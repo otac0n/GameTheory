@@ -17,10 +17,17 @@ namespace GameTheory
     public interface IGameState<TMove> where TMove : IMove
     {
         /// <summary>
-        /// Returns a finite, enumerable collection of moves.
+        /// Gets a list of players in the current game state.
         /// </summary>
-        /// <returns>An enumerable list of moves available.</returns>
-        IEnumerable<TMove> GetAvailableMoves();
+        /// <returns>The list of players in the current game state.</returns>
+        IReadOnlyList<PlayerToken> Players { get; }
+
+        /// <summary>
+        /// Returns a finite, enumerable collection of moves available to the specified player.
+        /// </summary>
+        /// <param name="player">The player whose moves will be retrieved.</param>
+        /// <returns>An enumerable list of moves available to the specified player.</returns>
+        IEnumerable<TMove> GetAvailableMoves(PlayerToken player);
 
         /// <summary>
         /// Applies the specified move to the given game state and returns the result.

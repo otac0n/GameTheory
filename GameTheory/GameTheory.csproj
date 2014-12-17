@@ -54,6 +54,8 @@
   <ItemGroup>
     <Compile Include="IGameState.cs" />
     <Compile Include="IMove.cs" />
+    <Compile Include="IPlayer.cs" />
+    <Compile Include="PlayerToken.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="..\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>

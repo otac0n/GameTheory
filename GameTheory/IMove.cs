@@ -13,5 +13,9 @@ namespace GameTheory
     /// </summary>
     public interface IMove
     {
+        /// <summary>
+        /// Gets the player who may perform this move.
+        /// </summary>
+        PlayerToken Player { get; }
     }
 }
