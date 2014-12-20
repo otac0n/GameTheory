@@ -8,6 +8,7 @@
 
 namespace GameTheory
 {
+    using System;
     using System.Threading;
     using System.Threading.Tasks;
 
@@ -15,7 +16,7 @@ namespace GameTheory
     /// Defines the contract for the implementation of a player.
     /// </summary>
     /// <typeparam name="TMove">The type of the moves that the player will choose.</typeparam>
-    public interface IPlayer<TMove> where TMove : IMove
+    public interface IPlayer<TMove> : IDisposable where TMove : IMove
     {
         /// <summary>
         /// Instructs the player to choose a move from the specified game state as an asynchronous operation using a task.

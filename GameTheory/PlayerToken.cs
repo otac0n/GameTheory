@@ -15,11 +15,7 @@ namespace GameTheory
     /// </summary>
     public sealed class PlayerToken : IEquatable<PlayerToken>
     {
-        /// <summary>
-        /// Indicates whether the current object is equal to another object of the same type.
-        /// </summary>
-        /// <param name="other">An object to compare with this object.</param>
-        /// <returns><c>true</c> if the current object is equal to the other parameter; otherwise, <c>false</c>.</returns>
+        /// <inheritdoc />
         public bool Equals(PlayerToken other)
         {
             return this == other;
