@@ -50,7 +50,7 @@ namespace GameTheory.Tests
             return this.moves.Where(m => m.Player == player);
         }
 
-        IGameState<Move> IGameState<Move>.Move(Move move)
+        public IGameState<Move> MakeMove(Move move)
         {
             return this;
         }

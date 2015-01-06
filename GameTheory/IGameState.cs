@@ -34,6 +34,6 @@ namespace GameTheory
         /// </summary>
         /// <param name="move">The move to apply.</param>
         /// <returns>The modified game state.</returns>
-        IGameState<TMove> Move(TMove move);
+        IGameState<TMove> MakeMove(TMove move);
     }
 }
