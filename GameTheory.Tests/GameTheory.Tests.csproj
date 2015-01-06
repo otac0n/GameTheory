@@ -50,7 +50,9 @@
     <Compile Include="..\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="RandomPlayerTests.cs" />
     <Compile Include="RandomTests.cs" />
+    <Compile Include="StubGameState.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
