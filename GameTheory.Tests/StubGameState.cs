@@ -45,9 +45,9 @@ namespace GameTheory.Tests
             get { return this.players; }
         }
 
-        public IEnumerable<Move> GetAvailableMoves(PlayerToken player)
+        public IReadOnlyCollection<Move> GetAvailableMoves(PlayerToken player)
         {
-            return this.moves.Where(m => m.Player == player);
+            return this.moves.Where(m => m.Player == player).ToList().AsReadOnly();
         }
 
         public IGameState<Move> MakeMove(Move move)

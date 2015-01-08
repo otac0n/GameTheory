@@ -17,7 +17,9 @@ namespace GameTheory.Games
     public class TicTacToe : IGameState<TicTacToe.Move>
     {
         private const int Size = 3;
+        private static readonly IReadOnlyCollection<Move> EmptyMoveList = new List<Move>(0).AsReadOnly();
         private readonly PlayerToken activePlayer;
+        private readonly Lazy<IReadOnlyCollection<Move>> availableMoves;
         private PlayerToken[,] field;
 
         /// <summary>
@@ -56,6 +58,8 @@ namespace GameTheory.Games
             }
 
             this.activePlayer = p0count <= p1count ? p0 : p1;
+
+            this.availableMoves = new Lazy<IReadOnlyCollection<Move>>(this.GetAvailableMoves);
         }
 
         /// <summary>
@@ -84,18 +88,14 @@ namespace GameTheory.Games
         }
 
         /// <inheritdoc />
-        public IEnumerable<Move> GetAvailableMoves(PlayerToken player)
+        public IReadOnlyCollection<Move> GetAvailableMoves(PlayerToken player)
         {
-            for (var x = 0; x < Size; x++)
+            if (player != this.activePlayer)
             {
-                for (var y = 0; y < Size; y++)
-                {
-                    if (this.field[x, y] == null)
-                    {
-                        yield return new Move(this.activePlayer, x, y);
-                    }
-                }
+                return EmptyMoveList;
             }
+
+            return this.availableMoves.Value;
         }
 
         /// <inheritdoc />
@@ -123,6 +123,24 @@ namespace GameTheory.Games
             newField[move.X, move.Y] = move.Player;
 
             return new TicTacToe(this.Players, newField);
+        }
+
+        private IReadOnlyCollection<Move> GetAvailableMoves()
+        {
+            var moves = new List<Move>(9);
+
+            for (var x = 0; x < Size; x++)
+            {
+                for (var y = 0; y < Size; y++)
+                {
+                    if (this.field[x, y] == null)
+                    {
+                        moves.Add(new Move(this.activePlayer, x, y));
+                    }
+                }
+            }
+
+            return moves.AsReadOnly();
         }
 
         /// <summary>

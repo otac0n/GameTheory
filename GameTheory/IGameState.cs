@@ -23,11 +23,11 @@ namespace GameTheory
         IReadOnlyList<PlayerToken> Players { get; }
 
         /// <summary>
-        /// Returns a finite, enumerable collection of moves available to the specified player.
+        /// Returns a collection of moves available to the specified player.
         /// </summary>
         /// <param name="player">The player whose moves will be retrieved.</param>
         /// <returns>An enumerable list of moves available to the specified player.</returns>
-        IEnumerable<TMove> GetAvailableMoves(PlayerToken player);
+        IReadOnlyCollection<TMove> GetAvailableMoves(PlayerToken player);
 
         /// <summary>
         /// Applies the specified move to the given game state and returns the result.
