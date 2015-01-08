@@ -52,6 +52,7 @@
     </CodeAnalysisDictionary>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Games\TicTacToe.cs" />
     <Compile Include="IGameState.cs" />
     <Compile Include="IMove.cs" />
     <Compile Include="IPlayer.cs" />
