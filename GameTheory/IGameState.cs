@@ -30,6 +30,16 @@ namespace GameTheory
         IReadOnlyCollection<TMove> GetAvailableMoves(PlayerToken player);
 
         /// <summary>
+        /// Returns any winners for the current game state.
+        /// </summary>
+        /// <returns>The list of players who can be considered winners.</returns>
+        /// <remarks>
+        /// More than one player may be listed, if the game allows for multiple winners.
+        /// If the game results in a draw, this collection will be empty.
+        /// </remarks>
+        IReadOnlyCollection<PlayerToken> GetWinners();
+
+        /// <summary>
         /// Applies the specified move to the given game state and returns the result.
         /// </summary>
         /// <param name="move">The move to apply.</param>

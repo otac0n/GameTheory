@@ -16,10 +16,13 @@ namespace GameTheory.Tests
         private readonly List<Move> moves;
         private readonly IReadOnlyList<Move> movesReadOnly;
         private readonly IReadOnlyList<PlayerToken> players;
+        private readonly List<PlayerToken> winners;
+        private readonly IReadOnlyList<PlayerToken> winnersReadOnly;
 
         public StubGameState(int playerCount = 1)
         {
             this.movesReadOnly = (this.moves = new List<Move>()).AsReadOnly();
+            this.winnersReadOnly = (this.winners = new List<PlayerToken>()).AsReadOnly();
             this.players = Enumerable.Range(0, playerCount).Select(i => new PlayerToken()).ToList().AsReadOnly();
         }
 
@@ -45,9 +48,31 @@ namespace GameTheory.Tests
             get { return this.players; }
         }
 
+        public IReadOnlyList<PlayerToken> Winners
+        {
+            get
+            {
+                return this.winnersReadOnly;
+            }
+
+            set
+            {
+                this.winners.Clear();
+                if (value != null)
+                {
+                    this.winners.AddRange(value);
+                }
+            }
+        }
+
         public IReadOnlyCollection<Move> GetAvailableMoves(PlayerToken player)
         {
             return this.moves.Where(m => m.Player == player).ToList().AsReadOnly();
+        }
+
+        public IReadOnlyCollection<PlayerToken> GetWinners()
+        {
+            return this.winnersReadOnly.Distinct().ToList().AsReadOnly();
         }
 
         public IGameState<Move> MakeMove(Move move)

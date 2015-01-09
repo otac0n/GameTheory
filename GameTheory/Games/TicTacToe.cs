@@ -18,8 +18,11 @@ namespace GameTheory.Games
     {
         private const int Size = 3;
         private static readonly IReadOnlyCollection<Move> EmptyMoveList = new List<Move>(0).AsReadOnly();
+        private static readonly IReadOnlyCollection<PlayerToken> EmptyWinnerList = new List<PlayerToken>(0).AsReadOnly();
         private readonly PlayerToken activePlayer;
         private readonly Lazy<IReadOnlyCollection<Move>> availableMoves;
+        private readonly Lazy<IReadOnlyCollection<PlayerToken>> winners;
+        private readonly PlayerToken winningPlayer;
         private PlayerToken[,] field;
 
         /// <summary>
@@ -59,7 +62,37 @@ namespace GameTheory.Games
 
             this.activePlayer = p0count <= p1count ? p0 : p1;
 
+            if ((field[0, 0] == field[1, 1] && field[1, 1] == field[2, 2]) ||
+                (field[0, 2] == field[1, 1] && field[1, 1] == field[2, 0]))
+            {
+                this.winningPlayer = field[1, 1];
+            }
+            else
+            {
+                for (var x = 0; x < Size; x++)
+                {
+                    if (field[x, 0] == field[x, 1] && field[x, 1] == field[x, 2])
+                    {
+                        this.winningPlayer = field[x, 1];
+                        break;
+                    }
+                }
+
+                if (this.winningPlayer == null)
+                {
+                    for (var y = 0; y < Size; y++)
+                    {
+                        if (field[0, y] == field[1, y] && field[1, y] == field[2, y])
+                        {
+                            this.winningPlayer = field[1, y];
+                            break;
+                        }
+                    }
+                }
+            }
+
             this.availableMoves = new Lazy<IReadOnlyCollection<Move>>(this.GetAvailableMoves);
+            this.winners = new Lazy<IReadOnlyCollection<PlayerToken>>(() => new List<PlayerToken> { this.winningPlayer }.AsReadOnly());
         }
 
         /// <summary>
@@ -90,12 +123,23 @@ namespace GameTheory.Games
         /// <inheritdoc />
         public IReadOnlyCollection<Move> GetAvailableMoves(PlayerToken player)
         {
-            if (player != this.activePlayer)
+            if (player != this.activePlayer || this.winningPlayer != null)
             {
                 return EmptyMoveList;
             }
 
             return this.availableMoves.Value;
+        }
+
+        /// <inheritdoc />
+        public IReadOnlyCollection<PlayerToken> GetWinners()
+        {
+            if (this.winningPlayer == null)
+            {
+                return EmptyWinnerList;
+            }
+
+            return this.winners.Value;
         }
 
         /// <inheritdoc />
