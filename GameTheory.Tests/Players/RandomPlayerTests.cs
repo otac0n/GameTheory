@@ -6,7 +6,7 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-namespace GameTheory.Tests
+namespace GameTheory.Tests.Players
 {
     using System;
     using System.Linq;
