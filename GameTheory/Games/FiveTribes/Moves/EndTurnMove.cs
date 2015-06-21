@@ -34,7 +34,7 @@ namespace GameTheory.Games.FiveTribes.Moves
             var resourcePile = state0.ResourcePile.Deal(9 - state0.VisibleResources.Count, out dealtResources, ref resourceDiscards);
 
             var moreTurns = state0.GetHighestBidIndex() != -1;
-            var isOver = !moreTurns && (state0.Players.Any(p => !state0.IsPlayerUnderCamelLimit(p)) || !state0.Sultanate.GetPickups().Any());
+            var isOver = !moreTurns && (state0.Players.Any(p => !state0.IsPlayerUnderCamelLimit(p)) || !state0.Sultanate.GetPickUps().Any());
 
             return state0.With(
                 djinnDiscards: djinnDiscards,

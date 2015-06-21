@@ -678,7 +678,7 @@ namespace GameTheory.Games.FiveTribes
         private IEnumerable<Move> GetPickUpMeeplesMoves()
         {
             var any = false;
-            foreach (var point in this.sultanate.GetPickups())
+            foreach (var point in this.sultanate.GetPickUps())
             {
                 any = true;
                 yield return new PickUpMeeplesMove(this, point);

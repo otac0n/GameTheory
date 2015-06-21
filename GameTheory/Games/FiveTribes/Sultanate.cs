@@ -13,11 +13,26 @@ namespace GameTheory.Games.FiveTribes
     using System.Collections.Immutable;
     using System.Linq;
 
+    /// <summary>
+    /// Provides utility functions for working with the Sultante, a collection of <see cref="Square">Squares</see>.
+    /// </summary>
     public static class Sultanate
     {
+        /// <summary>
+        /// The height of the Sultanate.
+        /// </summary>
         public const int Height = 5;
+
+        /// <summary>
+        /// The minimum number of Meeples such that you can make a loop with them.
+        /// </summary>
         public const int RequiredForLoop = 5;
+
+        /// <summary>
+        /// The width of the Sultanate.
+        /// </summary>
         public const int Width = 6;
+
         private static readonly ImmutableList<ImmutableList<Point>> SquarePoints;
         private static readonly Dictionary<Tuple<Point, Direction, int>, ImmutableHashSet<Point>> Storage = new Dictionary<Tuple<Point, Direction, int>, ImmutableHashSet<Point>>();
 
@@ -48,6 +63,12 @@ namespace GameTheory.Games.FiveTribes
             }).ToImmutableList();
         }
 
+        /// <summary>
+        /// Gets a direction from two adjacent Points.
+        /// </summary>
+        /// <param name="from">The source point.</param>
+        /// <param name="to">The destination point.</param>
+        /// <returns>The direction traveled from the source point to the destination point.</returns>
         public static Direction GetDirection(Point from, Point to)
         {
             return to.Y < from.Y ? Direction.Up :
@@ -57,6 +78,14 @@ namespace GameTheory.Games.FiveTribes
                    Direction.None;
         }
 
+        /// <summary>
+        /// Gets all of the Point and Meeple combinations that represent legal moves given the specified values.
+        /// </summary>
+        /// <param name="sultanate">The sultanate.</param>
+        /// <param name="point">The most recently touched point.</param>
+        /// <param name="incomingDirection">The direction that was most recently traveled to get to <see cref="point"/>, or <see cref="Direction.None"/> if it was picked up.</param>
+        /// <param name="inHand">The meeples in hand.</param>
+        /// <returns>A sequence containing all legal combinations of Point and Meeple.</returns>
         public static IEnumerable<Tuple<Meeple, Point>> GetMoves(this IList<Square> sultanate, Point point, Direction incomingDirection, EnumCollection<Meeple> inHand)
         {
             var count = inHand.Count;
@@ -144,7 +173,12 @@ namespace GameTheory.Games.FiveTribes
             }
         }
 
-        public static IEnumerable<Point> GetPickups(this ImmutableList<Square> sultanate)
+        /// <summary>
+        /// Gets all of the squares that have legal moves if they were to be picked up.
+        /// </summary>
+        /// <param name="sultanate">The sultanate.</param>
+        /// <returns>All of the legal pick ups.</returns>
+        public static IEnumerable<Point> GetPickUps(this ImmutableList<Square> sultanate)
         {
             for (var i = 0; i < Width * Height; i++)
             {
@@ -164,6 +198,12 @@ namespace GameTheory.Games.FiveTribes
             }
         }
 
+        /// <summary>
+        /// Gets points within the specified distance of the specified point.
+        /// </summary>
+        /// <param name="point">The starting point.</param>
+        /// <param name="distance">The inclusive maximum distance away, in number of moves.</param>
+        /// <returns>The points that are within the specified distance.</returns>
         public static IEnumerable<Point> GetPointsWithin(Point point, int distance)
         {
             var x1 = point.X;
@@ -181,6 +221,11 @@ namespace GameTheory.Games.FiveTribes
             }
         }
 
+        /// <summary>
+        /// Get the square containing all of the points adjacent to the specified point.
+        /// </summary>
+        /// <param name="point">The center point of the requested square.</param>
+        /// <returns>All of the points within the requested square.</returns>
         public static ImmutableList<Point> GetSquarePoints(Point point)
         {
             return SquarePoints[point];
