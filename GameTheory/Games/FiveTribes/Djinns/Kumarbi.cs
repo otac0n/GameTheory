@@ -1,4 +1,12 @@
-﻿namespace GameTheory.Games.FiveTribes.Djinns
+﻿// -----------------------------------------------------------------------
+// <copyright file="Kumarbi.cs" company="(none)">
+//   Copyright © 2015 John Gietzen.  All Rights Reserved.
+//   This source is subject to the MIT license.
+//   Please see license.md for more information.
+// </copyright>
+// -----------------------------------------------------------------------
+
+namespace GameTheory.Games.FiveTribes.Djinns
 {
     using System.Collections.Generic;
     using System.Collections.Immutable;
@@ -20,7 +28,7 @@
         {
             if (this.CanGetMoves(state0))
             {
-                return Cost.OneOrMoreSlaves(state0, s1 => s1.WithState(this.stateKey, "true"), GetAppliedCostMoves);
+                return Cost.OneOrMoreSlaves(state0, s1 => s1.WithState(this.stateKey, "true"), this.GetAppliedCostMoves);
             }
 
             return base.GetMoves(state0);
@@ -59,9 +67,9 @@
             {
                 if (state0.TurnOrderTrack[i] == null && state0.Inventory[state0.ActivePlayer].GoldCoins >= turnOrderTrackCosts[i])
                 {
-                    var j = i;
-                    if (j == 2 && state0.TurnOrderTrack[0] == null) j = 0;
-                    else if (j == 2 && state0.TurnOrderTrack[1] == null) j = 1;
+                    var j = i == 2 && state0.TurnOrderTrack[0] == null ? 0 :
+                            i == 2 && state0.TurnOrderTrack[1] == null ? 1 :
+                            i;
 
                     yield return new BidMove(state0, j, turnOrderTrackCosts[j]);
                 }

@@ -2,7 +2,10 @@
 <Dictionary>
   <Words>
     <Unrecognized />
-    <Recognized />
+    <Recognized>
+      <Word>combinatorics</Word>
+      <Word>djinn</Word>
+    </Recognized>
     <Deprecated />
     <Compound />
     <DiscreteExceptions />

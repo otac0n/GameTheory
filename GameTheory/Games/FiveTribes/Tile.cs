@@ -1,4 +1,12 @@
-﻿namespace GameTheory.Games.FiveTribes
+﻿// -----------------------------------------------------------------------
+// <copyright file="Tile.cs" company="(none)">
+//   Copyright © 2015 John Gietzen.  All Rights Reserved.
+//   This source is subject to the MIT license.
+//   Please see license.md for more information.
+// </copyright>
+// -----------------------------------------------------------------------
+
+namespace GameTheory.Games.FiveTribes
 {
     using System;
     using System.Collections.Generic;
@@ -54,7 +62,10 @@
                                                                               return s2.WithMoves(s3 => Enumerable.Concat(
                                                                                                          from j in Enumerable.Range(0, Math.Min(FirstN - 1, s3.VisibleResources.Count))
                                                                                                          select new TakeResourceMove(s3, j, s4 => s4.With(phase: Phase.CleanUp)),
-                                                                                                         new Move[] { new ChangePhaseMove(s3, "Skip second resource", Phase.CleanUp) }));
+                                                                                                         new Move[]
+                                                                                                         {
+                                                                                                             new ChangePhaseMove(s3, "Skip second resource", Phase.CleanUp)
+                                                                                                         }));
                                                                           }
                                                                           else
                                                                           {
@@ -62,10 +73,16 @@
                                                                           }
                                                                       }));
 
-                    foreach (var m in moves) yield return m;
+                    foreach (var m in moves)
+                    {
+                        yield return m;
+                    }
                 }
 
-                foreach (var m in base.GetTileActionMoves(state0)) yield return m;
+                foreach (var m in base.GetTileActionMoves(state0))
+                {
+                    yield return m;
+                }
             }
         }
 
@@ -98,10 +115,16 @@
                     var moves = Cost.OneElderPlusOneElderOrOneSlave(state0, s => s, s1 => from i in Enumerable.Range(0, s1.VisibleDjinns.Count)
                                                                                           select new TakeDjinnMove(s1, i, s2 => s2.With(phase: Phase.CleanUp)));
 
-                    foreach (var move in moves) yield return move;
+                    foreach (var move in moves)
+                    {
+                        yield return move;
+                    }
                 }
 
-                foreach (var baseMove in base.GetTileActionMoves(state0)) yield return baseMove;
+                foreach (var baseMove in base.GetTileActionMoves(state0))
+                {
+                    yield return baseMove;
+                }
             }
         }
 
@@ -123,10 +146,16 @@
                     var moves = Cost.Gold(state0, Gold, s => s, s1 => from i in Enumerable.Range(0, Math.Min(FirstN, s1.VisibleResources.Count))
                                                                       select new TakeResourceMove(s1, i, s2 => s2.With(phase: Phase.CleanUp)));
 
-                    foreach (var m in moves) yield return m;
+                    foreach (var m in moves)
+                    {
+                        yield return m;
+                    }
                 }
 
-                foreach (var m in base.GetTileActionMoves(state0)) yield return m;
+                foreach (var m in base.GetTileActionMoves(state0))
+                {
+                    yield return m;
+                }
             }
         }
 

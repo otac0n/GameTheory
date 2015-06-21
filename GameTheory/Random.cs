@@ -11,7 +11,7 @@ namespace GameTheory
     using System;
     using System.Collections.Generic;
     using System.Collections.Immutable;
-    using System.Diagnostics;
+    using System.Diagnostics.Contracts;
     using System.Linq;
     using System.Threading;
 
@@ -44,7 +44,7 @@ namespace GameTheory
             allDealt = allDealt.AddRange(newlyDealt);
 
             count -= allDealt.Count;
-            Debug.Assert(count == 0 || deck.Count == 0);
+            Contract.Assume(count == 0 || deck.Count == 0);
 
             if (count > 0 && discards.Count > 0)
             {
@@ -67,7 +67,7 @@ namespace GameTheory
             allDealt = allDealt.AddRange(newlyDealt);
 
             count -= allDealt.Count;
-            Debug.Assert(count == 0 || deck.Count == 0);
+            Contract.Assume(count == 0 || deck.Count == 0);
 
             if (count > 0 && discards.Count > 0)
             {
@@ -149,7 +149,11 @@ namespace GameTheory
             var i = 0;
             foreach (var item in items)
             {
-                if (instance.Next(i + 1) == 0) current = item;
+                if (instance.Next(i + 1) == 0)
+                {
+                    current = item;
+                }
+
                 i++;
             }
 

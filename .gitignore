@@ -12,6 +12,7 @@
 _ReSharper.*
 *.[Cc]ache
 *.ncrunch*
+_NCrunch*/
 *.docstates
 *.sln.ide/
 

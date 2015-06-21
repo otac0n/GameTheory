@@ -1,4 +1,12 @@
-﻿namespace GameTheory.Games.FiveTribes
+﻿// -----------------------------------------------------------------------
+// <copyright file="GameState.cs" company="(none)">
+//   Copyright © 2015 John Gietzen.  All Rights Reserved.
+//   This source is subject to the MIT license.
+//   Please see license.md for more information.
+// </copyright>
+// -----------------------------------------------------------------------
+
+namespace GameTheory.Games.FiveTribes
 {
     using System;
     using System.Collections.Generic;
@@ -6,6 +14,7 @@
     using System.Diagnostics.Contracts;
     using System.Linq;
     using System.Threading;
+    using GameTheory.Games.FiveTribes.Djinns;
     using GameTheory.Games.FiveTribes.Moves;
 
     public class GameState : IGameState<Move>
@@ -16,9 +25,9 @@
         public static readonly ImmutableList<Tile> InitialTiles;
         public static readonly ImmutableList<int> SuitValues;
         public static readonly ImmutableList<int> TurnOrderTrackCosts;
-        private static readonly ImmutableList<Djinn> djinns;
-        private static readonly EnumCollection<Meeple> meeples;
-        private static readonly EnumCollection<Resource> resources;
+        private static readonly ImmutableList<Djinn> Djinns;
+        private static readonly EnumCollection<Meeple> Meeples;
+        private static readonly EnumCollection<Resource> Resources;
         private readonly ImmutableDictionary<string, string> additionalState;
         private readonly ImmutableDictionary<PlayerToken, AssasinationTable> assassinationTables;
         private readonly EnumCollection<Meeple> bag;
@@ -80,7 +89,7 @@
                 new Tile.SacredPlace(12),
                 new Tile.SacredPlace(15));
 
-            meeples = new EnumCollection<Meeple>(new[]
+            Meeples = new EnumCollection<Meeple>(new[]
             {
                 Enumerable.Range(0, 16).Select(_ => Meeple.Vizier),
                 Enumerable.Range(0, 20).Select(_ => Meeple.Elder),
@@ -89,32 +98,32 @@
                 Enumerable.Range(0, 18).Select(_ => Meeple.Assassin),
             }.SelectMany(x => x));
 
-            djinns = ImmutableList.Create<Djinn>(
-                Djinns.AlAmin.Instance,
-                Djinns.AnunNak.Instance,
-                Djinns.Baal.Instance,
-                Djinns.Boaz.Instance,
-                Djinns.Bouraq.Instance,
-                //Djinns.Dhenim.Instance, // TODO: How do we handle this for tests?
-                Djinns.Echidna.Instance,
-                Djinns.Enki.Instance,
-                Djinns.Hagis.Instance,
-                Djinns.Haurvatat.Instance,
-                Djinns.Ibus.Instance,
-                Djinns.Jafaar.Instance,
-                Djinns.Kandicha.Instance,
-                Djinns.Kumarbi.Instance,
-                Djinns.Lamia.Instance,
-                Djinns.Leta.Instance,
-                Djinns.Marid.Instance,
-                Djinns.Monkir.Instance,
-                Djinns.Nekir.Instance,
-                Djinns.Shamhat.Instance,
-                Djinns.Sibittis.Instance,
-                Djinns.Sloar.Instance,
-                Djinns.Utug.Instance);
+            Djinns = ImmutableList.Create<Djinn>(
+                AlAmin.Instance,
+                AnunNak.Instance,
+                Baal.Instance,
+                Boaz.Instance,
+                Bouraq.Instance,
+                ////Dhenim.Instance, // TODO: How do we handle this for tests?
+                Echidna.Instance,
+                Enki.Instance,
+                Hagis.Instance,
+                Haurvatat.Instance,
+                Ibus.Instance,
+                Jafaar.Instance,
+                Kandicha.Instance,
+                Kumarbi.Instance,
+                Lamia.Instance,
+                Leta.Instance,
+                Marid.Instance,
+                Monkir.Instance,
+                Nekir.Instance,
+                Shamhat.Instance,
+                Sibittis.Instance,
+                Sloar.Instance,
+                Utug.Instance);
 
-            resources = new EnumCollection<Resource>(new[]
+            Resources = new EnumCollection<Resource>(new[]
             {
                 Enumerable.Range(0, 2).Select(_ => Resource.Ivory),
                 Enumerable.Range(0, 2).Select(_ => Resource.Jewels),
@@ -140,11 +149,11 @@
             this.inventory = this.players.ToImmutableDictionary(p => p, p => new Inventory());
             this.assassinationTables = this.players.ToImmutableDictionary(p => p, p => new AssasinationTable());
             this.scoreTables = this.players.ToImmutableDictionary(p => p, p => new ScoreTable());
-            this.sultanate = ImmutableList.CreateRange(InitialTiles.Shuffle().Zip(meeples.Shuffle().Partition(3), (t, ms) => new Square(t, new EnumCollection<Meeple>(ms))));
+            this.sultanate = ImmutableList.CreateRange(InitialTiles.Shuffle().Zip(Meeples.Shuffle().Partition(3), (t, ms) => new Square(t, new EnumCollection<Meeple>(ms))));
             this.bag = EnumCollection<Meeple>.Empty;
-            this.djinnPile = GameState.djinns.Deal(3, out this.visibleDjinns);
+            this.djinnPile = GameState.Djinns.Deal(3, out this.visibleDjinns);
             this.djinnDiscards = ImmutableList<Djinn>.Empty;
-            this.resourcePile = GameState.resources.Deal(9, out this.visibleResources);
+            this.resourcePile = GameState.Resources.Deal(9, out this.visibleResources);
             this.resourceDiscards = EnumCollection<Resource>.Empty;
             this.additionalState = ImmutableDictionary<string, string>.Empty;
         }
@@ -185,8 +194,8 @@
             {
                 return this.phase == Phase.End ? null :
                        this.phase == Phase.Bid ? this.bidOrderTrack.Peek() :
-                       this.phase == Phase.MoveTurnMarker ? this.turnOrderTrack[GetHighestBidIndex()] :
-                       bidOrderTrack.Last();
+                       this.phase == Phase.MoveTurnMarker ? this.turnOrderTrack[this.GetHighestBidIndex()] :
+                       this.bidOrderTrack.Last();
             }
         }
 
@@ -314,10 +323,16 @@
 
             foreach (var key in resources.Keys)
             {
-                if (key == Resource.Slave) continue;
+                if (key == Resource.Slave)
+                {
+                    continue;
+                }
 
                 var count = resources[key];
-                while (suits.Count < count) suits.Add(0);
+                while (suits.Count < count)
+                {
+                    suits.Add(0);
+                }
 
                 for (int i = 0; i < count; i++)
                 {
@@ -338,45 +353,45 @@
             }
             else
             {
-                var activePlayer = ActivePlayer;
+                var activePlayer = this.ActivePlayer;
                 if (player == activePlayer)
                 {
                     switch (this.phase)
                     {
                         case Phase.Bid:
-                            moves.AddRange(GetBidMoves());
+                            moves.AddRange(this.GetBidMoves());
                             break;
 
                         case Phase.MoveTurnMarker:
-                            moves.AddRange(GetMoveTurnMarkerMoves());
+                            moves.AddRange(this.GetMoveTurnMarkerMoves());
                             break;
 
                         case Phase.PickUpMeeples:
-                            moves.AddRange(GetPickUpMeeplesMoves());
+                            moves.AddRange(this.GetPickUpMeeplesMoves());
                             break;
 
                         case Phase.MoveMeeples:
-                            moves.AddRange(GetMoveMeeplesMoves());
+                            moves.AddRange(this.GetMoveMeeplesMoves());
                             break;
 
                         case Phase.TileControlCheck:
-                            moves.AddRange(GetTileControlCheckMoves());
+                            moves.AddRange(this.GetTileControlCheckMoves());
                             break;
 
                         case Phase.TribesAction:
-                            moves.AddRange(GetTribesActionMoves());
+                            moves.AddRange(this.GetTribesActionMoves());
                             break;
 
                         case Phase.TileAction:
-                            moves.AddRange(GetTileActionMoves());
+                            moves.AddRange(this.GetTileActionMoves());
                             break;
 
                         case Phase.CleanUp:
-                            moves.AddRange(GetCleanUpMoves());
+                            moves.AddRange(this.GetCleanUpMoves());
                             break;
                     }
 
-                    moves.AddRange(GetMerchandiseSaleMoves());
+                    moves.AddRange(this.GetMerchandiseSaleMoves());
                 }
 
                 foreach (var djinn in this.inventory[player].Djinns)
@@ -397,7 +412,11 @@
         public int GetHighestBidIndex()
         {
             var nextIndex = this.turnOrderTrack.Count - 1;
-            while (nextIndex >= 0 && this.turnOrderTrack[nextIndex] == null) nextIndex--;
+            while (nextIndex >= 0 && this.turnOrderTrack[nextIndex] == null)
+            {
+                nextIndex--;
+            }
+
             return nextIndex;
         }
 
@@ -540,7 +559,10 @@
 
             foreach (var victim in state0.players.Except(player0))
             {
-                if (state0.assassinationTables[victim].HasProtection) continue;
+                if (state0.assassinationTables[victim].HasProtection)
+                {
+                    continue;
+                }
 
                 foreach (var kill in combos(state0.inventory[victim].Meeples))
                 {
@@ -561,7 +583,7 @@
         {
             Contract.Requires(newState.subsequentMovesFactory == null || !newState.subsequentMoves.IsValueCreated);
 
-            var oldestStates = djinns.ToImmutableDictionary(d => d, d => oldState);
+            var oldestStates = Djinns.ToImmutableDictionary(d => d, d => oldState);
 
             var subsequentMoves = newState.subsequentMovesFactory;
 
@@ -588,7 +610,10 @@
                     }
                 }
 
-                if (!changed) break;
+                if (!changed)
+                {
+                    break;
+                }
             }
 
             if (changedEver && subsequentMoves != null)
@@ -607,9 +632,9 @@
             {
                 if (this.turnOrderTrack[i] == null && this.inventory[this.ActivePlayer].GoldCoins >= TurnOrderTrackCosts[i])
                 {
-                    var j = i;
-                    if (j == 2 && this.turnOrderTrack[0] == null) j = 0;
-                    else if (j == 2 && this.turnOrderTrack[1] == null) j = 1;
+                    var j = i == 2 && this.turnOrderTrack[0] == null ? 0 :
+                            i == 2 && this.turnOrderTrack[1] == null ? 1 :
+                            i;
 
                     yield return new BidMove(this, j, TurnOrderTrackCosts[j]);
                 }

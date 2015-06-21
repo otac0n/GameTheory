@@ -1,4 +1,12 @@
-﻿namespace GameTheory.Games.FiveTribes
+﻿// -----------------------------------------------------------------------
+// <copyright file="Sultanate.cs" company="(none)">
+//   Copyright © 2015 John Gietzen.  All Rights Reserved.
+//   This source is subject to the MIT license.
+//   Please see license.md for more information.
+// </copyright>
+// -----------------------------------------------------------------------
+
+namespace GameTheory.Games.FiveTribes
 {
     using System;
     using System.Collections.Generic;
@@ -10,12 +18,12 @@
         public const int Height = 5;
         public const int RequiredForLoop = 5;
         public const int Width = 6;
-        private static readonly ImmutableList<ImmutableList<Point>> squarePoints;
-        private static readonly Dictionary<Tuple<Point, Direction, int>, ImmutableHashSet<Point>> storage = new Dictionary<Tuple<Point, Direction, int>, ImmutableHashSet<Point>>();
+        private static readonly ImmutableList<ImmutableList<Point>> SquarePoints;
+        private static readonly Dictionary<Tuple<Point, Direction, int>, ImmutableHashSet<Point>> Storage = new Dictionary<Tuple<Point, Direction, int>, ImmutableHashSet<Point>>();
 
         static Sultanate()
         {
-            squarePoints = Enumerable.Range(0, Width * Height).Select(i =>
+            SquarePoints = Enumerable.Range(0, Width * Height).Select(i =>
             {
                 var points = ImmutableList.CreateBuilder<Point>();
 
@@ -166,20 +174,23 @@
                 var x2 = i % Width;
                 var y2 = i / Width;
 
-                if (Math.Abs(x1 - x2) + Math.Abs(y1 - y2) <= distance) yield return i;
+                if (Math.Abs(x1 - x2) + Math.Abs(y1 - y2) <= distance)
+                {
+                    yield return i;
+                }
             }
         }
 
         public static ImmutableList<Point> GetSquarePoints(Point point)
         {
-            return squarePoints[point];
+            return SquarePoints[point];
         }
 
         private static ImmutableHashSet<Point> FindDestinations(Point point, Direction incomingDirection, int meeples)
         {
             var key = Tuple.Create(point, incomingDirection, meeples);
             ImmutableHashSet<Point> result;
-            return storage.TryGetValue(key, out result) ? result : storage[key] = FindDestinationsImpl(point, incomingDirection, meeples);
+            return Storage.TryGetValue(key, out result) ? result : Storage[key] = FindDestinationsImpl(point, incomingDirection, meeples);
         }
 
         private static ImmutableHashSet<Point> FindDestinationsImpl(Point point, Direction incomingDirection, int meeples)
@@ -190,10 +201,26 @@
             }
 
             var destinations = ImmutableHashSet<Point>.Empty;
-            if (incomingDirection != Direction.Down && point.Y > 0) destinations = destinations.Union(FindDestinations(point - Width, Direction.Up, meeples - 1));
-            if (incomingDirection != Direction.Left && point.X < Width - 1) destinations = destinations.Union(FindDestinations(point + 1, Direction.Right, meeples - 1));
-            if (incomingDirection != Direction.Up && point.Y < Height - 1) destinations = destinations.Union(FindDestinations(point + Width, Direction.Down, meeples - 1));
-            if (incomingDirection != Direction.Right && point.X > 0) destinations = destinations.Union(FindDestinations(point - 1, Direction.Left, meeples - 1));
+
+            if (incomingDirection != Direction.Down && point.Y > 0)
+            {
+                destinations = destinations.Union(FindDestinations(point - Width, Direction.Up, meeples - 1));
+            }
+
+            if (incomingDirection != Direction.Left && point.X < Width - 1)
+            {
+                destinations = destinations.Union(FindDestinations(point + 1, Direction.Right, meeples - 1));
+            }
+
+            if (incomingDirection != Direction.Up && point.Y < Height - 1)
+            {
+                destinations = destinations.Union(FindDestinations(point + Width, Direction.Down, meeples - 1));
+            }
+
+            if (incomingDirection != Direction.Right && point.X > 0)
+            {
+                destinations = destinations.Union(FindDestinations(point - 1, Direction.Left, meeples - 1));
+            }
 
             return destinations;
         }

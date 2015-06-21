@@ -1,4 +1,12 @@
-﻿namespace GameTheory
+﻿// -----------------------------------------------------------------------
+// <copyright file="EnumerableExtensions.cs" company="(none)">
+//   Copyright © 2015 John Gietzen.  All Rights Reserved.
+//   This source is subject to the MIT license.
+//   Please see license.md for more information.
+// </copyright>
+// -----------------------------------------------------------------------
+
+namespace GameTheory
 {
     using System.Collections.Generic;
     using System.Collections.Immutable;
@@ -40,7 +48,10 @@
 
         public static IEnumerable<T> Times<T>(this T value, int count)
         {
-            while (count-- > 0) yield return value;
+            while (count-- > 0)
+            {
+                yield return value;
+            }
         }
     }
 }

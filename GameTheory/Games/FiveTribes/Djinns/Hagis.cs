@@ -1,4 +1,12 @@
-﻿namespace GameTheory.Games.FiveTribes.Djinns
+﻿// -----------------------------------------------------------------------
+// <copyright file="Hagis.cs" company="(none)">
+//   Copyright © 2015 John Gietzen.  All Rights Reserved.
+//   This source is subject to the MIT license.
+//   Please see license.md for more information.
+// </copyright>
+// -----------------------------------------------------------------------
+
+namespace GameTheory.Games.FiveTribes.Djinns
 {
     using System.Collections.Generic;
     using System.Linq;
@@ -22,8 +30,12 @@
             {
                 foreach (var move in moves.OfType<PlacePalaceMove>())
                 {
-                    var newMoves = Cost.OneElderOrOneSlave(state0, s1 => s1.WithState(this.stateKey, "true"), s1 => GetAppliedCostMoves(s1, move));
-                    foreach (var m in newMoves) yield return m;
+                    var newMoves = Cost.OneElderOrOneSlave(state0, s1 => s1.WithState(this.stateKey, "true"), s1 => this.GetAppliedCostMoves(s1, move));
+
+                    foreach (var m in newMoves)
+                    {
+                        yield return m;
+                    }
                 }
             }
         }

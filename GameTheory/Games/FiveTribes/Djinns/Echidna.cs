@@ -1,4 +1,12 @@
-﻿namespace GameTheory.Games.FiveTribes.Djinns
+﻿// -----------------------------------------------------------------------
+// <copyright file="Echidna.cs" company="(none)">
+//   Copyright © 2015 John Gietzen.  All Rights Reserved.
+//   This source is subject to the MIT license.
+//   Please see license.md for more information.
+// </copyright>
+// -----------------------------------------------------------------------
+
+namespace GameTheory.Games.FiveTribes.Djinns
 {
     using System.Collections.Generic;
     using System.Linq;
@@ -29,20 +37,22 @@
         public class DoubleBuilderScoreMove : Move
         {
             public DoubleBuilderScoreMove(GameState state0)
-                : base(state0, state0.ActivePlayer, s1 =>
-                {
-                    var player = s1.ActivePlayer;
-                    var scoreTable = s1.ScoreTables[player];
-
-                    return s1.With(
-                        scoreTables: s1.ScoreTables.SetItem(player, scoreTable.With(builderMultiplier: scoreTable.BuilderMultiplier * 2)));
-                })
+                : base(state0, state0.ActivePlayer)
             {
             }
 
             public override string ToString()
             {
                 return "Double the amout of GCs your Builders get this turn";
+            }
+
+            internal override GameState Apply(GameState state0)
+            {
+                var player = state0.ActivePlayer;
+                var scoreTable = state0.ScoreTables[player];
+
+                return state0.With(
+                    scoreTables: state0.ScoreTables.SetItem(player, scoreTable.With(builderMultiplier: scoreTable.BuilderMultiplier * 2)));
             }
         }
     }

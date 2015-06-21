@@ -1,29 +1,39 @@
-﻿namespace GameTheory.Games.FiveTribes.Moves
+﻿// -----------------------------------------------------------------------
+// <copyright file="PickUpTribeMove.cs" company="(none)">
+//   Copyright © 2015 John Gietzen.  All Rights Reserved.
+//   This source is subject to the MIT license.
+//   Please see license.md for more information.
+// </copyright>
+// -----------------------------------------------------------------------
+
+namespace GameTheory.Games.FiveTribes.Moves
 {
     public class PickUpTribeMove : Move
     {
         private readonly Meeple tribe;
 
         public PickUpTribeMove(GameState state0, Meeple tribe)
-            : base(state0, state0.ActivePlayer, s1 =>
-            {
-                var point = s1.LastPoint;
-                var square4 = s1.Sultanate[point];
-                var newSquare = square4.With(meeples: square4.Meeples.RemoveAll(tribe));
-                var canAddCamel = newSquare.Owner == null && newSquare.Meeples.Count == 0 && s1.IsPlayerUnderCamelLimit(s1.ActivePlayer);
-
-                return s1.With(
-                    sultanate: s1.Sultanate.SetItem(point, newSquare),
-                    inHand: s1.InHand.Add(tribe, square4.Meeples[tribe]),
-                    phase: canAddCamel ? Phase.TileControlCheck : Phase.TribesAction);
-            })
+            : base(state0, state0.ActivePlayer)
         {
             this.tribe = tribe;
         }
 
         public override string ToString()
         {
-            return string.Format("Pick up all {0} at {1}", tribe, this.State.LastPoint);
+            return string.Format("Pick up all {0} at {1}", this.tribe, this.State.LastPoint);
+        }
+
+        internal override GameState Apply(GameState state0)
+        {
+            var point = state0.LastPoint;
+            var square = state0.Sultanate[point];
+            var newSquare = square.With(meeples: square.Meeples.RemoveAll(this.tribe));
+            var canAddCamel = newSquare.Owner == null && newSquare.Meeples.Count == 0 && state0.IsPlayerUnderCamelLimit(state0.ActivePlayer);
+
+            return state0.With(
+                sultanate: state0.Sultanate.SetItem(point, newSquare),
+                inHand: state0.InHand.Add(this.tribe, square.Meeples[this.tribe]),
+                phase: canAddCamel ? Phase.TileControlCheck : Phase.TribesAction);
         }
     }
 }

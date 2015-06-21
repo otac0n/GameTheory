@@ -1,4 +1,12 @@
-﻿namespace GameTheory.Games.FiveTribes.Moves
+﻿// -----------------------------------------------------------------------
+// <copyright file="EndTurnMove.cs" company="(none)">
+//   Copyright © 2015 John Gietzen.  All Rights Reserved.
+//   This source is subject to the MIT license.
+//   Please see license.md for more information.
+// </copyright>
+// -----------------------------------------------------------------------
+
+namespace GameTheory.Games.FiveTribes.Moves
 {
     using System.Collections.Immutable;
     using System.Linq;
@@ -6,36 +14,38 @@
     public class EndTurnMove : Move
     {
         public EndTurnMove(GameState state0)
-            : base(state0, state0.ActivePlayer, s1 =>
-            {
-                ImmutableList<Djinn> dealtDjinns;
-                var djinnDiscards = s1.DjinnDiscards;
-                var djinnPile = s1.DjinnPile.Deal(3 - s1.VisibleDjinns.Count, out dealtDjinns, ref djinnDiscards);
-
-                ImmutableList<Resource> dealtResources;
-                var resourceDiscards = s1.ResourceDiscards;
-                var resourcePile = s1.ResourcePile.Deal(9 - s1.VisibleResources.Count, out dealtResources, ref resourceDiscards);
-
-                var moreTurns = s1.GetHighestBidIndex() != -1;
-                var isOver = !moreTurns && (s1.Players.Any(p => !s1.IsPlayerUnderCamelLimit(p)) || !s1.Sultanate.GetPickups().Any());
-
-                return s1.With(
-                    djinnDiscards: djinnDiscards,
-                    djinnPile: djinnPile,
-                    lastDirection: Direction.None,
-                    lastPoint: new Point(),
-                    phase: moreTurns ? Phase.MoveTurnMarker : (isOver ? Phase.End : Phase.Bid),
-                    resourceDiscards: resourceDiscards,
-                    resourcePile: resourcePile,
-                    visibleDjinns: s1.VisibleDjinns.AddRange(dealtDjinns),
-                    visibleResources: s1.VisibleResources.AddRange(dealtResources));
-            })
+            : base(state0, state0.ActivePlayer)
         {
         }
 
         public override string ToString()
         {
             return "End turn";
+        }
+
+        internal override GameState Apply(GameState state0)
+        {
+            ImmutableList<Djinn> dealtDjinns;
+            var djinnDiscards = state0.DjinnDiscards;
+            var djinnPile = state0.DjinnPile.Deal(3 - state0.VisibleDjinns.Count, out dealtDjinns, ref djinnDiscards);
+
+            ImmutableList<Resource> dealtResources;
+            var resourceDiscards = state0.ResourceDiscards;
+            var resourcePile = state0.ResourcePile.Deal(9 - state0.VisibleResources.Count, out dealtResources, ref resourceDiscards);
+
+            var moreTurns = state0.GetHighestBidIndex() != -1;
+            var isOver = !moreTurns && (state0.Players.Any(p => !state0.IsPlayerUnderCamelLimit(p)) || !state0.Sultanate.GetPickups().Any());
+
+            return state0.With(
+                djinnDiscards: djinnDiscards,
+                djinnPile: djinnPile,
+                lastDirection: Direction.None,
+                lastPoint: new Point(),
+                phase: moreTurns ? Phase.MoveTurnMarker : (isOver ? Phase.End : Phase.Bid),
+                resourceDiscards: resourceDiscards,
+                resourcePile: resourcePile,
+                visibleDjinns: state0.VisibleDjinns.AddRange(dealtDjinns),
+                visibleResources: state0.VisibleResources.AddRange(dealtResources));
         }
     }
 }

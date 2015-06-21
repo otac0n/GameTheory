@@ -1,4 +1,12 @@
-﻿namespace GameTheory
+﻿// -----------------------------------------------------------------------
+// <copyright file="EnumCollection.cs" company="(none)">
+//   Copyright © 2015 John Gietzen.  All Rights Reserved.
+//   This source is subject to the MIT license.
+//   Please see license.md for more information.
+// </copyright>
+// -----------------------------------------------------------------------
+
+namespace GameTheory
 {
     using System;
     using System.Collections;
@@ -7,9 +15,17 @@
     using System.Diagnostics.Contracts;
     using System.Linq;
 
+    /// <summary>
+    /// Provides a compact collection of enumeration values.
+    /// </summary>
+    /// <typeparam name="TEnum">The type of enumeration values to store in the collection.</typeparam>
     public class EnumCollection<TEnum> : IEnumerable<TEnum>, IReadOnlyList<TEnum> where TEnum : struct
     {
+        /// <summary>
+        /// An empty <see cref="EnumCollection{T}"/>.
+        /// </summary>
         public static readonly EnumCollection<TEnum> Empty;
+
         private static readonly int Capacity;
         private readonly int count;
         private readonly ImmutableList<int> storage;
@@ -20,17 +36,19 @@
             Empty = new EnumCollection<TEnum>(new TEnum[0]);
         }
 
-        public EnumCollection()
-        {
-            this.count = 0;
-            this.storage = ImmutableList.Create(new int[Capacity]);
-        }
-
+        /// <summary>
+        /// Initializes a new instance of <see cref="EnumCollection{TEnum}"/> with the specified items.
+        /// </summary>
+        /// <param name="items">The items to add to the collection.</param>
         public EnumCollection(params TEnum[] items)
             : this(items.AsEnumerable())
         {
         }
 
+        /// <summary>
+        /// Initializes a new instance of <see cref="EnumCollection{TEnum}"/> with the specified items.
+        /// </summary>
+        /// <param name="items">The items to add to the collection.</param>
         public EnumCollection(IEnumerable<TEnum> items)
         {
             var count = 0;
@@ -51,17 +69,27 @@
             this.storage = ImmutableList.Create(storage);
         }
 
+        private EnumCollection()
+        {
+            this.count = 0;
+            this.storage = ImmutableList.Create(new int[Capacity]);
+        }
+
         private EnumCollection(int count, ImmutableList<int> storage)
         {
             this.count = count;
             this.storage = storage;
         }
 
+        /// <inheritdoc />
         public int Count
         {
             get { return this.count; }
         }
 
+        /// <summary>
+        /// Gets the distinct list of items contained in the collection.
+        /// </summary>
         public IEnumerable<TEnum> Keys
         {
             get { return Enumerable.Range(0, Capacity).Where(i => this.storage[i] > 0).Select(i => (TEnum)Enum.ToObject(typeof(TEnum), i)); }
@@ -76,13 +104,21 @@
                 for (var i = 0; i < Capacity; i++)
                 {
                     index -= this.storage[i];
-                    if (index < 0) return (TEnum)Enum.ToObject(typeof(TEnum), i);
+                    if (index < 0)
+                    {
+                        return (TEnum)Enum.ToObject(typeof(TEnum), i);
+                    }
                 }
 
                 throw new IndexOutOfRangeException("index");
             }
         }
 
+        /// <summary>
+        /// Gets the count of the specified item in the collection.
+        /// </summary>
+        /// <param name="item">The item to find.</param>
+        /// <returns>The count of the specified item in the collection.</returns>
         public int this[TEnum item]
         {
             get
@@ -92,12 +128,23 @@
             }
         }
 
+        /// <summary>
+        /// Makes a copy of the collection and adds the specified item to the collection.
+        /// </summary>
+        /// <param name="item">The item to add.</param>
+        /// <returns>The new collection.</returns>
         public EnumCollection<TEnum> Add(TEnum item)
         {
             var key = Convert.ToInt32(item);
             return new EnumCollection<TEnum>(checked(this.count + 1), this.storage.SetItem(key, this.storage[key] + 1));
         }
 
+        /// <summary>
+        /// Makes a copy of the collection and adds the specified item to the collection.
+        /// </summary>
+        /// <param name="item">The item to add.</param>
+        /// <param name="count">The number of copies of the specified item to add.</param>
+        /// <returns>The new collection.</returns>
         public EnumCollection<TEnum> Add(TEnum item, int count)
         {
             Contract.Requires(count >= 1);
@@ -105,11 +152,21 @@
             return new EnumCollection<TEnum>(checked(this.count + count), this.storage.SetItem(key, this.storage[key] + count));
         }
 
+        /// <summary>
+        /// Makes a copy of the collection and adds the specified items to the collection.
+        /// </summary>
+        /// <param name="items">The items to add.</param>
+        /// <returns>The new collection.</returns>
         public EnumCollection<TEnum> AddRange(IEnumerable<TEnum> items)
         {
             return this.AddRange(new EnumCollection<TEnum>(items));
         }
 
+        /// <summary>
+        /// Makes a copy of the collection and adds the specified items to the collection.
+        /// </summary>
+        /// <param name="items">The items to add.</param>
+        /// <returns>The new collection.</returns>
         public EnumCollection<TEnum> AddRange(EnumCollection<TEnum> items)
         {
             var count = checked(this.count + items.count);
@@ -122,10 +179,23 @@
             return new EnumCollection<TEnum>(count, ImmutableList.Create(storage));
         }
 
+        /// <summary>
+        /// Gets an enumerable collection containing all combinations of the items in this collection.
+        /// </summary>
+        /// <param name="count">The size of the combinations.</param>
+        /// <param name="includeSmaller">A boolean value indicating whether or not smaller combinations should also be returned.</param>
+        /// <returns>An enumerable collection of combinations.</returns>
         public IEnumerable<EnumCollection<TEnum>> Combinations(int count, bool includeSmaller = false)
         {
-            if (count <= 0) yield break;
-            if (count > this.count) yield break;
+            if (count <= 0)
+            {
+                yield break;
+            }
+
+            if (count > this.count)
+            {
+                yield break;
+            }
 
             var storage = new int[Capacity];
             var digitalSum = 0;
@@ -133,7 +203,10 @@
             Func<int, bool> increment = null;
             increment = i =>
             {
-                if (i >= Capacity) return true;
+                if (i >= Capacity)
+                {
+                    return true;
+                }
 
                 var digit = ++storage[i];
                 digitalSum++;
@@ -150,16 +223,23 @@
 
             while (!increment(0))
             {
-                if (includeSmaller || digitalSum == count) yield return new EnumCollection<TEnum>(count, ImmutableList.Create(storage));
+                if (includeSmaller || digitalSum == count)
+                {
+                    yield return new EnumCollection<TEnum>(count, ImmutableList.Create(storage));
+                }
             }
         }
 
+        /// <inheritdoc />
         public IEnumerator<TEnum> GetEnumerator()
         {
             for (var i = 0; i < Capacity; i++)
             {
                 var repeat = this.storage[i];
-                while (repeat-- > 0) yield return (TEnum)Enum.ToObject(typeof(TEnum), i);
+                while (repeat-- > 0)
+                {
+                    yield return (TEnum)Enum.ToObject(typeof(TEnum), i);
+                }
             }
         }
 
@@ -168,6 +248,11 @@
             return this.GetEnumerator();
         }
 
+        /// <summary>
+        /// Makes a copy of the collection and removes the specified item from the collection.
+        /// </summary>
+        /// <param name="item">The item to remove.</param>
+        /// <returns>The new collection.</returns>
         public EnumCollection<TEnum> Remove(TEnum item)
         {
             var key = Convert.ToInt32(item);
@@ -175,6 +260,12 @@
             return count > 0 ? new EnumCollection<TEnum>(this.count - 1, this.storage.SetItem(key, count - 1)) : this;
         }
 
+        /// <summary>
+        /// Makes a copy of the collection and removes the specified item from the collection.
+        /// </summary>
+        /// <param name="item">The item to remove.</param>
+        /// <param name="count">The number of copies of the specified item to add.</param>
+        /// <returns>The new collection.</returns>
         public EnumCollection<TEnum> Remove(TEnum item, int count)
         {
             Contract.Requires(count >= 1);
@@ -184,6 +275,11 @@
             return count > 0 ? new EnumCollection<TEnum>(this.count - count, this.storage.SetItem(key, existing - count)) : this;
         }
 
+        /// <summary>
+        /// Makes a copy of the collection and removes all copies of the specified item from the collection.
+        /// </summary>
+        /// <param name="item">The item to remove.</param>
+        /// <returns>The new collection.</returns>
         public EnumCollection<TEnum> RemoveAll(TEnum item)
         {
             var key = Convert.ToInt32(item);
@@ -191,6 +287,11 @@
             return count > 0 ? new EnumCollection<TEnum>(this.count - count, this.storage.SetItem(key, 0)) : this;
         }
 
+        /// <summary>
+        /// Makes a copy of the collection and removes items that match the specified predicate from the collection.
+        /// </summary>
+        /// <param name="match">A predicate indicating which items to remove.</param>
+        /// <returns>The new collection.</returns>
         public EnumCollection<TEnum> RemoveAll(Predicate<TEnum> match)
         {
             var count = 0;
@@ -207,11 +308,21 @@
             return count == 0 ? EnumCollection<TEnum>.Empty : new EnumCollection<TEnum>(count, ImmutableList.Create(storage));
         }
 
+        /// <summary>
+        /// Makes a copy of the collection and removes the specified items from the collection.
+        /// </summary>
+        /// <param name="items">The items to remove.</param>
+        /// <returns>The new collection.</returns>
         public EnumCollection<TEnum> RemoveRange(IEnumerable<TEnum> items)
         {
             return this.RemoveRange(new EnumCollection<TEnum>(items));
         }
 
+        /// <summary>
+        /// Makes a copy of the collection and removes the specified items from the collection.
+        /// </summary>
+        /// <param name="items">The items to remove.</param>
+        /// <returns>The new collection.</returns>
         public EnumCollection<TEnum> RemoveRange(EnumCollection<TEnum> items)
         {
             var count = this.count;

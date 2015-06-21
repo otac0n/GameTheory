@@ -1,4 +1,12 @@
-﻿namespace GameTheory.Games.FiveTribes.Moves
+﻿// -----------------------------------------------------------------------
+// <copyright file="DropMeepleMove.cs" company="(none)">
+//   Copyright © 2015 John Gietzen.  All Rights Reserved.
+//   This source is subject to the MIT license.
+//   Please see license.md for more information.
+// </copyright>
+// -----------------------------------------------------------------------
+
+namespace GameTheory.Games.FiveTribes.Moves
 {
     public class DropMeepleMove : Move
     {
@@ -6,20 +14,7 @@
         private readonly Point point;
 
         public DropMeepleMove(GameState state0, Meeple meeple, Point point)
-            : base(state0, state0.ActivePlayer, s1 =>
-            {
-                var square1 = s1.Sultanate[point];
-                var s2 = s1.With(
-                    sultanate: s1.Sultanate.SetItem(point, square1.With(meeples: square1.Meeples.Add(meeple))),
-                    inHand: s1.InHand.Remove(meeple),
-                    lastDirection: Sultanate.GetDirection(from: s1.LastPoint, to: point),
-                    lastPoint: point);
-
-                return s2.InHand.Count >= 1 ? s2 : s2.WithMoves(s3 => new[]
-                {
-                    new PickUpTribeMove(s3, meeple),
-                });
-            })
+            : base(state0, state0.ActivePlayer)
         {
             this.meeple = meeple;
             this.point = point;
@@ -38,6 +33,21 @@
         public override string ToString()
         {
             return string.Format("Drop {0} at {1}", this.meeple, this.point);
+        }
+
+        internal override GameState Apply(GameState state0)
+        {
+            var square = state0.Sultanate[this.point];
+            var s1 = state0.With(
+                sultanate: state0.Sultanate.SetItem(this.point, square.With(meeples: square.Meeples.Add(this.meeple))),
+                inHand: state0.InHand.Remove(this.meeple),
+                lastDirection: Sultanate.GetDirection(from: state0.LastPoint, to: this.point),
+                lastPoint: this.point);
+
+            return s1.InHand.Count >= 1 ? s1 : s1.WithMoves(s2 => new[]
+            {
+                new PickUpTribeMove(s2, this.meeple),
+            });
         }
     }
 }

@@ -1,4 +1,12 @@
-﻿namespace GameTheory.Games.FiveTribes.Djinns
+﻿// -----------------------------------------------------------------------
+// <copyright file="Ibus.cs" company="(none)">
+//   Copyright © 2015 John Gietzen.  All Rights Reserved.
+//   This source is subject to the MIT license.
+//   Please see license.md for more information.
+// </copyright>
+// -----------------------------------------------------------------------
+
+namespace GameTheory.Games.FiveTribes.Djinns
 {
     using System.Collections.Generic;
     using System.Linq;
@@ -29,20 +37,22 @@
         public class DoubleAssassinKillCountMove : Move
         {
             public DoubleAssassinKillCountMove(GameState state0)
-                : base(state0, state0.ActivePlayer, s1 =>
-                {
-                    var player = s1.ActivePlayer;
-                    var assassinationTable = s1.AssassinationTables[player];
-
-                    return s1.With(
-                        assassinationTables: s1.AssassinationTables.SetItem(player, assassinationTable.With(killCount: 2)));
-                })
+                : base(state0, state0.ActivePlayer)
             {
             }
 
             public override string ToString()
             {
                 return "Double the number of meeples your Assassins kill this turn";
+            }
+
+            internal override GameState Apply(GameState state0)
+            {
+                var player = state0.ActivePlayer;
+                var assassinationTable = state0.AssassinationTables[player];
+
+                return state0.With(
+                    assassinationTables: state0.AssassinationTables.SetItem(player, assassinationTable.With(killCount: 2)));
             }
         }
     }

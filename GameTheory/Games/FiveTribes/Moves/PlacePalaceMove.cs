@@ -1,4 +1,12 @@
-﻿namespace GameTheory.Games.FiveTribes.Moves
+﻿// -----------------------------------------------------------------------
+// <copyright file="PlacePalaceMove.cs" company="(none)">
+//   Copyright © 2015 John Gietzen.  All Rights Reserved.
+//   This source is subject to the MIT license.
+//   Please see license.md for more information.
+// </copyright>
+// -----------------------------------------------------------------------
+
+namespace GameTheory.Games.FiveTribes.Moves
 {
     using System;
 
@@ -13,12 +21,7 @@
         }
 
         public PlacePalaceMove(GameState state0, Point point, Func<GameState, GameState> after)
-            : base(state0, state0.ActivePlayer, s1 =>
-            {
-                var square = s1.Sultanate[point];
-                return after(s1.With(
-                    sultanate: s1.Sultanate.SetItem(point, square.With(palaces: square.Palaces + 1))));
-            })
+            : base(state0, state0.ActivePlayer)
         {
             this.point = point;
             this.after = after;
@@ -32,6 +35,13 @@
         public override string ToString()
         {
             return string.Format("Place a Palace at {0}", this.point);
+        }
+
+        internal override GameState Apply(GameState state0)
+        {
+            var square = state0.Sultanate[this.point];
+            return this.after(state0.With(
+                sultanate: state0.Sultanate.SetItem(this.point, square.With(palaces: square.Palaces + 1))));
         }
 
         internal Move With(GameState state, Point point)

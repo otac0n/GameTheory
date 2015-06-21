@@ -1,4 +1,12 @@
-﻿namespace GameTheory.Games.FiveTribes.Djinns
+﻿// -----------------------------------------------------------------------
+// <copyright file="Sibittis.cs" company="(none)">
+//   Copyright © 2015 John Gietzen.  All Rights Reserved.
+//   This source is subject to the MIT license.
+//   Please see license.md for more information.
+// </copyright>
+// -----------------------------------------------------------------------
+
+namespace GameTheory.Games.FiveTribes.Djinns
 {
     using System;
     using System.Collections.Generic;
@@ -27,26 +35,28 @@
         public class DrawDjinnsMove : Move
         {
             public DrawDjinnsMove(GameState state0)
-                : base(state0, state0.ActivePlayer, s1 =>
-                {
-                    var toDraw = GetDrawCount(s1);
-
-                    ImmutableList<Djinn> dealt;
-                    var newDjinnDiscards = s1.DjinnDiscards;
-                    var newDjinnPile = s1.DjinnPile.Deal(toDraw, out dealt, ref newDjinnDiscards);
-
-                    var s2 = s1.With(
-                        djinnPile: newDjinnPile,
-                        djinnDiscards: newDjinnDiscards);
-
-                    return s2.WithMoves(s3 => Enumerable.Range(0, toDraw).Select(i => new TakeDealtDjinnMove(s3, dealt, i)));
-                })
+                : base(state0, state0.ActivePlayer)
             {
             }
 
             public override string ToString()
             {
                 return string.Format("Draw {0} Djinns", GetDrawCount(this.State));
+            }
+
+            internal override GameState Apply(GameState state0)
+            {
+                var toDraw = GetDrawCount(state0);
+
+                ImmutableList<Djinn> dealt;
+                var newDjinnDiscards = state0.DjinnDiscards;
+                var newDjinnPile = state0.DjinnPile.Deal(toDraw, out dealt, ref newDjinnDiscards);
+
+                var s1 = state0.With(
+                    djinnPile: newDjinnPile,
+                    djinnDiscards: newDjinnDiscards);
+
+                return s1.WithMoves(s2 => Enumerable.Range(0, toDraw).Select(i => new TakeDealtDjinnMove(s2, dealt, i)));
             }
 
             private static int GetDrawCount(GameState state0)
@@ -61,15 +71,7 @@
             private readonly int index;
 
             public TakeDealtDjinnMove(GameState state0, ImmutableList<Djinn> dealt, int index)
-                : base(state0, state0.ActivePlayer, s4 =>
-                {
-                    var player = s4.ActivePlayer;
-                    var inventory = s4.Inventory[player];
-
-                    return s4.With(
-                        djinnDiscards: s4.DjinnDiscards.AddRange(dealt.RemoveAt(index)),
-                        inventory: s4.Inventory.SetItem(player, inventory.With(djinns: inventory.Djinns.Add(dealt[index]))));
-                })
+                : base(state0, state0.ActivePlayer)
             {
                 this.dealt = dealt;
                 this.index = index;
@@ -78,6 +80,16 @@
             public override string ToString()
             {
                 return string.Format("Take {0}", this.dealt[this.index]);
+            }
+
+            internal override GameState Apply(GameState state0)
+            {
+                var player = state0.ActivePlayer;
+                var inventory = state0.Inventory[player];
+
+                return state0.With(
+                    djinnDiscards: state0.DjinnDiscards.AddRange(this.dealt.RemoveAt(this.index)),
+                    inventory: state0.Inventory.SetItem(player, inventory.With(djinns: inventory.Djinns.Add(this.dealt[this.index]))));
             }
         }
     }

@@ -1,4 +1,12 @@
-﻿namespace GameTheory.Tests.Games
+﻿// -----------------------------------------------------------------------
+// <copyright file="FiveTribesTests.cs" company="(none)">
+//   Copyright © 2015 John Gietzen.  All Rights Reserved.
+//   This source is subject to the MIT license.
+//   Please see license.md for more information.
+// </copyright>
+// -----------------------------------------------------------------------
+
+namespace GameTheory.Tests.Games
 {
     using System;
     using System.Collections.Generic;
@@ -249,7 +257,11 @@
             while (true)
             {
                 var move = players.Select(p => p.ChooseMove(state, GetCancellationToken()).Result).SingleOrDefault(m => m != null);
-                if (move == null) break;
+                if (move == null)
+                {
+                    break;
+                }
+
                 Console.WriteLine("{0}: {1}", FiveTribesTests.p(state, move.Player), move);
                 state = state.MakeMove(move);
             }
@@ -274,6 +286,7 @@
             {
                 ShowMoves(state);
             }
+
             return state.MakeMove(moves.Single());
         }
 
@@ -328,14 +341,22 @@
 
         public class ReturnGameStateMove : Move
         {
+            private readonly GameState state1;
+
             public ReturnGameStateMove(GameState state0, GameState state1)
-                : base(state0, state0.ActivePlayer, s1 => state1)
+                : base(state0, state0.ActivePlayer)
             {
+                this.state1 = state1;
             }
 
             public override string ToString()
             {
                 return "OK";
+            }
+
+            internal override GameState Apply(GameState state0)
+            {
+                return this.state1;
             }
         }
     }

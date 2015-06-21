@@ -1,22 +1,43 @@
-﻿namespace GameTheory.Games.FiveTribes
+﻿// -----------------------------------------------------------------------
+// <copyright file="Djinn.cs" company="(none)">
+//   Copyright © 2015 John Gietzen.  All Rights Reserved.
+//   This source is subject to the MIT license.
+//   Please see license.md for more information.
+// </copyright>
+// -----------------------------------------------------------------------
+
+namespace GameTheory.Games.FiveTribes
 {
     using System.Collections.Generic;
     using System.Collections.Immutable;
 
+    /// <summary>
+    /// The base class for all Djinns.
+    /// </summary>
     public abstract class Djinn
     {
         private readonly int value;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Djinn"/> class.
+        /// </summary>
+        /// <param name="value">The value of the Djinn, in victory points (VP).</param>
         protected Djinn(int value)
         {
             this.value = value;
         }
 
+        /// <summary>
+        /// Gets the name of the Djinn.
+        /// </summary>
         public virtual string Name
         {
             get { return this.GetType().Name; }
         }
 
+        /// <summary>
+        /// Gets the value of the Djinn, in victory points (VP).
+        /// </summary>
         public int Value
         {
             get { return this.value; }
@@ -93,7 +114,7 @@
             {
                 if (this.CanGetMoves(state0))
                 {
-                    return this.cost(state0, s1 => s1.WithState(this.stateKey, "true"), GetAppliedCostMoves);
+                    return this.cost(state0, s1 => s1.WithState(this.stateKey, "true"), this.GetAppliedCostMoves);
                 }
 
                 return base.GetMoves(state0);
@@ -103,7 +124,7 @@
             {
                 if (oldState.Phase == Phase.CleanUp && newState.Phase == Phase.Bid && newState[this.stateKey] != null)
                 {
-                    newState = CleanUp(newState.WithState(this.stateKey, null));
+                    newState = this.CleanUp(newState.WithState(this.stateKey, null));
                 }
 
                 return newState;
