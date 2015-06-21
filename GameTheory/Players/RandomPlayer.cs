@@ -44,7 +44,7 @@ namespace GameTheory.Players
 
             foreach (var move in gameState.GetAvailableMoves(this.playerToken))
             {
-                var max = checked(count + 1);
+                var max = count + 1;
 
                 if (GameTheory.Random.Instance.Next(max) == count)
                 {

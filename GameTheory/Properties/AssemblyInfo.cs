@@ -2,6 +2,7 @@
 using System;
 using System.Reflection;
 using System.Resources;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 [assembly: AssemblyTitle("GameTheory")]
@@ -9,3 +10,4 @@ using System.Runtime.InteropServices;
 [assembly: Guid("917f5eae-59a7-4b83-a485-b060e3754b1f")]
 [assembly: NeutralResourcesLanguage("en-US")]
 [assembly: CLSCompliant(true)]
+[assembly: InternalsVisibleTo("GameTheory.Tests")]
