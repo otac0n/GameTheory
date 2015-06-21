@@ -183,7 +183,7 @@ namespace GameTheory
         /// Gets an enumerable collection containing all combinations of the items in this collection.
         /// </summary>
         /// <param name="count">The size of the combinations.</param>
-        /// <param name="includeSmaller">A boolean value indicating whether or not smaller combinations should also be returned.</param>
+        /// <param name="includeSmaller">A value indicating whether or not smaller combinations should also be returned.</param>
         /// <returns>An enumerable collection of combinations.</returns>
         public IEnumerable<EnumCollection<TEnum>> Combinations(int count, bool includeSmaller = false)
         {
