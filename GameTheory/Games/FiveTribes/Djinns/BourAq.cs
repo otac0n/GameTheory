@@ -13,12 +13,12 @@ namespace GameTheory.Games.FiveTribes.Djinns
     using GameTheory.Games.FiveTribes.Moves;
 
     /// <summary>
-    /// Pay <see cref="Cost.OneElderOrOneSlave" /> to place 1 Palace on any Village.
+    /// Pay <see cref="Cost.OneElderOrOneSlave"/> to place 1 Palace on any Village.
     /// </summary>
     public class Bouraq : Djinn.PayPerActionDjinnBase
     {
         /// <summary>
-        /// The singleton instance of <see cref="Bouraq" />.
+        /// The singleton instance of <see cref="Bouraq"/>.
         /// </summary>
         public static readonly Bouraq Instance = new Bouraq();
 

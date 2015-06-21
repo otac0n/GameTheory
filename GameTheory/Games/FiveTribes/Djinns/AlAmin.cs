@@ -18,7 +18,7 @@ namespace GameTheory.Games.FiveTribes.Djinns
     public class AlAmin : Djinn
     {
         /// <summary>
-        /// The singleton instance of <see cref="AlAmin" />.
+        /// The singleton instance of <see cref="AlAmin"/>.
         /// </summary>
         public static readonly AlAmin Instance = new AlAmin();
 

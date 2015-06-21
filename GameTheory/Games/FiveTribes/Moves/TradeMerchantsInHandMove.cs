@@ -10,13 +10,21 @@ namespace GameTheory.Games.FiveTribes.Moves
 {
     using System.Linq;
 
+    /// <summary>
+    /// Represents a move to trade the <see cref="Meeple.Merchant">Merchants</see> in hand for <see cref="Resource">Resources</see>.
+    /// </summary>
     public class TradeMerchantsInHandMove : Move
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TradeMerchantsInHandMove"/> class.
+        /// </summary>
+        /// <param name="state0">The <see cref="GameState"/> that this move is based on.</param>
         public TradeMerchantsInHandMove(GameState state0)
             : base(state0, state0.ActivePlayer)
         {
         }
 
+        /// <inheritdoc />
         public override string ToString()
         {
             return string.Format("Take {0} resources", this.State.InHand.Count);

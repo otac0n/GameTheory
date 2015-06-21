@@ -149,7 +149,7 @@
     <Compile Include="Games\FiveTribes\Moves\PlaceCamelMove.cs" />
     <Compile Include="Games\FiveTribes\Moves\PlacePalmTreeMove.cs" />
     <Compile Include="Games\FiveTribes\Moves\ScoreBuildersInHandMove.cs" />
-    <Compile Include="Games\FiveTribes\Moves\SellMerchandiceMove.cs" />
+    <Compile Include="Games\FiveTribes\Moves\SellMerchandiseMove.cs" />
     <Compile Include="Games\FiveTribes\Moves\TakeDjinnMove.cs" />
     <Compile Include="Games\FiveTribes\Moves\TakeMeeplesInHandMove.cs" />
     <Compile Include="Games\FiveTribes\Moves\TakeResourceMove.cs" />

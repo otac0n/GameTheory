@@ -12,12 +12,12 @@ namespace GameTheory.Games.FiveTribes.Djinns
     using System.Linq;
 
     /// <summary>
-    /// Pay <see cref="Cost.OneElderPlusOneElderOrOneSlave" /> to activate the <see cref="DoubleBuilderScoreMove" />.
+    /// Pay <see cref="Cost.OneElderPlusOneElderOrOneSlave"/> to activate the <see cref="DoubleBuilderScoreMove"/>.
     /// </summary>
     public class Echidna : Djinn.PayPerActionDjinnBase
     {
         /// <summary>
-        /// The singleton instance of <see cref="Echidna" />.
+        /// The singleton instance of <see cref="Echidna"/>.
         /// </summary>
         public static readonly Echidna Instance = new Echidna();
 

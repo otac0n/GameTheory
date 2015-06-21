@@ -13,12 +13,12 @@ namespace GameTheory.Games.FiveTribes.Djinns
     using GameTheory.Games.FiveTribes.Moves;
 
     /// <summary>
-    /// Pay <see cref="Cost.OneElderOrOneSlave" /> to place 1 Palm Tree on any Oasis.
+    /// Pay <see cref="Cost.OneElderOrOneSlave"/> to place 1 Palm Tree on any Oasis.
     /// </summary>
     public class Enki : Djinn.PayPerActionDjinnBase
     {
         /// <summary>
-        /// The singleton instance of <see cref="Enki" />.
+        /// The singleton instance of <see cref="Enki"/>.
         /// </summary>
         public static readonly Enki Instance = new Enki();
 

@@ -16,7 +16,7 @@ namespace GameTheory.Games.FiveTribes.Djinns
     public class Monkir : Djinn
     {
         /// <summary>
-        /// The singleton instance of <see cref="Monkir" />.
+        /// The singleton instance of <see cref="Monkir"/>.
         /// </summary>
         public static readonly Monkir Instance = new Monkir();
 

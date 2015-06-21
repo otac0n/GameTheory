@@ -37,7 +37,7 @@ namespace GameTheory
         }
 
         /// <summary>
-        /// Initializes a new instance of <see cref="EnumCollection{TEnum}"/> with the specified items.
+        /// Initializes a new instance of the <see cref="EnumCollection{TEnum}"/> class with the specified items.
         /// </summary>
         /// <param name="items">The items to add to the collection.</param>
         public EnumCollection(params TEnum[] items)
@@ -46,7 +46,7 @@ namespace GameTheory
         }
 
         /// <summary>
-        /// Initializes a new instance of <see cref="EnumCollection{TEnum}"/> with the specified items.
+        /// Initializes a new instance of the <see cref="EnumCollection{TEnum}"/> class with the specified items.
         /// </summary>
         /// <param name="items">The items to add to the collection.</param>
         public EnumCollection(IEnumerable<TEnum> items)

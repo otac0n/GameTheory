@@ -29,13 +29,23 @@ namespace GameTheory
         /// Gets an instance of the <see cref="System.Random"/> class that is unique to the current thread.
         /// </summary>
         /// <remarks>
-        /// Do not allow this instance to be used on other threads.
+        /// Do not allow this instance to be observed by threads.
         /// </remarks>
         public static System.Random Instance
         {
             get { return instance ?? (instance = new System.Random(unchecked(Environment.TickCount * Interlocked.Increment(ref counter)))); }
         }
 
+        /// <summary>
+        /// Deals items from a collection, using a discard pile to replenish the deck if necessary.
+        /// </summary>
+        /// <typeparam name="T">The type of items in the deck.</typeparam>
+        /// <param name="deck">The source of items being dealt.</param>
+        /// <param name="count">The number of items to deal.</param>
+        /// <param name="dealt">The resulting items.</param>
+        /// <param name="discards">The discards pile.</param>
+        /// <param name="instance">An instance of <see cref="System.Random"/> to use.</param>
+        /// <returns>The remaining deck.</returns>
         public static ImmutableList<T> Deal<T>(this ImmutableList<T> deck, int count, out ImmutableList<T> dealt, ref ImmutableList<T> discards, System.Random instance = null)
         {
             var allDealt = ImmutableList<T>.Empty;
@@ -59,6 +69,16 @@ namespace GameTheory
             return deck;
         }
 
+        /// <summary>
+        /// Deals items from a collection, using a discard pile to replenish the deck if necessary.
+        /// </summary>
+        /// <typeparam name="T">The type of items in the deck.</typeparam>
+        /// <param name="deck">The source of items being dealt.</param>
+        /// <param name="count">The number of items to deal.</param>
+        /// <param name="dealt">The resulting items.</param>
+        /// <param name="discards">The discards pile.</param>
+        /// <param name="instance">An instance of <see cref="System.Random"/> to use.</param>
+        /// <returns>The remaining deck.</returns>
         public static EnumCollection<T> Deal<T>(this EnumCollection<T> deck, int count, out ImmutableList<T> dealt, ref EnumCollection<T> discards, System.Random instance = null) where T : struct
         {
             var allDealt = ImmutableList<T>.Empty;
@@ -82,6 +102,15 @@ namespace GameTheory
             return deck;
         }
 
+        /// <summary>
+        /// Deals items from a collection.
+        /// </summary>
+        /// <typeparam name="T">The type of items in the deck.</typeparam>
+        /// <param name="deck">The source of items being dealt.</param>
+        /// <param name="count">The number of items to deal.</param>
+        /// <param name="dealt">The resulting items.</param>
+        /// <param name="instance">An instance of <see cref="System.Random"/> to use.</param>
+        /// <returns>The remaining deck.</returns>
         public static ImmutableList<T> Deal<T>(this ImmutableList<T> deck, int count, out ImmutableList<T> dealt, System.Random instance = null)
         {
             instance = instance ?? Instance;
@@ -104,6 +133,15 @@ namespace GameTheory
             return deck;
         }
 
+        /// <summary>
+        /// Deals items from a collection.
+        /// </summary>
+        /// <typeparam name="T">The type of items in the deck.</typeparam>
+        /// <param name="deck">The source of items being dealt.</param>
+        /// <param name="count">The number of items to deal.</param>
+        /// <param name="dealt">The resulting items.</param>
+        /// <param name="instance">An instance of <see cref="System.Random"/> to use.</param>
+        /// <returns>The remaining deck.</returns>
         public static EnumCollection<T> Deal<T>(this EnumCollection<T> deck, int count, out ImmutableList<T> dealt, System.Random instance = null) where T : struct
         {
             instance = instance ?? Instance;
@@ -126,6 +164,13 @@ namespace GameTheory
             return deck;
         }
 
+        /// <summary>
+        /// Selects a random element from a list.
+        /// </summary>
+        /// <typeparam name="T">The type of items in the list.</typeparam>
+        /// <param name="items">The items to choose from.</param>
+        /// <param name="instance">An instance of <see cref="System.Random"/> to use.</param>
+        /// <returns>The selected element.</returns>
         public static T Pick<T>(this IReadOnlyList<T> items, System.Random instance = null)
         {
             instance = instance ?? Instance;
@@ -133,6 +178,13 @@ namespace GameTheory
             return items[instance.Next(items.Count)];
         }
 
+        /// <summary>
+        /// Selects a random element from a list.
+        /// </summary>
+        /// <typeparam name="T">The type of items in the list.</typeparam>
+        /// <param name="items">The items to choose from.</param>
+        /// <param name="instance">An instance of <see cref="System.Random"/> to use.</param>
+        /// <returns>The selected element.</returns>
         public static T Pick<T>(this IList<T> items, System.Random instance = null)
         {
             instance = instance ?? Instance;
@@ -140,6 +192,13 @@ namespace GameTheory
             return items[instance.Next(items.Count)];
         }
 
+        /// <summary>
+        /// Selects a random element from a collection.
+        /// </summary>
+        /// <typeparam name="T">The type of items in the collection.</typeparam>
+        /// <param name="items">The items to choose from.</param>
+        /// <param name="instance">An instance of <see cref="System.Random"/> to use.</param>
+        /// <returns>The selected element.</returns>
         public static T Pick<T>(this IEnumerable<T> items, System.Random instance = null)
         {
             instance = instance ?? Instance;
@@ -160,6 +219,13 @@ namespace GameTheory
             return current;
         }
 
+        /// <summary>
+        /// Shuffles a collection.
+        /// </summary>
+        /// <typeparam name="T">The type of elements in the collection.</typeparam>
+        /// <param name="source">The items to shuffle.</param>
+        /// <param name="instance">An instance of <see cref="System.Random"/> to use.</param>
+        /// <returns>A new list containing the original items in a new order.</returns>
         public static List<T> Shuffle<T>(this IEnumerable<T> source, System.Random instance = null)
         {
             instance = instance ?? Instance;

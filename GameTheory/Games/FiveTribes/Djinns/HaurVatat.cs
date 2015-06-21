@@ -14,7 +14,7 @@ namespace GameTheory.Games.FiveTribes.Djinns
     public class Haurvatat : Djinn.OnAcquireDjinnBase
     {
         /// <summary>
-        /// The singleton instance of <see cref="Haurvatat" />.
+        /// The singleton instance of <see cref="Haurvatat"/>.
         /// </summary>
         public static readonly Haurvatat Instance = new Haurvatat();
 

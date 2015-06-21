@@ -12,12 +12,12 @@ namespace GameTheory.Games.FiveTribes.Djinns
     using System.Linq;
 
     /// <summary>
-    /// Pay <see cref="Cost.OneElderOrOneSlave" /> to activate the <see cref="DoubleAssassinKillCountMove" />.
+    /// Pay <see cref="Cost.OneElderOrOneSlave"/> to activate the <see cref="DoubleAssassinKillCountMove"/>.
     /// </summary>
     public class Ibus : Djinn.PayPerActionDjinnBase
     {
         /// <summary>
-        /// The singleton instance of <see cref="Ibus" />.
+        /// The singleton instance of <see cref="Ibus"/>.
         /// </summary>
         public static readonly Ibus Instance = new Ibus();
 

@@ -13,12 +13,12 @@ namespace GameTheory.Games.FiveTribes.Djinns
     using GameTheory.Games.FiveTribes.Moves;
 
     /// <summary>
-    /// Pay <see cref="Cost.OneElderOrOneSlave" /> so that when building a Palm Tree, you may place it on a neighboring Tile instead.
+    /// Pay <see cref="Cost.OneElderOrOneSlave"/> so that when building a Palm Tree, you may place it on a neighboring Tile instead.
     /// </summary>
     public class Lamia : Djinn
     {
         /// <summary>
-        /// The singleton instance of <see cref="Lamia" />.
+        /// The singleton instance of <see cref="Lamia"/>.
         /// </summary>
         public static readonly Lamia Instance = new Lamia();
 

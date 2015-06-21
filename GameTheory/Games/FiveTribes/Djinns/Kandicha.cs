@@ -17,7 +17,7 @@ namespace GameTheory.Games.FiveTribes.Djinns
     public class Kandicha : Djinn
     {
         /// <summary>
-        /// The singleton instance of <see cref="Kandicha" />.
+        /// The singleton instance of <see cref="Kandicha"/>.
         /// </summary>
         public static readonly Kandicha Instance = new Kandicha();
 

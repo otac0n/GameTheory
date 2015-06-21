@@ -8,16 +8,33 @@
 
 namespace GameTheory.Games.FiveTribes.Moves
 {
+    /// <summary>
+    /// Represents a move to pick up all <see cref="Meeple">Meeples</see> of a specific tribe.
+    /// </summary>
     public class PickUpTribeMove : Move
     {
         private readonly Meeple tribe;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PickUpTribeMove"/> class.
+        /// </summary>
+        /// <param name="state0">The <see cref="GameState"/> that this move is based on.</param>
+        /// <param name="tribe">The <see cref="Meeple"/> tribe to pick up.</param>
         public PickUpTribeMove(GameState state0, Meeple tribe)
             : base(state0, state0.ActivePlayer)
         {
             this.tribe = tribe;
         }
 
+        /// <summary>
+        /// Gets the <see cref="Meeple"/> tribe to pick up.
+        /// </summary>
+        public Meeple Tribe
+        {
+            get { return this.tribe; }
+        }
+
+        /// <inheritdoc />
         public override string ToString()
         {
             return string.Format("Pick up all {0} at {1}", this.tribe, this.State.LastPoint);

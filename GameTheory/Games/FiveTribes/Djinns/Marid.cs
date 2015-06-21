@@ -14,7 +14,7 @@ namespace GameTheory.Games.FiveTribes.Djinns
     public class Marid : Djinn
     {
         /// <summary>
-        /// The singleton instance of <see cref="Marid" />.
+        /// The singleton instance of <see cref="Marid"/>.
         /// </summary>
         public static readonly Marid Instance = new Marid();
 

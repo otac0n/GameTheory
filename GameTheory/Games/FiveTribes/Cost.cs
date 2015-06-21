@@ -21,6 +21,9 @@ namespace GameTheory.Games.FiveTribes
     /// <returns>The cost's available moves.  This sequence will be empty if the active player cannot afford the cost, or if the cost results in no subsequent moves.</returns>
     public delegate IEnumerable<Move> CostDelegate(GameState state0, Func<GameState, GameState> after, Func<GameState, IEnumerable<Move>> getMoves);
 
+    /// <summary>
+    /// Provides utility methods for working with various costs in Five Tribes.
+    /// </summary>
     public static class Cost
     {
         /// <summary>
@@ -31,11 +34,11 @@ namespace GameTheory.Games.FiveTribes
         /// <param name="after">A function that should apply any necessary changes immediately after the cost is applied.</param>
         /// <param name="getMoves">A function that should return the available moves after applying the cost and <paramref name="after"/> function.</param>
         /// <returns>The cost's available moves.  This sequence will be empty if the active player cannot afford the cost, or if the cost results in no subsequent moves.</returns>
-        public static IEnumerable<Move> Gold(GameState state0, int gold, Func<GameState, GameState> after, Func<GameState, IEnumerable<Move>> getMovesAfterCost)
+        public static IEnumerable<Move> Gold(GameState state0, int gold, Func<GameState, GameState> after, Func<GameState, IEnumerable<Move>> getMoves)
         {
             if (state0.Inventory[state0.ActivePlayer].GoldCoins >= gold)
             {
-                var move = new PayGoldMove(state0, gold, s1 => after(s1).WithMoves(getMovesAfterCost));
+                var move = new PayGoldMove(state0, gold, s1 => after(s1).WithMoves(getMoves));
 
                 if (state0.MakeMove(move).HasSubsequentMoves)
                 {

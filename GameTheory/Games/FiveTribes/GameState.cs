@@ -654,7 +654,7 @@ namespace GameTheory.Games.FiveTribes
             {
                 var resources = new EnumCollection<Resource>(keys.Select((k, j) => new { k, j }).Where(x => (i & 1 << x.j) != 0).Select(x => x.k));
 
-                yield return new SellMerchandiceMove(this, resources);
+                yield return new SellMerchandiseMove(this, resources);
             }
         }
 

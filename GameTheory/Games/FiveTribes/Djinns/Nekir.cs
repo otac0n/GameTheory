@@ -14,7 +14,7 @@ namespace GameTheory.Games.FiveTribes.Djinns
     public class Nekir : Djinn
     {
         /// <summary>
-        /// The singleton instance of <see cref="Nekir" />.
+        /// The singleton instance of <see cref="Nekir"/>.
         /// </summary>
         public static readonly Nekir Instance = new Nekir();
 

@@ -14,7 +14,7 @@ namespace GameTheory.Games.FiveTribes.Djinns
     public class Shamhat : Djinn.OnAcquireDjinnBase
     {
         /// <summary>
-        /// The singleton instance of <see cref="Shamhat" />.
+        /// The singleton instance of <see cref="Shamhat"/>.
         /// </summary>
         public static readonly Shamhat Instance = new Shamhat();
 

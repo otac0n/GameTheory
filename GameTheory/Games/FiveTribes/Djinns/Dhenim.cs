@@ -14,7 +14,7 @@ namespace GameTheory.Games.FiveTribes.Djinns
     public class Dhenim : Djinn
     {
         /// <summary>
-        /// The singleton instance of <see cref="Dhenim" />.
+        /// The singleton instance of <see cref="Dhenim"/>.
         /// </summary>
         public static readonly Dhenim Instance = new Dhenim();
 

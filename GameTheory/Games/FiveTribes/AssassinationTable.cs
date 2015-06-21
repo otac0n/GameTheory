@@ -17,7 +17,7 @@ namespace GameTheory.Games.FiveTribes
         private readonly int killCount;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="AssassinationTable" /> class.
+        /// Initializes a new instance of the <see cref="AssassinationTable"/> class.
         /// </summary>
         public AssassinationTable()
             : this(false, 1)
@@ -25,7 +25,7 @@ namespace GameTheory.Games.FiveTribes
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="AssassinationTable" /> class.
+        /// Initializes a new instance of the <see cref="AssassinationTable"/> class.
         /// </summary>
         /// <param name="hasProtection">A value indicating whether or not the player's Meeples have protection from assassination.</param>
         /// <param name="killCount">A number corresponding to the number of meeples that the player can kill during an assassination.</param>

@@ -14,12 +14,12 @@ namespace GameTheory.Games.FiveTribes.Djinns
     using System.Linq;
 
     /// <summary>
-    /// Pay <see cref="Cost.OneElderPlusOneElderOrOneSlave" /> to activate the <see cref="DrawDjinnsMove" />.
+    /// Pay <see cref="Cost.OneElderPlusOneElderOrOneSlave"/> to activate the <see cref="DrawDjinnsMove"/>.
     /// </summary>
     public class Sibittis : Djinn.PayPerActionDjinnBase
     {
         /// <summary>
-        /// The singleton instance of <see cref="Sibittis" />.
+        /// The singleton instance of <see cref="Sibittis"/>.
         /// </summary>
         public static readonly Sibittis Instance = new Sibittis();
 

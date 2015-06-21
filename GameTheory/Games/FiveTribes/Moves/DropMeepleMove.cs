@@ -8,11 +8,20 @@
 
 namespace GameTheory.Games.FiveTribes.Moves
 {
+    /// <summary>
+    /// Represents a move where a meeple is dropped on the board.
+    /// </summary>
     public class DropMeepleMove : Move
     {
         private readonly Meeple meeple;
         private readonly Point point;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DropMeepleMove"/> class.
+        /// </summary>
+        /// <param name="state0">The <see cref="GameState"/> that this move is based on.</param>
+        /// <param name="meeple">The <see cref="Meeple"/> being dropped.</param>
+        /// <param name="point">The <see cref="Point"/> at which the <see cref="Meeple"/> will be dropped.</param>
         public DropMeepleMove(GameState state0, Meeple meeple, Point point)
             : base(state0, state0.ActivePlayer)
         {
@@ -20,16 +29,23 @@ namespace GameTheory.Games.FiveTribes.Moves
             this.point = point;
         }
 
+        /// <summary>
+        /// Gets the <see cref="Meeple"/> being dropped.
+        /// </summary>
         public Meeple Meeple
         {
             get { return this.meeple; }
         }
 
+        /// <summary>
+        /// Gets the <see cref="Point"/> at which the <see cref="Meeple"/> will be dropped.
+        /// </summary>
         public Point Point
         {
             get { return this.point; }
         }
 
+        /// <inheritdoc />
         public override string ToString()
         {
             return string.Format("Drop {0} at {1}", this.meeple, this.point);

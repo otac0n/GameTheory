@@ -13,12 +13,12 @@ namespace GameTheory.Games.FiveTribes.Djinns
     using GameTheory.Games.FiveTribes.Moves;
 
     /// <summary>
-    /// Pay <see cref="Cost.OneOrMoreSlaves" />: for each Slave you discard your bidding cost is reduced by 1 spot.
+    /// Pay <see cref="Cost.OneOrMoreSlaves"/>: for each Slave you discard your bidding cost is reduced by 1 spot.
     /// </summary>
     public class Kumarbi : Djinn
     {
         /// <summary>
-        /// The singleton instance of <see cref="Kumarbi" />.
+        /// The singleton instance of <see cref="Kumarbi"/>.
         /// </summary>
         public static readonly Kumarbi Instance = new Kumarbi();
 

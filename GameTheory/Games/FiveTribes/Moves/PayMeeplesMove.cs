@@ -10,16 +10,31 @@ namespace GameTheory.Games.FiveTribes.Moves
 {
     using System;
 
+    /// <summary>
+    /// Represents a move for the payment of a specific amount of <see cref="Meeple">Meeples</see>.
+    /// </summary>
     public class PayMeeplesMove : Move
     {
         private readonly Func<GameState, GameState> after;
         private readonly EnumCollection<Meeple> meeples;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PayMeeplesMove"/> class.
+        /// </summary>
+        /// <param name="state0">The <see cref="GameState"/> that this move is based on.</param>
+        /// <param name="meeple">The cost, in <see cref="Meeple">Meeples</see>.</param>
+        /// <param name="after">A function to perform after the move has taken place.</param>
         public PayMeeplesMove(GameState state0, Meeple meeple, Func<GameState, GameState> after)
             : this(state0, new EnumCollection<Meeple>(meeple), after)
         {
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PayMeeplesMove"/> class.
+        /// </summary>
+        /// <param name="state0">The <see cref="GameState"/> that this move is based on.</param>
+        /// <param name="meeples">The cost, in <see cref="Meeple">Meeples</see>.</param>
+        /// <param name="after">A function to perform after the move has taken place.</param>
         public PayMeeplesMove(GameState state0, EnumCollection<Meeple> meeples, Func<GameState, GameState> after)
             : base(state0, state0.ActivePlayer)
         {
@@ -27,11 +42,15 @@ namespace GameTheory.Games.FiveTribes.Moves
             this.meeples = meeples;
         }
 
+        /// <summary>
+        /// Gets the cost, in <see cref="Meeple">Meeples</see>.
+        /// </summary>
         public EnumCollection<Meeple> Meeples
         {
             get { return this.meeples; }
         }
 
+        /// <inheritdoc />
         public override string ToString()
         {
             return string.Format("Pay {0}", string.Join(",", this.meeples));

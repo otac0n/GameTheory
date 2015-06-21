@@ -14,7 +14,7 @@ namespace GameTheory.Games.FiveTribes
     using System.Linq;
 
     /// <summary>
-    /// Provides utility functions for working with the Sultante, a collection of <see cref="Square">Squares</see>.
+    /// Provides utility functions for working with the Sultanate, a collection of <see cref="Square">Squares</see>.
     /// </summary>
     public static class Sultanate
     {

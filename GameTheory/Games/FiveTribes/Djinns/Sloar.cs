@@ -12,12 +12,12 @@ namespace GameTheory.Games.FiveTribes.Djinns
     using System.Collections.Immutable;
 
     /// <summary>
-    /// Pay <see cref="Cost.OneSlave" /> to activate the <see cref="DrawTopCardMove" />.
+    /// Pay <see cref="Cost.OneSlave"/> to activate the <see cref="DrawTopCardMove"/>.
     /// </summary>
     public class Sloar : Djinn.PayPerActionDjinnBase
     {
         /// <summary>
-        /// The singleton instance of <see cref="Sloar" />.
+        /// The singleton instance of <see cref="Sloar"/>.
         /// </summary>
         public static readonly Sloar Instance = new Sloar();
 

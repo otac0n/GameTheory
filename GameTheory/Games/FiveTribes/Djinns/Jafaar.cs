@@ -14,7 +14,7 @@ namespace GameTheory.Games.FiveTribes.Djinns
     public class Jafaar : Djinn.OnAcquireDjinnBase
     {
         /// <summary>
-        /// The singleton instance of <see cref="Jafaar" />.
+        /// The singleton instance of <see cref="Jafaar"/>.
         /// </summary>
         public static readonly Jafaar Instance = new Jafaar();
 

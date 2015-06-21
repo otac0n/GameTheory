@@ -13,12 +13,12 @@ namespace GameTheory.Games.FiveTribes.Djinns
     using GameTheory.Games.FiveTribes.Moves;
 
     /// <summary>
-    /// Pay <see cref="Cost.OneElderOrOneSlave" /> so that when placing a Palace, you may drop it on any neighboring Tile instead.
+    /// Pay <see cref="Cost.OneElderOrOneSlave"/> so that when placing a Palace, you may drop it on any neighboring Tile instead.
     /// </summary>
     public class Hagis : Djinn
     {
         /// <summary>
-        /// The singleton instance of <see cref="Hagis" />.
+        /// The singleton instance of <see cref="Hagis"/>.
         /// </summary>
         public static readonly Hagis Instance = new Hagis();
 

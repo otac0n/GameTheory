@@ -14,7 +14,7 @@ namespace GameTheory.Games.FiveTribes.Djinns
     public class Boaz : Djinn.OnAcquireDjinnBase
     {
         /// <summary>
-        /// The singleton instance of <see cref="Boaz" />.
+        /// The singleton instance of <see cref="Boaz"/>.
         /// </summary>
         public static readonly Boaz Instance = new Boaz();
 

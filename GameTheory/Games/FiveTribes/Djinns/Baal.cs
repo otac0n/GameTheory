@@ -16,7 +16,7 @@ namespace GameTheory.Games.FiveTribes.Djinns
     public class Baal : Djinn
     {
         /// <summary>
-        /// The singleton instance of <see cref="Baal" />.
+        /// The singleton instance of <see cref="Baal"/>.
         /// </summary>
         public static readonly Baal Instance = new Baal();
 

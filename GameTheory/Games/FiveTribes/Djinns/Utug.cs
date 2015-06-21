@@ -13,12 +13,12 @@ namespace GameTheory.Games.FiveTribes.Djinns
     using GameTheory.Games.FiveTribes.Moves;
 
     /// <summary>
-    /// Pay <see cref="Cost.OneElderPlusOneElderOrOneSlave" /> to take control of 1 Tile with only Meeples on it (no Camel, Palm Tree or Palace); place 1 of your Camels on it.
+    /// Pay <see cref="Cost.OneElderPlusOneElderOrOneSlave"/> to take control of 1 Tile with only Meeples on it (no Camel, Palm Tree or Palace); place 1 of your Camels on it.
     /// </summary>
     public class Utug : Djinn.PayPerActionDjinnBase
     {
         /// <summary>
-        /// The singleton instance of <see cref="Utug" />.
+        /// The singleton instance of <see cref="Utug"/>.
         /// </summary>
         public static readonly Utug Instance = new Utug();
 

@@ -20,7 +20,7 @@ namespace GameTheory.Players
         private readonly PlayerToken playerToken;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="RandomPlayer{TMove}" /> class.
+        /// Initializes a new instance of the <see cref="RandomPlayer{TMove}"/> class.
         /// </summary>
         /// <param name="playerToken">The token that represents player.</param>
         public RandomPlayer(PlayerToken playerToken)

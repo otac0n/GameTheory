@@ -11,13 +11,21 @@ namespace GameTheory.Games.FiveTribes.Moves
     using System.Collections.Immutable;
     using System.Linq;
 
+    /// <summary>
+    /// Represents a move to end the active player's turn.
+    /// </summary>
     public class EndTurnMove : Move
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EndTurnMove"/> class.
+        /// </summary>
+        /// <param name="state0">The <see cref="GameState"/> that this move is based on.</param>
         public EndTurnMove(GameState state0)
             : base(state0, state0.ActivePlayer)
         {
         }
 
+        /// <inheritdoc />
         public override string ToString()
         {
             return "End turn";

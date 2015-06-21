@@ -10,11 +10,16 @@ namespace GameTheory.Games.FiveTribes.Moves
 {
     public class TakeMeeplesInHandMove : Move
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TakeMeeplesInHandMove"/> class.
+        /// </summary>
+        /// <param name="state0">The <see cref="GameState"/> that this move is based on.</param>
         public TakeMeeplesInHandMove(GameState state0)
             : base(state0, state0.ActivePlayer)
         {
         }
 
+        /// <inheritdoc />
         public override string ToString()
         {
             return string.Format("Take {0}", string.Join(",", this.State.InHand));

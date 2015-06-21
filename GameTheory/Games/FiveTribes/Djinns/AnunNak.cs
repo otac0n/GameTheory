@@ -14,12 +14,12 @@ namespace GameTheory.Games.FiveTribes.Djinns
     using System.Linq;
 
     /// <summary>
-    /// Pay <see cref="Cost.OneElderOrOneSlave" /> to activate the <see cref="AddMeeplesMove" />.
+    /// Pay <see cref="Cost.OneElderOrOneSlave"/> to activate the <see cref="AddMeeplesMove"/>.
     /// </summary>
     public class AnunNak : Djinn.PayPerActionDjinnBase
     {
         /// <summary>
-        /// The singleton instance of <see cref="AnunNak" />.
+        /// The singleton instance of <see cref="AnunNak"/>.
         /// </summary>
         public static readonly AnunNak Instance = new AnunNak();
 
