@@ -8,6 +8,9 @@
 
 namespace GameTheory.Games.FiveTribes.Moves
 {
+    /// <summary>
+    /// Represents a move to take all of the <see cref="Meeple">Meeples</see> in hand, and put them in the active player's inventory.
+    /// </summary>
     public class TakeMeeplesInHandMove : Move
     {
         /// <summary>

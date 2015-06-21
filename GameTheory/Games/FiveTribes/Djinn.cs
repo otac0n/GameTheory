@@ -43,11 +43,22 @@ namespace GameTheory.Games.FiveTribes
             get { return this.value; }
         }
 
+        /// <summary>
+        /// Called for every <see cref="GameState"/>, to allow inclusion of additional <see cref="Move">Moves</see>.
+        /// </summary>
+        /// <param name="state0">The <see cref="GameState"/> for which additional <see cref="Move">Moves</see> are being generated.</param>
+        /// <param name="moves">The standard <see cref="Move">Moves</see> returned by the <see cref="GameState"/>.</param>
+        /// <returns>The additional <see cref="Move">Moves</see>.</returns>
         public virtual IEnumerable<Move> GetAdditionalMoves(GameState state0, IList<Move> moves)
         {
             return ImmutableList<Move>.Empty;
         }
 
+        /// <summary>
+        /// Generate moves for any <see cref="GameState"/> where this <see cref="Djinn"/> is owned by the active player.
+        /// </summary>
+        /// <param name="state0">The <see cref="GameState"/> for which <see cref="Move">Moves</see> are being generated.</param>
+        /// <returns>The <see cref="Move">Moves</see> provided by the <see cref="Djinn"/>.</returns>
         public virtual IEnumerable<Move> GetMoves(GameState state)
         {
             return ImmutableList<Move>.Empty;

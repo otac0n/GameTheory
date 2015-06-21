@@ -17,11 +17,26 @@ namespace GameTheory.Games.FiveTribes
     using GameTheory.Games.FiveTribes.Djinns;
     using GameTheory.Games.FiveTribes.Moves;
 
+    /// <summary>
+    /// Represents the current state of a game of Five Tribes.
+    /// </summary>
     public class GameState : IGameState<Move>
     {
+        /// <summary>
+        /// The maximum number of supported players.
+        /// </summary>
         public const int MaxPlayers = 4;
+
+        /// <summary>
+        /// The minimum number of supported players.
+        /// </summary>
         public const int MinPlayers = 2;
+
+        /// <summary>
+        /// The number of tribes in the game.
+        /// </summary>
         public const int TribesCount = 5;
+
         public static readonly ImmutableList<Tile> InitialTiles;
         public static readonly ImmutableList<int> SuitValues;
         public static readonly ImmutableList<int> TurnOrderTrackCosts;

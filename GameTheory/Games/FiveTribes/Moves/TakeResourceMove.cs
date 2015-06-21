@@ -10,6 +10,9 @@ namespace GameTheory.Games.FiveTribes.Moves
 {
     using System;
 
+    /// <summary>
+    /// Represents a move to take a specified <see cref="Resource"/>.
+    /// </summary>
     public class TakeResourceMove : Move
     {
         private readonly Func<GameState, GameState> after;
