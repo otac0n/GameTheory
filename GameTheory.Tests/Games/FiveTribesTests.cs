@@ -73,7 +73,7 @@ namespace GameTheory.Tests.Games
         }
 
         [Test]
-        public void ComplexAssasinationScenario_Always_GoesAccordingToPlan()
+        public void ComplexAssassinationScenario_Always_GoesAccordingToPlan()
         {
             var template = new GameState(3);
 

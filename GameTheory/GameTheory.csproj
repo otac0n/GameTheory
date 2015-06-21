@@ -103,7 +103,7 @@
     <Compile Include="Combinatorics.cs" />
     <Compile Include="EnumCollection.cs" />
     <Compile Include="EnumerableExtensions.cs" />
-    <Compile Include="Games\FiveTribes\AssasinationTable.cs" />
+    <Compile Include="Games\FiveTribes\AssassinationTable.cs" />
     <Compile Include="Games\FiveTribes\Cost.cs" />
     <Compile Include="Games\FiveTribes\Djinn.cs" />
     <Compile Include="Games\FiveTribes\Sultanate.cs" />

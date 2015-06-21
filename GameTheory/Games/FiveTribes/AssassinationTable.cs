@@ -1,5 +1,5 @@
 ﻿// -----------------------------------------------------------------------
-// <copyright file="AssasinationTable.cs" company="(none)">
+// <copyright file="AssassinationTable.cs" company="(none)">
 //   Copyright © 2015 John Gietzen.  All Rights Reserved.
 //   This source is subject to the MIT license.
 //   Please see license.md for more information.
@@ -11,7 +11,7 @@ namespace GameTheory.Games.FiveTribes
     /// <summary>
     /// Holds state regarding the assassination process.
     /// </summary>
-    public class AssasinationTable
+    public class AssassinationTable
     {
         private readonly bool hasProtection;
         private readonly int killCount;
@@ -19,7 +19,7 @@ namespace GameTheory.Games.FiveTribes
         /// <summary>
         /// Initializes a new instance of the <see cref="AssassinationTable" /> class.
         /// </summary>
-        public AssasinationTable()
+        public AssassinationTable()
             : this(false, 1)
         {
         }
@@ -29,7 +29,7 @@ namespace GameTheory.Games.FiveTribes
         /// </summary>
         /// <param name="hasProtection">A value indicating whether or not the player's Meeples have protection from assassination.</param>
         /// <param name="killCount">A number corresponding to the number of meeples that the player can kill during an assassination.</param>
-        public AssasinationTable(bool hasProtection, int killCount)
+        public AssassinationTable(bool hasProtection, int killCount)
         {
             this.hasProtection = hasProtection;
             this.killCount = killCount;
@@ -51,9 +51,9 @@ namespace GameTheory.Games.FiveTribes
             get { return this.killCount; }
         }
 
-        public AssasinationTable With(bool? hasProtection = null, int? killCount = null)
+        public AssassinationTable With(bool? hasProtection = null, int? killCount = null)
         {
-            return new AssasinationTable(
+            return new AssassinationTable(
                 hasProtection ?? this.hasProtection,
                 killCount ?? this.killCount);
         }

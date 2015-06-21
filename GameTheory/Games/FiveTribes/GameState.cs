@@ -29,7 +29,7 @@ namespace GameTheory.Games.FiveTribes
         private static readonly EnumCollection<Meeple> Meeples;
         private static readonly EnumCollection<Resource> Resources;
         private readonly ImmutableDictionary<string, string> additionalState;
-        private readonly ImmutableDictionary<PlayerToken, AssasinationTable> assassinationTables;
+        private readonly ImmutableDictionary<PlayerToken, AssassinationTable> assassinationTables;
         private readonly EnumCollection<Meeple> bag;
         private readonly ImmutableQueue<PlayerToken> bidOrderTrack;
         private readonly ImmutableList<Djinn> djinnDiscards;
@@ -147,7 +147,7 @@ namespace GameTheory.Games.FiveTribes
             this.bidOrderTrack = ImmutableQueue.CreateRange((players == 2 ? this.players.Concat(this.players) : this.players).Shuffle());
             this.turnOrderTrack = ImmutableList.CreateRange(new PlayerToken[TurnOrderTrackCosts.Count]);
             this.inventory = this.players.ToImmutableDictionary(p => p, p => new Inventory());
-            this.assassinationTables = this.players.ToImmutableDictionary(p => p, p => new AssasinationTable());
+            this.assassinationTables = this.players.ToImmutableDictionary(p => p, p => new AssassinationTable());
             this.scoreTables = this.players.ToImmutableDictionary(p => p, p => new ScoreTable());
             this.sultanate = ImmutableList.CreateRange(InitialTiles.Shuffle().Zip(Meeples.Shuffle().Partition(3), (t, ms) => new Square(t, new EnumCollection<Meeple>(ms))));
             this.bag = EnumCollection<Meeple>.Empty;
@@ -158,7 +158,7 @@ namespace GameTheory.Games.FiveTribes
             this.additionalState = ImmutableDictionary<string, string>.Empty;
         }
 
-        internal GameState(ImmutableDictionary<string, string> additionalState, ImmutableDictionary<PlayerToken, AssasinationTable> assassinationTables, EnumCollection<Meeple> bag, ImmutableQueue<PlayerToken> bidOrderTrack, ImmutableList<PlayerToken> turnOrderTrack, ImmutableList<Square> sultanate, ImmutableList<Djinn> djinnDiscards, ImmutableList<Djinn> djinnPile, EnumCollection<Meeple> inHand, ImmutableDictionary<PlayerToken, Inventory> inventory, Direction lastDirection, Point lastPoint, Phase phase, ImmutableList<PlayerToken> players, EnumCollection<Resource> resourceDiscards, EnumCollection<Resource> resourcePile, ImmutableDictionary<PlayerToken, ScoreTable> scoreTables, Func<GameState, IEnumerable<Move>> subsequentMovesFactory, ImmutableList<Djinn> visibleDjinns, ImmutableList<Resource> visibleResources)
+        internal GameState(ImmutableDictionary<string, string> additionalState, ImmutableDictionary<PlayerToken, AssassinationTable> assassinationTables, EnumCollection<Meeple> bag, ImmutableQueue<PlayerToken> bidOrderTrack, ImmutableList<PlayerToken> turnOrderTrack, ImmutableList<Square> sultanate, ImmutableList<Djinn> djinnDiscards, ImmutableList<Djinn> djinnPile, EnumCollection<Meeple> inHand, ImmutableDictionary<PlayerToken, Inventory> inventory, Direction lastDirection, Point lastPoint, Phase phase, ImmutableList<PlayerToken> players, EnumCollection<Resource> resourceDiscards, EnumCollection<Resource> resourcePile, ImmutableDictionary<PlayerToken, ScoreTable> scoreTables, Func<GameState, IEnumerable<Move>> subsequentMovesFactory, ImmutableList<Djinn> visibleDjinns, ImmutableList<Resource> visibleResources)
             : this(subsequentMovesFactory)
         {
             this.additionalState = additionalState;
@@ -199,7 +199,7 @@ namespace GameTheory.Games.FiveTribes
             }
         }
 
-        public ImmutableDictionary<PlayerToken, AssasinationTable> AssassinationTables
+        public ImmutableDictionary<PlayerToken, AssassinationTable> AssassinationTables
         {
             get { return this.assassinationTables; }
         }
@@ -468,7 +468,7 @@ namespace GameTheory.Games.FiveTribes
             return HandleTransition(this, newState);
         }
 
-        public GameState With(ImmutableDictionary<PlayerToken, AssasinationTable> assassinationTables = null, EnumCollection<Meeple> bag = null, ImmutableQueue<PlayerToken> bidOrderTrack = null, ImmutableList<PlayerToken> turnOrderTrack = null, ImmutableList<Square> sultanate = null, ImmutableList<Djinn> djinnDiscards = null, ImmutableList<Djinn> djinnPile = null, EnumCollection<Meeple> inHand = null, ImmutableDictionary<PlayerToken, Inventory> inventory = null, Direction? lastDirection = null, Point? lastPoint = null, Phase? phase = null, ImmutableList<PlayerToken> players = null, EnumCollection<Resource> resourceDiscards = null, EnumCollection<Resource> resourcePile = null, ImmutableDictionary<PlayerToken, ScoreTable> scoreTables = null, ImmutableList<Djinn> visibleDjinns = null, ImmutableList<Resource> visibleResources = null)
+        public GameState With(ImmutableDictionary<PlayerToken, AssassinationTable> assassinationTables = null, EnumCollection<Meeple> bag = null, ImmutableQueue<PlayerToken> bidOrderTrack = null, ImmutableList<PlayerToken> turnOrderTrack = null, ImmutableList<Square> sultanate = null, ImmutableList<Djinn> djinnDiscards = null, ImmutableList<Djinn> djinnPile = null, EnumCollection<Meeple> inHand = null, ImmutableDictionary<PlayerToken, Inventory> inventory = null, Direction? lastDirection = null, Point? lastPoint = null, Phase? phase = null, ImmutableList<PlayerToken> players = null, EnumCollection<Resource> resourceDiscards = null, EnumCollection<Resource> resourcePile = null, ImmutableDictionary<PlayerToken, ScoreTable> scoreTables = null, ImmutableList<Djinn> visibleDjinns = null, ImmutableList<Resource> visibleResources = null)
         {
             return new GameState(
                 this.additionalState,
