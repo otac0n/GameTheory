@@ -8,8 +8,14 @@
 
 namespace GameTheory.Games.FiveTribes.Djinns
 {
+    /// <summary>
+    /// Each time Assassins kill Meeple(s), collect 1 GC if you did the Killing; 2 GCs if an opponent did.
+    /// </summary>
     public class Nekir : Djinn
     {
+        /// <summary>
+        /// The singleton instance of <see cref="Nekir" />.
+        /// </summary>
         public static readonly Nekir Instance = new Nekir();
 
         private Nekir()
@@ -17,11 +23,13 @@ namespace GameTheory.Games.FiveTribes.Djinns
         {
         }
 
+        /// <inheritdoc />
         public override GameState HandleAssassination(PlayerToken owner, GameState state0, Point point, EnumCollection<Meeple> kill)
         {
             return this.HandleAssassination(owner, state0, owner, kill);
         }
 
+        /// <inheritdoc />
         public override GameState HandleAssassination(PlayerToken owner, GameState state0, PlayerToken victim, EnumCollection<Meeple> kill)
         {
             var inventory = state0.Inventory[owner];

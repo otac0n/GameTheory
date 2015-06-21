@@ -12,8 +12,14 @@ namespace GameTheory.Games.FiveTribes.Djinns
     using System.Linq;
     using GameTheory.Games.FiveTribes.Moves;
 
+    /// <summary>
+    /// Pay <see cref="Cost.OneElderPlusOneElderOrOneSlave" /> to take control of 1 Tile with only Meeples on it (no Camel, Palm Tree or Palace); place 1 of your Camels on it.
+    /// </summary>
     public class Utug : Djinn.PayPerActionDjinnBase
     {
+        /// <summary>
+        /// The singleton instance of <see cref="Utug" />.
+        /// </summary>
         public static readonly Utug Instance = new Utug();
 
         private Utug()
@@ -21,11 +27,13 @@ namespace GameTheory.Games.FiveTribes.Djinns
         {
         }
 
+        /// <inheritdoc />
         protected override bool CanGetMoves(GameState state)
         {
             return base.CanGetMoves(state) && state.IsPlayerUnderCamelLimit(state.ActivePlayer);
         }
 
+        /// <inheritdoc />
         protected override IEnumerable<Move> GetAppliedCostMoves(GameState state0)
         {
             var meepleSquares = Enumerable.Range(0, Sultanate.Width * Sultanate.Height).Where(i => { var sq = state0.Sultanate[i]; return sq.Owner == null && sq.Meeples.Count >= 1 && sq.Palaces == 0 && sq.PalmTrees == 0; });

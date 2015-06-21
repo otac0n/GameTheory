@@ -13,8 +13,14 @@ namespace GameTheory.Games.FiveTribes.Djinns
     using System.Collections.Immutable;
     using System.Linq;
 
+    /// <summary>
+    /// Pay <see cref="Cost.OneElderPlusOneElderOrOneSlave" /> to activate the <see cref="DrawDjinnsMove" />.
+    /// </summary>
     public class Sibittis : Djinn.PayPerActionDjinnBase
     {
+        /// <summary>
+        /// The singleton instance of <see cref="Sibittis" />.
+        /// </summary>
         public static readonly Sibittis Instance = new Sibittis();
 
         private Sibittis()
@@ -22,16 +28,21 @@ namespace GameTheory.Games.FiveTribes.Djinns
         {
         }
 
+        /// <inheritdoc />
         protected override bool CanGetMoves(GameState state)
         {
             return base.CanGetMoves(state) && (state.DjinnPile.Count + state.DjinnDiscards.Count) >= 1;
         }
 
+        /// <inheritdoc />
         protected override IEnumerable<Move> GetAppliedCostMoves(GameState state0)
         {
             yield return new DrawDjinnsMove(state0);
         }
 
+        /// <summary>
+        /// Draw the top 3 Djinns from the top of the Djinns pile; keep 1, discard the 2 others.
+        /// </summary>
         public class DrawDjinnsMove : Move
         {
             public DrawDjinnsMove(GameState state0)
@@ -39,6 +50,7 @@ namespace GameTheory.Games.FiveTribes.Djinns
             {
             }
 
+            /// <inheritdoc />
             public override string ToString()
             {
                 return string.Format("Draw {0} Djinns", GetDrawCount(this.State));
@@ -77,6 +89,7 @@ namespace GameTheory.Games.FiveTribes.Djinns
                 this.index = index;
             }
 
+            /// <inheritdoc />
             public override string ToString()
             {
                 return string.Format("Take {0}", this.dealt[this.index]);

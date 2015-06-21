@@ -12,8 +12,14 @@ namespace GameTheory.Games.FiveTribes.Djinns
     using System.Collections.Generic;
     using System.Linq;
 
+    /// <summary>
+    /// At game end, each pair of Slaves you hold acts as 1 Wild Merchandise of your choice.
+    /// </summary>
     public class AlAmin : Djinn
     {
+        /// <summary>
+        /// The singleton instance of <see cref="AlAmin" />.
+        /// </summary>
         public static readonly AlAmin Instance = new AlAmin();
 
         private AlAmin()
@@ -21,11 +27,13 @@ namespace GameTheory.Games.FiveTribes.Djinns
         {
         }
 
+        /// <inheritdoc />
         public override string Name
         {
             get { return "Al-Amin"; }
         }
 
+        /// <inheritdoc />
         public override IEnumerable<Move> GetMoves(GameState state0)
         {
             var owner = state0.Players.SingleOrDefault(p => state0.Inventory[p].Djinns.Contains(this));
@@ -56,6 +64,7 @@ namespace GameTheory.Games.FiveTribes.Djinns
                 get { return this.resource; }
             }
 
+            /// <inheritdoc />
             public override string ToString()
             {
                 return string.Format("Trade {0},{0} for {1}", Resource.Slave, this.resource);

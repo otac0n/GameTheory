@@ -10,8 +10,14 @@ namespace GameTheory.Games.FiveTribes.Djinns
 {
     using System.Linq;
 
+    /// <summary>
+    /// Each time someone gets a Djinn, collect 1 GC if it's you, 2 GCSs if it's an opponent.
+    /// </summary>
     public class Baal : Djinn
     {
+        /// <summary>
+        /// The singleton instance of <see cref="Baal" />.
+        /// </summary>
         public static readonly Baal Instance = new Baal();
 
         private Baal()
@@ -19,11 +25,13 @@ namespace GameTheory.Games.FiveTribes.Djinns
         {
         }
 
+        /// <inheritdoc />
         public override string Name
         {
             get { return "Ba'al"; }
         }
 
+        /// <inheritdoc />
         public override GameState HandleTransition(PlayerToken owner, GameState oldState, GameState newState)
         {
             foreach (var player in oldState.Players)

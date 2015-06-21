@@ -11,8 +11,14 @@ namespace GameTheory.Games.FiveTribes.Djinns
     using System.Collections.Immutable;
     using System.Linq;
 
+    /// <summary>
+    /// Each time your Assassins kill: a Merchant, draw 1 Resource card from the top of the Resource pile; a Builder, take the GCs that Builder would have taken; a Vizier or Elder, place it in front of you instead of killing it.
+    /// </summary>
     public class Kandicha : Djinn
     {
+        /// <summary>
+        /// The singleton instance of <see cref="Kandicha" />.
+        /// </summary>
         public static readonly Kandicha Instance = new Kandicha();
 
         private Kandicha()
@@ -20,6 +26,7 @@ namespace GameTheory.Games.FiveTribes.Djinns
         {
         }
 
+        /// <inheritdoc />
         public override GameState HandleAssassination(PlayerToken owner, GameState state0, Point point, EnumCollection<Meeple> kill)
         {
             var s1 = state0;
@@ -70,6 +77,7 @@ namespace GameTheory.Games.FiveTribes.Djinns
             return s1;
         }
 
+        /// <inheritdoc />
         public override GameState HandleAssassination(PlayerToken owner, GameState state0, PlayerToken victim, EnumCollection<Meeple> kill)
         {
             return this.HandleAssassination(owner, state0, new Point(), kill);

@@ -11,8 +11,14 @@ namespace GameTheory.Games.FiveTribes.Djinns
     using System.Collections.Generic;
     using System.Collections.Immutable;
 
+    /// <summary>
+    /// Pay <see cref="Cost.OneSlave" /> to activate the <see cref="DrawTopCardMove" />.
+    /// </summary>
     public class Sloar : Djinn.PayPerActionDjinnBase
     {
+        /// <summary>
+        /// The singleton instance of <see cref="Sloar" />.
+        /// </summary>
         public static readonly Sloar Instance = new Sloar();
 
         private Sloar()
@@ -20,11 +26,15 @@ namespace GameTheory.Games.FiveTribes.Djinns
         {
         }
 
+        /// <inheritdoc />
         protected override IEnumerable<Move> GetAppliedCostMoves(GameState state0)
         {
             yield return new DrawTopCardMove(state0);
         }
 
+        /// <summary>
+        /// Take the top card from the Resource pile.
+        /// </summary>
         public class DrawTopCardMove : Move
         {
             public DrawTopCardMove(GameState state0)
@@ -32,6 +42,7 @@ namespace GameTheory.Games.FiveTribes.Djinns
             {
             }
 
+            /// <inheritdoc />
             public override string ToString()
             {
                 return "Draw the top card from the Resource Pile";

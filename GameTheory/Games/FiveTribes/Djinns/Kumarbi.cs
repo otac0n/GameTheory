@@ -12,18 +12,25 @@ namespace GameTheory.Games.FiveTribes.Djinns
     using System.Collections.Immutable;
     using GameTheory.Games.FiveTribes.Moves;
 
+    /// <summary>
+    /// Pay <see cref="Cost.OneOrMoreSlaves" />: for each Slave you discard your bidding cost is reduced by 1 spot.
+    /// </summary>
     public class Kumarbi : Djinn
     {
+        /// <summary>
+        /// The singleton instance of <see cref="Kumarbi" />.
+        /// </summary>
         public static readonly Kumarbi Instance = new Kumarbi();
 
         private readonly string stateKey;
 
-        protected Kumarbi()
+        private Kumarbi()
             : base(6)
         {
             this.stateKey = this.GetType().Name + "Used";
         }
 
+        /// <inheritdoc />
         public sealed override IEnumerable<Move> GetMoves(GameState state0)
         {
             if (this.CanGetMoves(state0))
@@ -34,6 +41,7 @@ namespace GameTheory.Games.FiveTribes.Djinns
             return base.GetMoves(state0);
         }
 
+        /// <inheritdoc />
         public override GameState HandleTransition(PlayerToken owner, GameState oldState, GameState newState)
         {
             if (oldState.Phase == Phase.CleanUp && newState.Phase == Phase.Bid && newState[this.stateKey] != null)
@@ -44,7 +52,7 @@ namespace GameTheory.Games.FiveTribes.Djinns
             return newState;
         }
 
-        protected virtual bool CanGetMoves(GameState state)
+        private bool CanGetMoves(GameState state)
         {
             if (state[this.stateKey] == null && state.Phase == Phase.Bid)
             {

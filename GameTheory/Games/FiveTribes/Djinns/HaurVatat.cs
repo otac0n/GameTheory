@@ -8,8 +8,14 @@
 
 namespace GameTheory.Games.FiveTribes.Djinns
 {
+    /// <summary>
+    /// At game end, each of your Palm Trees is worth 5 VPs instead of 3.
+    /// </summary>
     public class Haurvatat : Djinn.OnAcquireDjinnBase
     {
+        /// <summary>
+        /// The singleton instance of <see cref="Haurvatat" />.
+        /// </summary>
         public static readonly Haurvatat Instance = new Haurvatat();
 
         private Haurvatat()
@@ -17,6 +23,7 @@ namespace GameTheory.Games.FiveTribes.Djinns
         {
         }
 
+        /// <inheritdoc />
         protected override GameState OnAcquire(PlayerToken player, GameState state)
         {
             return state.With(

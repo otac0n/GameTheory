@@ -12,8 +12,14 @@ namespace GameTheory.Games.FiveTribes.Djinns
     using System.Linq;
     using GameTheory.Games.FiveTribes.Moves;
 
+    /// <summary>
+    /// Pay <see cref="Cost.OneElderOrOneSlave" /> so that when placing a Palace, you may drop it on any neighboring Tile instead.
+    /// </summary>
     public class Hagis : Djinn
     {
+        /// <summary>
+        /// The singleton instance of <see cref="Hagis" />.
+        /// </summary>
         public static readonly Hagis Instance = new Hagis();
 
         private readonly string stateKey;
@@ -24,6 +30,7 @@ namespace GameTheory.Games.FiveTribes.Djinns
             this.stateKey = this.GetType().Name + "Used";
         }
 
+        /// <inheritdoc />
         public override IEnumerable<Move> GetAdditionalMoves(GameState state0, IList<Move> moves)
         {
             if (state0.Phase != Phase.End && state0[this.stateKey] == null && state0.Inventory[state0.ActivePlayer].Djinns.Contains(this))
@@ -40,6 +47,7 @@ namespace GameTheory.Games.FiveTribes.Djinns
             }
         }
 
+        /// <inheritdoc />
         public override GameState HandleTransition(PlayerToken owner, GameState oldState, GameState newState)
         {
             if (oldState.Phase == Phase.CleanUp && newState.Phase == Phase.Bid && newState[this.stateKey] != null)

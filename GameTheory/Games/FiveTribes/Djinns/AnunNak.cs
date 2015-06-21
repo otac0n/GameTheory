@@ -13,8 +13,14 @@ namespace GameTheory.Games.FiveTribes.Djinns
     using System.Collections.Immutable;
     using System.Linq;
 
+    /// <summary>
+    /// Pay <see cref="Cost.OneElderOrOneSlave" /> to activate the <see cref="AddMeeplesMove" />.
+    /// </summary>
     public class AnunNak : Djinn.PayPerActionDjinnBase
     {
+        /// <summary>
+        /// The singleton instance of <see cref="AnunNak" />.
+        /// </summary>
         public static readonly AnunNak Instance = new AnunNak();
 
         private AnunNak()
@@ -22,11 +28,13 @@ namespace GameTheory.Games.FiveTribes.Djinns
         {
         }
 
+        /// <inheritdoc />
         public override string Name
         {
             get { return "Anun-Nak"; }
         }
 
+        /// <inheritdoc />
         protected override IEnumerable<Move> GetAppliedCostMoves(GameState state0)
         {
             var toDraw = Math.Min(state0.Bag.Count, 3);
@@ -41,6 +49,9 @@ namespace GameTheory.Games.FiveTribes.Djinns
                    select new AddMeeplesMove(state0, i);
         }
 
+        /// <summary>
+        /// Choose an empty Tile (with non Camel, Meeple, Palm Tree or Palace). Place 3 Meeples on that tile (drawn at random from the bag).
+        /// </summary>
         public class AddMeeplesMove : Move
         {
             private readonly Point point;
@@ -56,6 +67,7 @@ namespace GameTheory.Games.FiveTribes.Djinns
                 get { return this.point; }
             }
 
+            /// <inheritdoc />
             public override string ToString()
             {
                 return string.Format("Draw {0} Meeples and place at {1}", Math.Min(this.State.Bag.Count, 3), this.point);

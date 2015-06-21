@@ -12,8 +12,14 @@ namespace GameTheory.Games.FiveTribes.Djinns
     using System.Linq;
     using GameTheory.Games.FiveTribes.Moves;
 
+    /// <summary>
+    /// Pay <see cref="Cost.OneElderOrOneSlave" /> to place 1 Palm Tree on any Oasis.
+    /// </summary>
     public class Enki : Djinn.PayPerActionDjinnBase
     {
+        /// <summary>
+        /// The singleton instance of <see cref="Enki" />.
+        /// </summary>
         public static readonly Enki Instance = new Enki();
 
         private Enki()
@@ -21,6 +27,7 @@ namespace GameTheory.Games.FiveTribes.Djinns
         {
         }
 
+        /// <inheritdoc />
         protected override IEnumerable<Move> GetAppliedCostMoves(GameState state0)
         {
             return Enumerable.Range(0, Sultanate.Width * Sultanate.Height)
