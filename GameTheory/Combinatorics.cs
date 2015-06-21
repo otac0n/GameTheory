@@ -1,11 +1,12 @@
 ﻿namespace GameTheory
 {
-    using System;
     using System.Collections.Generic;
+    using System.Collections.Immutable;
+    using System.Linq;
 
     public static class Combinatorics
     {
-        public static IEnumerable<T[]> Combinations<T>(IList<T> items, int count)
+        public static IEnumerable<ImmutableList<T>> Combinations<T>(IList<T> items, int count)
         {
             if (count <= 0) yield break;
             if (count > items.Count) yield break;
@@ -18,7 +19,7 @@
             {
                 if (depth >= count)
                 {
-                    yield return Array.ConvertAll(indexes, i => items[i]);
+                    yield return indexes.Select(i => items[i]).ToImmutableList();
                     prev = --depth;
                     continue;
                 }

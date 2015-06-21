@@ -1,6 +1,7 @@
 ﻿namespace GameTheory
 {
     using System.Collections.Generic;
+    using System.Collections.Immutable;
     using System.Diagnostics.Contracts;
     using System.Linq;
 
@@ -26,14 +27,14 @@
                 result.Add(item);
                 if (result.Count >= count)
                 {
-                    yield return result.AsReadOnly();
+                    yield return result.ToImmutableList();
                     result.Clear();
                 }
             }
 
             if (result.Count > 0)
             {
-                yield return result.AsReadOnly();
+                yield return result.ToImmutableList();
             }
         }
 

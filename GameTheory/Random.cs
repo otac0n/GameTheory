@@ -20,6 +20,8 @@ namespace GameTheory
     /// </summary>
     public static class Random
     {
+        private static int counter;
+
         [ThreadStatic]
         private static System.Random instance;
 
@@ -31,7 +33,7 @@ namespace GameTheory
         /// </remarks>
         public static System.Random Instance
         {
-            get { return instance ?? (instance = new System.Random(Environment.TickCount ^ Thread.CurrentThread.ManagedThreadId)); }
+            get { return instance ?? (instance = new System.Random(unchecked(Environment.TickCount * Interlocked.Increment(ref counter)))); }
         }
 
         public static ImmutableList<T> Deal<T>(this ImmutableList<T> deck, int count, out ImmutableList<T> dealt, ref ImmutableList<T> discards, System.Random instance = null)

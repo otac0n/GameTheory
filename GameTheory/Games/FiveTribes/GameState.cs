@@ -391,7 +391,7 @@
                 moves.AddRange(djinn.GetAdditionalMoves(this, originalMoves));
             }
 
-            return moves.AsReadOnly();
+            return moves.ToImmutableList();
         }
 
         public int GetHighestBidIndex()
@@ -428,8 +428,7 @@
                 .GroupBy(p => this.GetScore(p))
                 .OrderByDescending(g => g.Key)
                 .First()
-                .ToList()
-                .AsReadOnly();
+                .ToImmutableList();
         }
 
         IGameState<Move> IGameState<Move>.MakeMove(Move move)

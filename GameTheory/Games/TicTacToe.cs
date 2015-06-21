@@ -10,6 +10,7 @@ namespace GameTheory.Games
 {
     using System;
     using System.Collections.Generic;
+    using System.Collections.Immutable;
 
     /// <summary>
     /// Implements the game of Tic-tac-toe.
@@ -17,11 +18,9 @@ namespace GameTheory.Games
     public class TicTacToe : IGameState<TicTacToe.Move>
     {
         private const int Size = 3;
-        private static readonly IReadOnlyCollection<Move> EmptyMoveList = new List<Move>(0).AsReadOnly();
-        private static readonly IReadOnlyCollection<PlayerToken> EmptyWinnerList = new List<PlayerToken>(0).AsReadOnly();
         private readonly PlayerToken activePlayer;
-        private readonly Lazy<IReadOnlyCollection<Move>> availableMoves;
-        private readonly Lazy<IReadOnlyCollection<PlayerToken>> winners;
+        private readonly Lazy<ImmutableList<Move>> availableMoves;
+        private readonly ImmutableList<PlayerToken> winners;
         private readonly PlayerToken winningPlayer;
         private PlayerToken[,] field;
 
@@ -29,11 +28,11 @@ namespace GameTheory.Games
         /// Initializes a new instance of the <see cref="TicTacToe"/> class in the starting position.
         /// </summary>
         public TicTacToe()
-            : this(new List<PlayerToken> { new PlayerToken(), new PlayerToken() }.AsReadOnly(), new PlayerToken[Size, Size])
+            : this(ImmutableList.Create<PlayerToken>(new PlayerToken(), new PlayerToken()), new PlayerToken[Size, Size])
         {
         }
 
-        private TicTacToe(IReadOnlyList<PlayerToken> players, PlayerToken[,] field)
+        private TicTacToe(ImmutableList<PlayerToken> players, PlayerToken[,] field)
         {
             this.Players = players;
             this.field = field;
@@ -91,8 +90,8 @@ namespace GameTheory.Games
                 }
             }
 
-            this.availableMoves = new Lazy<IReadOnlyCollection<Move>>(this.GetAvailableMoves);
-            this.winners = new Lazy<IReadOnlyCollection<PlayerToken>>(() => new List<PlayerToken> { this.winningPlayer }.AsReadOnly());
+            this.availableMoves = new Lazy<ImmutableList<Move>>(this.GetAvailableMoves);
+            this.winners = ImmutableList.Create<PlayerToken>(this.winningPlayer);
         }
 
         /// <summary>
@@ -103,8 +102,13 @@ namespace GameTheory.Games
             get { return this.activePlayer; }
         }
 
+        IReadOnlyList<PlayerToken> IGameState<TicTacToe.Move>.Players
+        {
+            get { return this.Players; }
+        }
+
         /// <inheritdoc />
-        public IReadOnlyList<PlayerToken> Players { get; private set; }
+        public ImmutableList<PlayerToken> Players { get; private set; }
 
         /// <summary>
         /// Gets the <see cref="PlayerToken"/> of the player who marked the specified spot.
@@ -125,7 +129,7 @@ namespace GameTheory.Games
         {
             if (player != this.activePlayer || this.winningPlayer != null)
             {
-                return EmptyMoveList;
+                return ImmutableList<Move>.Empty;
             }
 
             return this.availableMoves.Value;
@@ -136,10 +140,10 @@ namespace GameTheory.Games
         {
             if (this.winningPlayer == null)
             {
-                return EmptyWinnerList;
+                return ImmutableList<PlayerToken>.Empty;
             }
 
-            return this.winners.Value;
+            return this.winners;
         }
 
         /// <inheritdoc />
@@ -169,9 +173,9 @@ namespace GameTheory.Games
             return new TicTacToe(this.Players, newField);
         }
 
-        private IReadOnlyCollection<Move> GetAvailableMoves()
+        private ImmutableList<Move> GetAvailableMoves()
         {
-            var moves = new List<Move>(9);
+            var moves = ImmutableList.CreateBuilder<Move>();
 
             for (var x = 0; x < Size; x++)
             {
@@ -184,7 +188,7 @@ namespace GameTheory.Games
                 }
             }
 
-            return moves.AsReadOnly();
+            return moves.ToImmutable();
         }
 
         /// <summary>
