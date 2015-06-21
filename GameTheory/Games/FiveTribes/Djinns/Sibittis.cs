@@ -14,7 +14,7 @@ namespace GameTheory.Games.FiveTribes.Djinns
     using System.Linq;
 
     /// <summary>
-    /// Pay <see cref="Cost.OneElderPlusOneElderOrOneSlave"/> to activate the <see cref="DrawDjinnsMove"/>.
+    /// Pay <see cref="Cost.OneElderPlusOneElderOrOneSlave"/> to draw the top 3 Djinns from the top of the Djinns pile; keep 1, discard the 2 others.
     /// </summary>
     public class Sibittis : Djinn.PayPerActionDjinnBase
     {
@@ -41,10 +41,14 @@ namespace GameTheory.Games.FiveTribes.Djinns
         }
 
         /// <summary>
-        /// Draw the top 3 Djinns from the top of the Djinns pile; keep 1, discard the 2 others.
+        /// Represent a move to draw the top three <see cref="Djinn">Djinns</see> from the Djinn pile.
         /// </summary>
         public class DrawDjinnsMove : Move
         {
+            /// <summary>
+            /// Initializes a new instance of the <see cref="DrawDjinnsMove"/> class.
+            /// </summary>
+            /// <param name="state0">The <see cref="GameState"/> that this move is based on.</param>
             public DrawDjinnsMove(GameState state0)
                 : base(state0, state0.ActivePlayer)
             {
@@ -77,16 +81,41 @@ namespace GameTheory.Games.FiveTribes.Djinns
             }
         }
 
+        /// <summary>
+        /// Represents a move to take one of the dealt <see cref="Djinn">Djinns</see> and discard the others.
+        /// </summary>
         public class TakeDealtDjinnMove : Move
         {
             private readonly ImmutableList<Djinn> dealt;
             private readonly int index;
 
+            /// <summary>
+            /// Initializes a new instance of the <see cref="TakeDealtDjinnMove"/> class.
+            /// </summary>
+            /// <param name="state0">The <see cref="GameState"/> that this move is based on.</param>
+            /// <param name="dealt">The <see cref="Djinn">Djinns</see> dealt to the player.</param>
+            /// <param name="index">The index of the <see cref="Djinn"/> that will be taken.</param>
             public TakeDealtDjinnMove(GameState state0, ImmutableList<Djinn> dealt, int index)
                 : base(state0, state0.ActivePlayer)
             {
                 this.dealt = dealt;
                 this.index = index;
+            }
+
+            /// <summary>
+            /// Gets the <see cref="Djinn"/> that will be taken.
+            /// </summary>
+            public Djinn Djinn
+            {
+                get { return this.dealt[this.index]; }
+            }
+
+            /// <summary>
+            /// Gets the index of the <see cref="Djinn"/> that will be taken.
+            /// </summary>
+            public int Index
+            {
+                get { return this.index; }
             }
 
             /// <inheritdoc />

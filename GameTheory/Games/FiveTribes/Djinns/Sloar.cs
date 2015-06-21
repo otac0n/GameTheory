@@ -12,7 +12,7 @@ namespace GameTheory.Games.FiveTribes.Djinns
     using System.Collections.Immutable;
 
     /// <summary>
-    /// Pay <see cref="Cost.OneSlave"/> to activate the <see cref="DrawTopCardMove"/>.
+    /// Pay <see cref="Cost.OneSlave"/> to take the top card from the Resource pile.
     /// </summary>
     public class Sloar : Djinn.PayPerActionDjinnBase
     {
@@ -33,10 +33,14 @@ namespace GameTheory.Games.FiveTribes.Djinns
         }
 
         /// <summary>
-        /// Take the top card from the Resource pile.
+        /// Represents a move to draw the top card from the <see cref="Resource"/> pile.
         /// </summary>
         public class DrawTopCardMove : Move
         {
+            /// <summary>
+            /// Initializes a new instance of the <see cref="DrawTopCardMove"/> class.
+            /// </summary>
+            /// <param name="state0">The <see cref="GameState"/> that this move is based on.</param>
             public DrawTopCardMove(GameState state0)
                 : base(state0, state0.ActivePlayer)
             {

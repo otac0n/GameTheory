@@ -12,7 +12,7 @@ namespace GameTheory.Games.FiveTribes.Djinns
     using System.Linq;
 
     /// <summary>
-    /// Pay <see cref="Cost.OneElderOrOneSlave"/> to activate the <see cref="DoubleAssassinKillCountMove"/>.
+    /// Pay <see cref="Cost.OneElderOrOneSlave"/> to let your Assassins kill 2 Meeples of any color on the same Tile or kill 2 Elders and/or Viziers from the same opponent.
     /// </summary>
     public class Ibus : Djinn.PayPerActionDjinnBase
     {
@@ -43,10 +43,14 @@ namespace GameTheory.Games.FiveTribes.Djinns
         }
 
         /// <summary>
-        /// Your Assassins kill 2 Meeples of any color on the same Tile or kill 2 Elders and/or Viziers from the same opponent.
+        /// Represents a move to let assassins kill a second <see cref="Meeple"/>.
         /// </summary>
         public class DoubleAssassinKillCountMove : Move
         {
+            /// <summary>
+            /// Initializes a new instance of the <see cref="DoubleAssassinKillCountMove"/> class.
+            /// </summary>
+            /// <param name="state0">The <see cref="GameState"/> that this move is based on.</param>
             public DoubleAssassinKillCountMove(GameState state0)
                 : base(state0, state0.ActivePlayer)
             {

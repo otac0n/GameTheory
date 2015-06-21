@@ -49,16 +49,28 @@ namespace GameTheory.Games.FiveTribes.Djinns
             }
         }
 
+        /// <summary>
+        /// Represents a move to trade a pair of <see cref="Resource.Slave">Slaves</see> for the specified <see cref="Resource"/>.
+        /// </summary>
         public class TradeSlavesForResourceMove : Move
         {
             private readonly Resource resource;
 
+            /// <summary>
+            /// Initializes a new instance of the <see cref="TradeSlavesForResourceMove"/> class.
+            /// </summary>
+            /// <param name="state0">The <see cref="GameState"/> that this move is based on.</param>
+            /// <param name="owner">The player who may perform this move.</param>
+            /// <param name="resource">The <see cref="Resource"/> that will received by the player.</param>
             public TradeSlavesForResourceMove(GameState state0, PlayerToken owner, Resource resource)
                 : base(state0, owner)
             {
                 this.resource = resource;
             }
 
+            /// <summary>
+            /// Gets the <see cref="Resource"/> that will be received by the player.
+            /// </summary>
             public Resource Resource
             {
                 get { return this.resource; }

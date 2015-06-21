@@ -12,7 +12,7 @@ namespace GameTheory.Games.FiveTribes.Djinns
     using System.Linq;
 
     /// <summary>
-    /// Pay <see cref="Cost.OneElderPlusOneElderOrOneSlave"/> to activate the <see cref="DoubleBuilderScoreMove"/>.
+    /// Pay <see cref="Cost.OneElderPlusOneElderOrOneSlave"/> to double the amount of GCs your Builders get this turn.
     /// </summary>
     public class Echidna : Djinn.PayPerActionDjinnBase
     {
@@ -43,10 +43,14 @@ namespace GameTheory.Games.FiveTribes.Djinns
         }
 
         /// <summary>
-        /// Double the amount of DGs your Builders get this turn.
+        /// Represents a move to double the amount of Gold Coins (GCs) the active player's <see cref="Builder">Builders</see> get this turn.
         /// </summary>
         public class DoubleBuilderScoreMove : Move
         {
+            /// <summary>
+            /// Initializes a new instance of the <see cref="DoubleBuilderScoreMove"/> class.
+            /// </summary>
+            /// <param name="state0">The <see cref="GameState"/> that this move is based on.</param>
             public DoubleBuilderScoreMove(GameState state0)
                 : base(state0, state0.ActivePlayer)
             {
