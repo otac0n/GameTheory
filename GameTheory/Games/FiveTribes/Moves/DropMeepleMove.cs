@@ -57,8 +57,8 @@ namespace GameTheory.Games.FiveTribes.Moves
             var s1 = state0.With(
                 sultanate: state0.Sultanate.SetItem(this.point, square.With(meeples: square.Meeples.Add(this.meeple))),
                 inHand: state0.InHand.Remove(this.meeple),
-                lastDirection: Sultanate.GetDirection(from: state0.LastPoint, to: this.point),
-                lastPoint: this.point);
+                lastPoint: this.point,
+                previousPoint: state0.LastPoint);
 
             return s1.InHand.Count >= 1 ? s1 : s1.WithMoves(s2 => new[]
             {

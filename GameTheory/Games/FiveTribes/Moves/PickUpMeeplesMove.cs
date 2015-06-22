@@ -47,9 +47,9 @@ namespace GameTheory.Games.FiveTribes.Moves
             return state0.With(
                 sultanate: state0.Sultanate.SetItem(this.point, square.With(meeples: EnumCollection<Meeple>.Empty)),
                 inHand: square.Meeples,
-                lastDirection: Direction.None,
                 lastPoint: this.point,
-                phase: Phase.MoveMeeples);
+                phase: Phase.MoveMeeples,
+                previousPoint: this.point);
         }
     }
 }

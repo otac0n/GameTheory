@@ -34,7 +34,7 @@ namespace GameTheory.Games.FiveTribes
         public const int Width = 6;
 
         private static readonly ImmutableList<ImmutableList<Point>> SquarePoints;
-        private static readonly Dictionary<Tuple<Point, Direction, int>, ImmutableHashSet<Point>> Storage = new Dictionary<Tuple<Point, Direction, int>, ImmutableHashSet<Point>>();
+        private static readonly Dictionary<Tuple<Point, Point, int>, ImmutableHashSet<Point>> Storage = new Dictionary<Tuple<Point, Point, int>, ImmutableHashSet<Point>>();
 
         static Sultanate()
         {
@@ -64,32 +64,17 @@ namespace GameTheory.Games.FiveTribes
         }
 
         /// <summary>
-        /// Gets a direction from two adjacent Points.
-        /// </summary>
-        /// <param name="from">The source point.</param>
-        /// <param name="to">The destination point.</param>
-        /// <returns>The direction traveled from the source point to the destination point.</returns>
-        public static Direction GetDirection(Point from, Point to)
-        {
-            return to.Y < from.Y ? Direction.Up :
-                   to.X > from.X ? Direction.Right :
-                   to.Y > from.Y ? Direction.Down :
-                   to.X < from.X ? Direction.Left :
-                   Direction.None;
-        }
-
-        /// <summary>
         /// Gets all of the Point and Meeple combinations that represent legal moves given the specified values.
         /// </summary>
         /// <param name="sultanate">The sultanate.</param>
-        /// <param name="point">The most recently touched point.</param>
-        /// <param name="incomingDirection">The direction that was most recently traveled to get to <see cref="point"/>, or <see cref="Direction.None"/> if it was picked up.</param>
+        /// <param name="lastPoint">The most recently touched point.</param>
+        /// <param name="previousPoint">The previously touched point.</param>
         /// <param name="inHand">The meeples in hand.</param>
         /// <returns>A sequence containing all legal combinations of Point and Meeple.</returns>
-        public static IEnumerable<Tuple<Meeple, Point>> GetMoves(this IList<Square> sultanate, Point point, Direction incomingDirection, EnumCollection<Meeple> inHand)
+        public static IEnumerable<Tuple<Meeple, Point>> GetMoves(this IList<Square> sultanate, Point lastPoint, Point previousPoint, EnumCollection<Meeple> inHand)
         {
             var count = inHand.Count;
-            var potentialDrops = Sultanate.FindDestinations(point, incomingDirection, 1);
+            var potentialDrops = Sultanate.FindDestinations(lastPoint, previousPoint, 1);
 
             if (count == 1)
             {
@@ -120,7 +105,7 @@ namespace GameTheory.Games.FiveTribes
                 }
                 else
                 {
-                    var destinationSquares = Sultanate.FindDestinations(drop, GetDirection(from: point, to: drop), count - 1);
+                    var destinationSquares = Sultanate.FindDestinations(drop, lastPoint, count - 1);
 
                     var includeAllDupes = destinationSquares.Contains(drop);
 
@@ -188,11 +173,12 @@ namespace GameTheory.Games.FiveTribes
                 {
                     var newSultanate = sultanate.SetItem(i, sultanate[i].With(meeples: EnumCollection<Meeple>.Empty));
 
+                    var p = new Point(i);
                     var hasMoves = (count >= RequiredForLoop && count >= GameState.TribesCount + 1)
-                                || newSultanate.GetMoves(i, Direction.None, inHand).Any();
+                                || newSultanate.GetMoves(p, p, inHand).Any();
                     if (hasMoves)
                     {
-                        yield return i;
+                        yield return p;
                     }
                 }
             }
@@ -231,43 +217,44 @@ namespace GameTheory.Games.FiveTribes
             return SquarePoints[point];
         }
 
-        private static ImmutableHashSet<Point> FindDestinations(Point point, Direction incomingDirection, int meeples)
+        private static ImmutableHashSet<Point> FindDestinations(Point lastPoint, Point previousPoint, int meeples)
         {
-            var key = Tuple.Create(point, incomingDirection, meeples);
+            var key = Tuple.Create(lastPoint, previousPoint, meeples);
             ImmutableHashSet<Point> result;
-            return Storage.TryGetValue(key, out result) ? result : Storage[key] = FindDestinationsImpl(point, incomingDirection, meeples);
+            return Storage.TryGetValue(key, out result) ? result : Storage[key] = FindDestinationsImpl(lastPoint, previousPoint, meeples);
         }
 
-        private static ImmutableHashSet<Point> FindDestinationsImpl(Point point, Direction incomingDirection, int meeples)
+        private static ImmutableHashSet<Point> FindDestinationsImpl(Point lastPoint, Point previousPoint, int meeples)
         {
             if (meeples == 0)
             {
-                return ImmutableHashSet.Create(point);
+                return ImmutableHashSet.Create(lastPoint);
             }
 
-            var destinations = ImmutableHashSet<Point>.Empty;
+            Point p;
+            var destinations = ImmutableHashSet.CreateBuilder<Point>();
 
-            if (incomingDirection != Direction.Down && point.Y > 0)
+            if (lastPoint.Y > 0 && (p = lastPoint - Width) != previousPoint)
             {
-                destinations = destinations.Union(FindDestinations(point - Width, Direction.Up, meeples - 1));
+                destinations.UnionWith(FindDestinations(p, lastPoint, meeples - 1));
             }
 
-            if (incomingDirection != Direction.Left && point.X < Width - 1)
+            if (lastPoint.X < Width - 1 && (p = lastPoint + 1) != previousPoint)
             {
-                destinations = destinations.Union(FindDestinations(point + 1, Direction.Right, meeples - 1));
+                destinations.UnionWith(FindDestinations(p, lastPoint, meeples - 1));
             }
 
-            if (incomingDirection != Direction.Up && point.Y < Height - 1)
+            if (lastPoint.Y < Height - 1 && (p = lastPoint + Width) != previousPoint)
             {
-                destinations = destinations.Union(FindDestinations(point + Width, Direction.Down, meeples - 1));
+                destinations.UnionWith(FindDestinations(p, lastPoint, meeples - 1));
             }
 
-            if (incomingDirection != Direction.Right && point.X > 0)
+            if (lastPoint.X > 0 && (p = lastPoint - 1) != previousPoint)
             {
-                destinations = destinations.Union(FindDestinations(point - 1, Direction.Left, meeples - 1));
+                destinations.UnionWith(FindDestinations(p, lastPoint, meeples - 1));
             }
 
-            return destinations;
+            return destinations.ToImmutable();
         }
     }
 }

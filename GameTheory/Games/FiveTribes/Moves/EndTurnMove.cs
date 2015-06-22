@@ -47,9 +47,9 @@ namespace GameTheory.Games.FiveTribes.Moves
             return state0.With(
                 djinnDiscards: djinnDiscards,
                 djinnPile: djinnPile,
-                lastDirection: Direction.None,
                 lastPoint: new Point(),
                 phase: moreTurns ? Phase.MoveTurnMarker : (isOver ? Phase.End : Phase.Bid),
+                previousPoint: new Point(),
                 resourceDiscards: resourceDiscards,
                 resourcePile: resourcePile,
                 visibleDjinns: state0.VisibleDjinns.AddRange(dealtDjinns),

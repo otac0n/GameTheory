@@ -63,10 +63,10 @@ namespace GameTheory.Games.FiveTribes
         private readonly ImmutableList<Djinn> djinnPile;
         private readonly EnumCollection<Meeple> inHand;
         private readonly ImmutableDictionary<PlayerToken, Inventory> inventory;
-        private readonly Direction lastDirection;
         private readonly Point lastPoint;
         private readonly Phase phase;
         private readonly ImmutableList<PlayerToken> players;
+        private readonly Point previousPoint;
         private readonly EnumCollection<Resource> resourceDiscards;
         private readonly EnumCollection<Resource> resourcePile;
         private readonly ImmutableDictionary<PlayerToken, ScoreTable> scoreTables;
@@ -189,7 +189,7 @@ namespace GameTheory.Games.FiveTribes
             this.additionalState = ImmutableDictionary<string, string>.Empty;
         }
 
-        internal GameState(ImmutableDictionary<string, string> additionalState, ImmutableDictionary<PlayerToken, AssassinationTable> assassinationTables, EnumCollection<Meeple> bag, ImmutableQueue<PlayerToken> bidOrderTrack, ImmutableList<PlayerToken> turnOrderTrack, ImmutableList<Square> sultanate, ImmutableList<Djinn> djinnDiscards, ImmutableList<Djinn> djinnPile, EnumCollection<Meeple> inHand, ImmutableDictionary<PlayerToken, Inventory> inventory, Direction lastDirection, Point lastPoint, Phase phase, ImmutableList<PlayerToken> players, EnumCollection<Resource> resourceDiscards, EnumCollection<Resource> resourcePile, ImmutableDictionary<PlayerToken, ScoreTable> scoreTables, Func<GameState, IEnumerable<Move>> subsequentMovesFactory, ImmutableList<Djinn> visibleDjinns, ImmutableList<Resource> visibleResources)
+        internal GameState(ImmutableDictionary<string, string> additionalState, ImmutableDictionary<PlayerToken, AssassinationTable> assassinationTables, EnumCollection<Meeple> bag, ImmutableQueue<PlayerToken> bidOrderTrack, ImmutableList<PlayerToken> turnOrderTrack, ImmutableList<Square> sultanate, ImmutableList<Djinn> djinnDiscards, ImmutableList<Djinn> djinnPile, EnumCollection<Meeple> inHand, ImmutableDictionary<PlayerToken, Inventory> inventory, Point lastPoint, Phase phase, ImmutableList<PlayerToken> players, Point previousPoint, EnumCollection<Resource> resourceDiscards, EnumCollection<Resource> resourcePile, ImmutableDictionary<PlayerToken, ScoreTable> scoreTables, Func<GameState, IEnumerable<Move>> subsequentMovesFactory, ImmutableList<Djinn> visibleDjinns, ImmutableList<Resource> visibleResources)
             : this(subsequentMovesFactory)
         {
             this.additionalState = additionalState;
@@ -202,10 +202,10 @@ namespace GameTheory.Games.FiveTribes
             this.djinnPile = djinnPile;
             this.inHand = inHand;
             this.inventory = inventory;
-            this.lastDirection = lastDirection;
             this.lastPoint = lastPoint;
             this.phase = phase;
             this.players = players;
+            this.previousPoint = previousPoint;
             this.resourceDiscards = resourceDiscards;
             this.resourcePile = resourcePile;
             this.scoreTables = scoreTables;
@@ -310,11 +310,6 @@ namespace GameTheory.Games.FiveTribes
             get { return this.inventory; }
         }
 
-        public Direction LastDirection
-        {
-            get { return this.lastDirection; }
-        }
-
         /// <summary>
         /// Gets the last <see cref="Point"/> in the <see cref="Sultanate"/> that had <see cref="Meeple">Meeples</see> picked up or dropped.
         /// </summary>
@@ -337,6 +332,11 @@ namespace GameTheory.Games.FiveTribes
         public ImmutableList<PlayerToken> Players
         {
             get { return this.players; }
+        }
+
+        public Point PreviousPoint
+        {
+            get { return this.previousPoint; }
         }
 
         /// <summary>
@@ -583,7 +583,7 @@ namespace GameTheory.Games.FiveTribes
             return HandleTransition(this, newState);
         }
 
-        public GameState With(ImmutableDictionary<PlayerToken, AssassinationTable> assassinationTables = null, EnumCollection<Meeple> bag = null, ImmutableQueue<PlayerToken> bidOrderTrack = null, ImmutableList<PlayerToken> turnOrderTrack = null, ImmutableList<Square> sultanate = null, ImmutableList<Djinn> djinnDiscards = null, ImmutableList<Djinn> djinnPile = null, EnumCollection<Meeple> inHand = null, ImmutableDictionary<PlayerToken, Inventory> inventory = null, Direction? lastDirection = null, Point? lastPoint = null, Phase? phase = null, ImmutableList<PlayerToken> players = null, EnumCollection<Resource> resourceDiscards = null, EnumCollection<Resource> resourcePile = null, ImmutableDictionary<PlayerToken, ScoreTable> scoreTables = null, ImmutableList<Djinn> visibleDjinns = null, ImmutableList<Resource> visibleResources = null)
+        public GameState With(ImmutableDictionary<PlayerToken, AssassinationTable> assassinationTables = null, EnumCollection<Meeple> bag = null, ImmutableQueue<PlayerToken> bidOrderTrack = null, ImmutableList<PlayerToken> turnOrderTrack = null, ImmutableList<Square> sultanate = null, ImmutableList<Djinn> djinnDiscards = null, ImmutableList<Djinn> djinnPile = null, EnumCollection<Meeple> inHand = null, ImmutableDictionary<PlayerToken, Inventory> inventory = null, Point? lastPoint = null, Phase? phase = null, ImmutableList<PlayerToken> players = null, Point? previousPoint = null, EnumCollection<Resource> resourceDiscards = null, EnumCollection<Resource> resourcePile = null, ImmutableDictionary<PlayerToken, ScoreTable> scoreTables = null, ImmutableList<Djinn> visibleDjinns = null, ImmutableList<Resource> visibleResources = null)
         {
             return new GameState(
                 this.additionalState,
@@ -596,10 +596,10 @@ namespace GameTheory.Games.FiveTribes
                 djinnPile ?? this.djinnPile,
                 inHand ?? this.inHand,
                 inventory ?? this.inventory,
-                lastDirection ?? this.lastDirection,
                 lastPoint ?? this.lastPoint,
                 phase ?? this.phase,
                 players ?? this.players,
+                previousPoint ?? this.previousPoint,
                 resourceDiscards ?? this.resourceDiscards,
                 resourcePile ?? this.resourcePile,
                 scoreTables ?? this.scoreTables,
@@ -626,10 +626,10 @@ namespace GameTheory.Games.FiveTribes
                 this.djinnPile,
                 this.inHand,
                 this.inventory,
-                this.lastDirection,
                 this.lastPoint,
                 this.phase,
                 this.players,
+                this.previousPoint,
                 this.resourceDiscards,
                 this.resourcePile,
                 this.scoreTables,
@@ -651,10 +651,10 @@ namespace GameTheory.Games.FiveTribes
                 this.djinnPile,
                 this.inHand,
                 this.inventory,
-                this.lastDirection,
                 this.lastPoint,
                 this.phase,
                 this.players,
+                this.previousPoint,
                 this.resourceDiscards,
                 this.resourcePile,
                 this.scoreTables,
@@ -775,7 +775,7 @@ namespace GameTheory.Games.FiveTribes
 
         private IEnumerable<Move> GetMoveMeeplesMoves()
         {
-            var drops = this.sultanate.GetMoves(this.lastPoint, this.lastDirection, this.inHand);
+            var drops = this.sultanate.GetMoves(this.lastPoint, this.previousPoint, this.inHand);
             foreach (var drop in drops)
             {
                 var meeple = drop.Item1;

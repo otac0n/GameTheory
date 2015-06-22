@@ -107,7 +107,6 @@
     <Compile Include="Games\FiveTribes\Cost.cs" />
     <Compile Include="Games\FiveTribes\Djinn.cs" />
     <Compile Include="Games\FiveTribes\Sultanate.cs" />
-    <Compile Include="Games\FiveTribes\Direction.cs" />
     <Compile Include="Games\FiveTribes\Djinns\AlAmin.cs" />
     <Compile Include="Games\FiveTribes\Djinns\AnunNak.cs" />
     <Compile Include="Games\FiveTribes\Djinns\Baal.cs" />
