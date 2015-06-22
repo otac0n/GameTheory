@@ -100,6 +100,18 @@ namespace GameTheory.Games.FiveTribes
         }
 
         /// <inheritdoc />
+        public override bool Equals(object obj)
+        {
+            return obj is Point && ((Point)obj).index == this.index;
+        }
+
+        /// <inheritdoc />
+        public override int GetHashCode()
+        {
+            return this.index;
+        }
+
+        /// <inheritdoc />
         public override string ToString()
         {
             return "(" + this.X + ", " + this.Y + ")";

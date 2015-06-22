@@ -99,8 +99,6 @@ namespace GameTheory
         {
             get
             {
-                Contract.Requires(index >= 0 && index < this.count);
-
                 for (var i = 0; i < Capacity; i++)
                 {
                     index -= this.storage[i];

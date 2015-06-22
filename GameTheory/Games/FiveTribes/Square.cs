@@ -9,7 +9,7 @@
 namespace GameTheory.Games.FiveTribes
 {
     /// <summary>
-    /// Represents a location in the <see cref="Sutanate"/>.
+    /// Represents a location in the <see cref="Sultanate"/>.
     /// </summary>
     public class Square
     {
