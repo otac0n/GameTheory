@@ -33,8 +33,8 @@ namespace GameTheory.Games.FiveTribes.Moves
             var i = state0.GetHighestBidIndex();
             return state0.With(
                 bidOrderTrack: state0.BidOrderTrack.Enqueue(state0.TurnOrderTrack[i]),
-                turnOrderTrack: state0.TurnOrderTrack.SetItem(i, null),
-                phase: Phase.PickUpMeeples);
+                phase: Phase.PickUpMeeples,
+                turnOrderTrack: state0.TurnOrderTrack.SetItem(i, null));
         }
     }
 }

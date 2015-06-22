@@ -55,10 +55,10 @@ namespace GameTheory.Games.FiveTribes.Moves
         {
             var square = state0.Sultanate[this.point];
             var s1 = state0.With(
-                sultanate: state0.Sultanate.SetItem(this.point, square.With(meeples: square.Meeples.Add(this.meeple))),
                 inHand: state0.InHand.Remove(this.meeple),
                 lastPoint: this.point,
-                previousPoint: state0.LastPoint);
+                previousPoint: state0.LastPoint,
+                sultanate: state0.Sultanate.SetItem(this.point, square.With(meeples: square.Meeples.Add(this.meeple))));
 
             return s1.InHand.Count >= 1 ? s1 : s1.WithMoves(s2 => new[]
             {

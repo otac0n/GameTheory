@@ -80,6 +80,15 @@ namespace GameTheory.Games.FiveTribes
             get { return this.vizierValue; }
         }
 
+        /// <summary>
+        /// Creates a new <see cref="ScoreTable"/>, and updates the specified values.
+        /// </summary>
+        /// <param name="builderMultiplier"><c>null</c> to keep the existing value, or any other value to update <see cref="BuilderMultiplier"/>.</param>
+        /// <param name="elderValue"><c>null</c> to keep the existing value, or any other value to update <see cref="ElderValue"/>.</param>
+        /// <param name="palaceValue"><c>null</c> to keep the existing value, or any other value to update <see cref="PalaceValue"/>.</param>
+        /// <param name="palmTreeValue"><c>null</c> to keep the existing value, or any other value to update <see cref="PalmTreeValue"/>.</param>
+        /// <param name="vizierValue"><c>null</c> to keep the existing value, or any other value to update <see cref="VizierValue"/>.</param>
+        /// <returns>The new <see cref="ScoreTable"/>.</returns>
         public ScoreTable With(int? builderMultiplier = null, int? elderValue = null, int? palaceValue = null, int? palmTreeValue = null, int? vizierValue = null)
         {
             return new ScoreTable(

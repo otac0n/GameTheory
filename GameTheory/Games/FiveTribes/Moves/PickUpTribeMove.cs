@@ -48,9 +48,9 @@ namespace GameTheory.Games.FiveTribes.Moves
             var canAddCamel = newSquare.Owner == null && newSquare.Meeples.Count == 0 && state0.IsPlayerUnderCamelLimit(state0.ActivePlayer);
 
             return state0.With(
-                sultanate: state0.Sultanate.SetItem(point, newSquare),
                 inHand: state0.InHand.Add(this.tribe, square.Meeples[this.tribe]),
-                phase: canAddCamel ? Phase.TileControlCheck : Phase.TribesAction);
+                phase: canAddCamel ? Phase.TileControlCheck : Phase.TribesAction,
+                sultanate: state0.Sultanate.SetItem(point, newSquare));
         }
     }
 }

@@ -45,11 +45,11 @@ namespace GameTheory.Games.FiveTribes.Moves
             var square = state0.Sultanate[this.point];
 
             return state0.With(
-                sultanate: state0.Sultanate.SetItem(this.point, square.With(meeples: EnumCollection<Meeple>.Empty)),
                 inHand: square.Meeples,
                 lastPoint: this.point,
                 phase: Phase.MoveMeeples,
-                previousPoint: this.point);
+                previousPoint: this.point,
+                sultanate: state0.Sultanate.SetItem(this.point, square.With(meeples: EnumCollection<Meeple>.Empty)));
         }
     }
 }

@@ -62,8 +62,8 @@ namespace GameTheory.Games.FiveTribes.Moves
             var newSquare = square.With(meeples: square.Meeples.RemoveRange(this.meeples));
             var newState = state0.With(
                 bag: state0.Bag.AddRange(state0.InHand).AddRange(this.meeples),
-                sultanate: state0.Sultanate.SetItem(this.point, newSquare),
-                inHand: EnumCollection<Meeple>.Empty);
+                inHand: EnumCollection<Meeple>.Empty,
+                sultanate: state0.Sultanate.SetItem(this.point, newSquare));
 
             foreach (var owner in newState.Players)
             {

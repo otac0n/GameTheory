@@ -58,9 +58,9 @@ namespace GameTheory.Games.FiveTribes.Moves
             var newQueue = state0.BidOrderTrack.Dequeue();
             return state0.With(
                 bidOrderTrack: newQueue,
-                turnOrderTrack: state0.TurnOrderTrack.SetItem(this.index, player),
                 inventory: state0.Inventory.SetItem(player, inventory.With(goldCoins: inventory.GoldCoins - this.cost)),
-                phase: newQueue.IsEmpty ? Phase.MoveTurnMarker : Phase.Bid);
+                phase: newQueue.IsEmpty ? Phase.MoveTurnMarker : Phase.Bid,
+                turnOrderTrack: state0.TurnOrderTrack.SetItem(this.index, player));
         }
     }
 }

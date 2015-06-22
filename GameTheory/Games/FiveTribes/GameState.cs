@@ -189,15 +189,34 @@ namespace GameTheory.Games.FiveTribes
             this.additionalState = ImmutableDictionary<string, string>.Empty;
         }
 
-        internal GameState(ImmutableDictionary<string, string> additionalState, ImmutableDictionary<PlayerToken, AssassinationTable> assassinationTables, EnumCollection<Meeple> bag, ImmutableQueue<PlayerToken> bidOrderTrack, ImmutableList<PlayerToken> turnOrderTrack, ImmutableList<Square> sultanate, ImmutableList<Djinn> djinnDiscards, ImmutableList<Djinn> djinnPile, EnumCollection<Meeple> inHand, ImmutableDictionary<PlayerToken, Inventory> inventory, Point lastPoint, Phase phase, ImmutableList<PlayerToken> players, Point previousPoint, EnumCollection<Resource> resourceDiscards, EnumCollection<Resource> resourcePile, ImmutableDictionary<PlayerToken, ScoreTable> scoreTables, Func<GameState, IEnumerable<Move>> subsequentMovesFactory, ImmutableList<Djinn> visibleDjinns, ImmutableList<Resource> visibleResources)
+        internal GameState(
+            ImmutableDictionary<string, string> additionalState,
+            ImmutableDictionary<PlayerToken, AssassinationTable> assassinationTables,
+            EnumCollection<Meeple> bag,
+            ImmutableQueue<PlayerToken> bidOrderTrack,
+            ImmutableList<Djinn> djinnDiscards,
+            ImmutableList<Djinn> djinnPile,
+            EnumCollection<Meeple> inHand,
+            ImmutableDictionary<PlayerToken,
+            Inventory> inventory,
+            Point lastPoint,
+            Phase phase,
+            ImmutableList<PlayerToken> players,
+            Point previousPoint,
+            EnumCollection<Resource> resourceDiscards,
+            EnumCollection<Resource> resourcePile,
+            ImmutableDictionary<PlayerToken, ScoreTable> scoreTables,
+            Func<GameState, IEnumerable<Move>> subsequentMovesFactory,
+            ImmutableList<Square> sultanate,
+            ImmutableList<PlayerToken> turnOrderTrack,
+            ImmutableList<Djinn> visibleDjinns,
+            ImmutableList<Resource> visibleResources)
             : this(subsequentMovesFactory)
         {
             this.additionalState = additionalState;
             this.assassinationTables = assassinationTables;
             this.bag = bag;
             this.bidOrderTrack = bidOrderTrack;
-            this.turnOrderTrack = turnOrderTrack;
-            this.sultanate = sultanate;
             this.djinnDiscards = djinnDiscards;
             this.djinnPile = djinnPile;
             this.inHand = inHand;
@@ -209,6 +228,8 @@ namespace GameTheory.Games.FiveTribes
             this.resourceDiscards = resourceDiscards;
             this.resourcePile = resourcePile;
             this.scoreTables = scoreTables;
+            this.sultanate = sultanate;
+            this.turnOrderTrack = turnOrderTrack;
             this.visibleDjinns = visibleDjinns;
             this.visibleResources = visibleResources;
         }
@@ -334,6 +355,9 @@ namespace GameTheory.Games.FiveTribes
             get { return this.players; }
         }
 
+        /// <summary>
+        /// Gets the previous-to-last <see cref="Point"/> in the <see cref="Sultanate"/> that had <see cref="Meeple">Meeples</see> picked up or dropped.
+        /// </summary>
         public Point PreviousPoint
         {
             get { return this.previousPoint; }
@@ -584,15 +608,35 @@ namespace GameTheory.Games.FiveTribes
             return HandleTransition(this, newState);
         }
 
-        public GameState With(ImmutableDictionary<PlayerToken, AssassinationTable> assassinationTables = null, EnumCollection<Meeple> bag = null, ImmutableQueue<PlayerToken> bidOrderTrack = null, ImmutableList<PlayerToken> turnOrderTrack = null, ImmutableList<Square> sultanate = null, ImmutableList<Djinn> djinnDiscards = null, ImmutableList<Djinn> djinnPile = null, EnumCollection<Meeple> inHand = null, ImmutableDictionary<PlayerToken, Inventory> inventory = null, Point? lastPoint = null, Phase? phase = null, ImmutableList<PlayerToken> players = null, Point? previousPoint = null, EnumCollection<Resource> resourceDiscards = null, EnumCollection<Resource> resourcePile = null, ImmutableDictionary<PlayerToken, ScoreTable> scoreTables = null, ImmutableList<Djinn> visibleDjinns = null, ImmutableList<Resource> visibleResources = null)
+        /// <summary>
+        /// Creates a new <see cref="GameState"/>, and updates the specified values.
+        /// </summary>
+        /// <param name="assassinationTables"><c>null</c> to keep the existing value, or any other value to update <see cref="AssassinationTables"/>.</param>
+        /// <param name="bag"><c>null</c> to keep the existing value, or any other value to update <see cref="Bag"/>.</param>
+        /// <param name="bidOrderTrack"><c>null</c> to keep the existing value, or any other value to update <see cref="BidOrderTrack"/>.</param>
+        /// <param name="djinnDiscards"><c>null</c> to keep the existing value, or any other value to update <see cref="DjinnDiscards"/>.</param>
+        /// <param name="djinnPile"><c>null</c> to keep the existing value, or any other value to update <see cref="DjinnPile"/>.</param>
+        /// <param name="inHand"><c>null</c> to keep the existing value, or any other value to update <see cref="InHand"/>.</param>
+        /// <param name="inventory"><c>null</c> to keep the existing value, or any other value to update <see cref="Inventory"/>.</param>
+        /// <param name="lastPoint"><c>null</c> to keep the existing value, or any other value to update <see cref="LastPoint"/>.</param>
+        /// <param name="phase"><c>null</c> to keep the existing value, or any other value to update <see cref="Phase"/>.</param>
+        /// <param name="players"><c>null</c> to keep the existing value, or any other value to update <see cref="Players"/>.</param>
+        /// <param name="previousPoint"><c>null</c> to keep the existing value, or any other value to update <see cref="PreviousPoint"/>.</param>
+        /// <param name="resourceDiscards"><c>null</c> to keep the existing value, or any other value to update <see cref="ResourceDiscards"/>.</param>
+        /// <param name="resourcePile"><c>null</c> to keep the existing value, or any other value to update <see cref="ResourcePile"/>.</param>
+        /// <param name="scoreTables"><c>null</c> to keep the existing value, or any other value to update <see cref="ScoreTables"/>.</param>
+        /// <param name="sultanate"><c>null</c> to keep the existing value, or any other value to update <see cref="Sultanate"/>.</param>
+        /// <param name="turnOrderTrack"><c>null</c> to keep the existing value, or any other value to update <see cref="TurnOrderTrack"/>.</param>
+        /// <param name="visibleDjinns"><c>null</c> to keep the existing value, or any other value to update <see cref="VisibleDjinns"/>.</param>
+        /// <param name="visibleResources"><c>null</c> to keep the existing value, or any other value to update <see cref="VisibleResources"/>.</param>
+        /// <returns>The new <see cref="GameState"/>.</returns>
+        public GameState With(ImmutableDictionary<PlayerToken, AssassinationTable> assassinationTables = null, EnumCollection<Meeple> bag = null, ImmutableQueue<PlayerToken> bidOrderTrack = null, ImmutableList<Djinn> djinnDiscards = null, ImmutableList<Djinn> djinnPile = null, EnumCollection<Meeple> inHand = null, ImmutableDictionary<PlayerToken, Inventory> inventory = null, Point? lastPoint = null, Phase? phase = null, ImmutableList<PlayerToken> players = null, Point? previousPoint = null, EnumCollection<Resource> resourceDiscards = null, EnumCollection<Resource> resourcePile = null, ImmutableDictionary<PlayerToken, ScoreTable> scoreTables = null, ImmutableList<Square> sultanate = null, ImmutableList<PlayerToken> turnOrderTrack = null, ImmutableList<Djinn> visibleDjinns = null, ImmutableList<Resource> visibleResources = null)
         {
             return new GameState(
                 this.additionalState,
                 assassinationTables ?? this.assassinationTables,
                 bag ?? this.bag,
                 bidOrderTrack ?? this.bidOrderTrack,
-                turnOrderTrack ?? this.turnOrderTrack,
-                sultanate ?? this.sultanate,
                 djinnDiscards ?? this.djinnDiscards,
                 djinnPile ?? this.djinnPile,
                 inHand ?? this.inHand,
@@ -605,15 +649,27 @@ namespace GameTheory.Games.FiveTribes
                 resourcePile ?? this.resourcePile,
                 scoreTables ?? this.scoreTables,
                 null,
+                sultanate ?? this.sultanate,
+                turnOrderTrack ?? this.turnOrderTrack,
                 visibleDjinns ?? this.visibleDjinns,
                 visibleResources ?? this.visibleResources);
         }
 
+        /// <summary>
+        /// Creates a new <see cref="GameState"/> with the specified subsequent <see cref="Move">Moves</see>.
+        /// </summary>
+        /// <param name="subsequentMoves">A function that generates subsequent <see cref="Move">Moves</see>.</param>
+        /// <returns>The new <see cref="GameState"/>.</returns>
         public GameState WithMoves(Func<GameState, Move> subsequentMoves)
         {
             return this.WithMoves(s => new[] { subsequentMoves(s) });
         }
 
+        /// <summary>
+        /// Creates a new <see cref="GameState"/> with the specified subsequent <see cref="Move">Moves</see>.
+        /// </summary>
+        /// <param name="subsequentMoves">A function that generates subsequent <see cref="Move">Moves</see>.</param>
+        /// <returns>The new <see cref="GameState"/>.</returns>
         public GameState WithMoves(Func<GameState, IEnumerable<Move>> subsequentMoves)
         {
             return new GameState(
@@ -621,8 +677,6 @@ namespace GameTheory.Games.FiveTribes
                 this.assassinationTables,
                 this.bag,
                 this.bidOrderTrack,
-                this.turnOrderTrack,
-                this.sultanate,
                 this.djinnDiscards,
                 this.djinnPile,
                 this.inHand,
@@ -635,19 +689,25 @@ namespace GameTheory.Games.FiveTribes
                 this.resourcePile,
                 this.scoreTables,
                 subsequentMoves,
+                this.sultanate,
+                this.turnOrderTrack,
                 this.visibleDjinns,
                 this.visibleResources);
         }
 
-        public GameState WithState(string stateKey, string value)
+        /// <summary>
+        /// Creates a new <see cref="GameState"/>, and updates the specified state value.
+        /// </summary>
+        /// <param name="key">The state key.</param>
+        /// <param name="value">The state value.</param>
+        /// <returns>The new <see cref="GameState"/>.</returns>
+        public GameState WithState(string key, string value)
         {
             return new GameState(
-                value == null ? this.additionalState.Remove(stateKey) : this.additionalState.SetItem(stateKey, value),
+                value == null ? this.additionalState.Remove(key) : this.additionalState.SetItem(key, value),
                 this.assassinationTables,
                 this.bag,
                 this.bidOrderTrack,
-                this.turnOrderTrack,
-                this.sultanate,
                 this.djinnDiscards,
                 this.djinnPile,
                 this.inHand,
@@ -660,6 +720,8 @@ namespace GameTheory.Games.FiveTribes
                 this.resourcePile,
                 this.scoreTables,
                 null,
+                this.sultanate,
+                this.turnOrderTrack,
                 this.visibleDjinns,
                 this.visibleResources);
         }
