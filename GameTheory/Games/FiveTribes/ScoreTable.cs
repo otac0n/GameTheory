@@ -8,6 +8,9 @@
 
 namespace GameTheory.Games.FiveTribes
 {
+    /// <summary>
+    /// Represents the current state of a player's score table.
+    /// </summary>
     public class ScoreTable
     {
         private readonly int builderMultiplier;
@@ -16,6 +19,9 @@ namespace GameTheory.Games.FiveTribes
         private readonly int palmTreeValue;
         private readonly int vizierValue;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ScoreTable"/> class.
+        /// </summary>
         public ScoreTable()
         {
             this.builderMultiplier = 1;
@@ -34,26 +40,41 @@ namespace GameTheory.Games.FiveTribes
             this.vizierValue = vizierValue;
         }
 
+        /// <summary>
+        /// Gets the player's Gold Coin (GC) multiplier applied when scoring <see cref="Meeples.Builder">Builders</see>.
+        /// </summary>
         public int BuilderMultiplier
         {
             get { return this.builderMultiplier; }
         }
 
+        /// <summary>
+        /// Gets the player's base Victory Point (VP) value for <see cref="Meeples.Elder">Elders</see>.
+        /// </summary>
         public int ElderValue
         {
             get { return this.elderValue; }
         }
 
+        /// <summary>
+        /// Gets the player's base Victory Point (VP) value for Palaces.
+        /// </summary>
         public int PalaceValue
         {
             get { return this.palaceValue; }
         }
 
+        /// <summary>
+        /// Gets the player's base Victory Point (VP) value for Palm Trees.
+        /// </summary>
         public int PalmTreeValue
         {
             get { return this.palmTreeValue; }
         }
 
+        /// <summary>
+        /// Gets the player's base Victory Point (VP) value for <see cref="Meeples.Vizier">Viziers</see>.
+        /// </summary>
         public int VizierValue
         {
             get { return this.vizierValue; }

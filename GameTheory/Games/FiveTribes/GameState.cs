@@ -37,9 +37,21 @@ namespace GameTheory.Games.FiveTribes
         /// </summary>
         public const int TribesCount = 5;
 
+        /// <summary>
+        /// The initial list of <see cref="Tile">Tiles</see>.
+        /// </summary>
         public static readonly ImmutableList<Tile> InitialTiles;
+
+        /// <summary>
+        /// The value, in Gold Coins (GC), of <see cref="Resource"/> suits of various sizes.
+        /// </summary>
         public static readonly ImmutableList<int> SuitValues;
+
+        /// <summary>
+        /// The cost, in Gold Coins (GC), of bidding on the spots in the Turn Order Track.
+        /// </summary>
         public static readonly ImmutableList<int> TurnOrderTrackCosts;
+
         private static readonly ImmutableList<Djinn> Djinns;
         private static readonly EnumCollection<Meeple> Meeples;
         private static readonly EnumCollection<Resource> Resources;
@@ -153,6 +165,10 @@ namespace GameTheory.Games.FiveTribes
             }.SelectMany(x => x));
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="GameState"/> class.
+        /// </summary>
+        /// <param name="players">The number of players.</param>
         public GameState(int players)
             : this(null)
         {
@@ -203,6 +219,9 @@ namespace GameTheory.Games.FiveTribes
             this.subsequentMoves = new Lazy<ImmutableList<Move>>(() => this.subsequentMovesFactory(this).ToImmutableList(), LazyThreadSafetyMode.ExecutionAndPublication);
         }
 
+        /// <summary>
+        /// Gets the currently active player.
+        /// </summary>
         public PlayerToken ActivePlayer
         {
             get
@@ -214,39 +233,57 @@ namespace GameTheory.Games.FiveTribes
             }
         }
 
+        /// <summary>
+        /// Gets the <see cref="AssassinationTable">AssassinationTables</see> for all players.
+        /// </summary>
         public ImmutableDictionary<PlayerToken, AssassinationTable> AssassinationTables
         {
             get { return this.assassinationTables; }
         }
 
+        /// <summary>
+        /// Gets the Bag of <see cref="Meeple">Meeples</see>.
+        /// </summary>
         public EnumCollection<Meeple> Bag
         {
             get { return this.bag; }
         }
 
+        /// <summary>
+        /// Gets the Bid Order Track.
+        /// </summary>
         public ImmutableQueue<PlayerToken> BidOrderTrack
         {
             get { return this.bidOrderTrack; }
         }
 
+        /// <summary>
+        /// Gets the per-player Camel limit.
+        /// </summary>
         public int CamelLimit
         {
-            get
-            {
-                return this.players.Count > 2 ? 8 : 11;
-            }
+            get { return this.players.Count > 2 ? 8 : 11; }
         }
 
+        /// <summary>
+        /// Gets the <see cref="Djinn"/> discard pile.
+        /// </summary>
         public ImmutableList<Djinn> DjinnDiscards
         {
             get { return this.djinnDiscards; }
         }
 
+        /// <summary>
+        /// Gets the <see cref="Djinn"/> draw pile.
+        /// </summary>
         public ImmutableList<Djinn> DjinnPile
         {
             get { return this.djinnPile; }
         }
 
+        /// <summary>
+        /// Gets a value indicating whether or not this <see cref="GameState"/> contains subsequent moves.
+        /// </summary>
         public bool HasSubsequentMoves
         {
             get { return this.subsequentMovesFactory != null && !this.subsequentMoves.Value.IsEmpty; }
@@ -257,11 +294,17 @@ namespace GameTheory.Games.FiveTribes
             get { return this.Players; }
         }
 
+        /// <summary>
+        /// Gets the <see cref="Meeple">Meeples</see> in the active player's hand.
+        /// </summary>
         public EnumCollection<Meeple> InHand
         {
             get { return this.inHand; }
         }
 
+        /// <summary>
+        /// Gets the <see cref="Inventory">Inventories</see> for all players.
+        /// </summary>
         public ImmutableDictionary<PlayerToken, Inventory> Inventory
         {
             get { return this.inventory; }
@@ -272,66 +315,106 @@ namespace GameTheory.Games.FiveTribes
             get { return this.lastDirection; }
         }
 
+        /// <summary>
+        /// Gets the last <see cref="Point"/> in the <see cref="Sultanate"/> that had <see cref="Meeple">Meeples</see> picked up or dropped.
+        /// </summary>
         public Point LastPoint
         {
             get { return this.lastPoint; }
         }
 
+        /// <summary>
+        /// Gets the current <see cref="Phase"/>.
+        /// </summary>
         public Phase Phase
         {
             get { return this.phase; }
         }
 
+        /// <summary>
+        /// Gets the list of players.
+        /// </summary>
         public ImmutableList<PlayerToken> Players
         {
             get { return this.players; }
         }
 
+        /// <summary>
+        /// Gets the <see cref="Resource"/> discard pile.
+        /// </summary>
         public EnumCollection<Resource> ResourceDiscards
         {
             get { return this.resourceDiscards; }
         }
 
+        /// <summary>
+        /// Gets the <see cref="Resource"/> draw pile.
+        /// </summary>
         public EnumCollection<Resource> ResourcePile
         {
             get { return this.resourcePile; }
         }
 
+        /// <summary>
+        /// Gets the <see cref="ScoreTable">ScoreTables</see> for all players.
+        /// </summary>
         public ImmutableDictionary<PlayerToken, ScoreTable> ScoreTables
         {
             get { return this.scoreTables; }
         }
 
+        /// <summary>
+        /// Gets the <see cref="Sultanate"/>.
+        /// </summary>
         public ImmutableList<Square> Sultanate
         {
             get { return this.sultanate; }
         }
 
+        /// <summary>
+        /// Gets the Turn Order Track.
+        /// </summary>
         public ImmutableList<PlayerToken> TurnOrderTrack
         {
             get { return this.turnOrderTrack; }
         }
 
+        /// <summary>
+        /// Gets the face-up <see cref="Djinn">Djinns</see>.
+        /// </summary>
         public ImmutableList<Djinn> VisibleDjinns
         {
             get { return this.visibleDjinns; }
         }
 
+        /// <summary>
+        /// Gets the face-up <see cref="Resource">Resources</see>.
+        /// </summary>
         public ImmutableList<Resource> VisibleResources
         {
             get { return this.visibleResources; }
         }
 
-        public string this[string stateKey]
+        /// <summary>
+        /// Gets the state value of the specified key.
+        /// </summary>
+        /// <param name="key">The key of the state value.</param>
+        /// <returns>The requested state value.</returns>
+        public string this[string key]
         {
             get
             {
                 string result;
-                this.additionalState.TryGetValue(stateKey, out result);
+                this.additionalState.TryGetValue(key, out result);
                 return result;
             }
         }
 
+        /// <summary>
+        /// Gets the value, in Victory Points (VP) or Gold Coins (GC), of a set of <see cref="Resource">Resources</see>.
+        /// </summary>
+        /// <param name="resources">The resources to score.</param>
+        /// <returns>The value of the <see cref="Resource">Resources</see>.</returns>
         public static int ScoreResources(EnumCollection<Resource> resources)
         {
             var suits = new List<int>();
@@ -358,6 +441,7 @@ namespace GameTheory.Games.FiveTribes
             return suits.Sum(s => SuitValues[s]);
         }
 
+        /// <inheritdoc />
         public IReadOnlyCollection<Move> GetAvailableMoves(PlayerToken player)
         {
             var moves = new List<Move>();
@@ -424,6 +508,10 @@ namespace GameTheory.Games.FiveTribes
             return moves.ToImmutableList();
         }
 
+        /// <summary>
+        /// Gets the index of the highest non-null value in the <see cref="TurnOrderTrack"/>.
+        /// </summary>
+        /// <returns>The requested index.</returns>
         public int GetHighestBidIndex()
         {
             var nextIndex = this.turnOrderTrack.Count - 1;
@@ -435,6 +523,11 @@ namespace GameTheory.Games.FiveTribes
             return nextIndex;
         }
 
+        /// <summary>
+        /// Gets the score, in Victory Points (VP), of the specified player.
+        /// </summary>
+        /// <param name="player">The player whose score should be calculated.</param>
+        /// <returns>The specified player's score.</returns>
         public int GetScore(PlayerToken player)
         {
             var inventory = this.inventory[player];
@@ -451,6 +544,7 @@ namespace GameTheory.Games.FiveTribes
                    inventory.Djinns.Sum(d => d.Value);
         }
 
+        /// <inheritdoc />
         public IReadOnlyCollection<PlayerToken> GetWinners()
         {
             if (this.phase != Phase.End)
@@ -470,11 +564,17 @@ namespace GameTheory.Games.FiveTribes
             return this.MakeMove(move);
         }
 
+        /// <summary>
+        /// Gets a value indicating whether or not the specified player has any Camels left.
+        /// </summary>
+        /// <param name="player">The player whose camel count should be checked against the <see cref="CamelLimit"/>.</param>
+        /// <returns><c>true</c> if the player has any remaining camels, <c>false</c> otherwise.</returns>
         public bool IsPlayerUnderCamelLimit(PlayerToken player)
         {
             return this.sultanate.Count(s => s.Owner == player) < this.CamelLimit;
         }
 
+        /// <inheritdoc />
         public GameState MakeMove(Move move)
         {
             Contract.Requires(move.State == this);
