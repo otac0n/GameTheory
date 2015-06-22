@@ -559,6 +559,7 @@ namespace GameTheory.Games.FiveTribes
                 .ToImmutableList();
         }
 
+        /// <inheritdoc />
         IGameState<Move> IGameState<Move>.MakeMove(Move move)
         {
             return this.MakeMove(move);

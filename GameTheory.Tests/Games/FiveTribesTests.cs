@@ -12,6 +12,7 @@ namespace GameTheory.Tests.Games
     using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Linq;
+    using System.Linq.Expressions;
     using System.Threading;
     using GameTheory.Games.FiveTribes;
     using GameTheory.Games.FiveTribes.Djinns;
@@ -279,12 +280,13 @@ namespace GameTheory.Tests.Games
             return cts.Token;
         }
 
-        private static GameState MakeMove(GameState state, PlayerToken player, Func<Move, bool> filter)
+        private static GameState MakeMove(GameState state, PlayerToken player, Expression<Func<Move, bool>> filter)
         {
-            var moves = state.GetAvailableMoves(player).Where(filter).ToList();
+            var moves = state.GetAvailableMoves(player).Where(filter.Compile()).ToList();
             if (moves.Count != 1)
             {
                 ShowMoves(state);
+                Console.WriteLine("Filter: {0}", filter);
             }
 
             return state.MakeMove(moves.Single());
