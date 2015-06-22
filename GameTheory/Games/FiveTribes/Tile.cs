@@ -13,36 +13,69 @@ namespace GameTheory.Games.FiveTribes
     using System.Linq;
     using GameTheory.Games.FiveTribes.Moves;
 
+    /// <summary>
+    /// Represents a tile in game of Five Tribes.
+    /// </summary>
     public abstract class Tile
     {
         private readonly TileColor color;
         private readonly int value;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Tile"/> class.
+        /// </summary>
+        /// <param name="value">The value of the <see cref="Tile"/>, in Victory Points (VP).</param>
+        /// <param name="color">The color of the <see cref="Tile"/>.</param>
         protected Tile(int value, TileColor color)
         {
             this.value = value;
             this.color = color;
         }
 
+        /// <summary>
+        /// Gets the color of the <see cref="Tile"/>.
+        /// </summary>
         public TileColor Color
         {
             get { return this.color; }
         }
 
+        /// <summary>
+        /// Gets the value of the <see cref="Tile"/>, in Victory Points (VP).
+        /// </summary>
         public int Value
         {
             get { return this.value; }
         }
 
+        /// <summary>
+        /// Generates moves for the specified <see cref="GameState"/>.
+        /// </summary>
+        /// <param name="state">The <see cref="GameState"/> for which <see cref="Move">Moves</see> are being generated.</param>
+        /// <returns>The <see cref="Move">Moves</see> provided by the <see cref="Tile"/>.</returns>
         public virtual IEnumerable<Move> GetTileActionMoves(GameState state)
         {
             yield return new ChangePhaseMove(state, "Skip Tile Action", Phase.CleanUp);
         }
 
+        /// <summary>
+        /// Represents a Big Market tile.
+        /// </summary>
         public class BigMarket : Tile
         {
+            /// <summary>
+            /// The number of <see cref="Resource">Resources</see> the player can choose from, starting from the beginning.
+            /// </summary>
             public const int FirstN = 6;
+
+            /// <summary>
+            /// The cost of using the <see cref="BigMarket"/> to purchase two <see cref="Resource">Resources</see>.
+            /// </summary>
             public const int Gold = 6;
+
+            /// <summary>
+            /// The singleton instance of <see cref="BigMarket"/>.
+            /// </summary>
             public static readonly BigMarket Instance = new BigMarket();
 
             private BigMarket()
@@ -50,6 +83,7 @@ namespace GameTheory.Games.FiveTribes
             {
             }
 
+            /// <inheritdoc />
             public override IEnumerable<Move> GetTileActionMoves(GameState state0)
             {
                 if (state0.VisibleResources.Count > 0)
@@ -86,8 +120,14 @@ namespace GameTheory.Games.FiveTribes
             }
         }
 
+        /// <summary>
+        /// Represents an Oasis tile.
+        /// </summary>
         public class Oasis : Tile
         {
+            /// <summary>
+            /// The singleton instance of <see cref="Oasis"/>.
+            /// </summary>
             public static readonly Oasis Instance = new Oasis();
 
             private Oasis()
@@ -95,19 +135,28 @@ namespace GameTheory.Games.FiveTribes
             {
             }
 
+            /// <inheritdoc />
             public override IEnumerable<Move> GetTileActionMoves(GameState state0)
             {
                 yield return new PlacePalmTreeMove(state0, state0.LastPoint, s1 => s1.With(phase: Phase.CleanUp));
             }
         }
 
+        /// <summary>
+        /// Represents a Sacred Place tile.
+        /// </summary>
         public class SacredPlace : Tile
         {
+            /// <summary>
+            /// Initializes a new instance of the <see cref="SacredPlace"/> class.
+            /// </summary>
+            /// <param name="value">The value of the <see cref="Tile"/>, in Victory Points (VP).</param>
             public SacredPlace(int value)
                 : base(value, TileColor.Blue)
             {
             }
 
+            /// <inheritdoc />
             public override IEnumerable<Move> GetTileActionMoves(GameState state0)
             {
                 if (state0.VisibleDjinns.Count >= 1)
@@ -128,10 +177,24 @@ namespace GameTheory.Games.FiveTribes
             }
         }
 
+        /// <summary>
+        /// Represents a Small Market tile.
+        /// </summary>
         public class SmallMarket : Tile
         {
+            /// <summary>
+            /// The number of <see cref="Resource">Resources</see> the player can choose from, starting from the beginning.
+            /// </summary>
             public const int FirstN = 3;
+
+            /// <summary>
+            /// The cost of using the <see cref="SmallMarket"/> to purchase a <see cref="Resource"/>.
+            /// </summary>
             public const int Gold = 3;
+
+            /// <summary>
+            /// The singleton instance of <see cref="SmallMarket"/>.
+            /// </summary>
             public static readonly SmallMarket Instance = new SmallMarket();
 
             private SmallMarket()
@@ -139,6 +202,7 @@ namespace GameTheory.Games.FiveTribes
             {
             }
 
+            /// <inheritdoc />
             public override IEnumerable<Move> GetTileActionMoves(GameState state0)
             {
                 if (state0.VisibleResources.Count >= 1)
@@ -159,8 +223,14 @@ namespace GameTheory.Games.FiveTribes
             }
         }
 
+        /// <summary>
+        /// Represents a Village tile.
+        /// </summary>
         public class Village : Tile
         {
+            /// <summary>
+            /// The singleton instance of <see cref="Village"/>.
+            /// </summary>
             public static readonly Village Instance = new Village();
 
             private Village()
@@ -168,6 +238,7 @@ namespace GameTheory.Games.FiveTribes
             {
             }
 
+            /// <inheritdoc />
             public override IEnumerable<Move> GetTileActionMoves(GameState state0)
             {
                 yield return new PlacePalaceMove(state0, state0.LastPoint, s1 => s1.With(phase: Phase.CleanUp));
