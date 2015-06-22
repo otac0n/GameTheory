@@ -56,7 +56,7 @@ namespace GameTheory.Games.FiveTribes
         }
 
         /// <summary>
-        /// Gets the number of <see cref="Palace">Palaces</see> at this <see cref="Square"/>.
+        /// Gets the number of Palaces at this <see cref="Square"/>.
         /// </summary>
         public int Palaces
         {
@@ -64,7 +64,7 @@ namespace GameTheory.Games.FiveTribes
         }
 
         /// <summary>
-        /// Gets the number of <see cref="PalmTree">PalmTrees</see> at this <see cref="Square"/>.
+        /// Gets the number of Palm Trees at this <see cref="Square"/>.
         /// </summary>
         public int PalmTrees
         {

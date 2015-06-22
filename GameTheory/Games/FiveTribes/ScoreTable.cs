@@ -41,7 +41,7 @@ namespace GameTheory.Games.FiveTribes
         }
 
         /// <summary>
-        /// Gets the player's Gold Coin (GC) multiplier applied when scoring <see cref="Meeples.Builder">Builders</see>.
+        /// Gets the player's Gold Coin (GC) multiplier applied when scoring <see cref="Meeple.Builder">Builders</see>.
         /// </summary>
         public int BuilderMultiplier
         {
@@ -49,7 +49,7 @@ namespace GameTheory.Games.FiveTribes
         }
 
         /// <summary>
-        /// Gets the player's base Victory Point (VP) value for <see cref="Meeples.Elder">Elders</see>.
+        /// Gets the player's base Victory Point (VP) value for <see cref="Meeple.Elder">Elders</see>.
         /// </summary>
         public int ElderValue
         {
@@ -73,7 +73,7 @@ namespace GameTheory.Games.FiveTribes
         }
 
         /// <summary>
-        /// Gets the player's base Victory Point (VP) value for <see cref="Meeples.Vizier">Viziers</see>.
+        /// Gets the player's base Victory Point (VP) value for <see cref="Meeple.Vizier">Viziers</see>.
         /// </summary>
         public int VizierValue
         {

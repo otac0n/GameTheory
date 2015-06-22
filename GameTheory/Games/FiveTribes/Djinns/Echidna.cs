@@ -43,7 +43,7 @@ namespace GameTheory.Games.FiveTribes.Djinns
         }
 
         /// <summary>
-        /// Represents a move to double the amount of Gold Coins (GCs) the active player's <see cref="Builder">Builders</see> get this turn.
+        /// Represents a move to double the amount of Gold Coins (GCs) the active player's <see cref="Meeple.Builder">Builders</see> get this turn.
         /// </summary>
         public class DoubleBuilderScoreMove : Move
         {

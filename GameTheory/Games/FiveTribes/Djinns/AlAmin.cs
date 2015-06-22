@@ -50,7 +50,7 @@ namespace GameTheory.Games.FiveTribes.Djinns
         }
 
         /// <summary>
-        /// Represents a move to trade a pair of <see cref="Resource.Slave">Slaves</see> for the specified <see cref="Resource"/>.
+        /// Represents a move to trade a pair of <see cref="FiveTribes.Resource.Slave">Slaves</see> for the specified <see cref="Resource"/>.
         /// </summary>
         public class TradeSlavesForResourceMove : Move
         {
