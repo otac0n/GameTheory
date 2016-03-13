@@ -1,10 +1,6 @@
-﻿// -----------------------------------------------------------------------
-// <copyright file="EnumCollection.cs" company="(none)">
-//   Copyright © 2015 John Gietzen.  All Rights Reserved.
-//   This source is subject to the MIT license.
-//   Please see license.md for more information.
-// </copyright>
-// -----------------------------------------------------------------------
+﻿// Copyright © 2016 John Gietzen.  All Rights Reserved.
+// This source is subject to the MIT license.
+// Please see license.md for more information.
 
 namespace GameTheory
 {
@@ -19,7 +15,8 @@ namespace GameTheory
     /// Provides a compact collection of enumeration values.
     /// </summary>
     /// <typeparam name="TEnum">The type of enumeration values to store in the collection.</typeparam>
-    public class EnumCollection<TEnum> : IEnumerable<TEnum>, IReadOnlyList<TEnum> where TEnum : struct
+    public class EnumCollection<TEnum> : IEnumerable<TEnum>, IReadOnlyList<TEnum>
+        where TEnum : struct
     {
         /// <summary>
         /// An empty <see cref="EnumCollection{T}"/>.
@@ -95,6 +92,7 @@ namespace GameTheory
             get { return Enumerable.Range(0, Capacity).Where(i => this.storage[i] > 0).Select(i => (TEnum)Enum.ToObject(typeof(TEnum), i)); }
         }
 
+        /// <inheritdoc />
         TEnum IReadOnlyList<TEnum>.this[int index]
         {
             get

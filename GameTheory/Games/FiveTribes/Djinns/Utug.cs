@@ -1,10 +1,6 @@
-﻿// -----------------------------------------------------------------------
-// <copyright file="Utug.cs" company="(none)">
-//   Copyright © 2015 John Gietzen.  All Rights Reserved.
-//   This source is subject to the MIT license.
-//   Please see license.md for more information.
-// </copyright>
-// -----------------------------------------------------------------------
+﻿// Copyright © 2016 John Gietzen.  All Rights Reserved.
+// This source is subject to the MIT license.
+// Please see license.md for more information.
 
 namespace GameTheory.Games.FiveTribes.Djinns
 {
@@ -36,7 +32,11 @@ namespace GameTheory.Games.FiveTribes.Djinns
         /// <inheritdoc />
         protected override IEnumerable<Move> GetAppliedCostMoves(GameState state0)
         {
-            var meepleSquares = Enumerable.Range(0, Sultanate.Width * Sultanate.Height).Where(i => { var sq = state0.Sultanate[i]; return sq.Owner == null && sq.Meeples.Count >= 1 && sq.Palaces == 0 && sq.PalmTrees == 0; });
+            var meepleSquares = Enumerable.Range(0, Sultanate.Width * Sultanate.Height).Where(i =>
+            {
+                var sq = state0.Sultanate[i];
+                return sq.Owner == null && sq.Meeples.Count >= 1 && sq.Palaces == 0 && sq.PalmTrees == 0;
+            });
 
             return from i in meepleSquares
                    select new PlaceCamelMove(state0, i);

@@ -1,10 +1,6 @@
-﻿// -----------------------------------------------------------------------
-// <copyright file="TicTacToe.cs" company="(none)">
-//   Copyright © 2014 John Gietzen.  All Rights Reserved.
-//   This source is subject to the MIT license.
-//   Please see license.md for more information.
-// </copyright>
-// -----------------------------------------------------------------------
+﻿// Copyright © 2016 John Gietzen.  All Rights Reserved.
+// This source is subject to the MIT license.
+// Please see license.md for more information.
 
 namespace GameTheory.Games
 {
@@ -20,6 +16,7 @@ namespace GameTheory.Games
         private const int Size = 3;
         private readonly PlayerToken activePlayer;
         private readonly Lazy<ImmutableList<Move>> availableMoves;
+        private readonly ImmutableList<PlayerToken> players;
         private readonly ImmutableList<PlayerToken> winners;
         private readonly PlayerToken winningPlayer;
         private PlayerToken[,] field;
@@ -34,11 +31,11 @@ namespace GameTheory.Games
 
         private TicTacToe(ImmutableList<PlayerToken> players, PlayerToken[,] field)
         {
-            this.Players = players;
+            this.players = players;
             this.field = field;
 
-            var p0 = this.Players[0];
-            var p1 = this.Players[1];
+            var p0 = this.players[0];
+            var p1 = this.players[1];
             var p0count = 0;
             var p1count = 0;
 
@@ -102,13 +99,11 @@ namespace GameTheory.Games
             get { return this.activePlayer; }
         }
 
-        IReadOnlyList<PlayerToken> IGameState<TicTacToe.Move>.Players
-        {
-            get { return this.Players; }
-        }
-
         /// <inheritdoc />
-        public ImmutableList<PlayerToken> Players { get; private set; }
+        public IReadOnlyList<PlayerToken> Players
+        {
+            get { return this.players; }
+        }
 
         /// <summary>
         /// Gets the <see cref="PlayerToken"/> of the player who marked the specified spot.
@@ -170,7 +165,7 @@ namespace GameTheory.Games
 
             newField[move.X, move.Y] = move.Player;
 
-            return new TicTacToe(this.Players, newField);
+            return new TicTacToe(this.players, newField);
         }
 
         private ImmutableList<Move> GetAvailableMoves()

@@ -1,10 +1,6 @@
-﻿// -----------------------------------------------------------------------
-// <copyright file="TicTacToeTests.cs" company="(none)">
-//   Copyright © 2014 John Gietzen.  All Rights Reserved.
-//   This source is subject to the MIT license.
-//   Please see license.md for more information.
-// </copyright>
-// -----------------------------------------------------------------------
+﻿// Copyright © 2016 John Gietzen.  All Rights Reserved.
+// This source is subject to the MIT license.
+// Please see license.md for more information.
 
 namespace GameTheory.Tests.Games
 {
@@ -157,7 +153,8 @@ namespace GameTheory.Tests.Games
             Assert.That(winner, Is.EqualTo(player2));
         }
 
-        private static T ApplyMoves<T>(T state, string moveList) where T : IGameState<TicTacToe.Move>
+        private static T ApplyMoves<T>(T state, string moveList)
+            where T : IGameState<TicTacToe.Move>
         {
             var moves = from move in moveList.Split(';')
                         let parts = move.Split(',')

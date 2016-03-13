@@ -1,10 +1,6 @@
-﻿// -----------------------------------------------------------------------
-// <copyright file="RandomTests.cs" company="(none)">
-//   Copyright © 2014 John Gietzen.  All Rights Reserved.
-//   This source is subject to the MIT license.
-//   Please see license.md for more information.
-// </copyright>
-// -----------------------------------------------------------------------
+﻿// Copyright © 2016 John Gietzen.  All Rights Reserved.
+// This source is subject to the MIT license.
+// Please see license.md for more information.
 
 namespace GameTheory.Tests
 {
@@ -139,8 +135,20 @@ namespace GameTheory.Tests
             var waiting = 0;
             var threads = new List<Thread>
             {
-                new Thread(() => { Interlocked.Increment(ref waiting); flag.Wait(); var rand = Random.Instance; a = Enumerable.Range(0, 10).Select(i => rand.Next()).ToList(); }),
-                new Thread(() => { Interlocked.Increment(ref waiting); flag.Wait(); var rand = Random.Instance; b = Enumerable.Range(0, 10).Select(i => rand.Next()).ToList(); }),
+                new Thread(() =>
+                {
+                    Interlocked.Increment(ref waiting);
+                    flag.Wait();
+                    var rand = Random.Instance;
+                    a = Enumerable.Range(0, 10).Select(i => rand.Next()).ToList();
+                }),
+                new Thread(() =>
+                {
+                    Interlocked.Increment(ref waiting);
+                    flag.Wait();
+                    var rand = Random.Instance;
+                    b = Enumerable.Range(0, 10).Select(i => rand.Next()).ToList();
+                }),
             };
             threads.ForEach(t => t.Start());
             while (waiting < 2)

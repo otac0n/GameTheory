@@ -1,10 +1,6 @@
-﻿// -----------------------------------------------------------------------
-// <copyright file="Random.cs" company="(none)">
-//   Copyright © 2014 John Gietzen.  All Rights Reserved.
-//   This source is subject to the MIT license.
-//   Please see license.md for more information.
-// </copyright>
-// -----------------------------------------------------------------------
+﻿// Copyright © 2016 John Gietzen.  All Rights Reserved.
+// This source is subject to the MIT license.
+// Please see license.md for more information.
 
 namespace GameTheory
 {
@@ -79,7 +75,8 @@ namespace GameTheory
         /// <param name="discards">The discards pile.</param>
         /// <param name="instance">An instance of <see cref="System.Random"/> to use.</param>
         /// <returns>The remaining deck.</returns>
-        public static EnumCollection<T> Deal<T>(this EnumCollection<T> deck, int count, out ImmutableList<T> dealt, ref EnumCollection<T> discards, System.Random instance = null) where T : struct
+        public static EnumCollection<T> Deal<T>(this EnumCollection<T> deck, int count, out ImmutableList<T> dealt, ref EnumCollection<T> discards, System.Random instance = null)
+            where T : struct
         {
             var allDealt = ImmutableList<T>.Empty;
             ImmutableList<T> newlyDealt;
@@ -142,7 +139,8 @@ namespace GameTheory
         /// <param name="dealt">The resulting items.</param>
         /// <param name="instance">An instance of <see cref="System.Random"/> to use.</param>
         /// <returns>The remaining deck.</returns>
-        public static EnumCollection<T> Deal<T>(this EnumCollection<T> deck, int count, out ImmutableList<T> dealt, System.Random instance = null) where T : struct
+        public static EnumCollection<T> Deal<T>(this EnumCollection<T> deck, int count, out ImmutableList<T> dealt, System.Random instance = null)
+            where T : struct
         {
             instance = instance ?? Instance;
 

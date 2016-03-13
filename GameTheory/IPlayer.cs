@@ -1,10 +1,6 @@
-﻿// -----------------------------------------------------------------------
-// <copyright file="IPlayer.cs" company="(none)">
-//   Copyright © 2014 John Gietzen.  All Rights Reserved.
-//   This source is subject to the MIT license.
-//   Please see license.md for more information.
-// </copyright>
-// -----------------------------------------------------------------------
+﻿// Copyright © 2016 John Gietzen.  All Rights Reserved.
+// This source is subject to the MIT license.
+// Please see license.md for more information.
 
 namespace GameTheory
 {
@@ -16,7 +12,8 @@ namespace GameTheory
     /// Defines the contract for the implementation of a player.
     /// </summary>
     /// <typeparam name="TMove">The type of the moves that the player will choose.</typeparam>
-    public interface IPlayer<TMove> : IDisposable where TMove : IMove
+    public interface IPlayer<TMove> : IDisposable
+        where TMove : IMove
     {
         /// <summary>
         /// Instructs the player to choose a move from the specified game state as an asynchronous operation using a task.

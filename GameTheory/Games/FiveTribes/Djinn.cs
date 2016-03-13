@@ -1,10 +1,6 @@
-﻿// -----------------------------------------------------------------------
-// <copyright file="Djinn.cs" company="(none)">
-//   Copyright © 2015 John Gietzen.  All Rights Reserved.
-//   This source is subject to the MIT license.
-//   Please see license.md for more information.
-// </copyright>
-// -----------------------------------------------------------------------
+﻿// Copyright © 2016 John Gietzen.  All Rights Reserved.
+// This source is subject to the MIT license.
+// Please see license.md for more information.
 
 namespace GameTheory.Games.FiveTribes
 {
@@ -152,7 +148,7 @@ namespace GameTheory.Games.FiveTribes
         /// </summary>
         public abstract class PayPerActionDjinnBase : Djinn
         {
-            private readonly CostDelegate cost;
+            private readonly ApplyCost cost;
             private readonly string stateKey;
 
             /// <summary>
@@ -160,7 +156,7 @@ namespace GameTheory.Games.FiveTribes
             /// </summary>
             /// <param name="value">The value of the <see cref="Djinn"/>, in victory points (VP).</param>
             /// <param name="cost">The <see cref="Cost"/> of the ability.</param>
-            protected PayPerActionDjinnBase(int value, CostDelegate cost)
+            protected PayPerActionDjinnBase(int value, ApplyCost cost)
                 : base(value)
             {
                 this.cost = cost;

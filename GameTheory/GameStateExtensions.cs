@@ -1,10 +1,6 @@
-﻿// -----------------------------------------------------------------------
-// <copyright file="GameStateExtensions.cs" company="(none)">
-//   Copyright © 2014 John Gietzen.  All Rights Reserved.
-//   This source is subject to the MIT license.
-//   Please see license.md for more information.
-// </copyright>
-// -----------------------------------------------------------------------
+﻿// Copyright © 2016 John Gietzen.  All Rights Reserved.
+// This source is subject to the MIT license.
+// Please see license.md for more information.
 
 namespace GameTheory
 {
@@ -21,7 +17,8 @@ namespace GameTheory
         /// <typeparam name="TMove">The type of object that represents a move.</typeparam>
         /// <param name="state">The game state for which to retrieve all moves.</param>
         /// <returns>All moves for all players in the specified game state.</returns>
-        public static List<TMove> GetAvailableMoves<TMove>(this IGameState<TMove> state) where TMove : IMove
+        public static List<TMove> GetAvailableMoves<TMove>(this IGameState<TMove> state)
+            where TMove : IMove
         {
             var moves = new List<TMove>();
 

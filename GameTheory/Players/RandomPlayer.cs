@@ -1,10 +1,6 @@
-﻿// -----------------------------------------------------------------------
-// <copyright file="RandomPlayer.cs" company="(none)">
-//   Copyright © 2014 John Gietzen.  All Rights Reserved.
-//   This source is subject to the MIT license.
-//   Please see license.md for more information.
-// </copyright>
-// -----------------------------------------------------------------------
+﻿// Copyright © 2016 John Gietzen.  All Rights Reserved.
+// This source is subject to the MIT license.
+// Please see license.md for more information.
 
 namespace GameTheory.Players
 {
@@ -15,7 +11,8 @@ namespace GameTheory.Players
     /// Implements a player that chooses randomly from its options.
     /// </summary>
     /// <typeparam name="TMove">The type of move that the player supports.</typeparam>
-    public sealed class RandomPlayer<TMove> : IPlayer<TMove> where TMove : IMove
+    public sealed class RandomPlayer<TMove> : IPlayer<TMove>
+        where TMove : IMove
     {
         private readonly PlayerToken playerToken;
 
@@ -28,7 +25,9 @@ namespace GameTheory.Players
             this.playerToken = playerToken;
         }
 
-        /// <inheritdoc />
+        /// <summary>
+        /// Gets the <see cref="GameTheory.PlayerToken"/> that represents the player.
+        /// </summary>
         public PlayerToken PlayerToken
         {
             get { return this.playerToken; }

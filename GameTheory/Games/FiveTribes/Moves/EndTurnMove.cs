@@ -1,10 +1,6 @@
-﻿// -----------------------------------------------------------------------
-// <copyright file="EndTurnMove.cs" company="(none)">
-//   Copyright © 2015 John Gietzen.  All Rights Reserved.
-//   This source is subject to the MIT license.
-//   Please see license.md for more information.
-// </copyright>
-// -----------------------------------------------------------------------
+﻿// Copyright © 2016 John Gietzen.  All Rights Reserved.
+// This source is subject to the MIT license.
+// Please see license.md for more information.
 
 namespace GameTheory.Games.FiveTribes.Moves
 {
@@ -47,9 +43,9 @@ namespace GameTheory.Games.FiveTribes.Moves
             return state0.With(
                 djinnDiscards: djinnDiscards,
                 djinnPile: djinnPile,
-                lastPoint: new Point(),
+                lastPoint: default(Point),
                 phase: moreTurns ? Phase.MoveTurnMarker : (isOver ? Phase.End : Phase.Bid),
-                previousPoint: new Point(),
+                previousPoint: default(Point),
                 resourceDiscards: resourceDiscards,
                 resourcePile: resourcePile,
                 visibleDjinns: state0.VisibleDjinns.AddRange(dealtDjinns),

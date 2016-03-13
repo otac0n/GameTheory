@@ -1,10 +1,6 @@
-﻿// -----------------------------------------------------------------------
-// <copyright file="GameState.cs" company="(none)">
-//   Copyright © 2015 John Gietzen.  All Rights Reserved.
-//   This source is subject to the MIT license.
-//   Please see license.md for more information.
-// </copyright>
-// -----------------------------------------------------------------------
+﻿// Copyright © 2016 John Gietzen.  All Rights Reserved.
+// This source is subject to the MIT license.
+// Please see license.md for more information.
 
 namespace GameTheory.Games.FiveTribes
 {
@@ -130,8 +126,7 @@ namespace GameTheory.Games.FiveTribes
                 AnunNak.Instance,
                 Baal.Instance,
                 Boaz.Instance,
-                Bouraq.Instance,
-                ////Dhenim.Instance, // TODO: How do we handle this for tests?
+                Bouraq.Instance, ////Dhenim.Instance, // TODO: How do we handle this for tests?
                 Echidna.Instance,
                 Enki.Instance,
                 Hagis.Instance,
@@ -197,8 +192,7 @@ namespace GameTheory.Games.FiveTribes
             ImmutableList<Djinn> djinnDiscards,
             ImmutableList<Djinn> djinnPile,
             EnumCollection<Meeple> inHand,
-            ImmutableDictionary<PlayerToken,
-            Inventory> inventory,
+            ImmutableDictionary<PlayerToken, Inventory> inventory,
             Point lastPoint,
             Phase phase,
             ImmutableList<PlayerToken> players,
@@ -599,7 +593,6 @@ namespace GameTheory.Games.FiveTribes
             return this.sultanate.Count(s => s.Owner == player) < this.CamelLimit;
         }
 
-        /// <inheritdoc />
         public GameState MakeMove(Move move)
         {
             Contract.Requires(move.State == this);

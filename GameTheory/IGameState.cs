@@ -1,10 +1,6 @@
-﻿// -----------------------------------------------------------------------
-// <copyright file="IGameState.cs" company="(none)">
-//   Copyright © 2014 John Gietzen.  All Rights Reserved.
-//   This source is subject to the MIT license.
-//   Please see license.md for more information.
-// </copyright>
-// -----------------------------------------------------------------------
+﻿// Copyright © 2016 John Gietzen.  All Rights Reserved.
+// This source is subject to the MIT license.
+// Please see license.md for more information.
 
 namespace GameTheory
 {
@@ -14,7 +10,8 @@ namespace GameTheory
     /// Represents the contract of a game state.
     /// </summary>
     /// <typeparam name="TMove">The type of object that represents a move.</typeparam>
-    public interface IGameState<TMove> where TMove : IMove
+    public interface IGameState<TMove>
+        where TMove : IMove
     {
         /// <summary>
         /// Gets a list of players in the current game state.

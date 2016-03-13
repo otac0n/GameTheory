@@ -1,10 +1,6 @@
-﻿// -----------------------------------------------------------------------
-// <copyright file="Kandicha.cs" company="(none)">
-//   Copyright © 2015 John Gietzen.  All Rights Reserved.
-//   This source is subject to the MIT license.
-//   Please see license.md for more information.
-// </copyright>
-// -----------------------------------------------------------------------
+﻿// Copyright © 2016 John Gietzen.  All Rights Reserved.
+// This source is subject to the MIT license.
+// Please see license.md for more information.
 
 namespace GameTheory.Games.FiveTribes.Djinns
 {
@@ -80,7 +76,7 @@ namespace GameTheory.Games.FiveTribes.Djinns
         /// <inheritdoc />
         public override GameState HandleAssassination(PlayerToken owner, GameState state0, PlayerToken victim, EnumCollection<Meeple> kill)
         {
-            return this.HandleAssassination(owner, state0, new Point(), kill);
+            return this.HandleAssassination(owner, state0, default(Point), kill);
         }
     }
 }
