@@ -17,21 +17,21 @@ namespace GameTheory.Games.FiveTribes.Moves
         /// <summary>
         /// Initializes a new instance of the <see cref="TakeResourceMove"/> class.
         /// </summary>
-        /// <param name="state0">The <see cref="GameState"/> that this move is based on.</param>
+        /// <param name="state">The <see cref="GameState"/> that this move is based on.</param>
         /// <param name="index">The index of the <see cref="Resource"/> that will be taken.</param>
-        public TakeResourceMove(GameState state0, int index)
-            : this(state0, index, s => s)
+        public TakeResourceMove(GameState state, int index)
+            : this(state, index, s => s)
         {
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TakeResourceMove"/> class.
         /// </summary>
-        /// <param name="state0">The <see cref="GameState"/> that this move is based on.</param>
+        /// <param name="state">The <see cref="GameState"/> that this move is based on.</param>
         /// <param name="index">The index of the <see cref="Resource"/> that will be taken.</param>
         /// <param name="after">A function to perform after the move has taken place.</param>
-        public TakeResourceMove(GameState state0, int index, Func<GameState, GameState> after)
-            : base(state0, state0.ActivePlayer)
+        public TakeResourceMove(GameState state, int index, Func<GameState, GameState> after)
+            : base(state, state.ActivePlayer)
         {
             this.index = index;
             this.after = after;
@@ -56,17 +56,17 @@ namespace GameTheory.Games.FiveTribes.Moves
         /// <inheritdoc />
         public override string ToString()
         {
-            return string.Format("Take {0}", this.State.VisibleResources[this.index]);
+            return $"Take {this.State.VisibleResources[this.index]}";
         }
 
-        internal override GameState Apply(GameState state0)
+        internal override GameState Apply(GameState state)
         {
-            var player = state0.ActivePlayer;
-            var inventory = state0.Inventory[player];
+            var player = state.ActivePlayer;
+            var inventory = state.Inventory[player];
 
-            return this.after(state0.With(
-                inventory: state0.Inventory.SetItem(player, inventory.With(resources: inventory.Resources.Add(state0.VisibleResources[this.index]))),
-                visibleResources: state0.VisibleResources.RemoveAt(this.index)));
+            return this.after(state.With(
+                inventory: state.Inventory.SetItem(player, inventory.With(resources: inventory.Resources.Add(state.VisibleResources[this.index]))),
+                visibleResources: state.VisibleResources.RemoveAt(this.index)));
         }
     }
 }

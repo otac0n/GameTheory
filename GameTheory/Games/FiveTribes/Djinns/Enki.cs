@@ -7,11 +7,12 @@ namespace GameTheory.Games.FiveTribes.Djinns
     using System.Collections.Generic;
     using System.Linq;
     using GameTheory.Games.FiveTribes.Moves;
+    using GameTheory.Games.FiveTribes.Tiles;
 
     /// <summary>
     /// Pay <see cref="Cost.OneElderOrOneSlave"/> to place 1 Palm Tree on any Oasis.
     /// </summary>
-    public class Enki : Djinn.PayPerActionDjinnBase
+    public class Enki : PayPerActionDjinnBase
     {
         /// <summary>
         /// The singleton instance of <see cref="Enki"/>.
@@ -24,11 +25,11 @@ namespace GameTheory.Games.FiveTribes.Djinns
         }
 
         /// <inheritdoc />
-        protected override IEnumerable<Move> GetAppliedCostMoves(GameState state0)
+        protected override IEnumerable<Move> GetAppliedCostMoves(GameState state)
         {
             return Enumerable.Range(0, Sultanate.Width * Sultanate.Height)
-                .Where(i => state0.Sultanate[i].Tile is Tile.Oasis)
-                .Select(i => new PlacePalmTreeMove(state0, i));
+                .Where(i => state.Sultanate[i].Tile is Oasis)
+                .Select(i => new PlacePalmTreeMove(state, i));
         }
     }
 }

@@ -17,22 +17,22 @@ namespace GameTheory.Games.FiveTribes.Moves
         /// <summary>
         /// Initializes a new instance of the <see cref="PayMeeplesMove"/> class.
         /// </summary>
-        /// <param name="state0">The <see cref="GameState"/> that this move is based on.</param>
+        /// <param name="state">The <see cref="GameState"/> that this move is based on.</param>
         /// <param name="meeple">The cost, in <see cref="Meeple">Meeples</see>.</param>
         /// <param name="after">A function to perform after the move has taken place.</param>
-        public PayMeeplesMove(GameState state0, Meeple meeple, Func<GameState, GameState> after)
-            : this(state0, new EnumCollection<Meeple>(meeple), after)
+        public PayMeeplesMove(GameState state, Meeple meeple, Func<GameState, GameState> after)
+            : this(state, new EnumCollection<Meeple>(meeple), after)
         {
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PayMeeplesMove"/> class.
         /// </summary>
-        /// <param name="state0">The <see cref="GameState"/> that this move is based on.</param>
+        /// <param name="state">The <see cref="GameState"/> that this move is based on.</param>
         /// <param name="meeples">The cost, in <see cref="Meeple">Meeples</see>.</param>
         /// <param name="after">A function to perform after the move has taken place.</param>
-        public PayMeeplesMove(GameState state0, EnumCollection<Meeple> meeples, Func<GameState, GameState> after)
-            : base(state0, state0.ActivePlayer)
+        public PayMeeplesMove(GameState state, EnumCollection<Meeple> meeples, Func<GameState, GameState> after)
+            : base(state, state.ActivePlayer)
         {
             this.after = after;
             this.meeples = meeples;
@@ -49,17 +49,17 @@ namespace GameTheory.Games.FiveTribes.Moves
         /// <inheritdoc />
         public override string ToString()
         {
-            return string.Format("Pay {0}", string.Join(",", this.meeples));
+            return $"Pay {string.Join(",", this.meeples)}";
         }
 
-        internal override GameState Apply(GameState state0)
+        internal override GameState Apply(GameState state)
         {
-            var player = state0.ActivePlayer;
-            var inventory = state0.Inventory[player];
+            var player = state.ActivePlayer;
+            var inventory = state.Inventory[player];
 
-            return this.after(state0.With(
-                bag: state0.Bag.AddRange(this.meeples),
-                inventory: state0.Inventory.SetItem(player, inventory.With(meeples: inventory.Meeples.RemoveRange(this.meeples)))));
+            return this.after(state.With(
+                bag: state.Bag.AddRange(this.meeples),
+                inventory: state.Inventory.SetItem(player, inventory.With(meeples: inventory.Meeples.RemoveRange(this.meeples)))));
         }
     }
 }

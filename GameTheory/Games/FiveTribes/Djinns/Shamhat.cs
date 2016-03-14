@@ -7,7 +7,7 @@ namespace GameTheory.Games.FiveTribes.Djinns
     /// <summary>
     /// At game end, each of your Elders is worth 4 VPs instead of 2.
     /// </summary>
-    public class Shamhat : Djinn.OnAcquireDjinnBase
+    public class Shamhat : OnAcquireDjinnBase
     {
         /// <summary>
         /// The singleton instance of <see cref="Shamhat"/>.
@@ -20,10 +20,10 @@ namespace GameTheory.Games.FiveTribes.Djinns
         }
 
         /// <inheritdoc />
-        protected override GameState OnAcquire(PlayerToken player, GameState state)
+        protected override GameState OnAcquire(PlayerToken owner, GameState state)
         {
             return state.With(
-                scoreTables: state.ScoreTables.SetItem(player, state.ScoreTables[player].With(elderValue: 4)));
+                scoreTables: state.ScoreTables.SetItem(owner, state.ScoreTables[owner].With(elderValue: 4)));
         }
     }
 }

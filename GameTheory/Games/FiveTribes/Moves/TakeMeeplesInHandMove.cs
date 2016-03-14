@@ -12,25 +12,25 @@ namespace GameTheory.Games.FiveTribes.Moves
         /// <summary>
         /// Initializes a new instance of the <see cref="TakeMeeplesInHandMove"/> class.
         /// </summary>
-        /// <param name="state0">The <see cref="GameState"/> that this move is based on.</param>
-        public TakeMeeplesInHandMove(GameState state0)
-            : base(state0, state0.ActivePlayer)
+        /// <param name="state">The <see cref="GameState"/> that this move is based on.</param>
+        public TakeMeeplesInHandMove(GameState state)
+            : base(state, state.ActivePlayer)
         {
         }
 
         /// <inheritdoc />
         public override string ToString()
         {
-            return string.Format("Take {0}", string.Join(",", this.State.InHand));
+            return $"Take {string.Join(",", this.State.InHand)}";
         }
 
-        internal override GameState Apply(GameState state0)
+        internal override GameState Apply(GameState state)
         {
-            var player = state0.ActivePlayer;
-            var inventory = state0.Inventory[player];
-            return state0.With(
+            var player = state.ActivePlayer;
+            var inventory = state.Inventory[player];
+            return state.With(
                 inHand: EnumCollection<Meeple>.Empty,
-                inventory: state0.Inventory.SetItem(player, inventory.With(meeples: inventory.Meeples.AddRange(state0.InHand))),
+                inventory: state.Inventory.SetItem(player, inventory.With(meeples: inventory.Meeples.AddRange(state.InHand))),
                 phase: Phase.TileAction);
         }
     }

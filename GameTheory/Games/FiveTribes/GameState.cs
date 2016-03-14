@@ -12,6 +12,7 @@ namespace GameTheory.Games.FiveTribes
     using System.Threading;
     using GameTheory.Games.FiveTribes.Djinns;
     using GameTheory.Games.FiveTribes.Moves;
+    using GameTheory.Games.FiveTribes.Tiles;
 
     /// <summary>
     /// Represents the current state of a game of Five Tribes.
@@ -79,38 +80,38 @@ namespace GameTheory.Games.FiveTribes
 
             SuitValues = ImmutableList.Create(0, 1, 3, 7, 13, 21, 30, 40, 50, 60);
 
-            var smallSacredPlace = new Tile.SacredPlace(6);
+            var smallSacredPlace = new SacredPlace(6);
             InitialTiles = ImmutableList.Create<Tile>(
-                Tile.BigMarket.Instance,
-                Tile.BigMarket.Instance,
-                Tile.BigMarket.Instance,
-                Tile.BigMarket.Instance,
-                Tile.SmallMarket.Instance,
-                Tile.SmallMarket.Instance,
-                Tile.SmallMarket.Instance,
-                Tile.SmallMarket.Instance,
-                Tile.SmallMarket.Instance,
-                Tile.SmallMarket.Instance,
-                Tile.SmallMarket.Instance,
-                Tile.SmallMarket.Instance,
-                Tile.Oasis.Instance,
-                Tile.Oasis.Instance,
-                Tile.Oasis.Instance,
-                Tile.Oasis.Instance,
-                Tile.Oasis.Instance,
-                Tile.Oasis.Instance,
-                Tile.Village.Instance,
-                Tile.Village.Instance,
-                Tile.Village.Instance,
-                Tile.Village.Instance,
-                Tile.Village.Instance,
+                BigMarket.Instance,
+                BigMarket.Instance,
+                BigMarket.Instance,
+                BigMarket.Instance,
+                SmallMarket.Instance,
+                SmallMarket.Instance,
+                SmallMarket.Instance,
+                SmallMarket.Instance,
+                SmallMarket.Instance,
+                SmallMarket.Instance,
+                SmallMarket.Instance,
+                SmallMarket.Instance,
+                Oasis.Instance,
+                Oasis.Instance,
+                Oasis.Instance,
+                Oasis.Instance,
+                Oasis.Instance,
+                Oasis.Instance,
+                Village.Instance,
+                Village.Instance,
+                Village.Instance,
+                Village.Instance,
+                Village.Instance,
                 smallSacredPlace,
                 smallSacredPlace,
                 smallSacredPlace,
                 smallSacredPlace,
-                new Tile.SacredPlace(10),
-                new Tile.SacredPlace(12),
-                new Tile.SacredPlace(15));
+                new SacredPlace(10),
+                new SacredPlace(12),
+                new SacredPlace(15));
 
             Meeples = new EnumCollection<Meeple>(new[]
             {
@@ -243,7 +244,7 @@ namespace GameTheory.Games.FiveTribes
             {
                 return this.phase == Phase.End ? null :
                        this.phase == Phase.Bid ? this.bidOrderTrack.Peek() :
-                       this.phase == Phase.MoveTurnMarker ? this.turnOrderTrack[this.GetHighestBidIndex()] :
+                       this.phase == Phase.MoveTurnMarker ? this.turnOrderTrack[this.FindHighestBidIndex()] :
                        this.bidOrderTrack.Last();
             }
         }
@@ -435,6 +436,8 @@ namespace GameTheory.Games.FiveTribes
         /// <returns>The value of the <see cref="Resource">Resources</see>.</returns>
         public static int ScoreResources(EnumCollection<Resource> resources)
         {
+            Contract.Requires(resources != null);
+
             var suits = new List<int>();
 
             foreach (var key in resources.Keys)
@@ -527,10 +530,10 @@ namespace GameTheory.Games.FiveTribes
         }
 
         /// <summary>
-        /// Gets the index of the highest non-null value in the <see cref="TurnOrderTrack"/>.
+        /// Finds the index of the highest non-null value in the <see cref="TurnOrderTrack"/>.
         /// </summary>
         /// <returns>The requested index.</returns>
-        public int GetHighestBidIndex()
+        public int FindHighestBidIndex()
         {
             var nextIndex = this.turnOrderTrack.Count - 1;
             while (nextIndex >= 0 && this.turnOrderTrack[nextIndex] == null)
@@ -593,8 +596,14 @@ namespace GameTheory.Games.FiveTribes
             return this.sultanate.Count(s => s.Owner == player) < this.CamelLimit;
         }
 
+        /// <summary>
+        /// Applies the move to the current game state.
+        /// </summary>
+        /// <param name="move">The <see cref="Move"/> to apply.</param>
+        /// <returns>The updated <see cref="GameState"/>.</returns>
         public GameState MakeMove(Move move)
         {
+            Contract.Requires(move != null);
             Contract.Requires(move.State == this);
 
             var newState = move.Apply(this);
@@ -719,33 +728,33 @@ namespace GameTheory.Games.FiveTribes
                 this.visibleResources);
         }
 
-        private static IEnumerable<Move> GetAssassinationMoves(GameState state0, int slaves = 0)
+        private static IEnumerable<Move> GetAssassinationMoves(GameState state, int slaves = 0)
         {
-            var player0 = state0.ActivePlayer;
+            var player0 = state.ActivePlayer;
 
             Func<EnumCollection<Meeple>, IEnumerable<EnumCollection<Meeple>>> combos = killable =>
             {
-                return killable.Combinations(Math.Min(killable.Count, state0.assassinationTables[player0].KillCount));
+                return killable.Combinations(Math.Min(killable.Count, state.assassinationTables[player0].KillCount));
             };
 
-            foreach (var victim in state0.players.Except(player0))
+            foreach (var victim in state.players.Except(player0))
             {
-                if (state0.assassinationTables[victim].HasProtection)
+                if (state.assassinationTables[victim].HasProtection)
                 {
                     continue;
                 }
 
-                foreach (var kill in combos(state0.inventory[victim].Meeples))
+                foreach (var kill in combos(state.inventory[victim].Meeples))
                 {
-                    yield return new AssassinatePlayerMove(state0, victim, kill, s => s.With(phase: Phase.TileAction));
+                    yield return new AssassinatePlayerMove(state, victim, kill, s => s.With(phase: Phase.TileAction));
                 }
             }
 
-            foreach (var point in FiveTribes.Sultanate.GetPointsWithin(state0.lastPoint, state0.inHand.Count + slaves))
+            foreach (var point in FiveTribes.Sultanate.GetPointsWithin(state.lastPoint, state.inHand.Count + slaves))
             {
-                foreach (var kill in combos(state0.sultanate[point].Meeples))
+                foreach (var kill in combos(state.sultanate[point].Meeples))
                 {
-                    yield return new AssassinateMove(state0, point, kill, s => s.With(phase: Phase.TileAction));
+                    yield return new AssassinateMove(state, point, kill, s => s.With(phase: Phase.TileAction));
                 }
             }
         }

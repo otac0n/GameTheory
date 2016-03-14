@@ -15,11 +15,11 @@ namespace GameTheory.Games.FiveTribes.Moves
         /// <summary>
         /// Initializes a new instance of the <see cref="DropMeepleMove"/> class.
         /// </summary>
-        /// <param name="state0">The <see cref="GameState"/> that this move is based on.</param>
+        /// <param name="state">The <see cref="GameState"/> that this move is based on.</param>
         /// <param name="meeple">The <see cref="Meeple"/> being dropped.</param>
         /// <param name="point">The <see cref="Point"/> at which the <see cref="Meeple"/> will be dropped.</param>
-        public DropMeepleMove(GameState state0, Meeple meeple, Point point)
-            : base(state0, state0.ActivePlayer)
+        public DropMeepleMove(GameState state, Meeple meeple, Point point)
+            : base(state, state.ActivePlayer)
         {
             this.meeple = meeple;
             this.point = point;
@@ -44,17 +44,17 @@ namespace GameTheory.Games.FiveTribes.Moves
         /// <inheritdoc />
         public override string ToString()
         {
-            return string.Format("Drop {0} at {1}", this.meeple, this.point);
+            return $"Drop {this.meeple} at {this.point}";
         }
 
-        internal override GameState Apply(GameState state0)
+        internal override GameState Apply(GameState state)
         {
-            var square = state0.Sultanate[this.point];
-            var s1 = state0.With(
-                inHand: state0.InHand.Remove(this.meeple),
+            var square = state.Sultanate[this.point];
+            var s1 = state.With(
+                inHand: state.InHand.Remove(this.meeple),
                 lastPoint: this.point,
-                previousPoint: state0.LastPoint,
-                sultanate: state0.Sultanate.SetItem(this.point, square.With(meeples: square.Meeples.Add(this.meeple))));
+                previousPoint: state.LastPoint,
+                sultanate: state.Sultanate.SetItem(this.point, square.With(meeples: square.Meeples.Add(this.meeple))));
 
             return s1.InHand.Count >= 1 ? s1 : s1.WithMoves(s2 => new[]
             {

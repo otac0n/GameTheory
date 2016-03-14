@@ -14,10 +14,10 @@ namespace GameTheory.Games.FiveTribes.Moves
         /// <summary>
         /// Initializes a new instance of the <see cref="PickUpTribeMove"/> class.
         /// </summary>
-        /// <param name="state0">The <see cref="GameState"/> that this move is based on.</param>
+        /// <param name="state">The <see cref="GameState"/> that this move is based on.</param>
         /// <param name="tribe">The <see cref="Meeple"/> tribe to pick up.</param>
-        public PickUpTribeMove(GameState state0, Meeple tribe)
-            : base(state0, state0.ActivePlayer)
+        public PickUpTribeMove(GameState state, Meeple tribe)
+            : base(state, state.ActivePlayer)
         {
             this.tribe = tribe;
         }
@@ -33,20 +33,20 @@ namespace GameTheory.Games.FiveTribes.Moves
         /// <inheritdoc />
         public override string ToString()
         {
-            return string.Format("Pick up all {0} at {1}", this.tribe, this.State.LastPoint);
+            return $"Pick up all {this.tribe} at {this.State.LastPoint}";
         }
 
-        internal override GameState Apply(GameState state0)
+        internal override GameState Apply(GameState state)
         {
-            var point = state0.LastPoint;
-            var square = state0.Sultanate[point];
+            var point = state.LastPoint;
+            var square = state.Sultanate[point];
             var newSquare = square.With(meeples: square.Meeples.RemoveAll(this.tribe));
-            var canAddCamel = newSquare.Owner == null && newSquare.Meeples.Count == 0 && state0.IsPlayerUnderCamelLimit(state0.ActivePlayer);
+            var canAddCamel = newSquare.Owner == null && newSquare.Meeples.Count == 0 && state.IsPlayerUnderCamelLimit(state.ActivePlayer);
 
-            return state0.With(
-                inHand: state0.InHand.Add(this.tribe, square.Meeples[this.tribe]),
+            return state.With(
+                inHand: state.InHand.Add(this.tribe, square.Meeples[this.tribe]),
                 phase: canAddCamel ? Phase.TileControlCheck : Phase.TribesAction,
-                sultanate: state0.Sultanate.SetItem(point, newSquare));
+                sultanate: state.Sultanate.SetItem(point, newSquare));
         }
     }
 }

@@ -17,11 +17,11 @@ namespace GameTheory.Games.FiveTribes.Moves
         /// <summary>
         /// Initializes a new instance of the <see cref="PayGoldMove"/> class.
         /// </summary>
-        /// <param name="state0">The <see cref="GameState"/> that this move is based on.</param>
+        /// <param name="state">The <see cref="GameState"/> that this move is based on.</param>
         /// <param name="gold">The amount of Gold Coins (GC) that will be paid.</param>
         /// <param name="after">A function to perform after the move has taken place.</param>
-        public PayGoldMove(GameState state0, int gold, Func<GameState, GameState> after)
-            : base(state0, state0.ActivePlayer)
+        public PayGoldMove(GameState state, int gold, Func<GameState, GameState> after)
+            : base(state, state.ActivePlayer)
         {
             this.after = after;
             this.gold = gold;
@@ -38,16 +38,16 @@ namespace GameTheory.Games.FiveTribes.Moves
         /// <inheritdoc />
         public override string ToString()
         {
-            return string.Format("Pay {0} Gold", this.gold);
+            return $"Pay {this.gold} Gold";
         }
 
-        internal override GameState Apply(GameState state0)
+        internal override GameState Apply(GameState state)
         {
-            var player = state0.ActivePlayer;
-            var inventory = state0.Inventory[player];
+            var player = state.ActivePlayer;
+            var inventory = state.Inventory[player];
 
-            return this.after(state0.With(
-                inventory: state0.Inventory.SetItem(player, inventory.With(goldCoins: inventory.GoldCoins - this.gold))));
+            return this.after(state.With(
+                inventory: state.Inventory.SetItem(player, inventory.With(goldCoins: inventory.GoldCoins - this.gold))));
         }
     }
 }

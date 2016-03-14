@@ -18,12 +18,12 @@ namespace GameTheory.Games.FiveTribes.Moves
         /// <summary>
         /// Initializes a new instance of the <see cref="AssassinateMove"/> class.
         /// </summary>
-        /// <param name="state0">The <see cref="GameState"/> that this move is based on.</param>
+        /// <param name="state">The <see cref="GameState"/> that this move is based on.</param>
         /// <param name="point">The <see cref="Point"/> at which the assassination will take place.</param>
         /// <param name="meeples">The <see cref="Meeple">Meeples</see> that will be assassinated.</param>
         /// <param name="after">A function to perform after the move has taken place.</param>
-        public AssassinateMove(GameState state0, Point point, EnumCollection<Meeple> meeples, Func<GameState, GameState> after)
-            : base(state0, state0.ActivePlayer)
+        public AssassinateMove(GameState state, Point point, EnumCollection<Meeple> meeples, Func<GameState, GameState> after)
+            : base(state, state.ActivePlayer)
         {
             this.after = after;
             this.meeples = meeples;
@@ -49,17 +49,17 @@ namespace GameTheory.Games.FiveTribes.Moves
         /// <inheritdoc />
         public override string ToString()
         {
-            return string.Format("Assissinate {0} at {1}", string.Join(",", this.meeples), this.point);
+            return $"Assissinate {string.Join(",", this.meeples)} at {this.point}";
         }
 
-        internal override GameState Apply(GameState state0)
+        internal override GameState Apply(GameState state)
         {
-            var square = state0.Sultanate[this.point];
+            var square = state.Sultanate[this.point];
             var newSquare = square.With(meeples: square.Meeples.RemoveRange(this.meeples));
-            var newState = state0.With(
-                bag: state0.Bag.AddRange(state0.InHand).AddRange(this.meeples),
+            var newState = state.With(
+                bag: state.Bag.AddRange(state.InHand).AddRange(this.meeples),
                 inHand: EnumCollection<Meeple>.Empty,
-                sultanate: state0.Sultanate.SetItem(this.point, newSquare));
+                sultanate: state.Sultanate.SetItem(this.point, newSquare));
 
             foreach (var owner in newState.Players)
             {
@@ -69,7 +69,7 @@ namespace GameTheory.Games.FiveTribes.Moves
                 }
             }
 
-            if (newSquare.Meeples.Count == 0 && newSquare.Owner == null && newState.IsPlayerUnderCamelLimit(state0.ActivePlayer))
+            if (newSquare.Meeples.Count == 0 && newSquare.Owner == null && newState.IsPlayerUnderCamelLimit(state.ActivePlayer))
             {
                 return newState.WithMoves(t => new PlaceCamelMove(t, this.point, this.after));
             }

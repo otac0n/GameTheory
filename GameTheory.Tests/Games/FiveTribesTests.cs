@@ -13,6 +13,7 @@ namespace GameTheory.Tests.Games
     using GameTheory.Games.FiveTribes;
     using GameTheory.Games.FiveTribes.Djinns;
     using GameTheory.Games.FiveTribes.Moves;
+    using GameTheory.Games.FiveTribes.Tiles;
     using GameTheory.Players;
     using NUnit.Framework;
 
@@ -132,20 +133,20 @@ namespace GameTheory.Tests.Games
             Assert.That(state.GetAvailableMoves(), Has.Some.InstanceOf<AssassinatePlayerMove>().With.Property("Victim").EqualTo(playerC));
 
             state = MakeMove(state, playerA, m => m is PayMeeplesAndResourcesMove);
-            state = MakeMove(state, playerA, m => m is Sibittis.DrawDjinnsMove);
+            state = MakeMove(state, playerA, m => m is DrawDjinnsMove);
             state = MakeMove(state, playerA, m => m.ToString() == "Take Ibus");
-            state = MakeMove(state, playerA, m => state.MakeMove(m).GetAvailableMoves(playerA).Any(x => x is Ibus.DoubleAssassinKillCountMove));
+            state = MakeMove(state, playerA, m => state.MakeMove(m).GetAvailableMoves(playerA).Any(x => x is DoubleAssassinKillCountMove));
             state = MakeMove(state, playerA, m => m.ToString() == "Double the number of meeples your Assassins kill this turn");
             Assert.That(state.GetAvailableMoves(), Has.None.InstanceOf<AssassinatePlayerMove>().With.Property("Victim").EqualTo(playerB));
             Assert.That(state.GetAvailableMoves(), Has.Some.InstanceOf<AssassinatePlayerMove>().With.Property("Victim").EqualTo(playerC));
 
-            state = MakeMove(state, playerA, m => state.MakeMove(m).GetAvailableMoves(playerA).Any(x => x is AnunNak.AddMeeplesMove));
+            state = MakeMove(state, playerA, m => state.MakeMove(m).GetAvailableMoves(playerA).Any(x => x is AddMeeplesMove));
             state = MakeMove(state, playerA, m => m.ToString() == "Draw 2 Meeples and place at (3, 1)");
             state = MakeMove(state, playerA, m => m.ToString() == "Assissinate Elder,Elder at (3, 1)");
             state = MakeMove(state, playerA, m => m.ToString() == "Place a Camel at (3, 1)");
             ShowInventory(state);
-            Assert.That(state.GetAvailableMoves(), Has.None.InstanceOf<AnunNak.AddMeeplesMove>());
-            Assert.That(state.GetAvailableMoves(), Has.None.InstanceOf<Ibus.DoubleAssassinKillCountMove>());
+            Assert.That(state.GetAvailableMoves(), Has.None.InstanceOf<AddMeeplesMove>());
+            Assert.That(state.GetAvailableMoves(), Has.None.InstanceOf<DoubleAssassinKillCountMove>());
             Assert.That(state.Inventory[playerC].GoldCoins, Is.EqualTo(playerCGoldCoins + 6));
         }
 
@@ -181,14 +182,14 @@ namespace GameTheory.Tests.Games
 
             Assert.That(Sultanate.Width, Is.EqualTo(6));
             Assert.That(Sultanate.Height, Is.EqualTo(5));
-            Assert.That(tiles[typeof(Tile.BigMarket)].Count(), Is.EqualTo(4));
-            Assert.That(tiles[typeof(Tile.SmallMarket)].Count(), Is.EqualTo(8));
-            Assert.That(tiles[typeof(Tile.Oasis)].Count(), Is.EqualTo(6));
-            Assert.That(tiles[typeof(Tile.Village)].Count(), Is.EqualTo(5));
-            Assert.That(tiles[typeof(Tile.SacredPlace)].Where(t => t.Value == 6).Count(), Is.EqualTo(4));
-            Assert.That(tiles[typeof(Tile.SacredPlace)].Where(t => t.Value == 10).Count(), Is.EqualTo(1));
-            Assert.That(tiles[typeof(Tile.SacredPlace)].Where(t => t.Value == 12).Count(), Is.EqualTo(1));
-            Assert.That(tiles[typeof(Tile.SacredPlace)].Where(t => t.Value == 15).Count(), Is.EqualTo(1));
+            Assert.That(tiles[typeof(BigMarket)].Count(), Is.EqualTo(4));
+            Assert.That(tiles[typeof(SmallMarket)].Count(), Is.EqualTo(8));
+            Assert.That(tiles[typeof(Oasis)].Count(), Is.EqualTo(6));
+            Assert.That(tiles[typeof(Village)].Count(), Is.EqualTo(5));
+            Assert.That(tiles[typeof(SacredPlace)].Where(t => t.Value == 6).Count(), Is.EqualTo(4));
+            Assert.That(tiles[typeof(SacredPlace)].Where(t => t.Value == 10).Count(), Is.EqualTo(1));
+            Assert.That(tiles[typeof(SacredPlace)].Where(t => t.Value == 12).Count(), Is.EqualTo(1));
+            Assert.That(tiles[typeof(SacredPlace)].Where(t => t.Value == 15).Count(), Is.EqualTo(1));
         }
 
         [Test(Description = "Shuffle all Resources cards to form a draw pile face down, then draw the top 9 cards and lay them face up...")]
@@ -340,12 +341,12 @@ namespace GameTheory.Tests.Games
 
         public class ReturnGameStateMove : Move
         {
-            private readonly GameState state1;
+            private readonly GameState nextState;
 
-            public ReturnGameStateMove(GameState state0, GameState state1)
-                : base(state0, state0.ActivePlayer)
+            public ReturnGameStateMove(GameState state, GameState nextState)
+                : base(state, state.ActivePlayer)
             {
-                this.state1 = state1;
+                this.nextState = nextState;
             }
 
             public override string ToString()
@@ -353,9 +354,9 @@ namespace GameTheory.Tests.Games
                 return "OK";
             }
 
-            internal override GameState Apply(GameState state0)
+            internal override GameState Apply(GameState state)
             {
-                return this.state1;
+                return this.nextState;
             }
         }
     }

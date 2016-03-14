@@ -4,38 +4,28 @@
 
 namespace GameTheory.Games.FiveTribes.Moves
 {
-    using System;
+    using System.Collections.Immutable;
     using GameTheory.Games.FiveTribes.Djinns;
 
     /// <summary>
-    /// Represents a move to take a specified <see cref="Djinn"/>.
+    /// Represents a move to take one of the dealt <see cref="Djinn">Djinns</see> and discard the others.
     /// </summary>
-    public class TakeDjinnMove : Move
+    internal class TakeDealtDjinnMove : Move
     {
-        private readonly Func<GameState, GameState> after;
+        private readonly ImmutableList<Djinn> dealt;
         private readonly int index;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="TakeDjinnMove"/> class.
+        /// Initializes a new instance of the <see cref="TakeDealtDjinnMove"/> class.
         /// </summary>
         /// <param name="state">The <see cref="GameState"/> that this move is based on.</param>
+        /// <param name="dealt">The <see cref="Djinn">Djinns</see> dealt to the player.</param>
         /// <param name="index">The index of the <see cref="Djinn"/> that will be taken.</param>
-        public TakeDjinnMove(GameState state, int index)
-            : this(state, index, s => s)
-        {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="TakeDjinnMove"/> class.
-        /// </summary>
-        /// <param name="state">The <see cref="GameState"/> that this move is based on.</param>
-        /// <param name="index">The index of the <see cref="Djinn"/> that will be taken.</param>
-        /// <param name="after">A function to perform after the move has taken place.</param>
-        public TakeDjinnMove(GameState state, int index, Func<GameState, GameState> after)
+        public TakeDealtDjinnMove(GameState state, ImmutableList<Djinn> dealt, int index)
             : base(state, state.ActivePlayer)
         {
+            this.dealt = dealt;
             this.index = index;
-            this.after = after;
         }
 
         /// <summary>
@@ -43,7 +33,7 @@ namespace GameTheory.Games.FiveTribes.Moves
         /// </summary>
         public Djinn Djinn
         {
-            get { return this.State.VisibleDjinns[this.index]; }
+            get { return this.dealt[this.index]; }
         }
 
         /// <summary>
@@ -57,7 +47,7 @@ namespace GameTheory.Games.FiveTribes.Moves
         /// <inheritdoc />
         public override string ToString()
         {
-            return $"Take {this.Djinn}";
+            return $"Take {this.dealt[this.index]}";
         }
 
         internal override GameState Apply(GameState state)
@@ -65,9 +55,9 @@ namespace GameTheory.Games.FiveTribes.Moves
             var player = state.ActivePlayer;
             var inventory = state.Inventory[player];
 
-            return this.after(state.With(
-                inventory: state.Inventory.SetItem(player, inventory.With(djinns: inventory.Djinns.Add(state.VisibleDjinns[this.index]))),
-                visibleDjinns: state.VisibleDjinns.RemoveAt(this.index)));
+            return state.With(
+                djinnDiscards: state.DjinnDiscards.AddRange(this.dealt.RemoveAt(this.index)),
+                inventory: state.Inventory.SetItem(player, inventory.With(djinns: inventory.Djinns.Add(this.dealt[this.index]))));
         }
     }
 }

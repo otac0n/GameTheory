@@ -5,6 +5,7 @@
 namespace GameTheory.Games.FiveTribes.Djinns
 {
     using System.Collections.Generic;
+    using System.Diagnostics.Contracts;
     using System.Linq;
     using GameTheory.Games.FiveTribes.Moves;
 
@@ -27,13 +28,13 @@ namespace GameTheory.Games.FiveTribes.Djinns
         }
 
         /// <inheritdoc />
-        public override IEnumerable<Move> GetAdditionalMoves(GameState state0, IList<Move> moves)
+        public override IEnumerable<Move> GetAdditionalMoves(GameState state, IList<Move> moves)
         {
-            if (state0.Phase != Phase.End && state0[this.stateKey] == null && state0.Inventory[state0.ActivePlayer].Djinns.Contains(this))
+            if (state.Phase != Phase.End && state[this.stateKey] == null && state.Inventory[state.ActivePlayer].Djinns.Contains(this))
             {
                 foreach (var move in moves.OfType<PlacePalaceMove>())
                 {
-                    var newMoves = Cost.OneElderOrOneSlave(state0, s1 => s1.WithState(this.stateKey, "true"), s1 => this.GetAppliedCostMoves(s1, move));
+                    var newMoves = Cost.OneElderOrOneSlave(state, s1 => s1.WithState(this.stateKey, "true"), s1 => this.GetAppliedCostMoves(s1, move));
 
                     foreach (var m in newMoves)
                     {
@@ -46,6 +47,9 @@ namespace GameTheory.Games.FiveTribes.Djinns
         /// <inheritdoc />
         public override GameState HandleTransition(PlayerToken owner, GameState oldState, GameState newState)
         {
+            Contract.Requires(oldState != null);
+            Contract.Requires(newState != null);
+
             if (oldState.Phase == Phase.CleanUp && newState.Phase == Phase.Bid && newState[this.stateKey] != null)
             {
                 newState = newState.WithState(this.stateKey, null);
@@ -54,11 +58,11 @@ namespace GameTheory.Games.FiveTribes.Djinns
             return newState;
         }
 
-        private IEnumerable<Move> GetAppliedCostMoves(GameState state0, PlacePalaceMove template)
+        private IEnumerable<Move> GetAppliedCostMoves(GameState state, PlacePalaceMove template)
         {
             foreach (var point in Sultanate.GetSquarePoints(template.Point))
             {
-                yield return template.With(state: state0, point: point);
+                yield return template.With(state, point);
             }
         }
     }

@@ -17,21 +17,21 @@ namespace GameTheory.Games.FiveTribes.Moves
         /// <summary>
         /// Initializes a new instance of the <see cref="PlaceCamelMove"/> class.
         /// </summary>
-        /// <param name="state0">The <see cref="GameState"/> that this move is based on.</param>
+        /// <param name="state">The <see cref="GameState"/> that this move is based on.</param>
         /// <param name="point">The <see cref="Point"/> where a Camel will be placed.</param>
-        public PlaceCamelMove(GameState state0, Point point)
-            : this(state0, point, s => s)
+        public PlaceCamelMove(GameState state, Point point)
+            : this(state, point, s => s)
         {
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PlaceCamelMove"/> class.
         /// </summary>
-        /// <param name="state0">The <see cref="GameState"/> that this move is based on.</param>
+        /// <param name="state">The <see cref="GameState"/> that this move is based on.</param>
         /// <param name="point">The <see cref="Point"/> where a Camel will be placed.</param>
         /// <param name="after">A function to perform after the move has taken place.</param>
-        public PlaceCamelMove(GameState state0, Point point, Func<GameState, GameState> after)
-            : base(state0, state0.ActivePlayer)
+        public PlaceCamelMove(GameState state, Point point, Func<GameState, GameState> after)
+            : base(state, state.ActivePlayer)
         {
             this.after = after;
             this.point = point;
@@ -48,15 +48,15 @@ namespace GameTheory.Games.FiveTribes.Moves
         /// <inheritdoc />
         public override string ToString()
         {
-            return string.Format("Place a Camel at {0}", this.point);
+            return $"Place a Camel at {this.point}";
         }
 
-        internal override GameState Apply(GameState state0)
+        internal override GameState Apply(GameState state)
         {
-            var owner = state0.ActivePlayer;
+            var owner = state.ActivePlayer;
 
-            return this.after(state0.With(
-                sultanate: state0.Sultanate.SetItem(this.point, state0.Sultanate[this.point].With(owner: owner))));
+            return this.after(state.With(
+                sultanate: state.Sultanate.SetItem(this.point, state.Sultanate[this.point].With(owner: owner))));
         }
     }
 }

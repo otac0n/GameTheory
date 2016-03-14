@@ -23,9 +23,9 @@ namespace GameTheory.Games.FiveTribes.Djinns
         }
 
         /// <inheritdoc />
-        public override GameState HandleAssassination(PlayerToken owner, GameState state0, Point point, EnumCollection<Meeple> kill)
+        public override GameState HandleAssassination(PlayerToken owner, GameState state, Point point, EnumCollection<Meeple> kill)
         {
-            var s1 = state0;
+            var s1 = state;
 
             foreach (var meeple in kill.Keys)
             {
@@ -74,9 +74,9 @@ namespace GameTheory.Games.FiveTribes.Djinns
         }
 
         /// <inheritdoc />
-        public override GameState HandleAssassination(PlayerToken owner, GameState state0, PlayerToken victim, EnumCollection<Meeple> kill)
+        public override GameState HandleAssassination(PlayerToken owner, GameState state, PlayerToken victim, EnumCollection<Meeple> kill)
         {
-            return this.HandleAssassination(owner, state0, default(Point), kill);
+            return this.HandleAssassination(owner, state, default(Point), kill);
         }
     }
 }

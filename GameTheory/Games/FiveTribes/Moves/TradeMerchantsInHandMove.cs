@@ -14,29 +14,29 @@ namespace GameTheory.Games.FiveTribes.Moves
         /// <summary>
         /// Initializes a new instance of the <see cref="TradeMerchantsInHandMove"/> class.
         /// </summary>
-        /// <param name="state0">The <see cref="GameState"/> that this move is based on.</param>
-        public TradeMerchantsInHandMove(GameState state0)
-            : base(state0, state0.ActivePlayer)
+        /// <param name="state">The <see cref="GameState"/> that this move is based on.</param>
+        public TradeMerchantsInHandMove(GameState state)
+            : base(state, state.ActivePlayer)
         {
         }
 
         /// <inheritdoc />
         public override string ToString()
         {
-            return string.Format("Take {0} resources", this.State.InHand.Count);
+            return $"Take {this.State.InHand.Count} resources";
         }
 
-        internal override GameState Apply(GameState state0)
+        internal override GameState Apply(GameState state)
         {
-            var player = state0.ActivePlayer;
-            var inventory = state0.Inventory[player];
-            var resources = inventory.Resources.AddRange(state0.VisibleResources.Take(state0.InHand.Count));
-            return state0.With(
-                bag: state0.Bag.AddRange(state0.InHand),
+            var player = state.ActivePlayer;
+            var inventory = state.Inventory[player];
+            var resources = inventory.Resources.AddRange(state.VisibleResources.Take(state.InHand.Count));
+            return state.With(
+                bag: state.Bag.AddRange(state.InHand),
                 inHand: EnumCollection<Meeple>.Empty,
-                inventory: state0.Inventory.SetItem(player, inventory.With(resources: resources)),
+                inventory: state.Inventory.SetItem(player, inventory.With(resources: resources)),
                 phase: Phase.TileAction,
-                visibleResources: state0.VisibleResources.RemoveRange(0, state0.InHand.Count));
+                visibleResources: state.VisibleResources.RemoveRange(0, state.InHand.Count));
         }
     }
 }

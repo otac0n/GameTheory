@@ -5,15 +5,15 @@
 namespace GameTheory.Games.FiveTribes.Moves
 {
     /// <summary>
-    /// Represents a move to move the active player's turn marker.
+    /// Represents a move to double the amount of Gold Coins (GCs) the active player's <see cref="Meeple.Builder">Builders</see> get this turn.
     /// </summary>
-    public class MoveTurnMarkerMove : Move
+    public class DoubleBuilderScoreMove : Move
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="MoveTurnMarkerMove"/> class.
+        /// Initializes a new instance of the <see cref="DoubleBuilderScoreMove"/> class.
         /// </summary>
         /// <param name="state">The <see cref="GameState"/> that this move is based on.</param>
-        public MoveTurnMarkerMove(GameState state)
+        public DoubleBuilderScoreMove(GameState state)
             : base(state, state.ActivePlayer)
         {
         }
@@ -21,16 +21,16 @@ namespace GameTheory.Games.FiveTribes.Moves
         /// <inheritdoc />
         public override string ToString()
         {
-            return "Move turn marker";
+            return "Double the amout of GCs your Builders get this turn";
         }
 
         internal override GameState Apply(GameState state)
         {
-            var i = state.FindHighestBidIndex();
+            var player = state.ActivePlayer;
+            var scoreTable = state.ScoreTables[player];
+
             return state.With(
-                bidOrderTrack: state.BidOrderTrack.Enqueue(state.TurnOrderTrack[i]),
-                phase: Phase.PickUpMeeples,
-                turnOrderTrack: state.TurnOrderTrack.SetItem(i, null));
+                scoreTables: state.ScoreTables.SetItem(player, scoreTable.With(builderMultiplier: scoreTable.BuilderMultiplier * 2)));
         }
     }
 }

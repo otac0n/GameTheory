@@ -6,6 +6,7 @@ namespace GameTheory.Games.FiveTribes.Moves
 {
     using System.Collections.Immutable;
     using System.Linq;
+    using GameTheory.Games.FiveTribes.Djinns;
 
     /// <summary>
     /// Represents a move to end the active player's turn.
@@ -15,9 +16,9 @@ namespace GameTheory.Games.FiveTribes.Moves
         /// <summary>
         /// Initializes a new instance of the <see cref="EndTurnMove"/> class.
         /// </summary>
-        /// <param name="state0">The <see cref="GameState"/> that this move is based on.</param>
-        public EndTurnMove(GameState state0)
-            : base(state0, state0.ActivePlayer)
+        /// <param name="state">The <see cref="GameState"/> that this move is based on.</param>
+        public EndTurnMove(GameState state)
+            : base(state, state.ActivePlayer)
         {
         }
 
@@ -27,20 +28,20 @@ namespace GameTheory.Games.FiveTribes.Moves
             return "End turn";
         }
 
-        internal override GameState Apply(GameState state0)
+        internal override GameState Apply(GameState state)
         {
             ImmutableList<Djinn> dealtDjinns;
-            var djinnDiscards = state0.DjinnDiscards;
-            var djinnPile = state0.DjinnPile.Deal(3 - state0.VisibleDjinns.Count, out dealtDjinns, ref djinnDiscards);
+            var djinnDiscards = state.DjinnDiscards;
+            var djinnPile = state.DjinnPile.Deal(3 - state.VisibleDjinns.Count, out dealtDjinns, ref djinnDiscards);
 
             ImmutableList<Resource> dealtResources;
-            var resourceDiscards = state0.ResourceDiscards;
-            var resourcePile = state0.ResourcePile.Deal(9 - state0.VisibleResources.Count, out dealtResources, ref resourceDiscards);
+            var resourceDiscards = state.ResourceDiscards;
+            var resourcePile = state.ResourcePile.Deal(9 - state.VisibleResources.Count, out dealtResources, ref resourceDiscards);
 
-            var moreTurns = state0.GetHighestBidIndex() != -1;
-            var isOver = !moreTurns && (state0.Players.Any(p => !state0.IsPlayerUnderCamelLimit(p)) || !state0.Sultanate.GetPickUps().Any());
+            var moreTurns = state.FindHighestBidIndex() != -1;
+            var isOver = !moreTurns && (state.Players.Any(p => !state.IsPlayerUnderCamelLimit(p)) || !state.Sultanate.GetPickUps().Any());
 
-            return state0.With(
+            return state.With(
                 djinnDiscards: djinnDiscards,
                 djinnPile: djinnPile,
                 lastPoint: default(Point),
@@ -48,8 +49,8 @@ namespace GameTheory.Games.FiveTribes.Moves
                 previousPoint: default(Point),
                 resourceDiscards: resourceDiscards,
                 resourcePile: resourcePile,
-                visibleDjinns: state0.VisibleDjinns.AddRange(dealtDjinns),
-                visibleResources: state0.VisibleResources.AddRange(dealtResources));
+                visibleDjinns: state.VisibleDjinns.AddRange(dealtDjinns),
+                visibleResources: state.VisibleResources.AddRange(dealtResources));
         }
     }
 }

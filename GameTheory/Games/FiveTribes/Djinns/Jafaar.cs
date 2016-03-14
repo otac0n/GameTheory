@@ -7,7 +7,7 @@ namespace GameTheory.Games.FiveTribes.Djinns
     /// <summary>
     /// At game end, each Vizier you hold is worth 3 VPs instead of 1.
     /// </summary>
-    public class Jafaar : Djinn.OnAcquireDjinnBase
+    public class Jafaar : OnAcquireDjinnBase
     {
         /// <summary>
         /// The singleton instance of <see cref="Jafaar"/>.
@@ -20,10 +20,10 @@ namespace GameTheory.Games.FiveTribes.Djinns
         }
 
         /// <inheritdoc />
-        protected override GameState OnAcquire(PlayerToken player, GameState state)
+        protected override GameState OnAcquire(PlayerToken owner, GameState state)
         {
             return state.With(
-                scoreTables: state.ScoreTables.SetItem(player, state.ScoreTables[player].With(vizierValue: 3)));
+                scoreTables: state.ScoreTables.SetItem(owner, state.ScoreTables[owner].With(vizierValue: 3)));
         }
     }
 }

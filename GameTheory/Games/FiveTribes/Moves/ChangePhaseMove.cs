@@ -15,11 +15,11 @@ namespace GameTheory.Games.FiveTribes.Moves
         /// <summary>
         /// Initializes a new instance of the <see cref="ChangePhaseMove"/> class.
         /// </summary>
-        /// <param name="state0">The <see cref="GameState"/> that this move is based on.</param>
+        /// <param name="state">The <see cref="GameState"/> that this move is based on.</param>
         /// <param name="description">The description of the move.</param>
         /// <param name="phase">The <see cref="Phase"/> that the move will change to.</param>
-        public ChangePhaseMove(GameState state0, string description, Phase phase)
-            : base(state0, state0.ActivePlayer)
+        public ChangePhaseMove(GameState state, string description, Phase phase)
+            : base(state, state.ActivePlayer)
         {
             this.description = description;
             this.phase = phase;
@@ -39,9 +39,9 @@ namespace GameTheory.Games.FiveTribes.Moves
             return this.description;
         }
 
-        internal override GameState Apply(GameState state0)
+        internal override GameState Apply(GameState state)
         {
-            return state0.With(phase: this.phase);
+            return state.With(phase: this.phase);
         }
     }
 }

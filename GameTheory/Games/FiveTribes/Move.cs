@@ -34,6 +34,6 @@ namespace GameTheory.Games.FiveTribes
         /// <inheritdoc />
         public abstract override string ToString();
 
-        internal abstract GameState Apply(GameState state0);
+        internal abstract GameState Apply(GameState state);
     }
 }

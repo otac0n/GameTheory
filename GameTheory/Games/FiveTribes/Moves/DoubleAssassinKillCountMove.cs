@@ -5,15 +5,15 @@
 namespace GameTheory.Games.FiveTribes.Moves
 {
     /// <summary>
-    /// Represents a move to move the active player's turn marker.
+    /// Represents a move to let assassins kill a second <see cref="Meeple"/>.
     /// </summary>
-    public class MoveTurnMarkerMove : Move
+    public class DoubleAssassinKillCountMove : Move
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="MoveTurnMarkerMove"/> class.
+        /// Initializes a new instance of the <see cref="DoubleAssassinKillCountMove"/> class.
         /// </summary>
         /// <param name="state">The <see cref="GameState"/> that this move is based on.</param>
-        public MoveTurnMarkerMove(GameState state)
+        public DoubleAssassinKillCountMove(GameState state)
             : base(state, state.ActivePlayer)
         {
         }
@@ -21,16 +21,16 @@ namespace GameTheory.Games.FiveTribes.Moves
         /// <inheritdoc />
         public override string ToString()
         {
-            return "Move turn marker";
+            return "Double the number of meeples your Assassins kill this turn";
         }
 
         internal override GameState Apply(GameState state)
         {
-            var i = state.FindHighestBidIndex();
+            var player = state.ActivePlayer;
+            var assassinationTable = state.AssassinationTables[player];
+
             return state.With(
-                bidOrderTrack: state.BidOrderTrack.Enqueue(state.TurnOrderTrack[i]),
-                phase: Phase.PickUpMeeples,
-                turnOrderTrack: state.TurnOrderTrack.SetItem(i, null));
+                assassinationTables: state.AssassinationTables.SetItem(player, assassinationTable.With(killCount: 2)));
         }
     }
 }

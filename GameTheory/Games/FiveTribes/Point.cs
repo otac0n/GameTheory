@@ -4,6 +4,7 @@
 
 namespace GameTheory.Games.FiveTribes
 {
+    using System.Diagnostics.CodeAnalysis;
     using System.Diagnostics.Contracts;
 
     /// <summary>
@@ -29,6 +30,8 @@ namespace GameTheory.Games.FiveTribes
         /// </summary>
         /// <param name="x">The x coordinate of the <see cref="Point"/>.</param>
         /// <param name="y">The y coordinate of the <see cref="Point"/>.</param>
+        [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "x", Justification = "X is meaningful in the context of coordinates.")]
+        [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "y", Justification = "Y is meaningful in the context of coordinates.")]
         public Point(int x, int y)
         {
             Contract.Requires(x >= 0 && x < Sultanate.Width);
@@ -40,6 +43,7 @@ namespace GameTheory.Games.FiveTribes
         /// <summary>
         /// Gets the x coordinate of the <see cref="Point"/>.
         /// </summary>
+        [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "X", Justification = "X is meaningful in the context of coordinates.")]
         public int X
         {
             get { return this.index % Sultanate.Width; }
@@ -48,6 +52,7 @@ namespace GameTheory.Games.FiveTribes
         /// <summary>
         /// Gets the y coordinate of the <see cref="Point"/>.
         /// </summary>
+        [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Y", Justification = "Y is meaningful in the context of coordinates.")]
         public int Y
         {
             get { return this.index / Sultanate.Width; }
@@ -56,43 +61,43 @@ namespace GameTheory.Games.FiveTribes
         /// <summary>
         /// Converts the specified <see cref="Point"/> object to an index.
         /// </summary>
-        /// <param name="a">The <see cref="Point"/> to be converted.</param>
+        /// <param name="point">The <see cref="Point"/> to be converted.</param>
         /// <returns>The index of the <see cref="Point"/>.</returns>
-        public static implicit operator int(Point a)
+        public static implicit operator int(Point point)
         {
-            return a.index;
+            return point.index;
         }
 
         /// <summary>
         /// Converts the specified index to a <see cref="Point"/> object.
         /// </summary>
-        /// <param name="a">The index to be converted.</param>
+        /// <param name="index">The index to be converted.</param>
         /// <returns>The <see cref="Point"/> object that results from the conversion.</returns>
-        public static implicit operator Point(int a)
+        public static implicit operator Point(int index)
         {
-            return new Point(a);
+            return new Point(index);
         }
 
         /// <summary>
         /// Compares two <see cref="Point"/> objects. The result specifies whether they are unequal.
         /// </summary>
-        /// <param name="a">The first <see cref="Point"/> to compare.</param>
-        /// <param name="b">The second <see cref="Point"/> to compare.</param>
-        /// <returns><c>true</c> if <paramref name="a"/> and <paramref name="b"/> differ; otherwise, <c>false</c>.</returns>
-        public static bool operator !=(Point a, Point b)
+        /// <param name="left">The first <see cref="Point"/> to compare.</param>
+        /// <param name="right">The second <see cref="Point"/> to compare.</param>
+        /// <returns><c>true</c> if <paramref name="left"/> and <paramref name="right"/> differ; otherwise, <c>false</c>.</returns>
+        public static bool operator !=(Point left, Point right)
         {
-            return !(a == b);
+            return !(left == right);
         }
 
         /// <summary>
         /// Compares two <see cref="Point"/> objects. The result specifies whether they are equal.
         /// </summary>
-        /// <param name="a">The first <see cref="Point"/> to compare.</param>
-        /// <param name="b">The second <see cref="Point"/> to compare.</param>
-        /// <returns><c>true</c> if <paramref name="a"/> and <paramref name="b"/> are equal; otherwise, <c>false</c>.</returns>
-        public static bool operator ==(Point a, Point b)
+        /// <param name="left">The first <see cref="Point"/> to compare.</param>
+        /// <param name="right">The second <see cref="Point"/> to compare.</param>
+        /// <returns><c>true</c> if <paramref name="left"/> and <paramref name="right"/> are equal; otherwise, <c>false</c>.</returns>
+        public static bool operator ==(Point left, Point right)
         {
-            return a.Equals(b);
+            return left.Equals(right);
         }
 
         /// <inheritdoc />

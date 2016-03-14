@@ -3,15 +3,39 @@
   <Words>
     <Unrecognized />
     <Recognized>
+      <Word>al</Word>
+      <Word>anun</Word>
+      <Word>bouraq</Word>
       <Word>combinatorics</Word>
+      <Word>dhenim</Word>
       <Word>djinn</Word>
+      <Word>enki</Word>
+      <Word>hagis</Word>
+      <Word>haurvatat</Word>
+      <Word>ibus</Word>
+      <Word>jafaar</Word>
+      <Word>kandicha</Word>
+      <Word>kumarbi</Word>
+      <Word>leta</Word>
+      <Word>marid</Word>
       <Word>meeple</Word>
       <Word>meeples</Word>
+      <Word>monkir</Word>
+      <Word>nak</Word>
+      <Word>nekir</Word>
+      <Word>shamhat</Word>
+      <Word>sibittis</Word>
+      <Word>sloar</Word>
       <Word>sultanate</Word>
+      <Word>tac</Word>
+      <Word>utug</Word>
     </Recognized>
     <Deprecated />
     <Compound />
-    <DiscreteExceptions />
+    <DiscreteExceptions>
+      <Term>PickUp</Term>
+      <Term>PickUps</Term>
+    </DiscreteExceptions>
   </Words>
   <Acronyms>
     <CasingExceptions />

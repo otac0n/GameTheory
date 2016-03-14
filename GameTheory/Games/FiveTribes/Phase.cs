@@ -4,6 +4,8 @@
 
 namespace GameTheory.Games.FiveTribes
 {
+    using GameTheory.Games.FiveTribes.Tiles;
+
     /// <summary>
     /// Marks the current phase of a <see cref="GameState"/>.
     /// </summary>

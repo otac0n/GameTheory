@@ -14,10 +14,10 @@ namespace GameTheory.Games.FiveTribes.Moves
         /// <summary>
         /// Initializes a new instance of the <see cref="SellMerchandiseMove"/> class.
         /// </summary>
-        /// <param name="state0">The <see cref="GameState"/> that this move is based on.</param>
+        /// <param name="state">The <see cref="GameState"/> that this move is based on.</param>
         /// <param name="resources">The <see cref="Resource">Resources</see> being sold.</param>
-        public SellMerchandiseMove(GameState state0, EnumCollection<Resource> resources)
-            : base(state0, state0.ActivePlayer)
+        public SellMerchandiseMove(GameState state, EnumCollection<Resource> resources)
+            : base(state, state.ActivePlayer)
         {
             this.resources = resources;
         }
@@ -41,17 +41,17 @@ namespace GameTheory.Games.FiveTribes.Moves
         /// <inheritdoc />
         public override string ToString()
         {
-            return string.Format("Trade {0} for {1}", string.Join(",", this.resources), GameState.SuitValues[this.resources.Count]);
+            return $"Trade {string.Join(",", this.resources)} for {GameState.SuitValues[this.resources.Count]}";
         }
 
-        internal override GameState Apply(GameState state0)
+        internal override GameState Apply(GameState state)
         {
-            var player = state0.ActivePlayer;
-            var inventory = state0.Inventory[player];
+            var player = state.ActivePlayer;
+            var inventory = state.Inventory[player];
 
-            return state0.With(
-                inventory: state0.Inventory.SetItem(player, inventory.With(resources: inventory.Resources.RemoveRange(this.resources), goldCoins: inventory.GoldCoins + this.Value)),
-                resourceDiscards: state0.ResourceDiscards.AddRange(this.resources));
+            return state.With(
+                inventory: state.Inventory.SetItem(player, inventory.With(resources: inventory.Resources.RemoveRange(this.resources), goldCoins: inventory.GoldCoins + this.Value)),
+                resourceDiscards: state.ResourceDiscards.AddRange(this.resources));
         }
     }
 }

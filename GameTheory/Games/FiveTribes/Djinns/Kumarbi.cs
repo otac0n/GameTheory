@@ -27,14 +27,14 @@ namespace GameTheory.Games.FiveTribes.Djinns
         }
 
         /// <inheritdoc />
-        public sealed override IEnumerable<Move> GetMoves(GameState state0)
+        public sealed override IEnumerable<Move> GetMoves(GameState state)
         {
-            if (this.CanGetMoves(state0))
+            if (this.CanGetMoves(state))
             {
-                return Cost.OneOrMoreSlaves(state0, s1 => s1.WithState(this.stateKey, "true"), this.GetAppliedCostMoves);
+                return Cost.OneOrMoreSlaves(state, s1 => s1.WithState(this.stateKey, "true"), this.GetAppliedCostMoves);
             }
 
-            return base.GetMoves(state0);
+            return base.GetMoves(state);
         }
 
         /// <inheritdoc />
@@ -58,24 +58,24 @@ namespace GameTheory.Games.FiveTribes.Djinns
             return false;
         }
 
-        private IEnumerable<Move> GetAppliedCostMoves(GameState state0, int slaves)
+        private IEnumerable<Move> GetAppliedCostMoves(GameState state, int slaves)
         {
-            if (slaves > state0.TurnOrderTrack.LastIndexOf(null) - 2)
+            if (slaves > state.TurnOrderTrack.LastIndexOf(null) - 2)
             {
                 yield break;
             }
 
             var turnOrderTrackCosts = GameState.TurnOrderTrackCosts.InsertRange(0, new int[slaves]);
 
-            for (var i = 2; i < state0.TurnOrderTrack.Count; i++)
+            for (var i = 2; i < state.TurnOrderTrack.Count; i++)
             {
-                if (state0.TurnOrderTrack[i] == null && state0.Inventory[state0.ActivePlayer].GoldCoins >= turnOrderTrackCosts[i])
+                if (state.TurnOrderTrack[i] == null && state.Inventory[state.ActivePlayer].GoldCoins >= turnOrderTrackCosts[i])
                 {
-                    var j = i == 2 && state0.TurnOrderTrack[0] == null ? 0 :
-                            i == 2 && state0.TurnOrderTrack[1] == null ? 1 :
+                    var j = i == 2 && state.TurnOrderTrack[0] == null ? 0 :
+                            i == 2 && state.TurnOrderTrack[1] == null ? 1 :
                             i;
 
-                    yield return new BidMove(state0, j, turnOrderTrackCosts[j]);
+                    yield return new BidMove(state, j, turnOrderTrackCosts[j]);
                 }
             }
         }

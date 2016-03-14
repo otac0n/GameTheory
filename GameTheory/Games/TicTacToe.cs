@@ -7,6 +7,7 @@ namespace GameTheory.Games
     using System;
     using System.Collections.Generic;
     using System.Collections.Immutable;
+    using System.Diagnostics.CodeAnalysis;
 
     /// <summary>
     /// Implements the game of Tic-tac-toe.
@@ -111,6 +112,8 @@ namespace GameTheory.Games
         /// <param name="x">The x coordinate of the spot.</param>
         /// <param name="y">The y coordinate of the spot.</param>
         /// <returns>The <see cref="PlayerToken"/> of the player who marked the specified spot, or <c>null</c> if no player has marked the spot.</returns>
+        [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "x", Justification = "X is meaningful in the context of coordinates.")]
+        [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "y", Justification = "Y is meaningful in the context of coordinates.")]
         public PlayerToken this[int x, int y]
         {
             get
@@ -201,6 +204,8 @@ namespace GameTheory.Games
             /// <param name="player">The player who may make this move.</param>
             /// <param name="x">The x coordinate of the spot on which the move will me made.</param>
             /// <param name="y">The y coordinate of the spot on which the move will me made.</param>
+            [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "x", Justification = "X is meaningful in the context of coordinates.")]
+            [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "y", Justification = "Y is meaningful in the context of coordinates.")]
             public Move(PlayerToken player, int x, int y)
             {
                 this.player = player;
@@ -217,6 +222,7 @@ namespace GameTheory.Games
             /// <summary>
             /// Gets the x coordinate of the spot on which the move will me made.
             /// </summary>
+            [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "X", Justification = "X is meaningful in the context of coordinates.")]
             public int X
             {
                 get { return this.x; }
@@ -225,6 +231,7 @@ namespace GameTheory.Games
             /// <summary>
             /// Gets the y coordinate of the spot on which the move will me made.
             /// </summary>
+            [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Y", Justification = "Y is meaningful in the context of coordinates.")]
             public int Y
             {
                 get { return this.y; }

@@ -5,6 +5,7 @@
 namespace GameTheory.Games.FiveTribes
 {
     using System.Collections.Immutable;
+    using GameTheory.Games.FiveTribes.Djinns;
 
     /// <summary>
     /// Represents a player's inventory.

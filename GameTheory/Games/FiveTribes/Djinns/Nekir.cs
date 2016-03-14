@@ -20,17 +20,17 @@ namespace GameTheory.Games.FiveTribes.Djinns
         }
 
         /// <inheritdoc />
-        public override GameState HandleAssassination(PlayerToken owner, GameState state0, Point point, EnumCollection<Meeple> kill)
+        public override GameState HandleAssassination(PlayerToken owner, GameState state, Point point, EnumCollection<Meeple> kill)
         {
-            return this.HandleAssassination(owner, state0, owner, kill);
+            return this.HandleAssassination(owner, state, owner, kill);
         }
 
         /// <inheritdoc />
-        public override GameState HandleAssassination(PlayerToken owner, GameState state0, PlayerToken victim, EnumCollection<Meeple> kill)
+        public override GameState HandleAssassination(PlayerToken owner, GameState state, PlayerToken victim, EnumCollection<Meeple> kill)
         {
-            var inventory = state0.Inventory[owner];
-            var s1 = state0.With(
-                inventory: state0.Inventory.SetItem(owner, inventory.With(goldCoins: inventory.GoldCoins + kill.Count * (state0.ActivePlayer == owner ? 1 : 2))));
+            var inventory = state.Inventory[owner];
+            var s1 = state.With(
+                inventory: state.Inventory.SetItem(owner, inventory.With(goldCoins: inventory.GoldCoins + kill.Count * (state.ActivePlayer == owner ? 1 : 2))));
 
             return s1;
         }

@@ -15,11 +15,11 @@ namespace GameTheory.Games.FiveTribes.Moves
         /// <summary>
         /// Initializes a new instance of the <see cref="BidMove"/> class.
         /// </summary>
-        /// <param name="state0">The <see cref="GameState"/> that this move is based on.</param>
+        /// <param name="state">The <see cref="GameState"/> that this move is based on.</param>
         /// <param name="index">The position on the <see cref="GameState.TurnOrderTrack"/> being bid on.</param>
         /// <param name="cost">The cost of the bid, in Gold Coins (GC).</param>
-        public BidMove(GameState state0, int index, int cost)
-            : base(state0, state0.ActivePlayer)
+        public BidMove(GameState state, int index, int cost)
+            : base(state, state.ActivePlayer)
         {
             this.index = index;
             this.cost = cost;
@@ -44,19 +44,19 @@ namespace GameTheory.Games.FiveTribes.Moves
         /// <inheritdoc />
         public override string ToString()
         {
-            return string.Format("Bid {0}", this.cost);
+            return $"Bid {this.cost}";
         }
 
-        internal override GameState Apply(GameState state0)
+        internal override GameState Apply(GameState state)
         {
-            var player = state0.ActivePlayer;
-            var inventory = state0.Inventory[player];
-            var newQueue = state0.BidOrderTrack.Dequeue();
-            return state0.With(
+            var player = state.ActivePlayer;
+            var inventory = state.Inventory[player];
+            var newQueue = state.BidOrderTrack.Dequeue();
+            return state.With(
                 bidOrderTrack: newQueue,
-                inventory: state0.Inventory.SetItem(player, inventory.With(goldCoins: inventory.GoldCoins - this.cost)),
+                inventory: state.Inventory.SetItem(player, inventory.With(goldCoins: inventory.GoldCoins - this.cost)),
                 phase: newQueue.IsEmpty ? Phase.MoveTurnMarker : Phase.Bid,
-                turnOrderTrack: state0.TurnOrderTrack.SetItem(this.index, player));
+                turnOrderTrack: state.TurnOrderTrack.SetItem(this.index, player));
         }
     }
 }

@@ -9,6 +9,7 @@ namespace GameTheory
     using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Diagnostics.Contracts;
+    using System.Globalization;
     using System.Linq;
 
     /// <summary>
@@ -18,18 +19,13 @@ namespace GameTheory
     public class EnumCollection<TEnum> : IEnumerable<TEnum>, IReadOnlyList<TEnum>
         where TEnum : struct
     {
-        /// <summary>
-        /// An empty <see cref="EnumCollection{T}"/>.
-        /// </summary>
-        public static readonly EnumCollection<TEnum> Empty;
-
         private static readonly int Capacity;
         private readonly int count;
         private readonly ImmutableList<int> storage;
 
         static EnumCollection()
         {
-            Capacity = Enum.GetValues(typeof(TEnum)).Cast<TEnum>().Select(x => Convert.ToInt32(x)).Max() + 1;
+            Capacity = Enum.GetValues(typeof(TEnum)).Cast<TEnum>().Select(x => Convert.ToInt32(x, CultureInfo.InvariantCulture)).Max() + 1;
             Empty = new EnumCollection<TEnum>(new TEnum[0]);
         }
 
@@ -52,7 +48,7 @@ namespace GameTheory
             var storage = new int[Capacity];
             foreach (var item in items)
             {
-                var key = Convert.ToInt32(item);
+                var key = Convert.ToInt32(item, CultureInfo.InvariantCulture);
 
                 checked
                 {
@@ -77,6 +73,11 @@ namespace GameTheory
             this.count = count;
             this.storage = storage;
         }
+
+        /// <summary>
+        /// Gets an empty <see cref="EnumCollection{T}"/>.
+        /// </summary>
+        public static EnumCollection<TEnum> Empty { get; }
 
         /// <inheritdoc />
         public int Count
@@ -106,7 +107,7 @@ namespace GameTheory
                     }
                 }
 
-                throw new IndexOutOfRangeException("index");
+                throw new ArgumentOutOfRangeException(nameof(index));
             }
         }
 
@@ -119,7 +120,7 @@ namespace GameTheory
         {
             get
             {
-                var key = Convert.ToInt32(item);
+                var key = Convert.ToInt32(item, CultureInfo.InvariantCulture);
                 return this.storage[key];
             }
         }
@@ -131,7 +132,7 @@ namespace GameTheory
         /// <returns>The new collection.</returns>
         public EnumCollection<TEnum> Add(TEnum item)
         {
-            var key = Convert.ToInt32(item);
+            var key = Convert.ToInt32(item, CultureInfo.InvariantCulture);
             return new EnumCollection<TEnum>(checked(this.count + 1), this.storage.SetItem(key, this.storage[key] + 1));
         }
 
@@ -144,7 +145,7 @@ namespace GameTheory
         public EnumCollection<TEnum> Add(TEnum item, int count)
         {
             Contract.Requires(count >= 1);
-            var key = Convert.ToInt32(item);
+            var key = Convert.ToInt32(item, CultureInfo.InvariantCulture);
             return new EnumCollection<TEnum>(checked(this.count + count), this.storage.SetItem(key, this.storage[key] + count));
         }
 
@@ -251,7 +252,7 @@ namespace GameTheory
         /// <returns>The new collection.</returns>
         public EnumCollection<TEnum> Remove(TEnum item)
         {
-            var key = Convert.ToInt32(item);
+            var key = Convert.ToInt32(item, CultureInfo.InvariantCulture);
             var count = this.storage[key];
             return count > 0 ? new EnumCollection<TEnum>(this.count - 1, this.storage.SetItem(key, count - 1)) : this;
         }
@@ -265,7 +266,7 @@ namespace GameTheory
         public EnumCollection<TEnum> Remove(TEnum item, int count)
         {
             Contract.Requires(count >= 1);
-            var key = Convert.ToInt32(item);
+            var key = Convert.ToInt32(item, CultureInfo.InvariantCulture);
             var existing = this.storage[key];
             count = Math.Min(count, existing);
             return count > 0 ? new EnumCollection<TEnum>(this.count - count, this.storage.SetItem(key, existing - count)) : this;
@@ -278,7 +279,7 @@ namespace GameTheory
         /// <returns>The new collection.</returns>
         public EnumCollection<TEnum> RemoveAll(TEnum item)
         {
-            var key = Convert.ToInt32(item);
+            var key = Convert.ToInt32(item, CultureInfo.InvariantCulture);
             var count = this.storage[key];
             return count > 0 ? new EnumCollection<TEnum>(this.count - count, this.storage.SetItem(key, 0)) : this;
         }

@@ -16,10 +16,10 @@ namespace GameTheory.Games.FiveTribes.Moves
         /// <summary>
         /// Initializes a new instance of the <see cref="ScoreBuildersInHandMove"/> class.
         /// </summary>
-        /// <param name="state0">The <see cref="GameState"/> that this move is based on.</param>
+        /// <param name="state">The <see cref="GameState"/> that this move is based on.</param>
         /// <param name="spentSlaves">The number of <see cref="Resource.Slave">Slaves</see> spent.</param>
-        public ScoreBuildersInHandMove(GameState state0, int spentSlaves)
-            : base(state0, state0.ActivePlayer)
+        public ScoreBuildersInHandMove(GameState state, int spentSlaves)
+            : base(state, state.ActivePlayer)
         {
             this.spentSlaves = spentSlaves;
         }
@@ -35,20 +35,20 @@ namespace GameTheory.Games.FiveTribes.Moves
         /// <inheritdoc />
         public override string ToString()
         {
-            return string.Format("Score {0}", string.Join(",", this.State.InHand));
+            return $"Score {string.Join(",", this.State.InHand)}";
         }
 
-        internal override GameState Apply(GameState state0)
+        internal override GameState Apply(GameState state)
         {
-            var blueTiles = Sultanate.GetSquarePoints(state0.LastPoint).Count(p => state0.Sultanate[p].Tile.Color == TileColor.Blue);
-            var player = state0.ActivePlayer;
-            var inventory = state0.Inventory[player];
-            var score = (state0.InHand.Count + this.spentSlaves) * blueTiles * state0.ScoreTables[player].BuilderMultiplier;
+            var blueTiles = Sultanate.GetSquarePoints(state.LastPoint).Count(p => state.Sultanate[p].Tile.Color == TileColor.Blue);
+            var player = state.ActivePlayer;
+            var inventory = state.Inventory[player];
+            var score = (state.InHand.Count + this.spentSlaves) * blueTiles * state.ScoreTables[player].BuilderMultiplier;
 
-            return state0.With(
-                bag: state0.Bag.AddRange(state0.InHand),
+            return state.With(
+                bag: state.Bag.AddRange(state.InHand),
                 inHand: EnumCollection<Meeple>.Empty,
-                inventory: state0.Inventory.SetItem(player, inventory.With(goldCoins: inventory.GoldCoins + score)),
+                inventory: state.Inventory.SetItem(player, inventory.With(goldCoins: inventory.GoldCoins + score)),
                 phase: Phase.TileAction);
         }
     }

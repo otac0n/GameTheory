@@ -17,21 +17,21 @@ namespace GameTheory.Games.FiveTribes.Moves
         /// <summary>
         /// Initializes a new instance of the <see cref="PlacePalaceMove"/> class.
         /// </summary>
-        /// <param name="state0">The <see cref="GameState"/> that this move is based on.</param>
+        /// <param name="state">The <see cref="GameState"/> that this move is based on.</param>
         /// <param name="point">The <see cref="Point"/> where a Palace will be placed.</param>
-        public PlacePalaceMove(GameState state0, Point point)
-            : this(state0, point, s => s)
+        public PlacePalaceMove(GameState state, Point point)
+            : this(state, point, s => s)
         {
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PlacePalaceMove"/> class.
         /// </summary>
-        /// <param name="state0">The <see cref="GameState"/> that this move is based on.</param>
+        /// <param name="state">The <see cref="GameState"/> that this move is based on.</param>
         /// <param name="point">The <see cref="Point"/> where a Palace will be placed.</param>
         /// <param name="after">A function to perform after the move has taken place.</param>
-        public PlacePalaceMove(GameState state0, Point point, Func<GameState, GameState> after)
-            : base(state0, state0.ActivePlayer)
+        public PlacePalaceMove(GameState state, Point point, Func<GameState, GameState> after)
+            : base(state, state.ActivePlayer)
         {
             this.point = point;
             this.after = after;
@@ -48,14 +48,14 @@ namespace GameTheory.Games.FiveTribes.Moves
         /// <inheritdoc />
         public override string ToString()
         {
-            return string.Format("Place a Palace at {0}", this.point);
+            return $"Place a Palace at {this.point}";
         }
 
-        internal override GameState Apply(GameState state0)
+        internal override GameState Apply(GameState state)
         {
-            var square = state0.Sultanate[this.point];
-            return this.after(state0.With(
-                sultanate: state0.Sultanate.SetItem(this.point, square.With(palaces: square.Palaces + 1))));
+            var square = state.Sultanate[this.point];
+            return this.after(state.With(
+                sultanate: state.Sultanate.SetItem(this.point, square.With(palaces: square.Palaces + 1))));
         }
 
         internal Move With(GameState state, Point point)

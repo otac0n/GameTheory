@@ -4,6 +4,8 @@
 
 namespace GameTheory.Games.FiveTribes
 {
+    using GameTheory.Games.FiveTribes.Tiles;
+
     /// <summary>
     /// Represents the color of a <see cref="Tile"/>.
     /// </summary>
