@@ -11,23 +11,23 @@ namespace GameTheory.Tests.Games
     [TestFixture]
     public class TicTacToeTests
     {
-        private string[] draws =
+        private static string[] draws =
         {
             "0,0; 1,1; 2,2; 2,1; 0,1; 0,2; 2,0; 1,0; 1,2",
         };
 
-        private string[] player1Wins =
+        private static string[] player1Wins =
         {
             "0,0; 1,1; 0,1; 2,2; 0,2",
             "0,0; 1,1; 2,2; 0,2; 2,0; 1,0; 2,1",
         };
 
-        private string[] player2Wins =
+        private static string[] player2Wins =
         {
             "0,0; 1,1; 2,2; 1,0; 2,0; 1,2",
         };
 
-        private string[] unfinished =
+        private static string[] unfinished =
         {
             "0,0",
             "0,1",
@@ -37,7 +37,7 @@ namespace GameTheory.Tests.Games
             "0,0; 1,1; 2,2",
         };
 
-        [TestCaseSource("unfinished")]
+        [TestCaseSource(nameof(unfinished))]
         public void GetAvailableMoves_WhenTheGameHasNotCompleted_ReturnsANonEmptyListOfMoves(string moveList)
         {
             var state = ApplyMoves(new TicTacToe(), moveList);
@@ -47,7 +47,7 @@ namespace GameTheory.Tests.Games
             Assert.That(moves, Is.Not.Empty);
         }
 
-        [TestCaseSource("draws")]
+        [TestCaseSource(nameof(draws))]
         public void GetAvailableMoves_WhenTheGameResultsInADraw_ReturnsAnEmptyList(string moveList)
         {
             var state = ApplyMoves(new TicTacToe(), moveList);
@@ -57,7 +57,7 @@ namespace GameTheory.Tests.Games
             Assert.That(moves, Is.Empty);
         }
 
-        [TestCaseSource("player1Wins")]
+        [TestCaseSource(nameof(player1Wins))]
         public void GetAvailableMoves_WhenTheGameResultsInAWinForPlayer1_ReturnsAnEmptyList(string moveList)
         {
             var state = ApplyMoves(new TicTacToe(), moveList);
@@ -67,7 +67,7 @@ namespace GameTheory.Tests.Games
             Assert.That(moves, Is.Empty);
         }
 
-        [TestCaseSource("player2Wins")]
+        [TestCaseSource(nameof(player2Wins))]
         public void GetAvailableMoves_WhenTheGameResultsInAWinForPlayer2_ReturnsAnEmptyList(string moveList)
         {
             var state = ApplyMoves(new TicTacToe(), moveList);
@@ -111,7 +111,7 @@ namespace GameTheory.Tests.Games
             Assert.That(moves.Count(), Is.EqualTo(9));
         }
 
-        [TestCaseSource("unfinished")]
+        [TestCaseSource(nameof(unfinished))]
         public void GetWinners_WhenTheGameHasNotCompleted_ReturnsAnEmptyList(string moveList)
         {
             var state = ApplyMoves(new TicTacToe(), moveList);
@@ -121,7 +121,7 @@ namespace GameTheory.Tests.Games
             Assert.That(winners, Is.Empty);
         }
 
-        [TestCaseSource("draws")]
+        [TestCaseSource(nameof(draws))]
         public void GetWinners_WhenTheGameResultsInADraw_ReturnsAnEmptyList(string moveList)
         {
             var state = ApplyMoves(new TicTacToe(), moveList);
@@ -131,7 +131,7 @@ namespace GameTheory.Tests.Games
             Assert.That(winners, Is.Empty);
         }
 
-        [TestCaseSource("player1Wins")]
+        [TestCaseSource(nameof(player1Wins))]
         public void GetWinners_WhenTheGameResultsInAWinForPlayer1_ReturnsAListContainingOnlyPlayer1(string moveList)
         {
             var state = ApplyMoves(new TicTacToe(), moveList);
@@ -142,7 +142,7 @@ namespace GameTheory.Tests.Games
             Assert.That(winner, Is.EqualTo(player1));
         }
 
-        [TestCaseSource("player2Wins")]
+        [TestCaseSource(nameof(player2Wins))]
         public void GetWinners_WhenTheGameResultsInAWinForPlayer2_ReturnsAListContainingOnlyPlayer2(string moveList)
         {
             var state = ApplyMoves(new TicTacToe(), moveList);
