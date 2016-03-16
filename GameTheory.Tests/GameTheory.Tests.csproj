@@ -62,6 +62,8 @@
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="RandomTests.cs" />
+    <Compile Include="Strategies\ImmediateWinStrategyTests.cs" />
+    <Compile Include="Strategies\NullStrategyTests.cs" />
     <Compile Include="StubGameState.cs" />
   </ItemGroup>
   <ItemGroup>
