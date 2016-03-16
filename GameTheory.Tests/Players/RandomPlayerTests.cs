@@ -22,24 +22,19 @@ namespace GameTheory.Tests.Players
             const double Expected = (double)Samples / Moves;
 
             var gameState = new StubGameState();
-            var player = new RandomPlayer<StubGameState.Move>(gameState.Players[0]);
-            gameState.Moves = Enumerable.Range(0, Moves).Select(i => new StubGameState.Move(player.PlayerToken, "Move " + (char)('A' + i))).ToList();
-
-            var moves = gameState.Moves.ToDictionary(m => m.Value, m => 0);
-            for (int i = 0; i < Samples; i++)
+            using (var player = new RandomPlayer<StubGameState.Move>(gameState.Players[0]))
             {
-                var move = await player.ChooseMove(gameState, GetCancellationToken());
-                moves[move.Value]++;
+                gameState.Moves = Enumerable.Range(0, Moves).Select(i => new StubGameState.Move(player.PlayerToken, "Move " + (char)('A' + i))).ToList();
+
+                var moves = gameState.Moves.ToDictionary(m => m.Value, m => 0);
+                for (int i = 0; i < Samples; i++)
+                {
+                    var move = await player.ChooseMove(gameState, CancellationToken.None);
+                    moves[move.Value]++;
+                }
+
+                Assert.That(moves, Is.All.Property("Value").EqualTo(Expected).Within(3.29 * Math.Sqrt(Expected)));
             }
-
-            Assert.That(moves, Is.All.Property("Value").EqualTo(Expected).Within(3.29 * Math.Sqrt(Expected)));
-        }
-
-        private static CancellationToken GetCancellationToken()
-        {
-            var cts = new CancellationTokenSource();
-            cts.CancelAfter(TimeSpan.FromSeconds(10));
-            return cts.Token;
         }
     }
 }
