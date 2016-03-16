@@ -48,27 +48,9 @@ namespace GameTheory.Tests.Games
         }
 
         [TestCaseSource(nameof(draws))]
-        public void GetAvailableMoves_WhenTheGameResultsInADraw_ReturnsAnEmptyList(string moveList)
-        {
-            var state = ApplyMoves(new TicTacToe(), moveList);
-
-            var moves = state.GetAvailableMoves();
-
-            Assert.That(moves, Is.Empty);
-        }
-
         [TestCaseSource(nameof(player1Wins))]
-        public void GetAvailableMoves_WhenTheGameResultsInAWinForPlayer1_ReturnsAnEmptyList(string moveList)
-        {
-            var state = ApplyMoves(new TicTacToe(), moveList);
-
-            var moves = state.GetAvailableMoves();
-
-            Assert.That(moves, Is.Empty);
-        }
-
         [TestCaseSource(nameof(player2Wins))]
-        public void GetAvailableMoves_WhenTheGameResultsInAWinForPlayer2_ReturnsAnEmptyList(string moveList)
+        public void GetAvailableMoves_WhenTheGameEnds_ReturnsAnEmptyList(string moveList)
         {
             var state = ApplyMoves(new TicTacToe(), moveList);
 
@@ -153,7 +135,7 @@ namespace GameTheory.Tests.Games
             Assert.That(winner, Is.EqualTo(player2));
         }
 
-        private static T ApplyMoves<T>(T state, string moveList)
+        internal static T ApplyMoves<T>(T state, string moveList)
             where T : IGameState<TicTacToe.Move>
         {
             var moves = from move in moveList.Split(';')
