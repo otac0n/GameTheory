@@ -5,7 +5,7 @@
 namespace GameTheory.Tests.Games
 {
     using System.Linq;
-    using GameTheory.Games;
+    using GameTheory.Games.TicTacToe;
     using NUnit.Framework;
 
     [TestFixture]
@@ -40,7 +40,7 @@ namespace GameTheory.Tests.Games
         [TestCaseSource(nameof(unfinished))]
         public void GetAvailableMoves_WhenTheGameHasNotCompleted_ReturnsANonEmptyListOfMoves(string moveList)
         {
-            var state = ApplyMoves(new TicTacToe(), moveList);
+            var state = ApplyMoves(new GameState(), moveList);
 
             var moves = state.GetAvailableMoves();
 
@@ -52,7 +52,7 @@ namespace GameTheory.Tests.Games
         [TestCaseSource(nameof(player2Wins))]
         public void GetAvailableMoves_WhenTheGameEnds_ReturnsAnEmptyList(string moveList)
         {
-            var state = ApplyMoves(new TicTacToe(), moveList);
+            var state = ApplyMoves(new GameState(), moveList);
 
             var moves = state.GetAvailableMoves();
 
@@ -62,7 +62,7 @@ namespace GameTheory.Tests.Games
         [Test]
         public void GetAvailableMoves_WhenTheGameStateIsNew_ReturnsMovesForTheFirstPlayer()
         {
-            var state = new TicTacToe();
+            var state = new GameState();
 
             var moves = state.GetAvailableMoves();
 
@@ -72,7 +72,7 @@ namespace GameTheory.Tests.Games
         [Test]
         public void GetAvailableMoves_WhenTheGameStateIsNew_ReturnsMovesWithinRange()
         {
-            var state = new TicTacToe();
+            var state = new GameState();
 
             var moves = from m in state.GetAvailableMoves()
                         where m.X < 0 || m.X > 2 || m.Y < 0 || m.Y > 2
@@ -84,7 +84,7 @@ namespace GameTheory.Tests.Games
         [Test]
         public void GetAvailableMoves_WhenTheGameStateIsNew_ReturnsNineUniqueMoves()
         {
-            var state = new TicTacToe();
+            var state = new GameState();
 
             var moves = from m in state.GetAvailableMoves()
                         group m by new { m.X, m.Y } into g
@@ -96,7 +96,7 @@ namespace GameTheory.Tests.Games
         [TestCaseSource(nameof(unfinished))]
         public void GetWinners_WhenTheGameHasNotCompleted_ReturnsAnEmptyList(string moveList)
         {
-            var state = ApplyMoves(new TicTacToe(), moveList);
+            var state = ApplyMoves(new GameState(), moveList);
 
             var winners = state.GetWinners();
 
@@ -106,7 +106,7 @@ namespace GameTheory.Tests.Games
         [TestCaseSource(nameof(draws))]
         public void GetWinners_WhenTheGameResultsInADraw_ReturnsAnEmptyList(string moveList)
         {
-            var state = ApplyMoves(new TicTacToe(), moveList);
+            var state = ApplyMoves(new GameState(), moveList);
 
             var winners = state.GetWinners();
 
@@ -116,7 +116,7 @@ namespace GameTheory.Tests.Games
         [TestCaseSource(nameof(player1Wins))]
         public void GetWinners_WhenTheGameResultsInAWinForPlayer1_ReturnsAListContainingOnlyPlayer1(string moveList)
         {
-            var state = ApplyMoves(new TicTacToe(), moveList);
+            var state = ApplyMoves(new GameState(), moveList);
 
             var winner = state.GetWinners().SingleOrDefault();
 
@@ -127,7 +127,7 @@ namespace GameTheory.Tests.Games
         [TestCaseSource(nameof(player2Wins))]
         public void GetWinners_WhenTheGameResultsInAWinForPlayer2_ReturnsAListContainingOnlyPlayer2(string moveList)
         {
-            var state = ApplyMoves(new TicTacToe(), moveList);
+            var state = ApplyMoves(new GameState(), moveList);
 
             var winner = state.GetWinners().SingleOrDefault();
 
@@ -136,7 +136,7 @@ namespace GameTheory.Tests.Games
         }
 
         internal static T ApplyMoves<T>(T state, string moveList)
-            where T : IGameState<TicTacToe.Move>
+            where T : IGameState<Move>
         {
             var moves = from move in moveList.Split(';')
                         let parts = move.Split(',')
@@ -144,7 +144,7 @@ namespace GameTheory.Tests.Games
                         let y = int.Parse(parts[1].Trim())
                         select new { x, y };
 
-            return (T)moves.Aggregate((IGameState<TicTacToe.Move>)state, (s, m) => s.MakeMove(s.GetAvailableMoves().Single(a => a.X == m.x && a.Y == m.y)));
+            return (T)moves.Aggregate((IGameState<Move>)state, (s, m) => s.MakeMove(s.GetAvailableMoves().Single(a => a.X == m.x && a.Y == m.y)));
         }
     }
 }

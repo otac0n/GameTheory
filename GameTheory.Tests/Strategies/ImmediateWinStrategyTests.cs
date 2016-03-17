@@ -6,7 +6,7 @@ namespace GameTheory.Tests.Strategies
 {
     using System.Threading;
     using System.Threading.Tasks;
-    using GameTheory.Games;
+    using GameTheory.Games.TicTacToe;
     using GameTheory.Strategies;
     using NUnit.Framework;
 
@@ -18,8 +18,8 @@ namespace GameTheory.Tests.Strategies
         [TestCase("0,0; 1,1; 2,2; 1,0; 2,0", "1,2")]
         public async Task GetMove_WhenThereIsAWinningMove_ReturnsAWinningMove(string moveList, string expectedMove)
         {
-            var gameState = Games.TicTacToeTests.ApplyMoves(new TicTacToe(), moveList);
-            using (var strategy = new ImmediateWinStrategy<TicTacToe.Move>(gameState.ActivePlayer))
+            var gameState = Games.TicTacToeTests.ApplyMoves(new GameState(), moveList);
+            using (var strategy = new ImmediateWinStrategy<Move>(gameState.ActivePlayer))
             {
                 var maybeMove = await strategy.ChooseMove(gameState, CancellationToken.None);
                 var move = maybeMove.Value;
@@ -37,8 +37,8 @@ namespace GameTheory.Tests.Strategies
         [TestCase("0,0; 1,1; 2,2; 2,1; 0,1; 0,2; 2,0; 1,0")]
         public async Task GetMove_WhenThereIsNoWinningMove_ReturnsAnEmptyValue(string moveList)
         {
-            var gameState = Games.TicTacToeTests.ApplyMoves(new TicTacToe(), moveList);
-            using (var strategy = new ImmediateWinStrategy<TicTacToe.Move>(gameState.ActivePlayer))
+            var gameState = Games.TicTacToeTests.ApplyMoves(new GameState(), moveList);
+            using (var strategy = new ImmediateWinStrategy<Move>(gameState.ActivePlayer))
             {
                 var maybeMove = await strategy.ChooseMove(gameState, CancellationToken.None);
                 Assert.That(maybeMove.HasValue, Is.False);
