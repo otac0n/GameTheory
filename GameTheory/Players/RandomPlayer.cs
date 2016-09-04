@@ -34,7 +34,7 @@ namespace GameTheory.Players
         }
 
         /// <inheritdoc />
-        public async Task<TMove> ChooseMove(IGameState<TMove> gameState, CancellationToken cancel)
+        public async Task<Maybe<TMove>> ChooseMove(IGameState<TMove> gameState, CancellationToken cancel)
         {
             await Task.Yield();
 
@@ -53,7 +53,7 @@ namespace GameTheory.Players
                 count = max;
             }
 
-            return chosenMove;
+            return count == 0 ? default(Maybe<TMove>) : new Maybe<TMove>(chosenMove);
         }
 
         /// <inheritdoc />

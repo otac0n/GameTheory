@@ -175,11 +175,13 @@
     <Compile Include="Games\TicTacToe\GameState.cs" />
     <Compile Include="GameStateExtensions.cs" />
     <Compile Include="Games\TicTacToe\Move.cs" />
+    <Compile Include="GameUtils.cs" />
     <Compile Include="IGameState.cs" />
     <Compile Include="IMove.cs" />
     <Compile Include="IPlayer.cs" />
     <Compile Include="IStrategy.cs" />
     <Compile Include="Maybe.cs" />
+    <Compile Include="Players\StrategyPlayer.cs" />
     <Compile Include="Strategies\ImmediateWinStrategy.cs" />
     <Compile Include="Players\RandomPlayer.cs" />
     <Compile Include="PlayerToken.cs" />

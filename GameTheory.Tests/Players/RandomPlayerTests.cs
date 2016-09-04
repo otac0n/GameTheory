@@ -29,7 +29,7 @@ namespace GameTheory.Tests.Players
                 var moves = gameState.Moves.ToDictionary(m => m.Value, m => 0);
                 for (int i = 0; i < Samples; i++)
                 {
-                    var move = await player.ChooseMove(gameState, CancellationToken.None);
+                    var move = (await player.ChooseMove(gameState, CancellationToken.None)).Value;
                     moves[move.Value]++;
                 }
 

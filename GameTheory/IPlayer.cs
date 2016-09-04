@@ -21,6 +21,6 @@ namespace GameTheory
         /// <param name="gameState">The <see cref="IGameState{TMove}"/> for which the player will choose a move.</param>
         /// <param name="cancel">A <see cref="CancellationToken"/> that notifies a player if the request for a move is cancelled.</param>
         /// <returns>A task representing the ongoing operation.</returns>
-        Task<TMove> ChooseMove(IGameState<TMove> gameState, CancellationToken cancel);
+        Task<Maybe<TMove>> ChooseMove(IGameState<TMove> gameState, CancellationToken cancel);
     }
 }

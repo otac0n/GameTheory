@@ -250,25 +250,15 @@ namespace GameTheory.Tests.Games
         [Test(Description = "At the end of the game, the player with the most Victory Points is declared The Great Sultan and wins.")]
         public void GetWinners_AfterAGameHasBeenPlayed_ReturnsThePlayersWithTheHighestScore()
         {
-            var state = new GameState(2);
-            var players = state.Players.Select(p => new RandomPlayer<Move>(p)).ToList();
+            var endState = (GameState)GameUtils.PlayGame(
+                new GameState(2),
+                p => new RandomPlayer<Move>(p),
+                (state, move) => Console.WriteLine("{0}: {1}", FiveTribesTests.p((GameState)state, move.Player), move)).Result;
 
-            while (true)
-            {
-                var move = players.Select(p => p.ChooseMove(state, GetCancellationToken()).Result).SingleOrDefault(m => m != null);
-                if (move == null)
-                {
-                    break;
-                }
+            var highestScore = endState.Players.Max(p => endState.GetScore(p));
+            var winners = endState.GetWinners();
 
-                Console.WriteLine("{0}: {1}", FiveTribesTests.p(state, move.Player), move);
-                state = state.MakeMove(move);
-            }
-
-            var highestScore = state.Players.Max(p => state.GetScore(p));
-            var winners = state.GetWinners();
-
-            Assert.That(winners, Is.EqualTo(state.Players.Where(p => state.GetScore(p) == highestScore)));
+            Assert.That(winners, Is.EqualTo(endState.Players.Where(p => endState.GetScore(p) == highestScore)));
         }
 
         private static CancellationToken GetCancellationToken()
