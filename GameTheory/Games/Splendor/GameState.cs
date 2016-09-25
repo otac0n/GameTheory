@@ -34,6 +34,8 @@ namespace GameTheory.Games.Splendor
         private static readonly EnumCollection<Token> InititalTokens;
 
         private readonly PlayerToken activePlayer;
+        private readonly ImmutableArray<ImmutableList<DevelopmentCard>> developmentDecks;
+        private readonly ImmutableArray<ImmutableArray<DevelopmentCard>> developmentTracks;
         private readonly ImmutableDictionary<PlayerToken, Inventory> inventory;
         private readonly Phase phase;
         private readonly ImmutableList<PlayerToken> players;
@@ -166,6 +168,19 @@ namespace GameTheory.Games.Splendor
             this.phase = Phase.Play;
             this.tokens = InititalTokens;
             this.inventory = this.players.ToImmutableDictionary(p => p, p => new Inventory());
+
+            var developmentDecks = new[] { InitialLevel1DevelopmentCards, InitialLevel2DevelopmentCards, InitialLevel3DevelopmentCards };
+            var developmentTracks = new ImmutableArray<DevelopmentCard>[developmentDecks.Length];
+            for (var i = 0; i < developmentDecks.Length; i++)
+            {
+                ImmutableList<DevelopmentCard> dealt;
+                var remaining = developmentDecks[i].Deal(4, out dealt);
+                developmentDecks[i] = remaining;
+                developmentTracks[i] = dealt.ToImmutableArray();
+            }
+
+            this.developmentDecks = developmentDecks.ToImmutableArray();
+            this.developmentTracks = developmentTracks.ToImmutableArray();
         }
 
         private GameState(
@@ -173,19 +188,33 @@ namespace GameTheory.Games.Splendor
             PlayerToken activePlayer,
             Phase phase,
             EnumCollection<Token> tokens,
-            ImmutableDictionary<PlayerToken, Inventory> inventory)
+            ImmutableDictionary<PlayerToken, Inventory> inventory,
+            ImmutableArray<ImmutableList<DevelopmentCard>> developmentDecks,
+            ImmutableArray<ImmutableArray<DevelopmentCard>> developmentTracks)
         {
             this.players = players;
             this.activePlayer = activePlayer;
             this.phase = phase;
             this.tokens = tokens;
             this.inventory = inventory;
+            this.developmentDecks = developmentDecks;
+            this.developmentTracks = developmentTracks;
         }
 
         /// <summary>
         /// Gets the active player.
         /// </summary>
         public PlayerToken ActivePlayer => this.activePlayer;
+
+        /// <summary>
+        /// Gets the decks of development cards.
+        /// </summary>
+        public ImmutableArray<ImmutableList<DevelopmentCard>> DevelopmentDecks => this.developmentDecks;
+
+        /// <summary>
+        /// Gets the visible tracks of development cards.
+        /// </summary>
+        public ImmutableArray<ImmutableArray<DevelopmentCard>> DevelopmentTracks => this.developmentTracks;
 
         IReadOnlyList<PlayerToken> IGameState<Move>.Players => this.Players;
 
@@ -264,14 +293,18 @@ namespace GameTheory.Games.Splendor
             PlayerToken activePlayer = null,
             Phase? phase = null,
             EnumCollection<Token> tokens = null,
-            ImmutableDictionary<PlayerToken, Inventory> inventory = null)
+            ImmutableDictionary<PlayerToken, Inventory> inventory = null,
+            ImmutableArray<ImmutableList<DevelopmentCard>>? developmentDecks = null,
+            ImmutableArray<ImmutableArray<DevelopmentCard>>? developmentTracks = null)
         {
             return new GameState(
                 this.players,
                 activePlayer ?? this.activePlayer,
                 phase ?? this.phase,
                 tokens ?? this.tokens,
-                inventory ?? this.inventory);
+                inventory ?? this.inventory,
+                developmentDecks ?? this.developmentDecks,
+                developmentTracks ?? this.developmentTracks);
         }
     }
 }

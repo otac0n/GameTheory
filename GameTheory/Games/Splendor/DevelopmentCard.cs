@@ -25,7 +25,12 @@ namespace GameTheory.Games.Splendor
         /// </summary>
         /// <param name="prestige">The prestige awarded by this card.</param>
         /// <param name="bonus">The bonus granted by this card.</param>
-        public DevelopmentCard(int prestige, Token bonus, int diamond = 0, int sapphire = 0, int emerald = 0, int ruby = 0,  int onyx = 0)
+        /// <param name="diamond">The diamond component of the cost.</param>
+        /// <param name="sapphire">The sapphire component of the cost.</param>
+        /// <param name="emerald">The emerald component of the cost.</param>
+        /// <param name="ruby">The ruby component of the cost.</param>
+        /// <param name="onyx">The onyx component of the cost.</param>
+        public DevelopmentCard(int prestige, Token bonus, int diamond = 0, int sapphire = 0, int emerald = 0, int ruby = 0, int onyx = 0)
             : this(prestige, bonus, EnumCollection<Token>.Empty
                   .Add(Token.Diamond, diamond)
                   .Add(Token.Sapphire, sapphire)
