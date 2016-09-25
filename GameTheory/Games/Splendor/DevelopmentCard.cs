@@ -11,11 +11,13 @@ namespace GameTheory.Games.Splendor
         /// Initializes a new instance of the <see cref="DevelopmentCard"/> class.
         /// </summary>
         /// <param name="prestige">The prestige awarded by this card.</param>
+        /// <param name="bonus">The bonus granted by this card.</param>
         /// <param name="cost">The cost of this card.</param>
-        public DevelopmentCard(int prestige, EnumCollection<Token> cost)
+        public DevelopmentCard(int prestige, Token bonus, EnumCollection<Token> cost)
         {
             this.Prestige = prestige;
             this.Cost = cost;
+            this.Bonus = bonus;
         }
 
         /// <summary>
