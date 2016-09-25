@@ -21,6 +21,26 @@ namespace GameTheory.Games.Splendor
         }
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="DevelopmentCard"/> class.
+        /// </summary>
+        /// <param name="prestige">The prestige awarded by this card.</param>
+        /// <param name="bonus">The bonus granted by this card.</param>
+        public DevelopmentCard(int prestige, Token bonus, int diamond = 0, int sapphire = 0, int emerald = 0, int ruby = 0,  int onyx = 0)
+            : this(prestige, bonus, EnumCollection<Token>.Empty
+                  .Add(Token.Diamond, diamond)
+                  .Add(Token.Sapphire, sapphire)
+                  .Add(Token.Emerald, emerald)
+                  .Add(Token.Ruby, ruby)
+                  .Add(Token.Onyx, onyx))
+        {
+        }
+
+        /// <summary>
+        /// Gets the bonus granted by this card.
+        /// </summary>
+        public Token Bonus { get; }
+
+        /// <summary>
         /// Gets the cost of this card.
         /// </summary>
         public EnumCollection<Token> Cost { get; }
