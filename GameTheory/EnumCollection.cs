@@ -42,6 +42,8 @@ namespace GameTheory
         /// <param name="items">The items to add to the collection.</param>
         public EnumCollection(IEnumerable<TEnum> items)
         {
+            Contract.Requires(items != null);
+
             var count = 0;
             var storage = new int[Capacity];
             foreach (var item in items)
@@ -164,6 +166,8 @@ namespace GameTheory
         /// <returns>The new collection.</returns>
         public EnumCollection<TEnum> AddRange(EnumCollection<TEnum> items)
         {
+            Contract.Requires(items != null);
+
             var count = checked(this.count + items.count);
             var storage = new int[Capacity];
             for (var i = 0; i < Capacity; i++)

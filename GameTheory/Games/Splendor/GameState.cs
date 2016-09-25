@@ -94,7 +94,7 @@ namespace GameTheory.Games.Splendor
         /// <summary>
         /// Gets available tokens.
         /// </summary>
-        public ImmutableDictionary<PlayerToken, EnumCollection<Token>> Tokens => this.playerTokens;
+        public EnumCollection<Token> Tokens => this.tokens;
 
         /// <inheritdoc />
         public IReadOnlyCollection<Move> GetAvailableMoves(PlayerToken player)
