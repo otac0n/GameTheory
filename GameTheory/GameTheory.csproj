@@ -172,6 +172,15 @@
     <Compile Include="Games\FiveTribes\TileColor.cs" />
     <Compile Include="Games\FiveTribes\Moves\PlacePalaceMove.cs" />
     <Compile Include="Games\FiveTribes\Tiles\Village.cs" />
+    <Compile Include="Games\Splendor\DevelopmentCard.cs" />
+    <Compile Include="Games\Splendor\GameState.cs" />
+    <Compile Include="Games\Splendor\Moves\PurchaseMove.cs" />
+    <Compile Include="Games\Splendor\Moves\ReserveMove.cs" />
+    <Compile Include="Games\Splendor\Moves\TakeTokensMove.cs" />
+    <Compile Include="Games\Splendor\Noble.cs" />
+    <Compile Include="Games\Splendor\Phase.cs" />
+    <Compile Include="Games\Splendor\Token.cs" />
+    <Compile Include="Games\Splendor\Move.cs" />
     <Compile Include="Games\TicTacToe\GameState.cs" />
     <Compile Include="GameStateExtensions.cs" />
     <Compile Include="Games\TicTacToe\Move.cs" />
