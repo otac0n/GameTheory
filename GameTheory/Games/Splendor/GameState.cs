@@ -22,6 +22,11 @@ namespace GameTheory.Games.Splendor
         /// </summary>
         public const int MinPlayers = 2;
 
+        /// <summary>
+        /// The score at which the game ends.
+        /// </summary>
+        public const int ScoreLimit = 15;
+
         private static readonly EnumCollection<Token> InititalTokens;
 
         private readonly int activePlayer;

@@ -31,7 +31,7 @@ namespace GameTheory.Games.Splendor.Moves
 
         internal override GameState Apply(GameState state)
         {
-            return state;
+            return base.Apply(state);
         }
     }
 }

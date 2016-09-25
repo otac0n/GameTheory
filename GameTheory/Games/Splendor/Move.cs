@@ -3,6 +3,7 @@
 namespace GameTheory.Games.Splendor
 {
     using System.Diagnostics.Contracts;
+    using System.Linq;
 
     /// <summary>
     /// Represents a move in Splendor.
@@ -31,6 +32,18 @@ namespace GameTheory.Games.Splendor
         /// <inheritdoc />
         public abstract override string ToString();
 
-        internal abstract GameState Apply(GameState state);
+        internal virtual GameState Apply(GameState state)
+        {
+            state = state.With(
+                activePlayer: state.Players[(state.Players.IndexOf(state.ActivePlayer) + 1) % state.Players.Count]);
+
+            if (state.ActivePlayer == state.Players[0] && state.Players.Any(p => state.GetScore(p) >= GameState.ScoreLimit))
+            {
+                state = state.With(
+                    phase: Phase.End);
+            }
+
+            return state;
+        }
     }
 }
