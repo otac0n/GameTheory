@@ -24,13 +24,21 @@ namespace GameTheory.Games.Splendor.Moves
         public DevelopmentCard Card { get; }
 
         /// <inheritdoc />
-        public override string ToString()
-        {
-            return $"Reserve {this.Card}";
-        }
+        public override string ToString() => $"Reserve {this.Card}" + (this.State.Tokens[Token.GoldJoker] > 0 ? $" and take {Token.GoldJoker}" : string.Empty);
 
         internal override GameState Apply(GameState state)
         {
+            // TODO: Replace card with one from deck or null.
+            state = state.With(
+                hand: state.Hand.SetItem(state.ActivePlayer, state.Hand[state.ActivePlayer].Add(this.Card)));
+
+            if (state.Tokens[Token.GoldJoker] > 0)
+            {
+                state = state.With(
+                    tokens: state.Tokens.Remove(Token.GoldJoker),
+                    playerTokens: state.PlayerTokens.SetItem(state.ActivePlayer, state.PlayerTokens[state.ActivePlayer].Add(Token.GoldJoker)));
+            }
+
             return base.Apply(state);
         }
     }

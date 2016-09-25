@@ -24,14 +24,12 @@ namespace GameTheory.Games.Splendor.Moves
         public EnumCollection<Token> Tokens { get; }
 
         /// <inheritdoc />
-        public override string ToString()
-        {
-            return $"Take {string.Join(",", this.Tokens)}";
-        }
+        public override string ToString() => $"Take {string.Join(",", this.Tokens)}";
 
-        internal override GameState Apply(GameState state)
-        {
-            return base.Apply(state);
-        }
+        internal override GameState Apply(GameState state) =>
+            base.Apply(
+                state.With(
+                    tokens: state.Tokens.RemoveRange(this.Tokens),
+                    playerTokens: state.PlayerTokens.SetItem(state.ActivePlayer, state.PlayerTokens[state.ActivePlayer].AddRange(this.Tokens))));
     }
 }

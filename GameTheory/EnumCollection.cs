@@ -62,7 +62,11 @@ namespace GameTheory
             this.storage = ImmutableList.Create(storage);
         }
 
-        private EnumCollection()
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EnumCollection{TEnum}"/> class.
+        /// </summary>
+        [Obsolete("Use the static Empty property instead.", error: true)]
+        public EnumCollection()
         {
             this.count = 0;
             this.storage = ImmutableList.Create(new int[Capacity]);

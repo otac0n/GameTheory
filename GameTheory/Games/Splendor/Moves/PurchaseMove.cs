@@ -24,10 +24,7 @@ namespace GameTheory.Games.Splendor.Moves
         public DevelopmentCard Card { get; }
 
         /// <inheritdoc />
-        public override string ToString()
-        {
-            return $"Purchase {this.Card} for {string.Join(",", this.Card.Cost)}";
-        }
+        public override string ToString() => $"Purchase {this.Card} for {string.Join(",", this.Card.Cost)}";
 
         internal override GameState Apply(GameState state)
         {
