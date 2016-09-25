@@ -1,5 +1,7 @@
 ﻿// Copyright © John Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
+using System.Collections.Generic;
+
 namespace GameTheory.Games.Splendor.Moves
 {
     /// <summary>
@@ -38,6 +40,12 @@ namespace GameTheory.Games.Splendor.Moves
         /// <inheritdoc />
         public override string ToString() => $"Purchase {this.Card} for {string.Join(",", this.Card.Cost)}";
 
+        internal static IEnumerable<Move> GenerateMoves(GameState state)
+        {
+            ////TODO: Yield moves that are possible given the user's bonuses.
+            yield break;
+        }
+
         internal override GameState Apply(GameState state)
         {
             var tokens = state.Tokens;
@@ -48,8 +56,10 @@ namespace GameTheory.Games.Splendor.Moves
             var pDevelopmentCards = pInventory.DevelopmentCards;
             var pTokens = pInventory.Tokens;
 
-            tokens = tokens.AddRange(card.Cost);
-            pTokens = pTokens.RemoveRange(card.Cost);
+            var cost = card.Cost;
+            ////TODO: Provide a discount based on the user's bonuses.
+            tokens = tokens.AddRange(cost);
+            pTokens = pTokens.RemoveRange(cost);
 
             pDevelopmentCards.Add(card);
 

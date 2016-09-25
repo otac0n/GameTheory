@@ -2,6 +2,9 @@
 
 namespace GameTheory.Games.Splendor.Moves
 {
+    using System.Collections.Generic;
+    using System.Linq;
+
     /// <summary>
     /// Represents a move to take tokens from the board.
     /// </summary>
@@ -25,6 +28,21 @@ namespace GameTheory.Games.Splendor.Moves
 
         /// <inheritdoc />
         public override string ToString() => $"Take {string.Join(",", this.Tokens)}";
+
+        internal static IEnumerable<Move> GenerateMoves(GameState state)
+        {
+            var stacks = state.Tokens.Keys.Where(t => t != Token.GoldJoker);
+
+            ////TODO: Yield moves that are combinations of up to three colors.
+
+            foreach (var stack in stacks)
+            {
+                if (state.Tokens[stack] >= 4)
+                {
+                    yield return new TakeTokensMove(state, EnumCollection<Token>.Empty.Add(stack, 2));
+                }
+            }
+        }
 
         internal override GameState Apply(GameState state)
         {

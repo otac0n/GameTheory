@@ -240,6 +240,9 @@ namespace GameTheory.Games.Splendor
 
             if (this.phase != Phase.End)
             {
+                moves.AddRange(Moves.PurchaseMove.GenerateMoves(this));
+                moves.AddRange(Moves.TakeTokensMove.GenerateMoves(this));
+                moves.AddRange(Moves.ReserveMove.GenerateMoves(this));
             }
 
             return moves.ToImmutableList();

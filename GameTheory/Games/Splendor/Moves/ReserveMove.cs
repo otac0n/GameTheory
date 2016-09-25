@@ -2,6 +2,8 @@
 
 namespace GameTheory.Games.Splendor.Moves
 {
+    using System.Collections.Generic;
+
     /// <summary>
     /// Represents a move to reserve a development card from the board.
     /// </summary>
@@ -37,6 +39,27 @@ namespace GameTheory.Games.Splendor.Moves
 
         /// <inheritdoc />
         public override string ToString() => $"Reserve {this.Card}" + (this.State.Tokens[Token.GoldJoker] > 0 ? $" and take {Token.GoldJoker}" : string.Empty);
+
+        internal static IEnumerable<Move> GenerateMoves(GameState state)
+        {
+            var pInventory = state.Inventory[state.ActivePlayer];
+
+            if (pInventory.Hand.Count < 3)
+            {
+                for (var tr = 0; tr < state.DevelopmentTracks.Length; tr++)
+                {
+                    var track = state.DevelopmentTracks[tr];
+
+                    for (int ix = 0; ix < track.Length; ix++)
+                    {
+                        if (track[ix] != null)
+                        {
+                            yield return new ReserveMove(state, tr, ix);
+                        }
+                    }
+                }
+            }
+        }
 
         internal override GameState Apply(GameState state)
         {
