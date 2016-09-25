@@ -26,10 +26,20 @@ namespace GameTheory.Games.Splendor.Moves
         /// <inheritdoc />
         public override string ToString() => $"Take {string.Join(",", this.Tokens)}";
 
-        internal override GameState Apply(GameState state) =>
-            base.Apply(
+        internal override GameState Apply(GameState state)
+        {
+            var tokens = state.Tokens;
+            var pInventory = state.Inventory[state.ActivePlayer];
+            var pTokens = pInventory.Tokens;
+
+            tokens = tokens.RemoveRange(this.Tokens);
+            pTokens = pTokens.AddRange(this.Tokens);
+
+            return base.Apply(
                 state.With(
-                    tokens: state.Tokens.RemoveRange(this.Tokens),
-                    playerTokens: state.PlayerTokens.SetItem(state.ActivePlayer, state.PlayerTokens[state.ActivePlayer].AddRange(this.Tokens))));
+                    tokens: tokens,
+                    inventory: state.Inventory.SetItem(state.ActivePlayer, pInventory.With(
+                        tokens: pTokens))));
+        }
     }
 }

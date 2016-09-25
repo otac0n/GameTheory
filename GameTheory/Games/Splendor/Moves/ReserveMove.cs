@@ -28,18 +28,25 @@ namespace GameTheory.Games.Splendor.Moves
 
         internal override GameState Apply(GameState state)
         {
-            // TODO: Replace card with one from deck or null.
-            state = state.With(
-                hand: state.Hand.SetItem(state.ActivePlayer, state.Hand[state.ActivePlayer].Add(this.Card)));
+            var tokens = state.Tokens;
+            var pInventory = state.Inventory[state.ActivePlayer];
+            var pHand = pInventory.Hand;
+            var pTokens = pInventory.Tokens;
 
-            if (state.Tokens[Token.GoldJoker] > 0)
+            // TODO: Replace card with one from deck or null.
+            pHand = pHand.Add(this.Card);
+
+            if (tokens[Token.GoldJoker] > 0)
             {
-                state = state.With(
-                    tokens: state.Tokens.Remove(Token.GoldJoker),
-                    playerTokens: state.PlayerTokens.SetItem(state.ActivePlayer, state.PlayerTokens[state.ActivePlayer].Add(Token.GoldJoker)));
+                tokens = tokens.Remove(Token.GoldJoker);
+                pTokens = pTokens.Add(Token.GoldJoker);
             }
 
-            return base.Apply(state);
+            return base.Apply(state.With(
+                tokens: tokens,
+                inventory: state.Inventory.SetItem(state.ActivePlayer, pInventory.With(
+                    hand: pHand,
+                    tokens: pTokens))));
         }
     }
 }

@@ -34,10 +34,9 @@ namespace GameTheory.Games.Splendor
         private static readonly EnumCollection<Token> InititalTokens;
 
         private readonly PlayerToken activePlayer;
-        private readonly ImmutableDictionary<PlayerToken, ImmutableList<DevelopmentCard>> hand;
+        private readonly ImmutableDictionary<PlayerToken, Inventory> inventory;
         private readonly Phase phase;
         private readonly ImmutableList<PlayerToken> players;
-        private readonly ImmutableDictionary<PlayerToken, EnumCollection<Token>> playerTokens;
         private readonly EnumCollection<Token> tokens;
 
         static GameState()
@@ -59,8 +58,7 @@ namespace GameTheory.Games.Splendor
                 new Noble(4, 4, 0, 0, 0),
                 new Noble(0, 4, 4, 0, 0),
                 new Noble(0, 0, 4, 4, 0),
-                new Noble(0, 0, 0, 4, 4)
-                );
+                new Noble(0, 0, 0, 4, 4));
             InitialLevel1DevelopmentCards = ImmutableList.Create(
                 new DevelopmentCard(0, Token.Onyx, 1, 1, 1, 1, 0),
                 new DevelopmentCard(0, Token.Onyx, 0, 0, 2, 1, 0),
@@ -101,8 +99,7 @@ namespace GameTheory.Games.Splendor
                 new DevelopmentCard(0, Token.Diamond, 0, 2, 2, 0, 1),
                 new DevelopmentCard(0, Token.Diamond, 3, 1, 0, 0, 1),
                 new DevelopmentCard(0, Token.Diamond, sapphire: 3),
-                new DevelopmentCard(1, Token.Diamond, emerald: 4)
-                );
+                new DevelopmentCard(1, Token.Diamond, emerald: 4));
             InitialLevel2DevelopmentCards = ImmutableList.Create(
                 new DevelopmentCard(1, Token.Onyx, 3, 2, 2, 0, 0),
                 new DevelopmentCard(1, Token.Onyx, 3, 0, 3, 0, 2),
@@ -133,8 +130,7 @@ namespace GameTheory.Games.Splendor
                 new DevelopmentCard(2, Token.Diamond, 0, 0, 1, 4, 2),
                 new DevelopmentCard(2, Token.Diamond, 0, 0, 0, 5, 3),
                 new DevelopmentCard(2, Token.Diamond, ruby: 5),
-                new DevelopmentCard(3, Token.Diamond, diamond: 6)
-                );
+                new DevelopmentCard(3, Token.Diamond, diamond: 6));
             InitialLevel3DevelopmentCards = ImmutableList.Create(
                 new DevelopmentCard(3, Token.Onyx, 3, 3, 5, 3, 0),
                 new DevelopmentCard(4, Token.Onyx, 0, 0, 3, 6, 3),
@@ -155,8 +151,7 @@ namespace GameTheory.Games.Splendor
                 new DevelopmentCard(3, Token.Diamond, 0, 3, 3, 5, 3),
                 new DevelopmentCard(4, Token.Diamond, 3, 0, 0, 3, 6),
                 new DevelopmentCard(4, Token.Diamond, onyx: 7),
-                new DevelopmentCard(5, Token.Diamond, 3, 0, 0, 0, 7)
-                );
+                new DevelopmentCard(5, Token.Diamond, 3, 0, 0, 0, 7));
         }
 
         /// <summary>
@@ -170,24 +165,21 @@ namespace GameTheory.Games.Splendor
             this.activePlayer = this.players[0];
             this.phase = Phase.Play;
             this.tokens = InititalTokens;
-            this.playerTokens = this.players.ToImmutableDictionary(p => p, p => EnumCollection<Token>.Empty);
-            this.hand = this.players.ToImmutableDictionary(p => p, p => ImmutableList<DevelopmentCard>.Empty);
+            this.inventory = this.players.ToImmutableDictionary(p => p, p => new Inventory());
         }
 
-        public GameState(
+        private GameState(
             ImmutableList<PlayerToken> players,
             PlayerToken activePlayer,
             Phase phase,
             EnumCollection<Token> tokens,
-            ImmutableDictionary<PlayerToken, EnumCollection<Token>> playerTokens,
-            ImmutableDictionary<PlayerToken, ImmutableList<DevelopmentCard>> hand)
+            ImmutableDictionary<PlayerToken, Inventory> inventory)
         {
             this.players = players;
             this.activePlayer = activePlayer;
             this.phase = phase;
             this.tokens = tokens;
-            this.playerTokens = playerTokens;
-            this.hand = hand;
+            this.inventory = inventory;
         }
 
         /// <summary>
@@ -195,22 +187,17 @@ namespace GameTheory.Games.Splendor
         /// </summary>
         public PlayerToken ActivePlayer => this.activePlayer;
 
-        /// <summary>
-        /// Gets the cards in all players' hands.
-        /// </summary>
-        public ImmutableDictionary<PlayerToken, ImmutableList<DevelopmentCard>> Hand => this.hand;
-
         IReadOnlyList<PlayerToken> IGameState<Move>.Players => this.Players;
+
+        /// <summary>
+        /// Gets the inventory of all players.
+        /// </summary>
+        public ImmutableDictionary<PlayerToken, Inventory> Inventory => this.inventory;
 
         /// <summary>
         /// Gets the list of players.
         /// </summary>
         public ImmutableList<PlayerToken> Players => this.players;
-
-        /// <summary>
-        /// Gets the tokens owned by all players.
-        /// </summary>
-        public ImmutableDictionary<PlayerToken, EnumCollection<Token>> PlayerTokens => this.playerTokens;
 
         /// <summary>
         /// Gets available tokens.
@@ -277,16 +264,14 @@ namespace GameTheory.Games.Splendor
             PlayerToken activePlayer = null,
             Phase? phase = null,
             EnumCollection<Token> tokens = null,
-            ImmutableDictionary<PlayerToken, EnumCollection<Token>> playerTokens = null,
-            ImmutableDictionary<PlayerToken, ImmutableList<DevelopmentCard>> hand = null)
+            ImmutableDictionary<PlayerToken, Inventory> inventory = null)
         {
             return new GameState(
                 this.players,
                 activePlayer ?? this.activePlayer,
                 phase ?? this.phase,
                 tokens ?? this.tokens,
-                playerTokens ?? this.playerTokens,
-                hand ?? this.hand);
+                inventory ?? this.inventory);
         }
     }
 }
