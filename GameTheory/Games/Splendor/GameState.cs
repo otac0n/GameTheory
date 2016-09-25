@@ -29,9 +29,11 @@ namespace GameTheory.Games.Splendor
 
         private static readonly EnumCollection<Token> InititalTokens;
 
-        private readonly int activePlayer;
+        private readonly PlayerToken activePlayer;
         private readonly Phase phase;
         private readonly ImmutableList<PlayerToken> players;
+        private readonly ImmutableDictionary<PlayerToken, EnumCollection<Token>> playerTokens;
+        private readonly EnumCollection<Token> tokens;
 
         static GameState()
         {
@@ -52,14 +54,30 @@ namespace GameTheory.Games.Splendor
         {
             Contract.Requires(players >= MinPlayers && players <= MaxPlayers);
             this.players = Enumerable.Range(0, players).Select(i => new PlayerToken()).ToImmutableList();
-            this.activePlayer = 0;
+            this.activePlayer = this.players[0];
             this.phase = Phase.Play;
+            this.tokens = InititalTokens;
+            this.playerTokens = this.players.ToImmutableDictionary(p => p, p => new EnumCollection<Token>());
+        }
+
+        public GameState(
+            ImmutableList<PlayerToken> players,
+            PlayerToken activePlayer,
+            Phase phase,
+            EnumCollection<Token> tokens,
+            ImmutableDictionary<PlayerToken, EnumCollection<Token>> playerTokens)
+        {
+            this.players = players;
+            this.activePlayer = activePlayer;
+            this.phase = phase;
+            this.tokens = tokens;
+            this.playerTokens = playerTokens;
         }
 
         /// <summary>
         /// Gets the active player.
         /// </summary>
-        public PlayerToken ActivePlayer => this.players[this.activePlayer];
+        public PlayerToken ActivePlayer => this.activePlayer;
 
         IReadOnlyList<PlayerToken> IGameState<Move>.Players => this.Players;
 
@@ -68,18 +86,51 @@ namespace GameTheory.Games.Splendor
         /// </summary>
         public ImmutableList<PlayerToken> Players => this.players;
 
+        /// <summary>
+        /// Gets the tokens owned by all players.
+        /// </summary>
+        public ImmutableDictionary<PlayerToken, EnumCollection<Token>> PlayerTokens => this.playerTokens;
+
+        /// <summary>
+        /// Gets available tokens.
+        /// </summary>
+        public ImmutableDictionary<PlayerToken, EnumCollection<Token>> Tokens => this.playerTokens;
+
         /// <inheritdoc />
         public IReadOnlyCollection<Move> GetAvailableMoves(PlayerToken player)
         {
             var moves = new List<Move>();
 
+            if (this.phase != Phase.End)
+            {
+            }
+
             return moves.ToImmutableList();
+        }
+
+        /// <summary>
+        /// Gets the score of the specified player.
+        /// </summary>
+        /// <param name="player">The player whose score should be calculated.</param>
+        /// <returns>The specified player's score.</returns>
+        public int GetScore(PlayerToken player)
+        {
+            return 0;
         }
 
         /// <inheritdoc />
         public IReadOnlyCollection<PlayerToken> GetWinners()
         {
-            return ImmutableList<PlayerToken>.Empty;
+            if (this.phase == Phase.Play)
+            {
+                return ImmutableList<PlayerToken>.Empty;
+            }
+
+            return this.players
+                .GroupBy(p => this.GetScore(p))
+                .OrderByDescending(g => g.Key)
+                .First()
+                .ToImmutableList();
         }
 
         /// <inheritdoc />
@@ -99,6 +150,20 @@ namespace GameTheory.Games.Splendor
             Contract.Requires(move.State == this);
 
             return move.Apply(this);
+        }
+
+        internal GameState With(
+            PlayerToken activePlayer = null,
+            Phase? phase = null,
+            EnumCollection<Token> tokens = null,
+            ImmutableDictionary<PlayerToken, EnumCollection<Token>> playerTokens = null)
+        {
+            return new GameState(
+                this.players,
+                activePlayer ?? this.activePlayer,
+                phase ?? this.phase,
+                tokens ?? this.tokens,
+                playerTokens ?? this.playerTokens);
         }
     }
 }
