@@ -31,9 +31,24 @@ namespace GameTheory.Games.Splendor.Moves
 
         internal static IEnumerable<Move> GenerateMoves(GameState state)
         {
-            var stacks = state.Tokens.Keys.Where(t => t != Token.GoldJoker);
+            var stacks = state.Tokens.Keys.Where(t => t != Token.GoldJoker).ToArray();
 
-            ////TODO: Yield moves that are combinations of up to three colors.
+            for (var i = 0; i < stacks.Length; i++)
+            {
+                var firstOnly = EnumCollection<Token>.Empty.Add(stacks[i]);
+                yield return new TakeTokensMove(state, firstOnly);
+
+                for (var j = i + 1; j < stacks.Length; j++)
+                {
+                    var secondAndFirst = firstOnly.Add(stacks[j]);
+                    yield return new TakeTokensMove(state, secondAndFirst);
+
+                    for (var k = j + 1; k < stacks.Length; k++)
+                    {
+                        yield return new TakeTokensMove(state, secondAndFirst.Add(stacks[k]));
+                    }
+                }
+            }
 
             foreach (var stack in stacks)
             {
