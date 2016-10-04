@@ -42,7 +42,7 @@ namespace GameTheory.Games.Splendor.Moves
 
         internal static IEnumerable<Move> GenerateMoves(GameState state)
         {
-            ////TODO: Yield moves that are possible given the user's bonuses.
+            // TODO: Yield moves that are possible given the user's bonuses.
             yield break;
         }
 

@@ -13,6 +13,11 @@ namespace GameTheory.Games.Splendor
     public class GameState : IGameState<Move>
     {
         /// <summary>
+        /// The maxumum number of cards allowed in a player's hand.
+        /// </summary>
+        public const int HandLimit = 3;
+
+        /// <summary>
         /// The maximum number of supported players.
         /// </summary>
         public const int MaxPlayers = 4;
@@ -26,6 +31,11 @@ namespace GameTheory.Games.Splendor
         /// The score at which the game ends.
         /// </summary>
         public const int ScoreLimit = 15;
+
+        /// <summary>
+        /// The maximum number of tokens a player is allowed to have.
+        /// </summary>
+        public const int TokenLimit = 10;
 
         private static readonly ImmutableList<DevelopmentCard> InitialLevel1DevelopmentCards;
         private static readonly ImmutableList<DevelopmentCard> InitialLevel2DevelopmentCards;

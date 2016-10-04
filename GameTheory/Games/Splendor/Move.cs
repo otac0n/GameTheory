@@ -34,6 +34,7 @@ namespace GameTheory.Games.Splendor
 
         internal virtual GameState Apply(GameState state)
         {
+            // TODO: Implement transition moves for handling nobles and discarding tokens down to 10.
             state = state.With(
                 activePlayer: state.Players[(state.Players.IndexOf(state.ActivePlayer) + 1) % state.Players.Count]);
 
