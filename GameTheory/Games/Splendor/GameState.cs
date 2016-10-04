@@ -31,25 +31,18 @@ namespace GameTheory.Games.Splendor
         private static readonly ImmutableList<DevelopmentCard> InitialLevel2DevelopmentCards;
         private static readonly ImmutableList<DevelopmentCard> InitialLevel3DevelopmentCards;
         private static readonly ImmutableList<Noble> InitialNobles;
-        private static readonly EnumCollection<Token> InititalTokens;
 
         private readonly PlayerToken activePlayer;
         private readonly ImmutableArray<ImmutableList<DevelopmentCard>> developmentDecks;
         private readonly ImmutableArray<ImmutableArray<DevelopmentCard>> developmentTracks;
         private readonly ImmutableDictionary<PlayerToken, Inventory> inventory;
+        private readonly ImmutableList<Noble> nobles;
         private readonly Phase phase;
         private readonly ImmutableList<PlayerToken> players;
         private readonly EnumCollection<Token> tokens;
 
         static GameState()
         {
-            InititalTokens = EnumCollection<Token>.Empty
-                .Add(Token.Emerald, 7)
-                .Add(Token.Diamond, 7)
-                .Add(Token.Sapphire, 7)
-                .Add(Token.Onyx, 7)
-                .Add(Token.Ruby, 7)
-                .Add(Token.GoldJoker, 5);
             InitialNobles = ImmutableList.Create(
                 new Noble(3, 3, 3, 0, 0),
                 new Noble(3, 3, 0, 0, 3),
@@ -166,7 +159,18 @@ namespace GameTheory.Games.Splendor
             this.players = Enumerable.Range(0, players).Select(i => new PlayerToken()).ToImmutableList();
             this.activePlayer = this.players[0];
             this.phase = Phase.Play;
-            this.tokens = InititalTokens;
+
+            var gemTokens = players + (players >= 4 ? 3 : 2);
+            this.tokens = EnumCollection<Token>.Empty
+                .Add(Token.Emerald, gemTokens)
+                .Add(Token.Diamond, gemTokens)
+                .Add(Token.Sapphire, gemTokens)
+                .Add(Token.Onyx, gemTokens)
+                .Add(Token.Ruby, gemTokens)
+                .Add(Token.GoldJoker, 5);
+
+            InitialNobles.Deal(players + 1, out this.nobles);
+
             this.inventory = this.players.ToImmutableDictionary(p => p, p => new Inventory());
 
             var developmentDecks = new[] { InitialLevel1DevelopmentCards, InitialLevel2DevelopmentCards, InitialLevel3DevelopmentCards };
@@ -188,6 +192,7 @@ namespace GameTheory.Games.Splendor
             PlayerToken activePlayer,
             Phase phase,
             EnumCollection<Token> tokens,
+            ImmutableList<Noble> nobles,
             ImmutableDictionary<PlayerToken, Inventory> inventory,
             ImmutableArray<ImmutableList<DevelopmentCard>> developmentDecks,
             ImmutableArray<ImmutableArray<DevelopmentCard>> developmentTracks)
@@ -196,6 +201,7 @@ namespace GameTheory.Games.Splendor
             this.activePlayer = activePlayer;
             this.phase = phase;
             this.tokens = tokens;
+            this.nobles = nobles;
             this.inventory = inventory;
             this.developmentDecks = developmentDecks;
             this.developmentTracks = developmentTracks;
@@ -222,6 +228,11 @@ namespace GameTheory.Games.Splendor
         /// Gets the inventory of all players.
         /// </summary>
         public ImmutableDictionary<PlayerToken, Inventory> Inventory => this.inventory;
+
+        /// <summary>
+        /// Gets the remaining nobles.
+        /// </summary>
+        public ImmutableList<Noble> Nobles => this.nobles;
 
         /// <summary>
         /// Gets the list of players.
@@ -296,6 +307,7 @@ namespace GameTheory.Games.Splendor
             PlayerToken activePlayer = null,
             Phase? phase = null,
             EnumCollection<Token> tokens = null,
+            ImmutableList<Noble> nobles = null,
             ImmutableDictionary<PlayerToken, Inventory> inventory = null,
             ImmutableArray<ImmutableList<DevelopmentCard>>? developmentDecks = null,
             ImmutableArray<ImmutableArray<DevelopmentCard>>? developmentTracks = null)
@@ -305,6 +317,7 @@ namespace GameTheory.Games.Splendor
                 activePlayer ?? this.activePlayer,
                 phase ?? this.phase,
                 tokens ?? this.tokens,
+                nobles ?? this.nobles,
                 inventory ?? this.inventory,
                 developmentDecks ?? this.developmentDecks,
                 developmentTracks ?? this.developmentTracks);

@@ -54,6 +54,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Games\FiveTribesTests.cs" />
+    <Compile Include="Games\SplendorTests.cs" />
     <Compile Include="Games\TicTacToeTests.cs" />
     <Compile Include="Players\DuhPlayerTests.cs" />
     <Compile Include="Players\RandomPlayerTests.cs" />
