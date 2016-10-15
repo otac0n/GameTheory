@@ -7,15 +7,15 @@ namespace GameTheory.Games.Splendor.Moves
     /// <summary>
     /// Represents a move to reserve a development card from the board.
     /// </summary>
-    public class ReserveMove : Move
+    public class ReserveFromBoardMove : Move
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="ReserveMove"/> class.
+        /// Initializes a new instance of the <see cref="ReserveFromBoardMove"/> class.
         /// </summary>
         /// <param name="state">The <see cref="GameState"/> that this move is based on.</param>
         /// <param name="track">The index of the development track that contains the card to reserve.</param>
         /// <param name="index">The index in the development track of the card to reserve.</param>
-        public ReserveMove(GameState state, int track, int index)
+        public ReserveFromBoardMove(GameState state, int track, int index)
             : base(state)
         {
             this.Track = track;
@@ -44,7 +44,7 @@ namespace GameTheory.Games.Splendor.Moves
         {
             var pInventory = state.Inventory[state.ActivePlayer];
 
-            if (pInventory.Hand.Count < 3)
+            if (pInventory.Hand.Count < GameState.HandLimit)
             {
                 for (var tr = 0; tr < state.DevelopmentTracks.Length; tr++)
                 {
@@ -54,7 +54,7 @@ namespace GameTheory.Games.Splendor.Moves
                     {
                         if (track[ix] != null)
                         {
-                            yield return new ReserveMove(state, tr, ix);
+                            yield return new ReserveFromBoardMove(state, tr, ix);
                         }
                     }
                 }

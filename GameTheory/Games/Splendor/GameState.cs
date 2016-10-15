@@ -263,7 +263,7 @@ namespace GameTheory.Games.Splendor
             {
                 moves.AddRange(Moves.PurchaseMove.GenerateMoves(this));
                 moves.AddRange(Moves.TakeTokensMove.GenerateMoves(this));
-                moves.AddRange(Moves.ReserveMove.GenerateMoves(this));
+                moves.AddRange(Moves.ReserveFromBoardMove.GenerateMoves(this));
             }
 
             return moves.ToImmutableList();
