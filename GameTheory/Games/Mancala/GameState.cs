@@ -12,8 +12,19 @@ namespace GameTheory.Games.Mancala
     /// </summary>
     public class GameState : IGameState<Move>
     {
+        internal const int BinsOnASide = 6;
+        private const int InitialStonesPerBin = 4;
+        private static readonly ImmutableArray<int> InitialBoard;
         private readonly PlayerToken activePlayer;
         private readonly ImmutableList<PlayerToken> players;
+        private readonly ImmutableArray<int> board;
+
+        static GameState()
+        {
+            var bins = Enumerable.Repeat(InitialStonesPerBin, BinsOnASide);
+            var side = Enumerable.Concat(bins, Enumerable.Repeat(0, 1));
+            InitialBoard = ImmutableArray.CreateRange(Enumerable.Concat(side, side));
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GameState"/> class.
@@ -22,12 +33,15 @@ namespace GameTheory.Games.Mancala
         {
             this.players = ImmutableList.Create(new PlayerToken(), new PlayerToken());
             this.activePlayer = this.players[0];
+            this.board = InitialBoard;
         }
 
         private GameState(
-            PlayerToken activePlayer)
+            PlayerToken activePlayer,
+            ImmutableArray<int> board)
         {
             this.activePlayer = activePlayer;
+            this.board = board;
         }
 
         /// <summary>
@@ -57,7 +71,9 @@ namespace GameTheory.Games.Mancala
         /// <returns>The specified player's score.</returns>
         public int GetScore(PlayerToken player)
         {
-            return 0;
+            var playerIndex = this.players.IndexOf(this.activePlayer);
+            var mancalaIndex = (playerIndex + 1) * (BinsOnASide + 1) - 1;
+            return this.board[mancalaIndex];
         }
 
         /// <inheritdoc />
@@ -89,11 +105,31 @@ namespace GameTheory.Games.Mancala
             return move.Apply(this);
         }
 
+        private ImmutableList<Move> GetAvailableMoves()
+        {
+            var moves = ImmutableList.CreateBuilder<Move>();
+
+            var playerIndex = this.players.IndexOf(this.activePlayer);
+            var startingIndex = playerIndex * (BinsOnASide + 1);
+            for (int i = 0; i < BinsOnASide; i++)
+            {
+                var binIndex = startingIndex + i;
+                if (this.board[binIndex] > 0)
+                {
+                    moves.Add(new Move(this, binIndex));
+                }
+            }
+
+            return moves.ToImmutable();
+        }
+
         internal GameState With(
-            PlayerToken activePlayer = null)
+            PlayerToken activePlayer = null,
+            ImmutableArray<int>? board = null)
         {
             return new GameState(
-                activePlayer ?? this.activePlayer);
+                activePlayer ?? this.activePlayer,
+                board ?? this.board);
         }
     }
 }

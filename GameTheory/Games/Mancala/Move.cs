@@ -7,19 +7,26 @@ namespace GameTheory.Games.Mancala
     /// <summary>
     /// Represents a move in Mancala.
     /// </summary>
-    public abstract class Move : IMove
+    public sealed class Move : IMove
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="Move"/> class.
         /// </summary>
         /// <param name="state">The <see cref="GameState"/> that this move is based on.</param>
-        protected Move(GameState state)
+        /// <param name="bin">The index of the bin.</param>
+        internal Move(GameState state, int bin)
         {
             Contract.Requires(state != null);
 
             this.State = state;
             this.Player = state.ActivePlayer;
+            this.Bin = bin;
         }
+
+        /// <summary>
+        /// Gets the index of the bin.
+        /// </summary>
+        public int Bin { get; private set; }
 
         /// <summary>
         /// Gets the player who may perform this move.
@@ -29,8 +36,14 @@ namespace GameTheory.Games.Mancala
         internal GameState State { get; private set; }
 
         /// <inheritdoc />
-        public abstract override string ToString();
+        public override string ToString()
+        {
+            return $"Pick up {this.Bin}";
+        }
 
-        internal abstract GameState Apply(GameState state);
+        internal GameState Apply(GameState state)
+        {
+            return state;
+        }
     }
 }
