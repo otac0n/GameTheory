@@ -59,9 +59,17 @@ namespace GameTheory.Games.Mancala
         /// <inheritdoc />
         public IReadOnlyCollection<Move> GetAvailableMoves(PlayerToken player)
         {
-            var moves = new List<Move>();
+            var moves = ImmutableList.CreateBuilder<Move>();
 
-            return moves.ToImmutableList();
+            foreach (var i in this.GetPlayerIndexes(this.activePlayer).Take(BinsOnASide))
+            {
+                if (this.board[i] > 0)
+                {
+                    moves.Add(new Move(this, i));
+                }
+            }
+
+            return moves.ToImmutable();
         }
 
         /// <summary>
@@ -110,21 +118,6 @@ namespace GameTheory.Games.Mancala
             return new GameState(
                 activePlayer ?? this.activePlayer,
                 board ?? this.board);
-        }
-
-        private ImmutableList<Move> GetAvailableMoves()
-        {
-            var moves = ImmutableList.CreateBuilder<Move>();
-
-            foreach (var i in this.GetPlayerIndexes(this.activePlayer).Take(BinsOnASide))
-            {
-                if (this.board[i] > 0)
-                {
-                    moves.Add(new Move(this, i));
-                }
-            }
-
-            return moves.ToImmutable();
         }
 
         private IEnumerable<int> GetPlayerIndexes(PlayerToken player)
