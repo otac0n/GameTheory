@@ -16,8 +16,8 @@ namespace GameTheory.Games.Mancala
         private const int InitialStonesPerBin = 4;
         private static readonly ImmutableArray<int> InitialBoard;
         private readonly PlayerToken activePlayer;
-        private readonly ImmutableList<PlayerToken> players;
         private readonly ImmutableArray<int> board;
+        private readonly ImmutableList<PlayerToken> players;
 
         static GameState()
         {
@@ -71,9 +71,7 @@ namespace GameTheory.Games.Mancala
         /// <returns>The specified player's score.</returns>
         public int GetScore(PlayerToken player)
         {
-            var playerIndex = this.players.IndexOf(this.activePlayer);
-            var mancalaIndex = (playerIndex + 1) * (BinsOnASide + 1) - 1;
-            return this.board[mancalaIndex];
+            return this.GetPlayerIndexes(player).Sum(i => this.board[i]);
         }
 
         /// <inheritdoc />
@@ -105,24 +103,6 @@ namespace GameTheory.Games.Mancala
             return move.Apply(this);
         }
 
-        private ImmutableList<Move> GetAvailableMoves()
-        {
-            var moves = ImmutableList.CreateBuilder<Move>();
-
-            var playerIndex = this.players.IndexOf(this.activePlayer);
-            var startingIndex = playerIndex * (BinsOnASide + 1);
-            for (int i = 0; i < BinsOnASide; i++)
-            {
-                var binIndex = startingIndex + i;
-                if (this.board[binIndex] > 0)
-                {
-                    moves.Add(new Move(this, binIndex));
-                }
-            }
-
-            return moves.ToImmutable();
-        }
-
         internal GameState With(
             PlayerToken activePlayer = null,
             ImmutableArray<int>? board = null)
@@ -130,6 +110,29 @@ namespace GameTheory.Games.Mancala
             return new GameState(
                 activePlayer ?? this.activePlayer,
                 board ?? this.board);
+        }
+
+        private ImmutableList<Move> GetAvailableMoves()
+        {
+            var moves = ImmutableList.CreateBuilder<Move>();
+
+            foreach (var i in this.GetPlayerIndexes(this.activePlayer).Take(BinsOnASide))
+            {
+                if (this.board[i] > 0)
+                {
+                    moves.Add(new Move(this, i));
+                }
+            }
+
+            return moves.ToImmutable();
+        }
+
+        private IEnumerable<int> GetPlayerIndexes(PlayerToken player)
+        {
+            var playerIndex = this.players.IndexOf(player);
+            var startingIndex = playerIndex * (BinsOnASide + 1);
+            var indexes = Enumerable.Range(startingIndex, BinsOnASide + 1);
+            return indexes;
         }
     }
 }
