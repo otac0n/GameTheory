@@ -37,9 +37,11 @@ namespace GameTheory.Games.Mancala
         }
 
         private GameState(
+            ImmutableList<PlayerToken> players,
             PlayerToken activePlayer,
             ImmutableArray<int> board)
         {
+            this.players = players;
             this.activePlayer = activePlayer;
             this.board = board;
         }
@@ -48,6 +50,11 @@ namespace GameTheory.Games.Mancala
         /// Gets the active player.
         /// </summary>
         public PlayerToken ActivePlayer => this.activePlayer;
+
+        /// <summary>
+        /// Gets the board.
+        /// </summary>
+        public ImmutableArray<int> Board => this.board;
 
         IReadOnlyList<PlayerToken> IGameState<Move>.Players => this.Players;
 
@@ -111,21 +118,22 @@ namespace GameTheory.Games.Mancala
             return move.Apply(this);
         }
 
-        internal GameState With(
-            PlayerToken activePlayer = null,
-            ImmutableArray<int>? board = null)
-        {
-            return new GameState(
-                activePlayer ?? this.activePlayer,
-                board ?? this.board);
-        }
-
-        private IEnumerable<int> GetPlayerIndexes(PlayerToken player)
+        internal IEnumerable<int> GetPlayerIndexes(PlayerToken player)
         {
             var playerIndex = this.players.IndexOf(player);
             var startingIndex = playerIndex * (BinsOnASide + 1);
             var indexes = Enumerable.Range(startingIndex, BinsOnASide + 1);
             return indexes;
+        }
+
+        internal GameState With(
+            PlayerToken activePlayer = null,
+            ImmutableArray<int>? board = null)
+        {
+            return new GameState(
+                this.players,
+                activePlayer ?? this.activePlayer,
+                board ?? this.board);
         }
     }
 }

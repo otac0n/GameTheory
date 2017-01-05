@@ -2,7 +2,9 @@
 
 namespace GameTheory.Games.Mancala
 {
+    using System.Collections.Generic;
     using System.Diagnostics.Contracts;
+    using System.Linq;
 
     /// <summary>
     /// Represents a move in Mancala.
@@ -38,12 +40,55 @@ namespace GameTheory.Games.Mancala
         /// <inheritdoc />
         public override string ToString()
         {
-            return $"Pick up {this.Bin}";
+            return $"Pick up {this.State.Board[this.Bin]} stones from ({this.Bin})";
         }
 
         internal GameState Apply(GameState state)
         {
-            return state;
+            var mancala = state.GetPlayerIndexes(this.Player).Last();
+            var captureSpots = new HashSet<int>(state.GetPlayerIndexes(this.Player).Take(GameState.BinsOnASide));
+            var otherPlayer = state.Players.Except(this.Player).Single();
+            var otherMancala = state.GetPlayerIndexes(otherPlayer).Last();
+
+            var bin = this.Bin;
+            var board = state.Board;
+
+            var count = board[bin];
+            board = board.SetItem(bin, 0);
+
+            while (count > 0)
+            {
+                do
+                {
+                    bin += 1;
+                    bin %= board.Length;
+                }
+                while (bin == otherMancala);
+
+                board = board.SetItem(bin, board[bin] + 1);
+                count -= 1;
+            }
+
+            if (bin == mancala)
+            {
+                return state.With(
+                    board: board);
+            }
+            else
+            {
+                if (board[bin] == 1 && captureSpots.Contains(bin))
+                {
+                    var captureIndex = GameState.BinsOnASide - (bin - GameState.BinsOnASide);
+                    board = board
+                        .SetItem(mancala, board[bin] + board[captureIndex])
+                        .SetItem(bin, 0)
+                        .SetItem(captureIndex, 0);
+                }
+
+                return state.With(
+                    activePlayer: otherPlayer,
+                    board: board);
+            }
         }
     }
 }
