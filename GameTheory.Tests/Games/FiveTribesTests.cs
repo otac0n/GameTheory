@@ -251,7 +251,7 @@ namespace GameTheory.Tests.Games
             var endState = (GameState)GameUtils.PlayGame(
                 new GameState(2),
                 p => new RandomPlayer<Move>(p),
-                (state, move) => Console.WriteLine("{0}: {1}", FiveTribesTests.p((GameState)state, move.Player), move)).Result;
+                (state, move) => Console.WriteLine("{0}: {1}", FiveTribesTests.p((GameState)state, move.PlayerToken), move)).Result;
 
             var highestScore = endState.Players.Max(p => endState.GetScore(p));
             var winners = endState.GetWinners();
@@ -266,9 +266,9 @@ namespace GameTheory.Tests.Games
             return cts.Token;
         }
 
-        private static GameState MakeMove(GameState state, PlayerToken player, Expression<Func<Move, bool>> filter)
+        private static GameState MakeMove(GameState state, PlayerToken playerToken, Expression<Func<Move, bool>> filter)
         {
-            var moves = state.GetAvailableMoves(player).Where(filter.Compile()).ToList();
+            var moves = state.GetAvailableMoves(playerToken).Where(filter.Compile()).ToList();
             if (moves.Count != 1)
             {
                 ShowMoves(state);
@@ -278,9 +278,9 @@ namespace GameTheory.Tests.Games
             return state.MakeMove(moves.Single());
         }
 
-        private static string p(GameState state, PlayerToken player)
+        private static string p(GameState state, PlayerToken playerToken)
         {
-            return ((char)('A' + state.Players.IndexOf(player))).ToString();
+            return ((char)('A' + state.Players.IndexOf(playerToken))).ToString();
         }
 
         private static void ShowInventory(GameState state)
@@ -302,7 +302,7 @@ namespace GameTheory.Tests.Games
             Console.WriteLine("Available Moves:");
             foreach (var move in state.GetAvailableMoves())
             {
-                Console.WriteLine("{0}: {1} ", p(state, move.Player), move);
+                Console.WriteLine("{0}: {1} ", p(state, move.PlayerToken), move);
             }
         }
 

@@ -23,13 +23,8 @@ namespace GameTheory.Players
             this.playerToken = playerToken;
         }
 
-        /// <summary>
-        /// Gets the <see cref="GameTheory.PlayerToken"/> that represents the player.
-        /// </summary>
-        public PlayerToken PlayerToken
-        {
-            get { return this.playerToken; }
-        }
+        /// <inheritdoc />
+        public PlayerToken PlayerToken => this.playerToken;
 
         /// <inheritdoc />
         public async Task<Maybe<TMove>> ChooseMove(IGameState<TMove> gameState, CancellationToken cancel)

@@ -67,7 +67,7 @@ namespace GameTheory.Tests.Players
             where TMove : IMove
         {
             public DuhPlayer(PlayerToken playerToken)
-                : base(new RandomPlayer<TMove>(playerToken), new ImmediateWinStrategy<TMove>(playerToken))
+                : base(new ImmediateWinStrategy<TMove>(), new RandomPlayer<TMove>(playerToken))
             {
             }
         }

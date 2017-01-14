@@ -13,19 +13,19 @@ namespace GameTheory.Players
     public class StrategyPlayer<TMove> : IPlayer<TMove>
         where TMove : IMove
     {
-        private readonly IPlayer<TMove> player;
+        private readonly IPlayer<TMove> fallbackPlayer;
         private readonly IStrategy<TMove> strategy;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="StrategyPlayer{TMove}"/> class.
         /// </summary>
-        /// <param name="player">The player to default to when the strategy doesn't yield a move.</param>
         /// <param name="strategy">The strategy to use before defering to the player.</param>
-        public StrategyPlayer(IPlayer<TMove> player, IStrategy<TMove> strategy)
+        /// <param name="fallbackPlayer">The player to default to when the strategy doesn't yield a move.</param>
+        public StrategyPlayer(IStrategy<TMove> strategy, IPlayer<TMove> fallbackPlayer)
         {
-            if (player == null)
+            if (fallbackPlayer == null)
             {
-                throw new ArgumentNullException(nameof(player));
+                throw new ArgumentNullException(nameof(fallbackPlayer));
             }
 
             if (strategy == null)
@@ -33,14 +33,17 @@ namespace GameTheory.Players
                 throw new ArgumentNullException(nameof(strategy));
             }
 
-            this.player = player;
+            this.fallbackPlayer = fallbackPlayer;
             this.strategy = strategy;
         }
 
         /// <inheritdoc/>
+        public PlayerToken PlayerToken => this.fallbackPlayer.PlayerToken;
+
+        /// <inheritdoc/>
         public async Task<Maybe<TMove>> ChooseMove(IGameState<TMove> gameState, CancellationToken cancel)
         {
-            var maybeMove = await this.strategy.ChooseMove(gameState, cancel);
+            var maybeMove = await this.strategy.ChooseMove(gameState, this.fallbackPlayer.PlayerToken, cancel);
             if (maybeMove.HasValue)
             {
                 return maybeMove;
@@ -48,13 +51,13 @@ namespace GameTheory.Players
 
             cancel.ThrowIfCancellationRequested();
 
-            return await this.player.ChooseMove(gameState, cancel);
+            return await this.fallbackPlayer.ChooseMove(gameState, cancel);
         }
 
         /// <inheritdoc/>
         public void Dispose()
         {
-            this.player.Dispose();
+            this.fallbackPlayer.Dispose();
             this.strategy.Dispose();
         }
     }

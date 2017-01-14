@@ -121,9 +121,9 @@ namespace GameTheory.Games.TicTacToe
         }
 
         /// <inheritdoc />
-        public IReadOnlyCollection<Move> GetAvailableMoves(PlayerToken player)
+        public IReadOnlyCollection<Move> GetAvailableMoves(PlayerToken playerToken)
         {
-            if (player != this.activePlayer || this.winningPlayer != null)
+            if (playerToken != this.activePlayer || this.winningPlayer != null)
             {
                 return ImmutableList<Move>.Empty;
             }
@@ -145,7 +145,7 @@ namespace GameTheory.Games.TicTacToe
         /// <inheritdoc />
         public IGameState<Move> MakeMove(Move move)
         {
-            if (move.Player != this.activePlayer ||
+            if (move.PlayerToken != this.activePlayer ||
                 move.X < 0 ||
                 move.X >= Size ||
                 move.Y < 0 ||
@@ -164,7 +164,7 @@ namespace GameTheory.Games.TicTacToe
                 }
             }
 
-            newField[move.X, move.Y] = move.Player;
+            newField[move.X, move.Y] = move.PlayerToken;
 
             return new GameState(this.players, newField);
         }

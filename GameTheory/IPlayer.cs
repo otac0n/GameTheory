@@ -14,6 +14,11 @@ namespace GameTheory
         where TMove : IMove
     {
         /// <summary>
+        /// Gets the <see cref="PlayerToken"/> that represents the player.
+        /// </summary>
+        PlayerToken PlayerToken { get; }
+
+        /// <summary>
         /// Instructs the player to choose a move from the specified game state as an asynchronous operation using a task.
         /// </summary>
         /// <param name="gameState">The <see cref="IGameState{TMove}"/> for which the player will choose a move.</param>
