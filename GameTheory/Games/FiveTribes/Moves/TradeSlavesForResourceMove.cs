@@ -37,9 +37,9 @@ namespace GameTheory.Games.FiveTribes.Moves
 
         internal override GameState Apply(GameState state)
         {
-            var inventory = state.Inventory[this.Player];
+            var inventory = state.Inventory[this.PlayerToken];
             return state.With(
-                inventory: state.Inventory.SetItem(this.Player, inventory.With(resources: inventory.Resources.Remove(Resource.Slave, 2).Add(this.resource))));
+                inventory: state.Inventory.SetItem(this.PlayerToken, inventory.With(resources: inventory.Resources.Remove(Resource.Slave, 2).Add(this.resource))));
         }
     }
 }

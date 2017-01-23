@@ -460,19 +460,34 @@ namespace GameTheory.Games.FiveTribes
             return suits.Sum(s => SuitValues[s]);
         }
 
+        /// <summary>
+        /// Finds the index of the highest non-null value in the <see cref="TurnOrderTrack"/>.
+        /// </summary>
+        /// <returns>The requested index.</returns>
+        public int FindHighestBidIndex()
+        {
+            var nextIndex = this.turnOrderTrack.Count - 1;
+            while (nextIndex >= 0 && this.turnOrderTrack[nextIndex] == null)
+            {
+                nextIndex--;
+            }
+
+            return nextIndex;
+        }
+
         /// <inheritdoc />
-        public IReadOnlyCollection<Move> GetAvailableMoves(PlayerToken player)
+        public IReadOnlyCollection<Move> GetAvailableMoves(PlayerToken playerToken)
         {
             var moves = new List<Move>();
 
             if (this.subsequentMovesFactory != null)
             {
-                moves.AddRange(this.subsequentMoves.Value.Where(p => p.Player == player));
+                moves.AddRange(this.subsequentMoves.Value.Where(p => p.PlayerToken == playerToken));
             }
             else
             {
                 var activePlayer = this.ActivePlayer;
-                if (player == activePlayer)
+                if (playerToken == activePlayer)
                 {
                     switch (this.phase)
                     {
@@ -512,14 +527,14 @@ namespace GameTheory.Games.FiveTribes
                     moves.AddRange(this.GetMerchandiseSaleMoves());
                 }
 
-                foreach (var djinn in this.inventory[player].Djinns)
+                foreach (var djinn in this.inventory[playerToken].Djinns)
                 {
                     moves.AddRange(djinn.GetMoves(this));
                 }
             }
 
             var originalMoves = moves.ToImmutableList();
-            foreach (var djinn in this.inventory[player].Djinns)
+            foreach (var djinn in this.inventory[playerToken].Djinns)
             {
                 moves.AddRange(djinn.GetAdditionalMoves(this, originalMoves));
             }
@@ -528,30 +543,15 @@ namespace GameTheory.Games.FiveTribes
         }
 
         /// <summary>
-        /// Finds the index of the highest non-null value in the <see cref="TurnOrderTrack"/>.
-        /// </summary>
-        /// <returns>The requested index.</returns>
-        public int FindHighestBidIndex()
-        {
-            var nextIndex = this.turnOrderTrack.Count - 1;
-            while (nextIndex >= 0 && this.turnOrderTrack[nextIndex] == null)
-            {
-                nextIndex--;
-            }
-
-            return nextIndex;
-        }
-
-        /// <summary>
         /// Gets the score, in Victory Points (VP), of the specified player.
         /// </summary>
-        /// <param name="player">The player whose score should be calculated.</param>
+        /// <param name="playerToken">The player whose score should be calculated.</param>
         /// <returns>The specified player's score.</returns>
-        public int GetScore(PlayerToken player)
+        public int GetScore(PlayerToken playerToken)
         {
-            var inventory = this.inventory[player];
-            var scoreTable = this.scoreTables[player];
-            var owned = this.sultanate.Where(b => b.Owner == player).ToList();
+            var inventory = this.inventory[playerToken];
+            var scoreTable = this.scoreTables[playerToken];
+            var owned = this.sultanate.Where(b => b.Owner == playerToken).ToList();
             var viziers = inventory.Meeples.Count(m => m == Meeple.Vizier);
             var playersWithFewerViziers = this.inventory.Values.Count(i => i.Meeples.Count(m => m == Meeple.Vizier) < viziers);
             return inventory.GoldCoins +
@@ -587,11 +587,11 @@ namespace GameTheory.Games.FiveTribes
         /// <summary>
         /// Gets a value indicating whether or not the specified player has any Camels left.
         /// </summary>
-        /// <param name="player">The player whose camel count should be checked against the <see cref="CamelLimit"/>.</param>
+        /// <param name="playerToken">The player whose camel count should be checked against the <see cref="CamelLimit"/>.</param>
         /// <returns><c>true</c> if the player has any remaining camels, <c>false</c> otherwise.</returns>
-        public bool IsPlayerUnderCamelLimit(PlayerToken player)
+        public bool IsPlayerUnderCamelLimit(PlayerToken playerToken)
         {
-            return this.sultanate.Count(s => s.Owner == player) < this.CamelLimit;
+            return this.sultanate.Count(s => s.Owner == playerToken) < this.CamelLimit;
         }
 
         /// <summary>

@@ -41,12 +41,13 @@ namespace GameTheory.Tests.Games
                 sultanate: sultanate,
                 phase: Phase.PickUpMeeples);
 
-            state = MakeMove(state, playerA, m => m.ToString() == "Pick up meeples at (2, 2)");
-            state = MakeMove(state, playerA, m => m.ToString() == "Drop Assassin at (3, 2)");
-            state = MakeMove(state, playerA, m => m.ToString() == "Pick up all Assassin at (3, 2)");
-            state = MakeMove(state, playerA, m => m.ToString() == "Place a Camel at (3, 2)");
-            state = MakeMove(state, playerA, m => m.ToString() == "Assissinate Elder at (3, 1)");
-            state = MakeMove(state, playerA, m => m.ToString() == "Place a Camel at (3, 1)");
+            state = (GameState)state
+                .PlayMove(playerA, m => m.ToString() == "Pick up meeples at (2, 2)")
+                .PlayMove(playerA, m => m.ToString() == "Drop Assassin at (3, 2)")
+                .PlayMove(playerA, m => m.ToString() == "Pick up all Assassin at (3, 2)")
+                .PlayMove(playerA, m => m.ToString() == "Place a Camel at (3, 2)")
+                .PlayMove(playerA, m => m.ToString() == "Assissinate Elder at (3, 1)")
+                .PlayMove(playerA, m => m.ToString() == "Place a Camel at (3, 1)");
 
             Assert.That(state.Sultanate[kil].Owner, Is.EqualTo(playerA));
             Assert.That(state.Sultanate[dst].Owner, Is.EqualTo(playerA));
@@ -124,24 +125,27 @@ namespace GameTheory.Tests.Games
             state = Transition(template, state);
             var playerCGoldCoins = state.Inventory[playerC].GoldCoins;
 
-            state = MakeMove(state, playerA, m => m.ToString() == "Pick up meeples at (2, 2)");
-            state = MakeMove(state, playerA, m => m.ToString() == "Drop Assassin at (3, 2)");
+            state = (GameState)state
+                .PlayMove(playerA, m => m.ToString() == "Pick up meeples at (2, 2)")
+                .PlayMove(playerA, m => m.ToString() == "Drop Assassin at (3, 2)");
             state = state.MakeMove(state.GetAvailableMoves(playerA).Single(m => m.ToString() == "Pick up all Assassin at (3, 2)"));
             Assert.That(state.GetAvailableMoves(), Has.None.InstanceOf<AssassinatePlayerMove>().With.Property("Victim").EqualTo(playerB));
             Assert.That(state.GetAvailableMoves(), Has.Some.InstanceOf<AssassinatePlayerMove>().With.Property("Victim").EqualTo(playerC));
 
-            state = MakeMove(state, playerA, m => m is PayMeeplesAndResourcesMove);
-            state = MakeMove(state, playerA, m => m is DrawDjinnsMove);
-            state = MakeMove(state, playerA, m => m.ToString() == "Take Ibus");
-            state = MakeMove(state, playerA, m => state.MakeMove(m).GetAvailableMoves(playerA).Any(x => x is DoubleAssassinKillCountMove));
-            state = MakeMove(state, playerA, m => m.ToString() == "Double the number of meeples your Assassins kill this turn");
+            state = (GameState)state
+                .PlayMove(playerA, m => m is PayMeeplesAndResourcesMove)
+                .PlayMove(playerA, m => m is DrawDjinnsMove)
+                .PlayMove(playerA, m => m.ToString() == "Take Ibus")
+                .PlayMove(playerA, m => state.MakeMove(m).GetAvailableMoves(playerA).Any(x => x is DoubleAssassinKillCountMove))
+                .PlayMove(playerA, m => m.ToString() == "Double the number of meeples your Assassins kill this turn");
             Assert.That(state.GetAvailableMoves(), Has.None.InstanceOf<AssassinatePlayerMove>().With.Property("Victim").EqualTo(playerB));
             Assert.That(state.GetAvailableMoves(), Has.Some.InstanceOf<AssassinatePlayerMove>().With.Property("Victim").EqualTo(playerC));
 
-            state = MakeMove(state, playerA, m => state.MakeMove(m).GetAvailableMoves(playerA).Any(x => x is AddMeeplesMove));
-            state = MakeMove(state, playerA, m => m.ToString() == "Draw 2 Meeples and place at (3, 1)");
-            state = MakeMove(state, playerA, m => m.ToString() == "Assissinate Elder,Elder at (3, 1)");
-            state = MakeMove(state, playerA, m => m.ToString() == "Place a Camel at (3, 1)");
+            state = (GameState)state
+                .PlayMove(playerA, m => state.MakeMove(m).GetAvailableMoves(playerA).Any(x => x is AddMeeplesMove))
+                .PlayMove(playerA, m => m.ToString() == "Draw 2 Meeples and place at (3, 1)")
+                .PlayMove(playerA, m => m.ToString() == "Assissinate Elder,Elder at (3, 1)")
+                .PlayMove(playerA, m => m.ToString() == "Place a Camel at (3, 1)");
             ShowInventory(state);
             Assert.That(state.GetAvailableMoves(), Has.None.InstanceOf<AddMeeplesMove>());
             Assert.That(state.GetAvailableMoves(), Has.None.InstanceOf<DoubleAssassinKillCountMove>());
@@ -251,7 +255,7 @@ namespace GameTheory.Tests.Games
             var endState = (GameState)GameUtils.PlayGame(
                 new GameState(2),
                 p => new RandomPlayer<Move>(p),
-                (state, move) => Console.WriteLine("{0}: {1}", FiveTribesTests.p((GameState)state, move.Player), move)).Result;
+                (state, move) => Console.WriteLine("{0}: {1}", state.PlayerName(move.PlayerToken), move)).Result;
 
             var highestScore = endState.Players.Max(p => endState.GetScore(p));
             var winners = endState.GetWinners();
@@ -266,23 +270,6 @@ namespace GameTheory.Tests.Games
             return cts.Token;
         }
 
-        private static GameState MakeMove(GameState state, PlayerToken player, Expression<Func<Move, bool>> filter)
-        {
-            var moves = state.GetAvailableMoves(player).Where(filter.Compile()).ToList();
-            if (moves.Count != 1)
-            {
-                ShowMoves(state);
-                Console.WriteLine("Filter: {0}", filter);
-            }
-
-            return state.MakeMove(moves.Single());
-        }
-
-        private static string p(GameState state, PlayerToken player)
-        {
-            return ((char)('A' + state.Players.IndexOf(player))).ToString();
-        }
-
         private static void ShowInventory(GameState state)
         {
             Console.WriteLine("Inventories:");
@@ -293,16 +280,7 @@ namespace GameTheory.Tests.Games
                 stuff.AddRange(inventory.Meeples.Cast<object>());
                 stuff.AddRange(inventory.Resources.Cast<object>());
                 stuff.AddRange(inventory.Djinns);
-                Console.WriteLine("{0}: {1} {2} ", p(state, player), inventory.GoldCoins, string.Join(",", stuff));
-            }
-        }
-
-        private static void ShowMoves(GameState state)
-        {
-            Console.WriteLine("Available Moves:");
-            foreach (var move in state.GetAvailableMoves())
-            {
-                Console.WriteLine("{0}: {1} ", p(state, move.Player), move);
+                Console.WriteLine("{0}: {1} {2} ", state.PlayerName(player), inventory.GoldCoins, string.Join(",", stuff));
             }
         }
 
@@ -311,14 +289,14 @@ namespace GameTheory.Tests.Games
             Console.WriteLine("Scores:");
             foreach (var player in state.Players)
             {
-                Console.WriteLine("{0}: {1} ", p(state, player), state.GetScore(player));
+                Console.WriteLine("{0}: {1} ", state.PlayerName(player), state.GetScore(player));
             }
         }
 
         private static void ShowWinners(GameState state)
         {
             var winners = state.GetWinners();
-            Console.WriteLine("Winners: {0}", string.Join(", ", winners.Select(winner => p(state, winner))));
+            Console.WriteLine("Winners: {0}", string.Join(", ", winners.Select(winner => state.PlayerName(winner))));
         }
 
         private static GameState Transition(GameState from, GameState to)

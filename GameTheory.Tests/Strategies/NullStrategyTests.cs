@@ -2,6 +2,8 @@
 
 namespace GameTheory.Tests.Strategies
 {
+    using System.Collections.Generic;
+    using System.Collections.ObjectModel;
     using System.Threading;
     using System.Threading.Tasks;
     using GameTheory.Strategies;
@@ -13,11 +15,48 @@ namespace GameTheory.Tests.Strategies
         [Test]
         public async Task GetMove_Always_ReturnsNoMove()
         {
-            var gameState = new StubGameState();
-            using (var strategy = new NullStrategy<StubGameState.Move>())
+            var gameState = new TestGameState();
+            using (var strategy = new NullStrategy<TestGameState.Move>())
             {
-                var maybeMove = await strategy.ChooseMove(gameState, CancellationToken.None);
+                var maybeMove = await strategy.ChooseMove(gameState, gameState.Players[0], CancellationToken.None);
                 Assert.That(maybeMove.HasValue, Is.False);
+            }
+        }
+
+        public class TestGameState : IGameState<TestGameState.Move>
+        {
+            private readonly ReadOnlyCollection<PlayerToken> players;
+
+            public TestGameState()
+            {
+                this.players = new List<PlayerToken> { new PlayerToken() }.AsReadOnly();
+            }
+
+            public IReadOnlyList<PlayerToken> Players => this.players;
+
+            public IReadOnlyCollection<Move> GetAvailableMoves(PlayerToken playerToken)
+            {
+                return new List<Move> { new Move(playerToken) }.AsReadOnly();
+            }
+
+            public IReadOnlyCollection<PlayerToken> GetWinners()
+            {
+                return new List<PlayerToken>().AsReadOnly();
+            }
+
+            public IGameState<Move> MakeMove(Move move)
+            {
+                return this;
+            }
+
+            public class Move : IMove
+            {
+                public Move(PlayerToken playerToken)
+                {
+                    this.PlayerToken = playerToken;
+                }
+
+                public PlayerToken PlayerToken { get; }
             }
         }
     }

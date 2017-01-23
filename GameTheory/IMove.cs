@@ -10,6 +10,6 @@ namespace GameTheory
         /// <summary>
         /// Gets the player who may perform this move.
         /// </summary>
-        PlayerToken Player { get; }
+        PlayerToken PlayerToken { get; }
     }
 }

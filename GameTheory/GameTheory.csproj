@@ -183,6 +183,7 @@
     <Compile Include="IPlayer.cs" />
     <Compile Include="IStrategy.cs" />
     <Compile Include="Maybe.cs" />
+    <Compile Include="Players\MaximizingPlayer.cs" />
     <Compile Include="Players\StrategyPlayer.cs" />
     <Compile Include="Strategies\ImmediateWinStrategy.cs" />
     <Compile Include="Players\RandomPlayer.cs" />
@@ -193,6 +194,7 @@
     </Compile>
     <Compile Include="Random.cs" />
     <Compile Include="Strategies\NullStrategy.cs" />
+    <Compile Include="StrategyExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System.Collections.Immutable, Version=1.1.37.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">

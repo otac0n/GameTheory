@@ -48,7 +48,7 @@ namespace GameTheory
                 while (true)
                 {
                     var cts = new CancellationTokenSource();
-                    cts.CancelAfter(timePerMove ?? TimeSpan.FromSeconds(10));
+                    cts.CancelAfter(timePerMove ?? TimeSpan.FromMinutes(1));
                     var tasks = new HashSet<Task<Maybe<TMove>>>(getTasks(cts.Token));
 
                     Maybe<TMove> chosenMove = default(Maybe<TMove>);

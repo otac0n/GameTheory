@@ -20,9 +20,9 @@ namespace GameTheory
         /// <summary>
         /// Returns a collection of moves available to the specified player.
         /// </summary>
-        /// <param name="player">The player whose moves will be retrieved.</param>
+        /// <param name="playerToken">The player whose moves will be retrieved.</param>
         /// <returns>An enumerable list of moves available to the specified player.</returns>
-        IReadOnlyCollection<TMove> GetAvailableMoves(PlayerToken player);
+        IReadOnlyCollection<TMove> GetAvailableMoves(PlayerToken playerToken);
 
         /// <summary>
         /// Returns any winners for the current game state.

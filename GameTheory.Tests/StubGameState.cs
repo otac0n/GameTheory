@@ -59,9 +59,9 @@ namespace GameTheory.Tests
             }
         }
 
-        public IReadOnlyCollection<Move> GetAvailableMoves(PlayerToken player)
+        public IReadOnlyCollection<Move> GetAvailableMoves(PlayerToken playerToken)
         {
-            return this.moves.Where(m => m.Player == player).ToList().AsReadOnly();
+            return this.moves.Where(m => m.PlayerToken == playerToken).ToList().AsReadOnly();
         }
 
         public IReadOnlyCollection<PlayerToken> GetWinners()
@@ -76,18 +76,18 @@ namespace GameTheory.Tests
 
         public class Move : IMove
         {
-            private readonly PlayerToken player;
+            private readonly PlayerToken playerToken;
             private readonly string value;
 
-            public Move(PlayerToken player, string value)
+            public Move(PlayerToken playerToken, string value)
             {
-                this.player = player;
+                this.playerToken = playerToken;
                 this.value = value;
             }
 
-            public PlayerToken Player
+            public PlayerToken PlayerToken
             {
-                get { return this.player; }
+                get { return this.playerToken; }
             }
 
             public string Value

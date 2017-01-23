@@ -21,7 +21,7 @@ namespace GameTheory.Games.Mancala
             Contract.Requires(state != null);
 
             this.State = state;
-            this.Player = state.ActivePlayer;
+            this.PlayerToken = state.ActivePlayer;
             this.Bin = bin;
         }
 
@@ -33,7 +33,7 @@ namespace GameTheory.Games.Mancala
         /// <summary>
         /// Gets the player who may perform this move.
         /// </summary>
-        public PlayerToken Player { get; private set; }
+        public PlayerToken PlayerToken { get; private set; }
 
         internal GameState State { get; private set; }
 
@@ -45,9 +45,9 @@ namespace GameTheory.Games.Mancala
 
         internal GameState Apply(GameState state)
         {
-            var mancala = state.GetPlayerIndexes(this.Player).Last();
-            var captureSpots = new HashSet<int>(state.GetPlayerIndexes(this.Player).Take(GameState.BinsOnASide));
-            var otherPlayer = state.Players.Except(this.Player).Single();
+            var mancala = state.GetPlayerIndexes(this.PlayerToken).Last();
+            var captureSpots = new HashSet<int>(state.GetPlayerIndexes(this.PlayerToken).Take(GameState.BinsOnASide));
+            var otherPlayer = state.Players.Except(this.PlayerToken).Single();
             var otherMancala = state.GetPlayerIndexes(otherPlayer).Last();
 
             var bin = this.Bin;
