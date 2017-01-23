@@ -69,9 +69,11 @@
     </CodeAnalysisDictionary>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DuhPlayer.cs" />
     <Compile Include="GameStateExtensions.cs" />
     <Compile Include="Games\FiveTribesTests.cs" />
     <Compile Include="Games\TicTacToeTests.cs" />
+    <Compile Include="Players\MaximizingPlayerTests.cs" />
     <Compile Include="Players\DuhPlayerTests.cs" />
     <Compile Include="Players\RandomPlayerTests.cs" />
     <Compile Include="PlayerTokenTests.cs" />
