@@ -42,5 +42,8 @@ namespace GameTheory.Games.TicTacToe
         /// </summary>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Y", Justification = "Y is meaningful in the context of coordinates.")]
         public int Y => this.y;
+
+        /// <inheritdoc />
+        public override string ToString() => $"({this.x}, {this.y})";
     }
 }
