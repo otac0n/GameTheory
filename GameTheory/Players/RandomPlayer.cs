@@ -17,7 +17,7 @@ namespace GameTheory.Players
         /// <summary>
         /// Initializes a new instance of the <see cref="RandomPlayer{TMove}"/> class.
         /// </summary>
-        /// <param name="playerToken">The token that represents player.</param>
+        /// <param name="playerToken">The token that represents the player.</param>
         public RandomPlayer(PlayerToken playerToken)
         {
             this.playerToken = playerToken;
