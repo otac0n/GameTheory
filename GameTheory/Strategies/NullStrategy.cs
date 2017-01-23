@@ -2,6 +2,7 @@
 
 namespace GameTheory.Strategies
 {
+    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
 
@@ -13,7 +14,7 @@ namespace GameTheory.Strategies
         where TMove : IMove
     {
         /// <inheritdoc/>
-        public async Task<Maybe<TMove>> ChooseMove(IGameState<TMove> gameState, CancellationToken cancel)
+        public async Task<Maybe<TMove>> ChooseMove(IGameState<TMove> gameState, PlayerToken playerToken, IReadOnlyCollection<TMove> moves, CancellationToken cancel)
         {
             await Task.Yield();
 

@@ -17,19 +17,14 @@ namespace GameTheory.Players
         /// <summary>
         /// Initializes a new instance of the <see cref="RandomPlayer{TMove}"/> class.
         /// </summary>
-        /// <param name="playerToken">The token that represents player.</param>
+        /// <param name="playerToken">The token that represents the player.</param>
         public RandomPlayer(PlayerToken playerToken)
         {
             this.playerToken = playerToken;
         }
 
-        /// <summary>
-        /// Gets the <see cref="GameTheory.PlayerToken"/> that represents the player.
-        /// </summary>
-        public PlayerToken PlayerToken
-        {
-            get { return this.playerToken; }
-        }
+        /// <inheritdoc />
+        public PlayerToken PlayerToken => this.playerToken;
 
         /// <inheritdoc />
         public async Task<Maybe<TMove>> ChooseMove(IGameState<TMove> gameState, CancellationToken cancel)

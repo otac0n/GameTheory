@@ -66,7 +66,7 @@ namespace GameTheory.Games.TicTacToe
             {
                 for (var x = 0; x < Size; x++)
                 {
-                    if (field[x, 0] == field[x, 1] && field[x, 1] == field[x, 2])
+                    if (field[x, 1] != null && field[x, 0] == field[x, 1] && field[x, 1] == field[x, 2])
                     {
                         this.winningPlayer = field[x, 1];
                         break;
@@ -77,7 +77,7 @@ namespace GameTheory.Games.TicTacToe
                 {
                     for (var y = 0; y < Size; y++)
                     {
-                        if (field[0, y] == field[1, y] && field[1, y] == field[2, y])
+                        if (field[1, y] != null && field[0, y] == field[1, y] && field[1, y] == field[2, y])
                         {
                             this.winningPlayer = field[1, y];
                             break;
@@ -87,22 +87,18 @@ namespace GameTheory.Games.TicTacToe
             }
 
             this.availableMoves = new Lazy<ImmutableList<Move>>(this.GetAvailableMoves);
-            this.winners = ImmutableList.Create<PlayerToken>(this.winningPlayer);
+            this.winners = this.winningPlayer == null
+                ? ImmutableList<PlayerToken>.Empty
+                : ImmutableList.Create(this.winningPlayer);
         }
 
         /// <summary>
         /// Gets the <see cref="PlayerToken"/> representing the active player.
         /// </summary>
-        public PlayerToken ActivePlayer
-        {
-            get { return this.activePlayer; }
-        }
+        public PlayerToken ActivePlayer => this.activePlayer;
 
         /// <inheritdoc />
-        public IReadOnlyList<PlayerToken> Players
-        {
-            get { return this.players; }
-        }
+        public IReadOnlyList<PlayerToken> Players => this.players;
 
         /// <summary>
         /// Gets the <see cref="PlayerToken"/> of the player who marked the specified spot.
@@ -112,18 +108,12 @@ namespace GameTheory.Games.TicTacToe
         /// <returns>The <see cref="PlayerToken"/> of the player who marked the specified spot, or <c>null</c> if no player has marked the spot.</returns>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "x", Justification = "X is meaningful in the context of coordinates.")]
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "y", Justification = "Y is meaningful in the context of coordinates.")]
-        public PlayerToken this[int x, int y]
-        {
-            get
-            {
-                return this.field[x, y];
-            }
-        }
+        public PlayerToken this[int x, int y] => this.field[x, y];
 
         /// <inheritdoc />
-        public IReadOnlyCollection<Move> GetAvailableMoves(PlayerToken player)
+        public IReadOnlyCollection<Move> GetAvailableMoves(PlayerToken playerToken)
         {
-            if (player != this.activePlayer || this.winningPlayer != null)
+            if (playerToken != this.activePlayer || this.winningPlayer != null)
             {
                 return ImmutableList<Move>.Empty;
             }
@@ -132,20 +122,12 @@ namespace GameTheory.Games.TicTacToe
         }
 
         /// <inheritdoc />
-        public IReadOnlyCollection<PlayerToken> GetWinners()
-        {
-            if (this.winningPlayer == null)
-            {
-                return ImmutableList<PlayerToken>.Empty;
-            }
-
-            return this.winners;
-        }
+        public IReadOnlyCollection<PlayerToken> GetWinners() => this.winners;
 
         /// <inheritdoc />
         public IGameState<Move> MakeMove(Move move)
         {
-            if (move.Player != this.activePlayer ||
+            if (move.PlayerToken != this.activePlayer ||
                 move.X < 0 ||
                 move.X >= Size ||
                 move.Y < 0 ||
@@ -164,9 +146,16 @@ namespace GameTheory.Games.TicTacToe
                 }
             }
 
-            newField[move.X, move.Y] = move.Player;
+            newField[move.X, move.Y] = move.PlayerToken;
 
             return new GameState(this.players, newField);
+        }
+
+        /// <inheritdoc />
+        public override string ToString()
+        {
+            var c = new Func<int, int, string>((x, y) => this[x, y] == null ? " " : this[x, y] == this.players[0] ? "X" : "O");
+            return $"{c(0, 0)}|{c(1, 0)}|{c(2, 0)}\n-----\n{c(0, 1)}|{c(1, 1)}|{c(2, 1)}\n-----\n{c(0, 2)}|{c(1, 2)}|{c(2, 2)}";
         }
 
         private ImmutableList<Move> GetAvailableMoves()

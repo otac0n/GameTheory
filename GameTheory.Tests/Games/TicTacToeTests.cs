@@ -35,16 +35,6 @@ namespace GameTheory.Tests.Games
             "0,0; 1,1; 2,2",
         };
 
-        [TestCaseSource(nameof(unfinished))]
-        public void GetAvailableMoves_WhenTheGameHasNotCompleted_ReturnsANonEmptyListOfMoves(string moveList)
-        {
-            var state = ApplyMoves(new GameState(), moveList);
-
-            var moves = state.GetAvailableMoves();
-
-            Assert.That(moves, Is.Not.Empty);
-        }
-
         [TestCaseSource(nameof(draws))]
         [TestCaseSource(nameof(player1Wins))]
         [TestCaseSource(nameof(player2Wins))]
@@ -57,6 +47,16 @@ namespace GameTheory.Tests.Games
             Assert.That(moves, Is.Empty);
         }
 
+        [TestCaseSource(nameof(unfinished))]
+        public void GetAvailableMoves_WhenTheGameHasNotCompleted_ReturnsANonEmptyListOfMoves(string moveList)
+        {
+            var state = ApplyMoves(new GameState(), moveList);
+
+            var moves = state.GetAvailableMoves();
+
+            Assert.That(moves, Is.Not.Empty);
+        }
+
         [Test]
         public void GetAvailableMoves_WhenTheGameStateIsNew_ReturnsMovesForTheFirstPlayer()
         {
@@ -64,7 +64,7 @@ namespace GameTheory.Tests.Games
 
             var moves = state.GetAvailableMoves();
 
-            Assert.That(moves, Is.All.Property("Player").EqualTo(state.Players[0]));
+            Assert.That(moves, Is.All.Property(nameof(Move.PlayerToken)).EqualTo(state.Players[0]));
         }
 
         [Test]

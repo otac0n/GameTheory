@@ -19,13 +19,13 @@ namespace GameTheory.Games.Splendor
             Contract.Requires(state != null);
 
             this.State = state;
-            this.Player = state.ActivePlayer;
+            this.PlayerToken = state.ActivePlayer;
         }
 
         /// <summary>
         /// Gets the player who may perform this move.
         /// </summary>
-        public PlayerToken Player { get; private set; }
+        public PlayerToken PlayerToken { get; private set; }
 
         internal GameState State { get; private set; }
 

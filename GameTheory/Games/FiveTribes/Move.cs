@@ -13,19 +13,19 @@ namespace GameTheory.Games.FiveTribes
         /// Initializes a new instance of the <see cref="Move"/> class.
         /// </summary>
         /// <param name="state">The <see cref="GameState"/> that this move is based on.</param>
-        /// <param name="player">The player who may perform this move.</param>
-        protected Move(GameState state, PlayerToken player)
+        /// <param name="playerToken">The player who may perform this move.</param>
+        protected Move(GameState state, PlayerToken playerToken)
         {
-            Contract.Requires(player != null);
+            Contract.Requires(playerToken != null);
 
             this.State = state;
-            this.Player = player;
+            this.PlayerToken = playerToken;
         }
 
         /// <summary>
         /// Gets the player who may perform this move.
         /// </summary>
-        public PlayerToken Player { get; private set; }
+        public PlayerToken PlayerToken { get; private set; }
 
         internal GameState State { get; private set; }
 

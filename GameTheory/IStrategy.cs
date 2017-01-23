@@ -3,6 +3,7 @@
 namespace GameTheory
 {
     using System;
+    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
 
@@ -14,11 +15,13 @@ namespace GameTheory
         where TMove : IMove
     {
         /// <summary>
-        /// Instructs the strategy to choose a move from the specified game state as an asynchronous operation using a task.
+        /// Instructs the strategy to choose a move from the specified collection as an asynchronous operation using a task.
         /// </summary>
         /// <param name="gameState">The <see cref="IGameState{TMove}"/> for which the player will choose a move.</param>
+        /// <param name="playerToken">The player who is considered to be using this strategy.</param>
+        /// <param name="moves">The list of moves available.</param>
         /// <param name="cancel">A <see cref="CancellationToken"/> that notifies a player if the request for a move is cancelled.</param>
         /// <returns>A task representing the ongoing operation.</returns>
-        Task<Maybe<TMove>> ChooseMove(IGameState<TMove> gameState, CancellationToken cancel);
+        Task<Maybe<TMove>> ChooseMove(IGameState<TMove> gameState, PlayerToken playerToken, IReadOnlyCollection<TMove> moves, CancellationToken cancel);
     }
 }

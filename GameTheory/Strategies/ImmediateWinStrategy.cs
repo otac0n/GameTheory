@@ -2,6 +2,7 @@
 
 namespace GameTheory.Strategies
 {
+    using System.Collections.Generic;
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
@@ -13,27 +14,15 @@ namespace GameTheory.Strategies
     public class ImmediateWinStrategy<TMove> : IStrategy<TMove>
         where TMove : IMove
     {
-        private readonly PlayerToken player;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ImmediateWinStrategy{TMove}"/> class.
-        /// </summary>
-        /// <param name="player">A <see cref="PlayerToken"/> representing the player whose winning moves should be chosen.</param>
-        public ImmediateWinStrategy(PlayerToken player)
-        {
-            this.player = player;
-        }
-
         /// <inheritdoc/>
-        public async Task<Maybe<TMove>> ChooseMove(IGameState<TMove> gameState, CancellationToken cancel)
+        public async Task<Maybe<TMove>> ChooseMove(IGameState<TMove> gameState, PlayerToken playerToken, IReadOnlyCollection<TMove> moves, CancellationToken cancel)
         {
             await Task.Yield();
 
-            var moves = gameState.GetAvailableMoves(this.player);
-            foreach (var move in moves)
+            foreach (var move in moves.Where(m => m.PlayerToken == playerToken))
             {
                 var nextState = gameState.MakeMove(move);
-                if (nextState.GetWinners().Contains(this.player))
+                if (nextState.GetWinners().Contains(playerToken))
                 {
                     return new Maybe<TMove>(move);
                 }

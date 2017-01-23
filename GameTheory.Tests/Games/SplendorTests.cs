@@ -52,7 +52,7 @@ namespace GameTheory.Tests.Games
             var endState = (GameState)GameUtils.PlayGame(
                 new GameState(2),
                 p => new RandomPlayer<Move>(p),
-                (state, move) => Console.WriteLine("{0}: {1}", SplendorTests.p((GameState)state, move.Player), move)).Result;
+                (state, move) => Console.WriteLine("{0}: {1}", state.PlayerName(move.PlayerToken), move)).Result;
 
             var highestScore = endState.Players.Max(p => endState.GetScore(p));
             var playersWithHighestScore = endState.Players.Where(p => endState.GetScore(p) == highestScore);
@@ -60,11 +60,6 @@ namespace GameTheory.Tests.Games
             var winners = endState.GetWinners();
 
             Assert.That(winners, Is.EqualTo(playersWithHighestScore.Where(p => endState.Inventory[p].DevelopmentCards.Count == fewestCards)));
-        }
-
-        private static string p(GameState state, PlayerToken player)
-        {
-            return ((char)('A' + state.Players.IndexOf(player))).ToString();
         }
     }
 }
