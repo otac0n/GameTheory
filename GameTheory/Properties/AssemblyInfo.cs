@@ -4,9 +4,11 @@ using System;
 using System.Reflection;
 using System.Resources;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 [assembly: AssemblyTitle("GameTheory")]
 [assembly: AssemblyDescription("")]
 [assembly: NeutralResourcesLanguage("en-US")]
 [assembly: CLSCompliant(true)]
 [assembly: InternalsVisibleTo("GameTheory.Tests")]
+[assembly: ComVisible(false)]

@@ -161,6 +161,31 @@ namespace GameTheory
         }
 
         /// <summary>
+        /// Deals an item from a collection.  If there are no items remaining, the default value is returned.
+        /// </summary>
+        /// <typeparam name="T">The type of items in the deck.</typeparam>
+        /// <param name="deck">The source of items being dealt.</param>
+        /// <param name="dealt">The resulting item or default if there were no items.</param>
+        /// <param name="instance">An instance of <see cref="System.Random"/> to use.</param>
+        /// <returns>The remaining deck.</returns>
+        public static ImmutableList<T> Deal<T>(this ImmutableList<T> deck, out T dealt, System.Random instance = null)
+        {
+            instance = instance ?? Instance;
+
+            if (deck.Count > 0)
+            {
+                var ix = instance.Next(deck.Count);
+                dealt = deck[ix];
+                return deck.RemoveAt(ix);
+            }
+            else
+            {
+                dealt = default(T);
+                return deck;
+            }
+        }
+
+        /// <summary>
         /// Selects a random element from a list.
         /// </summary>
         /// <typeparam name="T">The type of items in the list.</typeparam>
