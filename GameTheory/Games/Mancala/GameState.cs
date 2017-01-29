@@ -68,11 +68,14 @@ namespace GameTheory.Games.Mancala
         {
             var moves = ImmutableList.CreateBuilder<Move>();
 
-            foreach (var i in this.GetPlayerIndexes(this.activePlayer).Take(BinsOnASide))
+            if (player == this.activePlayer)
             {
-                if (this.board[i] > 0)
+                foreach (var i in this.GetPlayerIndexes(this.activePlayer).Take(BinsOnASide))
                 {
-                    moves.Add(new Move(this, i));
+                    if (this.board[i] > 0)
+                    {
+                        moves.Add(new Move(this, i));
+                    }
                 }
             }
 
