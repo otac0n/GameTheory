@@ -82,7 +82,7 @@ namespace GameTheory.Games.Mancala
                     if (board[captureIndex] > 0)
                     {
                         board = board
-                            .SetItem(mancala, board[bin] + board[captureIndex])
+                            .SetItem(mancala, board[mancala] + board[bin] + board[captureIndex])
                             .SetItem(bin, 0)
                             .SetItem(captureIndex, 0);
                     }
