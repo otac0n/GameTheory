@@ -79,10 +79,13 @@ namespace GameTheory.Games.Mancala
                 if (board[bin] == 1 && captureSpots.Contains(bin))
                 {
                     var captureIndex = GameState.BinsOnASide - (bin - GameState.BinsOnASide);
-                    board = board
-                        .SetItem(mancala, board[bin] + board[captureIndex])
-                        .SetItem(bin, 0)
-                        .SetItem(captureIndex, 0);
+                    if (board[captureIndex] > 0)
+                    {
+                        board = board
+                            .SetItem(mancala, board[bin] + board[captureIndex])
+                            .SetItem(bin, 0)
+                            .SetItem(captureIndex, 0);
+                    }
                 }
 
                 return state.With(
