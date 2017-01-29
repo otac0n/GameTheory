@@ -172,6 +172,8 @@
     <Compile Include="Games\FiveTribes\TileColor.cs" />
     <Compile Include="Games\FiveTribes\Moves\PlacePalaceMove.cs" />
     <Compile Include="Games\FiveTribes\Tiles\Village.cs" />
+    <Compile Include="Games\Mancala\GameState.cs" />
+    <Compile Include="Games\Mancala\Move.cs" />
     <Compile Include="Games\TicTacToe\GameState.cs" />
     <Compile Include="GameStateExtensions.cs" />
     <Compile Include="Games\TicTacToe\Move.cs" />
