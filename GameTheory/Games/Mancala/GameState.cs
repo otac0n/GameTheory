@@ -2,6 +2,7 @@
 
 namespace GameTheory.Games.Mancala
 {
+    using System;
     using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Diagnostics.Contracts;
@@ -119,6 +120,13 @@ namespace GameTheory.Games.Mancala
             Contract.Requires(move.State == this);
 
             return move.Apply(this);
+        }
+
+        /// <inheritdoc />
+        public override string ToString()
+        {
+            var r = new Func<IEnumerable<int>, string>(bins => string.Join(" ", bins.Select(b => $"[{this.board[b],2}]")));
+            return $"{r(this.GetPlayerIndexes(this.players[1]).Reverse())} [  ]\n[  ] {r(this.GetPlayerIndexes(this.players[0]))}";
         }
 
         internal IEnumerable<int> GetPlayerIndexes(PlayerToken player)
