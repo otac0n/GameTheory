@@ -232,8 +232,6 @@ namespace GameTheory.Games.Splendor
         /// </summary>
         public ImmutableArray<ImmutableArray<DevelopmentCard>> DevelopmentTracks => this.developmentTracks;
 
-        IReadOnlyList<PlayerToken> IGameState<Move>.Players => this.Players;
-
         /// <summary>
         /// Gets the inventory of all players.
         /// </summary>
@@ -243,6 +241,8 @@ namespace GameTheory.Games.Splendor
         /// Gets the remaining nobles.
         /// </summary>
         public ImmutableList<Noble> Nobles => this.nobles;
+
+        IReadOnlyList<PlayerToken> IGameState<Move>.Players => this.Players;
 
         /// <summary>
         /// Gets the list of players.
@@ -259,7 +259,7 @@ namespace GameTheory.Games.Splendor
         {
             var moves = new List<Move>();
 
-            if (this.phase != Phase.End)
+            if (this.phase != Phase.End && player == this.activePlayer)
             {
                 moves.AddRange(Moves.PurchaseMove.GenerateMoves(this));
                 moves.AddRange(Moves.TakeTokensMove.GenerateMoves(this));
