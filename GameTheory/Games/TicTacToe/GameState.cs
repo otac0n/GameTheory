@@ -162,9 +162,9 @@ namespace GameTheory.Games.TicTacToe
         {
             var moves = ImmutableList.CreateBuilder<Move>();
 
-            for (var x = 0; x < Size; x++)
+            for (var y = 0; y < Size; y++)
             {
-                for (var y = 0; y < Size; y++)
+                for (var x = 0; x < Size; x++)
                 {
                     if (this.field[x, y] == null)
                     {

@@ -172,6 +172,8 @@
     <Compile Include="Games\FiveTribes\TileColor.cs" />
     <Compile Include="Games\FiveTribes\Moves\PlacePalaceMove.cs" />
     <Compile Include="Games\FiveTribes\Tiles\Village.cs" />
+    <Compile Include="Games\Mancala\GameState.cs" />
+    <Compile Include="Games\Mancala\Move.cs" />
     <Compile Include="Games\Splendor\DevelopmentCard.cs" />
     <Compile Include="Games\Splendor\GameState.cs" />
     <Compile Include="Games\Splendor\Inventory.cs" />
@@ -193,6 +195,7 @@
     <Compile Include="Maybe.cs" />
     <Compile Include="Players\MaximizingPlayer.cs" />
     <Compile Include="Players\StrategyPlayer.cs" />
+    <Compile Include="Strategies\CompositeStrategy.cs" />
     <Compile Include="Strategies\ImmediateWinStrategy.cs" />
     <Compile Include="Players\RandomPlayer.cs" />
     <Compile Include="PlayerToken.cs" />

@@ -255,7 +255,7 @@ namespace GameTheory.Tests.Games
             var endState = (GameState)GameUtils.PlayGame(
                 new GameState(2),
                 p => new RandomPlayer<Move>(p),
-                (state, move) => Console.WriteLine("{0}: {1}", state.PlayerName(move.PlayerToken), move)).Result;
+                (state, move) => Console.WriteLine("{0}: {1}", state.GetPlayerName(move.PlayerToken), move)).Result;
 
             var highestScore = endState.Players.Max(p => endState.GetScore(p));
             var winners = endState.GetWinners();
@@ -280,7 +280,7 @@ namespace GameTheory.Tests.Games
                 stuff.AddRange(inventory.Meeples.Cast<object>());
                 stuff.AddRange(inventory.Resources.Cast<object>());
                 stuff.AddRange(inventory.Djinns);
-                Console.WriteLine("{0}: {1} {2} ", state.PlayerName(player), inventory.GoldCoins, string.Join(",", stuff));
+                Console.WriteLine("{0}: {1} {2} ", state.GetPlayerName(player), inventory.GoldCoins, string.Join(",", stuff));
             }
         }
 
@@ -289,14 +289,14 @@ namespace GameTheory.Tests.Games
             Console.WriteLine("Scores:");
             foreach (var player in state.Players)
             {
-                Console.WriteLine("{0}: {1} ", state.PlayerName(player), state.GetScore(player));
+                Console.WriteLine("{0}: {1} ", state.GetPlayerName(player), state.GetScore(player));
             }
         }
 
         private static void ShowWinners(GameState state)
         {
             var winners = state.GetWinners();
-            Console.WriteLine("Winners: {0}", string.Join(", ", winners.Select(winner => state.PlayerName(winner))));
+            Console.WriteLine("Winners: {0}", string.Join(", ", winners.Select(winner => state.GetPlayerName(winner))));
         }
 
         private static GameState Transition(GameState from, GameState to)

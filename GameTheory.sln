@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.23107.0
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{44215A29-6C0C-4F7D-B0F8-EBF863617D09}"
 	ProjectSection(SolutionItems) = preProject
@@ -26,6 +26,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameTheory", "GameTheory\Ga
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameTheory.Tests", "GameTheory.Tests\GameTheory.Tests.csproj", "{95EF578E-DAF2-4D88-9399-E05190C08634}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameTheory.ConsoleRunner", "GameTheory.ConsoleRunner\GameTheory.ConsoleRunner.csproj", "{C126FB4D-027F-4F30-A873-EB419F6F4630}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -40,6 +42,10 @@ Global
 		{95EF578E-DAF2-4D88-9399-E05190C08634}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{95EF578E-DAF2-4D88-9399-E05190C08634}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{95EF578E-DAF2-4D88-9399-E05190C08634}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C126FB4D-027F-4F30-A873-EB419F6F4630}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C126FB4D-027F-4F30-A873-EB419F6F4630}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C126FB4D-027F-4F30-A873-EB419F6F4630}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C126FB4D-027F-4F30-A873-EB419F6F4630}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

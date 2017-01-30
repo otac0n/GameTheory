@@ -11,7 +11,6 @@
     <AssemblyName>GameTheory.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <StyleCopTreatErrorsAsWarnings>false</StyleCopTreatErrorsAsWarnings>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
     <RestorePackages>true</RestorePackages>
     <TargetFrameworkProfile />
@@ -72,6 +71,7 @@
     <Compile Include="DuhPlayer.cs" />
     <Compile Include="GameStateExtensions.cs" />
     <Compile Include="Games\FiveTribesTests.cs" />
+    <Compile Include="Games\MancalaTests.cs" />
     <Compile Include="Games\SplendorTests.cs" />
     <Compile Include="Games\TicTacToeTests.cs" />
     <Compile Include="Players\MaximizingPlayerTests.cs" />
