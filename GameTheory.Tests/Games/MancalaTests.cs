@@ -17,7 +17,7 @@ namespace GameTheory.Tests.Games
             var endState = (GameState)GameUtils.PlayGame(
                 new GameState(),
                 p => new RandomPlayer<Move>(p),
-                (state, move) => Console.WriteLine("{0}: {1}", state.PlayerName(move.PlayerToken), move)).Result;
+                (state, move) => Console.WriteLine("{0}: {1}", state.GetPlayerName(move.PlayerToken), move)).Result;
 
             var highestScore = endState.Players.Max(p => endState.GetScore(p));
             var winners = endState.GetWinners();

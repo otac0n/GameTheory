@@ -14,6 +14,40 @@ namespace GameTheory
     public static class GameUtils
     {
         /// <summary>
+        /// Gets a player name for display.
+        /// </summary>
+        /// <typeparam name="TMove">The type of object that represents a move in the game state.</typeparam>
+        /// <param name="gameState">The game state.</param>
+        /// <param name="playerToken">The player to search for.</param>
+        /// <returns>A name representing the specified player token.</returns>
+        public static string GetPlayerName<TMove>(this IGameState<TMove> gameState, PlayerToken playerToken)
+            where TMove : IMove
+        {
+            return $"Player {gameState.GetPlayerNumber(playerToken)}";
+        }
+
+        /// <summary>
+        /// Gets a player number for display.
+        /// </summary>
+        /// <typeparam name="TMove">The type of object that represents a move in the game state.</typeparam>
+        /// <param name="gameState">The game state.</param>
+        /// <param name="playerToken">The player to search for.</param>
+        /// <returns>A number representing the specified player token.</returns>
+        public static int GetPlayerNumber<TMove>(this IGameState<TMove> gameState, PlayerToken playerToken)
+            where TMove : IMove
+        {
+            for (int i = 0; i < gameState.Players.Count; i++)
+            {
+                if (gameState.Players[i] == playerToken)
+                {
+                    return i + 1;
+                }
+            }
+
+            return -1;
+        }
+
+        /// <summary>
         /// Plays the game from the specified game state as a task. The result of the task is the final game state.
         /// </summary>
         /// <typeparam name="TMove">The type of object that represents a move in the game state.</typeparam>

@@ -28,14 +28,8 @@ namespace GameTheory.Tests
             Console.WriteLine("Available Moves:");
             foreach (var move in state.GetAvailableMoves())
             {
-                Console.WriteLine("{0}: {1} ", PlayerName(state, move.PlayerToken), move);
+                Console.WriteLine($"{state.GetPlayerName(move.PlayerToken)}: {move}");
             }
-        }
-
-        public static string PlayerName<TMove>(this IGameState<TMove> state, PlayerToken playerToken)
-            where TMove : IMove
-        {
-            return ((char)('A' + state.Players.ToList().IndexOf(playerToken))).ToString();
         }
     }
 }

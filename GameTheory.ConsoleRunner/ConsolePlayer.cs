@@ -19,15 +19,14 @@ namespace GameTheory.ConsoleRunner
 
         public async Task<Maybe<TMove>> ChooseMove(IGameState<TMove> gameState, CancellationToken cancel)
         {
-            Console.WriteLine("Current state:");
-            Console.WriteLine(gameState);
-
             await Task.Yield();
 
             var moves = gameState.GetAvailableMoves(this.PlayerToken);
             if (moves.Any())
             {
-                return new Maybe<TMove>(Program.Choose(moves.ToArray()));
+                Console.WriteLine("Current state:");
+                Console.WriteLine(gameState);
+                return new Maybe<TMove>(ConsoleInteraction.Choose(moves.ToArray()));
             }
             else
             {

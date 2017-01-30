@@ -11,49 +11,6 @@ namespace GameTheory.ConsoleRunner
 
     internal class Program
     {
-        internal static T Choose<T>(IList<T> options, bool skipForced = false)
-        {
-            if (options.Count == 0)
-            {
-                return default(T);
-            }
-
-            if (skipForced && options.Count == 1)
-            {
-                return options[0];
-            }
-
-            for (int i = 0; i < options.Count; i++)
-            {
-                Console.WriteLine($"{i + 1}: {options[i]}");
-            }
-
-            Console.WriteLine($"Please make a selection: [1-{options.Count}]");
-            while (true)
-            {
-                var line = Console.ReadLine();
-
-                int selection;
-                if (int.TryParse(line, out selection))
-                {
-                    if (selection > 0 && selection <= options.Count)
-                    {
-                        return options[selection - 1];
-                    }
-                    else
-                    {
-                        Console.Write("Selection out of range. ");
-                    }
-                }
-                else
-                {
-                    Console.Write("Selection must be a number. ");
-                }
-
-                Console.WriteLine($"Please choose a number between 1 and {options.Count} (inclusive).");
-            }
-        }
-
         private static Type[] FindGames(Assembly assembly)
         {
             return (from t in assembly.ExportedTypes
@@ -100,9 +57,8 @@ namespace GameTheory.ConsoleRunner
         private static IPlayer<TMove> GetPlayer<TMove>(IGameState<TMove> gameState, PlayerToken playerToken)
             where TMove : IMove
         {
-            var playerNumber = gameState.Players.ToList().IndexOf(playerToken) + 1;
-            Console.WriteLine($"Choose player {playerNumber}:");
-            var playerType = Choose(new[] { typeof(RandomPlayer<TMove>), typeof(ConsolePlayer<TMove>) });
+            Console.WriteLine($"Choose {gameState.GetPlayerName(playerToken)}:");
+            var playerType = ConsoleInteraction.Choose(new[] { typeof(RandomPlayer<TMove>), typeof(ConsolePlayer<TMove>) });
             return (IPlayer<TMove>)Activator.CreateInstance(playerType, new[] { playerToken });
         }
 
@@ -110,8 +66,8 @@ namespace GameTheory.ConsoleRunner
         {
             var assembly = typeof(IGameState<>).Assembly;
             var games = FindGames(assembly);
-            var game = Choose(games);
-            var constructor = Choose(game.GetConstructors(), skipForced: true);
+            var game = ConsoleInteraction.Choose(games);
+            var constructor = ConsoleInteraction.Choose(game.GetConstructors(), skipMessage: _ => "Using only available constructor.");
             var args = constructor.GetParameters().Select(p => GetArgument(p)).ToArray();
 
             typeof(Program).GetMethod(nameof(RunGame), BindingFlags.Static | BindingFlags.NonPublic).MakeGenericMethod(GetMoveType(game)).Invoke(null, new object[] { constructor.Invoke(args) });
@@ -135,8 +91,7 @@ namespace GameTheory.ConsoleRunner
             foreach (var winner in gameState.GetWinners())
             {
                 anyWinners = true;
-                var playerNumber = gameState.Players.ToList().IndexOf(winner) + 1;
-                Console.WriteLine($"Player {playerNumber}");
+                Console.WriteLine(gameState.GetPlayerName(winner));
             }
 
             if (!anyWinners)
@@ -148,8 +103,7 @@ namespace GameTheory.ConsoleRunner
         private static void ShowMove<TMove>(IGameState<TMove> gameState, TMove move)
             where TMove : IMove
         {
-            var playerNumber = gameState.Players.ToList().IndexOf(move.PlayerToken) + 1;
-            Console.WriteLine($"Player {playerNumber} moved:");
+            Console.WriteLine($"{gameState.GetPlayerName(move.PlayerToken)} moved:");
             Console.WriteLine(move);
         }
     }
