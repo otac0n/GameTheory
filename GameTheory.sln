@@ -26,6 +26,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameTheory", "GameTheory\Ga
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameTheory.Tests", "GameTheory.Tests\GameTheory.Tests.csproj", "{95EF578E-DAF2-4D88-9399-E05190C08634}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameTheory.ConsoleRunner", "GameTheory.ConsoleRunner\GameTheory.ConsoleRunner.csproj", "{C126FB4D-027F-4F30-A873-EB419F6F4630}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -40,6 +42,10 @@ Global
 		{95EF578E-DAF2-4D88-9399-E05190C08634}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{95EF578E-DAF2-4D88-9399-E05190C08634}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{95EF578E-DAF2-4D88-9399-E05190C08634}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C126FB4D-027F-4F30-A873-EB419F6F4630}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C126FB4D-027F-4F30-A873-EB419F6F4630}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C126FB4D-027F-4F30-A873-EB419F6F4630}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C126FB4D-027F-4F30-A873-EB419F6F4630}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
