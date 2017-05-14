@@ -184,6 +184,7 @@
     <Compile Include="IStrategy.cs" />
     <Compile Include="Maybe.cs" />
     <Compile Include="Players\MaximizingPlayer.cs" />
+    <Compile Include="Players\MaximizingPlayers\TicTacToeMaximizingPlayer.cs" />
     <Compile Include="Players\StrategyPlayer.cs" />
     <Compile Include="Strategies\CompositeStrategy.cs" />
     <Compile Include="Strategies\ImmediateWinStrategy.cs" />
