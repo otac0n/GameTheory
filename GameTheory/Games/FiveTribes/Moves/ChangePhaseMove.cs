@@ -17,7 +17,7 @@ namespace GameTheory.Games.FiveTribes.Moves
         /// <param name="description">The description of the move.</param>
         /// <param name="phase">The <see cref="Phase"/> that the move will change to.</param>
         public ChangePhaseMove(GameState state, string description, Phase phase)
-            : base(state, state.ActivePlayer)
+            : base(state)
         {
             this.description = description;
             this.phase = phase;

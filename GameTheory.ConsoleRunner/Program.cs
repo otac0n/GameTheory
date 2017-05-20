@@ -3,7 +3,6 @@
 namespace GameTheory.ConsoleRunner
 {
     using System;
-    using System.Collections.Generic;
     using System.Diagnostics;
     using System.Linq;
     using System.Reflection;
@@ -29,8 +28,7 @@ namespace GameTheory.ConsoleRunner
                 {
                     var line = Console.ReadLine();
 
-                    int selection;
-                    if (int.TryParse(line, out selection))
+                    if (int.TryParse(line, out int selection))
                     {
                         return selection;
                     }
@@ -82,7 +80,7 @@ namespace GameTheory.ConsoleRunner
             where TMove : IMove
         {
             Console.WriteLine($"This game has {gameState.Players.Count} player{(gameState.Players.Count != 1 ? "s" : string.Empty)}");
-            gameState = GameUtils.PlayGame(gameState, playerToken => GetPlayer(gameState, playerToken), ShowMove).Result;
+            gameState = GameUtilities.PlayGame(gameState, playerToken => GetPlayer(gameState, playerToken), ShowMove).Result;
             Console.WriteLine($"Final state:");
             Console.WriteLine(gameState);
 

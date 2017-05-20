@@ -2,6 +2,8 @@
 
 namespace GameTheory.Games.FiveTribes.Djinns
 {
+    using System;
+
     /// <summary>
     /// Each time someone gets a Vizier, collect 1 GC if it's you, 2 GCSs if it's an opponent.
     /// </summary>
@@ -20,6 +22,11 @@ namespace GameTheory.Games.FiveTribes.Djinns
         /// <inheritdoc />
         public override GameState HandleTransition(PlayerToken owner, GameState oldState, GameState newState)
         {
+            if (oldState == null)
+            {
+                throw new ArgumentNullException(nameof(oldState));
+            }
+
             foreach (var player in oldState.Players)
             {
                 var newViziers = newState.Inventory[player].Meeples[Meeple.Vizier] - oldState.Inventory[player].Meeples[Meeple.Vizier];

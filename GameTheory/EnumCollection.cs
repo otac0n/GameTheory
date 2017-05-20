@@ -6,7 +6,6 @@ namespace GameTheory
     using System.Collections;
     using System.Collections.Generic;
     using System.Collections.Immutable;
-    using System.Diagnostics.Contracts;
     using System.Globalization;
     using System.Linq;
 
@@ -42,7 +41,10 @@ namespace GameTheory
         /// <param name="items">The items to add to the collection.</param>
         public EnumCollection(IEnumerable<TEnum> items)
         {
-            Contract.Requires(items != null);
+            if (items == null)
+            {
+                throw new ArgumentNullException(nameof(items));
+            }
 
             var count = 0;
             var storage = new int[Capacity];
@@ -148,7 +150,11 @@ namespace GameTheory
         /// <returns>The new collection.</returns>
         public EnumCollection<TEnum> Add(TEnum item, int count)
         {
-            Contract.Requires(count >= 1);
+            if (count < 1)
+            {
+                throw new ArgumentOutOfRangeException(nameof(count));
+            }
+
             var key = Convert.ToInt32(item, CultureInfo.InvariantCulture);
             return new EnumCollection<TEnum>(checked(this.count + count), this.storage.SetItem(key, this.storage[key] + count));
         }
@@ -170,7 +176,10 @@ namespace GameTheory
         /// <returns>The new collection.</returns>
         public EnumCollection<TEnum> AddRange(EnumCollection<TEnum> items)
         {
-            Contract.Requires(items != null);
+            if (items == null)
+            {
+                throw new ArgumentNullException(nameof(items));
+            }
 
             var count = checked(this.count + items.count);
             var storage = new int[Capacity];
@@ -271,7 +280,11 @@ namespace GameTheory
         /// <returns>The new collection.</returns>
         public EnumCollection<TEnum> Remove(TEnum item, int count)
         {
-            Contract.Requires(count >= 1);
+            if (count < 1)
+            {
+                throw new ArgumentOutOfRangeException(nameof(count));
+            }
+
             var key = Convert.ToInt32(item, CultureInfo.InvariantCulture);
             var existing = this.storage[key];
             count = Math.Min(count, existing);
@@ -297,6 +310,11 @@ namespace GameTheory
         /// <returns>The new collection.</returns>
         public EnumCollection<TEnum> RemoveAll(Predicate<TEnum> match)
         {
+            if (match == null)
+            {
+                throw new ArgumentNullException(nameof(match));
+            }
+
             var count = 0;
             var storage = new int[Capacity];
 
@@ -328,6 +346,11 @@ namespace GameTheory
         /// <returns>The new collection.</returns>
         public EnumCollection<TEnum> RemoveRange(EnumCollection<TEnum> items)
         {
+            if (items == null)
+            {
+                throw new ArgumentNullException(nameof(items));
+            }
+
             var count = this.count;
             var storage = new int[Capacity];
             for (var i = 0; i < Capacity; i++)

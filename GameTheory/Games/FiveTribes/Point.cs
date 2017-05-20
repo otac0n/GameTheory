@@ -2,8 +2,8 @@
 
 namespace GameTheory.Games.FiveTribes
 {
+    using System;
     using System.Diagnostics.CodeAnalysis;
-    using System.Diagnostics.Contracts;
 
     /// <summary>
     /// Represents a point in the <see cref="Sultanate"/>.
@@ -18,7 +18,10 @@ namespace GameTheory.Games.FiveTribes
         /// <param name="index">The index of the <see cref="Point"/> within the <see cref="Sultanate"/>.</param>
         public Point(int index)
         {
-            Contract.Requires(index >= 0 && index < Sultanate.Width * Sultanate.Height);
+            if (index < 0 || index >= Sultanate.Width * Sultanate.Height)
+            {
+                throw new ArgumentOutOfRangeException(nameof(index));
+            }
 
             this.index = (byte)index;
         }
@@ -32,8 +35,15 @@ namespace GameTheory.Games.FiveTribes
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "y", Justification = "Y is meaningful in the context of coordinates.")]
         public Point(int x, int y)
         {
-            Contract.Requires(x >= 0 && x < Sultanate.Width);
-            Contract.Requires(y >= 0 && y < Sultanate.Height);
+            if (x < 0 || x >= Sultanate.Width)
+            {
+                throw new ArgumentOutOfRangeException(nameof(x));
+            }
+
+            if (y < 0 || y >= Sultanate.Height)
+            {
+                throw new ArgumentOutOfRangeException(nameof(y));
+            }
 
             this.index = (byte)(Sultanate.Width * y + x);
         }

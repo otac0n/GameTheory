@@ -2,8 +2,8 @@
 
 namespace GameTheory.Games.FiveTribes.Djinns
 {
+    using System;
     using System.Collections.Generic;
-    using System.Diagnostics.Contracts;
     using System.Linq;
     using GameTheory.Games.FiveTribes.Moves;
 
@@ -45,8 +45,15 @@ namespace GameTheory.Games.FiveTribes.Djinns
         /// <inheritdoc />
         public override GameState HandleTransition(PlayerToken owner, GameState oldState, GameState newState)
         {
-            Contract.Requires(oldState != null);
-            Contract.Requires(newState != null);
+            if (oldState == null)
+            {
+                throw new ArgumentNullException(nameof(oldState));
+            }
+
+            if (newState == null)
+            {
+                throw new ArgumentNullException(nameof(newState));
+            }
 
             if (oldState.Phase == Phase.CleanUp && newState.Phase == Phase.Bid && newState[this.stateKey] != null)
             {

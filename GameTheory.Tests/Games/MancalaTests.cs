@@ -14,7 +14,7 @@ namespace GameTheory.Tests.Games
         [Test]
         public void GetWinners_AfterAGameHasBeenPlayed_ReturnsThePlayersWithTheHighestScore()
         {
-            var endState = (GameState)GameUtils.PlayGame(
+            var endState = (GameState)GameUtilities.PlayGame(
                 new GameState(),
                 p => new RandomPlayer<Move>(p),
                 (state, move) => Console.WriteLine("{0}: {1}", state.GetPlayerName(move.PlayerToken), move)).Result;

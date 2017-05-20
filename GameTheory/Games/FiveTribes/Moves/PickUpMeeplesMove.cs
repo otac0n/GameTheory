@@ -15,7 +15,7 @@ namespace GameTheory.Games.FiveTribes.Moves
         /// <param name="state">The <see cref="GameState"/> that this move is based on.</param>
         /// <param name="point">The <see cref="Point"/> in the <see cref="GameState.Sultanate"/> where the <see cref="Meeple">Meeples</see> will be picked up.</param>
         public PickUpMeeplesMove(GameState state, Point point)
-            : base(state, state.ActivePlayer)
+            : base(state)
         {
             this.point = point;
         }

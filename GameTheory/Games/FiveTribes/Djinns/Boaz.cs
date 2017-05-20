@@ -2,6 +2,8 @@
 
 namespace GameTheory.Games.FiveTribes.Djinns
 {
+    using System;
+
     /// <summary>
     /// Your Elders and Viziers are protected from Assassins.
     /// </summary>
@@ -20,6 +22,11 @@ namespace GameTheory.Games.FiveTribes.Djinns
         /// <inheritdoc />
         protected override GameState OnAcquire(PlayerToken owner, GameState state)
         {
+            if (state == null)
+            {
+                throw new ArgumentNullException(nameof(state));
+            }
+
             var assassinationTable = state.AssassinationTables[owner];
 
             return state.With(

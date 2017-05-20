@@ -21,7 +21,7 @@ namespace GameTheory.Tests.Players
 
             for (int i = 0; i < Samples; i++)
             {
-                var endState = await GameUtils.PlayGame(new GameState(), playerTokens => new IPlayer<Move>[]
+                var endState = await GameUtilities.PlayGame(new GameState(), playerTokens => new IPlayer<Move>[]
                 {
                     new DuhPlayer<Move>(playerTokens[0]),
                     new RandomPlayer<Move>(playerTokens[1]),
@@ -46,7 +46,7 @@ namespace GameTheory.Tests.Players
 
             for (int i = 0; i < Samples; i++)
             {
-                var endState = await GameUtils.PlayGame(new GameState(), playerTokens => new IPlayer<Move>[]
+                var endState = await GameUtilities.PlayGame(new GameState(), playerTokens => new IPlayer<Move>[]
                 {
                     new RandomPlayer<Move>(playerTokens[0]),
                     new DuhPlayer<Move>(playerTokens[1]),

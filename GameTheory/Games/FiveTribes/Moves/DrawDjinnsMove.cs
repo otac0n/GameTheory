@@ -17,7 +17,7 @@ namespace GameTheory.Games.FiveTribes.Moves
         /// </summary>
         /// <param name="state">The <see cref="GameState"/> that this move is based on.</param>
         public DrawDjinnsMove(GameState state)
-            : base(state, state.ActivePlayer)
+            : base(state)
         {
         }
 
@@ -31,9 +31,8 @@ namespace GameTheory.Games.FiveTribes.Moves
         {
             var toDraw = GetDrawCount(state);
 
-            ImmutableList<Djinn> dealt;
             var newDjinnDiscards = state.DjinnDiscards;
-            var newDjinnPile = state.DjinnPile.Deal(toDraw, out dealt, ref newDjinnDiscards);
+            var newDjinnPile = state.DjinnPile.Deal(toDraw, out ImmutableList<Djinn> dealt, ref newDjinnDiscards);
 
             var s1 = state.With(
                 djinnPile: newDjinnPile,

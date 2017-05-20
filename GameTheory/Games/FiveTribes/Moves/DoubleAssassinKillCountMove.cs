@@ -12,7 +12,7 @@ namespace GameTheory.Games.FiveTribes.Moves
         /// </summary>
         /// <param name="state">The <see cref="GameState"/> that this move is based on.</param>
         public DoubleAssassinKillCountMove(GameState state)
-            : base(state, state.ActivePlayer)
+            : base(state)
         {
         }
 

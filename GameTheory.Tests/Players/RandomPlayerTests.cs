@@ -19,15 +19,15 @@ namespace GameTheory.Tests.Players
             const int Moves = 3;
             const double Expected = (double)Samples / Moves;
 
-            var gameState = new StubGameState();
-            using (var player = new RandomPlayer<StubGameState.Move>(gameState.Players[0]))
+            var state = new StubGameState();
+            using (var player = new RandomPlayer<StubGameState.Move>(state.Players[0]))
             {
-                gameState.Moves = Enumerable.Range(0, Moves).Select(i => new StubGameState.Move(player.PlayerToken, "Move " + (char)('A' + i))).ToList();
+                state.Moves = Enumerable.Range(0, Moves).Select(i => new StubGameState.Move(player.PlayerToken, "Move " + (char)('A' + i))).ToList();
 
-                var moves = gameState.Moves.ToDictionary(m => m.Value, m => 0);
+                var moves = state.Moves.ToDictionary(m => m.Value, m => 0);
                 for (int i = 0; i < Samples; i++)
                 {
-                    var move = (await player.ChooseMove(gameState, CancellationToken.None)).Value;
+                    var move = (await player.ChooseMove(state, CancellationToken.None)).Value;
                     moves[move.Value]++;
                 }
 

@@ -19,7 +19,7 @@ namespace GameTheory.Games.FiveTribes.Moves
         /// <param name="gold">The amount of Gold Coins (GC) that will be paid.</param>
         /// <param name="after">A function to perform after the move has taken place.</param>
         public PayGoldMove(GameState state, int gold, Func<GameState, GameState> after)
-            : base(state, state.ActivePlayer)
+            : base(state)
         {
             this.after = after;
             this.gold = gold;

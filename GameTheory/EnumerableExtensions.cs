@@ -2,9 +2,9 @@
 
 namespace GameTheory
 {
+    using System;
     using System.Collections.Generic;
     using System.Collections.Immutable;
-    using System.Diagnostics.Contracts;
     using System.Linq;
 
     /// <summary>
@@ -45,7 +45,10 @@ namespace GameTheory
         /// <returns>A sequence that contains partitions of the specified size.</returns>
         public static IEnumerable<IReadOnlyList<T>> Partition<T>(this IEnumerable<T> source, int count)
         {
-            Contract.Requires(count > 0);
+            if (count <= 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(count));
+            }
 
             var result = new List<T>(count);
             foreach (var item in source)

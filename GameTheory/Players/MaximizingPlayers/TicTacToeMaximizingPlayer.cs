@@ -2,13 +2,14 @@
 
 namespace GameTheory.Players.MaximizingPlayers
 {
+    using System;
     using System.Linq;
     using Games.TicTacToe;
 
     /// <summary>
     /// A maximizing player for the game of <see cref="GameState">Tic tac toe</see>.
     /// </summary>
-    public class TicTacToeMaximizingPlayer : MaximizingPlayer<Move, double>
+    public sealed class TicTacToeMaximizingPlayer : MaximizingPlayer<Move, double>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="TicTacToeMaximizingPlayer"/> class.
@@ -23,7 +24,7 @@ namespace GameTheory.Players.MaximizingPlayers
         /// <summary>
         /// Provides a scoring metric for Tic-tac-toe.
         /// </summary>
-        public class ScoringMetric : IScoringMetric
+        private class ScoringMetric : IScoringMetric
         {
             /// <inheritdoc/>
             public double CombineScores(double[] scores, double[] weights) =>
@@ -38,8 +39,15 @@ namespace GameTheory.Players.MaximizingPlayers
                 playerScore - opponentScore;
 
             /// <inheritdoc/>
-            public double Score(IGameState<Move> gameState, PlayerToken playerToken) =>
-                gameState.GetWinners().Any(w => w == playerToken) ? 1 : 0;
+            public double Score(IGameState<Move> state, PlayerToken playerToken)
+            {
+                if (state == null)
+                {
+                    throw new ArgumentNullException(nameof(state));
+                }
+
+                return state.GetWinners().Any(w => w == playerToken) ? 1 : 0;
+            }
         }
     }
 }

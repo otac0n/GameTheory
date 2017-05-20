@@ -21,7 +21,7 @@ namespace GameTheory.Games.FiveTribes.Moves
         /// <param name="meeples">The <see cref="Meeple">Meeples</see> that will be assassinated.</param>
         /// <param name="after">A function to perform after the move has taken place.</param>
         public AssassinateMove(GameState state, Point point, EnumCollection<Meeple> meeples, Func<GameState, GameState> after)
-            : base(state, state.ActivePlayer)
+            : base(state)
         {
             this.after = after;
             this.meeples = meeples;

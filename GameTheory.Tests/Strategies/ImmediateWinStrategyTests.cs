@@ -16,10 +16,10 @@ namespace GameTheory.Tests.Strategies
         [TestCase("0,0; 1,1; 2,2; 1,0; 2,0", "1,2")]
         public async Task GetMove_WhenThereIsAWinningMove_ReturnsAWinningMove(string moveList, string expectedMove)
         {
-            var gameState = Games.TicTacToeTests.ApplyMoves(new GameState(), moveList);
+            var state = Games.TicTacToeTests.ApplyMoves(new GameState(), moveList);
             using (var strategy = new ImmediateWinStrategy<Move>())
             {
-                var maybeMove = await strategy.ChooseMove(gameState, gameState.ActivePlayer, CancellationToken.None);
+                var maybeMove = await strategy.ChooseMove(state, state.ActivePlayer, CancellationToken.None);
                 var move = maybeMove.Value;
                 Assert.That($"{move.X},{move.Y}", Is.EqualTo(expectedMove));
             }
@@ -35,10 +35,10 @@ namespace GameTheory.Tests.Strategies
         [TestCase("0,0; 1,1; 2,2; 2,1; 0,1; 0,2; 2,0; 1,0")]
         public async Task GetMove_WhenThereIsNoWinningMove_ReturnsAnEmptyValue(string moveList)
         {
-            var gameState = Games.TicTacToeTests.ApplyMoves(new GameState(), moveList);
+            var state = Games.TicTacToeTests.ApplyMoves(new GameState(), moveList);
             using (var strategy = new ImmediateWinStrategy<Move>())
             {
-                var maybeMove = await strategy.ChooseMove(gameState, gameState.ActivePlayer, CancellationToken.None);
+                var maybeMove = await strategy.ChooseMove(state, state.ActivePlayer, CancellationToken.None);
                 Assert.That(maybeMove.HasValue, Is.False);
             }
         }

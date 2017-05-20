@@ -2,6 +2,7 @@
 
 namespace GameTheory.Games.FiveTribes.Djinns
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using GameTheory.Games.FiveTribes.Moves;
@@ -24,6 +25,11 @@ namespace GameTheory.Games.FiveTribes.Djinns
         /// <inheritdoc />
         protected override GameState CleanUp(GameState state)
         {
+            if (state == null)
+            {
+                throw new ArgumentNullException(nameof(state));
+            }
+
             var player = state.Inventory.Where(i => i.Value.Djinns.Contains(this)).Select(i => i.Key).Single();
             var assassinationTable = state.AssassinationTables[player];
 

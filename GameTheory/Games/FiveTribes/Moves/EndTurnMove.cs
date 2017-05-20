@@ -16,7 +16,7 @@ namespace GameTheory.Games.FiveTribes.Moves
         /// </summary>
         /// <param name="state">The <see cref="GameState"/> that this move is based on.</param>
         public EndTurnMove(GameState state)
-            : base(state, state.ActivePlayer)
+            : base(state)
         {
         }
 
@@ -28,13 +28,11 @@ namespace GameTheory.Games.FiveTribes.Moves
 
         internal override GameState Apply(GameState state)
         {
-            ImmutableList<Djinn> dealtDjinns;
             var djinnDiscards = state.DjinnDiscards;
-            var djinnPile = state.DjinnPile.Deal(3 - state.VisibleDjinns.Count, out dealtDjinns, ref djinnDiscards);
+            var djinnPile = state.DjinnPile.Deal(3 - state.VisibleDjinns.Count, out ImmutableList<Djinn> dealtDjinns, ref djinnDiscards);
 
-            ImmutableList<Resource> dealtResources;
             var resourceDiscards = state.ResourceDiscards;
-            var resourcePile = state.ResourcePile.Deal(9 - state.VisibleResources.Count, out dealtResources, ref resourceDiscards);
+            var resourcePile = state.ResourcePile.Deal(9 - state.VisibleResources.Count, out ImmutableList<Resource> dealtResources, ref resourceDiscards);
 
             var moreTurns = state.FindHighestBidIndex() != -1;
             var isOver = !moreTurns && (state.Players.Any(p => !state.IsPlayerUnderCamelLimit(p)) || !state.Sultanate.GetPickUps().Any());

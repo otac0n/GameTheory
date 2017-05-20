@@ -2,8 +2,8 @@
 
 namespace GameTheory
 {
+    using System;
     using System.Collections.Generic;
-    using System.Diagnostics.Contracts;
 
     /// <summary>
     /// Extensions for all implementations of <see cref="IGameState{TMove}"/>.
@@ -19,7 +19,10 @@ namespace GameTheory
         public static List<TMove> GetAvailableMoves<TMove>(this IGameState<TMove> state)
             where TMove : IMove
         {
-            Contract.Requires(state != null);
+            if (state == null)
+            {
+                throw new ArgumentNullException(nameof(state));
+            }
 
             var moves = new List<TMove>();
 

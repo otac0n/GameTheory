@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<RuleSet Name="Strict" Description="A strict ruleset based on the Microsoft All Rules ruleset." ToolsVersion="14.0">
+<RuleSet Name="Strict" Description="A strict ruleset based on the Microsoft All Rules ruleset." ToolsVersion="15.0">
   <IncludeAll Action="Warning" />
   <Rules AnalyzerId="Microsoft.Analyzers.ManagedCodeAnalysis" RuleNamespace="Microsoft.Rules.Managed">
     <Rule Id="CA1006" Action="None" />
@@ -11,6 +11,7 @@
     <Rule Id="CA1045" Action="None" />
     <Rule Id="CA1305" Action="None" />
     <Rule Id="CA1500" Action="None" />
+    <Rule Id="CA1506" Action="None" />
     <Rule Id="CA1810" Action="None" />
     <Rule Id="CA1814" Action="None" />
     <Rule Id="CA2104" Action="None" />

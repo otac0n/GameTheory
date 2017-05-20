@@ -19,7 +19,7 @@ namespace GameTheory.Games.FiveTribes.Moves
         /// <param name="state">The <see cref="GameState"/> that this move is based on.</param>
         /// <param name="point">The <see cref="Point"/> where the <see cref="Meeple">Meeples</see> will be added.</param>
         public AddMeeplesMove(GameState state, Point point)
-            : base(state, state.ActivePlayer)
+            : base(state)
         {
             this.point = point;
         }
@@ -40,9 +40,8 @@ namespace GameTheory.Games.FiveTribes.Moves
 
         internal override GameState Apply(GameState state)
         {
-            ImmutableList<Meeple> dealt;
             var newBag = state.Bag;
-            newBag = newBag.Deal(3, out dealt);
+            newBag = newBag.Deal(3, out ImmutableList<Meeple> dealt);
 
             return state.With(
                 bag: newBag,

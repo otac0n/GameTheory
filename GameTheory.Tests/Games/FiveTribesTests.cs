@@ -6,7 +6,6 @@ namespace GameTheory.Tests.Games
     using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Linq;
-    using System.Linq.Expressions;
     using System.Threading;
     using GameTheory.Games.FiveTribes;
     using GameTheory.Games.FiveTribes.Djinns;
@@ -252,7 +251,7 @@ namespace GameTheory.Tests.Games
         [Test(Description = "At the end of the game, the player with the most Victory Points is declared The Great Sultan and wins.")]
         public void GetWinners_AfterAGameHasBeenPlayed_ReturnsThePlayersWithTheHighestScore()
         {
-            var endState = (GameState)GameUtils.PlayGame(
+            var endState = (GameState)GameUtilities.PlayGame(
                 new GameState(2),
                 p => new RandomPlayer<Move>(p),
                 (state, move) => Console.WriteLine("{0}: {1}", state.GetPlayerName(move.PlayerToken), move)).Result;
@@ -310,7 +309,7 @@ namespace GameTheory.Tests.Games
             private readonly GameState nextState;
 
             public ReturnGameStateMove(GameState state, GameState nextState)
-                : base(state, state.ActivePlayer)
+                : base(state)
             {
                 this.nextState = nextState;
             }

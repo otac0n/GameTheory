@@ -2,6 +2,7 @@
 
 namespace GameTheory.Games.FiveTribes.Djinns
 {
+    using System;
     using System.Collections.Immutable;
     using System.Linq;
 
@@ -23,6 +24,11 @@ namespace GameTheory.Games.FiveTribes.Djinns
         /// <inheritdoc />
         public override GameState HandleAssassination(PlayerToken owner, GameState state, Point point, EnumCollection<Meeple> kill)
         {
+            if (kill == null)
+            {
+                throw new ArgumentNullException(nameof(kill));
+            }
+
             var s1 = state;
 
             foreach (var meeple in kill.Keys)
@@ -53,9 +59,8 @@ namespace GameTheory.Games.FiveTribes.Djinns
 
                     case Meeple.Merchant:
                         {
-                            ImmutableList<Resource> dealt;
                             var newDiscards = s1.ResourceDiscards;
-                            var newResourcesPile = s1.ResourcePile.Deal(kill[meeple], out dealt, ref newDiscards);
+                            var newResourcesPile = s1.ResourcePile.Deal(kill[meeple], out ImmutableList<Resource> dealt, ref newDiscards);
                             var newInventory = inventory.With(resources: inventory.Resources.AddRange(dealt));
 
                             s1 = s1.With(

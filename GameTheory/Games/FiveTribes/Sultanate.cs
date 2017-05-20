@@ -214,8 +214,7 @@ namespace GameTheory.Games.FiveTribes
         private static ImmutableHashSet<Point> FindDestinations(Point lastPoint, Point previousPoint, int meeples)
         {
             var key = Tuple.Create(lastPoint, previousPoint, meeples);
-            ImmutableHashSet<Point> result;
-            return Storage.TryGetValue(key, out result) ? result : Storage[key] = FindDestinationsImpl(lastPoint, previousPoint, meeples);
+            return Storage.TryGetValue(key, out ImmutableHashSet<Point> result) ? result : Storage[key] = FindDestinationsImpl(lastPoint, previousPoint, meeples);
         }
 
         private static ImmutableHashSet<Point> FindDestinationsImpl(Point lastPoint, Point previousPoint, int meeples)

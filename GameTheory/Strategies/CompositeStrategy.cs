@@ -2,6 +2,7 @@
 
 namespace GameTheory.Strategies
 {
+    using System;
     using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Threading;
@@ -37,12 +38,20 @@ namespace GameTheory.Strategies
             this.disposeChildren = disposeChildren;
         }
 
+        /// <summary>
+        /// Finalizes an instance of the <see cref="CompositeStrategy{TMove}"/> class.
+        /// </summary>
+        ~CompositeStrategy()
+        {
+            this.Dispose(false);
+        }
+
         /// <inheritdoc/>
-        public async Task<Maybe<TMove>> ChooseMove(IGameState<TMove> gameState, PlayerToken playerToken, IReadOnlyCollection<TMove> moves, CancellationToken cancel)
+        public async Task<Maybe<TMove>> ChooseMove(IGameState<TMove> state, PlayerToken playerToken, IReadOnlyCollection<TMove> moves, CancellationToken cancel)
         {
             foreach (var strategy in this.strategies)
             {
-                var move = await strategy.ChooseMove(gameState, playerToken, moves, cancel);
+                var move = await strategy.ChooseMove(state, playerToken, moves, cancel);
                 if (move.HasValue)
                 {
                     return move;
@@ -55,11 +64,24 @@ namespace GameTheory.Strategies
         /// <inheritdoc/>
         public void Dispose()
         {
-            if (this.disposeChildren)
+            this.Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Releases the unmanaged resources used by the Component and optionally releases the managed resources.
+        /// </summary>
+        /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
             {
-                foreach (var strategy in this.strategies)
+                if (this.disposeChildren)
                 {
-                    strategy.Dispose();
+                    foreach (var strategy in this.strategies)
+                    {
+                        strategy.Dispose();
+                    }
                 }
             }
         }

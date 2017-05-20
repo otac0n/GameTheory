@@ -1,9 +1,9 @@
-// Copyright © John Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+﻿// Copyright © John Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Games.Mancala
 {
+    using System;
     using System.Collections.Generic;
-    using System.Diagnostics.Contracts;
     using System.Linq;
 
     /// <summary>
@@ -18,9 +18,7 @@ namespace GameTheory.Games.Mancala
         /// <param name="bin">The index of the bin.</param>
         internal Move(GameState state, int bin)
         {
-            Contract.Requires(state != null);
-
-            this.State = state;
+            this.State = state ?? throw new ArgumentNullException(nameof(state));
             this.PlayerToken = state.ActivePlayer;
             this.Bin = bin;
         }

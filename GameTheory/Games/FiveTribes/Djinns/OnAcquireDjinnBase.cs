@@ -2,7 +2,7 @@
 
 namespace GameTheory.Games.FiveTribes.Djinns
 {
-    using System.Linq;
+    using System;
 
     /// <summary>
     /// Encapsulates <see cref="Djinn"/> behaviors that happen when the <see cref="Djinn"/> is acquired.
@@ -21,6 +21,11 @@ namespace GameTheory.Games.FiveTribes.Djinns
         /// <inheritdoc />
         public sealed override GameState HandleTransition(PlayerToken owner, GameState oldState, GameState newState)
         {
+            if (oldState == null)
+            {
+                throw new ArgumentNullException(nameof(oldState));
+            }
+
             if (!oldState.Inventory[owner].Djinns.Contains(this))
             {
                 return this.OnAcquire(owner, newState);

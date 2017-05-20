@@ -14,7 +14,7 @@ namespace GameTheory.Games.FiveTribes.Moves
         /// </summary>
         /// <param name="state">The <see cref="GameState"/> that this move is based on.</param>
         public DrawTopCardMove(GameState state)
-            : base(state, state.ActivePlayer)
+            : base(state)
         {
         }
 
@@ -29,9 +29,8 @@ namespace GameTheory.Games.FiveTribes.Moves
             var player = state.ActivePlayer;
             var inventory = state.Inventory[player];
 
-            ImmutableList<Resource> dealt;
             var newDiscards = state.ResourceDiscards;
-            var newResourcesPile = state.ResourcePile.Deal(1, out dealt, ref newDiscards);
+            var newResourcesPile = state.ResourcePile.Deal(1, out ImmutableList<Resource> dealt, ref newDiscards);
             var newInventory = inventory.With(resources: inventory.Resources.AddRange(dealt));
 
             return state.With(

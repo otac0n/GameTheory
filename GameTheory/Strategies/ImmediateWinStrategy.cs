@@ -2,6 +2,7 @@
 
 namespace GameTheory.Strategies
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading;
@@ -14,14 +15,22 @@ namespace GameTheory.Strategies
     public class ImmediateWinStrategy<TMove> : IStrategy<TMove>
         where TMove : IMove
     {
+        /// <summary>
+        /// Finalizes an instance of the <see cref="ImmediateWinStrategy{TMove}"/> class.
+        /// </summary>
+        ~ImmediateWinStrategy()
+        {
+            this.Dispose(false);
+        }
+
         /// <inheritdoc/>
-        public async Task<Maybe<TMove>> ChooseMove(IGameState<TMove> gameState, PlayerToken playerToken, IReadOnlyCollection<TMove> moves, CancellationToken cancel)
+        public async Task<Maybe<TMove>> ChooseMove(IGameState<TMove> state, PlayerToken playerToken, IReadOnlyCollection<TMove> moves, CancellationToken cancel)
         {
             await Task.Yield();
 
             foreach (var move in moves.Where(m => m.PlayerToken == playerToken))
             {
-                var nextState = gameState.MakeMove(move);
+                var nextState = state.MakeMove(move);
                 if (nextState.GetWinners().Contains(playerToken))
                 {
                     return new Maybe<TMove>(move);
@@ -33,6 +42,16 @@ namespace GameTheory.Strategies
 
         /// <inheritdoc/>
         public void Dispose()
+        {
+            this.Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Releases the unmanaged resources used by the Component and optionally releases the managed resources.
+        /// </summary>
+        /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
+        protected virtual void Dispose(bool disposing)
         {
         }
     }

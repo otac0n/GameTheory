@@ -30,7 +30,7 @@ namespace GameTheory.Players
         /// <param name="playerToken">The token that represents the player.</param>
         /// <param name="scoringMetric">The scoring metric to use.</param>
         /// <param name="minPly">The minimum number of ply to think ahead.</param>
-        public MaximizingPlayer(PlayerToken playerToken, IScoringMetric scoringMetric, int minPly = 1)
+        protected MaximizingPlayer(PlayerToken playerToken, IScoringMetric scoringMetric, int minPly = 1)
         {
             this.playerToken = playerToken;
             this.scoringMetric = scoringMetric;
@@ -38,9 +38,17 @@ namespace GameTheory.Players
         }
 
         /// <summary>
+        /// Finalizes an instance of the <see cref="MaximizingPlayer{TMove, TScore}"/> class.
+        /// </summary>
+        ~MaximizingPlayer()
+        {
+            this.Dispose(false);
+        }
+
+        /// <summary>
         /// Provides an interface for the <see cref="MaximizingPlayer{TMove, TScore}"/> class to score game states.
         /// </summary>
-        public interface IScoringMetric : IComparer<TScore>
+        protected interface IScoringMetric : IComparer<TScore>
         {
             /// <summary>
             /// Combines one or more scores with the specified weights.
@@ -67,21 +75,21 @@ namespace GameTheory.Players
             /// <summary>
             /// Scores a <see cref="IGameState{TMove}"/> for the specified player.
             /// </summary>
-            /// <param name="gameState">The game state to score.</param>
+            /// <param name="state">The game state to score.</param>
             /// <param name="playerToken">The player whose score should be returned.</param>
             /// <returns>The player's score.</returns>
-            TScore Score(IGameState<TMove> gameState, PlayerToken playerToken);
+            TScore Score(IGameState<TMove> state, PlayerToken playerToken);
         }
 
         /// <inheritdoc />
         public PlayerToken PlayerToken => this.playerToken;
 
         /// <inheritdoc />
-        public async Task<Maybe<TMove>> ChooseMove(IGameState<TMove> gameState, CancellationToken cancel)
+        public async Task<Maybe<TMove>> ChooseMove(IGameState<TMove> state, CancellationToken cancel)
         {
             await Task.Yield();
 
-            var mainline = this.GetMove(gameState, this.minPly, cancel);
+            var mainline = this.GetMove(state, this.minPly, cancel);
 
             if (!mainline.Moves.Any() || mainline.Moves.Peek().PlayerToken != this.playerToken)
             {
@@ -93,22 +101,32 @@ namespace GameTheory.Players
             }
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc/>
         public void Dispose()
+        {
+            this.Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Releases the unmanaged resources used by the Component and optionally releases the managed resources.
+        /// </summary>
+        /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
+        protected virtual void Dispose(bool disposing)
         {
         }
 
-        private Mainline GetMove(IGameState<TMove> gameState, int ply, CancellationToken cancel)
+        private Mainline GetMove(IGameState<TMove> state, int ply, CancellationToken cancel)
         {
             if (ply == 0)
             {
-                return new Mainline(this.Score(gameState), gameState, ImmutableStack<TMove>.Empty);
+                return new Mainline(this.Score(state), state, ImmutableStack<TMove>.Empty);
             }
             else
             {
-                var allMoves = gameState.GetAvailableMoves();
+                var allMoves = state.GetAvailableMoves();
                 var moveScores = (from m in allMoves
-                                  let nextState = gameState.MakeMove(m)
+                                  let nextState = state.MakeMove(m)
                                   select this.GetMove(nextState, ply - 1, cancel).AddMove(m)).ToList();
                 cancel.ThrowIfCancellationRequested();
 
@@ -125,24 +143,24 @@ namespace GameTheory.Players
                 }
                 else if (players.Count == 0)
                 {
-                    return this.GetMove(gameState, 0, cancel);
+                    return this.GetMove(state, 0, cancel);
                 }
                 else
                 {
-                    var currentScore = this.Score(gameState);
+                    var currentScore = this.Score(state);
                     throw new NotImplementedException();
                 }
             }
         }
 
-        private IReadOnlyDictionary<PlayerToken, TScore> Score(IGameState<TMove> gameState)
+        private IReadOnlyDictionary<PlayerToken, TScore> Score(IGameState<TMove> state)
         {
-            return gameState.Players.ToImmutableDictionary(p => p, p => this.scoringMetric.Score(gameState, p));
+            return state.Players.ToImmutableDictionary(p => p, p => this.scoringMetric.Score(state, p));
         }
 
         private TScore GetLead(Mainline mainline, PlayerToken player)
         {
-            if (mainline.GameState.Players.Count == 1)
+            if (mainline.State.Players.Count == 1)
             {
                 return mainline.Score[player];
             }
@@ -156,14 +174,14 @@ namespace GameTheory.Players
 
         private class Mainline
         {
-            public Mainline(IReadOnlyDictionary<PlayerToken, TScore> score, IGameState<TMove> gameState, ImmutableStack<TMove> moves)
+            public Mainline(IReadOnlyDictionary<PlayerToken, TScore> score, IGameState<TMove> state, ImmutableStack<TMove> moves)
             {
                 this.Score = score;
-                this.GameState = gameState;
+                this.State = state;
                 this.Moves = moves;
             }
 
-            public IGameState<TMove> GameState { get; }
+            public IGameState<TMove> State { get; }
 
             public ImmutableStack<TMove> Moves { get; }
 
@@ -173,7 +191,7 @@ namespace GameTheory.Players
             {
                 return new Mainline(
                     this.Score,
-                    this.GameState,
+                    this.State,
                     this.Moves.Push(move));
             }
         }
