@@ -124,7 +124,7 @@ namespace GameTheory.Games.FiveTribes
                 AnunNak.Instance,
                 Baal.Instance,
                 Boaz.Instance,
-                Bouraq.Instance, ////Dhenim.Instance, // TODO: How do we handle this for tests?
+                Bouraq.Instance,
                 Echidna.Instance,
                 Enki.Instance,
                 Hagis.Instance,
@@ -162,7 +162,8 @@ namespace GameTheory.Games.FiveTribes
         /// Initializes a new instance of the <see cref="GameState"/> class.
         /// </summary>
         /// <param name="players">The number of players.</param>
-        public GameState(int players)
+        /// <param name="includeDhenim">Include the promo card, Dhenim, with the Djins?</param>
+        public GameState(int players, bool includeDhenim = false)
             : this(null)
         {
             if (players < MinPlayers || players > MaxPlayers)
@@ -179,7 +180,7 @@ namespace GameTheory.Games.FiveTribes
             this.scoreTables = this.players.ToImmutableDictionary(p => p, p => new ScoreTable());
             this.sultanate = ImmutableList.CreateRange(InitialTiles.Shuffle().Zip(Meeples.Shuffle().Partition(3), (t, ms) => new Square(t, new EnumCollection<Meeple>(ms))));
             this.bag = EnumCollection<Meeple>.Empty;
-            this.djinnPile = GameState.Djinns.Deal(3, out this.visibleDjinns);
+            this.djinnPile = (includeDhenim ? GameState.Djinns.Add(Dhenim.Instance) : GameState.Djinns).Deal(3, out this.visibleDjinns);
             this.djinnDiscards = ImmutableList<Djinn>.Empty;
             this.resourcePile = GameState.Resources.Deal(9, out this.visibleResources);
             this.resourceDiscards = EnumCollection<Resource>.Empty;
