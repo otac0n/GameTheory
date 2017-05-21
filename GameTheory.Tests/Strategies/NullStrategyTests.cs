@@ -49,6 +49,11 @@ namespace GameTheory.Tests.Strategies
                 return this;
             }
 
+            public IGameState<Move> GetView(PlayerToken playerToken)
+            {
+                return this;
+            }
+
             public class Move : IMove
             {
                 public Move(PlayerToken playerToken)

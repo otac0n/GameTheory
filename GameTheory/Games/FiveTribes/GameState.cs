@@ -590,6 +590,9 @@ namespace GameTheory.Games.FiveTribes
             return this.MakeMove(move);
         }
 
+        /// <inheritdoc />
+        IGameState<Move> IGameState<Move>.GetView(PlayerToken playerToken) => this;
+
         /// <summary>
         /// Gets a value indicating whether or not the specified player has any Camels left.
         /// </summary>

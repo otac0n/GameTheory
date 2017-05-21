@@ -24,7 +24,7 @@ namespace GameTheory.Games.TicTacToe
         /// Initializes a new instance of the <see cref="GameState"/> class in the starting position.
         /// </summary>
         public GameState()
-            : this(ImmutableList.Create<PlayerToken>(new PlayerToken(), new PlayerToken()), new PlayerToken[Size, Size])
+            : this(ImmutableList.Create(new PlayerToken(), new PlayerToken()), new PlayerToken[Size, Size])
         {
         }
 
@@ -150,6 +150,9 @@ namespace GameTheory.Games.TicTacToe
 
             return new GameState(this.players, newField);
         }
+
+        /// <inheritdoc />
+        IGameState<Move> IGameState<Move>.GetView(PlayerToken playerToken) => this;
 
         /// <inheritdoc />
         public override string ToString()

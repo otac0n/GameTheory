@@ -108,6 +108,9 @@ namespace GameTheory.Games.Mancala
             return this.MakeMove(move);
         }
 
+        /// <inheritdoc />
+        IGameState<Move> IGameState<Move>.GetView(PlayerToken playerToken) => this;
+
         /// <summary>
         /// Applies the move to the current game state.
         /// </summary>
