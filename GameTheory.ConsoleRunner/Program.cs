@@ -6,18 +6,11 @@ namespace GameTheory.ConsoleRunner
     using System.Diagnostics;
     using System.Linq;
     using System.Reflection;
+    using GameTheory.Catalogs;
     using GameTheory.Players;
 
     internal class Program
     {
-        private static Type[] FindGames(Assembly assembly)
-        {
-            return (from t in assembly.ExportedTypes
-                    where !t.IsAbstract
-                    where GetMoveType(t) != null
-                    select t).ToArray();
-        }
-
         private static object GetArgument(ParameterInfo parameter)
         {
             Console.WriteLine($"{parameter.Name}:");
@@ -44,14 +37,6 @@ namespace GameTheory.ConsoleRunner
             }
         }
 
-        private static Type GetMoveType(Type gameStateType)
-        {
-            return (from i in gameStateType.GetInterfaces()
-                    where i.IsConstructedGenericType
-                    where i.GetGenericTypeDefinition() == typeof(IGameState<>)
-                    select i.GetGenericArguments()[0]).FirstOrDefault();
-        }
-
         private static IPlayer<TMove> GetPlayer<TMove>(IGameState<TMove> gameState, PlayerToken playerToken)
             where TMove : IMove
         {
@@ -62,13 +47,12 @@ namespace GameTheory.ConsoleRunner
 
         private static void Main()
         {
-            var assembly = typeof(IGameState<>).Assembly;
-            var games = FindGames(assembly);
-            var game = ConsoleInteraction.Choose(games);
-            var constructor = ConsoleInteraction.Choose(game.GetConstructors(), skipMessage: _ => "Using only available constructor.");
+            var catalog = GameCatalog.Default;
+            var game = ConsoleInteraction.Choose(catalog.AvailableGames);
+            var constructor = ConsoleInteraction.Choose(game.GameStateType.GetConstructors(), skipMessage: _ => "Using only available constructor.");
             var args = constructor.GetParameters().Select(p => GetArgument(p)).ToArray();
 
-            typeof(Program).GetMethod(nameof(RunGame), BindingFlags.Static | BindingFlags.NonPublic).MakeGenericMethod(GetMoveType(game)).Invoke(null, new object[] { constructor.Invoke(args) });
+            typeof(Program).GetMethod(nameof(RunGame), BindingFlags.Static | BindingFlags.NonPublic).MakeGenericMethod(game.MoveType).Invoke(null, new object[] { constructor.Invoke(args) });
 
             if (Debugger.IsAttached)
             {
