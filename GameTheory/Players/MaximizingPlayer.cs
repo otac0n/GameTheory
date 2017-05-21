@@ -30,11 +30,11 @@ namespace GameTheory.Players
         /// <param name="playerToken">The token that represents the player.</param>
         /// <param name="scoringMetric">The scoring metric to use.</param>
         /// <param name="minPly">The minimum number of ply to think ahead.</param>
-        protected MaximizingPlayer(PlayerToken playerToken, IScoringMetric scoringMetric, int minPly = 1)
+        protected MaximizingPlayer(PlayerToken playerToken, IScoringMetric scoringMetric, int minPly)
         {
             this.playerToken = playerToken;
-            this.scoringMetric = scoringMetric;
-            this.minPly = minPly;
+            this.scoringMetric = scoringMetric ?? throw new ArgumentOutOfRangeException(nameof(scoringMetric));
+            this.minPly = minPly > -1 ? minPly : throw new ArgumentOutOfRangeException(nameof(minPly));
         }
 
         /// <summary>

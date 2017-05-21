@@ -13,14 +13,32 @@ namespace GameTheory.ConsoleRunner
     {
         private static object GetArgument(ParameterInfo parameter)
         {
-            Console.WriteLine($"{parameter.Name}:");
+            Console.Write($"{parameter.Name}:");
+
+            if (parameter.HasDefaultValue)
+            {
+                Console.Write($" [default {parameter.DefaultValue}]");
+            }
+
+            Console.WriteLine();
 
             if (parameter.ParameterType == typeof(int))
             {
                 while (true)
                 {
                     var line = Console.ReadLine();
-                    if (int.TryParse(line, out int selection))
+                    if (string.IsNullOrEmpty(line))
+                    {
+                        if (parameter.HasDefaultValue)
+                        {
+                            return parameter.DefaultValue;
+                        }
+                        else
+                        {
+                            Console.WriteLine("No default available.");
+                        }
+                    }
+                    else if (int.TryParse(line, out int selection))
                     {
                         return selection;
                     }
@@ -37,6 +55,17 @@ namespace GameTheory.ConsoleRunner
                     var line = Console.ReadLine();
                     switch (line.ToUpperInvariant())
                     {
+                        case "":
+                            if (parameter.HasDefaultValue)
+                            {
+                                return parameter.DefaultValue;
+                            }
+                            else
+                            {
+                                Console.WriteLine("No default available.");
+                                break;
+                            }
+
                         case "Y":
                         case "YES":
                         case "T":
