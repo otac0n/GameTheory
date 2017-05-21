@@ -4,11 +4,12 @@ namespace GameTheory.ConsoleRunner
 {
     using System;
     using System.Collections.Generic;
+    using System.Threading;
     using GameTheory.ConsoleRunner.Properties;
 
     internal static class ConsoleInteraction
     {
-        public static T Choose<T>(IList<T> options, Func<T, string> skipMessage = null)
+        public static T Choose<T>(IList<T> options, CancellationToken? cancel = null, Func<T, string> skipMessage = null)
         {
             if (options.Count == 0)
             {
@@ -22,10 +23,29 @@ namespace GameTheory.ConsoleRunner
                 return single;
             }
 
+            Func<string, int> parse;
+            if (cancel != null)
+            {
+                parse = s =>
+                {
+                    if (cancel.Value.IsCancellationRequested)
+                    {
+                        Console.WriteLine(Resources.InputDiscarded);
+                        throw new OperationCanceledException();
+                    }
+
+                    return int.Parse(s);
+                };
+            }
+            else
+            {
+                parse = int.Parse;
+            }
+
             List(options);
             var selection = Prompt(
                 string.Format(Resources.ListPrompt, options.Count),
-                int.Parse,
+                parse,
                 i => i > 0 && i <= options.Count ? null : string.Format(Resources.InvalidListItem, options.Count));
 
             return options[selection - 1];

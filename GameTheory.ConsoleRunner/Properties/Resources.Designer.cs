@@ -106,6 +106,15 @@ namespace GameTheory.ConsoleRunner.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to (last input was discarded).
+        /// </summary>
+        internal static string InputDiscarded {
+            get {
+                return ResourceManager.GetString("InputDiscarded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Selection must be a boolean value..
         /// </summary>
         internal static string InvalidBoolean {

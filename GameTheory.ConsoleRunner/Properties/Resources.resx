@@ -132,6 +132,9 @@
   <data name="GamePlayerCount" xml:space="preserve">
     <value>This game has {0}</value>
   </data>
+  <data name="InputDiscarded" xml:space="preserve">
+    <value>(last input was discarded)</value>
+  </data>
   <data name="InvalidBoolean" xml:space="preserve">
     <value>Selection must be a boolean value.</value>
   </data>

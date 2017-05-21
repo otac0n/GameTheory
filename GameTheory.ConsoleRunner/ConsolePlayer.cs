@@ -15,6 +15,8 @@ namespace GameTheory.ConsoleRunner
     public sealed class ConsolePlayer<TMove> : IPlayer<TMove>
         where TMove : IMove
     {
+        private static readonly object Sync = new object();
+
         /// <summary>
         /// Initializes a new instance of the <see cref="ConsolePlayer{TMove}"/> class.
         /// </summary>
@@ -35,9 +37,13 @@ namespace GameTheory.ConsoleRunner
             var moves = state.GetAvailableMoves(this.PlayerToken);
             if (moves.Any())
             {
-                Console.WriteLine(Resources.CurrentState);
-                Console.WriteLine(state);
-                return new Maybe<TMove>(ConsoleInteraction.Choose(moves.ToArray()));
+                lock (Sync)
+                {
+                    cancel.ThrowIfCancellationRequested();
+                    Console.WriteLine(Resources.CurrentState);
+                    Console.WriteLine(state);
+                    return new Maybe<TMove>(ConsoleInteraction.Choose(moves.ToArray(), cancel));
+                }
             }
             else
             {
