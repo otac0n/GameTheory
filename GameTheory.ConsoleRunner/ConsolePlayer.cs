@@ -7,7 +7,7 @@ namespace GameTheory.ConsoleRunner
     using System.Threading;
     using System.Threading.Tasks;
 
-    internal class ConsolePlayer<TMove> : IPlayer<TMove>
+    public sealed class ConsolePlayer<TMove> : IPlayer<TMove>
         where TMove : IMove
     {
         public ConsolePlayer(PlayerToken playerToken)

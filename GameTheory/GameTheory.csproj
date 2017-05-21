@@ -97,6 +97,8 @@
   <ItemGroup>
     <Compile Include="Catalogs\Game.cs" />
     <Compile Include="Catalogs\GameCatalog.cs" />
+    <Compile Include="Catalogs\Player.cs" />
+    <Compile Include="Catalogs\PlayerCatalog.cs" />
     <Compile Include="Combinatorics.cs" />
     <Compile Include="EnumCollection.cs" />
     <Compile Include="EnumerableExtensions.cs" />

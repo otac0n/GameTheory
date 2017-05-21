@@ -3,11 +3,11 @@
 namespace GameTheory.ConsoleRunner
 {
     using System;
+    using System.Collections.Generic;
     using System.Diagnostics;
     using System.Linq;
     using System.Reflection;
     using GameTheory.Catalogs;
-    using GameTheory.Players;
 
     internal class Program
     {
@@ -61,22 +61,22 @@ namespace GameTheory.ConsoleRunner
             }
         }
 
-        private static IPlayer<TMove> GetPlayer<TMove>(IGameState<TMove> gameState, PlayerToken playerToken)
+        private static IPlayer<TMove> GetPlayer<TMove>(IList<Player> players, IGameState<TMove> gameState, PlayerToken playerToken)
             where TMove : IMove
         {
             Console.WriteLine($"Choose {gameState.GetPlayerName(playerToken)}:");
-            var playerType = ConsoleInteraction.Choose(new[] { typeof(RandomPlayer<TMove>), typeof(ConsolePlayer<TMove>) });
-            return (IPlayer<TMove>)Activator.CreateInstance(playerType, new[] { playerToken });
+            var player = ConsoleInteraction.Choose(players);
+            return (IPlayer<TMove>)ConstructType(player.PlayerType, p => p.Name == nameof(playerToken) && p.ParameterType == typeof(PlayerToken) ? playerToken : GetArgument(p));
         }
 
         private static void Main()
         {
             var catalog = GameCatalog.Default;
             var game = ConsoleInteraction.Choose(catalog.AvailableGames);
-            var constructor = ConsoleInteraction.Choose(game.GameStateType.GetConstructors(), skipMessage: _ => "Using only available constructor.");
-            var args = constructor.GetParameters().Select(p => GetArgument(p)).ToArray();
+            var gameType = game.GameStateType;
+            var gameState = ConstructType(gameType);
 
-            typeof(Program).GetMethod(nameof(RunGame), BindingFlags.Static | BindingFlags.NonPublic).MakeGenericMethod(game.MoveType).Invoke(null, new object[] { constructor.Invoke(args) });
+            typeof(Program).GetMethod(nameof(RunGame), BindingFlags.Static | BindingFlags.NonPublic).MakeGenericMethod(game.MoveType).Invoke(null, new object[] { gameState });
 
             if (Debugger.IsAttached)
             {
@@ -84,11 +84,21 @@ namespace GameTheory.ConsoleRunner
             }
         }
 
+        private static object ConstructType(Type type, Func<ParameterInfo, object> getParameter = null)
+        {
+            getParameter = getParameter ?? (p => GetArgument(p));
+            var constructor = ConsoleInteraction.Choose(type.GetConstructors(), skipMessage: _ => "Using only available constructor.");
+            var args = constructor.GetParameters().Select(getParameter).ToArray();
+            return constructor.Invoke(args);
+        }
+
         private static void RunGame<TMove>(IGameState<TMove> gameState)
             where TMove : IMove
         {
             Console.WriteLine($"This game has {gameState.Players.Count} player{(gameState.Players.Count != 1 ? "s" : string.Empty)}");
-            gameState = GameUtilities.PlayGame(gameState, playerToken => GetPlayer(gameState, playerToken), ShowMove).Result;
+            var catalog = new PlayerCatalog(typeof(IGameState<>).Assembly, Assembly.GetExecutingAssembly());
+            var players = catalog.FindPlayers(typeof(TMove));
+            gameState = GameUtilities.PlayGame(gameState, playerToken => GetPlayer(players, gameState, playerToken), ShowMove).Result;
             Console.WriteLine($"Final state:");
             Console.WriteLine(gameState);
 

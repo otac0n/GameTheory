@@ -17,7 +17,7 @@ namespace GameTheory.Players
     /// <remarks>
     /// The maximizing player is a generalization of the min-max concept to games that have more than two players and that may allow moves by more than one player at a time.
     /// </remarks>
-    public class MaximizingPlayer<TMove, TScore> : IPlayer<TMove>
+    public abstract class MaximizingPlayer<TMove, TScore> : IPlayer<TMove>
         where TMove : IMove
     {
         private readonly int minPly;
