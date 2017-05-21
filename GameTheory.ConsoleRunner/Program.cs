@@ -20,7 +20,6 @@ namespace GameTheory.ConsoleRunner
                 while (true)
                 {
                     var line = Console.ReadLine();
-
                     if (int.TryParse(line, out int selection))
                     {
                         return selection;
@@ -28,6 +27,31 @@ namespace GameTheory.ConsoleRunner
                     else
                     {
                         Console.WriteLine("Selection must be a number.");
+                    }
+                }
+            }
+            else if (parameter.ParameterType == typeof(bool))
+            {
+                while (true)
+                {
+                    var line = Console.ReadLine();
+                    switch (line.ToUpperInvariant())
+                    {
+                        case "Y":
+                        case "YES":
+                        case "T":
+                        case "TRUE":
+                            return true;
+
+                        case "N":
+                        case "NO":
+                        case "F":
+                        case "FALSE":
+                            return true;
+
+                        default:
+                            Console.WriteLine("Selection must be a boolean value.");
+                            break;
                     }
                 }
             }
