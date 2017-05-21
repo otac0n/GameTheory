@@ -178,6 +178,8 @@
     <Compile Include="Games\FiveTribes\Tiles\Village.cs" />
     <Compile Include="Games\Mancala\GameState.cs" />
     <Compile Include="Games\Mancala\Move.cs" />
+    <Compile Include="Games\MatchingPennies\GameState.cs" />
+    <Compile Include="Games\MatchingPennies\Move.cs" />
     <Compile Include="Games\TicTacToe\GameState.cs" />
     <Compile Include="GameStateExtensions.cs" />
     <Compile Include="Games\TicTacToe\Move.cs" />
