@@ -9,17 +9,17 @@ namespace GameTheory.Tests
 
     internal static class GameStateExtensions
     {
-        public static IGameState<TMove> PlayMove<TMove>(this IGameState<TMove> gameState, PlayerToken playerToken, Expression<Func<TMove, bool>> filter)
+        public static IGameState<TMove> PlayMove<TMove>(this IGameState<TMove> state, PlayerToken playerToken, Expression<Func<TMove, bool>> filter)
             where TMove : IMove
         {
-            var moves = gameState.GetAvailableMoves(playerToken).Where(filter.Compile()).ToList();
+            var moves = state.GetAvailableMoves(playerToken).Where(filter.Compile()).ToList();
             if (moves.Count != 1)
             {
-                gameState.ShowMoves();
+                state.ShowMoves();
                 Console.WriteLine("Filter: {0}", filter);
             }
 
-            return gameState.MakeMove(moves.Single());
+            return state.MakeMove(moves.Single());
         }
 
         public static void ShowMoves<TMove>(this IGameState<TMove> state)

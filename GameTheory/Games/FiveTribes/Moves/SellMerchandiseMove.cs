@@ -15,7 +15,7 @@ namespace GameTheory.Games.FiveTribes.Moves
         /// <param name="state">The <see cref="GameState"/> that this move is based on.</param>
         /// <param name="resources">The <see cref="Resource">Resources</see> being sold.</param>
         public SellMerchandiseMove(GameState state, EnumCollection<Resource> resources)
-            : base(state, state.ActivePlayer)
+            : base(state)
         {
             this.resources = resources;
         }

@@ -27,14 +27,14 @@ namespace GameTheory.Players
         public PlayerToken PlayerToken => this.playerToken;
 
         /// <inheritdoc />
-        public async Task<Maybe<TMove>> ChooseMove(IGameState<TMove> gameState, CancellationToken cancel)
+        public async Task<Maybe<TMove>> ChooseMove(IGameState<TMove> state, CancellationToken cancel)
         {
             await Task.Yield();
 
             var chosenMove = default(TMove);
             var count = 0;
 
-            foreach (var move in gameState.GetAvailableMoves(this.playerToken))
+            foreach (var move in state.GetAvailableMoves(this.playerToken))
             {
                 var max = count + 1;
 

@@ -2,8 +2,8 @@
 
 namespace GameTheory.Games.FiveTribes.Djinns
 {
+    using System;
     using System.Collections.Generic;
-    using System.Diagnostics.Contracts;
 
     /// <summary>
     /// Encapsulates <see cref="Djinn"/> behaviors that are activated with a <see cref="Cost"/>.
@@ -39,6 +39,16 @@ namespace GameTheory.Games.FiveTribes.Djinns
         /// <inheritdoc />
         public override GameState HandleTransition(PlayerToken owner, GameState oldState, GameState newState)
         {
+            if (oldState == null)
+            {
+                throw new ArgumentNullException(nameof(oldState));
+            }
+
+            if (newState == null)
+            {
+                throw new ArgumentNullException(nameof(newState));
+            }
+
             if (oldState.Phase == Phase.CleanUp && newState.Phase == Phase.Bid && newState[this.stateKey] != null)
             {
                 newState = this.CleanUp(newState.WithState(this.stateKey, null));
@@ -54,7 +64,10 @@ namespace GameTheory.Games.FiveTribes.Djinns
         /// <returns><c>true</c>, if the ability can be activated, <c>false</c> otherwise.</returns>
         protected virtual bool CanGetMoves(GameState state)
         {
-            Contract.Requires(state != null);
+            if (state == null)
+            {
+                throw new ArgumentNullException(nameof(state));
+            }
 
             if (state[this.stateKey] == null)
             {

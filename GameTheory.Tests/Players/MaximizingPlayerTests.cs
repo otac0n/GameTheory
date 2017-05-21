@@ -6,7 +6,7 @@ namespace GameTheory.Tests.Players
     using System.Linq;
     using System.Threading.Tasks;
     using GameTheory.Games.TicTacToe;
-    using GameTheory.Players;
+    using GameTheory.Players.MaximizingPlayers;
     using NUnit.Framework;
 
     [TestFixture]
@@ -21,9 +21,9 @@ namespace GameTheory.Tests.Players
 
             for (int i = 0; i < Samples; i++)
             {
-                var endState = await GameUtils.PlayGame(new GameState(), playerTokens => new IPlayer<Move>[]
+                var endState = await GameUtilities.PlayGame(new GameState(), playerTokens => new IPlayer<Move>[]
                 {
-                    new MaximizingPlayer<Move, double>(playerTokens[0], new ScoringMetric(), minPly: 5),
+                    new TicTacToeMaximizingPlayer(playerTokens[0], minPly: 5),
                     new DuhPlayer<Move>(playerTokens[1]),
                 });
 
@@ -46,10 +46,10 @@ namespace GameTheory.Tests.Players
 
             for (int i = 0; i < Samples; i++)
             {
-                var endState = await GameUtils.PlayGame(new GameState(), playerTokens => new IPlayer<Move>[]
+                var endState = await GameUtilities.PlayGame(new GameState(), playerTokens => new IPlayer<Move>[]
                 {
                     new DuhPlayer<Move>(playerTokens[0]),
-                    new MaximizingPlayer<Move, double>(playerTokens[1], new ScoringMetric(), minPly: 6),
+                    new TicTacToeMaximizingPlayer(playerTokens[1], minPly: 6),
                 });
 
                 var players = endState.Players.ToArray();
@@ -60,21 +60,6 @@ namespace GameTheory.Tests.Players
             }
 
             Assert.That(wins[0], Is.Zero);
-        }
-
-        private class ScoringMetric : MaximizingPlayer<Move, double>.IScoringMetric
-        {
-            public double CombineScores(double[] scores, double[] weights) =>
-                scores.Select((s, i) => s * weights[i]).Sum() / weights.Sum();
-
-            public double Difference(double playerScore, double opponentScore) =>
-                playerScore - opponentScore;
-
-            public int Compare(double x, double y) =>
-                x.CompareTo(y);
-
-            public double Score(IGameState<Move> gameState, PlayerToken playerToken) =>
-                gameState.GetWinners().Any(w => w == playerToken) ? 1 : 0;
         }
     }
 }

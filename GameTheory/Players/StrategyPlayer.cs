@@ -23,27 +23,25 @@ namespace GameTheory.Players
         /// <param name="fallbackPlayer">The player to default to when the strategy doesn't yield a move.</param>
         public StrategyPlayer(IStrategy<TMove> strategy, IPlayer<TMove> fallbackPlayer)
         {
-            if (fallbackPlayer == null)
-            {
-                throw new ArgumentNullException(nameof(fallbackPlayer));
-            }
+            this.fallbackPlayer = fallbackPlayer ?? throw new ArgumentNullException(nameof(fallbackPlayer));
+            this.strategy = strategy ?? throw new ArgumentNullException(nameof(strategy));
+        }
 
-            if (strategy == null)
-            {
-                throw new ArgumentNullException(nameof(strategy));
-            }
-
-            this.fallbackPlayer = fallbackPlayer;
-            this.strategy = strategy;
+        /// <summary>
+        /// Finalizes an instance of the <see cref="StrategyPlayer{TMove}"/> class.
+        /// </summary>
+        ~StrategyPlayer()
+        {
+            this.Dispose(false);
         }
 
         /// <inheritdoc/>
         public PlayerToken PlayerToken => this.fallbackPlayer.PlayerToken;
 
         /// <inheritdoc/>
-        public async Task<Maybe<TMove>> ChooseMove(IGameState<TMove> gameState, CancellationToken cancel)
+        public async Task<Maybe<TMove>> ChooseMove(IGameState<TMove> state, CancellationToken cancel)
         {
-            var maybeMove = await this.strategy.ChooseMove(gameState, this.fallbackPlayer.PlayerToken, cancel);
+            var maybeMove = await this.strategy.ChooseMove(state, this.fallbackPlayer.PlayerToken, cancel);
             if (maybeMove.HasValue)
             {
                 return maybeMove;
@@ -51,14 +49,27 @@ namespace GameTheory.Players
 
             cancel.ThrowIfCancellationRequested();
 
-            return await this.fallbackPlayer.ChooseMove(gameState, cancel);
+            return await this.fallbackPlayer.ChooseMove(state, cancel);
         }
 
         /// <inheritdoc/>
         public void Dispose()
         {
-            this.fallbackPlayer.Dispose();
-            this.strategy.Dispose();
+            this.Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Releases the unmanaged resources used by the Component and optionally releases the managed resources.
+        /// </summary>
+        /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                this.fallbackPlayer.Dispose();
+                this.strategy.Dispose();
+            }
         }
     }
 }

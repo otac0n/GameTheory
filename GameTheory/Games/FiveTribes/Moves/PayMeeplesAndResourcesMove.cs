@@ -34,7 +34,7 @@ namespace GameTheory.Games.FiveTribes.Moves
         /// <param name="resources">The <see cref="Resource"/> portion of the cost.</param>
         /// <param name="after">A function to perform after the move has taken place.</param>
         public PayMeeplesAndResourcesMove(GameState state, EnumCollection<Meeple> meeples, EnumCollection<Resource> resources, Func<GameState, GameState> after)
-            : base(state, state.ActivePlayer)
+            : base(state)
         {
             this.after = after;
             this.meeples = meeples;

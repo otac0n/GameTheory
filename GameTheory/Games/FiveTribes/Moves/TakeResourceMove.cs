@@ -29,7 +29,7 @@ namespace GameTheory.Games.FiveTribes.Moves
         /// <param name="index">The index of the <see cref="Resource"/> that will be taken.</param>
         /// <param name="after">A function to perform after the move has taken place.</param>
         public TakeResourceMove(GameState state, int index, Func<GameState, GameState> after)
-            : base(state, state.ActivePlayer)
+            : base(state)
         {
             this.index = index;
             this.after = after;

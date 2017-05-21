@@ -95,6 +95,10 @@
     </CodeAnalysisDictionary>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Catalogs\Game.cs" />
+    <Compile Include="Catalogs\GameCatalog.cs" />
+    <Compile Include="Catalogs\Player.cs" />
+    <Compile Include="Catalogs\PlayerCatalog.cs" />
     <Compile Include="Combinatorics.cs" />
     <Compile Include="EnumCollection.cs" />
     <Compile Include="EnumerableExtensions.cs" />
@@ -187,13 +191,15 @@
     <Compile Include="Games\TicTacToe\GameState.cs" />
     <Compile Include="GameStateExtensions.cs" />
     <Compile Include="Games\TicTacToe\Move.cs" />
-    <Compile Include="GameUtils.cs" />
+    <Compile Include="GameUtilities.cs" />
     <Compile Include="IGameState.cs" />
     <Compile Include="IMove.cs" />
     <Compile Include="IPlayer.cs" />
     <Compile Include="IStrategy.cs" />
     <Compile Include="Maybe.cs" />
     <Compile Include="Players\MaximizingPlayer.cs" />
+    <Compile Include="Players\MaximizingPlayers\MancalaMaximizingPlayer.cs" />
+    <Compile Include="Players\MaximizingPlayers\TicTacToeMaximizingPlayer.cs" />
     <Compile Include="Players\StrategyPlayer.cs" />
     <Compile Include="Strategies\CompositeStrategy.cs" />
     <Compile Include="Strategies\ImmediateWinStrategy.cs" />

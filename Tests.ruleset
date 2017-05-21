@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<RuleSet Name="Tests" Description="A test ruleset based on the Strict ruleset." ToolsVersion="14.0">
+<RuleSet Name="Tests" Description="A test ruleset based on the Strict ruleset." ToolsVersion="15.0">
   <Include Path="strict.ruleset" Action="Default" />
   <Rules AnalyzerId="StyleCop.Analyzers" RuleNamespace="StyleCop.Analyzers">
     <Rule Id="SA1300" Action="None" />

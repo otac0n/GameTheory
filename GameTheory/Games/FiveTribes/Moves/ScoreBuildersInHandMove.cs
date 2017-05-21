@@ -17,7 +17,7 @@ namespace GameTheory.Games.FiveTribes.Moves
         /// <param name="state">The <see cref="GameState"/> that this move is based on.</param>
         /// <param name="spentSlaves">The number of <see cref="Resource.Slave">Slaves</see> spent.</param>
         public ScoreBuildersInHandMove(GameState state, int spentSlaves)
-            : base(state, state.ActivePlayer)
+            : base(state)
         {
             this.spentSlaves = spentSlaves;
         }

@@ -1,9 +1,9 @@
-// Copyright © John Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+﻿// Copyright © John Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Games.Mancala
 {
+    using System;
     using System.Collections.Generic;
-    using System.Diagnostics.Contracts;
     using System.Linq;
 
     /// <summary>
@@ -18,9 +18,7 @@ namespace GameTheory.Games.Mancala
         /// <param name="bin">The index of the bin.</param>
         internal Move(GameState state, int bin)
         {
-            Contract.Requires(state != null);
-
-            this.State = state;
+            this.State = state ?? throw new ArgumentNullException(nameof(state));
             this.PlayerToken = state.ActivePlayer;
             this.Bin = bin;
         }
@@ -49,6 +47,7 @@ namespace GameTheory.Games.Mancala
             var captureSpots = new HashSet<int>(state.GetPlayerIndexes(this.PlayerToken).Take(GameState.BinsOnASide));
             var otherPlayer = state.Players.Except(this.PlayerToken).Single();
             var otherMancala = state.GetPlayerIndexes(otherPlayer).Last();
+            var othersBins = new HashSet<int>(state.GetPlayerIndexes(otherPlayer).Take(GameState.BinsOnASide));
 
             var bin = this.Bin;
             var board = state.Board;
@@ -69,10 +68,10 @@ namespace GameTheory.Games.Mancala
                 count -= 1;
             }
 
+            PlayerToken activePlayer;
             if (bin == mancala)
             {
-                return state.With(
-                    board: board);
+                activePlayer = this.PlayerToken;
             }
             else
             {
@@ -88,10 +87,31 @@ namespace GameTheory.Games.Mancala
                     }
                 }
 
-                return state.With(
-                    activePlayer: otherPlayer,
-                    board: board);
+                activePlayer = otherPlayer;
             }
+
+            if (captureSpots.All(i => board[i] == 0))
+            {
+                foreach (var i in othersBins)
+                {
+                    board = board
+                        .SetItem(otherMancala, board[otherMancala] + board[i])
+                        .SetItem(i, 0);
+                }
+            }
+            else if (othersBins.All(i => board[i] == 0))
+            {
+                foreach (var i in captureSpots)
+                {
+                    board = board
+                        .SetItem(mancala, board[mancala] + board[i])
+                        .SetItem(i, 0);
+                }
+            }
+
+            return state.With(
+                board: board,
+                activePlayer: activePlayer);
         }
     }
 }

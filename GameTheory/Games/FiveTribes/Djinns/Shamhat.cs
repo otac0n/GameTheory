@@ -2,6 +2,8 @@
 
 namespace GameTheory.Games.FiveTribes.Djinns
 {
+    using System;
+
     /// <summary>
     /// At game end, each of your Elders is worth 4 VPs instead of 2.
     /// </summary>
@@ -20,6 +22,11 @@ namespace GameTheory.Games.FiveTribes.Djinns
         /// <inheritdoc />
         protected override GameState OnAcquire(PlayerToken owner, GameState state)
         {
+            if (state == null)
+            {
+                throw new ArgumentNullException(nameof(state));
+            }
+
             return state.With(
                 scoreTables: state.ScoreTables.SetItem(owner, state.ScoreTables[owner].With(elderValue: 4)));
         }

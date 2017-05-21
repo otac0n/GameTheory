@@ -2,6 +2,7 @@
 
 namespace GameTheory.Games.FiveTribes.Djinns
 {
+    using System;
     using System.Linq;
 
     /// <summary>
@@ -28,6 +29,11 @@ namespace GameTheory.Games.FiveTribes.Djinns
         /// <inheritdoc />
         public override GameState HandleTransition(PlayerToken owner, GameState oldState, GameState newState)
         {
+            if (oldState == null)
+            {
+                throw new ArgumentNullException(nameof(oldState));
+            }
+
             foreach (var player in oldState.Players)
             {
                 var newDjinns = newState.Inventory[player].Djinns.Except(oldState.Inventory[player].Djinns).Except(this).Count();

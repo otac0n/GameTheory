@@ -5,7 +5,7 @@ namespace GameTheory
     using System;
     using System.Collections.Generic;
     using System.Collections.Immutable;
-    using System.Diagnostics.Contracts;
+    using System.Diagnostics;
     using System.Linq;
     using System.Threading;
 
@@ -42,13 +42,22 @@ namespace GameTheory
         /// <returns>The remaining deck.</returns>
         public static ImmutableList<T> Deal<T>(this ImmutableList<T> deck, int count, out ImmutableList<T> dealt, ref ImmutableList<T> discards, System.Random instance = null)
         {
+            if (deck == null)
+            {
+                throw new ArgumentNullException(nameof(deck));
+            }
+
+            if (discards == null)
+            {
+                throw new ArgumentNullException(nameof(discards));
+            }
+
             var allDealt = ImmutableList<T>.Empty;
-            ImmutableList<T> newlyDealt;
-            deck = deck.Deal(count, out newlyDealt, instance);
+            deck = deck.Deal(count, out ImmutableList<T> newlyDealt, instance);
             allDealt = allDealt.AddRange(newlyDealt);
 
             count -= allDealt.Count;
-            Contract.Assume(count == 0 || deck.Count == 0);
+            Debug.Assert(count == 0 || deck.Count == 0);
 
             if (count > 0 && discards.Count > 0)
             {
@@ -76,13 +85,22 @@ namespace GameTheory
         public static EnumCollection<T> Deal<T>(this EnumCollection<T> deck, int count, out ImmutableList<T> dealt, ref EnumCollection<T> discards, System.Random instance = null)
             where T : struct
         {
+            if (deck == null)
+            {
+                throw new ArgumentNullException(nameof(deck));
+            }
+
+            if (discards == null)
+            {
+                throw new ArgumentNullException(nameof(discards));
+            }
+
             var allDealt = ImmutableList<T>.Empty;
-            ImmutableList<T> newlyDealt;
-            deck = deck.Deal(count, out newlyDealt, instance);
+            deck = deck.Deal(count, out ImmutableList<T> newlyDealt, instance);
             allDealt = allDealt.AddRange(newlyDealt);
 
             count -= allDealt.Count;
-            Contract.Assume(count == 0 || deck.Count == 0);
+            Debug.Assert(count == 0 || deck.Count == 0);
 
             if (count > 0 && discards.Count > 0)
             {
@@ -108,6 +126,11 @@ namespace GameTheory
         /// <returns>The remaining deck.</returns>
         public static ImmutableList<T> Deal<T>(this ImmutableList<T> deck, int count, out ImmutableList<T> dealt, System.Random instance = null)
         {
+            if (deck == null)
+            {
+                throw new ArgumentNullException(nameof(deck));
+            }
+
             instance = instance ?? Instance;
 
             if (count >= deck.Count)
@@ -140,6 +163,11 @@ namespace GameTheory
         public static EnumCollection<T> Deal<T>(this EnumCollection<T> deck, int count, out ImmutableList<T> dealt, System.Random instance = null)
             where T : struct
         {
+            if (deck == null)
+            {
+                throw new ArgumentNullException(nameof(deck));
+            }
+
             instance = instance ?? Instance;
 
             if (count >= deck.Count)
@@ -170,6 +198,11 @@ namespace GameTheory
         /// <returns>The remaining deck.</returns>
         public static ImmutableList<T> Deal<T>(this ImmutableList<T> deck, out T dealt, System.Random instance = null)
         {
+            if (deck == null)
+            {
+                throw new ArgumentNullException(nameof(deck));
+            }
+
             instance = instance ?? Instance;
 
             if (deck.Count > 0)
@@ -194,6 +227,11 @@ namespace GameTheory
         /// <returns>The selected element.</returns>
         public static T Pick<T>(this IReadOnlyList<T> items, System.Random instance = null)
         {
+            if (items == null)
+            {
+                throw new ArgumentNullException(nameof(items));
+            }
+
             instance = instance ?? Instance;
 
             return items[instance.Next(items.Count)];
@@ -208,6 +246,11 @@ namespace GameTheory
         /// <returns>The selected element.</returns>
         public static T Pick<T>(this IList<T> items, System.Random instance = null)
         {
+            if (items == null)
+            {
+                throw new ArgumentNullException(nameof(items));
+            }
+
             instance = instance ?? Instance;
 
             return items[instance.Next(items.Count)];
@@ -222,6 +265,11 @@ namespace GameTheory
         /// <returns>The selected element.</returns>
         public static T Pick<T>(this IEnumerable<T> items, System.Random instance = null)
         {
+            if (items == null)
+            {
+                throw new ArgumentNullException(nameof(items));
+            }
+
             instance = instance ?? Instance;
 
             T current = default(T);

@@ -2,6 +2,8 @@
 
 namespace GameTheory.Games.FiveTribes.Djinns
 {
+    using System;
+
     /// <summary>
     /// Each time a Meeple is dropped on one of your Tiles during a Move, collect 1 GC if you did the Move; 2 GCs if one of your opponents did.
     /// </summary>
@@ -20,6 +22,16 @@ namespace GameTheory.Games.FiveTribes.Djinns
         /// <inheritdoc />
         public override GameState HandleTransition(PlayerToken owner, GameState oldState, GameState newState)
         {
+            if (oldState == null)
+            {
+                throw new ArgumentNullException(nameof(oldState));
+            }
+
+            if (newState == null)
+            {
+                throw new ArgumentNullException(nameof(newState));
+            }
+
             if (oldState.Phase == Phase.MoveMeeples && oldState.LastPoint != newState.LastPoint && newState.Sultanate[newState.LastPoint].Owner == owner)
             {
                 var inventory = newState.Inventory[owner];

@@ -2,7 +2,7 @@
 
 namespace GameTheory.Games.FiveTribes
 {
-    using System.Diagnostics.Contracts;
+    using System;
 
     /// <summary>
     /// Represents a move in Five Tribes.
@@ -12,14 +12,21 @@ namespace GameTheory.Games.FiveTribes
         /// <summary>
         /// Initializes a new instance of the <see cref="Move"/> class.
         /// </summary>
+        /// <param name="state">The <see cref="GameState"/> that this move is based on.  The player for the move will be infered from the active player.</param>
+        protected Move(GameState state)
+            : this(state, state == null ? throw new ArgumentNullException(nameof(state)) : state.ActivePlayer)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Move"/> class.
+        /// </summary>
         /// <param name="state">The <see cref="GameState"/> that this move is based on.</param>
         /// <param name="playerToken">The player who may perform this move.</param>
         protected Move(GameState state, PlayerToken playerToken)
         {
-            Contract.Requires(playerToken != null);
-
             this.State = state;
-            this.PlayerToken = playerToken;
+            this.PlayerToken = playerToken ?? throw new ArgumentNullException(nameof(playerToken));
         }
 
         /// <summary>

@@ -29,7 +29,7 @@ namespace GameTheory.Games.FiveTribes.Moves
         /// <param name="point">The <see cref="Point"/> where a Palm Tree will be placed.</param>
         /// <param name="after">A function to perform after the move has taken place.</param>
         public PlacePalmTreeMove(GameState state, Point point, Func<GameState, GameState> after)
-            : base(state, state.ActivePlayer)
+            : base(state)
         {
             this.point = point;
             this.after = after;

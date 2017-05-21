@@ -20,7 +20,7 @@ namespace GameTheory.Games.FiveTribes.Moves
         /// <param name="dealt">The <see cref="Djinn">Djinns</see> dealt to the player.</param>
         /// <param name="index">The index of the <see cref="Djinn"/> that will be taken.</param>
         public TakeDealtDjinnMove(GameState state, ImmutableList<Djinn> dealt, int index)
-            : base(state, state.ActivePlayer)
+            : base(state)
         {
             this.dealt = dealt;
             this.index = index;

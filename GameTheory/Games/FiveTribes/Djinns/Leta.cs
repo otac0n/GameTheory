@@ -2,6 +2,7 @@
 
 namespace GameTheory.Games.FiveTribes.Djinns
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using GameTheory.Games.FiveTribes.Moves;
@@ -24,6 +25,11 @@ namespace GameTheory.Games.FiveTribes.Djinns
         /// <inheritdoc />
         protected override bool CanGetMoves(GameState state)
         {
+            if (state == null)
+            {
+                throw new ArgumentNullException(nameof(state));
+            }
+
             return base.CanGetMoves(state) && state.IsPlayerUnderCamelLimit(state.ActivePlayer);
         }
 

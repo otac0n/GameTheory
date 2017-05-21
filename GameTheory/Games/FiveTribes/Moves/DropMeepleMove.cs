@@ -17,7 +17,7 @@ namespace GameTheory.Games.FiveTribes.Moves
         /// <param name="meeple">The <see cref="Meeple"/> being dropped.</param>
         /// <param name="point">The <see cref="Point"/> at which the <see cref="Meeple"/> will be dropped.</param>
         public DropMeepleMove(GameState state, Meeple meeple, Point point)
-            : base(state, state.ActivePlayer)
+            : base(state)
         {
             this.meeple = meeple;
             this.point = point;

@@ -1,11 +1,10 @@
-// Copyright © John Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+﻿// Copyright © John Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Games.Mancala
 {
     using System;
     using System.Collections.Generic;
     using System.Collections.Immutable;
-    using System.Diagnostics.Contracts;
     using System.Linq;
 
     /// <summary>
@@ -65,11 +64,11 @@ namespace GameTheory.Games.Mancala
         public ImmutableList<PlayerToken> Players => this.players;
 
         /// <inheritdoc />
-        public IReadOnlyCollection<Move> GetAvailableMoves(PlayerToken player)
+        public IReadOnlyCollection<Move> GetAvailableMoves(PlayerToken playerToken)
         {
             var moves = ImmutableList.CreateBuilder<Move>();
 
-            if (player == this.activePlayer)
+            if (playerToken == this.activePlayer)
             {
                 foreach (var i in this.GetPlayerIndexes(this.activePlayer).Take(BinsOnASide))
                 {
@@ -116,8 +115,15 @@ namespace GameTheory.Games.Mancala
         /// <returns>The updated <see cref="GameState"/>.</returns>
         public GameState MakeMove(Move move)
         {
-            Contract.Requires(move != null);
-            Contract.Requires(move.State == this);
+            if (move == null)
+            {
+                throw new ArgumentNullException(nameof(move));
+            }
+
+            if (move.State != this)
+            {
+                throw new InvalidOperationException();
+            }
 
             return move.Apply(this);
         }
@@ -125,7 +131,7 @@ namespace GameTheory.Games.Mancala
         /// <inheritdoc />
         public override string ToString()
         {
-            var r = new Func<IEnumerable<int>, string>(bins => string.Join(" ", bins.Select(b => $"[{this.board[b],2}]")));
+            var r = new Func<IEnumerable<int>, string>(bins => string.Join(" ", bins.Select(b => $"[{this.board[b], 2}]")));
             return $"{r(this.GetPlayerIndexes(this.players[1]).Reverse())} [  ]\n[  ] {r(this.GetPlayerIndexes(this.players[0]))}";
         }
 

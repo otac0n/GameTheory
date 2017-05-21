@@ -4,7 +4,6 @@ namespace GameTheory.Games.FiveTribes.Djinns
 {
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics.Contracts;
     using System.Linq;
     using GameTheory.Games.FiveTribes.Moves;
 
@@ -32,7 +31,10 @@ namespace GameTheory.Games.FiveTribes.Djinns
         /// <inheritdoc />
         protected override IEnumerable<Move> GetAppliedCostMoves(GameState state)
         {
-            Contract.Requires(state != null);
+            if (state == null)
+            {
+                throw new ArgumentNullException(nameof(state));
+            }
 
             var toDraw = Math.Min(state.Bag.Count, 3);
             if (toDraw == 0)

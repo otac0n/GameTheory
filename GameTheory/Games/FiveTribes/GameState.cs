@@ -5,7 +5,6 @@ namespace GameTheory.Games.FiveTribes
     using System;
     using System.Collections.Generic;
     using System.Collections.Immutable;
-    using System.Diagnostics.Contracts;
     using System.Linq;
     using System.Threading;
     using GameTheory.Games.FiveTribes.Djinns;
@@ -125,7 +124,7 @@ namespace GameTheory.Games.FiveTribes
                 AnunNak.Instance,
                 Baal.Instance,
                 Boaz.Instance,
-                Bouraq.Instance, ////Dhenim.Instance, // TODO: How do we handle this for tests?
+                Bouraq.Instance,
                 Echidna.Instance,
                 Enki.Instance,
                 Hagis.Instance,
@@ -163,10 +162,15 @@ namespace GameTheory.Games.FiveTribes
         /// Initializes a new instance of the <see cref="GameState"/> class.
         /// </summary>
         /// <param name="players">The number of players.</param>
-        public GameState(int players)
+        /// <param name="includeDhenim">Include the promo card, Dhenim, with the Djins?</param>
+        public GameState(int players, bool includeDhenim = false)
             : this(null)
         {
-            Contract.Requires(players >= MinPlayers && players <= MaxPlayers);
+            if (players < MinPlayers || players > MaxPlayers)
+            {
+                throw new ArgumentOutOfRangeException(nameof(players));
+            }
+
             this.players = Enumerable.Range(0, players).Select(i => new PlayerToken()).ToImmutableList();
             this.phase = Phase.Bid;
             this.bidOrderTrack = ImmutableQueue.CreateRange((players == 2 ? this.players.Concat(this.players) : this.players).Shuffle());
@@ -176,7 +180,7 @@ namespace GameTheory.Games.FiveTribes
             this.scoreTables = this.players.ToImmutableDictionary(p => p, p => new ScoreTable());
             this.sultanate = ImmutableList.CreateRange(InitialTiles.Shuffle().Zip(Meeples.Shuffle().Partition(3), (t, ms) => new Square(t, new EnumCollection<Meeple>(ms))));
             this.bag = EnumCollection<Meeple>.Empty;
-            this.djinnPile = GameState.Djinns.Deal(3, out this.visibleDjinns);
+            this.djinnPile = (includeDhenim ? GameState.Djinns.Add(Dhenim.Instance) : GameState.Djinns).Deal(3, out this.visibleDjinns);
             this.djinnDiscards = ImmutableList<Djinn>.Empty;
             this.resourcePile = GameState.Resources.Deal(9, out this.visibleResources);
             this.resourceDiscards = EnumCollection<Resource>.Empty;
@@ -421,8 +425,7 @@ namespace GameTheory.Games.FiveTribes
         {
             get
             {
-                string result;
-                this.additionalState.TryGetValue(key, out result);
+                this.additionalState.TryGetValue(key, out string result);
                 return result;
             }
         }
@@ -434,7 +437,10 @@ namespace GameTheory.Games.FiveTribes
         /// <returns>The value of the <see cref="Resource">Resources</see>.</returns>
         public static int ScoreResources(EnumCollection<Resource> resources)
         {
-            Contract.Requires(resources != null);
+            if (resources == null)
+            {
+                throw new ArgumentNullException(nameof(resources));
+            }
 
             var suits = new List<int>();
 
@@ -601,8 +607,15 @@ namespace GameTheory.Games.FiveTribes
         /// <returns>The updated <see cref="GameState"/>.</returns>
         public GameState MakeMove(Move move)
         {
-            Contract.Requires(move != null);
-            Contract.Requires(move.State == this);
+            if (move == null)
+            {
+                throw new ArgumentNullException(nameof(move));
+            }
+
+            if (move.State != this)
+            {
+                throw new InvalidOperationException();
+            }
 
             var newState = move.Apply(this);
             return HandleTransition(this, newState);
@@ -759,7 +772,10 @@ namespace GameTheory.Games.FiveTribes
 
         private static GameState HandleTransition(GameState oldState, GameState newState)
         {
-            Contract.Requires(newState.subsequentMovesFactory == null || !newState.subsequentMoves.IsValueCreated);
+            if (newState.subsequentMovesFactory != null && newState.subsequentMoves.IsValueCreated)
+            {
+                throw new InvalidOperationException();
+            }
 
             var oldestStates = Djinns.ToImmutableDictionary(d => d, d => oldState);
 
@@ -804,7 +820,10 @@ namespace GameTheory.Games.FiveTribes
 
         private IEnumerable<Move> GetBidMoves()
         {
-            Contract.Requires(this.Phase == FiveTribes.Phase.Bid);
+            if (this.Phase != FiveTribes.Phase.Bid)
+            {
+                throw new InvalidOperationException();
+            }
 
             for (var i = 2; i < this.turnOrderTrack.Count; i++)
             {

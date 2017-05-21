@@ -17,7 +17,7 @@ namespace GameTheory.Games.FiveTribes.Moves
         /// <param name="index">The position on the <see cref="GameState.TurnOrderTrack"/> being bid on.</param>
         /// <param name="cost">The cost of the bid, in Gold Coins (GC).</param>
         public BidMove(GameState state, int index, int cost)
-            : base(state, state.ActivePlayer)
+            : base(state)
         {
             this.index = index;
             this.cost = cost;

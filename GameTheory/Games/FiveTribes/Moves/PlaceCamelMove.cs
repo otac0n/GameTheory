@@ -29,7 +29,7 @@ namespace GameTheory.Games.FiveTribes.Moves
         /// <param name="point">The <see cref="Point"/> where a Camel will be placed.</param>
         /// <param name="after">A function to perform after the move has taken place.</param>
         public PlaceCamelMove(GameState state, Point point, Func<GameState, GameState> after)
-            : base(state, state.ActivePlayer)
+            : base(state)
         {
             this.after = after;
             this.point = point;
