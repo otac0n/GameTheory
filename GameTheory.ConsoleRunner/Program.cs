@@ -125,7 +125,7 @@ namespace GameTheory.ConsoleRunner
             where TMove : IMove
         {
             Console.WriteLine($"This game has {gameState.Players.Count} player{(gameState.Players.Count != 1 ? "s" : string.Empty)}");
-            var catalog = new PlayerCatalog(typeof(IGameState<>).Assembly, Assembly.GetExecutingAssembly());
+            var catalog = new PlayerCatalog(Assembly.GetExecutingAssembly(), typeof(IGameState<>).Assembly);
             var players = catalog.FindPlayers(typeof(TMove));
             gameState = GameUtilities.PlayGame(gameState, playerToken => GetPlayer(players, gameState, playerToken), ShowMove).Result;
             Console.WriteLine($"Final state:");
