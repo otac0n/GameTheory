@@ -6,6 +6,7 @@ namespace GameTheory
     using System.Collections;
     using System.Collections.Generic;
     using System.Collections.Immutable;
+    using System.Diagnostics.CodeAnalysis;
     using System.Globalization;
     using System.Linq;
 
@@ -83,6 +84,7 @@ namespace GameTheory
         /// <summary>
         /// Gets an empty <see cref="EnumCollection{T}"/>.
         /// </summary>
+        [SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes", Justification = "This follows the patterns in System.Collections.Immutable")]
         public static EnumCollection<TEnum> Empty { get; }
 
         /// <inheritdoc />

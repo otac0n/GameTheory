@@ -4,6 +4,7 @@ namespace GameTheory.ConsoleRunner
 {
     using System;
     using System.Collections.Generic;
+    using GameTheory.ConsoleRunner.Properties;
 
     internal static class ConsoleInteraction
     {
@@ -23,9 +24,9 @@ namespace GameTheory.ConsoleRunner
 
             List(options);
             var selection = Prompt(
-                $"Please make a selection: [1-{options.Count}]",
+                string.Format(Resources.ListPrompt, options.Count),
                 int.Parse,
-                i => i > 0 && i <= options.Count ? null : $"Please choose a number between 1 and {options.Count} (inclusive).");
+                i => i > 0 && i <= options.Count ? null : string.Format(Resources.InvalidListItem, options.Count));
 
             return options[selection - 1];
         }
@@ -35,7 +36,7 @@ namespace GameTheory.ConsoleRunner
             toString = toString ?? new Func<T, string>(item => item?.ToString());
             for (int i = 0; i < items.Count; i++)
             {
-                Console.WriteLine($"{i + 1}: {toString(items[i])}");
+                Console.WriteLine(Resources.ListItem, i + 1, toString(items[i]));
             }
         }
 
@@ -58,7 +59,7 @@ namespace GameTheory.ConsoleRunner
                 }
                 catch (Exception ex) when (ex is FormatException || ex is OverflowException)
                 {
-                    Console.WriteLine($"Input not recognized. {ex.Message}");
+                    Console.WriteLine(Resources.InvalidInput, ex.Message);
                     continue;
                 }
 

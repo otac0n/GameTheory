@@ -127,6 +127,11 @@ namespace GameTheory.Games.TicTacToe
         /// <inheritdoc />
         public IGameState<Move> MakeMove(Move move)
         {
+            if (move == null)
+            {
+                throw new ArgumentNullException(nameof(move));
+            }
+
             if (move.PlayerToken != this.activePlayer ||
                 move.X < 0 ||
                 move.X >= Size ||
@@ -152,7 +157,7 @@ namespace GameTheory.Games.TicTacToe
         }
 
         /// <inheritdoc />
-        IGameState<Move> IGameState<Move>.GetView(PlayerToken playerToken) => this;
+        public IGameState<Move> GetView(PlayerToken playerToken) => this;
 
         /// <inheritdoc />
         public override string ToString()

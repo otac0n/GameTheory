@@ -57,7 +57,7 @@ namespace GameTheory
             allDealt = allDealt.AddRange(newlyDealt);
 
             count -= allDealt.Count;
-            Debug.Assert(count == 0 || deck.Count == 0);
+            Debug.Assert(count == 0 || deck.Count == 0, "Expected either an empty deck or no cards left to deal.");
 
             if (count > 0 && discards.Count > 0)
             {
@@ -100,7 +100,7 @@ namespace GameTheory
             allDealt = allDealt.AddRange(newlyDealt);
 
             count -= allDealt.Count;
-            Debug.Assert(count == 0 || deck.Count == 0);
+            Debug.Assert(count == 0 || deck.Count == 0, "Expected either an empty deck or no cards left to deal.");
 
             if (count > 0 && discards.Count > 0)
             {
