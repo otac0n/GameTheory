@@ -134,7 +134,8 @@ namespace GameTheory.Tests.Games
             state = (GameState)state
                 .PlayMove(playerA, m => m is PayMeeplesAndResourcesMove)
                 .PlayMove(playerA, m => m is DrawDjinnsMove)
-                .PlayMove(playerA, m => m.ToString() == "Take Ibus")
+                .PlayMove(playerA, m => m.ToString() == "Take Ibus");
+            state = (GameState)state
                 .PlayMove(playerA, m => state.MakeMove(m).GetAvailableMoves(playerA).Any(x => x is DoubleAssassinKillCountMove))
                 .PlayMove(playerA, m => m.ToString() == "Double the number of meeples your Assassins kill this turn");
             Assert.That(state.GetAvailableMoves(), Has.None.InstanceOf<AssassinatePlayerMove>().With.Property("Victim").EqualTo(playerB));

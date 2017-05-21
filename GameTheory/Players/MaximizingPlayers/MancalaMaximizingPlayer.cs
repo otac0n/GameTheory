@@ -35,11 +35,8 @@ namespace GameTheory.Players.MaximizingPlayers
                 playerScore - opponentScore;
 
             /// <inheritdoc/>
-            public double Score(IGameState<Move> state, PlayerToken playerToken)
-            {
-                var typedState = (GameState)state;
-                return typedState.GetPlayerIndexes(playerToken).Sum(i => typedState.Board[i]);
-            }
+            public double Score(IGameState<Move> state, PlayerToken playerToken) =>
+                ((GameState)state).GetScore(playerToken);
         }
     }
 }
