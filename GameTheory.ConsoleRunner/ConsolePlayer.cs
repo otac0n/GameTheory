@@ -3,6 +3,7 @@
 namespace GameTheory.ConsoleRunner
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
@@ -15,6 +16,15 @@ namespace GameTheory.ConsoleRunner
     public sealed class ConsolePlayer<TMove> : IPlayer<TMove>
         where TMove : IMove
     {
+        private static readonly IReadOnlyList<ConsoleColor> PlayerColors = new List<ConsoleColor>
+        {
+            ConsoleColor.Green,
+            ConsoleColor.Cyan,
+            ConsoleColor.Yellow,
+            ConsoleColor.Magenta,
+            ConsoleColor.Red,
+        }.AsReadOnly();
+
         private static readonly object Sync = new object();
 
         /// <summary>
@@ -39,16 +49,41 @@ namespace GameTheory.ConsoleRunner
             {
                 lock (Sync)
                 {
-                    cancel.ThrowIfCancellationRequested();
-                    Console.WriteLine(Resources.CurrentState);
-                    Console.WriteLine(state);
-                    return new Maybe<TMove>(ConsoleInteraction.Choose(moves.ToArray(), cancel));
+                    var originalColor = Console.ForegroundColor;
+                    try
+                    {
+                        Console.ForegroundColor = GetColor(state, this.PlayerToken);
+                        cancel.ThrowIfCancellationRequested();
+                        Console.WriteLine(Resources.CurrentState);
+                        Console.WriteLine(state);
+                        return new Maybe<TMove>(ConsoleInteraction.Choose(moves.ToArray(), cancel));
+                    }
+                    finally
+                    {
+                        Console.ForegroundColor = originalColor;
+                    }
                 }
             }
             else
             {
                 return default(Maybe<TMove>);
             }
+        }
+
+        private ConsoleColor GetColor(IGameState<TMove> state, PlayerToken playerToken)
+        {
+            var i = 0;
+            foreach (var player in state.Players)
+            {
+                if (player == playerToken)
+                {
+                    return PlayerColors[i % PlayerColors.Count];
+                }
+
+                i++;
+            }
+
+            return ConsoleColor.White;
         }
 
         /// <inheritdoc />
