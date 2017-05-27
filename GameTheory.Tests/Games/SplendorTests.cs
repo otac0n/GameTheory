@@ -3,6 +3,7 @@
 namespace GameTheory.Tests.Games
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using GameTheory.Games.Splendor;
     using GameTheory.Players;
@@ -47,7 +48,7 @@ namespace GameTheory.Tests.Games
         }
 
         [Test(Description = "The player who has the highest number of prestige points is declared the winner. In case of a tie, the player who has purchased the fewest development cards wins.")]
-        public void GetWinners_AfterAGameHasBeenPlayed_ReturnsThePlayersWithTheHighestScoreTheFewestCards()
+        public void GetWinners_AfterAGameHasBeenPlayed_ReturnsThePlayersWithTheHighestScoreWithTheFewestCards()
         {
             var endState = (GameState)GameUtilities.PlayGame(
                 new GameState(2),
@@ -59,7 +60,8 @@ namespace GameTheory.Tests.Games
             var fewestCards = playersWithHighestScore.Min(p => endState.Inventory[p].DevelopmentCards.Count);
             var winners = endState.GetWinners();
 
-            Assert.That(winners, Is.EqualTo(playersWithHighestScore.Where(p => endState.Inventory[p].DevelopmentCards.Count == fewestCards)));
+            string formatWinners(IEnumerable<PlayerToken> players) => string.Join(", ", players.Select(player => endState.GetPlayerName(player)).OrderBy(n => n));
+            Assert.That(formatWinners(winners), Is.EqualTo(formatWinners(playersWithHighestScore.Where(p => endState.Inventory[p].DevelopmentCards.Count == fewestCards))));
         }
     }
 }
