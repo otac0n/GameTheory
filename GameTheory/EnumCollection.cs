@@ -385,7 +385,12 @@ namespace GameTheory
                         sb.Append(", ");
                     }
 
-                    sb.Append(count).Append('\u00D7').Append(Enum.ToObject(typeof(TEnum), i));
+                    if (count > 1)
+                    {
+                        sb.Append(count).Append('\u00D7');
+                    }
+
+                    sb.Append(Enum.ToObject(typeof(TEnum), i));
                 }
             }
 

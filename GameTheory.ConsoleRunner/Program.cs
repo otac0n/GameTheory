@@ -116,7 +116,7 @@ namespace GameTheory.ConsoleRunner
             Console.WriteLine(Resources.GamePlayerCount, string.Format(gameState.Players.Count == 1 ? Resources.SingularPlayer : Resources.PluralPlayers, gameState.Players.Count));
             var catalog = new PlayerCatalog(Assembly.GetExecutingAssembly(), typeof(IGameState<>).Assembly);
             var players = catalog.FindPlayers(typeof(TMove));
-            gameState = GameUtilities.PlayGame(gameState, playerToken => GetPlayer(players, gameState, playerToken), ShowMove).Result;
+            gameState = GameUtilities.PlayGame(gameState, playerToken => GetPlayer(players, gameState, playerToken), ShowMove, TimeSpan.FromMinutes(5)).Result;
             Console.WriteLine(Resources.FinalState);
             Console.WriteLine(gameState);
 
