@@ -9,6 +9,7 @@ namespace GameTheory
     using System.Diagnostics.CodeAnalysis;
     using System.Globalization;
     using System.Linq;
+    using System.Text;
 
     /// <summary>
     /// Provides a compact collection of enumeration values.
@@ -368,6 +369,27 @@ namespace GameTheory
             }
 
             return new EnumCollection<TEnum>(count, ImmutableList.Create(storage));
+        }
+
+        /// <inheritdoc />
+        public override string ToString()
+        {
+            var sb = new StringBuilder();
+            for (var i = 0; i < Capacity; i++)
+            {
+                var count = this.storage[i];
+                if (count > 0)
+                {
+                    if (sb.Length > 0)
+                    {
+                        sb.Append(", ");
+                    }
+
+                    sb.Append(count).Append('\u00D7').Append(Enum.ToObject(typeof(TEnum), i));
+                }
+            }
+
+            return sb.ToString();
         }
     }
 }
