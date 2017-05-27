@@ -70,7 +70,12 @@ namespace GameTheory.ConsoleRunner
             }
         }
 
-        private ConsoleColor GetColor(IGameState<TMove> state, PlayerToken playerToken)
+        /// <inheritdoc />
+        public void Dispose()
+        {
+        }
+
+        private static ConsoleColor GetColor(IGameState<TMove> state, PlayerToken playerToken)
         {
             var i = 0;
             foreach (var player in state.Players)
@@ -84,11 +89,6 @@ namespace GameTheory.ConsoleRunner
             }
 
             return ConsoleColor.White;
-        }
-
-        /// <inheritdoc />
-        public void Dispose()
-        {
         }
     }
 }
