@@ -12,28 +12,22 @@ namespace GameTheory.Games.Mancala
     /// </summary>
     public class GameState : IGameState<Move>
     {
-        internal const int BinsOnASide = 6;
-        private const int InitialStonesPerBin = 4;
-        private static readonly ImmutableArray<int> InitialBoard;
         private readonly PlayerToken activePlayer;
         private readonly ImmutableArray<int> board;
         private readonly ImmutableList<PlayerToken> players;
 
-        static GameState()
-        {
-            var bins = Enumerable.Repeat(InitialStonesPerBin, BinsOnASide);
-            var side = Enumerable.Concat(bins, Enumerable.Repeat(0, 1));
-            InitialBoard = ImmutableArray.CreateRange(Enumerable.Concat(side, side));
-        }
-
         /// <summary>
         /// Initializes a new instance of the <see cref="GameState"/> class.
         /// </summary>
-        public GameState()
+        /// <param name="binsPerSide">The number of bins on each side of the board.</param>
+        /// <param name="initialStonesPerBin">The number of stones initially in each bin.</param>
+        public GameState(int binsPerSide = 6, int initialStonesPerBin = 4)
         {
             this.players = ImmutableList.Create(new PlayerToken(), new PlayerToken());
             this.activePlayer = this.players[0];
-            this.board = InitialBoard;
+            var bins = Enumerable.Repeat(initialStonesPerBin, binsPerSide);
+            var side = Enumerable.Concat(bins, Enumerable.Repeat(0, 1));
+            this.board = ImmutableArray.CreateRange(Enumerable.Concat(side, side));
         }
 
         private GameState(
@@ -63,6 +57,11 @@ namespace GameTheory.Games.Mancala
         /// </summary>
         public ImmutableList<PlayerToken> Players => this.players;
 
+        /// <summary>
+        /// Gets the number of bins per side.
+        /// </summary>
+        public int BinsPerSide => this.Board.Length / 2 - 1;
+
         /// <inheritdoc />
         public IReadOnlyCollection<Move> GetAvailableMoves(PlayerToken playerToken)
         {
@@ -70,11 +69,14 @@ namespace GameTheory.Games.Mancala
 
             if (playerToken == this.activePlayer)
             {
-                foreach (var i in this.GetPlayerIndexes(this.activePlayer).Take(BinsOnASide))
+                var playerOffset = this.GetPlayerIndexOffset(this.activePlayer);
+                var binsPerSide = this.BinsPerSide;
+                for (var i = 0; i < binsPerSide; i++)
                 {
-                    if (this.board[i] > 0)
+                    var index = i + playerOffset;
+                    if (this.board[index] > 0)
                     {
-                        moves.Add(new Move(this, i));
+                        moves.Add(new Move(this, index));
                     }
                 }
             }
@@ -85,11 +87,11 @@ namespace GameTheory.Games.Mancala
         /// <summary>
         /// Gets the score of the specified player.
         /// </summary>
-        /// <param name="player">The player whose score should be calculated.</param>
+        /// <param name="playerToken">The player whose score should be calculated.</param>
         /// <returns>The specified player's score.</returns>
-        public int GetScore(PlayerToken player)
+        public int GetScore(PlayerToken playerToken)
         {
-            return this.GetPlayerIndexes(player).Sum(i => this.board[i]);
+            return this.GetPlayerIndexes(playerToken).Sum(i => this.board[i]);
         }
 
         /// <inheritdoc />
@@ -138,13 +140,21 @@ namespace GameTheory.Games.Mancala
             return $"{r(this.GetPlayerIndexes(this.players[1]).Reverse())} [  ]\n[  ] {r(this.GetPlayerIndexes(this.players[0]))}";
         }
 
-        internal IEnumerable<int> GetPlayerIndexes(PlayerToken player)
-        {
-            var playerIndex = this.players.IndexOf(player);
-            var startingIndex = playerIndex * (BinsOnASide + 1);
-            var indexes = Enumerable.Range(startingIndex, BinsOnASide + 1);
-            return indexes;
-        }
+        /// <summary>
+        /// Enumerates the indexes for the specified player.
+        /// </summary>
+        /// <param name="playerToken">The player whose bin indexes should be returned.</param>
+        /// <returns>An enumerable collection of indexes.</returns>
+        public IEnumerable<int> GetPlayerIndexes(PlayerToken playerToken) =>
+            Enumerable.Range(this.GetPlayerIndexOffset(playerToken), this.board.Length / 2);
+
+        /// <summary>
+        /// Gets the starting index for the specified player.
+        /// </summary>
+        /// <param name="playerToken">The player whose starting index should be returned.</param>
+        /// <returns>The lowest index representing a bin owned by this player.</returns>
+        public int GetPlayerIndexOffset(PlayerToken playerToken) =>
+            this.players.IndexOf(playerToken) * this.board.Length / 2;
 
         internal GameState With(
             PlayerToken activePlayer = null,
