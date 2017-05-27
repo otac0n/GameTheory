@@ -152,6 +152,11 @@ namespace GameTheory
         /// <returns>The new collection.</returns>
         public EnumCollection<TEnum> Add(TEnum item, int count)
         {
+            if (count == 0)
+            {
+                return this;
+            }
+
             if (count < 1)
             {
                 throw new ArgumentOutOfRangeException(nameof(count));
