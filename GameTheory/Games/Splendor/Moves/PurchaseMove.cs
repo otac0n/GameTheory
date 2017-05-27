@@ -3,6 +3,7 @@
 namespace GameTheory.Games.Splendor.Moves
 {
     using System.Collections.Generic;
+    using System.Linq;
 
     /// <summary>
     /// Represents a move to reserve a development card from the board or the player's hand.
@@ -49,9 +50,10 @@ namespace GameTheory.Games.Splendor.Moves
 
         internal static IEnumerable<Move> GenerateMoves(GameState state)
         {
-            var budget = state
-                .GetBonus(state.ActivePlayer)
-                .AddRange(state.Inventory[state.ActivePlayer].Tokens);
+            var tokens = state.Inventory[state.ActivePlayer].Tokens;
+            var bonus = state.GetBonus(state.ActivePlayer);
+
+            var costs = tokens.Combinations(tokens.Count, includeSmaller: true).ToArray();
 
             for (int t = 0; t < state.DevelopmentTracks.Length; t++)
             {
@@ -61,6 +63,9 @@ namespace GameTheory.Games.Splendor.Moves
                     if (card != null)
                     {
                         // TODO: Yield moves that are possible given the budget.
+                        foreach (var cost in costs.Where(c => c.Count <= card.Cost.Count))
+                        {
+                        }
                     }
                 }
             }
