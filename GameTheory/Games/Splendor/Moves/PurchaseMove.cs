@@ -2,7 +2,9 @@
 
 namespace GameTheory.Games.Splendor.Moves
 {
+    using System;
     using System.Collections.Generic;
+    using System.Collections.Immutable;
     using System.Linq;
 
     /// <summary>
@@ -10,6 +12,8 @@ namespace GameTheory.Games.Splendor.Moves
     /// </summary>
     public class PurchaseMove : Move
     {
+        private static readonly ImmutableArray<Token> NonJokers = Enum.GetValues(typeof(Token)).Cast<Token>().Except(Token.GoldJoker).ToImmutableArray();
+
         /// <summary>
         /// Initializes a new instance of the <see cref="PurchaseMove"/> class.
         /// </summary>
@@ -46,14 +50,19 @@ namespace GameTheory.Games.Splendor.Moves
         public int Track { get; }
 
         /// <inheritdoc />
-        public override string ToString() => $"Purchase {this.Card} for {string.Join(",", this.Cost)}";
+        public override string ToString() => $"Purchase {this.Card} for {(this.Cost.Count > 0 ? this.Cost.ToString() : "free")}";
 
         internal static IEnumerable<Move> GenerateMoves(GameState state)
         {
             var tokens = state.Inventory[state.ActivePlayer].Tokens;
-            var bonus = state.GetBonus(state.ActivePlayer);
+            var jokerCount = tokens[Token.GoldJoker];
+            tokens = tokens.RemoveAll(Token.GoldJoker);
 
-            var costs = tokens.Combinations(tokens.Count, includeSmaller: true).ToArray();
+            // TODO: May be more performant to move inside the inner loop to reduce total inner cycles.
+            var jokers = new EnumCollection<Token>(NonJokers.SelectMany(n => Enumerable.Repeat(n, jokerCount)));
+            var jokerCombinations = Enumerable.Concat(new[] { EnumCollection<Token>.Empty }, jokers.Combinations(jokerCount, includeSmaller: true));
+
+            var bonus = state.GetBonus(state.ActivePlayer);
 
             for (int t = 0; t < state.DevelopmentTracks.Length; t++)
             {
@@ -62,9 +71,14 @@ namespace GameTheory.Games.Splendor.Moves
                     var card = state.DevelopmentTracks[t][i];
                     if (card != null)
                     {
-                        // TODO: Yield moves that are possible given the budget.
-                        foreach (var cost in costs.Where(c => c.Count <= card.Cost.Count))
+                        var cost = card.Cost.RemoveRange(bonus);
+                        foreach (var jokerCost in jokerCombinations.Where(jc => jc.Keys.All(k => cost[k] >= jc[k])))
                         {
+                            var tokenCost = cost.RemoveRange(jokerCost);
+                            if (tokenCost.Keys.All(k => tokens[k] >= tokenCost[k]))
+                            {
+                                yield return new PurchaseMove(state, tokenCost.Add(Token.GoldJoker, jokerCost.Count), t, i);
+                            }
                         }
                     }
                 }
@@ -86,7 +100,7 @@ namespace GameTheory.Games.Splendor.Moves
             tokens = tokens.AddRange(this.Cost);
             pTokens = pTokens.RemoveRange(this.Cost);
 
-            pDevelopmentCards.Add(card);
+            pDevelopmentCards = pDevelopmentCards.Add(card);
 
             deck = deck.Deal(out DevelopmentCard replacement);
             track = track.SetItem(this.Index, replacement);
