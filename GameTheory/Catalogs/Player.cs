@@ -51,7 +51,7 @@ namespace GameTheory.Catalogs
             var typeName = playerType.Name.Split('`').First();
 
             const string playerSuffix = "Player";
-            if (typeName.EndsWith(playerSuffix))
+            if (typeName.EndsWith(playerSuffix, StringComparison.OrdinalIgnoreCase))
             {
                 typeName = typeName.Substring(0, typeName.Length - playerSuffix.Length);
             }

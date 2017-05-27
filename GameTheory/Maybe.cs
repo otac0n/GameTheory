@@ -50,5 +50,47 @@ namespace GameTheory
                 return this.value;
             }
         }
+
+        /// <summary>
+        /// Compares two <see cref="Maybe{T}"/> objects. The result specifies whether they are unequal.
+        /// </summary>
+        /// <param name="left">The first <see cref="Maybe{T}"/> to compare.</param>
+        /// <param name="right">The second <see cref="Maybe{T}"/> to compare.</param>
+        /// <returns><c>true</c> if <paramref name="left"/> and <paramref name="right"/> differ; otherwise, <c>false</c>.</returns>
+        public static bool operator !=(Maybe<T> left, Maybe<T> right)
+        {
+            return !left.Equals(right);
+        }
+
+        /// <summary>
+        /// Compares two <see cref="Maybe{T}"/> objects. The result specifies whether they are equal.
+        /// </summary>
+        /// <param name="left">The first <see cref="Maybe{T}"/> to compare.</param>
+        /// <param name="right">The second <see cref="Maybe{T}"/> to compare.</param>
+        /// <returns><c>true</c> if <paramref name="left"/> and <paramref name="right"/> are equal; otherwise, <c>false</c>.</returns>
+        public static bool operator ==(Maybe<T> left, Maybe<T> right)
+        {
+            return left.Equals(right);
+        }
+
+        /// <inheritdoc />
+        public override bool Equals(object obj)
+        {
+            if (obj is Maybe<T> other)
+            {
+                return other.hasValue == this.hasValue &&
+                    (!other.hasValue || Equals(other.value, this.value));
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        /// <inheritdoc />
+        public override int GetHashCode()
+        {
+            return this.hasValue ? this.value?.GetHashCode() ?? 0 : -1;
+        }
     }
 }

@@ -49,7 +49,7 @@ namespace GameTheory.Tests.Games
         [Test(Description = "The player who has the highest number of prestige points is declared the winner. In case of a tie, the player who has purchased the fewest development cards wins.")]
         public void GetWinners_AfterAGameHasBeenPlayed_ReturnsThePlayersWithTheHighestScoreTheFewestCards()
         {
-            var endState = (GameState)GameUtils.PlayGame(
+            var endState = (GameState)GameUtilities.PlayGame(
                 new GameState(2),
                 p => new RandomPlayer<Move>(p),
                 (state, move) => Console.WriteLine("{0}: {1}", state.GetPlayerName(move.PlayerToken), move)).Result;

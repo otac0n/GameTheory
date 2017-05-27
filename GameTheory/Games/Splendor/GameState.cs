@@ -2,9 +2,9 @@
 
 namespace GameTheory.Games.Splendor
 {
+    using System;
     using System.Collections.Generic;
     using System.Collections.Immutable;
-    using System.Diagnostics.Contracts;
     using System.Linq;
 
     /// <summary>
@@ -165,7 +165,11 @@ namespace GameTheory.Games.Splendor
         /// <param name="players">The number of players.</param>
         public GameState(int players)
         {
-            Contract.Requires(players >= MinPlayers && players <= MaxPlayers);
+            if (players < MinPlayers || players > MaxPlayers)
+            {
+                throw new ArgumentOutOfRangeException(nameof(players));
+            }
+
             this.players = Enumerable.Range(0, players).Select(i => new PlayerToken()).ToImmutableList();
             this.activePlayer = this.players[0];
             this.phase = Phase.Play;
@@ -187,8 +191,7 @@ namespace GameTheory.Games.Splendor
             var developmentTracks = new ImmutableArray<DevelopmentCard>[developmentDecks.Length];
             for (var i = 0; i < developmentDecks.Length; i++)
             {
-                ImmutableList<DevelopmentCard> dealt;
-                var remaining = developmentDecks[i].Deal(4, out dealt);
+                var remaining = developmentDecks[i].Deal(4, out ImmutableList<DevelopmentCard> dealt);
                 developmentDecks[i] = remaining;
                 developmentTracks[i] = dealt.ToImmutableArray();
             }
@@ -280,6 +283,9 @@ namespace GameTheory.Games.Splendor
         }
 
         /// <inheritdoc />
+        public IGameState<Move> GetView(PlayerToken playerToken) => this;
+
+        /// <inheritdoc />
         public IReadOnlyCollection<PlayerToken> GetWinners()
         {
             if (this.phase == Phase.Play)
@@ -307,8 +313,15 @@ namespace GameTheory.Games.Splendor
         /// <returns>The updated <see cref="GameState"/>.</returns>
         public GameState MakeMove(Move move)
         {
-            Contract.Requires(move != null);
-            Contract.Requires(move.State == this);
+            if (move == null)
+            {
+                throw new ArgumentNullException(nameof(move));
+            }
+
+            if (move.State != this)
+            {
+                throw new InvalidOperationException();
+            }
 
             return move.Apply(this);
         }

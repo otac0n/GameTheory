@@ -3,7 +3,6 @@
 namespace GameTheory.Games.Mancala
 {
     using System;
-    using System.Collections.Generic;
     using System.Linq;
 
     /// <summary>
@@ -43,11 +42,13 @@ namespace GameTheory.Games.Mancala
 
         internal GameState Apply(GameState state)
         {
-            var mancala = state.GetPlayerIndexes(this.PlayerToken).Last();
-            var captureSpots = new HashSet<int>(state.GetPlayerIndexes(this.PlayerToken).Take(GameState.BinsOnASide));
+            var binsPerSide = state.BinsPerSide;
+            var captureMin = state.GetPlayerIndexOffset(this.PlayerToken);
+            var mancala = captureMin + binsPerSide;
+
             var otherPlayer = state.Players.Except(this.PlayerToken).Single();
-            var otherMancala = state.GetPlayerIndexes(otherPlayer).Last();
-            var othersBins = new HashSet<int>(state.GetPlayerIndexes(otherPlayer).Take(GameState.BinsOnASide));
+            var othersBinsMin = state.GetPlayerIndexOffset(otherPlayer);
+            var otherMancala = othersBinsMin + binsPerSide;
 
             var bin = this.Bin;
             var board = state.Board;
@@ -75,9 +76,9 @@ namespace GameTheory.Games.Mancala
             }
             else
             {
-                if (board[bin] == 1 && captureSpots.Contains(bin))
+                if (board[bin] == 1 && bin >= captureMin && bin < mancala)
                 {
-                    var captureIndex = GameState.BinsOnASide - (bin - GameState.BinsOnASide);
+                    var captureIndex = binsPerSide - (bin - binsPerSide);
                     if (board[captureIndex] > 0)
                     {
                         board = board
@@ -90,7 +91,9 @@ namespace GameTheory.Games.Mancala
                 activePlayer = otherPlayer;
             }
 
-            if (captureSpots.All(i => board[i] == 0))
+            var playerBins = Enumerable.Range(captureMin, binsPerSide);
+            var othersBins = Enumerable.Range(othersBinsMin, binsPerSide);
+            if (playerBins.All(i => board[i] == 0))
             {
                 foreach (var i in othersBins)
                 {
@@ -101,7 +104,7 @@ namespace GameTheory.Games.Mancala
             }
             else if (othersBins.All(i => board[i] == 0))
             {
-                foreach (var i in captureSpots)
+                foreach (var i in playerBins)
                 {
                     board = board
                         .SetItem(mancala, board[mancala] + board[i])

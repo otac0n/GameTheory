@@ -1,9 +1,9 @@
 ﻿// Copyright © John Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
-using System.Collections.Generic;
-
 namespace GameTheory.Games.Splendor.Moves
 {
+    using System.Collections.Generic;
+
     /// <summary>
     /// Represents a move to reserve a development card from the board or the player's hand.
     /// </summary>
@@ -63,8 +63,7 @@ namespace GameTheory.Games.Splendor.Moves
 
             pDevelopmentCards.Add(card);
 
-            DevelopmentCard replacement;
-            deck = deck.Deal(out replacement);
+            deck = deck.Deal(out DevelopmentCard replacement);
             track = track.SetItem(this.Index, replacement);
 
             return base.Apply(state.With(

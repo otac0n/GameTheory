@@ -7,14 +7,14 @@ namespace GameTheory.Games.TicTacToe
     /// <summary>
     /// Represents a move in Tic-tac-toe.
     /// </summary>
-    public struct Move : IMove
+    public class Move : IMove
     {
         private readonly PlayerToken playerToken;
         private readonly int x;
         private readonly int y;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Move"/> struct.
+        /// Initializes a new instance of the <see cref="Move"/> class.
         /// </summary>
         /// <param name="playerToken">The player who may make this move.</param>
         /// <param name="x">The x coordinate of the spot on which the move will me made.</param>

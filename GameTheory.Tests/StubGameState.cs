@@ -74,6 +74,11 @@ namespace GameTheory.Tests
             return this;
         }
 
+        public IGameState<Move> GetView(PlayerToken playerToken)
+        {
+            return this;
+        }
+
         public class Move : IMove
         {
             private readonly PlayerToken playerToken;

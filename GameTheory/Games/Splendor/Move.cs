@@ -2,7 +2,7 @@
 
 namespace GameTheory.Games.Splendor
 {
-    using System.Diagnostics.Contracts;
+    using System;
     using System.Linq;
 
     /// <summary>
@@ -16,9 +16,7 @@ namespace GameTheory.Games.Splendor
         /// <param name="state">The <see cref="GameState"/> that this move is based on.</param>
         protected Move(GameState state)
         {
-            Contract.Requires(state != null);
-
-            this.State = state;
+            this.State = state ?? throw new ArgumentOutOfRangeException(nameof(state));
             this.PlayerToken = state.ActivePlayer;
         }
 

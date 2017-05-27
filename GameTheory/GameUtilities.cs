@@ -83,7 +83,7 @@ namespace GameTheory
             var players = getPlayers(playerTokens);
             try
             {
-                var getTasks = new Func<CancellationToken, Task<Maybe<TMove>>[]>(cancel => players.Select(p => p.ChooseMove(state, cancel)).ToArray());
+                var getTasks = new Func<CancellationToken, Task<Maybe<TMove>>[]>(cancel => players.Select(p => p.ChooseMove(state.GetView(p.PlayerToken), cancel)).ToArray());
                 while (true)
                 {
                     var cts = new CancellationTokenSource();

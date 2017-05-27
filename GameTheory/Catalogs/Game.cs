@@ -80,7 +80,7 @@ namespace GameTheory.Catalogs
             var typeName = gameType.FullName;
 
             const string gameStateSuffix = "GameState";
-            if (typeName.EndsWith(gameStateSuffix))
+            if (typeName.EndsWith(gameStateSuffix, StringComparison.OrdinalIgnoreCase))
             {
                 typeName = typeName.Substring(0, typeName.Length - gameStateSuffix.Length);
             }

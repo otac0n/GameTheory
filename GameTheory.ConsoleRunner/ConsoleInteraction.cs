@@ -4,10 +4,12 @@ namespace GameTheory.ConsoleRunner
 {
     using System;
     using System.Collections.Generic;
+    using System.Threading;
+    using GameTheory.ConsoleRunner.Properties;
 
     internal static class ConsoleInteraction
     {
-        public static T Choose<T>(IList<T> options, Func<T, string> skipMessage = null)
+        public static T Choose<T>(IList<T> options, CancellationToken? cancel = null, Func<T, string> skipMessage = null)
         {
             if (options.Count == 0)
             {
@@ -21,11 +23,30 @@ namespace GameTheory.ConsoleRunner
                 return single;
             }
 
+            Func<string, int> parse;
+            if (cancel != null)
+            {
+                parse = s =>
+                {
+                    if (cancel.Value.IsCancellationRequested)
+                    {
+                        Console.WriteLine(Resources.InputDiscarded);
+                        throw new OperationCanceledException();
+                    }
+
+                    return int.Parse(s);
+                };
+            }
+            else
+            {
+                parse = int.Parse;
+            }
+
             List(options);
             var selection = Prompt(
-                $"Please make a selection: [1-{options.Count}]",
-                int.Parse,
-                i => i > 0 && i <= options.Count ? null : $"Please choose a number between 1 and {options.Count} (inclusive).");
+                string.Format(Resources.ListPrompt, options.Count),
+                parse,
+                i => i > 0 && i <= options.Count ? null : string.Format(Resources.InvalidListItem, options.Count));
 
             return options[selection - 1];
         }
@@ -35,7 +56,7 @@ namespace GameTheory.ConsoleRunner
             toString = toString ?? new Func<T, string>(item => item?.ToString());
             for (int i = 0; i < items.Count; i++)
             {
-                Console.WriteLine($"{i + 1}: {toString(items[i])}");
+                Console.WriteLine(Resources.ListItem, i + 1, toString(items[i]));
             }
         }
 
@@ -58,7 +79,7 @@ namespace GameTheory.ConsoleRunner
                 }
                 catch (Exception ex) when (ex is FormatException || ex is OverflowException)
                 {
-                    Console.WriteLine($"Input not recognized. {ex.Message}");
+                    Console.WriteLine(Resources.InvalidInput, ex.Message);
                     continue;
                 }
 

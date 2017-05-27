@@ -178,6 +178,8 @@
     <Compile Include="Games\FiveTribes\Tiles\Village.cs" />
     <Compile Include="Games\Mancala\GameState.cs" />
     <Compile Include="Games\Mancala\Move.cs" />
+    <Compile Include="Games\MatchingPennies\GameState.cs" />
+    <Compile Include="Games\MatchingPennies\Move.cs" />
     <Compile Include="Games\Splendor\DevelopmentCard.cs" />
     <Compile Include="Games\Splendor\GameState.cs" />
     <Compile Include="Games\Splendor\Inventory.cs" />

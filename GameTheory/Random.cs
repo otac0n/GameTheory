@@ -57,7 +57,7 @@ namespace GameTheory
             allDealt = allDealt.AddRange(newlyDealt);
 
             count -= allDealt.Count;
-            Debug.Assert(count == 0 || deck.Count == 0);
+            Debug.Assert(count == 0 || deck.Count == 0, "Expected either an empty deck or no cards left to deal.");
 
             if (count > 0 && discards.Count > 0)
             {
@@ -100,7 +100,7 @@ namespace GameTheory
             allDealt = allDealt.AddRange(newlyDealt);
 
             count -= allDealt.Count;
-            Debug.Assert(count == 0 || deck.Count == 0);
+            Debug.Assert(count == 0 || deck.Count == 0, "Expected either an empty deck or no cards left to deal.");
 
             if (count > 0 && discards.Count > 0)
             {
@@ -255,6 +255,15 @@ namespace GameTheory
 
             return items[instance.Next(items.Count)];
         }
+
+        /// <summary>
+        /// Selects a random element from a list.
+        /// </summary>
+        /// <typeparam name="T">The type of items in the list.</typeparam>
+        /// <param name="items">The items to choose from.</param>
+        /// <param name="instance">An instance of <see cref="System.Random"/> to use.</param>
+        /// <returns>The selected element.</returns>
+        public static T Pick<T>(this List<T> items, System.Random instance = null) => Pick((IList<T>)items, instance);
 
         /// <summary>
         /// Selects a random element from a collection.

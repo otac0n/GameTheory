@@ -137,9 +137,34 @@ namespace GameTheory.Players
                 if (players.Count == 1)
                 {
                     var player = players.First();
-                    return moveScores
-                        .OrderByDescending(m => this.GetLead(m, player), this.scoringMetric)
-                        .First();
+
+                    var maxLead = default(Maybe<TScore>);
+                    var maxMoves = new List<Mainline>();
+                    foreach (var m in moveScores)
+                    {
+                        if (!maxLead.HasValue)
+                        {
+                            maxLead = new Maybe<TScore>(this.GetLead(m, player));
+                            maxMoves.Add(m);
+                        }
+                        else
+                        {
+                            var lead = this.GetLead(m, player);
+                            var comp = this.scoringMetric.Compare(lead, maxLead.Value);
+                            if (comp >= 0)
+                            {
+                                if (comp > 0)
+                                {
+                                    maxLead = new Maybe<TScore>(lead);
+                                    maxMoves.Clear();
+                                }
+
+                                maxMoves.Add(m);
+                            }
+                        }
+                    }
+
+                    return maxMoves.Pick();
                 }
                 else if (players.Count == 0)
                 {
