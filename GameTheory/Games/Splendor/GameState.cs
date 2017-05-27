@@ -273,6 +273,14 @@ namespace GameTheory.Games.Splendor
         }
 
         /// <summary>
+        /// Gets the total bonus for the specified player.
+        /// </summary>
+        /// <param name="player">The player whose bonuses should be tallied.</param>
+        /// <returns>The specified player's bonus.</returns>
+        public EnumCollection<Token> GetBonus(PlayerToken player) =>
+            new EnumCollection<Token>(this.Inventory[player].DevelopmentCards.Select(c => c.Bonus));
+
+        /// <summary>
         /// Gets the score of the specified player.
         /// </summary>
         /// <param name="player">The player whose score should be calculated.</param>

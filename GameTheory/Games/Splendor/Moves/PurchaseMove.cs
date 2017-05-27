@@ -13,11 +13,13 @@ namespace GameTheory.Games.Splendor.Moves
         /// Initializes a new instance of the <see cref="PurchaseMove"/> class.
         /// </summary>
         /// <param name="state">The <see cref="GameState"/> that this move is based on.</param>
+        /// <param name="cost">The effective token cost of this card, including substituted jokers and bonuses.</param>
         /// <param name="track">The index of the development track that contains the card to purchase.</param>
         /// <param name="index">The index in the development track of the card to purchase.</param>
-        public PurchaseMove(GameState state, int track, int index)
+        public PurchaseMove(GameState state, EnumCollection<Token> cost, int track, int index)
             : base(state)
         {
+            this.Cost = cost;
             this.Track = track;
             this.Index = index;
         }
@@ -26,6 +28,11 @@ namespace GameTheory.Games.Splendor.Moves
         /// Gets the development card to purchase.
         /// </summary>
         public DevelopmentCard Card => this.State.DevelopmentTracks[this.Track][this.Index];
+
+        /// <summary>
+        /// Gets the effective token cost of this card, including substituted jokers and bonuses.
+        /// </summary>
+        public EnumCollection<Token> Cost { get; }
 
         /// <summary>
         /// Gets the index in the development track of the card to purchase.
@@ -38,11 +45,26 @@ namespace GameTheory.Games.Splendor.Moves
         public int Track { get; }
 
         /// <inheritdoc />
-        public override string ToString() => $"Purchase {this.Card} for {string.Join(",", this.Card.Cost)}";
+        public override string ToString() => $"Purchase {this.Card} for {string.Join(",", this.Cost)}";
 
         internal static IEnumerable<Move> GenerateMoves(GameState state)
         {
-            // TODO: Yield moves that are possible given the user's bonuses.
+            var budget = state
+                .GetBonus(state.ActivePlayer)
+                .AddRange(state.Inventory[state.ActivePlayer].Tokens);
+
+            for (int t = 0; t < state.DevelopmentTracks.Length; t++)
+            {
+                for (int i = 0; i < state.DevelopmentTracks[t].Length; i++)
+                {
+                    var card = state.DevelopmentTracks[t][i];
+                    if (card != null)
+                    {
+                        // TODO: Yield moves that are possible given the budget.
+                    }
+                }
+            }
+
             yield break;
         }
 
@@ -56,10 +78,8 @@ namespace GameTheory.Games.Splendor.Moves
             var pDevelopmentCards = pInventory.DevelopmentCards;
             var pTokens = pInventory.Tokens;
 
-            var cost = card.Cost;
-            ////TODO: Provide a discount based on the user's bonuses.
-            tokens = tokens.AddRange(cost);
-            pTokens = pTokens.RemoveRange(cost);
+            tokens = tokens.AddRange(this.Cost);
+            pTokens = pTokens.RemoveRange(this.Cost);
 
             pDevelopmentCards.Add(card);
 
