@@ -54,5 +54,11 @@ namespace GameTheory.Games.Splendor
         /// Gets the prestige awarded by this card.
         /// </summary>
         public int Prestige { get; }
+
+        /// <inheritdoc />
+        public override string ToString()
+        {
+            return Bonus.ToString() + (Prestige > 0 ? $" +{Prestige}" : "");
+        }
     }
 }

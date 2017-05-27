@@ -38,7 +38,7 @@ namespace GameTheory.Games.Splendor.Moves
         public int Track { get; }
 
         /// <inheritdoc />
-        public override string ToString() => $"Reserve {this.Card}" + (this.State.Tokens[Token.GoldJoker] > 0 ? $" and take {Token.GoldJoker}" : string.Empty);
+        public override string ToString() => $"Reserve [{this.Card}] (cost: {this.Card.Cost})" + (this.State.Tokens[Token.GoldJoker] > 0 ? $" and take {Token.GoldJoker}" : string.Empty);
 
         internal static IEnumerable<Move> GenerateMoves(GameState state)
         {
