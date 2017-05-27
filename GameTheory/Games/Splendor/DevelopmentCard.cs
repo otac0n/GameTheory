@@ -58,7 +58,7 @@ namespace GameTheory.Games.Splendor
         /// <inheritdoc />
         public override string ToString()
         {
-            return Bonus.ToString() + (Prestige > 0 ? $" +{Prestige}" : "");
+            return this.Bonus.ToString() + (this.Prestige > 0 ? $" +{this.Prestige}" : "");
         }
     }
 }

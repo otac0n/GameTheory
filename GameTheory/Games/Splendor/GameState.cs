@@ -264,9 +264,13 @@ namespace GameTheory.Games.Splendor
 
             if (this.phase != Phase.End && player == this.activePlayer)
             {
-                moves.AddRange(Moves.PurchaseMove.GenerateMoves(this));
                 moves.AddRange(Moves.TakeTokensMove.GenerateMoves(this));
+
+                // TODO: Reserve from stack.
                 moves.AddRange(Moves.ReserveFromBoardMove.GenerateMoves(this));
+
+                // TODO: Purchase from hand moves.
+                moves.AddRange(Moves.PurchaseMove.GenerateMoves(this));
             }
 
             return moves.ToImmutableList();
@@ -285,10 +289,8 @@ namespace GameTheory.Games.Splendor
         /// </summary>
         /// <param name="player">The player whose score should be calculated.</param>
         /// <returns>The specified player's score.</returns>
-        public int GetScore(PlayerToken player)
-        {
-            return 0;
-        }
+        public int GetScore(PlayerToken player) =>
+            this.Inventory[player].DevelopmentCards.Sum(c => c.Prestige) + this.Inventory[player].Nobles.Count * Noble.PrestigeBonus;
 
         /// <inheritdoc />
         public IGameState<Move> GetView(PlayerToken playerToken) => this;
