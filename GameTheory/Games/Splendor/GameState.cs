@@ -269,8 +269,8 @@ namespace GameTheory.Games.Splendor
                 // TODO: Reserve from stack.
                 moves.AddRange(Moves.ReserveFromBoardMove.GenerateMoves(this));
 
-                // TODO: Purchase from hand moves.
-                moves.AddRange(Moves.PurchaseMove.GenerateMoves(this));
+                moves.AddRange(Moves.PurchaseFromHandMove.GenerateMoves(this));
+                moves.AddRange(Moves.PurchaseFromBoardMove.GenerateMoves(this));
             }
 
             return moves.ToImmutableList();

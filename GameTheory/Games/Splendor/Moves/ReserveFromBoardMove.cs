@@ -72,8 +72,7 @@ namespace GameTheory.Games.Splendor.Moves
 
             pHand = pHand.Add(track[this.Index]);
 
-            DevelopmentCard replacement;
-            deck = deck.Deal(out replacement);
+            deck = deck.Deal(out DevelopmentCard replacement);
             track = track.SetItem(this.Index, replacement);
 
             if (tokens[Token.GoldJoker] > 0)

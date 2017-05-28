@@ -52,9 +52,9 @@ namespace GameTheory.ConsoleRunner.ConsoleRenderers
             if (inventory.Hand.Count > 0)
             {
                 Console.WriteLine("  Hand:");
-                foreach (var card in inventory.DevelopmentCards)
+                foreach (var card in inventory.Hand)
                 {
-                    Console.Write("    {0}", card);
+                    Console.WriteLine("    {0} [cost: {1}]", card, card.Cost);
                 }
             }
 

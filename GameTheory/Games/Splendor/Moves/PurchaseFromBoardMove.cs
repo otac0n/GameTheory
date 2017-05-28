@@ -10,18 +10,16 @@ namespace GameTheory.Games.Splendor.Moves
     /// <summary>
     /// Represents a move to reserve a development card from the board or the player's hand.
     /// </summary>
-    public class PurchaseMove : Move
+    public class PurchaseFromBoardMove : Move
     {
-        private static readonly ImmutableArray<Token> NonJokers = Enum.GetValues(typeof(Token)).Cast<Token>().Except(Token.GoldJoker).ToImmutableArray();
-
         /// <summary>
-        /// Initializes a new instance of the <see cref="PurchaseMove"/> class.
+        /// Initializes a new instance of the <see cref="PurchaseFromBoardMove"/> class.
         /// </summary>
         /// <param name="state">The <see cref="GameState"/> that this move is based on.</param>
         /// <param name="cost">The effective token cost of this card, including substituted jokers and bonuses.</param>
         /// <param name="track">The index of the development track that contains the card to purchase.</param>
         /// <param name="index">The index in the development track of the card to purchase.</param>
-        public PurchaseMove(GameState state, EnumCollection<Token> cost, int track, int index)
+        public PurchaseFromBoardMove(GameState state, EnumCollection<Token> cost, int track, int index)
             : base(state)
         {
             this.Cost = cost;
@@ -52,15 +50,26 @@ namespace GameTheory.Games.Splendor.Moves
         /// <inheritdoc />
         public override string ToString() => $"Purchase {this.Card} for {(this.Cost.Count > 0 ? this.Cost.ToString() : "free")}";
 
+        internal static IEnumerable<EnumCollection<Token>> GetAffordableTokenCosts(EnumCollection<Token> tokens, int jokerCount, EnumCollection<Token> cost)
+        {
+            var jokers = new EnumCollection<Token>(cost.Keys.SelectMany(n => Enumerable.Repeat(n, jokerCount)));
+            var jokerCombinations = Enumerable.Concat(new[] { EnumCollection<Token>.Empty }, jokers.Combinations(jokerCount, includeSmaller: true));
+
+            foreach (var jokerCost in jokerCombinations.Where(jc => jc.Keys.All(k => cost[k] >= jc[k])))
+            {
+                var tokenCost = cost.RemoveRange(jokerCost);
+                if (tokenCost.Keys.All(k => tokens[k] >= tokenCost[k]))
+                {
+                    yield return tokenCost.Add(Token.GoldJoker, jokerCost.Count);
+                }
+            }
+        }
+
         internal static IEnumerable<Move> GenerateMoves(GameState state)
         {
             var tokens = state.Inventory[state.ActivePlayer].Tokens;
             var jokerCount = tokens[Token.GoldJoker];
             tokens = tokens.RemoveAll(Token.GoldJoker);
-
-            // TODO: May be more performant to move inside the inner loop to reduce total inner cycles.
-            var jokers = new EnumCollection<Token>(NonJokers.SelectMany(n => Enumerable.Repeat(n, jokerCount)));
-            var jokerCombinations = Enumerable.Concat(new[] { EnumCollection<Token>.Empty }, jokers.Combinations(jokerCount, includeSmaller: true));
 
             var bonus = state.GetBonus(state.ActivePlayer);
 
@@ -72,19 +81,13 @@ namespace GameTheory.Games.Splendor.Moves
                     if (card != null)
                     {
                         var cost = card.Cost.RemoveRange(bonus);
-                        foreach (var jokerCost in jokerCombinations.Where(jc => jc.Keys.All(k => cost[k] >= jc[k])))
+                        foreach (var tokenCost in GetAffordableTokenCosts(tokens, jokerCount, cost))
                         {
-                            var tokenCost = cost.RemoveRange(jokerCost);
-                            if (tokenCost.Keys.All(k => tokens[k] >= tokenCost[k]))
-                            {
-                                yield return new PurchaseMove(state, tokenCost.Add(Token.GoldJoker, jokerCost.Count), t, i);
-                            }
+                            yield return new PurchaseFromBoardMove(state, tokenCost, t, i);
                         }
                     }
                 }
             }
-
-            yield break;
         }
 
         internal override GameState Apply(GameState state)

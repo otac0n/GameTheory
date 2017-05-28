@@ -183,7 +183,8 @@
     <Compile Include="Games\Splendor\DevelopmentCard.cs" />
     <Compile Include="Games\Splendor\GameState.cs" />
     <Compile Include="Games\Splendor\Inventory.cs" />
-    <Compile Include="Games\Splendor\Moves\PurchaseMove.cs" />
+    <Compile Include="Games\Splendor\Moves\PurchaseFromHandMove.cs" />
+    <Compile Include="Games\Splendor\Moves\PurchaseFromBoardMove.cs" />
     <Compile Include="Games\Splendor\Moves\ReserveFromBoardMove.cs" />
     <Compile Include="Games\Splendor\Moves\TakeTokensMove.cs" />
     <Compile Include="Games\Splendor\Noble.cs" />
