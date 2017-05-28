@@ -220,8 +220,7 @@ namespace GameTheory
             var storage = new int[Capacity];
             var digitalSum = 0;
 
-            Func<int, bool> increment = null;
-            increment = i =>
+            bool increment(int i)
             {
                 if (i >= Capacity)
                 {
@@ -239,13 +238,13 @@ namespace GameTheory
                 }
 
                 return false;
-            };
+            }
 
             while (!increment(0))
             {
                 if (includeSmaller || digitalSum == count)
                 {
-                    yield return new EnumCollection<TEnum>(count, ImmutableList.Create(storage));
+                    yield return new EnumCollection<TEnum>(digitalSum, ImmutableList.Create(storage));
                 }
             }
         }

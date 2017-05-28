@@ -50,10 +50,8 @@ namespace GameTheory.Games.Splendor.Moves
 
         internal static IEnumerable<EnumCollection<Token>> GetAffordableTokenCosts(EnumCollection<Token> tokens, int jokerCount, EnumCollection<Token> cost)
         {
-            var jokers = new EnumCollection<Token>(cost.Keys.SelectMany(n => Enumerable.Repeat(n, jokerCount)));
-            var jokerCombinations = Enumerable.Concat(new[] { EnumCollection<Token>.Empty }, jokers.Combinations(jokerCount, includeSmaller: true));
-
-            foreach (var jokerCost in jokerCombinations.Where(jc => jc.Keys.All(k => cost[k] >= jc[k])))
+            var jokerCombinations = Enumerable.Concat(new[] { EnumCollection<Token>.Empty }, cost.Combinations(jokerCount, includeSmaller: true));
+            foreach (var jokerCost in jokerCombinations)
             {
                 var tokenCost = cost.RemoveRange(jokerCost);
                 if (tokenCost.Keys.All(k => tokens[k] >= tokenCost[k]))
