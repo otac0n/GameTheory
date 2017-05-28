@@ -59,6 +59,7 @@
     <Compile Include="ConsolePlayer.cs" />
     <Compile Include="ConsoleRenderers\ConsoleRenderer.cs" />
     <Compile Include="ConsoleRenderers\IConsoleRenderer.cs" />
+    <Compile Include="ConsoleRenderers\SplendorConsoleRenderer.cs" />
     <Compile Include="ConsoleRenderers\ToStringConsoleRenderer.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

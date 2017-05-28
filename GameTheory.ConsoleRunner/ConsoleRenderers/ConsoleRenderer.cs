@@ -7,6 +7,11 @@ namespace GameTheory.ConsoleRunner.ConsoleRenderers
         internal static IConsoleRenderer<TMove> Default<TMove>()
             where TMove : IMove
         {
+            if (typeof(TMove) == typeof(Games.Splendor.Move))
+            {
+                return (IConsoleRenderer<TMove>)new SplendorConsoleRenderer();
+            }
+
             return new ToStringConsoleRenderer<TMove>();
         }
     }
