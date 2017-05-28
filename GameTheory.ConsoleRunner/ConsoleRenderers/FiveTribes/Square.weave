@@ -1,0 +1,9 @@
+﻿@model Square
+{{= model.Tile.Color}} {{= model.Tile.GetType().Name}} +{{= model.Tile.Value}}{{if model.Owner != null}} ({{= this.state.GetPlayerName(model.Owner)}}){{/if}}
+{{= model.Meeples}}
+{{if model.Palaces > 0}}
+  {{= model.Palaces}}×Palace
+{{/if}}
+{{if model.PalmTrees > 0}}
+  {{= model.PalmTrees}}×Palm Tree
+{{/if}}

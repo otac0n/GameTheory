@@ -1,0 +1,22 @@
+﻿@model GameState
+{{if model.Phase == Phase.Bid || model.Phase == Phase.MoveTurnMarker}}
+  Bid Order Track:
+    {{each token in model.BidOrderTrack}}
+      {{= model.GetPlayerName(token)}}
+    {{/each}}
+{{/if}}
+Turn Order Track:
+  {{each i in Enumerable.Range(0, model.TurnOrderTrack.Count)}}
+    {{ var token = model.TurnOrderTrack[i]; }}
+    {{if token != null || model.Phase == Phase.Bid || model.Phase == Phase.MoveTurnMarker}}
+      {{= GameState.TurnOrderTrackCosts[i]}}:{{if token != null}} {{= model.GetPlayerName(token)}}{{/if}}
+    {{/if}}
+  {{/each}}
+Resources: [remaining: {{= model.ResourcePile.Count}}]
+  {{each resource in model.VisibleResources}}{{= resource}}{{delimit}} {{/each}}
+Djinns: [remaining: {{= model.DjinnPile.Count}}]
+  {{each djinn in model.VisibleDjinns}}
+    {{= djinn}}
+  {{/each}}
+Sultanate:
+  {{@RenderSultanate model.Sultanate}}

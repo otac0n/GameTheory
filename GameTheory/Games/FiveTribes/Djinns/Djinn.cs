@@ -97,9 +97,6 @@ namespace GameTheory.Games.FiveTribes.Djinns
         }
 
         /// <inheritdoc />
-        public override string ToString()
-        {
-            return this.Name;
-        }
+        public override string ToString() => $"{this.Name} +{this.Value}";
     }
 }

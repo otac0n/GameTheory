@@ -1,0 +1,33 @@
+﻿@model ImmutableList<Square>
+{{
+    var columns = Enumerable.Range(0, Sultanate.Width);
+    var rows = Enumerable.Range(0, Sultanate.Height);
+
+    var allSquares = model.Select(square =>
+    {
+        var sw = new StringWriter();
+        this.RenderSquare(square, sw);
+        return Regex.Split(sw.ToString().TrimEnd(), @"\r\n?|\n");
+    }).ToList();
+    string text(int column, int row, int index)
+    {
+        var lines = allSquares[new Point(column, row)];
+        return lines.Length > index ? lines[index] : null;
+    }
+
+    var cw = columns.Select(c => rows.Max(r => allSquares[new Point(c, r)].Max(l => l.Length))).ToList();
+    var rh = rows.Select(r => columns.Max(c => allSquares[new Point(c, r)].Length)).ToList();
+    string pad(int column, char padding, string value = null)
+    {
+        return (value ?? "").PadRight(cw[column], padding);
+    }
+}}
+┌{{each c in columns}}{{= pad(c, '─')}}{{delimit}}┬{{/each}}┐
+{{each r in rows}}
+  {{each i in Enumerable.Range(0, rh[r])}}
+    │{{each c in columns}}{{= pad(c, ' ', text(c, r, i))}}{{delimit}}│{{/each}}│
+  {{/each}}
+{{delimit}}
+  ├{{each c in columns}}{{= pad(c, '─')}}{{delimit}}┼{{/each}}┤
+{{/each}}
+└{{each c in columns}}{{= pad(c, '─')}}{{delimit}}┴{{/each}}┘

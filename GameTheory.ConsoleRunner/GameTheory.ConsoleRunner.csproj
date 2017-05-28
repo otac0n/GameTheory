@@ -62,7 +62,9 @@
     <Compile Include="ConsoleInteraction.cs" />
     <Compile Include="ConsolePlayer.cs" />
     <Compile Include="ConsoleRenderers\ConsoleRenderer.cs" />
+    <Compile Include="ConsoleRenderers\FiveTribes\Templates.cs" />
     <Compile Include="ConsoleRenderers\IConsoleRenderer.cs" />
+    <Compile Include="ConsoleRenderers\FiveTribesConsoleRenderer.cs" />
     <Compile Include="ConsoleRenderers\SplendorConsoleRenderer.cs" />
     <Compile Include="ConsoleRenderers\Splendor\Templates.cs" />
     <Compile Include="ConsoleRenderers\ToStringConsoleRenderer.cs" />
@@ -83,6 +85,10 @@
     </AdditionalFiles>
     <None Include="App.config" />
     <WeaveTemplate Include="ConsoleRenderers\Splendor\GameState.weave" />
+    <WeaveTemplate Include="ConsoleRenderers\FiveTribes\GameState.weave" />
+    <WeaveTemplate Include="ConsoleRenderers\FiveTribes\Square.weave" />
+    <WeaveTemplate Include="ConsoleRenderers\FiveTribes\Sultanate.weave" />
+    <None Include="ConsoleRenderers\FiveTribes\_config.weave" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
