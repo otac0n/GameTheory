@@ -33,10 +33,15 @@ namespace GameTheory.Games.Splendor
 
         internal virtual GameState Apply(GameState state)
         {
-            // TODO: Make players discard down to 10 coins.
+            var transitionState = Moves.DiscardTokensMove.GenerateTransitionState(state);
+            if (transitionState != state)
+            {
+                return transitionState;
+            }
+
             if (this.GetType() != typeof(Moves.ChooseNobleMove))
             {
-                var transitionState = Moves.ChooseNobleMove.GenerateTransitionState(state);
+                transitionState = Moves.ChooseNobleMove.GenerateTransitionState(state);
                 if (transitionState != state)
                 {
                     return transitionState;
