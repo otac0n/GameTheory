@@ -31,10 +31,7 @@ namespace GameTheory.Games.FiveTribes.Moves
         }
 
         /// <inheritdoc />
-        public override string ToString()
-        {
-            return $"Score {string.Join(",", this.State.InHand)}";
-        }
+        public override string ToString() => $"Score {this.State.InHand}";
 
         internal override GameState Apply(GameState state)
         {

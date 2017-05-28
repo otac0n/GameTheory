@@ -10,7 +10,6 @@ namespace GameTheory.Games.FiveTribes.Moves
     public class PayMeeplesMove : Move
     {
         private readonly Func<GameState, GameState> after;
-        private readonly EnumCollection<Meeple> meeples;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PayMeeplesMove"/> class.
@@ -33,22 +32,16 @@ namespace GameTheory.Games.FiveTribes.Moves
             : base(state)
         {
             this.after = after;
-            this.meeples = meeples;
+            this.Meeples = meeples;
         }
 
         /// <summary>
         /// Gets the cost, in <see cref="Meeple">Meeples</see>.
         /// </summary>
-        public EnumCollection<Meeple> Meeples
-        {
-            get { return this.meeples; }
-        }
+        public EnumCollection<Meeple> Meeples { get; }
 
         /// <inheritdoc />
-        public override string ToString()
-        {
-            return $"Pay {string.Join(",", this.meeples)}";
-        }
+        public override string ToString() => $"Pay {this.Meeples}";
 
         internal override GameState Apply(GameState state)
         {
@@ -56,8 +49,8 @@ namespace GameTheory.Games.FiveTribes.Moves
             var inventory = state.Inventory[player];
 
             return this.after(state.With(
-                bag: state.Bag.AddRange(this.meeples),
-                inventory: state.Inventory.SetItem(player, inventory.With(meeples: inventory.Meeples.RemoveRange(this.meeples)))));
+                bag: state.Bag.AddRange(this.Meeples),
+                inventory: state.Inventory.SetItem(player, inventory.With(meeples: inventory.Meeples.RemoveRange(this.Meeples)))));
         }
     }
 }

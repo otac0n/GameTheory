@@ -7,8 +7,6 @@ namespace GameTheory.Games.FiveTribes.Moves
     /// </summary>
     public class SellMerchandiseMove : Move
     {
-        private readonly EnumCollection<Resource> resources;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="SellMerchandiseMove"/> class.
         /// </summary>
@@ -17,30 +15,24 @@ namespace GameTheory.Games.FiveTribes.Moves
         public SellMerchandiseMove(GameState state, EnumCollection<Resource> resources)
             : base(state)
         {
-            this.resources = resources;
+            this.Resources = resources;
         }
 
         /// <summary>
         /// Gets the <see cref="Resource">Resources</see> being sold.
         /// </summary>
-        public EnumCollection<Resource> Resources
-        {
-            get { return this.resources; }
-        }
+        public EnumCollection<Resource> Resources { get; }
 
         /// <summary>
         /// Gets the value of the <see cref="Resource">Resources</see> being sold, in Gold Coins (GC).
         /// </summary>
         public int Value
         {
-            get { return GameState.ScoreResources(this.resources); }
+            get { return GameState.ScoreResources(this.Resources); }
         }
 
         /// <inheritdoc />
-        public override string ToString()
-        {
-            return $"Trade {string.Join(",", this.resources)} for {GameState.SuitValues[this.resources.Count]}";
-        }
+        public override string ToString() => $"Trade {this.Resources} for {GameState.SuitValues[this.Resources.Count]}";
 
         internal override GameState Apply(GameState state)
         {
@@ -48,8 +40,8 @@ namespace GameTheory.Games.FiveTribes.Moves
             var inventory = state.Inventory[player];
 
             return state.With(
-                inventory: state.Inventory.SetItem(player, inventory.With(resources: inventory.Resources.RemoveRange(this.resources), goldCoins: inventory.GoldCoins + this.Value)),
-                resourceDiscards: state.ResourceDiscards.AddRange(this.resources));
+                inventory: state.Inventory.SetItem(player, inventory.With(resources: inventory.Resources.RemoveRange(this.Resources), goldCoins: inventory.GoldCoins + this.Value)),
+                resourceDiscards: state.ResourceDiscards.AddRange(this.Resources));
         }
     }
 }

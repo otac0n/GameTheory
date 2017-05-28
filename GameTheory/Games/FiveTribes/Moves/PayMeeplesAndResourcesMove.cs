@@ -11,8 +11,6 @@ namespace GameTheory.Games.FiveTribes.Moves
     public class PayMeeplesAndResourcesMove : Move
     {
         private readonly Func<GameState, GameState> after;
-        private readonly EnumCollection<Meeple> meeples;
-        private readonly EnumCollection<Resource> resources;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PayMeeplesAndResourcesMove"/> class.
@@ -37,31 +35,22 @@ namespace GameTheory.Games.FiveTribes.Moves
             : base(state)
         {
             this.after = after;
-            this.meeples = meeples;
-            this.resources = resources;
+            this.Meeples = meeples;
+            this.Resources = resources;
         }
 
         /// <summary>
         /// Gets the <see cref="Meeple"/> portion of the cost.
         /// </summary>
-        public EnumCollection<Meeple> Meeples
-        {
-            get { return this.meeples; }
-        }
+        public EnumCollection<Meeple> Meeples { get; }
 
         /// <summary>
         /// Gets the <see cref="Resource"/> portion of the cost.
         /// </summary>
-        public EnumCollection<Resource> Resources
-        {
-            get { return this.resources; }
-        }
+        public EnumCollection<Resource> Resources { get; }
 
         /// <inheritdoc />
-        public override string ToString()
-        {
-            return $"Pay {string.Join(",", this.meeples.Cast<object>().Concat(this.resources.Cast<object>()))}";
-        }
+        public override string ToString() => $"Pay {this.Meeples}{(this.Meeples.Count > 0 && this.Resources.Count > 0 ? ", " : string.Empty)}{this.Resources}";
 
         internal override GameState Apply(GameState state)
         {
@@ -69,9 +58,9 @@ namespace GameTheory.Games.FiveTribes.Moves
             var inventory = state.Inventory[player];
 
             return this.after(state.With(
-                bag: state.Bag.AddRange(this.meeples),
-                inventory: state.Inventory.SetItem(player, inventory.With(meeples: inventory.Meeples.RemoveRange(this.meeples), resources: inventory.Resources.RemoveRange(this.resources))),
-                resourceDiscards: state.ResourceDiscards.AddRange(this.resources)));
+                bag: state.Bag.AddRange(this.Meeples),
+                inventory: state.Inventory.SetItem(player, inventory.With(meeples: inventory.Meeples.RemoveRange(this.Meeples), resources: inventory.Resources.RemoveRange(this.Resources))),
+                resourceDiscards: state.ResourceDiscards.AddRange(this.Resources)));
         }
     }
 }

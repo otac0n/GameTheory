@@ -10,8 +10,6 @@ namespace GameTheory.Games.FiveTribes.Moves
     public class AssassinatePlayerMove : Move
     {
         private readonly Func<GameState, GameState> after;
-        private readonly EnumCollection<Meeple> meeples;
-        private readonly PlayerToken victim;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AssassinatePlayerMove"/> class.
@@ -24,45 +22,36 @@ namespace GameTheory.Games.FiveTribes.Moves
             : base(state)
         {
             this.after = after;
-            this.meeples = meeples;
-            this.victim = victim;
+            this.Meeples = meeples;
+            this.Victim = victim;
         }
 
         /// <summary>
         /// Gets the <see cref="Meeple">Meeples</see> that will be assassinated.
         /// </summary>
-        public EnumCollection<Meeple> Meeples
-        {
-            get { return this.meeples; }
-        }
+        public EnumCollection<Meeple> Meeples { get; }
 
         /// <summary>
         /// Gets the <see cref="PlayerToken"/> whose <see cref="Meeple">Meeples</see> will be assassinated.
         /// </summary>
-        public PlayerToken Victim
-        {
-            get { return this.victim; }
-        }
+        public PlayerToken Victim { get; }
 
         /// <inheritdoc />
-        public override string ToString()
-        {
-            return $"Assassinate {this.victim}'s {string.Join(",", this.meeples)}";
-        }
+        public override string ToString() => $"Assassinate {this.Victim}'s {this.Meeples}";
 
         internal override GameState Apply(GameState state)
         {
-            var inventory = state.Inventory[this.victim];
+            var inventory = state.Inventory[this.Victim];
             var newState = state.With(
-                bag: state.Bag.AddRange(state.InHand).AddRange(this.meeples),
+                bag: state.Bag.AddRange(state.InHand).AddRange(this.Meeples),
                 inHand: EnumCollection<Meeple>.Empty,
-                inventory: state.Inventory.SetItem(this.victim, inventory.With(meeples: inventory.Meeples.RemoveRange(this.meeples))));
+                inventory: state.Inventory.SetItem(this.Victim, inventory.With(meeples: inventory.Meeples.RemoveRange(this.Meeples))));
 
             foreach (var owner in newState.Players)
             {
                 foreach (var djinn in newState.Inventory[owner].Djinns)
                 {
-                    newState = djinn.HandleAssassination(owner, newState, this.victim, this.meeples);
+                    newState = djinn.HandleAssassination(owner, newState, this.Victim, this.Meeples);
                 }
             }
 

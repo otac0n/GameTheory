@@ -10,7 +10,6 @@ namespace GameTheory.Games.FiveTribes.Moves
     public class PayResourcesMove : Move
     {
         private readonly Func<GameState, GameState> after;
-        private readonly EnumCollection<Resource> resources;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PayResourcesMove"/> class.
@@ -33,22 +32,16 @@ namespace GameTheory.Games.FiveTribes.Moves
             : base(state)
         {
             this.after = after;
-            this.resources = resources;
+            this.Resources = resources;
         }
 
         /// <summary>
         /// Gets the cost, in <see cref="Resource">Resources</see>.
         /// </summary>
-        public EnumCollection<Resource> Resources
-        {
-            get { return this.resources; }
-        }
+        public EnumCollection<Resource> Resources { get; }
 
         /// <inheritdoc />
-        public override string ToString()
-        {
-            return $"Pay {string.Join(",", this.resources)}";
-        }
+        public override string ToString() => $"Pay {this.Resources}";
 
         internal override GameState Apply(GameState state)
         {
@@ -56,8 +49,8 @@ namespace GameTheory.Games.FiveTribes.Moves
             var inventory = state.Inventory[player];
 
             return this.after(state.With(
-                inventory: state.Inventory.SetItem(player, inventory.With(resources: inventory.Resources.RemoveRange(this.resources))),
-                resourceDiscards: state.ResourceDiscards.AddRange(this.resources)));
+                inventory: state.Inventory.SetItem(player, inventory.With(resources: inventory.Resources.RemoveRange(this.Resources))),
+                resourceDiscards: state.ResourceDiscards.AddRange(this.Resources)));
         }
     }
 }
