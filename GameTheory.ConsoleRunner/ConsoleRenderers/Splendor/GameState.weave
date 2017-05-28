@@ -1,0 +1,51 @@
+﻿@using System.Linq
+@using GameTheory.Games.Splendor
+@namespace GameTheory.ConsoleRunner.ConsoleRenderers.Splendor
+@static false
+@model GameState
+{{if model.Nobles.Count > 0}}
+  Nobles:
+    {{each noble in model.Nobles}}
+      [requires: {{= noble.RequiredBonuses}}]
+    {{/each}}
+
+{{/if}}
+{{each tr in Enumerable.Range(1, model.DevelopmentTracks.Length).Reverse()}}
+  {{ var track = model.DevelopmentTracks[tr - 1]; }}
+  Track {{= tr}}: [remaining: {{= track.Length}}]
+    {{each card in track}}
+      {{if card == null}}
+        [empty]
+      {{else}}
+        {{= card}} [cost: {{= card.Cost}}]
+      {{/if}}
+    {{/each}}
+{{/each}}
+
+Available Tokens:
+  {{= model.Tokens}}
+
+{{if this.playerToken != null}}
+  {{ var inventory = model.Inventory[playerToken]; }}
+  {{= model.GetPlayerName(playerToken)}} Inventory:
+    Prestige: {{= model.GetScore(playerToken)}}
+    {{if inventory.Nobles.Count > 0}}
+       Nobles: {{= inventory.Nobles.Count}} [bonus: {{= inventory.Nobles.Count * Noble.PrestigeBonus}}]
+    {{/if}}
+    {{if inventory.Tokens.Count > 0}}
+      Tokens: {{= inventory.Tokens}}
+    {{/if}}
+    {{if inventory.Hand.Count > 0}}
+      Hand:
+        {{each card in inventory.Hand}}
+          {{= card}} [cost: {{= card.Cost}}]
+        {{/each}}
+    {{/if}}
+    {{if inventory.DevelopmentCards.Count > 0}}
+      Development Cards:
+        {{each card in inventory.DevelopmentCards.OrderBy(c => c.Bonus).ThenByDescending(c => c.Prestige)}}
+          {{= card}}
+        {{/each}}
+    {{/if}}
+
+{{/if}}

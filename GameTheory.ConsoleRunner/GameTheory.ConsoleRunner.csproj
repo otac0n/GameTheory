@@ -64,6 +64,7 @@
     <Compile Include="ConsoleRenderers\ConsoleRenderer.cs" />
     <Compile Include="ConsoleRenderers\IConsoleRenderer.cs" />
     <Compile Include="ConsoleRenderers\SplendorConsoleRenderer.cs" />
+    <Compile Include="ConsoleRenderers\Splendor\Templates.cs" />
     <Compile Include="ConsoleRenderers\ToStringConsoleRenderer.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -81,6 +82,7 @@
       <Link>stylecop.json</Link>
     </AdditionalFiles>
     <None Include="App.config" />
+    <WeaveTemplate Include="ConsoleRenderers\Splendor\GameState.weave" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -108,5 +110,7 @@
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\FixMe.0.1.0\build\FixMe.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\FixMe.0.1.0\build\FixMe.targets'))" />
+    <Error Condition="!Exists('..\packages\Weave.2.0.0\build\Weave.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Weave.2.0.0\build\Weave.targets'))" />
   </Target>
+  <Import Project="..\packages\Weave.2.0.0\build\Weave.targets" Condition="Exists('..\packages\Weave.2.0.0\build\Weave.targets')" />
 </Project>
