@@ -7,6 +7,7 @@ namespace GameTheory.ConsoleRunner
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
+    using GameTheory.ConsoleRunner.ConsoleRenderers;
     using GameTheory.ConsoleRunner.Properties;
 
     /// <summary>
@@ -26,6 +27,7 @@ namespace GameTheory.ConsoleRunner
         }.AsReadOnly();
 
         private static readonly object Sync = new object();
+        private readonly IConsoleRenderer<TMove> renderer;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ConsolePlayer{TMove}"/> class.
@@ -34,6 +36,7 @@ namespace GameTheory.ConsoleRunner
         public ConsolePlayer(PlayerToken playerToken)
         {
             this.PlayerToken = playerToken;
+            this.renderer = ConsoleRenderer.Default<TMove>();
         }
 
         /// <inheritdoc />
@@ -55,7 +58,7 @@ namespace GameTheory.ConsoleRunner
                         Console.ForegroundColor = GetColor(state, this.PlayerToken);
                         cancel.ThrowIfCancellationRequested();
                         Console.WriteLine(Resources.CurrentState);
-                        Console.WriteLine(state);
+                        this.renderer.Show(this.PlayerToken, state);
                         return new Maybe<TMove>(ConsoleInteraction.Choose(moves.ToArray(), cancel));
                     }
                     finally
