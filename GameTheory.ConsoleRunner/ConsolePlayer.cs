@@ -58,7 +58,7 @@ namespace GameTheory.ConsoleRunner
                         Console.ForegroundColor = GetColor(state, this.PlayerToken);
                         cancel.ThrowIfCancellationRequested();
                         Console.WriteLine(Resources.CurrentState);
-                        this.renderer.Show(this.PlayerToken, state);
+                        this.renderer.Show(state, this.PlayerToken);
                         return new Maybe<TMove>(ConsoleInteraction.Choose(moves.ToArray(), cancel));
                     }
                     finally

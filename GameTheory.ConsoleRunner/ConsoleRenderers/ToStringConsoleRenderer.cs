@@ -7,7 +7,7 @@ namespace GameTheory.ConsoleRunner.ConsoleRenderers
     internal class ToStringConsoleRenderer<TMove> : IConsoleRenderer<TMove>
         where TMove : IMove
     {
-        public void Show(PlayerToken playerToken, IGameState<TMove> state)
+        public void Show(IGameState<TMove> state, PlayerToken playerToken)
         {
             Console.WriteLine(state);
         }
