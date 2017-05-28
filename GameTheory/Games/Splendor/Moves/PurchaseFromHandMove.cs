@@ -2,12 +2,11 @@
 
 namespace GameTheory.Games.Splendor.Moves
 {
-    using System;
     using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
 
+    /// <summary>
+    /// Represents a move to purchase a development card from the player's hand.
+    /// </summary>
     public class PurchaseFromHandMove : Move
     {
         /// <summary>

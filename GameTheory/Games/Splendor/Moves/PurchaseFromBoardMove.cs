@@ -2,13 +2,11 @@
 
 namespace GameTheory.Games.Splendor.Moves
 {
-    using System;
     using System.Collections.Generic;
-    using System.Collections.Immutable;
     using System.Linq;
 
     /// <summary>
-    /// Represents a move to reserve a development card from the board or the player's hand.
+    /// Represents a move to purchase a development card from the board.
     /// </summary>
     public class PurchaseFromBoardMove : Move
     {

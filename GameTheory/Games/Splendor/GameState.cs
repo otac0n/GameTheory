@@ -265,10 +265,8 @@ namespace GameTheory.Games.Splendor
             if (this.phase != Phase.End && player == this.activePlayer)
             {
                 moves.AddRange(Moves.TakeTokensMove.GenerateMoves(this));
-
-                // TODO: Reserve from stack.
+                moves.AddRange(Moves.ReserveFromDeckMove.GenerateMoves(this));
                 moves.AddRange(Moves.ReserveFromBoardMove.GenerateMoves(this));
-
                 moves.AddRange(Moves.PurchaseFromHandMove.GenerateMoves(this));
                 moves.AddRange(Moves.PurchaseFromBoardMove.GenerateMoves(this));
             }

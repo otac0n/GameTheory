@@ -3,9 +3,11 @@
 namespace GameTheory.ConsoleRunner.ConsoleRenderers
 {
     using System;
-    using System.Linq;
     using Games.Splendor;
 
+    /// <summary>
+    /// Implements a console renderer for the game of <see cref="GameState">Splendor</see>.
+    /// </summary>
     public class SplendorConsoleRenderer : IConsoleRenderer<Move>
     {
         /// <inheritdoc />
