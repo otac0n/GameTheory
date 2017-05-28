@@ -26,7 +26,7 @@ namespace GameTheory.Games.FiveTribes.Tiles
             if (state.VisibleDjinns.Count >= 1)
             {
                 var moves = Cost.OneElderPlusOneElderOrOneSlave(state, s => s, s1 => from i in Enumerable.Range(0, s1.VisibleDjinns.Count)
-                                                                                     select new TakeDjinnMove(s1, i, s2 => s2.With(phase: Phase.CleanUp)));
+                                                                                     select new TakeDjinnMove(s1, i, s2 => s2.With(phase: Phase.MerchandiseSale)));
 
                 foreach (var move in moves)
                 {

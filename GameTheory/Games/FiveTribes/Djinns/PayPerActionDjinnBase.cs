@@ -49,7 +49,7 @@ namespace GameTheory.Games.FiveTribes.Djinns
                 throw new ArgumentNullException(nameof(newState));
             }
 
-            if (oldState.Phase == Phase.CleanUp && newState.Phase == Phase.Bid && newState[this.stateKey] != null)
+            if (oldState.Phase == Phase.MerchandiseSale && newState.Phase == Phase.Bid && newState[this.stateKey] != null)
             {
                 newState = this.CleanUp(newState.WithState(this.stateKey, null));
             }
@@ -78,7 +78,7 @@ namespace GameTheory.Games.FiveTribes.Djinns
                     case Phase.TileControlCheck:
                     case Phase.TribesAction:
                     case Phase.TileAction:
-                    case Phase.CleanUp:
+                    case Phase.MerchandiseSale:
                         return state.Inventory[state.ActivePlayer].Djinns.Contains(this);
                 }
             }

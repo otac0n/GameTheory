@@ -525,12 +525,10 @@ namespace GameTheory.Games.FiveTribes
                             moves.AddRange(this.GetTileActionMoves());
                             break;
 
-                        case Phase.CleanUp:
-                            moves.AddRange(this.GetCleanUpMoves());
+                        case Phase.MerchandiseSale:
+                            moves.AddRange(this.GetMerchandiseSaleMoves());
                             break;
                     }
-
-                    moves.AddRange(this.GetMerchandiseSaleMoves());
                 }
 
                 foreach (var djinn in this.inventory[playerToken].Djinns)
@@ -841,11 +839,6 @@ namespace GameTheory.Games.FiveTribes
             }
         }
 
-        private IEnumerable<Move> GetCleanUpMoves()
-        {
-            yield return new EndTurnMove(this);
-        }
-
         private IEnumerable<Move> GetMerchandiseSaleMoves()
         {
             var keys = this.inventory[this.ActivePlayer].Resources.Keys.ToImmutableList().RemoveAll(r => r == Resource.Slave);
@@ -856,6 +849,8 @@ namespace GameTheory.Games.FiveTribes
 
                 yield return new SellMerchandiseMove(this, resources);
             }
+
+            yield return new EndTurnMove(this);
         }
 
         private IEnumerable<Move> GetMoveMeeplesMoves()
@@ -886,7 +881,7 @@ namespace GameTheory.Games.FiveTribes
 
             if (!any)
             {
-                yield return new ChangePhaseMove(this, "Skip move", Phase.CleanUp);
+                yield return new ChangePhaseMove(this, "Skip move", Phase.MerchandiseSale);
             }
         }
 

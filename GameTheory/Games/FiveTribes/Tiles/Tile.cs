@@ -47,7 +47,7 @@ namespace GameTheory.Games.FiveTribes.Tiles
         /// <returns>The <see cref="Move">Moves</see> provided by the <see cref="Tile"/>.</returns>
         public virtual IEnumerable<Move> GetTileActionMoves(GameState state)
         {
-            yield return new ChangePhaseMove(state, "Skip Tile Action", Phase.CleanUp);
+            yield return new ChangePhaseMove(state, "Skip Tile Action", Phase.MerchandiseSale);
         }
     }
 }

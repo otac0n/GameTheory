@@ -47,7 +47,7 @@ namespace GameTheory.Games.FiveTribes
         /// <summary>
         /// Merchandise Sale (Optional) and Clean Up, Phase 2.6 and 3.
         /// </summary>
-        CleanUp,
+        MerchandiseSale,
 
         /// <summary>
         /// End of the game.

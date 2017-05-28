@@ -38,7 +38,7 @@ namespace GameTheory.Games.FiveTribes.Tiles
             if (state.VisibleResources.Count >= 1)
             {
                 var moves = Cost.Gold(state, Gold, s => s, s1 => from i in Enumerable.Range(0, Math.Min(FirstN, s1.VisibleResources.Count))
-                                                                 select new TakeResourceMove(s1, i, s2 => s2.With(phase: Phase.CleanUp)));
+                                                                 select new TakeResourceMove(s1, i, s2 => s2.With(phase: Phase.MerchandiseSale)));
 
                 foreach (var m in moves)
                 {

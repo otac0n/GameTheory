@@ -44,12 +44,12 @@ namespace GameTheory.Games.FiveTribes.Tiles
                                                                      {
                                                                          return s2.WithMoves(s3 => Enumerable.Concat(
                                                                              from j in Enumerable.Range(0, Math.Min(FirstN - 1, s3.VisibleResources.Count))
-                                                                             select new TakeResourceMove(s3, j, s4 => s4.With(phase: Phase.CleanUp)),
-                                                                             new Move[] { new ChangePhaseMove(s3, "Skip second resource", Phase.CleanUp) }));
+                                                                             select new TakeResourceMove(s3, j, s4 => s4.With(phase: Phase.MerchandiseSale)),
+                                                                             new Move[] { new ChangePhaseMove(s3, "Skip second resource", Phase.MerchandiseSale) }));
                                                                      }
                                                                      else
                                                                      {
-                                                                         return s2.With(phase: Phase.CleanUp);
+                                                                         return s2.With(phase: Phase.MerchandiseSale);
                                                                      }
                                                                  }));
 
