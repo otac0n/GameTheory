@@ -3,6 +3,7 @@
 namespace GameTheory.Games.Splendor
 {
     using System;
+    using System.Collections.Immutable;
     using System.Linq;
 
     /// <summary>
@@ -32,7 +33,16 @@ namespace GameTheory.Games.Splendor
 
         internal virtual GameState Apply(GameState state)
         {
-            // TODO: Implement transition moves for handling nobles and discarding tokens down to 10.
+            // TODO: Make players discard down to 10 coins.
+            if (this.GetType() != typeof(Moves.ChooseNobleMove))
+            {
+                var transitionState = Moves.ChooseNobleMove.GenerateTransitionState(state);
+                if (transitionState != state)
+                {
+                    return transitionState;
+                }
+            }
+
             state = state.With(
                 activePlayer: state.Players[(state.Players.IndexOf(state.ActivePlayer) + 1) % state.Players.Count]);
 

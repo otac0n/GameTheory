@@ -6,6 +6,7 @@ namespace GameTheory.Games.Splendor
     using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Linq;
+    using System.Threading;
 
     /// <summary>
     /// Represents the current state of a game of Splendor.
@@ -50,6 +51,8 @@ namespace GameTheory.Games.Splendor
         private readonly Phase phase;
         private readonly ImmutableList<PlayerToken> players;
         private readonly EnumCollection<Token> tokens;
+        private readonly Func<GameState, IEnumerable<Move>> subsequentMovesFactory;
+        private readonly Lazy<ImmutableList<Move>> subsequentMoves;
 
         static GameState()
         {
@@ -208,7 +211,9 @@ namespace GameTheory.Games.Splendor
             ImmutableList<Noble> nobles,
             ImmutableDictionary<PlayerToken, Inventory> inventory,
             ImmutableArray<ImmutableList<DevelopmentCard>> developmentDecks,
-            ImmutableArray<ImmutableArray<DevelopmentCard>> developmentTracks)
+            ImmutableArray<ImmutableArray<DevelopmentCard>> developmentTracks,
+            Func<GameState, IEnumerable<Move>> subsequentMovesFactory)
+            : this(subsequentMovesFactory)
         {
             this.players = players;
             this.activePlayer = activePlayer;
@@ -218,6 +223,12 @@ namespace GameTheory.Games.Splendor
             this.inventory = inventory;
             this.developmentDecks = developmentDecks;
             this.developmentTracks = developmentTracks;
+        }
+
+        private GameState(Func<GameState, IEnumerable<Move>> subsequentMovesFactory)
+        {
+            this.subsequentMovesFactory = subsequentMovesFactory;
+            this.subsequentMoves = subsequentMovesFactory == null ? null : new Lazy<ImmutableList<Move>>(() => this.subsequentMovesFactory(this).ToImmutableList(), LazyThreadSafetyMode.ExecutionAndPublication);
         }
 
         /// <summary>
@@ -262,13 +273,20 @@ namespace GameTheory.Games.Splendor
         {
             var moves = new List<Move>();
 
-            if (this.phase != Phase.End && player == this.activePlayer)
+            if (this.subsequentMovesFactory != null)
             {
-                moves.AddRange(Moves.TakeTokensMove.GenerateMoves(this));
-                moves.AddRange(Moves.ReserveFromDeckMove.GenerateMoves(this));
-                moves.AddRange(Moves.ReserveFromBoardMove.GenerateMoves(this));
-                moves.AddRange(Moves.PurchaseFromHandMove.GenerateMoves(this));
-                moves.AddRange(Moves.PurchaseFromBoardMove.GenerateMoves(this));
+                moves.AddRange(this.subsequentMoves.Value.Where(p => p.PlayerToken == player));
+            }
+            else
+            {
+                if (this.phase != Phase.End && player == this.activePlayer)
+                {
+                    moves.AddRange(Moves.TakeTokensMove.GenerateMoves(this));
+                    moves.AddRange(Moves.ReserveFromDeckMove.GenerateMoves(this));
+                    moves.AddRange(Moves.ReserveFromBoardMove.GenerateMoves(this));
+                    moves.AddRange(Moves.PurchaseFromHandMove.GenerateMoves(this));
+                    moves.AddRange(Moves.PurchaseFromBoardMove.GenerateMoves(this));
+                }
             }
 
             return moves.ToImmutableList();
@@ -351,7 +369,27 @@ namespace GameTheory.Games.Splendor
                 nobles ?? this.nobles,
                 inventory ?? this.inventory,
                 developmentDecks ?? this.developmentDecks,
-                developmentTracks ?? this.developmentTracks);
+                developmentTracks ?? this.developmentTracks,
+                null);
+        }
+
+        internal GameState WithMoves(Func<GameState, Move> subsequentMoves)
+        {
+            return this.WithMoves(s => new[] { subsequentMoves(s) });
+        }
+
+        internal GameState WithMoves(Func<GameState, IEnumerable<Move>> subsequentMoves)
+        {
+            return new GameState(
+                this.players,
+                this.activePlayer,
+                this.phase,
+                this.tokens,
+                this.nobles,
+                this.inventory,
+                this.developmentDecks,
+                this.developmentTracks,
+                subsequentMoves);
         }
     }
 }

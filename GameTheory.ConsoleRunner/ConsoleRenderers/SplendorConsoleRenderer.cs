@@ -3,6 +3,7 @@
 namespace GameTheory.ConsoleRunner.ConsoleRenderers
 {
     using System;
+    using System.Linq;
     using Games.Splendor;
 
     /// <summary>
@@ -63,9 +64,9 @@ namespace GameTheory.ConsoleRunner.ConsoleRenderers
             if (inventory.DevelopmentCards.Count > 0)
             {
                 Console.WriteLine("  Development Cards:");
-                foreach (var card in inventory.DevelopmentCards)
+                foreach (var card in inventory.DevelopmentCards.OrderBy(c => c.Bonus).ThenByDescending(c => c.Prestige))
                 {
-                    Console.Write("    {0}", card);
+                    Console.WriteLine("    {0}", card);
                 }
             }
 

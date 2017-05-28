@@ -234,7 +234,7 @@ namespace GameTheory.Games.FiveTribes
         private GameState(Func<GameState, IEnumerable<Move>> subsequentMovesFactory)
         {
             this.subsequentMovesFactory = subsequentMovesFactory;
-            this.subsequentMoves = new Lazy<ImmutableList<Move>>(() => this.subsequentMovesFactory(this).ToImmutableList(), LazyThreadSafetyMode.ExecutionAndPublication);
+            this.subsequentMoves = subsequentMovesFactory == null ? null : new Lazy<ImmutableList<Move>>(() => this.subsequentMovesFactory(this).ToImmutableList(), LazyThreadSafetyMode.ExecutionAndPublication);
         }
 
         /// <summary>
