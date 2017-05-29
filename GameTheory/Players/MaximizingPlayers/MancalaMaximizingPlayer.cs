@@ -38,25 +38,7 @@ namespace GameTheory.Players.MaximizingPlayers
             public double Score(IGameState<Move> state, PlayerToken playerToken)
             {
                 var gameState = (GameState)state;
-                var sum = 0D;
-                var playerOffset = gameState.GetPlayerIndexOffset(playerToken);
-                var binsPerSide = gameState.BinsPerSide;
-                var discountThreshold = binsPerSide;
-                var discountFactor = 0.5D;
-                for (var i = 0; i <= binsPerSide; i++)
-                {
-                    var value = gameState.Board[i + playerOffset];
-                    if (i == binsPerSide || value < discountThreshold)
-                    {
-                        sum += value;
-                    }
-                    else
-                    {
-                        sum += discountThreshold + (value - discountThreshold) * discountFactor;
-                    }
-                }
-
-                return sum;
+                return gameState.Board[gameState.GetPlayerIndexOffset(playerToken) + gameState.BinsPerSide];
             }
         }
     }
