@@ -482,65 +482,67 @@ namespace GameTheory.Games.FiveTribes
         }
 
         /// <inheritdoc />
-        public IReadOnlyCollection<Move> GetAvailableMoves(PlayerToken playerToken)
+        public IReadOnlyCollection<Move> GetAvailableMoves()
         {
             var moves = new List<Move>();
 
             if (this.subsequentMovesFactory != null)
             {
-                moves.AddRange(this.subsequentMoves.Value.Where(p => p.PlayerToken == playerToken));
+                moves.AddRange(this.subsequentMoves.Value);
             }
             else
             {
-                var activePlayer = this.ActivePlayer;
-                if (playerToken == activePlayer)
+                switch (this.phase)
                 {
-                    switch (this.phase)
-                    {
-                        case Phase.Bid:
-                            moves.AddRange(this.GetBidMoves());
-                            break;
+                    case Phase.Bid:
+                        moves.AddRange(this.GetBidMoves());
+                        break;
 
-                        case Phase.MoveTurnMarker:
-                            moves.AddRange(this.GetMoveTurnMarkerMoves());
-                            break;
+                    case Phase.MoveTurnMarker:
+                        moves.AddRange(this.GetMoveTurnMarkerMoves());
+                        break;
 
-                        case Phase.PickUpMeeples:
-                            moves.AddRange(this.GetPickUpMeeplesMoves());
-                            break;
+                    case Phase.PickUpMeeples:
+                        moves.AddRange(this.GetPickUpMeeplesMoves());
+                        break;
 
-                        case Phase.MoveMeeples:
-                            moves.AddRange(this.GetMoveMeeplesMoves());
-                            break;
+                    case Phase.MoveMeeples:
+                        moves.AddRange(this.GetMoveMeeplesMoves());
+                        break;
 
-                        case Phase.TileControlCheck:
-                            moves.AddRange(this.GetTileControlCheckMoves());
-                            break;
+                    case Phase.TileControlCheck:
+                        moves.AddRange(this.GetTileControlCheckMoves());
+                        break;
 
-                        case Phase.TribesAction:
-                            moves.AddRange(this.GetTribesActionMoves());
-                            break;
+                    case Phase.TribesAction:
+                        moves.AddRange(this.GetTribesActionMoves());
+                        break;
 
-                        case Phase.TileAction:
-                            moves.AddRange(this.GetTileActionMoves());
-                            break;
+                    case Phase.TileAction:
+                        moves.AddRange(this.GetTileActionMoves());
+                        break;
 
-                        case Phase.MerchandiseSale:
-                            moves.AddRange(this.GetMerchandiseSaleMoves());
-                            break;
-                    }
+                    case Phase.MerchandiseSale:
+                        moves.AddRange(this.GetMerchandiseSaleMoves());
+                        break;
                 }
 
-                foreach (var djinn in this.inventory[playerToken].Djinns)
+                foreach (var playerToken in this.Players)
                 {
-                    moves.AddRange(djinn.GetMoves(this));
+                    foreach (var djinn in this.inventory[playerToken].Djinns)
+                    {
+                        moves.AddRange(djinn.GetMoves(this));
+                    }
                 }
             }
 
             var originalMoves = moves.ToImmutableList();
-            foreach (var djinn in this.inventory[playerToken].Djinns)
+            foreach (var playerToken in this.Players)
             {
-                moves.AddRange(djinn.GetAdditionalMoves(this, originalMoves));
+                foreach (var djinn in this.inventory[playerToken].Djinns)
+                {
+                    moves.AddRange(djinn.GetAdditionalMoves(this, originalMoves));
+                }
             }
 
             return moves.ToImmutableList();

@@ -269,17 +269,17 @@ namespace GameTheory.Games.Splendor
         public EnumCollection<Token> Tokens => this.tokens;
 
         /// <inheritdoc />
-        public IReadOnlyCollection<Move> GetAvailableMoves(PlayerToken player)
+        public IReadOnlyCollection<Move> GetAvailableMoves()
         {
-            var moves = new List<Move>();
-
             if (this.subsequentMovesFactory != null)
             {
-                moves.AddRange(this.subsequentMoves.Value.Where(p => p.PlayerToken == player));
+                return this.subsequentMoves.Value;
             }
             else
             {
-                if (this.phase != Phase.End && player == this.activePlayer)
+                var moves = ImmutableList.CreateBuilder<Move>();
+
+                if (this.phase != Phase.End)
                 {
                     moves.AddRange(Moves.TakeTokensMove.GenerateMoves(this));
                     moves.AddRange(Moves.ReserveFromDeckMove.GenerateMoves(this));
@@ -287,9 +287,9 @@ namespace GameTheory.Games.Splendor
                     moves.AddRange(Moves.PurchaseFromHandMove.GenerateMoves(this));
                     moves.AddRange(Moves.PurchaseFromBoardMove.GenerateMoves(this));
                 }
-            }
 
-            return moves.ToImmutableList();
+                return moves.ToImmutable();
+            }
         }
 
         /// <summary>

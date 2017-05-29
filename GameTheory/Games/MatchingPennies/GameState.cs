@@ -33,20 +33,12 @@ namespace GameTheory.Games.MatchingPennies
         public IReadOnlyList<PlayerToken> Players => this.players;
 
         /// <inheritdoc />
-        public IReadOnlyCollection<Move> GetAvailableMoves(PlayerToken playerToken)
+        public IReadOnlyCollection<Move> GetAvailableMoves()
         {
-            var index = this.players.IndexOf(playerToken);
-            if (index == -1)
-            {
-                throw new InvalidOperationException();
-            }
-
-            if (this.choices[index] != null)
-            {
-                return ImmutableArray<Move>.Empty;
-            }
-
-            return ImmutableArray.Create(new Move(playerToken, true), new Move(playerToken, false));
+            return this.players
+                .Where(p => this.choices[this.players.IndexOf(p)] == null)
+                .SelectMany(p => new[] { new Move(p, true), new Move(p, false) })
+                .ToImmutableArray();
         }
 
         /// <inheritdoc />

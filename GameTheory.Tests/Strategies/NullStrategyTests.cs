@@ -4,6 +4,7 @@ namespace GameTheory.Tests.Strategies
 {
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
+    using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
     using GameTheory.Strategies;
@@ -34,9 +35,9 @@ namespace GameTheory.Tests.Strategies
 
             public IReadOnlyList<PlayerToken> Players => this.players;
 
-            public IReadOnlyCollection<Move> GetAvailableMoves(PlayerToken playerToken)
+            public IReadOnlyCollection<Move> GetAvailableMoves()
             {
-                return new List<Move> { new Move(playerToken) }.AsReadOnly();
+                return this.players.Select(p => new Move(p)).ToList().AsReadOnly();
             }
 
             public IReadOnlyCollection<PlayerToken> GetWinners()

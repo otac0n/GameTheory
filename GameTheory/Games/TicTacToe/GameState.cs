@@ -14,7 +14,6 @@ namespace GameTheory.Games.TicTacToe
     {
         private const int Size = 3;
         private readonly PlayerToken activePlayer;
-        private readonly Lazy<ImmutableList<Move>> availableMoves;
         private readonly ImmutableList<PlayerToken> players;
         private readonly ImmutableList<PlayerToken> winners;
         private readonly PlayerToken winningPlayer;
@@ -86,7 +85,6 @@ namespace GameTheory.Games.TicTacToe
                 }
             }
 
-            this.availableMoves = new Lazy<ImmutableList<Move>>(this.GetAvailableMoves);
             this.winners = this.winningPlayer == null
                 ? ImmutableList<PlayerToken>.Empty
                 : ImmutableList.Create(this.winningPlayer);
@@ -111,14 +109,27 @@ namespace GameTheory.Games.TicTacToe
         public PlayerToken this[int x, int y] => this.field[x, y];
 
         /// <inheritdoc />
-        public IReadOnlyCollection<Move> GetAvailableMoves(PlayerToken playerToken)
+        public IReadOnlyCollection<Move> GetAvailableMoves()
         {
-            if (playerToken != this.activePlayer || this.winningPlayer != null)
+            if (this.winningPlayer != null)
             {
                 return ImmutableList<Move>.Empty;
             }
 
-            return this.availableMoves.Value;
+            var moves = ImmutableList.CreateBuilder<Move>();
+
+            for (var y = 0; y < Size; y++)
+            {
+                for (var x = 0; x < Size; x++)
+                {
+                    if (this.field[x, y] == null)
+                    {
+                        moves.Add(new Move(this.activePlayer, x, y));
+                    }
+                }
+            }
+
+            return moves.ToImmutable();
         }
 
         /// <inheritdoc />
@@ -164,24 +175,6 @@ namespace GameTheory.Games.TicTacToe
         {
             var c = new Func<int, int, string>((x, y) => this[x, y] == null ? " " : this[x, y] == this.players[0] ? "X" : "O");
             return $"{c(0, 0)}|{c(1, 0)}|{c(2, 0)}\n-----\n{c(0, 1)}|{c(1, 1)}|{c(2, 1)}\n-----\n{c(0, 2)}|{c(1, 2)}|{c(2, 2)}";
-        }
-
-        private ImmutableList<Move> GetAvailableMoves()
-        {
-            var moves = ImmutableList.CreateBuilder<Move>();
-
-            for (var y = 0; y < Size; y++)
-            {
-                for (var x = 0; x < Size; x++)
-                {
-                    if (this.field[x, y] == null)
-                    {
-                        moves.Add(new Move(this.activePlayer, x, y));
-                    }
-                }
-            }
-
-            return moves.ToImmutable();
         }
     }
 }

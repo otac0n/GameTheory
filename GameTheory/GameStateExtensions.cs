@@ -4,6 +4,7 @@ namespace GameTheory
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
 
     /// <summary>
     /// Extensions for all implementations of <see cref="IGameState{TMove}"/>.
@@ -15,8 +16,9 @@ namespace GameTheory
         /// </summary>
         /// <typeparam name="TMove">The type of object that represents a move.</typeparam>
         /// <param name="state">The game state for which to retrieve all moves.</param>
+        /// <param name="playerToken">The player whose moves will be retrieved.</param>
         /// <returns>All moves for all players in the specified game state.</returns>
-        public static List<TMove> GetAvailableMoves<TMove>(this IGameState<TMove> state)
+        public static List<TMove> GetAvailableMoves<TMove>(this IGameState<TMove> state, PlayerToken playerToken)
             where TMove : IMove
         {
             if (state == null)
@@ -24,14 +26,12 @@ namespace GameTheory
                 throw new ArgumentNullException(nameof(state));
             }
 
-            var moves = new List<TMove>();
-
-            foreach (var player in state.Players)
+            if (playerToken == null)
             {
-                moves.AddRange(state.GetAvailableMoves(player));
+                throw new ArgumentNullException(nameof(playerToken));
             }
 
-            return moves;
+            return state.GetAvailableMoves().Where(m => m.PlayerToken == playerToken).ToList();
         }
     }
 }

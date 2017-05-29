@@ -69,24 +69,24 @@ namespace GameTheory.Games.Mancala
         public int BinsPerSide { get; }
 
         /// <inheritdoc />
-        public IReadOnlyCollection<Move> GetAvailableMoves(PlayerToken playerToken)
+        public IReadOnlyCollection<Move> GetAvailableMoves()
         {
-            var moves = ImmutableList.CreateBuilder<Move>();
+            int bins = this.BinsPerSide;
+            var moves = new Move[bins];
 
-            if (playerToken == this.ActivePlayer)
+            var playerOffset = this.GetPlayerIndexOffset(this.ActivePlayer);
+            var b = 0;
+            for (var i = 0; i < bins; i++)
             {
-                var playerOffset = this.GetPlayerIndexOffset(this.ActivePlayer);
-                for (var i = 0; i < this.BinsPerSide; i++)
+                var index = i + playerOffset;
+                if (this.Board[index] > 0)
                 {
-                    var index = i + playerOffset;
-                    if (this.Board[index] > 0)
-                    {
-                        moves.Add(new Move(this, index));
-                    }
+                    moves[b++] = new Move(this, index);
                 }
             }
 
-            return moves.ToImmutable();
+            Array.Resize(ref moves, b);
+            return moves;
         }
 
         /// <summary>

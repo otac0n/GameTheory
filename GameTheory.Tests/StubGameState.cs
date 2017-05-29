@@ -59,9 +59,9 @@ namespace GameTheory.Tests
             }
         }
 
-        public IReadOnlyCollection<Move> GetAvailableMoves(PlayerToken playerToken)
+        public IReadOnlyCollection<Move> GetAvailableMoves()
         {
-            return this.moves.Where(m => m.PlayerToken == playerToken).ToList().AsReadOnly();
+            return this.moves.AsReadOnly();
         }
 
         public IReadOnlyCollection<PlayerToken> GetWinners()
