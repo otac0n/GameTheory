@@ -315,10 +315,7 @@ namespace GameTheory.Tests.Games
                 this.nextState = nextState;
             }
 
-            public override string ToString()
-            {
-                return "OK";
-            }
+            public override string ToString() => "OK";
 
             internal override GameState Apply(GameState state)
             {

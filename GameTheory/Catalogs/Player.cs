@@ -41,10 +41,7 @@ namespace GameTheory.Catalogs
         public string Name { get; }
 
         /// <inheritdoc />
-        public override string ToString()
-        {
-            return this.Name;
-        }
+        public override string ToString() => this.Name;
 
         private static string GetPlayerName(Type playerType)
         {

@@ -11,8 +11,6 @@ namespace GameTheory.Games.FiveTribes.Moves
     /// </summary>
     public class AddMeeplesMove : Move
     {
-        private readonly Point point;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="AddMeeplesMove"/> class.
         /// </summary>
@@ -21,31 +19,24 @@ namespace GameTheory.Games.FiveTribes.Moves
         public AddMeeplesMove(GameState state, Point point)
             : base(state)
         {
-            this.point = point;
+            this.Point = point;
         }
 
         /// <summary>
         /// Gets the <see cref="Point"/> where the <see cref="Meeple">Meeples</see> will be added.
         /// </summary>
-        public Point Point
-        {
-            get { return this.point; }
-        }
+        public Point Point { get; }
 
         /// <inheritdoc />
-        public override string ToString()
-        {
-            return $"Draw {Math.Min(this.State.Bag.Count, 3)} Meeples and place at {this.point}";
-        }
+        public override string ToString() => $"Draw {Math.Min(this.State.Bag.Count, 3)} Meeples and place at {this.Point}";
 
         internal override GameState Apply(GameState state)
         {
-            var newBag = state.Bag;
-            newBag = newBag.Deal(3, out ImmutableList<Meeple> dealt);
+            var newBag = state.Bag.Deal(3, out ImmutableList<Meeple> dealt);
 
             return state.With(
                 bag: newBag,
-                sultanate: state.Sultanate.SetItem(this.point, state.Sultanate[this.point].With(meeples: new EnumCollection<Meeple>(dealt))));
+                sultanate: state.Sultanate.SetItem(this.Point, state.Sultanate[this.Point].With(meeples: new EnumCollection<Meeple>(dealt))));
         }
     }
 }

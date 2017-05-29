@@ -10,61 +10,44 @@ namespace GameTheory.Games.FiveTribes
     /// </summary>
     public class Inventory
     {
-        private readonly ImmutableList<Djinn> djinns;
-        private readonly int goldCoins;
-        private readonly EnumCollection<Meeple> meeples;
-        private readonly EnumCollection<Resource> resources;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="Inventory"/> class.
         /// </summary>
         public Inventory()
         {
-            this.djinns = ImmutableList<Djinn>.Empty;
-            this.meeples = EnumCollection<Meeple>.Empty;
-            this.goldCoins = 50;
-            this.resources = EnumCollection<Resource>.Empty;
+            this.Djinns = ImmutableList<Djinn>.Empty;
+            this.Meeples = EnumCollection<Meeple>.Empty;
+            this.GoldCoins = 50;
+            this.Resources = EnumCollection<Resource>.Empty;
         }
 
         private Inventory(ImmutableList<Djinn> djinns, EnumCollection<Meeple> meeples, int goldCoins, EnumCollection<Resource> resources)
         {
-            this.djinns = djinns;
-            this.meeples = meeples;
-            this.goldCoins = goldCoins;
-            this.resources = resources;
+            this.Djinns = djinns;
+            this.Meeples = meeples;
+            this.GoldCoins = goldCoins;
+            this.Resources = resources;
         }
 
         /// <summary>
         /// Gets the player's <see cref="Djinn">Djinns</see>.
         /// </summary>
-        public ImmutableList<Djinn> Djinns
-        {
-            get { return this.djinns; }
-        }
+        public ImmutableList<Djinn> Djinns { get; }
 
         /// <summary>
         /// Gets the player's Gold Coins (GC).
         /// </summary>
-        public int GoldCoins
-        {
-            get { return this.goldCoins; }
-        }
+        public int GoldCoins { get; }
 
         /// <summary>
         /// Gets the player's <see cref="Meeple">Meeples</see>.
         /// </summary>
-        public EnumCollection<Meeple> Meeples
-        {
-            get { return this.meeples; }
-        }
+        public EnumCollection<Meeple> Meeples { get; }
 
         /// <summary>
         /// Gets the player's <see cref="Resource">Resources</see>.
         /// </summary>
-        public EnumCollection<Resource> Resources
-        {
-            get { return this.resources; }
-        }
+        public EnumCollection<Resource> Resources { get; }
 
         /// <summary>
         /// Creates a new <see cref="Inventory"/>, and updates the specified values.
@@ -77,10 +60,10 @@ namespace GameTheory.Games.FiveTribes
         public Inventory With(ImmutableList<Djinn> djinns = null, int? goldCoins = null, EnumCollection<Meeple> meeples = null, EnumCollection<Resource> resources = null)
         {
             return new Inventory(
-                djinns ?? this.djinns,
-                meeples ?? this.meeples,
-                goldCoins ?? this.goldCoins,
-                resources ?? this.resources);
+                djinns ?? this.Djinns,
+                meeples ?? this.Meeples,
+                goldCoins ?? this.GoldCoins,
+                resources ?? this.Resources);
         }
     }
 }

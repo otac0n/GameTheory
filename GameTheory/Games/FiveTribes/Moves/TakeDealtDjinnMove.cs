@@ -11,7 +11,6 @@ namespace GameTheory.Games.FiveTribes.Moves
     internal class TakeDealtDjinnMove : Move
     {
         private readonly ImmutableList<Djinn> dealt;
-        private readonly int index;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TakeDealtDjinnMove"/> class.
@@ -23,30 +22,21 @@ namespace GameTheory.Games.FiveTribes.Moves
             : base(state)
         {
             this.dealt = dealt;
-            this.index = index;
+            this.Index = index;
         }
 
         /// <summary>
         /// Gets the <see cref="Djinn"/> that will be taken.
         /// </summary>
-        public Djinn Djinn
-        {
-            get { return this.dealt[this.index]; }
-        }
+        public Djinn Djinn => this.dealt[this.Index];
 
         /// <summary>
         /// Gets the index of the <see cref="Djinn"/> that will be taken.
         /// </summary>
-        public int Index
-        {
-            get { return this.index; }
-        }
+        public int Index { get; }
 
         /// <inheritdoc />
-        public override string ToString()
-        {
-            return $"Take {this.dealt[this.index]}";
-        }
+        public override string ToString() => $"Take {this.dealt[this.Index]}";
 
         internal override GameState Apply(GameState state)
         {
@@ -54,8 +44,8 @@ namespace GameTheory.Games.FiveTribes.Moves
             var inventory = state.Inventory[player];
 
             return state.With(
-                djinnDiscards: state.DjinnDiscards.AddRange(this.dealt.RemoveAt(this.index)),
-                inventory: state.Inventory.SetItem(player, inventory.With(djinns: inventory.Djinns.Add(this.dealt[this.index]))));
+                djinnDiscards: state.DjinnDiscards.AddRange(this.dealt.RemoveAt(this.Index)),
+                inventory: state.Inventory.SetItem(player, inventory.With(djinns: inventory.Djinns.Add(this.dealt[this.Index]))));
         }
     }
 }

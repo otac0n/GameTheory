@@ -21,7 +21,6 @@ namespace GameTheory.Players
         where TMove : IMove
     {
         private readonly int minPly;
-        private readonly PlayerToken playerToken;
         private readonly IScoringMetric scoringMetric;
 
         /// <summary>
@@ -32,7 +31,7 @@ namespace GameTheory.Players
         /// <param name="minPly">The minimum number of ply to think ahead.</param>
         protected MaximizingPlayer(PlayerToken playerToken, IScoringMetric scoringMetric, int minPly)
         {
-            this.playerToken = playerToken;
+            this.PlayerToken = playerToken;
             this.scoringMetric = scoringMetric ?? throw new ArgumentOutOfRangeException(nameof(scoringMetric));
             this.minPly = minPly > -1 ? minPly : throw new ArgumentOutOfRangeException(nameof(minPly));
         }
@@ -82,7 +81,7 @@ namespace GameTheory.Players
         }
 
         /// <inheritdoc />
-        public PlayerToken PlayerToken => this.playerToken;
+        public PlayerToken PlayerToken { get; }
 
         /// <inheritdoc />
         public async Task<Maybe<TMove>> ChooseMove(IGameState<TMove> state, CancellationToken cancel)
@@ -91,7 +90,7 @@ namespace GameTheory.Players
 
             var mainline = this.GetMove(state, this.minPly, cancel);
 
-            if (!mainline.Moves.Any() || mainline.Moves.Peek().PlayerToken != this.playerToken)
+            if (!mainline.Moves.Any() || mainline.Moves.Peek().PlayerToken != this.PlayerToken)
             {
                 return default(Maybe<TMove>);
             }
@@ -126,7 +125,7 @@ namespace GameTheory.Players
             {
                 var allMoves = state.GetAvailableMoves();
                 var moveScores = (from m in allMoves
-                                  let nextState = state.MakeMove(m)
+                                  let nextState = state.MakeMove(m) // BUG: MakeMove may not be deterministic. Need to enumerate possible outcomes and combine scores with expected occurence probabilities.
                                   select this.GetMove(nextState, ply - 1, cancel).AddMove(m)).ToList();
                 cancel.ThrowIfCancellationRequested();
 

@@ -23,10 +23,7 @@ namespace GameTheory.Games.FiveTribes.Djinns
         }
 
         /// <inheritdoc />
-        public override string Name
-        {
-            get { return "Al-Amin"; }
-        }
+        public override string Name => "Al-Amin";
 
         /// <inheritdoc />
         public override IEnumerable<Move> GetMoves(GameState state)

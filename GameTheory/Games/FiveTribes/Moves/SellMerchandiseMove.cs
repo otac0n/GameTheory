@@ -26,10 +26,7 @@ namespace GameTheory.Games.FiveTribes.Moves
         /// <summary>
         /// Gets the value of the <see cref="Resource">Resources</see> being sold, in Gold Coins (GC).
         /// </summary>
-        public int Value
-        {
-            get { return GameState.ScoreResources(this.Resources); }
-        }
+        public int Value => GameState.ScoreResources(this.Resources);
 
         /// <inheritdoc />
         public override string ToString() => $"Trade {this.Resources} for {GameState.SuitValues[this.Resources.Count]}";

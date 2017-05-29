@@ -7,7 +7,7 @@ namespace GameTheory.Games.FiveTribes.Moves
     /// </summary>
     public class TradeSlavesForResourceMove : Move
     {
-        private readonly Resource resource;
+        private static readonly EnumCollection<Resource> Cost = new EnumCollection<Resource>(Resource.Slave, Resource.Slave);
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TradeSlavesForResourceMove"/> class.
@@ -18,28 +18,22 @@ namespace GameTheory.Games.FiveTribes.Moves
         public TradeSlavesForResourceMove(GameState state, PlayerToken owner, Resource resource)
             : base(state, owner)
         {
-            this.resource = resource;
+            this.Resource = resource;
         }
 
         /// <summary>
         /// Gets the <see cref="Resource"/> that will be received by the player.
         /// </summary>
-        public Resource Resource
-        {
-            get { return this.resource; }
-        }
+        public Resource Resource { get; }
 
         /// <inheritdoc />
-        public override string ToString()
-        {
-            return $"Trade {Resource.Slave},{Resource.Slave} for {this.resource}";
-        }
+        public override string ToString() => $"Trade {Cost} for {this.Resource}";
 
         internal override GameState Apply(GameState state)
         {
             var inventory = state.Inventory[this.PlayerToken];
             return state.With(
-                inventory: state.Inventory.SetItem(this.PlayerToken, inventory.With(resources: inventory.Resources.Remove(Resource.Slave, 2).Add(this.resource))));
+                inventory: state.Inventory.SetItem(this.PlayerToken, inventory.With(resources: inventory.Resources.RemoveRange(Cost).Add(this.Resource))));
         }
     }
 }

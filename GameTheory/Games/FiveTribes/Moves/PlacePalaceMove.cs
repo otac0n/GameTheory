@@ -10,7 +10,6 @@ namespace GameTheory.Games.FiveTribes.Moves
     public class PlacePalaceMove : Move
     {
         private Func<GameState, GameState> after;
-        private Point point;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PlacePalaceMove"/> class.
@@ -31,29 +30,23 @@ namespace GameTheory.Games.FiveTribes.Moves
         public PlacePalaceMove(GameState state, Point point, Func<GameState, GameState> after)
             : base(state)
         {
-            this.point = point;
+            this.Point = point;
             this.after = after;
         }
 
         /// <summary>
         /// Gets the <see cref="Point"/> where a Palace will be placed.
         /// </summary>
-        public Point Point
-        {
-            get { return this.point; }
-        }
+        public Point Point { get; }
 
         /// <inheritdoc />
-        public override string ToString()
-        {
-            return $"Place a Palace at {this.point}";
-        }
+        public override string ToString() => $"Place a Palace at {this.Point}";
 
         internal override GameState Apply(GameState state)
         {
-            var square = state.Sultanate[this.point];
+            var square = state.Sultanate[this.Point];
             return this.after(state.With(
-                sultanate: state.Sultanate.SetItem(this.point, square.With(palaces: square.Palaces + 1))));
+                sultanate: state.Sultanate.SetItem(this.Point, square.With(palaces: square.Palaces + 1))));
         }
 
         internal Move With(GameState state, Point point)

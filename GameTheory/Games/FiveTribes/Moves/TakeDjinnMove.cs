@@ -11,7 +11,6 @@ namespace GameTheory.Games.FiveTribes.Moves
     public class TakeDjinnMove : Move
     {
         private readonly Func<GameState, GameState> after;
-        private readonly int index;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TakeDjinnMove"/> class.
@@ -32,31 +31,22 @@ namespace GameTheory.Games.FiveTribes.Moves
         public TakeDjinnMove(GameState state, int index, Func<GameState, GameState> after)
             : base(state)
         {
-            this.index = index;
+            this.Index = index;
             this.after = after;
         }
 
         /// <summary>
         /// Gets the <see cref="Djinn"/> that will be taken.
         /// </summary>
-        public Djinn Djinn
-        {
-            get { return this.State.VisibleDjinns[this.index]; }
-        }
+        public Djinn Djinn => this.State.VisibleDjinns[this.Index];
 
         /// <summary>
         /// Gets the index of the <see cref="Djinn"/> that will be taken.
         /// </summary>
-        public int Index
-        {
-            get { return this.index; }
-        }
+        public int Index { get; }
 
         /// <inheritdoc />
-        public override string ToString()
-        {
-            return $"Take {this.Djinn}";
-        }
+        public override string ToString() => $"Take {this.Djinn}";
 
         internal override GameState Apply(GameState state)
         {
@@ -64,8 +54,8 @@ namespace GameTheory.Games.FiveTribes.Moves
             var inventory = state.Inventory[player];
 
             return this.after(state.With(
-                inventory: state.Inventory.SetItem(player, inventory.With(djinns: inventory.Djinns.Add(state.VisibleDjinns[this.index]))),
-                visibleDjinns: state.VisibleDjinns.RemoveAt(this.index)));
+                inventory: state.Inventory.SetItem(player, inventory.With(djinns: inventory.Djinns.Add(state.VisibleDjinns[this.Index]))),
+                visibleDjinns: state.VisibleDjinns.RemoveAt(this.Index)));
         }
     }
 }

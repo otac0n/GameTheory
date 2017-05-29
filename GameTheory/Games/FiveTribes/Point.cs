@@ -52,19 +52,13 @@ namespace GameTheory.Games.FiveTribes
         /// Gets the x coordinate of the <see cref="Point"/>.
         /// </summary>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "X", Justification = "X is meaningful in the context of coordinates.")]
-        public int X
-        {
-            get { return this.index % Sultanate.Width; }
-        }
+        public int X => this.index % Sultanate.Width;
 
         /// <summary>
         /// Gets the y coordinate of the <see cref="Point"/>.
         /// </summary>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Y", Justification = "Y is meaningful in the context of coordinates.")]
-        public int Y
-        {
-            get { return this.index / Sultanate.Width; }
-        }
+        public int Y => this.index / Sultanate.Width;
 
         /// <summary>
         /// Converts the specified <see cref="Point"/> object to an index.
@@ -121,9 +115,6 @@ namespace GameTheory.Games.FiveTribes
         }
 
         /// <inheritdoc />
-        public override string ToString()
-        {
-            return "(" + this.X + ", " + this.Y + ")";
-        }
+        public override string ToString() => "(" + this.X + ", " + this.Y + ")";
     }
 }

@@ -50,26 +50,8 @@ namespace GameTheory.Games.FiveTribes
         private static readonly EnumCollection<Meeple> Meeples;
         private static readonly EnumCollection<Resource> Resources;
         private readonly ImmutableDictionary<string, string> additionalState;
-        private readonly ImmutableDictionary<PlayerToken, AssassinationTable> assassinationTables;
-        private readonly EnumCollection<Meeple> bag;
-        private readonly ImmutableQueue<PlayerToken> bidOrderTrack;
-        private readonly ImmutableList<Djinn> djinnDiscards;
-        private readonly ImmutableList<Djinn> djinnPile;
-        private readonly EnumCollection<Meeple> inHand;
-        private readonly ImmutableDictionary<PlayerToken, Inventory> inventory;
-        private readonly Point lastPoint;
-        private readonly Phase phase;
-        private readonly ImmutableList<PlayerToken> players;
-        private readonly Point previousPoint;
-        private readonly EnumCollection<Resource> resourceDiscards;
-        private readonly EnumCollection<Resource> resourcePile;
-        private readonly ImmutableDictionary<PlayerToken, ScoreTable> scoreTables;
         private readonly Lazy<ImmutableList<Move>> subsequentMoves;
         private readonly Func<GameState, IEnumerable<Move>> subsequentMovesFactory;
-        private readonly ImmutableList<Square> sultanate;
-        private readonly ImmutableList<PlayerToken> turnOrderTrack;
-        private readonly ImmutableList<Djinn> visibleDjinns;
-        private readonly ImmutableList<Resource> visibleResources;
 
         static GameState()
         {
@@ -171,19 +153,21 @@ namespace GameTheory.Games.FiveTribes
                 throw new ArgumentOutOfRangeException(nameof(players));
             }
 
-            this.players = Enumerable.Range(0, players).Select(i => new PlayerToken()).ToImmutableList();
-            this.phase = Phase.Bid;
-            this.bidOrderTrack = ImmutableQueue.CreateRange((players == 2 ? this.players.Concat(this.players) : this.players).Shuffle());
-            this.turnOrderTrack = ImmutableList.CreateRange(new PlayerToken[TurnOrderTrackCosts.Count]);
-            this.inventory = this.players.ToImmutableDictionary(p => p, p => new Inventory());
-            this.assassinationTables = this.players.ToImmutableDictionary(p => p, p => new AssassinationTable());
-            this.scoreTables = this.players.ToImmutableDictionary(p => p, p => new ScoreTable());
-            this.sultanate = ImmutableList.CreateRange(InitialTiles.Shuffle().Zip(Meeples.Shuffle().Partition(3), (t, ms) => new Square(t, new EnumCollection<Meeple>(ms))));
-            this.bag = EnumCollection<Meeple>.Empty;
-            this.djinnPile = (includeDhenim ? GameState.Djinns.Add(Dhenim.Instance) : GameState.Djinns).Deal(3, out this.visibleDjinns);
-            this.djinnDiscards = ImmutableList<Djinn>.Empty;
-            this.resourcePile = GameState.Resources.Deal(9, out this.visibleResources);
-            this.resourceDiscards = EnumCollection<Resource>.Empty;
+            this.Players = Enumerable.Range(0, players).Select(i => new PlayerToken()).ToImmutableList();
+            this.Phase = Phase.Bid;
+            this.BidOrderTrack = ImmutableQueue.CreateRange((players == 2 ? this.Players.Concat(this.Players) : this.Players).Shuffle());
+            this.TurnOrderTrack = ImmutableList.CreateRange(new PlayerToken[TurnOrderTrackCosts.Count]);
+            this.Inventory = this.Players.ToImmutableDictionary(p => p, p => new Inventory());
+            this.AssassinationTables = this.Players.ToImmutableDictionary(p => p, p => new AssassinationTable());
+            this.ScoreTables = this.Players.ToImmutableDictionary(p => p, p => new ScoreTable());
+            this.Sultanate = ImmutableList.CreateRange(InitialTiles.Shuffle().Zip(Meeples.Shuffle().Partition(3), (t, ms) => new Square(t, new EnumCollection<Meeple>(ms))));
+            this.Bag = EnumCollection<Meeple>.Empty;
+            this.DjinnPile = (includeDhenim ? GameState.Djinns.Add(Dhenim.Instance) : GameState.Djinns).Deal(3, out ImmutableList<Djinn> visibleDjinns);
+            this.VisibleDjinns = visibleDjinns;
+            this.DjinnDiscards = ImmutableList<Djinn>.Empty;
+            this.ResourcePile = GameState.Resources.Deal(9, out ImmutableList<Resource> visibleResources);
+            this.VisibleResources = visibleResources;
+            this.ResourceDiscards = EnumCollection<Resource>.Empty;
             this.additionalState = ImmutableDictionary<string, string>.Empty;
         }
 
@@ -211,24 +195,24 @@ namespace GameTheory.Games.FiveTribes
             : this(subsequentMovesFactory)
         {
             this.additionalState = additionalState;
-            this.assassinationTables = assassinationTables;
-            this.bag = bag;
-            this.bidOrderTrack = bidOrderTrack;
-            this.djinnDiscards = djinnDiscards;
-            this.djinnPile = djinnPile;
-            this.inHand = inHand;
-            this.inventory = inventory;
-            this.lastPoint = lastPoint;
-            this.phase = phase;
-            this.players = players;
-            this.previousPoint = previousPoint;
-            this.resourceDiscards = resourceDiscards;
-            this.resourcePile = resourcePile;
-            this.scoreTables = scoreTables;
-            this.sultanate = sultanate;
-            this.turnOrderTrack = turnOrderTrack;
-            this.visibleDjinns = visibleDjinns;
-            this.visibleResources = visibleResources;
+            this.AssassinationTables = assassinationTables;
+            this.Bag = bag;
+            this.BidOrderTrack = bidOrderTrack;
+            this.DjinnDiscards = djinnDiscards;
+            this.DjinnPile = djinnPile;
+            this.InHand = inHand;
+            this.Inventory = inventory;
+            this.LastPoint = lastPoint;
+            this.Phase = phase;
+            this.Players = players;
+            this.PreviousPoint = previousPoint;
+            this.ResourceDiscards = resourceDiscards;
+            this.ResourcePile = resourcePile;
+            this.ScoreTables = scoreTables;
+            this.Sultanate = sultanate;
+            this.TurnOrderTrack = turnOrderTrack;
+            this.VisibleDjinns = visibleDjinns;
+            this.VisibleResources = visibleResources;
         }
 
         private GameState(Func<GameState, IEnumerable<Move>> subsequentMovesFactory)
@@ -240,181 +224,114 @@ namespace GameTheory.Games.FiveTribes
         /// <summary>
         /// Gets the currently active player.
         /// </summary>
-        public PlayerToken ActivePlayer
-        {
-            get
-            {
-                return this.phase == Phase.End ? null :
-                       this.phase == Phase.Bid ? this.bidOrderTrack.Peek() :
-                       this.phase == Phase.MoveTurnMarker ? this.turnOrderTrack[this.FindHighestBidIndex()] :
-                       this.bidOrderTrack.Last();
-            }
-        }
+        public PlayerToken ActivePlayer =>
+            this.Phase == Phase.End ? null :
+            this.Phase == Phase.Bid ? this.BidOrderTrack.Peek() :
+            this.Phase == Phase.MoveTurnMarker ? this.TurnOrderTrack[this.FindHighestBidIndex()] :
+            this.BidOrderTrack.Last();
 
         /// <summary>
         /// Gets the <see cref="AssassinationTable">AssassinationTables</see> for all players.
         /// </summary>
-        public ImmutableDictionary<PlayerToken, AssassinationTable> AssassinationTables
-        {
-            get { return this.assassinationTables; }
-        }
+        public ImmutableDictionary<PlayerToken, AssassinationTable> AssassinationTables { get; }
 
         /// <summary>
         /// Gets the Bag of <see cref="Meeple">Meeples</see>.
         /// </summary>
-        public EnumCollection<Meeple> Bag
-        {
-            get { return this.bag; }
-        }
+        public EnumCollection<Meeple> Bag { get; }
 
         /// <summary>
         /// Gets the Bid Order Track.
         /// </summary>
-        public ImmutableQueue<PlayerToken> BidOrderTrack
-        {
-            get { return this.bidOrderTrack; }
-        }
+        public ImmutableQueue<PlayerToken> BidOrderTrack { get; }
 
         /// <summary>
         /// Gets the per-player Camel limit.
         /// </summary>
-        public int CamelLimit
-        {
-            get { return this.players.Count > 2 ? 8 : 11; }
-        }
+        public int CamelLimit => this.Players.Count > 2 ? 8 : 11;
 
         /// <summary>
         /// Gets the <see cref="Djinn"/> discard pile.
         /// </summary>
-        public ImmutableList<Djinn> DjinnDiscards
-        {
-            get { return this.djinnDiscards; }
-        }
+        public ImmutableList<Djinn> DjinnDiscards { get; }
 
         /// <summary>
         /// Gets the <see cref="Djinn"/> draw pile.
         /// </summary>
-        public ImmutableList<Djinn> DjinnPile
-        {
-            get { return this.djinnPile; }
-        }
+        public ImmutableList<Djinn> DjinnPile { get; }
 
         /// <summary>
         /// Gets a value indicating whether or not this <see cref="GameState"/> contains subsequent moves.
         /// </summary>
-        public bool HasSubsequentMoves
-        {
-            get { return this.subsequentMovesFactory != null && !this.subsequentMoves.Value.IsEmpty; }
-        }
+        public bool HasSubsequentMoves => 
+            this.subsequentMovesFactory != null && !this.subsequentMoves.Value.IsEmpty;
 
-        IReadOnlyList<PlayerToken> IGameState<Move>.Players
-        {
-            get { return this.Players; }
-        }
+        IReadOnlyList<PlayerToken> IGameState<Move>.Players => this.Players;
 
         /// <summary>
         /// Gets the <see cref="Meeple">Meeples</see> in the active player's hand.
         /// </summary>
-        public EnumCollection<Meeple> InHand
-        {
-            get { return this.inHand; }
-        }
+        public EnumCollection<Meeple> InHand { get; }
 
         /// <summary>
         /// Gets the <see cref="Inventory">Inventories</see> for all players.
         /// </summary>
-        public ImmutableDictionary<PlayerToken, Inventory> Inventory
-        {
-            get { return this.inventory; }
-        }
+        public ImmutableDictionary<PlayerToken, Inventory> Inventory { get; }
 
         /// <summary>
         /// Gets the last <see cref="Point"/> in the <see cref="Sultanate"/> that had <see cref="Meeple">Meeples</see> picked up or dropped.
         /// </summary>
-        public Point LastPoint
-        {
-            get { return this.lastPoint; }
-        }
+        public Point LastPoint { get; }
 
         /// <summary>
         /// Gets the current <see cref="Phase"/>.
         /// </summary>
-        public Phase Phase
-        {
-            get { return this.phase; }
-        }
+        public Phase Phase { get; }
 
         /// <summary>
         /// Gets the list of players.
         /// </summary>
-        public ImmutableList<PlayerToken> Players
-        {
-            get { return this.players; }
-        }
+        public ImmutableList<PlayerToken> Players { get; }
 
         /// <summary>
         /// Gets the previous-to-last <see cref="Point"/> in the <see cref="Sultanate"/> that had <see cref="Meeple">Meeples</see> picked up or dropped.
         /// </summary>
-        public Point PreviousPoint
-        {
-            get { return this.previousPoint; }
-        }
+        public Point PreviousPoint { get; }
 
         /// <summary>
         /// Gets the <see cref="Resource"/> discard pile.
         /// </summary>
-        public EnumCollection<Resource> ResourceDiscards
-        {
-            get { return this.resourceDiscards; }
-        }
+        public EnumCollection<Resource> ResourceDiscards { get; }
 
         /// <summary>
         /// Gets the <see cref="Resource"/> draw pile.
         /// </summary>
-        public EnumCollection<Resource> ResourcePile
-        {
-            get { return this.resourcePile; }
-        }
+        public EnumCollection<Resource> ResourcePile { get; }
 
         /// <summary>
         /// Gets the <see cref="ScoreTable">ScoreTables</see> for all players.
         /// </summary>
-        public ImmutableDictionary<PlayerToken, ScoreTable> ScoreTables
-        {
-            get { return this.scoreTables; }
-        }
+        public ImmutableDictionary<PlayerToken, ScoreTable> ScoreTables { get; }
 
         /// <summary>
         /// Gets the <see cref="Sultanate"/>.
         /// </summary>
-        public ImmutableList<Square> Sultanate
-        {
-            get { return this.sultanate; }
-        }
+        public ImmutableList<Square> Sultanate { get; }
 
         /// <summary>
         /// Gets the Turn Order Track.
         /// </summary>
-        public ImmutableList<PlayerToken> TurnOrderTrack
-        {
-            get { return this.turnOrderTrack; }
-        }
+        public ImmutableList<PlayerToken> TurnOrderTrack { get; }
 
         /// <summary>
         /// Gets the face-up <see cref="Djinn">Djinns</see>.
         /// </summary>
-        public ImmutableList<Djinn> VisibleDjinns
-        {
-            get { return this.visibleDjinns; }
-        }
+        public ImmutableList<Djinn> VisibleDjinns { get; }
 
         /// <summary>
         /// Gets the face-up <see cref="Resource">Resources</see>.
         /// </summary>
-        public ImmutableList<Resource> VisibleResources
-        {
-            get { return this.visibleResources; }
-        }
+        public ImmutableList<Resource> VisibleResources { get; }
 
         /// <summary>
         /// Gets the state value of the specified key.
@@ -472,8 +389,8 @@ namespace GameTheory.Games.FiveTribes
         /// <returns>The requested index.</returns>
         public int FindHighestBidIndex()
         {
-            var nextIndex = this.turnOrderTrack.Count - 1;
-            while (nextIndex >= 0 && this.turnOrderTrack[nextIndex] == null)
+            var nextIndex = this.TurnOrderTrack.Count - 1;
+            while (nextIndex >= 0 && this.TurnOrderTrack[nextIndex] == null)
             {
                 nextIndex--;
             }
@@ -492,7 +409,7 @@ namespace GameTheory.Games.FiveTribes
             }
             else
             {
-                switch (this.phase)
+                switch (this.Phase)
                 {
                     case Phase.Bid:
                         moves.AddRange(this.GetBidMoves());
@@ -529,7 +446,7 @@ namespace GameTheory.Games.FiveTribes
 
                 foreach (var playerToken in this.Players)
                 {
-                    foreach (var djinn in this.inventory[playerToken].Djinns)
+                    foreach (var djinn in this.Inventory[playerToken].Djinns)
                     {
                         moves.AddRange(djinn.GetMoves(this));
                     }
@@ -539,7 +456,7 @@ namespace GameTheory.Games.FiveTribes
             var originalMoves = moves.ToImmutableList();
             foreach (var playerToken in this.Players)
             {
-                foreach (var djinn in this.inventory[playerToken].Djinns)
+                foreach (var djinn in this.Inventory[playerToken].Djinns)
                 {
                     moves.AddRange(djinn.GetAdditionalMoves(this, originalMoves));
                 }
@@ -555,11 +472,11 @@ namespace GameTheory.Games.FiveTribes
         /// <returns>The specified player's score.</returns>
         public int GetScore(PlayerToken playerToken)
         {
-            var inventory = this.inventory[playerToken];
-            var scoreTable = this.scoreTables[playerToken];
-            var owned = this.sultanate.Where(b => b.Owner == playerToken).ToList();
+            var inventory = this.Inventory[playerToken];
+            var scoreTable = this.ScoreTables[playerToken];
+            var owned = this.Sultanate.Where(b => b.Owner == playerToken).ToList();
             var viziers = inventory.Meeples.Count(m => m == Meeple.Vizier);
-            var playersWithFewerViziers = this.inventory.Values.Count(i => i.Meeples.Count(m => m == Meeple.Vizier) < viziers);
+            var playersWithFewerViziers = this.Inventory.Values.Count(i => i.Meeples.Count(m => m == Meeple.Vizier) < viziers);
             return inventory.GoldCoins +
                    ScoreResources(inventory.Resources) +
                    viziers * scoreTable.VizierValue +
@@ -572,12 +489,12 @@ namespace GameTheory.Games.FiveTribes
         /// <inheritdoc />
         public IReadOnlyCollection<PlayerToken> GetWinners()
         {
-            if (this.phase != Phase.End)
+            if (this.Phase != Phase.End)
             {
                 return ImmutableList<PlayerToken>.Empty;
             }
 
-            return this.players
+            return this.Players
                 .GroupBy(p => this.GetScore(p))
                 .OrderByDescending(g => g.Key)
                 .First()
@@ -600,7 +517,7 @@ namespace GameTheory.Games.FiveTribes
         /// <returns><c>true</c> if the player has any remaining camels, <c>false</c> otherwise.</returns>
         public bool IsPlayerUnderCamelLimit(PlayerToken playerToken)
         {
-            return this.sultanate.Count(s => s.Owner == playerToken) < this.CamelLimit;
+            return this.Sultanate.Count(s => s.Owner == playerToken) < this.CamelLimit;
         }
 
         /// <summary>
@@ -650,25 +567,25 @@ namespace GameTheory.Games.FiveTribes
         {
             return new GameState(
                 this.additionalState,
-                assassinationTables ?? this.assassinationTables,
-                bag ?? this.bag,
-                bidOrderTrack ?? this.bidOrderTrack,
-                djinnDiscards ?? this.djinnDiscards,
-                djinnPile ?? this.djinnPile,
-                inHand ?? this.inHand,
-                inventory ?? this.inventory,
-                lastPoint ?? this.lastPoint,
-                phase ?? this.phase,
-                players ?? this.players,
-                previousPoint ?? this.previousPoint,
-                resourceDiscards ?? this.resourceDiscards,
-                resourcePile ?? this.resourcePile,
-                scoreTables ?? this.scoreTables,
+                assassinationTables ?? this.AssassinationTables,
+                bag ?? this.Bag,
+                bidOrderTrack ?? this.BidOrderTrack,
+                djinnDiscards ?? this.DjinnDiscards,
+                djinnPile ?? this.DjinnPile,
+                inHand ?? this.InHand,
+                inventory ?? this.Inventory,
+                lastPoint ?? this.LastPoint,
+                phase ?? this.Phase,
+                players ?? this.Players,
+                previousPoint ?? this.PreviousPoint,
+                resourceDiscards ?? this.ResourceDiscards,
+                resourcePile ?? this.ResourcePile,
+                scoreTables ?? this.ScoreTables,
                 null,
-                sultanate ?? this.sultanate,
-                turnOrderTrack ?? this.turnOrderTrack,
-                visibleDjinns ?? this.visibleDjinns,
-                visibleResources ?? this.visibleResources);
+                sultanate ?? this.Sultanate,
+                turnOrderTrack ?? this.TurnOrderTrack,
+                visibleDjinns ?? this.VisibleDjinns,
+                visibleResources ?? this.VisibleResources);
         }
 
         /// <summary>
@@ -690,25 +607,25 @@ namespace GameTheory.Games.FiveTribes
         {
             return new GameState(
                 this.additionalState,
-                this.assassinationTables,
-                this.bag,
-                this.bidOrderTrack,
-                this.djinnDiscards,
-                this.djinnPile,
-                this.inHand,
-                this.inventory,
-                this.lastPoint,
-                this.phase,
-                this.players,
-                this.previousPoint,
-                this.resourceDiscards,
-                this.resourcePile,
-                this.scoreTables,
+                this.AssassinationTables,
+                this.Bag,
+                this.BidOrderTrack,
+                this.DjinnDiscards,
+                this.DjinnPile,
+                this.InHand,
+                this.Inventory,
+                this.LastPoint,
+                this.Phase,
+                this.Players,
+                this.PreviousPoint,
+                this.ResourceDiscards,
+                this.ResourcePile,
+                this.ScoreTables,
                 subsequentMoves,
-                this.sultanate,
-                this.turnOrderTrack,
-                this.visibleDjinns,
-                this.visibleResources);
+                this.Sultanate,
+                this.TurnOrderTrack,
+                this.VisibleDjinns,
+                this.VisibleResources);
         }
 
         /// <summary>
@@ -721,25 +638,25 @@ namespace GameTheory.Games.FiveTribes
         {
             return new GameState(
                 value == null ? this.additionalState.Remove(key) : this.additionalState.SetItem(key, value),
-                this.assassinationTables,
-                this.bag,
-                this.bidOrderTrack,
-                this.djinnDiscards,
-                this.djinnPile,
-                this.inHand,
-                this.inventory,
-                this.lastPoint,
-                this.phase,
-                this.players,
-                this.previousPoint,
-                this.resourceDiscards,
-                this.resourcePile,
-                this.scoreTables,
+                this.AssassinationTables,
+                this.Bag,
+                this.BidOrderTrack,
+                this.DjinnDiscards,
+                this.DjinnPile,
+                this.InHand,
+                this.Inventory,
+                this.LastPoint,
+                this.Phase,
+                this.Players,
+                this.PreviousPoint,
+                this.ResourceDiscards,
+                this.ResourcePile,
+                this.ScoreTables,
                 null,
-                this.sultanate,
-                this.turnOrderTrack,
-                this.visibleDjinns,
-                this.visibleResources);
+                this.Sultanate,
+                this.TurnOrderTrack,
+                this.VisibleDjinns,
+                this.VisibleResources);
         }
 
         private static IEnumerable<Move> GetAssassinationMoves(GameState state, int slaves = 0)
@@ -748,27 +665,27 @@ namespace GameTheory.Games.FiveTribes
 
             Func<EnumCollection<Meeple>, IEnumerable<EnumCollection<Meeple>>> combos = killable =>
             {
-                return killable.Combinations(Math.Min(killable.Count, state.assassinationTables[player0].KillCount));
+                return killable.Combinations(Math.Min(killable.Count, state.AssassinationTables[player0].KillCount));
             };
 
-            foreach (var victim in state.players.Except(player0))
+            foreach (var victim in state.Players.Except(player0))
             {
-                if (state.assassinationTables[victim].HasProtection)
+                if (state.AssassinationTables[victim].HasProtection)
                 {
                     continue;
                 }
 
-                foreach (var kill in combos(state.inventory[victim].Meeples))
+                foreach (var kill in combos(state.Inventory[victim].Meeples))
                 {
-                    yield return new AssassinatePlayerMove(state, victim, kill, s => s.With(phase: Phase.TileAction));
+                    yield return new AssassinatePlayerMove(state, victim, kill, s => s.With(phase: FiveTribes.Phase.TileAction));
                 }
             }
 
-            foreach (var point in FiveTribes.Sultanate.GetPointsWithin(state.lastPoint, state.inHand.Count + slaves))
+            foreach (var point in FiveTribes.Sultanate.GetPointsWithin(state.LastPoint, state.InHand.Count + slaves))
             {
-                foreach (var kill in combos(state.sultanate[point].Meeples))
+                foreach (var kill in combos(state.Sultanate[point].Meeples))
                 {
-                    yield return new AssassinateMove(state, point, kill, s => s.With(phase: Phase.TileAction));
+                    yield return new AssassinateMove(state, point, kill, s => s.With(phase: FiveTribes.Phase.TileAction));
                 }
             }
         }
@@ -789,7 +706,7 @@ namespace GameTheory.Games.FiveTribes
             {
                 var changed = false;
 
-                foreach (var player in newState.players)
+                foreach (var player in newState.Players)
                 {
                     foreach (var djinn in newState.Inventory[player].Djinns)
                     {
@@ -828,12 +745,12 @@ namespace GameTheory.Games.FiveTribes
                 throw new InvalidOperationException();
             }
 
-            for (var i = 2; i < this.turnOrderTrack.Count; i++)
+            for (var i = 2; i < this.TurnOrderTrack.Count; i++)
             {
-                if (this.turnOrderTrack[i] == null && this.inventory[this.ActivePlayer].GoldCoins >= TurnOrderTrackCosts[i])
+                if (this.TurnOrderTrack[i] == null && this.Inventory[this.ActivePlayer].GoldCoins >= TurnOrderTrackCosts[i])
                 {
-                    var j = i == 2 && this.turnOrderTrack[0] == null ? 0 :
-                            i == 2 && this.turnOrderTrack[1] == null ? 1 :
+                    var j = i == 2 && this.TurnOrderTrack[0] == null ? 0 :
+                            i == 2 && this.TurnOrderTrack[1] == null ? 1 :
                             i;
 
                     yield return new BidMove(this, j, TurnOrderTrackCosts[j]);
@@ -843,7 +760,7 @@ namespace GameTheory.Games.FiveTribes
 
         private IEnumerable<Move> GetMerchandiseSaleMoves()
         {
-            var keys = this.inventory[this.ActivePlayer].Resources.Keys.ToImmutableList().RemoveAll(r => r == Resource.Slave);
+            var keys = this.Inventory[this.ActivePlayer].Resources.Keys.ToImmutableList().RemoveAll(r => r == Resource.Slave);
 
             for (var i = (1 << keys.Count) - 1; i > 0; i--)
             {
@@ -857,7 +774,7 @@ namespace GameTheory.Games.FiveTribes
 
         private IEnumerable<Move> GetMoveMeeplesMoves()
         {
-            var drops = this.sultanate.GetMoves(this.lastPoint, this.previousPoint, this.inHand);
+            var drops = this.Sultanate.GetMoves(this.LastPoint, this.PreviousPoint, this.InHand);
             foreach (var drop in drops)
             {
                 var meeple = drop.Item1;
@@ -875,7 +792,7 @@ namespace GameTheory.Games.FiveTribes
         private IEnumerable<Move> GetPickUpMeeplesMoves()
         {
             var any = false;
-            foreach (var point in this.sultanate.GetPickUps())
+            foreach (var point in this.Sultanate.GetPickUps())
             {
                 any = true;
                 yield return new PickUpMeeplesMove(this, point);
@@ -883,24 +800,24 @@ namespace GameTheory.Games.FiveTribes
 
             if (!any)
             {
-                yield return new ChangePhaseMove(this, "Skip move", Phase.MerchandiseSale);
+                yield return new ChangePhaseMove(this, "Skip move", FiveTribes.Phase.MerchandiseSale);
             }
         }
 
         private IEnumerable<Move> GetTileActionMoves()
         {
-            return this.sultanate[this.lastPoint].Tile.GetTileActionMoves(this);
+            return this.Sultanate[this.LastPoint].Tile.GetTileActionMoves(this);
         }
 
         private IEnumerable<Move> GetTileControlCheckMoves()
         {
-            yield return new PlaceCamelMove(this, this.LastPoint, s => s.With(phase: Phase.TribesAction));
+            yield return new PlaceCamelMove(this, this.LastPoint, s => s.With(phase: FiveTribes.Phase.TribesAction));
         }
 
         private IEnumerable<Move> GetTribesActionMoves()
         {
             var activePlayer = this.ActivePlayer;
-            var tribe = this.inHand.Keys.Single();
+            var tribe = this.InHand.Keys.Single();
             switch (tribe)
             {
                 case Meeple.Vizier:
@@ -934,7 +851,7 @@ namespace GameTheory.Games.FiveTribes
 
                     if (!any)
                     {
-                        yield return new ChangePhaseMove(this, "Skip Tribes Action", Phase.TileAction);
+                        yield return new ChangePhaseMove(this, "Skip Tribes Action", FiveTribes.Phase.TileAction);
                     }
 
                     var costMoves = Cost.OneOrMoreSlaves(this, s => s, GetAssassinationMoves);

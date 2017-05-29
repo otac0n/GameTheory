@@ -13,7 +13,6 @@ namespace GameTheory.Games.TicTacToe
     public class GameState : IGameState<Move>
     {
         private const int Size = 3;
-        private readonly PlayerToken activePlayer;
         private readonly ImmutableList<PlayerToken> players;
         private readonly ImmutableList<PlayerToken> winners;
         private readonly PlayerToken winningPlayer;
@@ -54,7 +53,7 @@ namespace GameTheory.Games.TicTacToe
                 }
             }
 
-            this.activePlayer = p0count <= p1count ? p0 : p1;
+            this.ActivePlayer = p0count <= p1count ? p0 : p1;
 
             if ((field[0, 0] == field[1, 1] && field[1, 1] == field[2, 2]) ||
                 (field[0, 2] == field[1, 1] && field[1, 1] == field[2, 0]))
@@ -93,7 +92,7 @@ namespace GameTheory.Games.TicTacToe
         /// <summary>
         /// Gets the <see cref="PlayerToken"/> representing the active player.
         /// </summary>
-        public PlayerToken ActivePlayer => this.activePlayer;
+        public PlayerToken ActivePlayer { get; }
 
         /// <inheritdoc />
         public IReadOnlyList<PlayerToken> Players => this.players;
@@ -124,7 +123,7 @@ namespace GameTheory.Games.TicTacToe
                 {
                     if (this.field[x, y] == null)
                     {
-                        moves.Add(new Move(this.activePlayer, x, y));
+                        moves.Add(new Move(this.ActivePlayer, x, y));
                     }
                 }
             }
@@ -143,7 +142,7 @@ namespace GameTheory.Games.TicTacToe
                 throw new ArgumentNullException(nameof(move));
             }
 
-            if (move.PlayerToken != this.activePlayer ||
+            if (move.PlayerToken != this.ActivePlayer ||
                 move.X < 0 ||
                 move.X >= Size ||
                 move.Y < 0 ||

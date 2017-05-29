@@ -10,7 +10,6 @@ namespace GameTheory.Games.FiveTribes.Moves
     public class PayGoldMove : Move
     {
         private readonly Func<GameState, GameState> after;
-        private readonly int gold;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PayGoldMove"/> class.
@@ -22,22 +21,16 @@ namespace GameTheory.Games.FiveTribes.Moves
             : base(state)
         {
             this.after = after;
-            this.gold = gold;
+            this.Gold = gold;
         }
 
         /// <summary>
         /// Gets the amount of Gold Coins (GC) that will be paid.
         /// </summary>
-        public int Gold
-        {
-            get { return this.gold; }
-        }
+        public int Gold { get; }
 
         /// <inheritdoc />
-        public override string ToString()
-        {
-            return $"Pay {this.gold} Gold";
-        }
+        public override string ToString() => $"Pay {this.Gold} Gold";
 
         internal override GameState Apply(GameState state)
         {
@@ -45,7 +38,7 @@ namespace GameTheory.Games.FiveTribes.Moves
             var inventory = state.Inventory[player];
 
             return this.after(state.With(
-                inventory: state.Inventory.SetItem(player, inventory.With(goldCoins: inventory.GoldCoins - this.gold))));
+                inventory: state.Inventory.SetItem(player, inventory.With(goldCoins: inventory.GoldCoins - this.Gold))));
         }
     }
 }

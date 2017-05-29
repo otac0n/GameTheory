@@ -7,8 +7,6 @@ namespace GameTheory.Games.FiveTribes.Moves
     /// </summary>
     public class PickUpMeeplesMove : Move
     {
-        private Point point;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="PickUpMeeplesMove"/> class.
         /// </summary>
@@ -17,33 +15,27 @@ namespace GameTheory.Games.FiveTribes.Moves
         public PickUpMeeplesMove(GameState state, Point point)
             : base(state)
         {
-            this.point = point;
+            this.Point = point;
         }
 
         /// <summary>
         /// Gets the <see cref="Point"/> in the <see cref="GameState.Sultanate"/> where the <see cref="Meeple">Meeples</see> will be picked up.
         /// </summary>
-        public Point Point
-        {
-            get { return this.point; }
-        }
+        public Point Point { get; }
 
         /// <inheritdoc />
-        public override string ToString()
-        {
-            return $"Pick up meeples at {this.point}";
-        }
+        public override string ToString() => $"Pick up meeples at {this.Point}";
 
         internal override GameState Apply(GameState state)
         {
-            var square = state.Sultanate[this.point];
+            var square = state.Sultanate[this.Point];
 
             return state.With(
                 inHand: square.Meeples,
-                lastPoint: this.point,
+                lastPoint: this.Point,
                 phase: Phase.MoveMeeples,
-                previousPoint: this.point,
-                sultanate: state.Sultanate.SetItem(this.point, square.With(meeples: EnumCollection<Meeple>.Empty)));
+                previousPoint: this.Point,
+                sultanate: state.Sultanate.SetItem(this.Point, square.With(meeples: EnumCollection<Meeple>.Empty)));
         }
     }
 }

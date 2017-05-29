@@ -9,8 +9,6 @@ namespace GameTheory.Games.FiveTribes.Moves
     /// </summary>
     public class ScoreBuildersInHandMove : Move
     {
-        private readonly int spentSlaves;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="ScoreBuildersInHandMove"/> class.
         /// </summary>
@@ -19,16 +17,13 @@ namespace GameTheory.Games.FiveTribes.Moves
         public ScoreBuildersInHandMove(GameState state, int spentSlaves)
             : base(state)
         {
-            this.spentSlaves = spentSlaves;
+            this.SpentSlaves = spentSlaves;
         }
 
         /// <summary>
         /// Gets the number of <see cref="Resource.Slave">Slaves</see> spent.
         /// </summary>
-        public int SpentSlaves
-        {
-            get { return this.spentSlaves; }
-        }
+        public int SpentSlaves { get; }
 
         /// <inheritdoc />
         public override string ToString() => $"Score {this.State.InHand}";
@@ -38,7 +33,7 @@ namespace GameTheory.Games.FiveTribes.Moves
             var blueTiles = Sultanate.GetSquarePoints(state.LastPoint).Count(p => state.Sultanate[p].Tile.Color == TileColor.Blue);
             var player = state.ActivePlayer;
             var inventory = state.Inventory[player];
-            var score = (state.InHand.Count + this.spentSlaves) * blueTiles * state.ScoreTables[player].BuilderMultiplier;
+            var score = (state.InHand.Count + this.SpentSlaves) * blueTiles * state.ScoreTables[player].BuilderMultiplier;
 
             return state.With(
                 bag: state.Bag.AddRange(state.InHand),

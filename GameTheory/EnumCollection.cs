@@ -89,18 +89,13 @@ namespace GameTheory
         public static EnumCollection<TEnum> Empty { get; }
 
         /// <inheritdoc />
-        public int Count
-        {
-            get { return this.count; }
-        }
+        public int Count => this.count;
 
         /// <summary>
         /// Gets the distinct list of items contained in the collection.
         /// </summary>
-        public IEnumerable<TEnum> Keys
-        {
-            get { return Enumerable.Range(0, Capacity).Where(i => this.storage[i] > 0).Select(i => (TEnum)Enum.ToObject(typeof(TEnum), i)); }
-        }
+        public IEnumerable<TEnum> Keys =>
+            Enumerable.Range(0, Capacity).Where(i => this.storage[i] > 0).Select(i => (TEnum)Enum.ToObject(typeof(TEnum), i));
 
         /// <inheritdoc />
         TEnum IReadOnlyList<TEnum>.this[int index]

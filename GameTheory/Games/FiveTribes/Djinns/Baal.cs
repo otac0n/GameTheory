@@ -21,10 +21,7 @@ namespace GameTheory.Games.FiveTribes.Djinns
         }
 
         /// <inheritdoc />
-        public override string Name
-        {
-            get { return "Ba'al"; }
-        }
+        public override string Name => "Ba'al";
 
         /// <inheritdoc />
         public override GameState HandleTransition(PlayerToken owner, GameState oldState, GameState newState)

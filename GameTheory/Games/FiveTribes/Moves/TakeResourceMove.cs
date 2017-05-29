@@ -10,7 +10,6 @@ namespace GameTheory.Games.FiveTribes.Moves
     public class TakeResourceMove : Move
     {
         private readonly Func<GameState, GameState> after;
-        private readonly int index;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TakeResourceMove"/> class.
@@ -31,31 +30,22 @@ namespace GameTheory.Games.FiveTribes.Moves
         public TakeResourceMove(GameState state, int index, Func<GameState, GameState> after)
             : base(state)
         {
-            this.index = index;
+            this.Index = index;
             this.after = after;
         }
 
         /// <summary>
         /// Gets the index of the <see cref="Resource"/> that will be taken.
         /// </summary>
-        public int Index
-        {
-            get { return this.index; }
-        }
+        public int Index { get; }
 
         /// <summary>
         /// Gets the <see cref="Resource"/> that will be taken.
         /// </summary>
-        public Resource Resource
-        {
-            get { return this.State.VisibleResources[this.index]; }
-        }
+        public Resource Resource => this.State.VisibleResources[this.Index];
 
         /// <inheritdoc />
-        public override string ToString()
-        {
-            return $"Take {this.State.VisibleResources[this.index]}";
-        }
+        public override string ToString() => $"Take {this.Resource}";
 
         internal override GameState Apply(GameState state)
         {
@@ -63,8 +53,8 @@ namespace GameTheory.Games.FiveTribes.Moves
             var inventory = state.Inventory[player];
 
             return this.after(state.With(
-                inventory: state.Inventory.SetItem(player, inventory.With(resources: inventory.Resources.Add(state.VisibleResources[this.index]))),
-                visibleResources: state.VisibleResources.RemoveAt(this.index)));
+                inventory: state.Inventory.SetItem(player, inventory.With(resources: inventory.Resources.Add(state.VisibleResources[this.Index]))),
+                visibleResources: state.VisibleResources.RemoveAt(this.Index)));
         }
     }
 }

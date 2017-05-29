@@ -43,14 +43,7 @@ namespace GameTheory.Games.Splendor
         private static readonly ImmutableList<DevelopmentCard> InitialLevel3DevelopmentCards;
         private static readonly ImmutableList<Noble> InitialNobles;
 
-        private readonly PlayerToken activePlayer;
-        private readonly ImmutableArray<ImmutableList<DevelopmentCard>> developmentDecks;
-        private readonly ImmutableArray<ImmutableArray<DevelopmentCard>> developmentTracks;
-        private readonly ImmutableDictionary<PlayerToken, Inventory> inventory;
-        private readonly ImmutableList<Noble> nobles;
         private readonly Phase phase;
-        private readonly ImmutableList<PlayerToken> players;
-        private readonly EnumCollection<Token> tokens;
         private readonly Func<GameState, IEnumerable<Move>> subsequentMovesFactory;
         private readonly Lazy<ImmutableList<Move>> subsequentMoves;
 
@@ -173,12 +166,12 @@ namespace GameTheory.Games.Splendor
                 throw new ArgumentOutOfRangeException(nameof(players));
             }
 
-            this.players = Enumerable.Range(0, players).Select(i => new PlayerToken()).ToImmutableList();
-            this.activePlayer = this.players[0];
+            this.Players = Enumerable.Range(0, players).Select(i => new PlayerToken()).ToImmutableList();
+            this.ActivePlayer = this.Players[0];
             this.phase = Phase.Play;
 
             var gemTokens = players + (players >= 4 ? 3 : 2);
-            this.tokens = EnumCollection<Token>.Empty
+            this.Tokens = EnumCollection<Token>.Empty
                 .Add(Token.Emerald, gemTokens)
                 .Add(Token.Diamond, gemTokens)
                 .Add(Token.Sapphire, gemTokens)
@@ -186,9 +179,10 @@ namespace GameTheory.Games.Splendor
                 .Add(Token.Ruby, gemTokens)
                 .Add(Token.GoldJoker, 5);
 
-            InitialNobles.Deal(players + 1, out this.nobles);
+            InitialNobles.Deal(players + 1, out ImmutableList<Noble> nobles);
+            this.Nobles = nobles;
 
-            this.inventory = this.players.ToImmutableDictionary(p => p, p => new Inventory());
+            this.Inventory = this.Players.ToImmutableDictionary(p => p, p => new Inventory());
 
             var developmentDecks = new[] { InitialLevel1DevelopmentCards, InitialLevel2DevelopmentCards, InitialLevel3DevelopmentCards };
             var developmentTracks = new ImmutableArray<DevelopmentCard>[developmentDecks.Length];
@@ -199,8 +193,8 @@ namespace GameTheory.Games.Splendor
                 developmentTracks[i] = dealt.ToImmutableArray();
             }
 
-            this.developmentDecks = developmentDecks.ToImmutableArray();
-            this.developmentTracks = developmentTracks.ToImmutableArray();
+            this.DevelopmentDecks = developmentDecks.ToImmutableArray();
+            this.DevelopmentTracks = developmentTracks.ToImmutableArray();
         }
 
         private GameState(
@@ -215,14 +209,14 @@ namespace GameTheory.Games.Splendor
             Func<GameState, IEnumerable<Move>> subsequentMovesFactory)
             : this(subsequentMovesFactory)
         {
-            this.players = players;
-            this.activePlayer = activePlayer;
+            this.Players = players;
+            this.ActivePlayer = activePlayer;
             this.phase = phase;
-            this.tokens = tokens;
-            this.nobles = nobles;
-            this.inventory = inventory;
-            this.developmentDecks = developmentDecks;
-            this.developmentTracks = developmentTracks;
+            this.Tokens = tokens;
+            this.Nobles = nobles;
+            this.Inventory = inventory;
+            this.DevelopmentDecks = developmentDecks;
+            this.DevelopmentTracks = developmentTracks;
         }
 
         private GameState(Func<GameState, IEnumerable<Move>> subsequentMovesFactory)
@@ -234,39 +228,39 @@ namespace GameTheory.Games.Splendor
         /// <summary>
         /// Gets the active player.
         /// </summary>
-        public PlayerToken ActivePlayer => this.activePlayer;
+        public PlayerToken ActivePlayer { get; }
 
         /// <summary>
         /// Gets the decks of development cards.
         /// </summary>
-        public ImmutableArray<ImmutableList<DevelopmentCard>> DevelopmentDecks => this.developmentDecks;
+        public ImmutableArray<ImmutableList<DevelopmentCard>> DevelopmentDecks { get; }
 
         /// <summary>
         /// Gets the visible tracks of development cards.
         /// </summary>
-        public ImmutableArray<ImmutableArray<DevelopmentCard>> DevelopmentTracks => this.developmentTracks;
+        public ImmutableArray<ImmutableArray<DevelopmentCard>> DevelopmentTracks { get; }
 
         /// <summary>
         /// Gets the inventory of all players.
         /// </summary>
-        public ImmutableDictionary<PlayerToken, Inventory> Inventory => this.inventory;
+        public ImmutableDictionary<PlayerToken, Inventory> Inventory { get; }
 
         /// <summary>
         /// Gets the remaining nobles.
         /// </summary>
-        public ImmutableList<Noble> Nobles => this.nobles;
+        public ImmutableList<Noble> Nobles { get; }
 
         IReadOnlyList<PlayerToken> IGameState<Move>.Players => this.Players;
 
         /// <summary>
         /// Gets the list of players.
         /// </summary>
-        public ImmutableList<PlayerToken> Players => this.players;
+        public ImmutableList<PlayerToken> Players { get; }
 
         /// <summary>
         /// Gets available tokens.
         /// </summary>
-        public EnumCollection<Token> Tokens => this.tokens;
+        public EnumCollection<Token> Tokens { get; }
 
         /// <inheritdoc />
         public IReadOnlyCollection<Move> GetAvailableMoves()
@@ -319,7 +313,7 @@ namespace GameTheory.Games.Splendor
                 return ImmutableList<PlayerToken>.Empty;
             }
 
-            return this.players
+            return this.Players
                 .GroupBy(p => this.GetScore(p))
                 .OrderByDescending(g => g.Key)
                 .First()
@@ -362,14 +356,14 @@ namespace GameTheory.Games.Splendor
             ImmutableArray<ImmutableArray<DevelopmentCard>>? developmentTracks = null)
         {
             return new GameState(
-                this.players,
-                activePlayer ?? this.activePlayer,
+                this.Players,
+                activePlayer ?? this.ActivePlayer,
                 phase ?? this.phase,
-                tokens ?? this.tokens,
-                nobles ?? this.nobles,
-                inventory ?? this.inventory,
-                developmentDecks ?? this.developmentDecks,
-                developmentTracks ?? this.developmentTracks,
+                tokens ?? this.Tokens,
+                nobles ?? this.Nobles,
+                inventory ?? this.Inventory,
+                developmentDecks ?? this.DevelopmentDecks,
+                developmentTracks ?? this.DevelopmentTracks,
                 null);
         }
 
@@ -381,14 +375,14 @@ namespace GameTheory.Games.Splendor
         internal GameState WithMoves(Func<GameState, IEnumerable<Move>> subsequentMoves)
         {
             return new GameState(
-                this.players,
-                this.activePlayer,
+                this.Players,
+                this.ActivePlayer,
                 this.phase,
-                this.tokens,
-                this.nobles,
-                this.inventory,
-                this.developmentDecks,
-                this.developmentTracks,
+                this.Tokens,
+                this.Nobles,
+                this.Inventory,
+                this.DevelopmentDecks,
+                this.DevelopmentTracks,
                 subsequentMoves);
         }
     }

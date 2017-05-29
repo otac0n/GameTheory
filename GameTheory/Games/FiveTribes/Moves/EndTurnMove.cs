@@ -21,10 +21,7 @@ namespace GameTheory.Games.FiveTribes.Moves
         }
 
         /// <inheritdoc />
-        public override string ToString()
-        {
-            return "End turn";
-        }
+        public override string ToString() => "End turn";
 
         internal override GameState Apply(GameState state)
         {

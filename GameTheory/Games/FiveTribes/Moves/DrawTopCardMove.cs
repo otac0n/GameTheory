@@ -19,10 +19,7 @@ namespace GameTheory.Games.FiveTribes.Moves
         }
 
         /// <inheritdoc />
-        public override string ToString()
-        {
-            return "Draw the top card from the Resource Pile";
-        }
+        public override string ToString() => "Draw the top card from the Resource Pile";
 
         internal override GameState Apply(GameState state)
         {

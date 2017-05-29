@@ -7,8 +7,6 @@ namespace GameTheory.Games.FiveTribes.Moves
     /// </summary>
     public class PickUpTribeMove : Move
     {
-        private readonly Meeple tribe;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="PickUpTribeMove"/> class.
         /// </summary>
@@ -17,32 +15,26 @@ namespace GameTheory.Games.FiveTribes.Moves
         public PickUpTribeMove(GameState state, Meeple tribe)
             : base(state)
         {
-            this.tribe = tribe;
+            this.Tribe = tribe;
         }
 
         /// <summary>
         /// Gets the <see cref="Meeple"/> tribe to pick up.
         /// </summary>
-        public Meeple Tribe
-        {
-            get { return this.tribe; }
-        }
+        public Meeple Tribe { get; }
 
         /// <inheritdoc />
-        public override string ToString()
-        {
-            return $"Pick up all {this.tribe} at {this.State.LastPoint}";
-        }
+        public override string ToString() => $"Pick up all {this.Tribe} at {this.State.LastPoint}";
 
         internal override GameState Apply(GameState state)
         {
             var point = state.LastPoint;
             var square = state.Sultanate[point];
-            var newSquare = square.With(meeples: square.Meeples.RemoveAll(this.tribe));
+            var newSquare = square.With(meeples: square.Meeples.RemoveAll(this.Tribe));
             var canAddCamel = newSquare.Owner == null && newSquare.Meeples.Count == 0 && state.IsPlayerUnderCamelLimit(state.ActivePlayer);
 
             return state.With(
-                inHand: state.InHand.Add(this.tribe, square.Meeples[this.tribe]),
+                inHand: state.InHand.Add(this.Tribe, square.Meeples[this.Tribe]),
                 phase: canAddCamel ? Phase.TileControlCheck : Phase.TribesAction,
                 sultanate: state.Sultanate.SetItem(point, newSquare));
         }

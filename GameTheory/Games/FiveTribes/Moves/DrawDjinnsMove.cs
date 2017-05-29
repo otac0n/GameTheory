@@ -22,10 +22,7 @@ namespace GameTheory.Games.FiveTribes.Moves
         }
 
         /// <inheritdoc />
-        public override string ToString()
-        {
-            return $"Draw {GetDrawCount(this.State)} Djinns";
-        }
+        public override string ToString() => $"Draw {GetDrawCount(this.State)} Djinns";
 
         internal override GameState Apply(GameState state)
         {
@@ -41,9 +38,6 @@ namespace GameTheory.Games.FiveTribes.Moves
             return s1.WithMoves(s2 => Enumerable.Range(0, toDraw).Select(i => new TakeDealtDjinnMove(s2, dealt, i)));
         }
 
-        private static int GetDrawCount(GameState state)
-        {
-            return Math.Min(3, state.DjinnPile.Count + state.DjinnDiscards.Count);
-        }
+        private static int GetDrawCount(GameState state) => Math.Min(3, state.DjinnPile.Count + state.DjinnDiscards.Count);
     }
 }

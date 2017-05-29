@@ -10,9 +10,6 @@ namespace GameTheory.Games.FiveTribes.Tiles
     /// </summary>
     public abstract class Tile
     {
-        private readonly TileColor color;
-        private readonly int value;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="Tile"/> class.
         /// </summary>
@@ -20,25 +17,19 @@ namespace GameTheory.Games.FiveTribes.Tiles
         /// <param name="color">The color of the <see cref="Tile"/>.</param>
         protected Tile(int value, TileColor color)
         {
-            this.value = value;
-            this.color = color;
+            this.Value = value;
+            this.Color = color;
         }
 
         /// <summary>
         /// Gets the color of the <see cref="Tile"/>.
         /// </summary>
-        public TileColor Color
-        {
-            get { return this.color; }
-        }
+        public TileColor Color { get; }
 
         /// <summary>
         /// Gets the value of the <see cref="Tile"/>, in Victory Points (VP).
         /// </summary>
-        public int Value
-        {
-            get { return this.value; }
-        }
+        public int Value { get; }
 
         /// <summary>
         /// Generates moves for the specified <see cref="GameState"/>.

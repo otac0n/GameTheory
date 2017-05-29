@@ -7,9 +7,6 @@ namespace GameTheory.Games.FiveTribes
     /// </summary>
     public class AssassinationTable
     {
-        private readonly bool hasProtection;
-        private readonly int killCount;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="AssassinationTable"/> class.
         /// </summary>
@@ -25,25 +22,19 @@ namespace GameTheory.Games.FiveTribes
         /// <param name="killCount">A number corresponding to the number of <see cref="Meeple">Meeples</see> that the player can kill during an assassination.</param>
         public AssassinationTable(bool hasProtection, int killCount)
         {
-            this.hasProtection = hasProtection;
-            this.killCount = killCount;
+            this.HasProtection = hasProtection;
+            this.KillCount = killCount;
         }
 
         /// <summary>
         /// Gets a value indicating whether or not the player's <see cref="Meeple">Meeples</see> have protection from assassination.
         /// </summary>
-        public bool HasProtection
-        {
-            get { return this.hasProtection; }
-        }
+        public bool HasProtection { get; }
 
         /// <summary>
         /// Gets a number corresponding to the number of meeples that the player can kill during an assassination.
         /// </summary>
-        public int KillCount
-        {
-            get { return this.killCount; }
-        }
+        public int KillCount { get; }
 
         /// <summary>
         /// Creates a new <see cref="AssassinationTable"/>, and updates the specified values.
@@ -54,8 +45,8 @@ namespace GameTheory.Games.FiveTribes
         public AssassinationTable With(bool? hasProtection = null, int? killCount = null)
         {
             return new AssassinationTable(
-                hasProtection ?? this.hasProtection,
-                killCount ?? this.killCount);
+                hasProtection ?? this.HasProtection,
+                killCount ?? this.KillCount);
         }
     }
 }

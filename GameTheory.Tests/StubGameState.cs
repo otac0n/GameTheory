@@ -37,10 +37,7 @@ namespace GameTheory.Tests
             }
         }
 
-        public IReadOnlyList<PlayerToken> Players
-        {
-            get { return this.players; }
-        }
+        public IReadOnlyList<PlayerToken> Players => this.players;
 
         public IReadOnlyList<PlayerToken> Winners
         {
@@ -81,24 +78,15 @@ namespace GameTheory.Tests
 
         public class Move : IMove
         {
-            private readonly PlayerToken playerToken;
-            private readonly string value;
-
             public Move(PlayerToken playerToken, string value)
             {
-                this.playerToken = playerToken;
-                this.value = value;
+                this.PlayerToken = playerToken;
+                this.Value = value;
             }
 
-            public PlayerToken PlayerToken
-            {
-                get { return this.playerToken; }
-            }
+            public PlayerToken PlayerToken { get; }
 
-            public string Value
-            {
-                get { return this.value; }
-            }
+            public string Value { get; }
         }
     }
 }

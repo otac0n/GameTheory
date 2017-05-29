@@ -32,9 +32,9 @@ namespace GameTheory.Games.FiveTribes
         /// <summary>
         /// Gets the player who may perform this move.
         /// </summary>
-        public PlayerToken PlayerToken { get; private set; }
+        public PlayerToken PlayerToken { get; }
 
-        internal GameState State { get; private set; }
+        internal GameState State { get; }
 
         /// <inheritdoc />
         public abstract override string ToString();

@@ -19,10 +19,7 @@ namespace GameTheory.Games.FiveTribes.Moves
         }
 
         /// <inheritdoc />
-        public override string ToString()
-        {
-            return $"Take {this.State.InHand.Count} resources";
-        }
+        public override string ToString() => $"Take {this.State.InHand.Count} resources";
 
         internal override GameState Apply(GameState state)
         {

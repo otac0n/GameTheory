@@ -8,7 +8,6 @@ namespace GameTheory.Games.FiveTribes.Moves
     public class ChangePhaseMove : Move
     {
         private string description;
-        private Phase phase;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ChangePhaseMove"/> class.
@@ -20,26 +19,20 @@ namespace GameTheory.Games.FiveTribes.Moves
             : base(state)
         {
             this.description = description;
-            this.phase = phase;
+            this.Phase = phase;
         }
 
         /// <summary>
         /// Gets the phase that the move will change to.
         /// </summary>
-        public Phase Phase
-        {
-            get { return this.phase; }
-        }
+        public Phase Phase { get; }
 
         /// <inheritdoc />
-        public override string ToString()
-        {
-            return this.description;
-        }
+        public override string ToString() => this.description;
 
         internal override GameState Apply(GameState state)
         {
-            return state.With(phase: this.phase);
+            return state.With(phase: this.Phase);
         }
     }
 }

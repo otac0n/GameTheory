@@ -10,7 +10,6 @@ namespace GameTheory.Games.FiveTribes.Moves
     public class PlaceCamelMove : Move
     {
         private readonly Func<GameState, GameState> after;
-        private readonly Point point;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PlaceCamelMove"/> class.
@@ -32,29 +31,23 @@ namespace GameTheory.Games.FiveTribes.Moves
             : base(state)
         {
             this.after = after;
-            this.point = point;
+            this.Point = point;
         }
 
         /// <summary>
         /// Gets the <see cref="Point"/> where a Camel will be placed.
         /// </summary>
-        public Point Point
-        {
-            get { return this.point; }
-        }
+        public Point Point { get; }
 
         /// <inheritdoc />
-        public override string ToString()
-        {
-            return $"Place a Camel at {this.point}";
-        }
+        public override string ToString() => $"Place a Camel at {this.Point}";
 
         internal override GameState Apply(GameState state)
         {
             var owner = state.ActivePlayer;
 
             return this.after(state.With(
-                sultanate: state.Sultanate.SetItem(this.point, state.Sultanate[this.point].With(owner: owner))));
+                sultanate: state.Sultanate.SetItem(this.Point, state.Sultanate[this.Point].With(owner: owner))));
         }
     }
 }

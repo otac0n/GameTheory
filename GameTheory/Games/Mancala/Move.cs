@@ -25,20 +25,17 @@ namespace GameTheory.Games.Mancala
         /// <summary>
         /// Gets the index of the bin.
         /// </summary>
-        public int Bin { get; private set; }
+        public int Bin { get; }
 
         /// <summary>
         /// Gets the player who may perform this move.
         /// </summary>
-        public PlayerToken PlayerToken { get; private set; }
+        public PlayerToken PlayerToken { get; }
 
-        internal GameState State { get; private set; }
+        internal GameState State { get; }
 
         /// <inheritdoc />
-        public override string ToString()
-        {
-            return $"Pick up {this.State.Board[this.Bin]} stones from ({this.Bin})";
-        }
+        public override string ToString() => $"Pick up {this.State.Board[this.Bin]} stones from ({this.Bin})";
 
         internal GameState Apply(GameState state)
         {

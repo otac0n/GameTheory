@@ -17,10 +17,7 @@ namespace GameTheory.Games.FiveTribes.Moves
         }
 
         /// <inheritdoc />
-        public override string ToString()
-        {
-            return "Double the number of meeples your Assassins kill this turn";
-        }
+        public override string ToString() => "Double the number of meeples your Assassins kill this turn";
 
         internal override GameState Apply(GameState state)
         {

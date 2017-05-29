@@ -10,32 +10,24 @@ namespace GameTheory.Games.FiveTribes.Djinns
     /// </summary>
     public abstract class Djinn
     {
-        private readonly int value;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="Djinn"/> class.
         /// </summary>
         /// <param name="value">The value of the <see cref="Djinn"/>, in victory points (VP).</param>
         protected Djinn(int value)
         {
-            this.value = value;
+            this.Value = value;
         }
 
         /// <summary>
         /// Gets the name of the Djinn.
         /// </summary>
-        public virtual string Name
-        {
-            get { return this.GetType().Name; }
-        }
+        public virtual string Name => this.GetType().Name;
 
         /// <summary>
         /// Gets the value of the Djinn, in victory points (VP).
         /// </summary>
-        public int Value
-        {
-            get { return this.value; }
-        }
+        public int Value { get; }
 
         /// <summary>
         /// Called for every <see cref="GameState"/>, to allow inclusion of additional <see cref="Move">Moves</see>.

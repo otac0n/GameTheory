@@ -9,12 +9,6 @@ namespace GameTheory.Games.FiveTribes
     /// </summary>
     public class Square
     {
-        private readonly EnumCollection<Meeple> meeples;
-        private readonly PlayerToken owner;
-        private readonly int palaces;
-        private readonly int palmTrees;
-        private readonly Tile tile;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="Square"/> class.
         /// </summary>
@@ -22,58 +16,43 @@ namespace GameTheory.Games.FiveTribes
         /// <param name="meeples">The <see cref="Meeple">Meeples</see> at this <see cref="Square"/>.</param>
         public Square(Tile tile, EnumCollection<Meeple> meeples)
         {
-            this.tile = tile;
-            this.meeples = meeples;
+            this.Tile = tile;
+            this.Meeples = meeples;
         }
 
         private Square(EnumCollection<Meeple> meeples, PlayerToken owner, int palaces, int palmTrees, Tile tile)
         {
-            this.meeples = meeples;
-            this.owner = owner;
-            this.palaces = palaces;
-            this.palmTrees = palmTrees;
-            this.tile = tile;
+            this.Meeples = meeples;
+            this.Owner = owner;
+            this.Palaces = palaces;
+            this.PalmTrees = palmTrees;
+            this.Tile = tile;
         }
 
         /// <summary>
         /// Gets the <see cref="Meeple">Meeples</see> at this <see cref="Square"/>.
         /// </summary>
-        public EnumCollection<Meeple> Meeples
-        {
-            get { return this.meeples; }
-        }
+        public EnumCollection<Meeple> Meeples { get; }
 
         /// <summary>
         /// Gets the player who owns this <see cref="Square"/>.
         /// </summary>
-        public PlayerToken Owner
-        {
-            get { return this.owner; }
-        }
+        public PlayerToken Owner { get; }
 
         /// <summary>
         /// Gets the number of Palaces at this <see cref="Square"/>.
         /// </summary>
-        public int Palaces
-        {
-            get { return this.palaces; }
-        }
+        public int Palaces { get; }
 
         /// <summary>
         /// Gets the number of Palm Trees at this <see cref="Square"/>.
         /// </summary>
-        public int PalmTrees
-        {
-            get { return this.palmTrees; }
-        }
+        public int PalmTrees { get; }
 
         /// <summary>
         /// Gets the <see cref="Tile"/> at this <see cref="Square"/>.
         /// </summary>
-        public Tile Tile
-        {
-            get { return this.tile; }
-        }
+        public Tile Tile { get; }
 
         /// <summary>
         /// Creates a new <see cref="Square"/>, and updates the specified values.
@@ -87,11 +66,11 @@ namespace GameTheory.Games.FiveTribes
         public Square With(EnumCollection<Meeple> meeples = null, PlayerToken owner = null, int? palaces = null, int? palmTrees = null, Tile tile = null)
         {
             return new Square(
-                meeples ?? this.meeples,
-                owner ?? this.owner,
-                palaces ?? this.palaces,
-                palmTrees ?? this.palmTrees,
-                tile ?? this.tile);
+                meeples ?? this.Meeples,
+                owner ?? this.Owner,
+                palaces ?? this.Palaces,
+                palmTrees ?? this.PalmTrees,
+                tile ?? this.Tile);
         }
     }
 }

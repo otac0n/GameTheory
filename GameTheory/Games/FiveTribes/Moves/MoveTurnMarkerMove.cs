@@ -17,10 +17,7 @@ namespace GameTheory.Games.FiveTribes.Moves
         }
 
         /// <inheritdoc />
-        public override string ToString()
-        {
-            return "Move turn marker";
-        }
+        public override string ToString() => "Move turn marker";
 
         internal override GameState Apply(GameState state)
         {

@@ -25,10 +25,8 @@ namespace GameTheory
         /// <remarks>
         /// Do not allow this instance to be observed by threads.
         /// </remarks>
-        public static System.Random Instance
-        {
-            get { return instance ?? (instance = new System.Random(unchecked(Environment.TickCount * Interlocked.Increment(ref counter)))); }
-        }
+        public static System.Random Instance =>
+            instance ?? (instance = new System.Random(unchecked(Environment.TickCount * Interlocked.Increment(ref counter))));
 
         /// <summary>
         /// Deals items from a collection, using a discard pile to replenish the deck if necessary.

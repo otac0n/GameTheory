@@ -9,10 +9,6 @@ namespace GameTheory.Games.TicTacToe
     /// </summary>
     public class Move : IMove
     {
-        private readonly PlayerToken playerToken;
-        private readonly int x;
-        private readonly int y;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="Move"/> class.
         /// </summary>
@@ -23,27 +19,27 @@ namespace GameTheory.Games.TicTacToe
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "y", Justification = "Y is meaningful in the context of coordinates.")]
         public Move(PlayerToken playerToken, int x, int y)
         {
-            this.playerToken = playerToken;
-            this.x = x;
-            this.y = y;
+            this.PlayerToken = playerToken;
+            this.X = x;
+            this.Y = y;
         }
 
         /// <inheritdoc />
-        public PlayerToken PlayerToken => this.playerToken;
+        public PlayerToken PlayerToken { get; }
 
         /// <summary>
         /// Gets the x coordinate of the spot on which the move will me made.
         /// </summary>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "X", Justification = "X is meaningful in the context of coordinates.")]
-        public int X => this.x;
+        public int X { get; }
 
         /// <summary>
         /// Gets the y coordinate of the spot on which the move will me made.
         /// </summary>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Y", Justification = "Y is meaningful in the context of coordinates.")]
-        public int Y => this.y;
+        public int Y { get; }
 
         /// <inheritdoc />
-        public override string ToString() => $"({this.x}, {this.y})";
+        public override string ToString() => $"({this.X}, {this.Y})";
     }
 }

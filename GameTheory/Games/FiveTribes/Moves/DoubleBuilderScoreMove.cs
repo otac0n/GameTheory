@@ -17,10 +17,7 @@ namespace GameTheory.Games.FiveTribes.Moves
         }
 
         /// <inheritdoc />
-        public override string ToString()
-        {
-            return "Double the amout of GCs your Builders get this turn";
-        }
+        public override string ToString() => "Double the amout of GCs your Builders get this turn";
 
         internal override GameState Apply(GameState state)
         {

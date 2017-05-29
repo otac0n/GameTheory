@@ -7,9 +7,6 @@ namespace GameTheory.Games.FiveTribes.Moves
     /// </summary>
     public class BidMove : Move
     {
-        private readonly int cost;
-        private readonly int index;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="BidMove"/> class.
         /// </summary>
@@ -19,31 +16,22 @@ namespace GameTheory.Games.FiveTribes.Moves
         public BidMove(GameState state, int index, int cost)
             : base(state)
         {
-            this.index = index;
-            this.cost = cost;
+            this.Index = index;
+            this.Cost = cost;
         }
 
         /// <summary>
         /// Gets the cost of the bid, in Gold Coins (GC).
         /// </summary>
-        public int Cost
-        {
-            get { return this.cost; }
-        }
+        public int Cost { get; }
 
         /// <summary>
         /// Gets the position on the <see cref="GameState.TurnOrderTrack"/> being bid on.
         /// </summary>
-        public int Index
-        {
-            get { return this.index; }
-        }
+        public int Index { get; }
 
         /// <inheritdoc />
-        public override string ToString()
-        {
-            return $"Bid {this.cost}";
-        }
+        public override string ToString() => $"Bid {this.Cost}";
 
         internal override GameState Apply(GameState state)
         {
@@ -52,9 +40,9 @@ namespace GameTheory.Games.FiveTribes.Moves
             var newQueue = state.BidOrderTrack.Dequeue();
             return state.With(
                 bidOrderTrack: newQueue,
-                inventory: state.Inventory.SetItem(player, inventory.With(goldCoins: inventory.GoldCoins - this.cost)),
+                inventory: state.Inventory.SetItem(player, inventory.With(goldCoins: inventory.GoldCoins - this.Cost)),
                 phase: newQueue.IsEmpty ? Phase.MoveTurnMarker : Phase.Bid,
-                turnOrderTrack: state.TurnOrderTrack.SetItem(this.index, player));
+                turnOrderTrack: state.TurnOrderTrack.SetItem(this.Index, player));
         }
     }
 }

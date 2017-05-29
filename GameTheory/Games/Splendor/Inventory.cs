@@ -42,7 +42,7 @@ namespace GameTheory.Games.Splendor
         /// <summary>
         /// Gets the Nobles that have visited the player.
         /// </summary>
-        public ImmutableList<Noble> Nobles { get; private set; }
+        public ImmutableList<Noble> Nobles { get; }
 
         /// <summary>
         /// Gets the tokens owned by the player.
