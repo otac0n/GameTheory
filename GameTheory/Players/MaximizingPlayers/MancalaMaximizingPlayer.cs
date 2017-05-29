@@ -15,7 +15,7 @@ namespace GameTheory.Players.MaximizingPlayers
         /// </summary>
         /// <param name="playerToken">The token that represents the player.</param>
         /// <param name="minPly">The minimum number of ply to think ahead.</param>
-        public MancalaMaximizingPlayer(PlayerToken playerToken, int minPly)
+        public MancalaMaximizingPlayer(PlayerToken playerToken, int minPly = 6)
             : base(playerToken, new ScoringMetric(), minPly)
         {
         }
