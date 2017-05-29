@@ -12,9 +12,8 @@ namespace GameTheory.Games.Mancala
     /// </summary>
     public class GameState : IGameState<Move>
     {
-        private readonly PlayerToken activePlayer;
-        private readonly ImmutableArray<int> board;
-        private readonly ImmutableList<PlayerToken> players;
+        private readonly PlayerToken player0;
+        private readonly PlayerToken player1;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GameState"/> class.
@@ -23,11 +22,14 @@ namespace GameTheory.Games.Mancala
         /// <param name="initialStonesPerBin">The number of stones initially in each bin.</param>
         public GameState(int binsPerSide = 6, int initialStonesPerBin = 4)
         {
-            this.players = ImmutableList.Create(new PlayerToken(), new PlayerToken());
-            this.activePlayer = this.players[0];
+            this.Players = ImmutableList.Create(new PlayerToken(), new PlayerToken());
+            this.player0 = this.Players[0];
+            this.player1 = this.Players[1];
+            this.ActivePlayer = this.player0;
+            this.BinsPerSide = binsPerSide;
             var bins = Enumerable.Repeat(initialStonesPerBin, binsPerSide);
             var side = Enumerable.Concat(bins, Enumerable.Repeat(0, 1));
-            this.board = ImmutableArray.CreateRange(Enumerable.Concat(side, side));
+            this.Board = ImmutableArray.CreateRange(Enumerable.Concat(side, side));
         }
 
         private GameState(
@@ -35,46 +37,49 @@ namespace GameTheory.Games.Mancala
             PlayerToken activePlayer,
             ImmutableArray<int> board)
         {
-            this.players = players;
-            this.activePlayer = activePlayer;
-            this.board = board;
+            this.Players = players;
+            this.player0 = this.Players[0];
+            this.player1 = this.Players[1];
+            this.ActivePlayer = activePlayer;
+            this.BinsPerSide = board.Length / 2 - 1;
+            this.Board = board;
         }
 
         /// <summary>
         /// Gets the active player.
         /// </summary>
-        public PlayerToken ActivePlayer => this.activePlayer;
+        public PlayerToken ActivePlayer { get; }
 
         /// <summary>
         /// Gets the board.
         /// </summary>
-        public ImmutableArray<int> Board => this.board;
+        public ImmutableArray<int> Board { get; }
 
+        /// <inheritdoc />
         IReadOnlyList<PlayerToken> IGameState<Move>.Players => this.Players;
 
         /// <summary>
         /// Gets the list of players.
         /// </summary>
-        public ImmutableList<PlayerToken> Players => this.players;
+        public ImmutableList<PlayerToken> Players { get; }
 
         /// <summary>
         /// Gets the number of bins per side.
         /// </summary>
-        public int BinsPerSide => this.Board.Length / 2 - 1;
+        public int BinsPerSide { get; }
 
         /// <inheritdoc />
         public IReadOnlyCollection<Move> GetAvailableMoves(PlayerToken playerToken)
         {
             var moves = ImmutableList.CreateBuilder<Move>();
 
-            if (playerToken == this.activePlayer)
+            if (playerToken == this.ActivePlayer)
             {
-                var playerOffset = this.GetPlayerIndexOffset(this.activePlayer);
-                var binsPerSide = this.BinsPerSide;
-                for (var i = 0; i < binsPerSide; i++)
+                var playerOffset = this.GetPlayerIndexOffset(this.ActivePlayer);
+                for (var i = 0; i < this.BinsPerSide; i++)
                 {
                     var index = i + playerOffset;
-                    if (this.board[index] > 0)
+                    if (this.Board[index] > 0)
                     {
                         moves.Add(new Move(this, index));
                     }
@@ -91,13 +96,13 @@ namespace GameTheory.Games.Mancala
         /// <returns>The specified player's score.</returns>
         public int GetScore(PlayerToken playerToken)
         {
-            return this.GetPlayerIndexes(playerToken).Sum(i => this.board[i]);
+            return this.GetPlayerIndexes(playerToken).Sum(i => this.Board[i]);
         }
 
         /// <inheritdoc />
         public IReadOnlyCollection<PlayerToken> GetWinners()
         {
-            return this.players
+            return this.Players
                 .GroupBy(p => this.GetScore(p))
                 .OrderByDescending(g => g.Key)
                 .First()
@@ -136,8 +141,8 @@ namespace GameTheory.Games.Mancala
         /// <inheritdoc />
         public override string ToString()
         {
-            var r = new Func<IEnumerable<int>, string>(bins => string.Join(" ", bins.Select(b => $"[{this.board[b], 2}]")));
-            return $"{r(this.GetPlayerIndexes(this.players[1]).Reverse())} [  ]\n[  ] {r(this.GetPlayerIndexes(this.players[0]))}";
+            var r = new Func<IEnumerable<int>, string>(bins => string.Join(" ", bins.Select(b => $"[{this.Board[b], 2}]")));
+            return $"{r(this.GetPlayerIndexes(this.Players[1]).Reverse())} [  ]\n[  ] {r(this.GetPlayerIndexes(this.Players[0]))}";
         }
 
         /// <summary>
@@ -146,7 +151,7 @@ namespace GameTheory.Games.Mancala
         /// <param name="playerToken">The player whose bin indexes should be returned.</param>
         /// <returns>An enumerable collection of indexes.</returns>
         public IEnumerable<int> GetPlayerIndexes(PlayerToken playerToken) =>
-            Enumerable.Range(this.GetPlayerIndexOffset(playerToken), this.board.Length / 2);
+            Enumerable.Range(this.GetPlayerIndexOffset(playerToken), this.BinsPerSide + 1);
 
         /// <summary>
         /// Gets the starting index for the specified player.
@@ -154,16 +159,18 @@ namespace GameTheory.Games.Mancala
         /// <param name="playerToken">The player whose starting index should be returned.</param>
         /// <returns>The lowest index representing a bin owned by this player.</returns>
         public int GetPlayerIndexOffset(PlayerToken playerToken) =>
-            this.players.IndexOf(playerToken) * this.board.Length / 2;
+            playerToken == this.player0 ? 0 :
+            playerToken == this.player1 ? this.BinsPerSide + 1 :
+            throw new ArgumentOutOfRangeException(nameof(playerToken));
 
         internal GameState With(
             PlayerToken activePlayer = null,
             ImmutableArray<int>? board = null)
         {
             return new GameState(
-                this.players,
-                activePlayer ?? this.activePlayer,
-                board ?? this.board);
+                this.Players,
+                activePlayer ?? this.ActivePlayer,
+                board ?? this.Board);
         }
     }
 }
