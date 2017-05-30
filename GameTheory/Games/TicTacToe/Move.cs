@@ -27,6 +27,9 @@ namespace GameTheory.Games.TicTacToe
         /// <inheritdoc />
         public PlayerToken PlayerToken { get; }
 
+        /// <inheritdoc />
+        public bool IsDeterministic => true;
+
         /// <summary>
         /// Gets the x coordinate of the spot on which the move will me made.
         /// </summary>

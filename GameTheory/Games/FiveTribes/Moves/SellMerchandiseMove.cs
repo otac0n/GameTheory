@@ -29,6 +29,9 @@ namespace GameTheory.Games.FiveTribes.Moves
         public int Value => GameState.ScoreResources(this.Resources);
 
         /// <inheritdoc />
+        public override bool IsDeterministic => true;
+
+        /// <inheritdoc />
         public override string ToString() => $"Trade {this.Resources} for {GameState.SuitValues[this.Resources.Count]}";
 
         internal override GameState Apply(GameState state)

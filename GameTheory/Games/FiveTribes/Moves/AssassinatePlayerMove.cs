@@ -37,6 +37,9 @@ namespace GameTheory.Games.FiveTribes.Moves
         public PlayerToken Victim { get; }
 
         /// <inheritdoc />
+        public override bool IsDeterministic => true;
+
+        /// <inheritdoc />
         public override string ToString() => $"Assassinate {this.Victim}'s {this.Meeples}";
 
         internal override GameState Apply(GameState state)

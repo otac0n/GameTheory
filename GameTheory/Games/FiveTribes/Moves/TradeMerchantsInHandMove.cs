@@ -19,6 +19,9 @@ namespace GameTheory.Games.FiveTribes.Moves
         }
 
         /// <inheritdoc />
+        public override bool IsDeterministic => true;
+
+        /// <inheritdoc />
         public override string ToString() => $"Take {this.State.InHand.Count} resources";
 
         internal override GameState Apply(GameState state)

@@ -26,6 +26,9 @@ namespace GameTheory.Games.Splendor
         /// </summary>
         public PlayerToken PlayerToken { get; }
 
+        /// <inheritdoc />
+        public abstract bool IsDeterministic { get; }
+
         internal GameState State { get; }
 
         /// <inheritdoc />

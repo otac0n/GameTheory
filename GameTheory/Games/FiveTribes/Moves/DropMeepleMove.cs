@@ -31,6 +31,9 @@ namespace GameTheory.Games.FiveTribes.Moves
         public Point Point { get; }
 
         /// <inheritdoc />
+        public override bool IsDeterministic => true;
+
+        /// <inheritdoc />
         public override string ToString() => $"Drop {this.Meeple} at {this.Point}";
 
         internal override GameState Apply(GameState state)

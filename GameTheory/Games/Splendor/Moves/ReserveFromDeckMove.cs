@@ -26,6 +26,9 @@ namespace GameTheory.Games.Splendor.Moves
         public int Track { get; }
 
         /// <inheritdoc />
+        public override bool IsDeterministic => false;
+
+        /// <inheritdoc />
         public override string ToString() => $"Reserve from deck {this.Track + 1}" + (this.State.Tokens[Token.GoldJoker] > 0 ? $" and take {Token.GoldJoker}" : string.Empty);
 
         internal static IEnumerable<Move> GenerateMoves(GameState state)

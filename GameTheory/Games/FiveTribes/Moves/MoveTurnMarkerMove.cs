@@ -17,6 +17,9 @@ namespace GameTheory.Games.FiveTribes.Moves
         }
 
         /// <inheritdoc />
+        public override bool IsDeterministic => true;
+
+        /// <inheritdoc />
         public override string ToString() => "Move turn marker";
 
         internal override GameState Apply(GameState state)

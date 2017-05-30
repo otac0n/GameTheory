@@ -11,5 +11,14 @@ namespace GameTheory
         /// Gets the player who may perform this move.
         /// </summary>
         PlayerToken PlayerToken { get; }
+
+        /// <summary>
+        /// Gets a value indicating whether or not the immediate outcome of this move is certain.
+        /// </summary>
+        /// <remarks>
+        /// A value of <c>true</c> means that the result of applying the move to a game state will always have the same outcome.
+        /// A value of <c>false</c> means that the outcome may vary.
+        /// </remarks>
+        bool IsDeterministic { get; }
     }
 }

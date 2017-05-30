@@ -63,6 +63,8 @@ namespace GameTheory.Tests.Strategies
                 }
 
                 public PlayerToken PlayerToken { get; }
+
+                public bool IsDeterministic => true;
             }
         }
     }

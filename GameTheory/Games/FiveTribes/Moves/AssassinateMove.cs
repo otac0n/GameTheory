@@ -3,6 +3,7 @@
 namespace GameTheory.Games.FiveTribes.Moves
 {
     using System;
+    using System.Linq;
 
     /// <summary>
     /// Represents a move to assassinate specific <see cref="Meeple">Meeples</see> at a specific <see cref="Point"/> on the board.
@@ -35,6 +36,10 @@ namespace GameTheory.Games.FiveTribes.Moves
         /// Gets the <see cref="Point"/> at which the assassination will take place.
         /// </summary>
         public Point Point { get; }
+
+        /// <inheritdoc />
+        public override bool IsDeterministic =>
+            this.Meeples[Meeple.Merchant] == 0 || !this.State.Inventory[this.State.ActivePlayer].Djinns.Any(d => d is Djinns.Kandicha);
 
         /// <inheritdoc />
         public override string ToString() => $"Assissinate {this.Meeples} at {this.Point}";

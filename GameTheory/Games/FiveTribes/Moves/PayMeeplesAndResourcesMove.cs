@@ -50,6 +50,9 @@ namespace GameTheory.Games.FiveTribes.Moves
         public EnumCollection<Resource> Resources { get; }
 
         /// <inheritdoc />
+        public override bool IsDeterministic => true;
+
+        /// <inheritdoc />
         public override string ToString() => $"Pay {this.Meeples}{(this.Meeples.Count > 0 && this.Resources.Count > 0 ? ", " : string.Empty)}{this.Resources}";
 
         internal override GameState Apply(GameState state)

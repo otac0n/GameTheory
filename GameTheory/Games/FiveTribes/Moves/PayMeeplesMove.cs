@@ -41,6 +41,9 @@ namespace GameTheory.Games.FiveTribes.Moves
         public EnumCollection<Meeple> Meeples { get; }
 
         /// <inheritdoc />
+        public override bool IsDeterministic => true;
+
+        /// <inheritdoc />
         public override string ToString() => $"Pay {this.Meeples}";
 
         internal override GameState Apply(GameState state)

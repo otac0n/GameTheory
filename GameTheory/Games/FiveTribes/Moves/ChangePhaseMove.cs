@@ -28,6 +28,9 @@ namespace GameTheory.Games.FiveTribes.Moves
         public Phase Phase { get; }
 
         /// <inheritdoc />
+        public override bool IsDeterministic => true;
+
+        /// <inheritdoc />
         public override string ToString() => this.description;
 
         internal override GameState Apply(GameState state)

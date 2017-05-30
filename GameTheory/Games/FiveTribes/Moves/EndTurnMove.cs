@@ -21,8 +21,12 @@ namespace GameTheory.Games.FiveTribes.Moves
         }
 
         /// <inheritdoc />
+        public override bool IsDeterministic => false;
+
+        /// <inheritdoc />
         public override string ToString() => "End turn";
 
+        // BUG: Much of this should not happen during each players turn and should be reserved for Clean Up phase (3).
         internal override GameState Apply(GameState state)
         {
             var djinnDiscards = state.DjinnDiscards;

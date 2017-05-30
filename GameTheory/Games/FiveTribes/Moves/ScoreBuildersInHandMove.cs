@@ -26,6 +26,9 @@ namespace GameTheory.Games.FiveTribes.Moves
         public int SpentSlaves { get; }
 
         /// <inheritdoc />
+        public override bool IsDeterministic => true;
+
+        /// <inheritdoc />
         public override string ToString() => $"Score {this.State.InHand}";
 
         internal override GameState Apply(GameState state)

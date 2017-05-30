@@ -32,6 +32,9 @@ namespace GameTheory.Games.Mancala
         /// </summary>
         public PlayerToken PlayerToken { get; }
 
+        /// <inheritdoc />
+        public bool IsDeterministic => true;
+
         internal GameState State { get; }
 
         /// <inheritdoc />

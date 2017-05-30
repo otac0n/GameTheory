@@ -86,6 +86,8 @@ namespace GameTheory.Tests
 
             public PlayerToken PlayerToken { get; }
 
+            public bool IsDeterministic => true;
+
             public string Value { get; }
         }
     }

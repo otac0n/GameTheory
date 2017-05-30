@@ -27,6 +27,9 @@ namespace GameTheory.Games.Splendor.Moves
         public EnumCollection<Token> Tokens { get; }
 
         /// <inheritdoc />
+        public override bool IsDeterministic => true;
+
+        /// <inheritdoc />
         public override string ToString() => $"Take {this.Tokens}";
 
         internal static IEnumerable<Move> GenerateMoves(GameState state)

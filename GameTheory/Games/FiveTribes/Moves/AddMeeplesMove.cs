@@ -28,6 +28,9 @@ namespace GameTheory.Games.FiveTribes.Moves
         public Point Point { get; }
 
         /// <inheritdoc />
+        public override bool IsDeterministic => false;
+
+        /// <inheritdoc />
         public override string ToString() => $"Draw {Math.Min(this.State.Bag.Count, 3)} Meeples and place at {this.Point}";
 
         internal override GameState Apply(GameState state)

@@ -21,6 +21,9 @@ namespace GameTheory.Games.MatchingPennies
         /// <inheritdoc />
         public PlayerToken PlayerToken { get; }
 
+        /// <inheritdoc />
+        public bool IsDeterministic => true;
+
         /// <summary>
         /// Gets a value indicating whether or not the player has chosen heads.
         /// </summary>

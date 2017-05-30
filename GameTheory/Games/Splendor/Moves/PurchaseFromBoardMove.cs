@@ -46,6 +46,9 @@ namespace GameTheory.Games.Splendor.Moves
         public int Track { get; }
 
         /// <inheritdoc />
+        public override bool IsDeterministic => false;
+
+        /// <inheritdoc />
         public override string ToString() => $"Purchase {this.Card} for {(this.Cost.Count > 0 ? this.Cost.ToString() : "free")}";
 
         internal static IEnumerable<EnumCollection<Token>> GetAffordableTokenCosts(EnumCollection<Token> tokens, int jokerCount, EnumCollection<Token> cost)

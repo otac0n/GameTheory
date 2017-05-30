@@ -38,6 +38,9 @@ namespace GameTheory.Games.Splendor.Moves
         public int Index { get; }
 
         /// <inheritdoc />
+        public override bool IsDeterministic => true;
+
+        /// <inheritdoc />
         public override string ToString() => $"Purchase {this.Card} for {(this.Cost.Count > 0 ? this.Cost.ToString() : "free")}";
 
         internal static IEnumerable<Move> GenerateMoves(GameState state)

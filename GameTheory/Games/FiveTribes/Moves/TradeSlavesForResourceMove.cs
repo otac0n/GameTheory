@@ -27,6 +27,9 @@ namespace GameTheory.Games.FiveTribes.Moves
         public Resource Resource { get; }
 
         /// <inheritdoc />
+        public override bool IsDeterministic => true;
+
+        /// <inheritdoc />
         public override string ToString() => $"Trade {Cost} for {this.Resource}";
 
         internal override GameState Apply(GameState state)

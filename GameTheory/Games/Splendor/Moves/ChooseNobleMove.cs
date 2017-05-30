@@ -33,6 +33,9 @@ namespace GameTheory.Games.Splendor.Moves
         public int Index { get; }
 
         /// <inheritdoc />
+        public override bool IsDeterministic => true;
+
+        /// <inheritdoc />
         public override string ToString() => $"Invite {this.Noble} to visit";
 
         internal static GameState GenerateTransitionState(GameState state)

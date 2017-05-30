@@ -31,6 +31,9 @@ namespace GameTheory.Games.FiveTribes.Moves
         public int Index { get; }
 
         /// <inheritdoc />
+        public override bool IsDeterministic => true;
+
+        /// <inheritdoc />
         public override string ToString() => $"Bid {this.Cost}";
 
         internal override GameState Apply(GameState state)

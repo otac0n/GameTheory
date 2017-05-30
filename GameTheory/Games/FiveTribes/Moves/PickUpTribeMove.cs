@@ -24,6 +24,9 @@ namespace GameTheory.Games.FiveTribes.Moves
         public Meeple Tribe { get; }
 
         /// <inheritdoc />
+        public override bool IsDeterministic => true;
+
+        /// <inheritdoc />
         public override string ToString() => $"Pick up all {this.Tribe} at {this.State.LastPoint}";
 
         internal override GameState Apply(GameState state)

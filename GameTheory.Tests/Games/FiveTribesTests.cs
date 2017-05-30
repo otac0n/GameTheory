@@ -315,6 +315,8 @@ namespace GameTheory.Tests.Games
                 this.nextState = nextState;
             }
 
+            public override bool IsDeterministic => true;
+
             public override string ToString() => "OK";
 
             internal override GameState Apply(GameState state)

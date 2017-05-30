@@ -45,6 +45,9 @@ namespace GameTheory.Games.FiveTribes.Moves
         public Resource Resource => this.State.VisibleResources[this.Index];
 
         /// <inheritdoc />
+        public override bool IsDeterministic => true;
+
+        /// <inheritdoc />
         public override string ToString() => $"Take {this.Resource}";
 
         internal override GameState Apply(GameState state)
