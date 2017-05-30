@@ -2,6 +2,7 @@
 
 namespace GameTheory.Games.FiveTribes.Moves
 {
+    using System;
     using System.Linq;
 
     /// <summary>
@@ -22,19 +23,20 @@ namespace GameTheory.Games.FiveTribes.Moves
         public override bool IsDeterministic => true;
 
         /// <inheritdoc />
-        public override string ToString() => $"Take {this.State.InHand.Count} resources";
+        public override string ToString() => $"Take {Math.Min(this.State.VisibleResources.Count, this.State.InHand.Count)} resources";
 
         internal override GameState Apply(GameState state)
         {
             var player = state.ActivePlayer;
             var inventory = state.Inventory[player];
-            var resources = inventory.Resources.AddRange(state.VisibleResources.Take(state.InHand.Count));
+            var count = Math.Min(state.VisibleResources.Count, state.InHand.Count);
+            var resources = inventory.Resources.AddRange(state.VisibleResources.Take(count));
             return state.With(
                 bag: state.Bag.AddRange(state.InHand),
                 inHand: EnumCollection<Meeple>.Empty,
                 inventory: state.Inventory.SetItem(player, inventory.With(resources: resources)),
                 phase: Phase.TileAction,
-                visibleResources: state.VisibleResources.RemoveRange(0, state.InHand.Count));
+                visibleResources: state.VisibleResources.RemoveRange(0, count));
         }
     }
 }

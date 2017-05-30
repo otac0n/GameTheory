@@ -263,7 +263,7 @@ namespace GameTheory.Games.FiveTribes
         /// <summary>
         /// Gets a value indicating whether or not this <see cref="GameState"/> contains subsequent moves.
         /// </summary>
-        public bool HasSubsequentMoves => 
+        public bool HasSubsequentMoves =>
             this.subsequentMovesFactory != null && !this.subsequentMoves.Value.IsEmpty;
 
         IReadOnlyList<PlayerToken> IGameState<Move>.Players => this.Players;
@@ -760,6 +760,8 @@ namespace GameTheory.Games.FiveTribes
 
         private IEnumerable<Move> GetMerchandiseSaleMoves()
         {
+            yield return new EndTurnMove(this);
+
             var keys = this.Inventory[this.ActivePlayer].Resources.Keys.ToImmutableList().RemoveAll(r => r == Resource.Slave);
 
             for (var i = (1 << keys.Count) - 1; i > 0; i--)
@@ -768,8 +770,6 @@ namespace GameTheory.Games.FiveTribes
 
                 yield return new SellMerchandiseMove(this, resources);
             }
-
-            yield return new EndTurnMove(this);
         }
 
         private IEnumerable<Move> GetMoveMeeplesMoves()

@@ -29,6 +29,16 @@ namespace GameTheory.Games.FiveTribes.Djinns
                 throw new ArgumentNullException(nameof(kill));
             }
 
+            if (state == null)
+            {
+                throw new ArgumentNullException(nameof(state));
+            }
+
+            if (owner != state.ActivePlayer)
+            {
+                return state;
+            }
+
             var s1 = state;
 
             foreach (var meeple in kill.Keys)
