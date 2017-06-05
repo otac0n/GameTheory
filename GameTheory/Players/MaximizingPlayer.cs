@@ -52,8 +52,7 @@ namespace GameTheory.Players
             /// <summary>
             /// Combines one or more scores with the specified weights.
             /// </summary>
-            /// <param name="scores">The scores to combine.</param>
-            /// <param name="weights">The weights to use when combining</param>
+            /// <param name="scores">The weighted scores to combine.</param>
             /// <returns>The combines score.</returns>
             /// <remarks>
             /// <para>The length of scores and weights must be the same.</para>
@@ -61,7 +60,7 @@ namespace GameTheory.Players
             /// If given multiple scores, the function should return a expected score based on the specified weights.</para>
             /// <para>The player will use negative weights to subtract one score from another.</para>
             /// </remarks>
-            TScore CombineScores(TScore[] scores, double[] weights);
+            TScore CombineScores(IWeighted<TScore>[] scores);
 
             /// <summary>
             /// Gets the difference between two players' scores.

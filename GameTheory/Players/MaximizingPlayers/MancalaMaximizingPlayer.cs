@@ -23,8 +23,8 @@ namespace GameTheory.Players.MaximizingPlayers
         private class ScoringMetric : IScoringMetric
         {
             /// <inheritdoc/>
-            public double CombineScores(double[] scores, double[] weights) =>
-                scores.Select((s, i) => s * weights[i]).Sum() / weights.Sum();
+            public double CombineScores(IWeighted<double>[] scores) =>
+                scores.Sum(s => s.Value * s.Weight) / scores.Sum(s => s.Weight);
 
             /// <inheritdoc/>
             public int Compare(double x, double y) =>
