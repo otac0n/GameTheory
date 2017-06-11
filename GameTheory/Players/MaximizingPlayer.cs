@@ -124,14 +124,15 @@ namespace GameTheory.Players
             {
                 var allMoves = state.GetAvailableMoves();
                 var moveScores = (from m in allMoves
-                                  let nextState = state.MakeMove(m) // BUG: MakeMove may not be deterministic. Need to enumerate possible outcomes and combine scores with expected occurence probabilities.
-                                  select this.GetMove(nextState, ply - 1, cancel).AddMove(m)).ToList();
+                                  let outcomes = state.GetOutcomes(m)
+                                  let mainlines = outcomes.Select(o => Weighted.Create(this.GetMove(o.Value, ply - 1, cancel).AddMove(m), o.Weight))
+                                  select this.CombineOutcomes(mainlines.ToList())).ToList();
                 cancel.ThrowIfCancellationRequested();
 
                 // If only one player can move, they must choose a move.
                 // If more than one player can move, then we assume that players will exclusively play moves that improve their position.
                 // If this is a stalemate (or there are no moves), we return no move and score the current position (recurse with ply 0)
-                var players = moveScores.Select(m => m.Moves.Peek().PlayerToken).ToImmutableHashSet();
+                var players = allMoves.Select(m => m.PlayerToken).ToImmutableHashSet();
                 if (players.Count == 1)
                 {
                     var player = players.First();
@@ -174,6 +175,47 @@ namespace GameTheory.Players
                     throw new NotImplementedException();
                 }
             }
+        }
+
+        private Mainline CombineOutcomes(IList<IWeighted<Mainline>> mainlines)
+        {
+            if (mainlines.Count == 1)
+            {
+                return mainlines[0].Value;
+            }
+
+            double maxWeight = double.NaN;
+            Mainline maxMainline = null;
+
+            var playerScores = new Dictionary<PlayerToken, IWeighted<TScore>[]>();
+
+            for (int i = 0; i < mainlines.Count; i++)
+            {
+                var weightedMainline = mainlines[i];
+                var weight = weightedMainline.Weight;
+                var mainline = weightedMainline.Value;
+                var score = mainline.Score;
+
+                if (double.IsNaN(maxWeight) || weight > maxWeight)
+                {
+                    maxWeight = weight;
+                    maxMainline = mainline;
+                }
+
+                foreach (var player in score.Keys)
+                {
+                    if (!playerScores.TryGetValue(player, out IWeighted<TScore>[] playerScore))
+                    {
+                        playerScores[player] = playerScore = new IWeighted<TScore>[mainlines.Count];
+                    }
+
+                    playerScore[i] = Weighted.Create(score[player], weight);
+                }
+            }
+
+            var combinedScore = playerScores.ToImmutableDictionary(ps => ps.Key, ps => this.scoringMetric.CombineScores(ps.Value));
+
+            return new Mainline(combinedScore, maxMainline.State, maxMainline.Moves);
         }
 
         private IReadOnlyDictionary<PlayerToken, TScore> Score(IGameState<TMove> state)

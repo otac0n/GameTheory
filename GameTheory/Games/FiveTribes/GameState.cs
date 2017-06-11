@@ -541,6 +541,19 @@ namespace GameTheory.Games.FiveTribes
             return HandleTransition(this, newState);
         }
 
+        /// <inheritdoc />
+        public IEnumerable<IWeighted<IGameState<Move>>> GetOutcomes(Move move)
+        {
+            if (move.IsDeterministic)
+            {
+                yield return Weighted.Create(this.MakeMove(move), 1);
+                yield break;
+            }
+
+            // BUG: Need to enumerate possible outcomes and combine scores with expected occurence probabilities.
+            yield return Weighted.Create(this.MakeMove(move), 1);
+        }
+
         /// <summary>
         /// Creates a new <see cref="GameState"/>, and updates the specified values.
         /// </summary>

@@ -50,6 +50,11 @@ namespace GameTheory.Tests.Strategies
                 return this;
             }
 
+            public IEnumerable<IWeighted<IGameState<Move>>> GetOutcomes(Move move)
+            {
+                yield return Weighted.Create(this.MakeMove(move), 1);
+            }
+
             public IGameState<Move> GetView(PlayerToken playerToken)
             {
                 return this;

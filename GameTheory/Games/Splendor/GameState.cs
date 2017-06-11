@@ -346,6 +346,19 @@ namespace GameTheory.Games.Splendor
             return move.Apply(this);
         }
 
+        /// <inheritdoc />
+        public IEnumerable<IWeighted<IGameState<Move>>> GetOutcomes(Move move)
+        {
+            if (move.IsDeterministic)
+            {
+                yield return Weighted.Create(this.MakeMove(move), 1);
+                yield break;
+            }
+
+            // BUG: Need to enumerate possible outcomes and combine scores with expected occurence probabilities.
+            yield return Weighted.Create(this.MakeMove(move), 1);
+        }
+
         internal GameState With(
             PlayerToken activePlayer = null,
             Phase? phase = null,

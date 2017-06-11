@@ -135,6 +135,12 @@ namespace GameTheory.Games.TicTacToe
         public IReadOnlyCollection<PlayerToken> GetWinners() => this.winners;
 
         /// <inheritdoc />
+        public IEnumerable<IWeighted<IGameState<Move>>> GetOutcomes(Move move)
+        {
+            yield return Weighted.Create(this.MakeMove(move), 1);
+        }
+
+        /// <inheritdoc />
         public IGameState<Move> MakeMove(Move move)
         {
             if (move == null)

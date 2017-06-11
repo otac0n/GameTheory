@@ -75,6 +75,12 @@ namespace GameTheory.Games.MatchingPennies
         }
 
         /// <inheritdoc />
+        public IEnumerable<IWeighted<IGameState<Move>>> GetOutcomes(Move move)
+        {
+            yield return Weighted.Create(this.MakeMove(move), 1);
+        }
+
+        /// <inheritdoc />
         public IGameState<Move> GetView(PlayerToken playerToken)
         {
             var index = this.players.IndexOf(playerToken);

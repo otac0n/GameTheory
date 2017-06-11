@@ -116,6 +116,12 @@ namespace GameTheory.Games.Mancala
         }
 
         /// <inheritdoc />
+        public IEnumerable<IWeighted<IGameState<Move>>> GetOutcomes(Move move)
+        {
+            yield return Weighted.Create(this.MakeMove(move), 1);
+        }
+
+        /// <inheritdoc />
         public IGameState<Move> GetView(PlayerToken playerToken) => this;
 
         /// <summary>
