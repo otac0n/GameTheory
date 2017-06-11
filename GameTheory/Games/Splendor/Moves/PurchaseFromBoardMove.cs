@@ -46,7 +46,7 @@ namespace GameTheory.Games.Splendor.Moves
         public int Track { get; }
 
         /// <inheritdoc />
-        public override bool IsDeterministic => false;
+        public override bool IsDeterministic => this.State.DevelopmentDecks[this.Track].Count <= 1;
 
         /// <inheritdoc />
         public override string ToString() => $"Purchase {this.Card} for {(this.Cost.Count > 0 ? this.Cost.ToString() : "free")}";
@@ -94,7 +94,6 @@ namespace GameTheory.Games.Splendor.Moves
             var tokens = state.Tokens;
             var track = state.DevelopmentTracks[this.Track];
             var deck = state.DevelopmentDecks[this.Track];
-            var card = track[this.Index];
             var pInventory = state.Inventory[state.ActivePlayer];
             var pDevelopmentCards = pInventory.DevelopmentCards;
             var pTokens = pInventory.Tokens;
@@ -102,10 +101,17 @@ namespace GameTheory.Games.Splendor.Moves
             tokens = tokens.AddRange(this.Cost);
             pTokens = pTokens.RemoveRange(this.Cost);
 
-            pDevelopmentCards = pDevelopmentCards.Add(card);
+            pDevelopmentCards = pDevelopmentCards.Add(track[this.Index]);
 
-            deck = deck.Deal(out DevelopmentCard replacement);
-            track = track.SetItem(this.Index, replacement);
+            if (deck.Count == 0)
+            {
+                track = track.SetItem(this.Index, null);
+            }
+            else
+            {
+                deck = deck.Deal(out DevelopmentCard replacement);
+                track = track.SetItem(this.Index, replacement);
+            }
 
             return base.Apply(state.With(
                 tokens: tokens,
@@ -114,6 +120,53 @@ namespace GameTheory.Games.Splendor.Moves
                 inventory: state.Inventory.SetItem(state.ActivePlayer, pInventory.With(
                     developmentCards: pDevelopmentCards,
                     tokens: pTokens))));
+        }
+
+        internal override IEnumerable<IWeighted<GameState>> GetOutcomes(GameState state)
+        {
+            var tokens = state.Tokens;
+            var track = state.DevelopmentTracks[this.Track];
+            var deck = state.DevelopmentDecks[this.Track];
+            var pInventory = state.Inventory[state.ActivePlayer];
+            var pDevelopmentCards = pInventory.DevelopmentCards;
+            var pTokens = pInventory.Tokens;
+
+            tokens = tokens.AddRange(this.Cost);
+            pTokens = pTokens.RemoveRange(this.Cost);
+
+            pDevelopmentCards = pDevelopmentCards.Add(track[this.Index]);
+
+            if (deck.Count == 0)
+            {
+                track = track.SetItem(this.Index, null);
+
+                var outcome = base.Apply(state.With(
+                    tokens: tokens,
+                    developmentDecks: state.DevelopmentDecks.SetItem(this.Track, deck),
+                    developmentTracks: state.DevelopmentTracks.SetItem(this.Track, track),
+                    inventory: state.Inventory.SetItem(state.ActivePlayer, pInventory.With(
+                        developmentCards: pDevelopmentCards,
+                        tokens: pTokens))));
+                yield return Weighted.Create(outcome, 1);
+            }
+            else
+            {
+                for (var i = 0; i < deck.Count; i++)
+                {
+                    var replacement = deck[i];
+                    var newDeck = deck.RemoveAt(i);
+                    var newTrack = track.SetItem(this.Index, replacement);
+
+                    var outcome = base.Apply(state.With(
+                        tokens: tokens,
+                        developmentDecks: state.DevelopmentDecks.SetItem(this.Track, newDeck),
+                        developmentTracks: state.DevelopmentTracks.SetItem(this.Track, newTrack),
+                        inventory: state.Inventory.SetItem(state.ActivePlayer, pInventory.With(
+                            developmentCards: pDevelopmentCards,
+                            tokens: pTokens))));
+                    yield return Weighted.Create(outcome, 1);
+                }
+            }
         }
     }
 }

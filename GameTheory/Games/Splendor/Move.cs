@@ -3,6 +3,7 @@
 namespace GameTheory.Games.Splendor
 {
     using System;
+    using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Linq;
 
@@ -62,5 +63,7 @@ namespace GameTheory.Games.Splendor
 
             return state;
         }
+
+        internal virtual IEnumerable<IWeighted<GameState>> GetOutcomes(GameState state) => throw new NotImplementedException();
     }
 }

@@ -355,8 +355,10 @@ namespace GameTheory.Games.Splendor
                 yield break;
             }
 
-            // BUG: Need to enumerate possible outcomes and combine scores with expected occurence probabilities.
-            yield return Weighted.Create(this.MakeMove(move), 1);
+            foreach (var outcome in move.GetOutcomes(this))
+            {
+                yield return outcome;
+            }
         }
 
         internal GameState With(

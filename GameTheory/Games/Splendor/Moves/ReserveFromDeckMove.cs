@@ -39,7 +39,7 @@ namespace GameTheory.Games.Splendor.Moves
             {
                 for (var tr = 0; tr < state.DevelopmentTracks.Length; tr++)
                 {
-                    if (state.DevelopmentTracks[tr].Length > 0)
+                    if (state.DevelopmentDecks[tr].Count > 0)
                     {
                         yield return new ReserveFromDeckMove(state, tr);
                     }
@@ -55,14 +55,14 @@ namespace GameTheory.Games.Splendor.Moves
             var pHand = pInventory.Hand;
             var pTokens = pInventory.Tokens;
 
-            deck = deck.Deal(out DevelopmentCard drawn);
-            pHand = pHand.Add(drawn);
-
             if (tokens[Token.GoldJoker] > 0)
             {
                 tokens = tokens.Remove(Token.GoldJoker);
                 pTokens = pTokens.Add(Token.GoldJoker);
             }
+
+            deck = deck.Deal(out DevelopmentCard drawn);
+            pHand = pHand.Add(drawn);
 
             return base.Apply(state.With(
                 tokens: tokens,
@@ -70,6 +70,37 @@ namespace GameTheory.Games.Splendor.Moves
                 inventory: state.Inventory.SetItem(state.ActivePlayer, pInventory.With(
                     hand: pHand,
                     tokens: pTokens))));
+        }
+
+        internal override IEnumerable<IWeighted<GameState>> GetOutcomes(GameState state)
+        {
+            var tokens = state.Tokens;
+            var deck = state.DevelopmentDecks[this.Track];
+            var pInventory = state.Inventory[state.ActivePlayer];
+            var pHand = pInventory.Hand;
+            var pTokens = pInventory.Tokens;
+
+            if (tokens[Token.GoldJoker] > 0)
+            {
+                tokens = tokens.Remove(Token.GoldJoker);
+                pTokens = pTokens.Add(Token.GoldJoker);
+            }
+
+            for (var i = 0; i < deck.Count; i++)
+            {
+                var drawn = deck[i];
+                var newDeck = deck.RemoveAt(i);
+                var newHand = pHand.Add(drawn);
+
+                var outcome = base.Apply(state.With(
+                    tokens: tokens,
+                    developmentDecks: state.DevelopmentDecks.SetItem(this.Track, newDeck),
+                    inventory: state.Inventory.SetItem(state.ActivePlayer, pInventory.With(
+                        hand: newHand,
+                        tokens: pTokens))));
+
+                yield return Weighted.Create(outcome, 1);
+            }
         }
     }
 }

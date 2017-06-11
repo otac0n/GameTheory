@@ -38,7 +38,7 @@ namespace GameTheory.Games.Splendor.Moves
         public int Track { get; }
 
         /// <inheritdoc />
-        public override bool IsDeterministic => false;
+        public override bool IsDeterministic => this.State.DevelopmentDecks[this.Track].Count <= 1;
 
         /// <inheritdoc />
         public override string ToString() => $"Reserve [{this.Card}] (cost: {this.Card.Cost})" + (this.State.Tokens[Token.GoldJoker] > 0 ? $" and take {Token.GoldJoker}" : string.Empty);
@@ -73,15 +73,22 @@ namespace GameTheory.Games.Splendor.Moves
             var pHand = pInventory.Hand;
             var pTokens = pInventory.Tokens;
 
-            pHand = pHand.Add(track[this.Index]);
-
-            deck = deck.Deal(out DevelopmentCard replacement);
-            track = track.SetItem(this.Index, replacement);
-
             if (tokens[Token.GoldJoker] > 0)
             {
                 tokens = tokens.Remove(Token.GoldJoker);
                 pTokens = pTokens.Add(Token.GoldJoker);
+            }
+
+            pHand = pHand.Add(track[this.Index]);
+
+            if (deck.Count == 0)
+            {
+                track = track.SetItem(this.Index, null);
+            }
+            else
+            {
+                deck = deck.Deal(out DevelopmentCard replacement);
+                track = track.SetItem(this.Index, replacement);
             }
 
             return base.Apply(state.With(
@@ -91,6 +98,56 @@ namespace GameTheory.Games.Splendor.Moves
                 inventory: state.Inventory.SetItem(state.ActivePlayer, pInventory.With(
                     hand: pHand,
                     tokens: pTokens))));
+        }
+
+        internal override IEnumerable<IWeighted<GameState>> GetOutcomes(GameState state)
+        {
+            var tokens = state.Tokens;
+            var track = state.DevelopmentTracks[this.Track];
+            var deck = state.DevelopmentDecks[this.Track];
+            var pInventory = state.Inventory[state.ActivePlayer];
+            var pHand = pInventory.Hand;
+            var pTokens = pInventory.Tokens;
+
+            if (tokens[Token.GoldJoker] > 0)
+            {
+                tokens = tokens.Remove(Token.GoldJoker);
+                pTokens = pTokens.Add(Token.GoldJoker);
+            }
+
+            pHand = pHand.Add(track[this.Index]);
+
+            if (deck.Count == 0)
+            {
+                track = track.SetItem(this.Index, null);
+
+                var outcome = base.Apply(state.With(
+                    tokens: tokens,
+                    developmentDecks: state.DevelopmentDecks.SetItem(this.Track, deck),
+                    developmentTracks: state.DevelopmentTracks.SetItem(this.Track, track),
+                    inventory: state.Inventory.SetItem(state.ActivePlayer, pInventory.With(
+                        hand: pHand,
+                        tokens: pTokens))));
+                yield return Weighted.Create(outcome, 1);
+            }
+            else
+            {
+                for (var i = 0; i < deck.Count; i++)
+                {
+                    var replacement = deck[i];
+                    var newDeck = deck.RemoveAt(i);
+                    var newTrack = track.SetItem(this.Index, replacement);
+
+                    var outcome = base.Apply(state.With(
+                        tokens: tokens,
+                        developmentDecks: state.DevelopmentDecks.SetItem(this.Track, newDeck),
+                        developmentTracks: state.DevelopmentTracks.SetItem(this.Track, newTrack),
+                        inventory: state.Inventory.SetItem(state.ActivePlayer, pInventory.With(
+                            hand: pHand,
+                            tokens: pTokens))));
+                    yield return Weighted.Create(outcome, 1);
+                }
+            }
         }
     }
 }
