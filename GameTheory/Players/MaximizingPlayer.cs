@@ -89,7 +89,7 @@ namespace GameTheory.Players
 
             var mainline = this.GetMove(state, this.minPly, cancel);
 
-            if (!mainline.Moves.Any() || mainline.Moves.Peek().PlayerToken != this.PlayerToken)
+            if (mainline == null || !mainline.Moves.Any() || mainline.Moves.Peek().PlayerToken != this.PlayerToken)
             {
                 return default(Maybe<TMove>);
             }
@@ -123,19 +123,25 @@ namespace GameTheory.Players
             else
             {
                 var allMoves = state.GetAvailableMoves();
-                var moveScores = (from m in allMoves
-                                  let outcomes = state.GetOutcomes(m)
-                                  let mainlines = outcomes.Select(o => Weighted.Create(this.GetMove(o.Value, ply - 1, cancel).AddMove(m), o.Weight))
-                                  select this.CombineOutcomes(mainlines.ToList())).ToList();
-                cancel.ThrowIfCancellationRequested();
+                var players = allMoves.Select(m => m.PlayerToken).ToImmutableHashSet();
 
                 // If only one player can move, they must choose a move.
                 // If more than one player can move, then we assume that players will exclusively play moves that improve their position.
                 // If this is a stalemate (or there are no moves), we return no move and score the current position (recurse with ply 0)
-                var players = allMoves.Select(m => m.PlayerToken).ToImmutableHashSet();
                 if (players.Count == 1)
                 {
-                    var player = players.First();
+                    var player = players.Single();
+                    if (ply == this.minPly && player != this.PlayerToken)
+                    {
+                        // We can avoid any further calculation at this ply, because it is not our turn.
+                        return null;
+                    }
+
+                    var moveScores = (from m in allMoves
+                                      let outcomes = state.GetOutcomes(m)
+                                      let mainlines = outcomes.Select(o => Weighted.Create(this.GetMove(o.Value, ply - 1, cancel).AddMove(m), o.Weight))
+                                      select this.CombineOutcomes(mainlines.ToList())).ToList();
+                    cancel.ThrowIfCancellationRequested();
 
                     var maxLead = default(Maybe<TScore>);
                     var maxMoves = new List<Mainline>();

@@ -90,7 +90,7 @@ namespace GameTheory
                     cts.CancelAfter(timePerMove ?? TimeSpan.FromMinutes(1));
                     var tasks = new HashSet<Task<Maybe<TMove>>>(getTasks(cts.Token));
 
-                    Maybe<TMove> chosenMove = default(Maybe<TMove>);
+                    var chosenMove = default(Maybe<TMove>);
 
                     while (tasks.Count > 0)
                     {
