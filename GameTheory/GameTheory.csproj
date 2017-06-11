@@ -205,7 +205,9 @@
     <Compile Include="IWeighted.cs" />
     <Compile Include="Maybe.cs" />
     <Compile Include="Players\MaximizingPlayer.cs" />
+    <Compile Include="Players\MaximizingPlayers\FiveTribesMaximizingPlayer.cs" />
     <Compile Include="Players\MaximizingPlayers\MancalaMaximizingPlayer.cs" />
+    <Compile Include="Players\MaximizingPlayers\SplendorMaximizingPlayer.cs" />
     <Compile Include="Players\MaximizingPlayers\TicTacToeMaximizingPlayer.cs" />
     <Compile Include="Players\StrategyPlayer.cs" />
     <Compile Include="Strategies\CompositeStrategy.cs" />
