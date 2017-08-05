@@ -8,6 +8,7 @@ namespace GameTheory.ConsoleRunner
     using System.Linq;
     using System.Reflection;
     using GameTheory.Catalogs;
+    using GameTheory.ConsoleRunner.ConsoleRenderers;
     using GameTheory.ConsoleRunner.Properties;
 
     internal class Program
@@ -118,7 +119,7 @@ namespace GameTheory.ConsoleRunner
             var players = catalog.FindPlayers(typeof(TMove));
             gameState = GameUtilities.PlayGame(gameState, playerToken => GetPlayer(players, gameState, playerToken), ShowMove, TimeSpan.FromMinutes(5)).Result;
             Console.WriteLine(Resources.FinalState);
-            Console.WriteLine(gameState);
+            ConsoleRenderer.Default<TMove>().Show(gameState);
 
             Console.WriteLine(Resources.Winners);
             var anyWinners = false;
