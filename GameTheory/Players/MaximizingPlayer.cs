@@ -137,24 +137,30 @@ namespace GameTheory.Players
                         return null;
                     }
 
-                    var moveScores = (from m in allMoves
-                                      let outcomes = state.GetOutcomes(m)
-                                      let mainlines = outcomes.Select(o => Weighted.Create(this.GetMove(o.Value, ply - 1, cancel).AddMove(m), o.Weight))
-                                      select this.CombineOutcomes(mainlines.ToList())).ToList();
+                    var moveScores = new Mainline[allMoves.Count];
+                    for (var m = 0; m < allMoves.Count; m++)
+                    {
+                        var move = allMoves[m];
+                        var outcomes = state.GetOutcomes(move);
+                        var mainlines = outcomes.Select(o => Weighted.Create(this.GetMove(o.Value, ply - 1, cancel).AddMove(move), o.Weight));
+                        moveScores[m] = this.CombineOutcomes(mainlines.ToList());
+                    }
+
                     cancel.ThrowIfCancellationRequested();
 
                     var maxLead = default(Maybe<TScore>);
                     var maxMoves = new List<Mainline>();
-                    foreach (var m in moveScores)
+                    for (var m = 0; m < moveScores.Length; m++)
                     {
+                        var mainline = moveScores[m];
                         if (!maxLead.HasValue)
                         {
-                            maxLead = new Maybe<TScore>(this.GetLead(m, player));
-                            maxMoves.Add(m);
+                            maxLead = new Maybe<TScore>(this.GetLead(mainline, player));
+                            maxMoves.Add(mainline);
                         }
                         else
                         {
-                            var lead = this.GetLead(m, player);
+                            var lead = this.GetLead(mainline, player);
                             var comp = this.scoringMetric.Compare(lead, maxLead.Value);
                             if (comp >= 0)
                             {
@@ -164,7 +170,7 @@ namespace GameTheory.Players
                                     maxMoves.Clear();
                                 }
 
-                                maxMoves.Add(m);
+                                maxMoves.Add(mainline);
                             }
                         }
                     }
