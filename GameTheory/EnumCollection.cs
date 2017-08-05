@@ -19,12 +19,14 @@ namespace GameTheory
         where TEnum : struct
     {
         private static readonly int Capacity;
+        private static readonly TEnum[] AllKeys;
         private readonly int count;
         private readonly ImmutableList<int> storage;
 
         static EnumCollection()
         {
             Capacity = Enum.GetValues(typeof(TEnum)).Cast<TEnum>().Select(x => Convert.ToInt32(x, CultureInfo.InvariantCulture)).Max() + 1;
+            AllKeys = Enumerable.Range(0, Capacity).Select(i => (TEnum)Enum.ToObject(typeof(TEnum), i)).ToArray();
             Empty = new EnumCollection<TEnum>(new TEnum[0]);
         }
 
@@ -95,7 +97,7 @@ namespace GameTheory
         /// Gets the distinct list of items contained in the collection.
         /// </summary>
         public IEnumerable<TEnum> Keys =>
-            Enumerable.Range(0, Capacity).Where(i => this.storage[i] > 0).Select(i => (TEnum)Enum.ToObject(typeof(TEnum), i));
+            Enumerable.Range(0, Capacity).Where(i => this.storage[i] > 0).Select(i => AllKeys[i]);
 
         /// <inheritdoc />
         TEnum IReadOnlyList<TEnum>.this[int index]
@@ -107,7 +109,7 @@ namespace GameTheory
                     index -= this.storage[i];
                     if (index < 0)
                     {
-                        return (TEnum)Enum.ToObject(typeof(TEnum), i);
+                        return AllKeys[i];
                     }
                 }
 
@@ -252,7 +254,7 @@ namespace GameTheory
                 var repeat = this.storage[i];
                 while (repeat-- > 0)
                 {
-                    yield return (TEnum)Enum.ToObject(typeof(TEnum), i);
+                    yield return AllKeys[i];
                 }
             }
         }
@@ -322,7 +324,7 @@ namespace GameTheory
 
             for (var i = 0; i < Capacity; i++)
             {
-                if (this.storage[i] > 0 && !match((TEnum)Enum.ToObject(typeof(TEnum), i)))
+                if (this.storage[i] > 0 && !match(AllKeys[i]))
                 {
                     count += storage[i] = this.storage[i];
                 }
@@ -384,7 +386,7 @@ namespace GameTheory
                         sb.Append(count).Append('\u00D7');
                     }
 
-                    sb.Append(Enum.ToObject(typeof(TEnum), i));
+                    sb.Append(AllKeys[i]);
                 }
             }
 
