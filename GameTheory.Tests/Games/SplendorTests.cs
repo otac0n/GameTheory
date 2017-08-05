@@ -16,7 +16,7 @@ namespace GameTheory.Tests.Games
         [TestCase(2, 4)]
         [TestCase(3, 5)]
         [TestCase(4, 7)]
-        public void ctor_Always_AddGemsAndFiveGoldeJokers(int players, int gemTokens)
+        public void Constructor_Always_AddGemsAndFiveGoldeJokers(int players, int gemTokens)
         {
             var state = new GameState(players);
 
@@ -31,7 +31,7 @@ namespace GameTheory.Tests.Games
         }
 
         [Test(Description = "Shuffle the noble tiles and reveal as many of them as there are players plus one (example: 5 tiles for a 4 player game).")]
-        public void ctor_Always_AddsOneMoreNobleThanPlayers([Values(2, 3, 4)] int players)
+        public void Constructor_Always_AddsOneMoreNobleThanPlayers([Values(2, 3, 4)] int players)
         {
             var state = new GameState(players);
 
@@ -39,7 +39,7 @@ namespace GameTheory.Tests.Games
         }
 
         [Test(Description = "Shuffle each development card deck separately, and the place them in a column in the middle of the table in increasing order from bottom to top. Then reveal 4 cards from each level.")]
-        public void ctor_Always_DealsFourDevelopmentCardsFromEachDeck([Values(2, 3, 4)] int players)
+        public void Constructor_Always_DealsFourDevelopmentCardsFromEachDeck([Values(2, 3, 4)] int players)
         {
             var state = new GameState(players);
 

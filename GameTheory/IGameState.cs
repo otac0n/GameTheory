@@ -18,15 +18,15 @@ namespace GameTheory
         IReadOnlyList<PlayerToken> Players { get; }
 
         /// <summary>
-        /// Returns a collection of moves available to the specified player.
+        /// Returns a list of moves available to the specified player.
         /// </summary>
         /// <returns>An enumerable list of moves available to the specified player.</returns>
-        IReadOnlyCollection<TMove> GetAvailableMoves();
+        IReadOnlyList<TMove> GetAvailableMoves();
 
         /// <summary>
         /// Returns any winners for the current game state.
         /// </summary>
-        /// <returns>The list of players who can be considered winners.</returns>
+        /// <returns>The collection of players who can be considered winners.</returns>
         /// <remarks>
         /// More than one player may be listed, if the game allows for multiple winners.
         /// If the game results in a draw, this collection will be empty.

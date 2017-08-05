@@ -56,7 +56,7 @@ namespace GameTheory.Tests
             }
         }
 
-        public IReadOnlyCollection<Move> GetAvailableMoves()
+        public IReadOnlyList<Move> GetAvailableMoves()
         {
             return this.moves.AsReadOnly();
         }

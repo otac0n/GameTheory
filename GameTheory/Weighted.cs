@@ -10,6 +10,7 @@ namespace GameTheory
         /// <summary>
         /// Creates a new instance of a class implementing the <see cref="IWeighted{T}"/> interface.
         /// </summary>
+        /// <typeparam name="T">The type of value being weighted.</typeparam>
         /// <param name="value">The value being weighted.</param>
         /// <param name="weight">The weight assigned.</param>
         /// <returns>The new instance.</returns>

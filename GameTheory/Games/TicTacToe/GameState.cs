@@ -108,7 +108,7 @@ namespace GameTheory.Games.TicTacToe
         public PlayerToken this[int x, int y] => this.field[x, y];
 
         /// <inheritdoc />
-        public IReadOnlyCollection<Move> GetAvailableMoves()
+        public IReadOnlyList<Move> GetAvailableMoves()
         {
             if (this.winningPlayer != null)
             {

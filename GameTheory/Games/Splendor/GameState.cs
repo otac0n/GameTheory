@@ -263,7 +263,7 @@ namespace GameTheory.Games.Splendor
         public EnumCollection<Token> Tokens { get; }
 
         /// <inheritdoc />
-        public IReadOnlyCollection<Move> GetAvailableMoves()
+        public IReadOnlyList<Move> GetAvailableMoves()
         {
             if (this.subsequentMovesFactory != null)
             {

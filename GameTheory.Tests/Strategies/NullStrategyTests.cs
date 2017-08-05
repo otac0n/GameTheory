@@ -35,7 +35,7 @@ namespace GameTheory.Tests.Strategies
 
             public IReadOnlyList<PlayerToken> Players => this.players;
 
-            public IReadOnlyCollection<Move> GetAvailableMoves()
+            public IReadOnlyList<Move> GetAvailableMoves()
             {
                 return this.players.Select(p => new Move(p)).ToList().AsReadOnly();
             }

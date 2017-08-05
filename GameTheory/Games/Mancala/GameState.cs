@@ -69,7 +69,7 @@ namespace GameTheory.Games.Mancala
         public int BinsPerSide { get; }
 
         /// <inheritdoc />
-        public IReadOnlyCollection<Move> GetAvailableMoves()
+        public IReadOnlyList<Move> GetAvailableMoves()
         {
             int bins = this.BinsPerSide;
             var moves = new Move[bins];

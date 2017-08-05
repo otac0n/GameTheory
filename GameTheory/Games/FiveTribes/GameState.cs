@@ -399,7 +399,7 @@ namespace GameTheory.Games.FiveTribes
         }
 
         /// <inheritdoc />
-        public IReadOnlyCollection<Move> GetAvailableMoves()
+        public IReadOnlyList<Move> GetAvailableMoves()
         {
             var moves = new List<Move>();
 

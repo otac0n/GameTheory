@@ -33,7 +33,7 @@ namespace GameTheory.Games.MatchingPennies
         public IReadOnlyList<PlayerToken> Players => this.players;
 
         /// <inheritdoc />
-        public IReadOnlyCollection<Move> GetAvailableMoves()
+        public IReadOnlyList<Move> GetAvailableMoves()
         {
             return this.players
                 .Where(p => this.choices[this.players.IndexOf(p)] == null)
