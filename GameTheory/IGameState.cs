@@ -2,13 +2,14 @@
 
 namespace GameTheory
 {
+    using System;
     using System.Collections.Generic;
 
     /// <summary>
     /// Represents the contract of a game state.
     /// </summary>
     /// <typeparam name="TMove">The type of object that represents a move.</typeparam>
-    public interface IGameState<TMove>
+    public interface IGameState<TMove> : IComparable<IGameState<TMove>>
         where TMove : IMove
     {
         /// <summary>

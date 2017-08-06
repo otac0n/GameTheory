@@ -2,12 +2,13 @@
 
 namespace GameTheory.Games.FiveTribes
 {
+    using System;
     using GameTheory.Games.FiveTribes.Tiles;
 
     /// <summary>
     /// Represents a location in the <see cref="Sultanate"/>.
     /// </summary>
-    public class Square
+    public class Square : IComparable<Square>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="Square"/> class.
@@ -71,6 +72,39 @@ namespace GameTheory.Games.FiveTribes
                 palaces ?? this.Palaces,
                 palmTrees ?? this.PalmTrees,
                 tile ?? this.Tile);
+        }
+
+        /// <inheritdoc/>
+        public int CompareTo(Square other)
+        {
+            if (other == this)
+            {
+                return 0;
+            }
+            else if (other == null)
+            {
+                return 1;
+            }
+
+            int comp;
+
+            if ((comp = this.Palaces.CompareTo(other.Palaces)) != 0 ||
+                (comp = this.PalmTrees.CompareTo(other.PalmTrees)) != 0 ||
+                (comp = this.Meeples.CompareTo(other.Meeples)) != 0 ||
+                (comp = this.Tile.CompareTo(other.Tile)) != 0)
+            {
+                return comp;
+            }
+
+            if (this.Owner != other.Owner)
+            {
+                if ((comp = this.Owner == null ? -1 : this.Owner.CompareTo(other.Owner)) != 0)
+                {
+                    return comp;
+                }
+            }
+
+            return 0;
         }
     }
 }

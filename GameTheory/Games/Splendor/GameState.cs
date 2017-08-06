@@ -338,7 +338,7 @@ namespace GameTheory.Games.Splendor
                 throw new ArgumentNullException(nameof(move));
             }
 
-            if (move.State != this)
+            if (move.State != this && this.CompareTo(move.State) != 0)
             {
                 throw new InvalidOperationException();
             }
@@ -359,6 +359,90 @@ namespace GameTheory.Games.Splendor
             {
                 yield return outcome;
             }
+        }
+
+        /// <inheritdoc/>
+        public int CompareTo(IGameState<Move> other)
+        {
+            if (other == this)
+            {
+                return 0;
+            }
+
+            var state = other as GameState;
+            if (state == null)
+            {
+                return 1;
+            }
+
+            int comp;
+
+            if ((comp = this.phase.CompareTo(state.phase)) != 0 ||
+                (comp = this.ActivePlayer.CompareTo(state.ActivePlayer)) != 0)
+            {
+                return comp;
+            }
+
+            if (this.Players != state.Players)
+            {
+                if ((comp = this.Players.Count.CompareTo(state.Players.Count)) != 0)
+                {
+                    return comp;
+                }
+
+                for (var i = 0; i < this.Players.Count; i++)
+                {
+                    if ((comp = this.Players[i].CompareTo(state.Players[i])) != 0)
+                    {
+                        return comp;
+                    }
+                }
+            }
+
+            if (this.Inventory != state.Inventory)
+            {
+                for (var i = 0; i < this.Players.Count; i++)
+                {
+                    var player = this.Players[i];
+                    if ((comp = this.Inventory[player].CompareTo(state.Inventory[player])) != 0)
+                    {
+                        return comp;
+                    }
+                }
+            }
+
+            if (this.DevelopmentTracks != state.DevelopmentTracks)
+            {
+                for (var i = 0; i < this.DevelopmentTracks.Length; i++)
+                {
+                    var track = this.DevelopmentTracks[i];
+                    var otherTrack = state.DevelopmentTracks[i];
+                    for (var c = 0; c < track.Length; c++)
+                    {
+                        if ((comp = track[c] == null ? -1 : track[c].CompareTo(otherTrack[c])) != 0)
+                        {
+                            return comp;
+                        }
+                    }
+                }
+            }
+
+            if (this.subsequentMovesFactory != null)
+            {
+                if (state.subsequentMovesFactory == null)
+                {
+                    return 1;
+                }
+
+                // BUG: These could still possibly represent different subsequent moves.
+                return 0;
+            }
+            else if (state.subsequentMovesFactory != null)
+            {
+                return -1;
+            }
+
+            return 0;
         }
 
         internal GameState With(

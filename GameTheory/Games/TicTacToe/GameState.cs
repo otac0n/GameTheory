@@ -181,5 +181,46 @@ namespace GameTheory.Games.TicTacToe
             var c = new Func<int, int, string>((x, y) => this[x, y] == null ? " " : this[x, y] == this.players[0] ? "X" : "O");
             return $"{c(0, 0)}|{c(1, 0)}|{c(2, 0)}\n-----\n{c(0, 1)}|{c(1, 1)}|{c(2, 1)}\n-----\n{c(0, 2)}|{c(1, 2)}|{c(2, 2)}";
         }
+
+        /// <inheritdoc/>
+        public int CompareTo(IGameState<Move> other)
+        {
+            if (other == this)
+            {
+                return 0;
+            }
+
+            var state = other as GameState;
+            if (state == null)
+            {
+                return 1;
+            }
+
+            int comp;
+
+            if (this.players != state.players)
+            {
+                if ((comp = this.players[0].CompareTo(state.players[0])) != 0 ||
+                    (comp = this.players[1].CompareTo(state.players[1])) != 0)
+                {
+                    return comp;
+                }
+            }
+
+            for (var y = 0; y < Size; y++)
+            {
+                for (var x = 0; x < Size; x++)
+                {
+                    var left = this.field[x, y];
+                    var right = state.field[x, y];
+                    if (left != right)
+                    {
+                        return left == null ? -1 : left.CompareTo(right);
+                    }
+                }
+            }
+
+            return 0;
+        }
     }
 }

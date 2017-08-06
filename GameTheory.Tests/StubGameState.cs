@@ -2,11 +2,13 @@
 
 namespace GameTheory.Tests
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
 
     internal class StubGameState : IGameState<StubGameState.Move>
     {
+        private readonly Guid id = Guid.NewGuid();
         private readonly List<Move> moves;
         private readonly IReadOnlyList<Move> movesReadOnly;
         private readonly IReadOnlyList<PlayerToken> players;
@@ -79,6 +81,22 @@ namespace GameTheory.Tests
         public IGameState<Move> GetView(PlayerToken playerToken)
         {
             return this;
+        }
+
+        public int CompareTo(IGameState<Move> other)
+        {
+            if (other == this)
+            {
+                return 0;
+            }
+
+            var state = other as StubGameState;
+            if (state == null)
+            {
+                return 1;
+            }
+
+            return this.id.CompareTo(state.id);
         }
 
         public class Move : IMove

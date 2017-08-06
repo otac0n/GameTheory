@@ -179,6 +179,57 @@ namespace GameTheory.Games.TwentyFortyEight
             return state;
         }
 
+        /// <inheritdoc/>
+        public int CompareTo(IGameState<Move> other)
+        {
+            if (other == this)
+            {
+                return 0;
+            }
+
+            var state = other as GameState;
+            if (state == null)
+            {
+                return 1;
+            }
+
+            int comp;
+
+            if ((comp = this.turn.CompareTo(state.turn)) != 0)
+            {
+                return comp;
+            }
+
+            if (this.players != state.players)
+            {
+                if ((comp = this.players.Count.CompareTo(state.players.Count)) != 0)
+                {
+                    return comp;
+                }
+
+                for (var i = 0; i < this.players.Count; i++)
+                {
+                    if ((comp = this.players[i].CompareTo(state.players[i])) != 0)
+                    {
+                        return comp;
+                    }
+                }
+            }
+
+            for (var y = 0; y < Size; y++)
+            {
+                for (var x = 0; x < Size; x++)
+                {
+                    if ((comp = this.field[x, y].CompareTo(state.field[x, y])) != 0)
+                    {
+                        return comp;
+                    }
+                }
+            }
+
+            return 0;
+        }
+
         internal GameState With(
             Turn? turn = null,
             byte[,] field = null)

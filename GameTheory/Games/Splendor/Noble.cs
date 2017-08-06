@@ -2,10 +2,12 @@
 
 namespace GameTheory.Games.Splendor
 {
+    using System;
+
     /// <summary>
     /// Describes a Noble.
     /// </summary>
-    public class Noble
+    public class Noble : IComparable<Noble>
     {
         /// <summary>
         /// Gets the prestige awarded by a Noble.
@@ -43,5 +45,20 @@ namespace GameTheory.Games.Splendor
         /// Gets the bonuses required for this Noble to visit.
         /// </summary>
         public EnumCollection<Token> RequiredBonuses { get; }
+
+        /// <inheritdoc/>
+        public int CompareTo(Noble noble)
+        {
+            if (noble == this)
+            {
+                return 0;
+            }
+            else if (noble == null)
+            {
+                return 1;
+            }
+
+            return this.RequiredBonuses.CompareTo(noble.RequiredBonuses);
+        }
     }
 }

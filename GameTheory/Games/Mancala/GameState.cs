@@ -136,7 +136,7 @@ namespace GameTheory.Games.Mancala
                 throw new ArgumentNullException(nameof(move));
             }
 
-            if (move.State != this)
+            if (move.State != this && this.CompareTo(move.State) != 0)
             {
                 throw new InvalidOperationException();
             }
@@ -177,6 +177,47 @@ namespace GameTheory.Games.Mancala
                 this.Players,
                 activePlayer ?? this.ActivePlayer,
                 board ?? this.Board);
+        }
+
+        /// <inheritdoc/>
+        public int CompareTo(IGameState<Move> other)
+        {
+            if (other == this)
+            {
+                return 0;
+            }
+
+            var state = other as GameState;
+            if (state == null)
+            {
+                return 1;
+            }
+
+            int comp;
+
+            if (this.Players != state.Players)
+            {
+                for (var i = 0; i < this.Players.Count; i++)
+                {
+                    if ((comp = this.Players[i].CompareTo(state.Players[i])) != 0)
+                    {
+                        return comp;
+                    }
+                }
+            }
+
+            if (this.Board != state.Board)
+            {
+                for (var i = 0; i < this.Board.Length; i++)
+                {
+                    if ((comp = this.Board[i].CompareTo(state.Board[i])) != 0)
+                    {
+                        return comp;
+                    }
+                }
+            }
+
+            return 0;
         }
     }
 }

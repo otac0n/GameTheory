@@ -2,13 +2,14 @@
 
 namespace GameTheory.Games.FiveTribes
 {
+    using System;
     using System.Collections.Immutable;
     using GameTheory.Games.FiveTribes.Djinns;
 
     /// <summary>
     /// Represents a player's inventory.
     /// </summary>
-    public class Inventory
+    public class Inventory : IComparable<Inventory>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="Inventory"/> class.
@@ -64,6 +65,46 @@ namespace GameTheory.Games.FiveTribes
                 meeples ?? this.Meeples,
                 goldCoins ?? this.GoldCoins,
                 resources ?? this.Resources);
+        }
+
+        /// <inheritdoc/>
+        public int CompareTo(Inventory other)
+        {
+            if (other == this)
+            {
+                return 0;
+            }
+            else if (other == null)
+            {
+                return 1;
+            }
+
+            int comp;
+
+            if ((comp = this.GoldCoins.CompareTo(other.GoldCoins)) != 0 ||
+                (comp = this.Meeples.CompareTo(other.Meeples)) != 0 ||
+                (comp = this.Resources.CompareTo(other.Resources)) != 0)
+            {
+                return comp;
+            }
+
+            if (this.Djinns != other.Djinns)
+            {
+                if ((comp = this.Djinns.Count.CompareTo(other.Djinns.Count)) != 0)
+                {
+                    return comp;
+                }
+
+                for (var i = 0; i < this.Djinns.Count; i++)
+                {
+                    if ((comp = this.Djinns[i].CompareTo(other.Djinns[i])) != 0)
+                    {
+                        return comp;
+                    }
+                }
+            }
+
+            return 0;
         }
     }
 }

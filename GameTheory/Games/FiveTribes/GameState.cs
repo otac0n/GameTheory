@@ -672,6 +672,229 @@ namespace GameTheory.Games.FiveTribes
                 this.VisibleResources);
         }
 
+        /// <inheritdoc/>
+        public int CompareTo(IGameState<Move> other)
+        {
+            if (other == this)
+            {
+                return 0;
+            }
+
+            var state = other as GameState;
+            if (state == null)
+            {
+                return 1;
+            }
+
+            int comp;
+
+            if ((comp = this.Phase.CompareTo(state.Phase)) != 0 ||
+                (comp = this.PreviousPoint.CompareTo(state.PreviousPoint)) != 0 ||
+                (comp = this.LastPoint.CompareTo(state.LastPoint)) != 0 ||
+                (comp = this.ResourceDiscards.CompareTo(state.ResourceDiscards)) != 0)
+            {
+                return comp;
+            }
+
+            if (this.InHand != state.InHand)
+            {
+                if ((comp = this.InHand == null ? -1 : this.InHand.CompareTo(state.InHand)) != 0)
+                {
+                    return comp;
+                }
+            }
+
+            if (this.Players != state.Players)
+            {
+                if ((comp = this.Players.Count.CompareTo(state.Players.Count)) != 0)
+                {
+                    return comp;
+                }
+
+                for (var i = 0; i < this.Players.Count; i++)
+                {
+                    if ((comp = this.Players[i].CompareTo(state.Players[i])) != 0)
+                    {
+                        return comp;
+                    }
+                }
+            }
+
+            if (this.BidOrderTrack != state.BidOrderTrack)
+            {
+                var track = this.BidOrderTrack;
+                var otherTrack = state.BidOrderTrack;
+
+                while (!track.IsEmpty && !otherTrack.IsEmpty)
+                {
+                    if ((comp = track.Peek().CompareTo(otherTrack.Peek())) != 0)
+                    {
+                        return comp;
+                    }
+
+                    track = track.Dequeue();
+                    otherTrack = otherTrack.Dequeue();
+                }
+
+                if ((comp = track.IsEmpty.CompareTo(otherTrack.IsEmpty)) != 0)
+                {
+                    return comp;
+                }
+            }
+
+            if (this.TurnOrderTrack != state.TurnOrderTrack)
+            {
+                if ((comp = this.TurnOrderTrack.Count.CompareTo(state.TurnOrderTrack.Count)) != 0)
+                {
+                    return comp;
+                }
+
+                for (var i = 0; i < this.TurnOrderTrack.Count; i++)
+                {
+                    var element = this.TurnOrderTrack[i];
+                    var otherElement = state.TurnOrderTrack[i];
+                    if (element != otherElement)
+                    {
+                        if ((comp = element == null ? -1 : element.CompareTo(otherElement)) != 0)
+                        {
+                            return comp;
+                        }
+                    }
+                }
+            }
+
+            if (this.Inventory != state.Inventory)
+            {
+                for (var i = 0; i < this.Players.Count; i++)
+                {
+                    var player = this.Players[i];
+                    if ((comp = this.Inventory[player].CompareTo(state.Inventory[player])) != 0)
+                    {
+                        return comp;
+                    }
+                }
+            }
+
+            if (this.Sultanate != state.Sultanate)
+            {
+                for (var i = 0; i < this.Sultanate.Count; i++)
+                {
+                    if ((comp = this.Sultanate[i].CompareTo(state.Sultanate[i])) != 0)
+                    {
+                        return comp;
+                    }
+                }
+            }
+
+            if (this.AssassinationTables != state.AssassinationTables)
+            {
+                for (var i = 0; i < this.Players.Count; i++)
+                {
+                    var player = this.Players[i];
+                    if ((comp = this.AssassinationTables[player].CompareTo(state.AssassinationTables[player])) != 0)
+                    {
+                        return comp;
+                    }
+                }
+            }
+
+            if (this.ScoreTables != state.ScoreTables)
+            {
+                for (var i = 0; i < this.Players.Count; i++)
+                {
+                    var player = this.Players[i];
+                    if ((comp = this.ScoreTables[player].CompareTo(state.ScoreTables[player])) != 0)
+                    {
+                        return comp;
+                    }
+                }
+            }
+
+            if (this.VisibleResources != state.VisibleResources)
+            {
+                if ((comp = this.VisibleResources.Count.CompareTo(state.VisibleResources.Count)) != 0)
+                {
+                    return comp;
+                }
+
+                for (var i = 0; i < this.VisibleResources.Count; i++)
+                {
+                    if ((comp = this.VisibleResources[i].CompareTo(state.VisibleResources[i])) != 0)
+                    {
+                        return comp;
+                    }
+                }
+            }
+
+            if (this.VisibleDjinns != state.VisibleDjinns)
+            {
+                if ((comp = this.VisibleDjinns.Count.CompareTo(state.VisibleDjinns.Count)) != 0)
+                {
+                    return comp;
+                }
+
+                for (var i = 0; i < this.VisibleDjinns.Count; i++)
+                {
+                    if ((comp = this.VisibleDjinns[i].CompareTo(state.VisibleDjinns[i])) != 0)
+                    {
+                        return comp;
+                    }
+                }
+            }
+
+            if (this.DjinnDiscards != state.DjinnDiscards)
+            {
+                if ((comp = this.DjinnDiscards.Count.CompareTo(state.DjinnDiscards.Count)) != 0)
+                {
+                    return comp;
+                }
+
+                for (var i = 0; i < this.DjinnDiscards.Count; i++)
+                {
+                    if ((comp = this.DjinnDiscards[i].CompareTo(state.DjinnDiscards[i])) != 0)
+                    {
+                        return comp;
+                    }
+                }
+            }
+
+            if (this.additionalState != state.additionalState)
+            {
+                if ((comp = this.additionalState.Count.CompareTo(state.additionalState.Count)) != 0)
+                {
+                    return comp;
+                }
+
+                var keys = this.additionalState.Keys.OrderBy(k => k);
+                var otherKeys = state.additionalState.Keys.OrderBy(k => k);
+                foreach (var keyPair in keys.Zip(otherKeys, (a, b) => new { a, b }))
+                {
+                    if ((comp = string.Compare(keyPair.a, keyPair.b)) != 0 ||
+                        (comp = string.Compare(this.additionalState[keyPair.a], state.additionalState[keyPair.b])) != 0)
+                    {
+                        return comp;
+                    }
+                }
+            }
+
+            if (this.subsequentMovesFactory != null)
+            {
+                if (state.subsequentMovesFactory == null)
+                {
+                    return 1;
+                }
+
+                // BUG: These could still possibly represent different subsequent moves.
+                return 0;
+            }
+            else if (state.subsequentMovesFactory != null)
+            {
+                return -1;
+            }
+
+            return 0;
+        }
+
         private static IEnumerable<Move> GetAssassinationMoves(GameState state, int slaves = 0)
         {
             var player0 = state.ActivePlayer;

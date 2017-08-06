@@ -8,7 +8,7 @@ namespace GameTheory.Games.FiveTribes
     /// <summary>
     /// Represents a point in the <see cref="Sultanate"/>.
     /// </summary>
-    public struct Point
+    public struct Point : IComparable<Point>
     {
         private readonly byte index;
 
@@ -116,5 +116,19 @@ namespace GameTheory.Games.FiveTribes
 
         /// <inheritdoc />
         public override string ToString() => "(" + this.X + ", " + this.Y + ")";
+
+        public int CompareTo(Point other)
+        {
+            if (other == this)
+            {
+                return 0;
+            }
+            else if (other == null)
+            {
+                return 1;
+            }
+
+            return this.index.CompareTo(other.index);
+        }
     }
 }

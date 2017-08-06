@@ -2,13 +2,14 @@
 
 namespace GameTheory.Games.FiveTribes.Djinns
 {
+    using System;
     using System.Collections.Generic;
     using System.Collections.Immutable;
 
     /// <summary>
     /// The base class for all Djinns.
     /// </summary>
-    public abstract class Djinn
+    public abstract class Djinn : IComparable<Djinn>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="Djinn"/> class.
@@ -90,5 +91,20 @@ namespace GameTheory.Games.FiveTribes.Djinns
 
         /// <inheritdoc />
         public override string ToString() => $"{this.Name} +{this.Value}";
+
+        /// <inheritdoc/>
+        public int CompareTo(Djinn other)
+        {
+            if (other == this)
+            {
+                return 0;
+            }
+            else if (other == null)
+            {
+                return 1;
+            }
+
+            return this.GetType().Name.CompareTo(other.GetType().Name);
+        }
     }
 }

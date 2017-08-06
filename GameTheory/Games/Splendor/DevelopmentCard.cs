@@ -1,11 +1,13 @@
 ﻿// Copyright © John Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
+using System;
+
 namespace GameTheory.Games.Splendor
 {
     /// <summary>
     /// Describes a development card.
     /// </summary>
-    public class DevelopmentCard
+    public class DevelopmentCard : IComparable<DevelopmentCard>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="DevelopmentCard"/> class.
@@ -57,5 +59,28 @@ namespace GameTheory.Games.Splendor
 
         /// <inheritdoc />
         public override string ToString() => this.Bonus.ToString() + (this.Prestige > 0 ? $" +{this.Prestige}" : string.Empty);
+
+        /// <inheritdoc/>
+        public int CompareTo(DevelopmentCard other)
+        {
+            if (other == this)
+            {
+                return 0;
+            }
+            else if (other == null)
+            {
+                return 1;
+            }
+
+            int comp;
+            if ((comp = this.Prestige.CompareTo(other.Prestige)) != 0 ||
+                (comp = this.Cost.CompareTo(other.Cost)) != 0 ||
+                (comp = this.Bonus.CompareTo(other.Bonus)) != 0)
+            {
+                return comp;
+            }
+
+            return 0;
+        }
     }
 }

@@ -112,5 +112,70 @@ namespace GameTheory.Games.MatchingPennies
 
             return $"[{Penny(this.choices[0])}{Penny(this.choices[1])}]";
         }
+
+        /// <inheritdoc/>
+        public int CompareTo(IGameState<Move> other)
+        {
+            if (other == this)
+            {
+                return 0;
+            }
+
+            var state = other as GameState;
+            if (state == null)
+            {
+                return 1;
+            }
+
+            int comp;
+
+            if (this.players != state.players)
+            {
+                if ((comp = this.players.Length.CompareTo(state.players.Length)) != 0)
+                {
+                    return comp;
+                }
+
+                for (var i = 0; i < this.players.Length; i++)
+                {
+                    if ((comp = this.players[i].CompareTo(state.players[i])) != 0)
+                    {
+                        return comp;
+                    }
+                }
+            }
+
+            if (this.choices != state.choices)
+            {
+                if ((comp = this.choices.Length.CompareTo(state.choices.Length)) != 0)
+                {
+                    return comp;
+                }
+
+                for (var i = 0; i < this.players.Length; i++)
+                {
+                    var choice = this.choices[i];
+                    var otherChoice = state.choices[i];
+                    if (choice != otherChoice)
+                    {
+                        if (choice == null)
+                        {
+                            return -1;
+                        }
+                        else if (otherChoice == null)
+                        {
+                            return 1;
+                        }
+
+                        if ((comp = choice.Value.CompareTo(otherChoice.Value)) != 0)
+                        {
+                            return comp;
+                        }
+                    }
+                }
+            }
+
+            return 0;
+        }
     }
 }

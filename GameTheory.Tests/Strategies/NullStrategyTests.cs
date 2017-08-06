@@ -2,6 +2,7 @@
 
 namespace GameTheory.Tests.Strategies
 {
+    using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.Linq;
@@ -26,6 +27,7 @@ namespace GameTheory.Tests.Strategies
 
         public class TestGameState : IGameState<TestGameState.Move>
         {
+            private readonly Guid id = Guid.NewGuid();
             private readonly ReadOnlyCollection<PlayerToken> players;
 
             public TestGameState()
@@ -58,6 +60,22 @@ namespace GameTheory.Tests.Strategies
             public IGameState<Move> GetView(PlayerToken playerToken)
             {
                 return this;
+            }
+
+            public int CompareTo(IGameState<Move> other)
+            {
+                if (other == this)
+                {
+                    return 0;
+                }
+
+                var state = other as TestGameState;
+                if (state == null)
+                {
+                    return 1;
+                }
+
+                return this.id.CompareTo(state.id);
             }
 
             public class Move : IMove

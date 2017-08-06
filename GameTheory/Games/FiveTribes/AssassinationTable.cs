@@ -2,10 +2,12 @@
 
 namespace GameTheory.Games.FiveTribes
 {
+    using System;
+
     /// <summary>
     /// Holds state regarding the assassination process.
     /// </summary>
-    public class AssassinationTable
+    public class AssassinationTable : IComparable<AssassinationTable>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="AssassinationTable"/> class.
@@ -47,6 +49,29 @@ namespace GameTheory.Games.FiveTribes
             return new AssassinationTable(
                 hasProtection ?? this.HasProtection,
                 killCount ?? this.KillCount);
+        }
+
+        /// <inheritdoc/>
+        public int CompareTo(AssassinationTable other)
+        {
+            if (other == this)
+            {
+                return 0;
+            }
+            else if (other == null)
+            {
+                return 1;
+            }
+
+            int comp;
+
+            if ((comp = this.KillCount.CompareTo(other.KillCount)) != 0 ||
+                (comp = this.HasProtection.CompareTo(other.HasProtection)) != 0)
+            {
+                return comp;
+            }
+
+            return 0;
         }
     }
 }

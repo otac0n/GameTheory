@@ -2,13 +2,14 @@
 
 namespace GameTheory.Games.FiveTribes.Tiles
 {
+    using System;
     using System.Collections.Generic;
     using GameTheory.Games.FiveTribes.Moves;
 
     /// <summary>
     /// Represents a tile in game of Five Tribes.
     /// </summary>
-    public abstract class Tile
+    public abstract class Tile : IComparable<Tile>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="Tile"/> class.
@@ -39,6 +40,30 @@ namespace GameTheory.Games.FiveTribes.Tiles
         public virtual IEnumerable<Move> GetTileActionMoves(GameState state)
         {
             yield return new ChangePhaseMove(state, "Skip Tile Action", Phase.MerchandiseSale);
+        }
+
+        /// <inheritdoc/>
+        public int CompareTo(Tile other)
+        {
+            if (other == this)
+            {
+                return 0;
+            }
+            else if (other == null)
+            {
+                return 1;
+            }
+
+            int comp;
+
+            if ((comp = this.Value.CompareTo(other.Value)) != 0 ||
+                (comp = this.Color.CompareTo(other.Color)) != 0 ||
+                (comp = this.GetType().Name.CompareTo(other.GetType().Name)) != 0)
+            {
+                return comp;
+            }
+
+            return 0;
         }
     }
 }

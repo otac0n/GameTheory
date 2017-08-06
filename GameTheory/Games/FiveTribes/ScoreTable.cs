@@ -2,10 +2,12 @@
 
 namespace GameTheory.Games.FiveTribes
 {
+    using System;
+
     /// <summary>
     /// Represents the current state of a player's score table.
     /// </summary>
-    public class ScoreTable
+    public class ScoreTable : IComparable<ScoreTable>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="ScoreTable"/> class.
@@ -70,6 +72,32 @@ namespace GameTheory.Games.FiveTribes
                 palaceValue ?? this.PalaceValue,
                 palmTreeValue ?? this.PalmTreeValue,
                 vizierValue ?? this.VizierValue);
+        }
+
+        /// <inheritdoc/>
+        public int CompareTo(ScoreTable other)
+        {
+            if (other == this)
+            {
+                return 0;
+            }
+            else if (other == null)
+            {
+                return 1;
+            }
+
+            int comp;
+
+            if ((comp = this.BuilderMultiplier.CompareTo(other.BuilderMultiplier)) != 0 ||
+                (comp = this.ElderValue.CompareTo(other.ElderValue)) != 0 ||
+                (comp = this.PalaceValue.CompareTo(other.PalaceValue)) != 0 ||
+                (comp = this.PalmTreeValue.CompareTo(other.PalmTreeValue)) != 0 ||
+                (comp = this.VizierValue.CompareTo(other.VizierValue)) != 0)
+            {
+                return comp;
+            }
+
+            return 0;
         }
     }
 }
