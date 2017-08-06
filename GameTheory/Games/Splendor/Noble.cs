@@ -46,6 +46,9 @@ namespace GameTheory.Games.Splendor
         /// </summary>
         public EnumCollection<Token> RequiredBonuses { get; }
 
+        /// <inheritdoc />
+        public override string ToString() => $"Noble +{PrestigeBonus} {this.RequiredBonuses.ToString()}";
+
         /// <inheritdoc/>
         public int CompareTo(Noble noble)
         {

@@ -6,7 +6,7 @@
 {{if model.Nobles.Count > 0}}
   Nobles:
     {{each noble in model.Nobles}}
-      [requires: {{= noble.RequiredBonuses}}]
+      {{= noble}}
     {{/each}}
 
 {{/if}}
