@@ -20,6 +20,8 @@ namespace GameTheory.Players
     public abstract class MaximizingPlayer<TMove, TScore> : IPlayer<TMove>
         where TMove : IMove
     {
+        private const int TrimDepth = 32;
+        private readonly SplayTree<IGameState<TMove>, Mainline> cache = new SplayTree<IGameState<TMove>, Mainline>();
         private readonly int minPly;
         private readonly IScoringMetric scoringMetric;
 
@@ -88,6 +90,7 @@ namespace GameTheory.Players
             await Task.Yield();
 
             var mainline = this.GetMove(state, this.minPly, cancel);
+            this.cache.Trim(TrimDepth);
 
             if (mainline == null || !mainline.Moves.Any() || mainline.Moves.Peek().PlayerToken != this.PlayerToken)
             {
@@ -116,9 +119,18 @@ namespace GameTheory.Players
 
         private Mainline GetMove(IGameState<TMove> state, int ply, CancellationToken cancel)
         {
+            Mainline cached;
+            if (this.cache.TryGetValue(state, out cached))
+            {
+                if (cached.Depth >= ply)
+                {
+                    return cached;
+                }
+            }
+
             if (ply == 0)
             {
-                return new Mainline(this.Score(state), state, ImmutableStack<TMove>.Empty);
+                return this.cache[state] = new Mainline(this.Score(state), state, ImmutableStack<TMove>.Empty, 0);
             }
             else
             {
@@ -175,11 +187,11 @@ namespace GameTheory.Players
                         }
                     }
 
-                    return maxMoves.Pick();
+                    return this.cache[state] = maxMoves.Pick();
                 }
                 else if (players.Count == 0)
                 {
-                    return this.GetMove(state, 0, cancel);
+                    return this.cache[state] = new Mainline(this.Score(state), state, ImmutableStack<TMove>.Empty, ply);
                 }
                 else
                 {
@@ -198,6 +210,7 @@ namespace GameTheory.Players
 
             double maxWeight = double.NaN;
             Mainline maxMainline = null;
+            int minDepth = -1;
 
             var playerScores = new Dictionary<PlayerToken, IWeighted<TScore>[]>();
 
@@ -207,6 +220,11 @@ namespace GameTheory.Players
                 var weight = weightedMainline.Weight;
                 var mainline = weightedMainline.Value;
                 var score = mainline.Score;
+
+                if (minDepth == -1 || mainline.Depth < minDepth)
+                {
+                    minDepth = mainline.Depth;
+                }
 
                 if (double.IsNaN(maxWeight) || weight > maxWeight)
                 {
@@ -227,7 +245,7 @@ namespace GameTheory.Players
 
             var combinedScore = playerScores.ToImmutableDictionary(ps => ps.Key, ps => this.scoringMetric.CombineScores(ps.Value));
 
-            return new Mainline(combinedScore, maxMainline.State, maxMainline.Moves);
+            return new Mainline(combinedScore, maxMainline.State, maxMainline.Moves, minDepth);
         }
 
         private IReadOnlyDictionary<PlayerToken, TScore> Score(IGameState<TMove> state)
@@ -251,11 +269,12 @@ namespace GameTheory.Players
 
         private class Mainline
         {
-            public Mainline(IReadOnlyDictionary<PlayerToken, TScore> score, IGameState<TMove> state, ImmutableStack<TMove> moves)
+            public Mainline(IReadOnlyDictionary<PlayerToken, TScore> score, IGameState<TMove> state, ImmutableStack<TMove> moves, int depth)
             {
                 this.Score = score;
                 this.State = state;
                 this.Moves = moves;
+                this.Depth = depth;
             }
 
             public IGameState<TMove> State { get; }
@@ -264,12 +283,15 @@ namespace GameTheory.Players
 
             public IReadOnlyDictionary<PlayerToken, TScore> Score { get; }
 
+            public int Depth { get; }
+
             public Mainline AddMove(TMove move)
             {
                 return new Mainline(
                     this.Score,
                     this.State,
-                    this.Moves.Push(move));
+                    this.Moves.Push(move),
+                    this.Depth + 1);
             }
         }
     }
