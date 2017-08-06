@@ -117,9 +117,10 @@ namespace GameTheory.ConsoleRunner
             Console.WriteLine(Resources.GamePlayerCount, string.Format(gameState.Players.Count == 1 ? Resources.SingularPlayer : Resources.PluralPlayers, gameState.Players.Count));
             var catalog = new PlayerCatalog(Assembly.GetExecutingAssembly(), typeof(IGameState<>).Assembly);
             var players = catalog.FindPlayers(typeof(TMove));
-            gameState = GameUtilities.PlayGame(gameState, playerToken => GetPlayer(players, gameState, playerToken), ShowMove, TimeSpan.FromMinutes(5)).Result;
+            var consoleRenderer = ConsoleRenderer.Default<TMove>();
+            gameState = GameUtilities.PlayGame(gameState, playerToken => GetPlayer(players, gameState, playerToken), (prevState, move, state) => ShowMove(state, move, consoleRenderer), TimeSpan.FromMinutes(5)).Result;
             Console.WriteLine(Resources.FinalState);
-            ConsoleRenderer.Default<TMove>().Show(gameState);
+            consoleRenderer.Show(gameState);
 
             Console.WriteLine(Resources.Winners);
             var anyWinners = false;
@@ -135,11 +136,12 @@ namespace GameTheory.ConsoleRunner
             }
         }
 
-        private static void ShowMove<TMove>(IGameState<TMove> gameState, TMove move)
+        private static void ShowMove<TMove>(IGameState<TMove> gameState, TMove move, IConsoleRenderer<TMove> consoleRenderer)
             where TMove : IMove
         {
             Console.WriteLine(Resources.PlayerMoved, gameState.GetPlayerName(move.PlayerToken));
             Console.WriteLine(move);
+            consoleRenderer.Show(gameState);
         }
     }
 }

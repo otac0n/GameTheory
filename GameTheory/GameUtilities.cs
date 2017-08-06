@@ -61,7 +61,7 @@ namespace GameTheory
         /// <param name="moveChosen">An action that is executed whenever a move is chosen.</param>
         /// <param name="timePerMove">The allowed time per move.</param>
         /// <returns>A task representing the ongoning operation.</returns>
-        public static Task<IGameState<TMove>> PlayGame<TMove>(IGameState<TMove> state, Func<PlayerToken, IPlayer<TMove>> getPlayer, Action<IGameState<TMove>, TMove> moveChosen = null, TimeSpan? timePerMove = null)
+        public static Task<IGameState<TMove>> PlayGame<TMove>(IGameState<TMove> state, Func<PlayerToken, IPlayer<TMove>> getPlayer, Action<IGameState<TMove>, TMove, IGameState<TMove>> moveChosen = null, TimeSpan? timePerMove = null)
             where TMove : IMove
         {
             return PlayGame(state, playerTokens => playerTokens.Select(p => getPlayer(p)).ToArray(), moveChosen, timePerMove);
@@ -76,7 +76,7 @@ namespace GameTheory
         /// <param name="moveChosen">An action that is executed whenever a move is chosen.</param>
         /// <param name="timePerMove">The allowed time per move.</param>
         /// <returns>A task representing the ongoning operation.</returns>
-        public static async Task<IGameState<TMove>> PlayGame<TMove>(IGameState<TMove> state, Func<IReadOnlyList<PlayerToken>, IReadOnlyList<IPlayer<TMove>>> getPlayers, Action<IGameState<TMove>, TMove> moveChosen = null, TimeSpan? timePerMove = null)
+        public static async Task<IGameState<TMove>> PlayGame<TMove>(IGameState<TMove> state, Func<IReadOnlyList<PlayerToken>, IReadOnlyList<IPlayer<TMove>>> getPlayers, Action<IGameState<TMove>, TMove, IGameState<TMove>> moveChosen = null, TimeSpan? timePerMove = null)
             where TMove : IMove
         {
             var playerTokens = state.Players;
@@ -109,9 +109,9 @@ namespace GameTheory
                         break;
                     }
 
-                    moveChosen?.Invoke(state, chosenMove.Value);
-
+                    var before = state;
                     state = state.MakeMove(chosenMove.Value);
+                    moveChosen?.Invoke(before, chosenMove.Value, state);
                 }
 
                 return state;
