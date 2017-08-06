@@ -25,7 +25,7 @@ namespace GameTheory.Tests.Players
                 state.Moves = Enumerable.Range(0, Moves).Select(i => new StubGameState.Move(player.PlayerToken, "Move " + (char)('A' + i))).ToList();
 
                 var moves = state.Moves.ToDictionary(m => m.Value, m => 0);
-                for (int i = 0; i < Samples; i++)
+                for (var i = 0; i < Samples; i++)
                 {
                     var move = (await player.ChooseMove(state, CancellationToken.None)).Value;
                     moves[move.Value]++;

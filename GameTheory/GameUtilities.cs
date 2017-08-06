@@ -41,7 +41,7 @@ namespace GameTheory
                 throw new ArgumentNullException(nameof(state));
             }
 
-            for (int i = 0; i < state.Players.Count; i++)
+            for (var i = 0; i < state.Players.Count; i++)
             {
                 if (state.Players[i] == playerToken)
                 {
@@ -118,7 +118,7 @@ namespace GameTheory
             }
             finally
             {
-                for (int i = 0; i < players.Count; i++)
+                for (var i = 0; i < players.Count; i++)
                 {
                     players[i].Dispose();
                 }

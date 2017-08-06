@@ -19,7 +19,7 @@ namespace GameTheory.Tests.Players
 
             var wins = new int[2];
 
-            for (int i = 0; i < Samples; i++)
+            for (var i = 0; i < Samples; i++)
             {
                 var endState = await GameUtilities.PlayGame(new GameState(), playerTokens => new IPlayer<Move>[]
                 {
@@ -44,7 +44,7 @@ namespace GameTheory.Tests.Players
 
             var wins = new int[2];
 
-            for (int i = 0; i < Samples; i++)
+            for (var i = 0; i < Samples; i++)
             {
                 var endState = await GameUtilities.PlayGame(new GameState(), playerTokens => new IPlayer<Move>[]
                 {

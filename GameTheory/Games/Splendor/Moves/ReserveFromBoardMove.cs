@@ -53,7 +53,7 @@ namespace GameTheory.Games.Splendor.Moves
                 {
                     var track = state.DevelopmentTracks[tr];
 
-                    for (int ix = 0; ix < track.Length; ix++)
+                    for (var ix = 0; ix < track.Length; ix++)
                     {
                         if (track[ix] != null)
                         {

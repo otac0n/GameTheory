@@ -466,11 +466,6 @@ namespace GameTheory.Games.Splendor
                 null);
         }
 
-        internal GameState WithMoves(Func<GameState, Move> subsequentMoves)
-        {
-            return this.WithMoves(s => new[] { subsequentMoves(s) });
-        }
-
         internal GameState WithMoves(Func<GameState, IEnumerable<Move>> subsequentMoves)
         {
             return new GameState(

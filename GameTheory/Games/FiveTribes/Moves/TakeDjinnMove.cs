@@ -3,7 +3,6 @@
 namespace GameTheory.Games.FiveTribes.Moves
 {
     using System;
-    using GameTheory.Games.FiveTribes.Djinns;
 
     /// <summary>
     /// Represents a move to take a specified <see cref="Djinn"/>.

@@ -72,9 +72,9 @@ namespace GameTheory.Games.Splendor.Moves
 
             var bonus = state.GetBonus(state.ActivePlayer);
 
-            for (int t = 0; t < state.DevelopmentTracks.Length; t++)
+            for (var t = 0; t < state.DevelopmentTracks.Length; t++)
             {
-                for (int i = 0; i < state.DevelopmentTracks[t].Length; i++)
+                for (var i = 0; i < state.DevelopmentTracks[t].Length; i++)
                 {
                     var card = state.DevelopmentTracks[t][i];
                     if (card != null)

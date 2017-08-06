@@ -3,7 +3,6 @@
 namespace GameTheory.Games.FiveTribes.Moves
 {
     using System;
-    using System.Linq;
 
     /// <summary>
     /// Represents a move for the payment of a specific amount of <see cref="Meeple">Meeples</see> and <see cref="Resource">Resources</see>.

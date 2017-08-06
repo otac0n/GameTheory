@@ -374,7 +374,7 @@ namespace GameTheory.Games.FiveTribes
                     suits.Add(0);
                 }
 
-                for (int i = 0; i < count; i++)
+                for (var i = 0; i < count; i++)
                 {
                     suits[i]++;
                 }

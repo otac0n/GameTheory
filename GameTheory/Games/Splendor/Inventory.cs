@@ -88,7 +88,7 @@ namespace GameTheory.Games.Splendor
                     return comp;
                 }
 
-                for (int i = 0; i < this.DevelopmentCards.Count; i++)
+                for (var i = 0; i < this.DevelopmentCards.Count; i++)
                 {
                     if ((comp = this.DevelopmentCards[i].CompareTo(other.DevelopmentCards[i])) != 0)
                     {
@@ -104,7 +104,7 @@ namespace GameTheory.Games.Splendor
                     return comp;
                 }
 
-                for (int i = 0; i < this.Hand.Count; i++)
+                for (var i = 0; i < this.Hand.Count; i++)
                 {
                     if ((comp = this.Hand[i].CompareTo(other.Hand[i])) != 0)
                     {
@@ -120,7 +120,7 @@ namespace GameTheory.Games.Splendor
                     return comp;
                 }
 
-                for (int i = 0; i < this.Nobles.Count; i++)
+                for (var i = 0; i < this.Nobles.Count; i++)
                 {
                     if ((comp = this.Nobles[i].CompareTo(other.Nobles[i])) != 0)
                     {

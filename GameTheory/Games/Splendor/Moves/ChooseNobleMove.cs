@@ -2,7 +2,6 @@
 
 namespace GameTheory.Games.Splendor.Moves
 {
-    using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Linq;
 
@@ -47,7 +46,7 @@ namespace GameTheory.Games.Splendor.Moves
                 {
                     var builder = ImmutableList.CreateBuilder<Move>();
 
-                    for (int i = 0; i < newState.Nobles.Count; i++)
+                    for (var i = 0; i < newState.Nobles.Count; i++)
                     {
                         var noble = newState.Nobles[i];
                         if (noble.RequiredBonuses.Keys.All(k => bonus[k] >= noble.RequiredBonuses[k]))

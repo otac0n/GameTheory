@@ -214,7 +214,7 @@ namespace GameTheory.Players
 
             var playerScores = new Dictionary<PlayerToken, IWeighted<TScore>[]>();
 
-            for (int i = 0; i < mainlines.Count; i++)
+            for (var i = 0; i < mainlines.Count; i++)
             {
                 var weightedMainline = mainlines[i];
                 var weight = weightedMainline.Weight;

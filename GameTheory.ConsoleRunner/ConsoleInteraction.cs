@@ -54,7 +54,7 @@ namespace GameTheory.ConsoleRunner
         public static void List<T>(IList<T> items, Func<T, string> toString = null)
         {
             toString = toString ?? new Func<T, string>(item => item?.ToString());
-            for (int i = 0; i < items.Count; i++)
+            for (var i = 0; i < items.Count; i++)
             {
                 Console.WriteLine(Resources.ListItem, i + 1, toString(items[i]));
             }

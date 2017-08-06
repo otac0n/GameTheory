@@ -3,7 +3,6 @@
 namespace GameTheory.Games.FiveTribes
 {
     using System;
-    using GameTheory.Games.FiveTribes.Tiles;
 
     /// <summary>
     /// Represents a location in the <see cref="Sultanate"/>.

@@ -4,7 +4,6 @@ namespace GameTheory.Games.FiveTribes.Moves
 {
     using System;
     using System.Collections.Immutable;
-    using GameTheory.Games.FiveTribes.Tiles;
 
     /// <summary>
     /// Represents a move to draw three <see cref="Meeple">Meeples</see> and place them on the specified <see cref="Tile"/>.

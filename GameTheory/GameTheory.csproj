@@ -104,7 +104,7 @@
     <Compile Include="EnumerableExtensions.cs" />
     <Compile Include="Games\FiveTribes\AssassinationTable.cs" />
     <Compile Include="Games\FiveTribes\Cost.cs" />
-    <Compile Include="Games\FiveTribes\Djinns\Djinn.cs" />
+    <Compile Include="Games\FiveTribes\Djinn.cs" />
     <Compile Include="Games\FiveTribes\Djinns\OnAcquireDjinnBase.cs" />
     <Compile Include="Games\FiveTribes\Djinns\PayPerActionDjinnBase.cs" />
     <Compile Include="Games\FiveTribes\Moves\AddMeeplesMove.cs" />
@@ -172,7 +172,7 @@
     <Compile Include="Games\FiveTribes\Tiles\Oasis.cs" />
     <Compile Include="Games\FiveTribes\Tiles\SacredPlace.cs" />
     <Compile Include="Games\FiveTribes\Tiles\SmallMarket.cs" />
-    <Compile Include="Games\FiveTribes\Tiles\Tile.cs" />
+    <Compile Include="Games\FiveTribes\Tile.cs" />
     <Compile Include="Games\FiveTribes\TileColor.cs" />
     <Compile Include="Games\FiveTribes\Moves\PlacePalaceMove.cs" />
     <Compile Include="Games\FiveTribes\Tiles\Village.cs" />

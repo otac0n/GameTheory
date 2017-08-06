@@ -3,7 +3,6 @@
 namespace GameTheory.Games.FiveTribes.Moves
 {
     using System.Collections.Immutable;
-    using GameTheory.Games.FiveTribes.Djinns;
 
     /// <summary>
     /// Represents a move to take one of the dealt <see cref="Djinn">Djinns</see> and discard the others.

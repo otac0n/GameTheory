@@ -115,9 +115,9 @@ namespace GameTheory.Games.TwentyFortyEight
             }
 
             var state = move.Apply(this);
-            for (int y = 0; y < Size; y++)
+            for (var y = 0; y < Size; y++)
             {
-                for (int x = 0; x < Size; x++)
+                for (var x = 0; x < Size; x++)
                 {
                     if (state.field[x, y] == 0)
                     {
@@ -141,9 +141,9 @@ namespace GameTheory.Games.TwentyFortyEight
         /// <inheritdoc/>
         public IReadOnlyCollection<PlayerToken> GetWinners()
         {
-            for (int y = 0; y < Size; y++)
+            for (var y = 0; y < Size; y++)
             {
-                for (int x = 0; x < Size; x++)
+                for (var x = 0; x < Size; x++)
                 {
                     if (this.field[x, y] >= WinThreshold)
                     {
@@ -245,7 +245,7 @@ namespace GameTheory.Games.TwentyFortyEight
             var found = 0;
             for (var y = 0; y < Size; y++)
             {
-                for (int x = 0; x < Size; x++)
+                for (var x = 0; x < Size; x++)
                 {
                     if (field[x, y] == 0)
                     {
@@ -258,7 +258,7 @@ namespace GameTheory.Games.TwentyFortyEight
 
             for (var y = 0; y < Size; y++)
             {
-                for (int x = 0; x < Size; x++)
+                for (var x = 0; x < Size; x++)
                 {
                     if (field[x, y] == 0)
                     {

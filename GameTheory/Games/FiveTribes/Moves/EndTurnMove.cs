@@ -4,7 +4,6 @@ namespace GameTheory.Games.FiveTribes.Moves
 {
     using System.Collections.Immutable;
     using System.Linq;
-    using GameTheory.Games.FiveTribes.Djinns;
 
     /// <summary>
     /// Represents a move to end the active player's turn.
