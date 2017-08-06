@@ -1,0 +1,30 @@
+﻿@using System.Linq
+@using GameTheory.Games.TwentyFortyEight
+@namespace GameTheory.ConsoleRunner.ConsoleRenderers.TwentyFortyEight
+@static false
+@model GameState
+{{
+    var columns = Enumerable.Range(0, GameState.Size);
+    var rows = Enumerable.Range(0, GameState.Size);
+
+    string text(int column, int row, int index)
+    {
+        return index == 0 && model[column, row] != 0 ? (1 << model[column, row]).ToString() : " ";
+    }
+
+    var cw = columns.Select(c => rows.Max(r => text(c, r, 0).Length)).ToList();
+    var rh = rows.Select(r => 1).ToList();
+    string pad(int column, char padding, string value = null)
+    {
+        return (value ?? "").PadRight(cw[column], padding);
+    }
+}}
+┌{{each c in columns}}{{= pad(c, '─')}}{{delimit}}┬{{/each}}┐
+{{each r in rows}}
+  {{each i in Enumerable.Range(0, rh[r])}}
+    │{{each c in columns}}{{= pad(c, ' ', text(c, r, i))}}{{delimit}}│{{/each}}│
+  {{/each}}
+{{delimit}}
+  ├{{each c in columns}}{{= pad(c, '─')}}{{delimit}}┼{{/each}}┤
+{{/each}}
+└{{each c in columns}}{{= pad(c, '─')}}{{delimit}}┴{{/each}}┘
