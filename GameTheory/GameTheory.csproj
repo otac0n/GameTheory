@@ -215,6 +215,7 @@
     <Compile Include="Players\MaximizingPlayers\TwentyFortyEightMaximizingPlayer.cs" />
     <Compile Include="Players\MaximizingPlayers\TicTacToeMaximizingPlayer.cs" />
     <Compile Include="Players\StrategyPlayer.cs" />
+    <Compile Include="SplayTree.cs" />
     <Compile Include="Strategies\CompositeStrategy.cs" />
     <Compile Include="Strategies\ImmediateWinStrategy.cs" />
     <Compile Include="Players\RandomPlayer.cs" />
