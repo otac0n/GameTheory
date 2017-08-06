@@ -36,23 +36,21 @@ namespace GameTheory.Games.Splendor
 
         internal virtual GameState Apply(GameState state)
         {
-            var transitionState = Moves.DiscardTokensMove.GenerateTransitionState(state);
-            if (transitionState != state)
+            if (Moves.DiscardTokensMove.ShouldTransitionToPhase(state))
             {
-                return transitionState;
+                return state.With(
+                    phase: Phase.Discard);
             }
 
-            if (this.GetType() != typeof(Moves.ChooseNobleMove))
+            if (Moves.ChooseNobleMove.ShouldTransitionToPhase(state))
             {
-                transitionState = Moves.ChooseNobleMove.GenerateTransitionState(state);
-                if (transitionState != state)
-                {
-                    return transitionState;
-                }
+                return state.With(
+                    phase: Phase.ChooseNoble);
             }
 
             state = state.With(
-                activePlayer: state.Players[(state.Players.IndexOf(state.ActivePlayer) + 1) % state.Players.Count]);
+                activePlayer: state.Players[(state.Players.IndexOf(state.ActivePlayer) + 1) % state.Players.Count],
+                phase: Phase.Play);
 
             if (state.ActivePlayer == state.Players[0] && state.Players.Any(p => state.GetScore(p) >= GameState.ScoreLimit))
             {

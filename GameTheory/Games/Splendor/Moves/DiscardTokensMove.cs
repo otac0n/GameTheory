@@ -2,6 +2,7 @@
 
 namespace GameTheory.Games.Splendor.Moves
 {
+    using System.Collections.Generic;
     using System.Collections.Immutable;
 
     /// <summary>
@@ -31,26 +32,22 @@ namespace GameTheory.Games.Splendor.Moves
         /// <inheritdoc />
         public override string ToString() => $"Discard {this.Tokens}";
 
-        internal static GameState GenerateTransitionState(GameState state)
+        internal static bool ShouldTransitionToPhase(GameState state)
+        {
+            if (state.Phase == Phase.Play)
+            {
+                return state.Inventory[state.ActivePlayer].Tokens.Count - GameState.TokenLimit > 0;
+            }
+
+            return false;
+        }
+
+        internal static IEnumerable<Move> GenerateMoves(GameState state)
         {
             var toDiscard = state.Inventory[state.ActivePlayer].Tokens.Count - GameState.TokenLimit;
-            if (toDiscard > 0)
+            foreach (var discardTokens in state.Inventory[state.ActivePlayer].Tokens.Combinations(toDiscard))
             {
-                return state.WithMoves(newState =>
-                {
-                    var builder = ImmutableList.CreateBuilder<Move>();
-
-                    foreach (var discardTokens in newState.Inventory[newState.ActivePlayer].Tokens.Combinations(toDiscard))
-                    {
-                        builder.Add(new DiscardTokensMove(newState, discardTokens));
-                    }
-
-                    return builder.ToImmutable();
-                });
-            }
-            else
-            {
-                return state;
+                yield return new DiscardTokensMove(state, discardTokens);
             }
         }
 

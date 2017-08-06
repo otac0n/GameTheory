@@ -2,6 +2,7 @@
 
 namespace GameTheory.Games.Splendor.Moves
 {
+    using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Linq;
 
@@ -37,30 +38,27 @@ namespace GameTheory.Games.Splendor.Moves
         /// <inheritdoc />
         public override string ToString() => $"Invite {this.Noble} to visit";
 
-        internal static GameState GenerateTransitionState(GameState state)
+        internal static bool ShouldTransitionToPhase(GameState state)
+        {
+            if (state.Phase == Phase.Play || state.Phase == Phase.Discard)
+            {
+                var bonus = state.GetBonus(state.ActivePlayer);
+                return state.Nobles.Any(noble => noble.RequiredBonuses.Keys.All(k => bonus[k] >= noble.RequiredBonuses[k]));
+            }
+
+            return false;
+        }
+
+        internal static IEnumerable<Move> GenerateMoves(GameState state)
         {
             var bonus = state.GetBonus(state.ActivePlayer);
-            if (state.Nobles.Any(noble => noble.RequiredBonuses.Keys.All(k => bonus[k] >= noble.RequiredBonuses[k])))
+            for (var i = 0; i < state.Nobles.Count; i++)
             {
-                return state.WithMoves(newState =>
+                var noble = state.Nobles[i];
+                if (noble.RequiredBonuses.Keys.All(k => bonus[k] >= noble.RequiredBonuses[k]))
                 {
-                    var builder = ImmutableList.CreateBuilder<Move>();
-
-                    for (var i = 0; i < newState.Nobles.Count; i++)
-                    {
-                        var noble = newState.Nobles[i];
-                        if (noble.RequiredBonuses.Keys.All(k => bonus[k] >= noble.RequiredBonuses[k]))
-                        {
-                             builder.Add(new ChooseNobleMove(newState, i));
-                        }
-                    }
-
-                    return builder.ToImmutable();
-                });
-            }
-            else
-            {
-                return state;
+                    yield return new ChooseNobleMove(state, i);
+                }
             }
         }
 

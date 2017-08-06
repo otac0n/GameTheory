@@ -43,10 +43,6 @@ namespace GameTheory.Games.Splendor
         private static readonly ImmutableList<DevelopmentCard> InitialLevel3DevelopmentCards;
         private static readonly ImmutableList<Noble> InitialNobles;
 
-        private readonly Phase phase;
-        private readonly Func<GameState, IEnumerable<Move>> subsequentMovesFactory;
-        private readonly Lazy<ImmutableList<Move>> subsequentMoves;
-
         static GameState()
         {
             InitialNobles = ImmutableList.Create(
@@ -168,7 +164,7 @@ namespace GameTheory.Games.Splendor
 
             this.Players = Enumerable.Range(0, players).Select(i => new PlayerToken()).ToImmutableList();
             this.ActivePlayer = this.Players[0];
-            this.phase = Phase.Play;
+            this.Phase = Phase.Play;
 
             var gemTokens = players + (players >= 4 ? 3 : 2);
             this.Tokens = EnumCollection<Token>.Empty
@@ -205,13 +201,11 @@ namespace GameTheory.Games.Splendor
             ImmutableList<Noble> nobles,
             ImmutableDictionary<PlayerToken, Inventory> inventory,
             ImmutableArray<ImmutableList<DevelopmentCard>> developmentDecks,
-            ImmutableArray<ImmutableArray<DevelopmentCard>> developmentTracks,
-            Func<GameState, IEnumerable<Move>> subsequentMovesFactory)
-            : this(subsequentMovesFactory)
+            ImmutableArray<ImmutableArray<DevelopmentCard>> developmentTracks)
         {
             this.Players = players;
             this.ActivePlayer = activePlayer;
-            this.phase = phase;
+            this.Phase = phase;
             this.Tokens = tokens;
             this.Nobles = nobles;
             this.Inventory = inventory;
@@ -219,16 +213,15 @@ namespace GameTheory.Games.Splendor
             this.DevelopmentTracks = developmentTracks;
         }
 
-        private GameState(Func<GameState, IEnumerable<Move>> subsequentMovesFactory)
-        {
-            this.subsequentMovesFactory = subsequentMovesFactory;
-            this.subsequentMoves = subsequentMovesFactory == null ? null : new Lazy<ImmutableList<Move>>(() => this.subsequentMovesFactory(this).ToImmutableList(), LazyThreadSafetyMode.ExecutionAndPublication);
-        }
-
         /// <summary>
         /// Gets the active player.
         /// </summary>
         public PlayerToken ActivePlayer { get; }
+
+        /// <summary>
+        /// Gets the phase of the game.
+        /// </summary>
+        public Phase Phase { get; }
 
         /// <summary>
         /// Gets the decks of development cards.
@@ -265,25 +258,31 @@ namespace GameTheory.Games.Splendor
         /// <inheritdoc />
         public IReadOnlyList<Move> GetAvailableMoves()
         {
-            if (this.subsequentMovesFactory != null)
-            {
-                return this.subsequentMoves.Value;
-            }
-            else
-            {
-                var moves = ImmutableList.CreateBuilder<Move>();
+            var moves = ImmutableList.CreateBuilder<Move>();
 
-                if (this.phase != Phase.End)
-                {
+            switch (this.Phase)
+            {
+                case Phase.Play:
                     moves.AddRange(Moves.TakeTokensMove.GenerateMoves(this));
                     moves.AddRange(Moves.ReserveFromDeckMove.GenerateMoves(this));
                     moves.AddRange(Moves.ReserveFromBoardMove.GenerateMoves(this));
                     moves.AddRange(Moves.PurchaseFromHandMove.GenerateMoves(this));
                     moves.AddRange(Moves.PurchaseFromBoardMove.GenerateMoves(this));
-                }
+                    break;
 
-                return moves.ToImmutable();
+                case Phase.Discard:
+                    moves.AddRange(Moves.DiscardTokensMove.GenerateMoves(this));
+                    break;
+
+                case Phase.ChooseNoble:
+                    moves.AddRange(Moves.ChooseNobleMove.GenerateMoves(this));
+                    break;
+
+                case Phase.End:
+                    break;
             }
+
+            return moves.ToImmutable();
         }
 
         /// <summary>
@@ -308,7 +307,7 @@ namespace GameTheory.Games.Splendor
         /// <inheritdoc />
         public IReadOnlyCollection<PlayerToken> GetWinners()
         {
-            if (this.phase == Phase.Play)
+            if (this.Phase != Phase.End)
             {
                 return ImmutableList<PlayerToken>.Empty;
             }
@@ -377,7 +376,7 @@ namespace GameTheory.Games.Splendor
 
             int comp;
 
-            if ((comp = this.phase.CompareTo(state.phase)) != 0 ||
+            if ((comp = this.Phase.CompareTo(state.Phase)) != 0 ||
                 (comp = this.ActivePlayer.CompareTo(state.ActivePlayer)) != 0)
             {
                 return comp;
@@ -427,21 +426,6 @@ namespace GameTheory.Games.Splendor
                 }
             }
 
-            if (this.subsequentMovesFactory != null)
-            {
-                if (state.subsequentMovesFactory == null)
-                {
-                    return 1;
-                }
-
-                // BUG: These could still possibly represent different subsequent moves.
-                return 0;
-            }
-            else if (state.subsequentMovesFactory != null)
-            {
-                return -1;
-            }
-
             return 0;
         }
 
@@ -457,27 +441,12 @@ namespace GameTheory.Games.Splendor
             return new GameState(
                 this.Players,
                 activePlayer ?? this.ActivePlayer,
-                phase ?? this.phase,
+                phase ?? this.Phase,
                 tokens ?? this.Tokens,
                 nobles ?? this.Nobles,
                 inventory ?? this.Inventory,
                 developmentDecks ?? this.DevelopmentDecks,
-                developmentTracks ?? this.DevelopmentTracks,
-                null);
-        }
-
-        internal GameState WithMoves(Func<GameState, IEnumerable<Move>> subsequentMoves)
-        {
-            return new GameState(
-                this.Players,
-                this.ActivePlayer,
-                this.phase,
-                this.Tokens,
-                this.Nobles,
-                this.Inventory,
-                this.DevelopmentDecks,
-                this.DevelopmentTracks,
-                subsequentMoves);
+                developmentTracks ?? this.DevelopmentTracks);
         }
     }
 }
