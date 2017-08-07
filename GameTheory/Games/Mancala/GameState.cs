@@ -208,7 +208,8 @@ namespace GameTheory.Games.Mancala
 
             if (this.Board != state.Board)
             {
-                for (var i = 0; i < this.Board.Length; i++)
+                var length = this.Board.Length;
+                for (var i = 0; i < length; i++)
                 {
                     if ((comp = this.Board[i].CompareTo(state.Board[i])) != 0)
                     {
