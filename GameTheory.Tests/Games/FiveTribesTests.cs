@@ -134,7 +134,7 @@ namespace GameTheory.Tests.Games
             state = (GameState)state
                 .PlayMove(playerA, m => m is PayMeeplesAndResourcesMove)
                 .PlayMove(playerA, m => m is DrawDjinnsMove)
-                .PlayMove(playerA, m => m.ToString() == "Take Ibus");
+                .PlayMove(playerA, m => m.ToString() == "Take Ibus +8");
             state = (GameState)state
                 .PlayMove(playerA, m => state.MakeMove(m).GetAvailableMoves(playerA).Any(x => x is DoubleAssassinKillCountMove))
                 .PlayMove(playerA, m => m.ToString() == "Double the number of meeples your Assassins kill this turn");
@@ -144,7 +144,7 @@ namespace GameTheory.Tests.Games
             state = (GameState)state
                 .PlayMove(playerA, m => state.MakeMove(m).GetAvailableMoves(playerA).Any(x => x is AddMeeplesMove))
                 .PlayMove(playerA, m => m.ToString() == "Draw 2 Meeples and place at (3, 1)")
-                .PlayMove(playerA, m => m.ToString() == "Assissinate Elder,Elder at (3, 1)")
+                .PlayMove(playerA, m => m.ToString() == "Assissinate 2×Elder at (3, 1)")
                 .PlayMove(playerA, m => m.ToString() == "Place a Camel at (3, 1)");
             ShowInventory(state);
             Assert.That(state.GetAvailableMoves(), Has.None.InstanceOf<AddMeeplesMove>());
