@@ -9,7 +9,7 @@
 
     string text(int column, int row, int index)
     {
-        return index == 0 && model[column, row] != 0 ? (1 << model[column, row]).ToString() : " ";
+        return (index == 0 && model[column, row] != 0 ? (1 << model[column, row]).ToString() : " ").PadLeft(3);
     }
 
     var cw = columns.Select(c => rows.Max(r => text(c, r, 0).Length)).ToList();
