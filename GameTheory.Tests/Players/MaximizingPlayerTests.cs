@@ -12,18 +12,18 @@ namespace GameTheory.Tests.Players
     [TestFixture]
     public class MaximizingPlayerTests
     {
+        private const int Samples = 1000;
+
         [Test]
         public async Task WhenGoingFirst_Never_LosesToDuhPlayer()
         {
-            const int Samples = 1000;
-
             var wins = new int[2];
 
             for (var i = 0; i < Samples; i++)
             {
                 var endState = await GameUtilities.PlayGame(new GameState(), playerTokens => new IPlayer<Move>[]
                 {
-                    new TicTacToeMaximizingPlayer(playerTokens[0], minPly: 5),
+                    new TicTacToeMaximizingPlayer(playerTokens[0], minPly: 6),
                     new DuhPlayer<Move>(playerTokens[1]),
                 });
 
@@ -40,8 +40,6 @@ namespace GameTheory.Tests.Players
         [Test]
         public async Task WhenGoingSecond_Never_LosesToDuhPlayer()
         {
-            const int Samples = 1000;
-
             var wins = new int[2];
 
             for (var i = 0; i < Samples; i++)

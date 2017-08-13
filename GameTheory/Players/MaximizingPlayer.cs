@@ -92,8 +92,12 @@ namespace GameTheory.Players
         {
             await Task.Yield();
 
-            var mainline = this.GetMove(state, this.minPly, cancel);
-            this.cache.Trim(TrimDepth);
+            Mainline mainline;
+            lock (this.cache)
+            {
+                mainline = this.GetMove(state, this.minPly, cancel);
+                this.cache.Trim(TrimDepth);
+            }
 
             if (mainline == null || !mainline.Moves.Any() || mainline.Moves.Peek().PlayerToken != this.PlayerToken)
             {
