@@ -14,6 +14,11 @@ namespace GameTheory
         where TMove : IMove
     {
         /// <summary>
+        /// Subscribes
+        /// </summary>
+        event EventHandler<MessageSentEventArgs> MessageSent;
+
+        /// <summary>
         /// Gets the <see cref="PlayerToken"/> that represents the player.
         /// </summary>
         PlayerToken PlayerToken { get; }

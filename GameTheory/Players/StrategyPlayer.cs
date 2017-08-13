@@ -35,6 +35,9 @@ namespace GameTheory.Players
             this.Dispose(false);
         }
 
+        /// <inheritdoc />
+        public event EventHandler<MessageSentEventArgs> MessageSent;
+
         /// <inheritdoc/>
         public PlayerToken PlayerToken => this.fallbackPlayer.PlayerToken;
 

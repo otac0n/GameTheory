@@ -2,6 +2,7 @@
 
 namespace GameTheory.Players
 {
+    using System;
     using System.Threading;
     using System.Threading.Tasks;
 
@@ -22,6 +23,9 @@ namespace GameTheory.Players
         {
             this.playerToken = playerToken;
         }
+
+        /// <inheritdoc />
+        public event EventHandler<MessageSentEventArgs> MessageSent;
 
         /// <inheritdoc />
         public PlayerToken PlayerToken => this.playerToken;

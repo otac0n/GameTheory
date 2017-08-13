@@ -208,6 +208,7 @@
     <Compile Include="IStrategy.cs" />
     <Compile Include="IWeighted.cs" />
     <Compile Include="Maybe.cs" />
+    <Compile Include="MessageSentEventArgs.cs" />
     <Compile Include="Players\MaximizingPlayer.cs" />
     <Compile Include="Players\MaximizingPlayers\FiveTribesMaximizingPlayer.cs" />
     <Compile Include="Players\MaximizingPlayers\MancalaMaximizingPlayer.cs" />

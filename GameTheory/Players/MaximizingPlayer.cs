@@ -46,6 +46,9 @@ namespace GameTheory.Players
             this.Dispose(false);
         }
 
+        /// <inheritdoc />
+        public event EventHandler<MessageSentEventArgs> MessageSent;
+
         /// <summary>
         /// Provides an interface for the <see cref="MaximizingPlayer{TMove, TScore}"/> class to score game states.
         /// </summary>
@@ -98,6 +101,7 @@ namespace GameTheory.Players
             }
             else
             {
+                this.MessageSent?.Invoke(this, new MessageSentEventArgs(mainline.ToString()));
                 return new Maybe<TMove>(mainline.Moves.Peek());
             }
         }
@@ -292,6 +296,11 @@ namespace GameTheory.Players
                     this.State,
                     this.Moves.Push(move),
                     this.Depth + 1);
+            }
+
+            public override string ToString()
+            {
+                return $"{string.Join(" ", this.Moves)} [{string.Join(", ", this.Score.Select(s => this.State.GetPlayerName(s.Key) + ": " + s.Value))}]";
             }
         }
     }

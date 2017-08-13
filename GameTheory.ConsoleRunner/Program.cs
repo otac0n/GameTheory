@@ -118,7 +118,20 @@ namespace GameTheory.ConsoleRunner
             var catalog = new PlayerCatalog(Assembly.GetExecutingAssembly(), typeof(IGameState<>).Assembly);
             var players = catalog.FindPlayers(typeof(TMove));
             var consoleRenderer = ConsoleRenderer.Default<TMove>();
-            gameState = GameUtilities.PlayGame(gameState, playerToken => GetPlayer(players, gameState, playerToken), (prevState, move, state) => ShowMove(state, move, consoleRenderer), TimeSpan.FromMinutes(5)).Result;
+
+            IPlayer<TMove> getPlayer(PlayerToken playerToken)
+            {
+                var player = GetPlayer(players, gameState, playerToken);
+                player.MessageSent += (obj, args) =>
+                {
+                    Console.Write(gameState.GetPlayerName(playerToken));
+                    Console.Write(" Messaged: ");
+                    Console.WriteLine(args.Message);
+                };
+                return player;
+            }
+
+            gameState = GameUtilities.PlayGame(gameState, getPlayer, (prevState, move, state) => ShowMove(state, move, consoleRenderer), TimeSpan.FromMinutes(5)).Result;
             Console.WriteLine(Resources.FinalState);
             consoleRenderer.Show(gameState);
 
