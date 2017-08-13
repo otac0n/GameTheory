@@ -3,7 +3,6 @@
 namespace GameTheory.Games.Splendor.Moves
 {
     using System.Collections.Generic;
-    using System.Collections.Immutable;
 
     /// <summary>
     /// Represents a move to choose tokens to discard.

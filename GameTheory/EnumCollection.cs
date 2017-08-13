@@ -96,8 +96,19 @@ namespace GameTheory
         /// <summary>
         /// Gets the distinct list of items contained in the collection.
         /// </summary>
-        public IEnumerable<TEnum> Keys =>
-            Enumerable.Range(0, Capacity).Where(i => this.storage[i] > 0).Select(i => AllKeys[i]);
+        public IEnumerable<TEnum> Keys
+        {
+            get
+            {
+                for (var i = 0; i < Capacity; i++)
+                {
+                    if (this.storage[i] > 0)
+                    {
+                        yield return AllKeys[i];
+                    }
+                }
+            }
+        }
 
         /// <inheritdoc />
         TEnum IReadOnlyList<TEnum>.this[int index]

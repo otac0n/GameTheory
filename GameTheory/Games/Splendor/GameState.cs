@@ -6,7 +6,6 @@ namespace GameTheory.Games.Splendor
     using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Linq;
-    using System.Threading;
 
     /// <summary>
     /// Represents the current state of a game of Splendor.
@@ -312,6 +311,7 @@ namespace GameTheory.Games.Splendor
                 return ImmutableList<PlayerToken>.Empty;
             }
 
+            // TODO: The player with the fewest resource cards should win.
             return this.Players
                 .GroupBy(p => this.GetScore(p))
                 .OrderByDescending(g => g.Key)

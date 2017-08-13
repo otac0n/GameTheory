@@ -2,7 +2,6 @@
 
 namespace GameTheory.Games.TwentyFortyEight.Moves
 {
-    using System;
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
 
