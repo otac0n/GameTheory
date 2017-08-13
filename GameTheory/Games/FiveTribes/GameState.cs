@@ -532,7 +532,7 @@ namespace GameTheory.Games.FiveTribes
                 throw new ArgumentNullException(nameof(move));
             }
 
-            if (move.State != this)
+            if (this.CompareTo(move.State) != 0)
             {
                 throw new InvalidOperationException();
             }

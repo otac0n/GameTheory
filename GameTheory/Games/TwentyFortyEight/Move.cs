@@ -29,7 +29,7 @@ namespace GameTheory.Games.TwentyFortyEight
         /// <summary>
         /// Gets the <see cref="GameState"/> that this move is based on.
         /// </summary>
-        protected GameState State { get; }
+        internal GameState State { get; }
 
         internal abstract GameState Apply(GameState state);
     }

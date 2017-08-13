@@ -136,7 +136,7 @@ namespace GameTheory.Games.Mancala
                 throw new ArgumentNullException(nameof(move));
             }
 
-            if (move.State != this && this.CompareTo(move.State) != 0)
+            if (this.CompareTo(move.State) != 0)
             {
                 throw new InvalidOperationException();
             }

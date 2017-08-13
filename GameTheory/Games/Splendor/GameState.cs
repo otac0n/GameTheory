@@ -337,7 +337,7 @@ namespace GameTheory.Games.Splendor
                 throw new ArgumentNullException(nameof(move));
             }
 
-            if (move.State != this && this.CompareTo(move.State) != 0)
+            if (this.CompareTo(move.State) != 0)
             {
                 throw new InvalidOperationException();
             }

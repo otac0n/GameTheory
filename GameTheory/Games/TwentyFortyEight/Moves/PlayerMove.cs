@@ -131,11 +131,6 @@ namespace GameTheory.Games.TwentyFortyEight.Moves
 
         internal override GameState Apply(GameState state)
         {
-            if (state != this.State)
-            {
-                throw new InvalidOperationException();
-            }
-
             var field = new byte[GameState.Size, GameState.Size];
 
             int ix = 0, iy = 0, jx = 0, jy = 0, ox = 0, oy = 0;

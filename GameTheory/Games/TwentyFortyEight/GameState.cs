@@ -166,6 +166,11 @@ namespace GameTheory.Games.TwentyFortyEight
         /// <inheritdoc/>
         public IGameState<Move> MakeMove(Move move)
         {
+            if (this.CompareTo(move.State) != 0)
+            {
+                throw new InvalidOperationException();
+            }
+
             var state = move.Apply(this);
 
             if (this.players.Count == 1 && state.turn == Turn.Computer)
