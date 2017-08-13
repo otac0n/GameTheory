@@ -42,19 +42,57 @@ namespace GameTheory.Games.CenturySpiceRoad.Moves
                 hand: pInventory.Hand.Add(acquired.MerchantCard),
                 caravan: pInventory.Caravan.AddRange(acquired.Spices));
 
+            var inventory = state.Inventory.SetItem(activePlayer, pInventory);
+            var merchantCardTrack = state.MerchantCardTrack.RemoveAt(state.MerchantCardIndexAfforded);
+
             var merchantCardDeck = state.MerchantCardDeck.Deal(1, out ImmutableList<MerchantCard> dealt);
-            var merchantCardTrack = state.MerchantCardTrack
-                .RemoveAt(state.MerchantCardIndexAfforded)
-                .AddRange(dealt.Select(c => new MerchantStall(c, EnumCollection<Spice>.Empty)));
+            merchantCardTrack = merchantCardTrack.AddRange(dealt.Select(c => new MerchantStall(c, EnumCollection<Spice>.Empty)));
 
             state = state.With(
                 merchantCardDeck: merchantCardDeck,
                 merchantCardTrack: merchantCardTrack,
-                inventory: state.Inventory.SetItem(activePlayer, pInventory),
+                inventory: inventory,
                 merchantCardIndexAfforded: 0,
                 phase: Phase.Play);
 
             return base.Apply(state);
+        }
+
+        internal override IEnumerable<IWeighted<GameState>> GetOutcomes(GameState state)
+        {
+            var activePlayer = state.ActivePlayer;
+            var pInventory = state.Inventory[activePlayer];
+            var acquired = state.MerchantCardTrack[state.MerchantCardIndexAfforded];
+
+            pInventory = pInventory.With(
+                hand: pInventory.Hand.Add(acquired.MerchantCard),
+                caravan: pInventory.Caravan.AddRange(acquired.Spices));
+
+            var inventory = state.Inventory.SetItem(activePlayer, pInventory);
+            var merchantCardTrack = state.MerchantCardTrack.RemoveAt(state.MerchantCardIndexAfforded);
+
+            if (state.MerchantCardDeck.Count == 0)
+            {
+                var outcome = base.Apply(state.With(
+                    merchantCardTrack: merchantCardTrack,
+                    inventory: inventory,
+                    merchantCardIndexAfforded: 0,
+                    phase: Phase.Play));
+                yield return Weighted.Create(outcome, 1);
+            }
+            else
+            {
+                for (var i = 0; i < state.MerchantCardDeck.Count; i++)
+                {
+                    var outcome = base.Apply(state.With(
+                        merchantCardDeck: state.MerchantCardDeck.RemoveAt(i),
+                        merchantCardTrack: merchantCardTrack.Add(new MerchantStall(state.MerchantCardDeck[i], EnumCollection<Spice>.Empty)),
+                        inventory: inventory,
+                        merchantCardIndexAfforded: 0,
+                        phase: Phase.Play));
+                    yield return Weighted.Create(outcome, 1);
+                }
+            }
         }
     }
 }
