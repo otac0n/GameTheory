@@ -117,6 +117,7 @@ namespace GameTheory.Games.FiveTribes
         /// <inheritdoc />
         public override string ToString() => "(" + this.X + ", " + this.Y + ")";
 
+        /// <inheritdoc />
         public int CompareTo(Point other)
         {
             if (other == this)

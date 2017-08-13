@@ -36,7 +36,11 @@ namespace GameTheory.Players
         }
 
         /// <inheritdoc />
-        public event EventHandler<MessageSentEventArgs> MessageSent;
+        public event EventHandler<MessageSentEventArgs> MessageSent
+        {
+            add { }
+            remove { }
+        }
 
         /// <inheritdoc/>
         public PlayerToken PlayerToken => this.fallbackPlayer.PlayerToken;

@@ -40,7 +40,11 @@ namespace GameTheory.ConsoleRunner
         }
 
         /// <inheritdoc />
-        public event EventHandler<MessageSentEventArgs> MessageSent;
+        public event EventHandler<MessageSentEventArgs> MessageSent
+        {
+            add { }
+            remove { }
+        }
 
         /// <inheritdoc />
         public PlayerToken PlayerToken { get; }

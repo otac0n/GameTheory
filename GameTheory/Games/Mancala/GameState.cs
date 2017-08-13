@@ -169,16 +169,6 @@ namespace GameTheory.Games.Mancala
             playerToken == this.player1 ? this.BinsPerSide + 1 :
             throw new ArgumentOutOfRangeException(nameof(playerToken));
 
-        internal GameState With(
-            PlayerToken activePlayer = null,
-            ImmutableArray<int>? board = null)
-        {
-            return new GameState(
-                this.Players,
-                activePlayer ?? this.ActivePlayer,
-                board ?? this.Board);
-        }
-
         /// <inheritdoc/>
         public int CompareTo(IGameState<Move> other)
         {
@@ -219,6 +209,16 @@ namespace GameTheory.Games.Mancala
             }
 
             return 0;
+        }
+
+        internal GameState With(
+            PlayerToken activePlayer = null,
+            ImmutableArray<int>? board = null)
+        {
+            return new GameState(
+                this.Players,
+                activePlayer ?? this.ActivePlayer,
+                board ?? this.Board);
         }
     }
 }
