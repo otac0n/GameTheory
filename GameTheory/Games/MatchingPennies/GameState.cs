@@ -2,7 +2,6 @@
 
 namespace GameTheory.Games.MatchingPennies
 {
-    using System;
     using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Linq;
@@ -10,172 +9,53 @@ namespace GameTheory.Games.MatchingPennies
     /// <summary>
     /// Implements the game of matching pennies.
     /// </summary>
-    public class GameState : IGameState<Move>
+    public class GameState : NormalFormGame.GameState<string>
     {
-        private readonly ImmutableArray<PlayerToken> players;
-        private readonly ImmutableArray<bool?> choices;
+        /// <summary>
+        /// A move of "heads".
+        /// </summary>
+        public const string Heads = "Heads";
+
+        /// <summary>
+        /// A move of "tails".
+        /// </summary>
+        public const string Tails = "Tails";
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GameState"/> class in the starting position.
         /// </summary>
         public GameState()
-            : this(ImmutableArray.Create(new PlayerToken(), new PlayerToken()), ImmutableArray.Create<bool?>(null, null))
+            : base()
         {
         }
 
-        private GameState(ImmutableArray<PlayerToken> players, ImmutableArray<bool?> choices)
+        private GameState(ImmutableArray<PlayerToken> players, ImmutableArray<string> choices)
+            : base(players, choices)
         {
-            this.players = players;
-            this.choices = choices;
-        }
-
-        /// <inheritdoc />
-        public IReadOnlyList<PlayerToken> Players => this.players;
-
-        /// <inheritdoc />
-        public IReadOnlyList<Move> GetAvailableMoves()
-        {
-            return this.players
-                .Where(p => this.choices[this.players.IndexOf(p)] == null)
-                .SelectMany(p => new[] { new Move(p, true), new Move(p, false) })
-                .ToImmutableArray();
         }
 
         /// <inheritdoc />
-        public IReadOnlyCollection<PlayerToken> GetWinners()
+        public override double GetScore(PlayerToken player)
         {
-            if (this.choices.Any(c => c == null))
-            {
-                return ImmutableArray<PlayerToken>.Empty;
-            }
-
-            return ImmutableArray.Create(this.players[this.choices.Distinct().Count() - 1]);
-        }
-
-        /// <inheritdoc />
-        IGameState<Move> IGameState<Move>.MakeMove(Move move) => this.MakeMove(move);
-
-        /// <summary>
-        /// Applies the move to the current game state.
-        /// </summary>
-        /// <param name="move">The <see cref="Move"/> to apply.</param>
-        /// <returns>The updated <see cref="GameState"/>.</returns>
-        public GameState MakeMove(Move move)
-        {
-            if (move == null)
-            {
-                throw new ArgumentNullException(nameof(move));
-            }
-
-            var index = this.players.IndexOf(move.PlayerToken);
-
-            return new GameState(
-                players: this.players,
-                choices: this.choices.SetItem(index, move.Heads));
-        }
-
-        /// <inheritdoc />
-        public IEnumerable<IWeighted<IGameState<Move>>> GetOutcomes(Move move)
-        {
-            yield return Weighted.Create(this.MakeMove(move), 1);
-        }
-
-        /// <inheritdoc />
-        public IGameState<Move> GetView(PlayerToken playerToken)
-        {
-            var index = this.players.IndexOf(playerToken);
-            if (index == -1)
-            {
-                throw new InvalidOperationException();
-            }
-
-            return new GameState(
-                players: this.players,
-                choices: this.choices.SetItem(1 - index, null));
-        }
-
-        /// <inheritdoc />
-        public override string ToString()
-        {
-            string Penny(bool? choice)
-            {
-                switch (choice)
-                {
-                    case true:
-                        return "H";
-                    case false:
-                        return "T";
-                    default:
-                        return "?";
-                }
-            }
-
-            return $"[{Penny(this.choices[0])}{Penny(this.choices[1])}]";
-        }
-
-        /// <inheritdoc/>
-        public int CompareTo(IGameState<Move> other)
-        {
-            if (other == this)
+            if (this.Choices.Any(c => c == null))
             {
                 return 0;
             }
 
-            var state = other as GameState;
-            if (state == null)
-            {
-                return 1;
-            }
+            var match = this.Choices[0] == this.Choices[1];
+            return ((player == this.Players[0]) ^ match) ? 0 : 1;
+        }
 
-            int comp;
+        /// <inheritdoc />
+        protected override IEnumerable<string> GetMoveKinds()
+        {
+            return new[] { Heads, Tails };
+        }
 
-            if (this.players != state.players)
-            {
-                if ((comp = this.players.Length.CompareTo(state.players.Length)) != 0)
-                {
-                    return comp;
-                }
-
-                for (var i = 0; i < this.players.Length; i++)
-                {
-                    if ((comp = this.players[i].CompareTo(state.players[i])) != 0)
-                    {
-                        return comp;
-                    }
-                }
-            }
-
-            if (this.choices != state.choices)
-            {
-                if ((comp = this.choices.Length.CompareTo(state.choices.Length)) != 0)
-                {
-                    return comp;
-                }
-
-                for (var i = 0; i < this.players.Length; i++)
-                {
-                    var choice = this.choices[i];
-                    var otherChoice = state.choices[i];
-                    if (choice != otherChoice)
-                    {
-                        if (choice == null)
-                        {
-                            return -1;
-                        }
-                        else if (otherChoice == null)
-                        {
-                            return 1;
-                        }
-
-                        if ((comp = choice.Value.CompareTo(otherChoice.Value)) != 0)
-                        {
-                            return comp;
-                        }
-                    }
-                }
-            }
-
-            return 0;
+        /// <inheritdoc />
+        protected override NormalFormGame.GameState<string> WithChoices(ImmutableArray<string> choices)
+        {
+            return new GameState(this.Players, choices);
         }
     }
 }

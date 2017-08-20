@@ -1,21 +1,22 @@
 ﻿// Copyright © John Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
-namespace GameTheory.Games.MatchingPennies
+namespace GameTheory.Games.NormalFormGame
 {
     /// <summary>
     /// Represents a move in Matching Pennies.
     /// </summary>
-    public class Move : IMove
+    /// <typeparam name="T">The type representing the distint moves available.</typeparam>
+    public sealed class Move<T> : IMove
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="Move"/> class.
+        /// Initializes a new instance of the <see cref="Move{T}"/> class.
         /// </summary>
         /// <param name="playerToken">The player who may make this move.</param>
-        /// <param name="heads">A value indicating whether or not the player has chosen heads.</param>
-        public Move(PlayerToken playerToken, bool heads)
+        /// <param name="kind">A value indicating the kind of move the player has chosen.</param>
+        public Move(PlayerToken playerToken, T kind)
         {
             this.PlayerToken = playerToken;
-            this.Heads = heads;
+            this.Kind = kind;
         }
 
         /// <inheritdoc />
@@ -25,11 +26,11 @@ namespace GameTheory.Games.MatchingPennies
         public bool IsDeterministic => true;
 
         /// <summary>
-        /// Gets a value indicating whether or not the player has chosen heads.
+        /// Gets a value indicating the kind of move the player has chosen.
         /// </summary>
-        public bool Heads { get; }
+        public T Kind { get; }
 
         /// <inheritdoc />
-        public override string ToString() => this.Heads ? "H" : "T";
+        public override string ToString() => this.Kind.ToString();
     }
 }
