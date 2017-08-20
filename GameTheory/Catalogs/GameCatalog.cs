@@ -50,6 +50,7 @@ namespace GameTheory.Catalogs
             foreach (var assembly in this.assemblies)
             {
                 var games = (from t in assembly.ExportedTypes
+                             where !t.GetTypeInfo().IsAbstract
                              let m = Game.GetMoveType(t)
                              where m != null
                              select new Game(t, m)).ToArray();
