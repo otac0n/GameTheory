@@ -311,10 +311,12 @@ namespace GameTheory.Games.Splendor
                 return ImmutableList<PlayerToken>.Empty;
             }
 
-            // TODO: The player with the fewest resource cards should win.
             return this.Players
                 .GroupBy(p => this.GetScore(p))
                 .OrderByDescending(g => g.Key)
+                .First()
+                .GroupBy(p => this.Inventory[p].DevelopmentCards.Count)
+                .OrderBy(g => g.Key)
                 .First()
                 .ToImmutableList();
         }
