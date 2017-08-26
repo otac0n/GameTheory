@@ -1,9 +1,12 @@
-﻿// Copyright © John Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Games.CenturySpiceRoad
 {
     using System;
 
+    /// <summary>
+    /// A merchant stall represents the in-game unit of a card and the spices placed atop.
+    /// </summary>
     public class MerchantStall : IComparable<MerchantStall>
     {
         /// <summary>

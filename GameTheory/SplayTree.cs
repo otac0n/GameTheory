@@ -1,4 +1,4 @@
-﻿// Copyright © John Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory
 {
@@ -229,6 +229,9 @@ namespace GameTheory
             }
         }
 
+        /// <inheritdoc/>
+        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
+
         private void Set(TKey key, TValue value, bool throwOnExisting)
         {
             if (this.count == 0)
@@ -393,21 +396,21 @@ namespace GameTheory
             }
         }
 
-        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
-
         private sealed class SplayTreeNode
         {
-            public readonly TKey Key;
-
-            public TValue Value;
-            public SplayTreeNode LeftChild;
-            public SplayTreeNode RightChild;
-
             public SplayTreeNode(TKey key, TValue value)
             {
                 this.Key = key;
                 this.Value = value;
             }
+
+            public TKey Key { get; }
+
+            public TValue Value { get; set; }
+
+            public SplayTreeNode LeftChild { get; set; }
+
+            public SplayTreeNode RightChild { get; set; }
         }
 
         [DebuggerDisplay("Count = {Count}")]

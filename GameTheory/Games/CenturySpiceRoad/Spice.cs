@@ -1,4 +1,4 @@
-﻿// Copyright © John Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Games.CenturySpiceRoad
 {
@@ -10,21 +10,21 @@ namespace GameTheory.Games.CenturySpiceRoad
         /// <summary>
         /// Represents the yellow spice Turmeric.
         /// </summary>
-        Turmeric = 1,
+        Turmeric = 0,
 
         /// <summary>
         /// Represents the red spice Safran.
         /// </summary>
-        Safran = 2,
+        Safran = 1,
 
         /// <summary>
         /// Represents the green spice Cardamom.
         /// </summary>
-        Cardamom = 3,
+        Cardamom = 2,
 
         /// <summary>
         /// Represents the brown spice Cinnamon.
         /// </summary>
-        Cinnamon = 4,
+        Cinnamon = 3,
     }
 }

@@ -1,7 +1,10 @@
-﻿// Copyright © John Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Games.CenturySpiceRoad.MerchantCards
 {
+    /// <summary>
+    /// Represents a trade card.
+    /// </summary>
     public class TradeCard : MerchantCard
     {
         /// <summary>

@@ -1,4 +1,4 @@
-﻿// Copyright © John Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Games.Splendor
 {
@@ -50,19 +50,7 @@ namespace GameTheory.Games.Splendor
         /// </summary>
         public EnumCollection<Token> Tokens { get; }
 
-        internal Inventory With(
-            ImmutableList<DevelopmentCard> hand = null,
-            EnumCollection<Token> tokens = null,
-            ImmutableList<DevelopmentCard> developmentCards = null,
-            ImmutableList<Noble> nobles = null)
-        {
-            return new Inventory(
-                hand ?? this.Hand,
-                tokens ?? this.Tokens,
-                developmentCards ?? this.DevelopmentCards,
-                nobles ?? this.Nobles);
-        }
-
+        /// <inheritdoc />
         public int CompareTo(Inventory other)
         {
             if (other == this)
@@ -130,6 +118,19 @@ namespace GameTheory.Games.Splendor
             }
 
             return 0;
+        }
+
+        internal Inventory With(
+            ImmutableList<DevelopmentCard> hand = null,
+            EnumCollection<Token> tokens = null,
+            ImmutableList<DevelopmentCard> developmentCards = null,
+            ImmutableList<Noble> nobles = null)
+        {
+            return new Inventory(
+                hand ?? this.Hand,
+                tokens ?? this.Tokens,
+                developmentCards ?? this.DevelopmentCards,
+                nobles ?? this.Nobles);
         }
     }
 }

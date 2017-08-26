@@ -1,4 +1,4 @@
-﻿// Copyright © John Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Games.CenturySpiceRoad.Moves
 {
@@ -6,6 +6,9 @@ namespace GameTheory.Games.CenturySpiceRoad.Moves
     using System.Linq;
     using GameTheory.Games.CenturySpiceRoad.MerchantCards;
 
+    /// <summary>
+    /// Represents a move to trade spices.
+    /// </summary>
     public class TradeCardMove : Move
     {
         /// <summary>
@@ -37,8 +40,7 @@ namespace GameTheory.Games.CenturySpiceRoad.Moves
             var hand = inventory.Hand;
             for (var i = 0; i < hand.Count; i++)
             {
-                var tradeCard = hand[i] as TradeCard;
-                if (tradeCard != null && tradeCard.Cost.Keys.All(k => inventory.Caravan[k] >= tradeCard.Cost[k]))
+                if (hand[i] is TradeCard tradeCard && tradeCard.Cost.Keys.All(k => inventory.Caravan[k] >= tradeCard.Cost[k]))
                 {
                     yield return new TradeCardMove(state, i);
                 }

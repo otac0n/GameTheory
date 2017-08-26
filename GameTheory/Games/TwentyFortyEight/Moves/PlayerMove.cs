@@ -1,4 +1,4 @@
-﻿// Copyright © John Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Games.TwentyFortyEight.Moves
 {
@@ -8,33 +8,27 @@ namespace GameTheory.Games.TwentyFortyEight.Moves
     /// <summary>
     /// Represents the possible move directions.
     /// </summary>
-    [Flags]
     public enum MoveDirection
     {
         /// <summary>
-        /// Indicates there is no available move.
-        /// </summary>
-        None = 0x00,
-
-        /// <summary>
         /// Shift tiles upwards.
         /// </summary>
-        Up = 0x01,
+        Up,
 
         /// <summary>
         /// Shift tiles to the right.
         /// </summary>
-        Right = 0x02,
+        Right,
 
         /// <summary>
         /// Shift tiles downwards.
         /// </summary>
-        Down = 0x04,
+        Down,
 
         /// <summary>
         /// Shift tiles to the left.
         /// </summary>
-        Left = 0x08,
+        Left,
     }
 
     /// <summary>

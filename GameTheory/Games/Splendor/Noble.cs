@@ -1,4 +1,4 @@
-﻿// Copyright © John Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Games.Splendor
 {
@@ -50,18 +50,18 @@ namespace GameTheory.Games.Splendor
         public override string ToString() => $"Noble +{PrestigeBonus} {this.RequiredBonuses.ToString()}";
 
         /// <inheritdoc/>
-        public int CompareTo(Noble noble)
+        public int CompareTo(Noble other)
         {
-            if (noble == this)
+            if (other == this)
             {
                 return 0;
             }
-            else if (noble == null)
+            else if (other == null)
             {
                 return 1;
             }
 
-            return this.RequiredBonuses.CompareTo(noble.RequiredBonuses);
+            return this.RequiredBonuses.CompareTo(other.RequiredBonuses);
         }
     }
 }

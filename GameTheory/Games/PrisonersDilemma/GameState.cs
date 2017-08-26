@@ -1,13 +1,13 @@
-﻿// Copyright © John Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
-namespace GameTheory.Games.PrisonersDilema
+namespace GameTheory.Games.PrisonersDilemma
 {
     using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Linq;
 
     /// <summary>
-    /// Implements the game of Prisoner's Dilema.
+    /// Implements the game of Prisoner's Dilemma.
     /// </summary>
     public class GameState : NormalFormGame.GameState<string>
     {
@@ -50,7 +50,7 @@ namespace GameTheory.Games.PrisonersDilema
         }
 
         /// <inheritdoc />
-        protected override IEnumerable<string> GetMoveKinds()
+        protected override IEnumerable<string> GetMoveKinds(PlayerToken playerToken)
         {
             return new[] { Cooperate, Defect };
         }

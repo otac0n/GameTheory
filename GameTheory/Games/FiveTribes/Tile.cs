@@ -1,4 +1,4 @@
-﻿// Copyright © John Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Games.FiveTribes
 {
@@ -58,7 +58,7 @@ namespace GameTheory.Games.FiveTribes
 
             if ((comp = this.Value.CompareTo(other.Value)) != 0 ||
                 (comp = this.Color.CompareTo(other.Color)) != 0 ||
-                (comp = this.GetType().Name.CompareTo(other.GetType().Name)) != 0)
+                (comp = string.Compare(this.GetType().Name, other.GetType().Name, StringComparison.OrdinalIgnoreCase)) != 0)
             {
                 return comp;
             }

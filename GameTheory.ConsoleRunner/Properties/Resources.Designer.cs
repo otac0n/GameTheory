@@ -196,6 +196,15 @@ namespace GameTheory.ConsoleRunner.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0} messaged: {1}.
+        /// </summary>
+        internal static string PlayerMessaged {
+            get {
+                return ResourceManager.GetString("PlayerMessaged", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {0} moved:.
         /// </summary>
         internal static string PlayerMoved {

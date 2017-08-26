@@ -1,4 +1,4 @@
-﻿// Copyright © John Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Games.StagHunt
 {
@@ -50,7 +50,7 @@ namespace GameTheory.Games.StagHunt
         }
 
         /// <inheritdoc />
-        protected override IEnumerable<string> GetMoveKinds()
+        protected override IEnumerable<string> GetMoveKinds(PlayerToken playerToken)
         {
             return new[] { Stag, Hare };
         }

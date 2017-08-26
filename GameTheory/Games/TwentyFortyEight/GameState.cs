@@ -1,4 +1,4 @@
-﻿// Copyright © John Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Games.TwentyFortyEight
 {
@@ -166,6 +166,11 @@ namespace GameTheory.Games.TwentyFortyEight
         /// <inheritdoc/>
         public IGameState<Move> MakeMove(Move move)
         {
+            if (move == null)
+            {
+                throw new ArgumentNullException(nameof(move));
+            }
+
             if (this.CompareTo(move.State) != 0)
             {
                 throw new InvalidOperationException();

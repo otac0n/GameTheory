@@ -1,4 +1,4 @@
-﻿// Copyright © John Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Games.NormalFormGame
 {
@@ -8,19 +8,26 @@ namespace GameTheory.Games.NormalFormGame
     using System.Linq;
 
     /// <summary>
-    /// Implements the game of matching pennies.
+    /// Implements a normal-form game.
     /// </summary>
+    /// <typeparam name="T">The type of choices tracked in this game.</typeparam>
     public abstract class GameState<T> : IGameState<Move<T>>
         where T : class, IComparable<T>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="GameState{T}"/> class in the starting position.
         /// </summary>
-        public GameState()
+        protected GameState()
             : this(ImmutableArray.Create(new PlayerToken(), new PlayerToken()), ImmutableArray.Create<T>(null, null))
         {
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="GameState{T}"/> class with the specified internal state.
+        /// This construtor is used for copying the internal state and is intended to be used by the <see cref="WithChoices(ImmutableArray{T})"/> method.
+        /// </summary>
+        /// <param name="players">The players collection.</param>
+        /// <param name="choices">The choices collection.</param>
         protected GameState(ImmutableArray<PlayerToken> players, ImmutableArray<T> choices)
         {
             this.Players = players;
@@ -46,7 +53,7 @@ namespace GameTheory.Games.NormalFormGame
         {
             return this.Players
                 .Where(p => this.Choices[this.Players.IndexOf(p)] == null)
-                .SelectMany(p => this.GetMoveKinds().Select(k => new Move<T>(p, k)))
+                .SelectMany(p => this.GetMoveKinds(p).Select(k => new Move<T>(p, k)))
                 .ToImmutableArray();
         }
 
@@ -186,10 +193,11 @@ namespace GameTheory.Games.NormalFormGame
         }
 
         /// <summary>
-        /// Gets the kinds of moves defined for this game.
+        /// Gets the kinds of moves defined for this game for the specified player.
         /// </summary>
-        /// <returns>An enumerable collection of the moves defined for this game.</returns>
-        protected abstract IEnumerable<T> GetMoveKinds();
+        /// <param name="playerToken">The player who may play the moves.</param>
+        /// <returns>An enumerable collection of the moves defined for this game for the specified player.</returns>
+        protected abstract IEnumerable<T> GetMoveKinds(PlayerToken playerToken);
 
         /// <summary>
         /// Copies the current gamestate and overwrites the chosen moves.

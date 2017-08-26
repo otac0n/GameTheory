@@ -1,9 +1,9 @@
-﻿// Copyright © John Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
-
-using System;
+﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Games.Splendor
 {
+    using System;
+
     /// <summary>
     /// Describes a development card.
     /// </summary>

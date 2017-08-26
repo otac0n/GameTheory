@@ -1,4 +1,4 @@
-﻿// Copyright © John Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Games.FiveTribes
 {
@@ -869,8 +869,8 @@ namespace GameTheory.Games.FiveTribes
                 var otherKeys = state.additionalState.Keys.OrderBy(k => k);
                 foreach (var keyPair in keys.Zip(otherKeys, (a, b) => new { a, b }))
                 {
-                    if ((comp = string.Compare(keyPair.a, keyPair.b)) != 0 ||
-                        (comp = string.Compare(this.additionalState[keyPair.a], state.additionalState[keyPair.b])) != 0)
+                    if ((comp = string.Compare(keyPair.a, keyPair.b, StringComparison.OrdinalIgnoreCase)) != 0 ||
+                        (comp = string.Compare(this.additionalState[keyPair.a], state.additionalState[keyPair.b], StringComparison.OrdinalIgnoreCase)) != 0)
                     {
                         return comp;
                     }

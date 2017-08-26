@@ -1,10 +1,13 @@
-﻿// Copyright © John Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Games.CenturySpiceRoad.Moves
 {
     using System.Collections.Generic;
     using System.Collections.Immutable;
 
+    /// <summary>
+    /// Represents a rest move.
+    /// </summary>
     public class RestMove : Move
     {
         /// <summary>

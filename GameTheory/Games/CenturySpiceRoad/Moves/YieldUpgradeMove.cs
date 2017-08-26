@@ -1,9 +1,12 @@
-﻿// Copyright © John Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Games.CenturySpiceRoad.Moves
 {
     using System.Collections.Generic;
 
+    /// <summary>
+    /// Represents a move to yield remaining upgrades.
+    /// </summary>
     public class YieldUpgradeMove : Move
     {
         /// <summary>

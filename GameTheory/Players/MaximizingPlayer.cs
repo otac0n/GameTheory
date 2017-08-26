@@ -1,4 +1,4 @@
-﻿// Copyright © John Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Players
 {
@@ -127,8 +127,7 @@ namespace GameTheory.Players
 
         private Mainline GetMove(IGameState<TMove> state, int ply, CancellationToken cancel)
         {
-            Mainline cached;
-            if (this.cache.TryGetValue(state, out cached))
+            if (this.cache.TryGetValue(state, out Mainline cached))
             {
                 if (cached.Depth >= ply)
                 {

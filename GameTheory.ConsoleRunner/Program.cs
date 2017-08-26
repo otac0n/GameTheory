@@ -1,4 +1,4 @@
-﻿// Copyright © John Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.ConsoleRunner
 {
@@ -124,9 +124,7 @@ namespace GameTheory.ConsoleRunner
                 var player = GetPlayer(players, gameState, playerToken);
                 player.MessageSent += (obj, args) =>
                 {
-                    Console.Write(gameState.GetPlayerName(playerToken));
-                    Console.Write(" Messaged: ");
-                    Console.WriteLine(args.Message);
+                    Console.WriteLine(Resources.PlayerMessaged, gameState.GetPlayerName(playerToken), args.Message);
                 };
                 return player;
             }

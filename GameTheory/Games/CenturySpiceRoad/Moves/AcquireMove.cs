@@ -1,4 +1,4 @@
-﻿// Copyright © John Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Games.CenturySpiceRoad.Moves
 {
@@ -6,6 +6,9 @@ namespace GameTheory.Games.CenturySpiceRoad.Moves
     using System.Collections.Immutable;
     using System.Linq;
 
+    /// <summary>
+    /// Represents a move to acquire a merchant card.
+    /// </summary>
     public class AcquireMove : Move
     {
         /// <summary>

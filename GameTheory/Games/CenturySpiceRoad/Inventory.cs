@@ -1,4 +1,4 @@
-﻿// Copyright © John Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Games.CenturySpiceRoad
 {
@@ -44,10 +44,19 @@ namespace GameTheory.Games.CenturySpiceRoad
         /// </summary>
         public ImmutableList<MerchantCard> Hand { get; }
 
+        /// <summary>
+        /// Gets the list of cards in the player's played pile.
+        /// </summary>
         public ImmutableList<MerchantCard> PlayedCards { get; }
 
+        /// <summary>
+        /// Gets the list of point cards that the player has collected.
+        /// </summary>
         public ImmutableList<PointCard> PointCards { get; }
 
+        /// <summary>
+        /// Gets the tokens that the player has collected.
+        /// </summary>
         public EnumCollection<Token> Tokens { get; }
 
         /// <inheritdoc/>

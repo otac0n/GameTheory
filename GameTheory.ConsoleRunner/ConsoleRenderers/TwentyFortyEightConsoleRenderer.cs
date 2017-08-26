@@ -1,4 +1,4 @@
-﻿// Copyright © John Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.ConsoleRunner.ConsoleRenderers
 {
@@ -15,7 +15,7 @@ namespace GameTheory.ConsoleRunner.ConsoleRenderers
         public void Show(IGameState<Move> state, PlayerToken playerToken)
         {
             var gameState = (GameState)state;
-            new Templates(gameState).RenderGameState(gameState, Console.Out);
+            new Templates().RenderGameState(gameState, Console.Out);
         }
     }
 }

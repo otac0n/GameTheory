@@ -1,9 +1,10 @@
-﻿// Copyright © John Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
 
     /// <summary>
     /// Represents the contract of a game state.
@@ -22,6 +23,7 @@ namespace GameTheory
         /// Returns a list of moves available to the specified player.
         /// </summary>
         /// <returns>An enumerable list of moves available to the specified player.</returns>
+        [SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate", Justification = "This could be quite computationally intensive.")]
         IReadOnlyList<TMove> GetAvailableMoves();
 
         /// <summary>
@@ -32,6 +34,7 @@ namespace GameTheory
         /// More than one player may be listed, if the game allows for multiple winners.
         /// If the game results in a draw, this collection will be empty.
         /// </remarks>
+        [SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate", Justification = "This could be quite computationally intensive.")]
         IReadOnlyCollection<PlayerToken> GetWinners();
 
         /// <summary>

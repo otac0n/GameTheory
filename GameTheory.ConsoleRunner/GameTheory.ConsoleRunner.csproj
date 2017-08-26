@@ -71,7 +71,6 @@
     <Compile Include="ConsoleRenderers\SplendorConsoleRenderer.cs" />
     <Compile Include="ConsoleRenderers\Splendor\Templates.cs" />
     <Compile Include="ConsoleRenderers\ToStringConsoleRenderer.cs" />
-    <Compile Include="ConsoleRenderers\TwentyFortyEight\Templates.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="..\SharedAssemblyInfo.cs">
