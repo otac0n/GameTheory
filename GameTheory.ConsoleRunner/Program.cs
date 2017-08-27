@@ -131,7 +131,10 @@ namespace GameTheory.ConsoleRunner
 
             gameState = GameUtilities.PlayGame(gameState, getPlayer, (prevState, move, state) => ShowMove(state, move, consoleRenderer), TimeSpan.FromMinutes(5)).Result;
             Console.WriteLine(Resources.FinalState);
+
+            Console.WriteLine();
             consoleRenderer.Show(gameState);
+            Console.WriteLine();
 
             Console.WriteLine(Resources.Winners);
             var anyWinners = false;
@@ -152,7 +155,10 @@ namespace GameTheory.ConsoleRunner
         {
             Console.WriteLine(Resources.PlayerMoved, gameState.GetPlayerName(move.PlayerToken));
             Console.WriteLine(move);
+
+            Console.WriteLine();
             consoleRenderer.Show(gameState);
+            Console.WriteLine();
         }
     }
 }

@@ -52,6 +52,8 @@ namespace GameTheory.ConsoleRunner
         /// <inheritdoc />
         public async Task<Maybe<TMove>> ChooseMove(IGameState<TMove> state, CancellationToken cancel)
         {
+            var playerColor = GetColor(state, this.PlayerToken);
+
             await Task.Yield();
 
             var moves = state.GetAvailableMoves(this.PlayerToken);
@@ -59,19 +61,24 @@ namespace GameTheory.ConsoleRunner
             {
                 lock (Sync)
                 {
-                    var originalColor = Console.ForegroundColor;
-                    try
+                    cancel.ThrowIfCancellationRequested();
+
+                    ConsoleInteraction.WithColor(playerColor, () =>
                     {
-                        Console.ForegroundColor = GetColor(state, this.PlayerToken);
-                        cancel.ThrowIfCancellationRequested();
                         Console.WriteLine(Resources.CurrentState);
-                        this.renderer.Show(state, this.PlayerToken);
-                        return new Maybe<TMove>(ConsoleInteraction.Choose(moves.ToArray(), cancel));
-                    }
-                    finally
+                    });
+
+                    Console.WriteLine();
+                    this.renderer.Show(state, this.PlayerToken);
+                    Console.WriteLine();
+
+                    var result = default(Maybe<TMove>);
+                    ConsoleInteraction.WithColor(playerColor, () =>
                     {
-                        Console.ForegroundColor = originalColor;
-                    }
+                        result = new Maybe<TMove>(ConsoleInteraction.Choose(moves.ToArray(), cancel));
+                    });
+                    Console.WriteLine();
+                    return result;
                 }
             }
             else

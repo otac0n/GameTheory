@@ -93,5 +93,19 @@ namespace GameTheory.ConsoleRunner
                 return value;
             }
         }
+
+        public static void WithColor(ConsoleColor color, Action action)
+        {
+            var originalColor = Console.ForegroundColor;
+            try
+            {
+                Console.ForegroundColor = color;
+                action();
+            }
+            finally
+            {
+                Console.ForegroundColor = originalColor;
+            }
+        }
     }
 }
