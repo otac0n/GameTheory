@@ -105,7 +105,7 @@ namespace GameTheory.Players
             }
             else
             {
-                this.MessageSent?.Invoke(this, new MessageSentEventArgs(mainline.ToString()));
+                this.MessageSent?.Invoke(this, new MessageSentEventArgs(mainline));
                 return new Maybe<TMove>(mainline.Moves.Peek());
             }
         }
@@ -274,7 +274,7 @@ namespace GameTheory.Players
             }
         }
 
-        private class Mainline
+        private class Mainline : ITokenFormattable
         {
             public Mainline(IReadOnlyDictionary<PlayerToken, TScore> score, IGameState<TMove> state, ImmutableStack<TMove> moves, int depth)
             {
@@ -292,6 +292,47 @@ namespace GameTheory.Players
 
             public int Depth { get; }
 
+            public IList<object> FormatTokens
+            {
+                get
+                {
+                    var tokens = new List<object>();
+
+                    var first = true;
+                    foreach (var move in this.Moves)
+                    {
+                        if (!first)
+                        {
+                            tokens.Add(" ");
+                        }
+
+                        tokens.Add(move);
+                        first = false;
+                    }
+
+                    tokens.Add(" [");
+
+                    first = true;
+                    foreach (var score in this.Score)
+                    {
+                        if (!first)
+                        {
+                            tokens.Add(", ");
+                        }
+
+                        tokens.Add(score.Key);
+                        tokens.Add(": ");
+                        tokens.Add(score.Value);
+
+                        first = false;
+                    }
+
+                    tokens.Add("]");
+
+                    return tokens;
+                }
+            }
+
             public Mainline AddMove(TMove move)
             {
                 return new Mainline(
@@ -301,10 +342,7 @@ namespace GameTheory.Players
                     this.Depth + 1);
             }
 
-            public override string ToString()
-            {
-                return $"{string.Join(" ", this.Moves)} [{string.Join(", ", this.Score.Select(s => this.State.GetPlayerName(s.Key) + ": " + s.Value))}]";
-            }
+            public override string ToString() => string.Concat(this.FlattenFormatTokens());
         }
     }
 }

@@ -3,11 +3,12 @@
 namespace GameTheory.Games.FiveTribes.Moves
 {
     using System;
+    using System.Collections.Generic;
 
     /// <summary>
     /// Represents a move to place a Camel at a specified <see cref="Point"/>.
     /// </summary>
-    public class PlaceCamelMove : Move
+    public sealed class PlaceCamelMove : Move
     {
         private readonly Func<GameState, GameState> after;
 
@@ -43,7 +44,7 @@ namespace GameTheory.Games.FiveTribes.Moves
         public override bool IsDeterministic => true;
 
         /// <inheritdoc />
-        public override string ToString() => $"Place a Camel at {this.Point}";
+        public override IList<object> FormatTokens => new object[] { "Place a Camel at ", this.Point };
 
         internal override GameState Apply(GameState state)
         {

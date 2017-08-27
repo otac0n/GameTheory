@@ -124,7 +124,7 @@ namespace GameTheory.ConsoleRunner
                 var player = GetPlayer(players, gameState, playerToken);
                 player.MessageSent += (obj, args) =>
                 {
-                    Console.WriteLine(Resources.PlayerMessaged, gameState.GetPlayerName(playerToken), args.Message);
+                    Console.WriteLine(Resources.PlayerMessaged, gameState.GetPlayerName(playerToken), string.Concat(args.FlattenFormatTokens()));
                 };
                 return player;
             }

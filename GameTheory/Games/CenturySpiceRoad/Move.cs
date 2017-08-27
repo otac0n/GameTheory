@@ -29,10 +29,13 @@ namespace GameTheory.Games.CenturySpiceRoad
         /// <inheritdoc />
         public abstract bool IsDeterministic { get; }
 
+        /// <inheritdoc />
+        public abstract IList<object> FormatTokens { get; }
+
         internal GameState State { get; }
 
         /// <inheritdoc />
-        public abstract override string ToString();
+        public sealed override string ToString() => string.Concat(this.FlattenFormatTokens());
 
         internal virtual GameState Apply(GameState state)
         {

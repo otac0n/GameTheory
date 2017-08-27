@@ -3,13 +3,14 @@
 namespace GameTheory.Games.FiveTribes.Moves
 {
     using System;
+    using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Linq;
 
     /// <summary>
     /// Represent a move to draw the top three <see cref="Djinn">Djinns</see> from the Djinn pile.
     /// </summary>
-    internal class DrawDjinnsMove : Move
+    public sealed class DrawDjinnsMove : Move
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="DrawDjinnsMove"/> class.
@@ -24,7 +25,7 @@ namespace GameTheory.Games.FiveTribes.Moves
         public override bool IsDeterministic => false;
 
         /// <inheritdoc />
-        public override string ToString() => $"Draw {GetDrawCount(this.State)} Djinns";
+        public override IList<object> FormatTokens => new object[] { "Draw ", GetDrawCount(this.State), " Djinns" };
 
         internal override GameState Apply(GameState state)
         {

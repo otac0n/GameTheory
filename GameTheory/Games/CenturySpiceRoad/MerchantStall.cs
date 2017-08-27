@@ -3,11 +3,12 @@
 namespace GameTheory.Games.CenturySpiceRoad
 {
     using System;
+    using System.Collections.Generic;
 
     /// <summary>
     /// A merchant stall represents the in-game unit of a card and the spices placed atop.
     /// </summary>
-    public class MerchantStall : IComparable<MerchantStall>
+    public sealed class MerchantStall : IComparable<MerchantStall>, ITokenFormattable
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="MerchantStall"/> class.
@@ -29,6 +30,11 @@ namespace GameTheory.Games.CenturySpiceRoad
         /// Gets the <see cref="MerchantCard"/> at this <see cref="MerchantStall"/>.
         /// </summary>
         public MerchantCard MerchantCard { get; }
+
+        /// <inheritdoc/>
+        public IList<object> FormatTokens => this.Spices.Count > 0
+            ? new object[] { this.MerchantCard, " with ", this.Spices }
+            : new object[] { this.MerchantCard };
 
         /// <summary>
         /// Creates a new <see cref="MerchantStall"/>, and updates the specified values.
@@ -67,6 +73,6 @@ namespace GameTheory.Games.CenturySpiceRoad
         }
 
         /// <inheritdoc/>
-        public override string ToString() => this.Spices.Count == 0 ? $"{this.MerchantCard}" : $"{this.MerchantCard} with {this.Spices}";
+        public override string ToString() => string.Concat(this.FlattenFormatTokens());
     }
 }

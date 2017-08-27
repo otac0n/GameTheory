@@ -9,7 +9,7 @@ namespace GameTheory.Games.CenturySpiceRoad.Moves
     /// <summary>
     /// Represents a move to claim a point card.
     /// </summary>
-    public class ClaimMove : Move
+    public sealed class ClaimMove : Move
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="ClaimMove"/> class.
@@ -31,7 +31,7 @@ namespace GameTheory.Games.CenturySpiceRoad.Moves
         public int Index { get; }
 
         /// <inheritdoc />
-        public override string ToString() => $"Claim {this.State.PointCardTrack[this.Index]}";
+        public override IList<object> FormatTokens => new object[] { "Claim ", this.State.PointCardTrack[this.Index] };
 
         internal static IEnumerable<Move> GenerateMoves(GameState state)
         {

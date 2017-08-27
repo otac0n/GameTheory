@@ -2,12 +2,13 @@
 
 namespace GameTheory.Games.FiveTribes.Moves
 {
+    using System.Collections.Generic;
     using System.Linq;
 
     /// <summary>
     /// Represents a move to score the <see cref="Meeple.Builder">Builders</see> in hand.
     /// </summary>
-    public class ScoreBuildersInHandMove : Move
+    public sealed class ScoreBuildersInHandMove : Move
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="ScoreBuildersInHandMove"/> class.
@@ -29,7 +30,7 @@ namespace GameTheory.Games.FiveTribes.Moves
         public override bool IsDeterministic => true;
 
         /// <inheritdoc />
-        public override string ToString() => $"Score {this.State.InHand}";
+        public override IList<object> FormatTokens => new object[] { "Score ", this.State.InHand };
 
         internal override GameState Apply(GameState state)
         {

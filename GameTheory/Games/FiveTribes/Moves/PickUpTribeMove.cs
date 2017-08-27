@@ -2,10 +2,12 @@
 
 namespace GameTheory.Games.FiveTribes.Moves
 {
+    using System.Collections.Generic;
+
     /// <summary>
     /// Represents a move to pick up all <see cref="Meeple">Meeples</see> of a specific tribe.
     /// </summary>
-    public class PickUpTribeMove : Move
+    public sealed class PickUpTribeMove : Move
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="PickUpTribeMove"/> class.
@@ -27,7 +29,7 @@ namespace GameTheory.Games.FiveTribes.Moves
         public override bool IsDeterministic => true;
 
         /// <inheritdoc />
-        public override string ToString() => $"Pick up all {this.Tribe} at {this.State.LastPoint}";
+        public override IList<object> FormatTokens => new object[] { "Pick up all ", this.Tribe, " at ", this.State.LastPoint };
 
         internal override GameState Apply(GameState state)
         {

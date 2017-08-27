@@ -14,19 +14,6 @@ namespace GameTheory
     public static class GameUtilities
     {
         /// <summary>
-        /// Gets a player name for display.
-        /// </summary>
-        /// <typeparam name="TMove">The type of object that represents a move in the game state.</typeparam>
-        /// <param name="state">The game state.</param>
-        /// <param name="playerToken">The player to search for.</param>
-        /// <returns>A name representing the specified player token.</returns>
-        public static string GetPlayerName<TMove>(this IGameState<TMove> state, PlayerToken playerToken)
-            where TMove : IMove
-        {
-            return $"Player {state.GetPlayerNumber(playerToken)}";
-        }
-
-        /// <summary>
         /// Gets a player number for display.
         /// </summary>
         /// <typeparam name="TMove">The type of object that represents a move in the game state.</typeparam>

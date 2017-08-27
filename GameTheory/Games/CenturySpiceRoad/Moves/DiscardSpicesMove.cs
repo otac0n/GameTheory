@@ -7,7 +7,7 @@ namespace GameTheory.Games.CenturySpiceRoad.Moves
     /// <summary>
     /// Represents a move to choose spices to discard.
     /// </summary>
-    public class DiscardSpicesMove : Move
+    public sealed class DiscardSpicesMove : Move
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="DiscardSpicesMove"/> class.
@@ -29,7 +29,7 @@ namespace GameTheory.Games.CenturySpiceRoad.Moves
         public override bool IsDeterministic => true;
 
         /// <inheritdoc />
-        public override string ToString() => $"Discard {this.Spices}";
+        public override IList<object> FormatTokens => new object[] { "Discard ", this.Spices };
 
         internal static bool ShouldTransitionToPhase(GameState state)
         {

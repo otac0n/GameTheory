@@ -7,7 +7,7 @@ namespace GameTheory.Games.Splendor.Moves
     /// <summary>
     /// Represents a move to choose tokens to discard.
     /// </summary>
-    public class DiscardTokensMove : Move
+    public sealed class DiscardTokensMove : Move
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="DiscardTokensMove"/> class.
@@ -29,7 +29,7 @@ namespace GameTheory.Games.Splendor.Moves
         public override bool IsDeterministic => true;
 
         /// <inheritdoc />
-        public override string ToString() => $"Discard {this.Tokens}";
+        public override IList<object> FormatTokens => new object[] { "Discard ", this.Tokens };
 
         internal static bool ShouldTransitionToPhase(GameState state)
         {

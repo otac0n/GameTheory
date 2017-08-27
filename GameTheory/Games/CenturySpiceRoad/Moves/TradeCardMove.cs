@@ -9,7 +9,7 @@ namespace GameTheory.Games.CenturySpiceRoad.Moves
     /// <summary>
     /// Represents a move to trade spices.
     /// </summary>
-    public class TradeCardMove : Move
+    public sealed class TradeCardMove : Move
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="TradeCardMove"/> class.
@@ -30,8 +30,8 @@ namespace GameTheory.Games.CenturySpiceRoad.Moves
         /// <inheritdoc />
         public override bool IsDeterministic => true;
 
-        /// <inheritdoc/>
-        public override string ToString() => $"Play [{this.State.Inventory[this.PlayerToken].Hand[this.Index]}]";
+        /// <inheritdoc />
+        public override IList<object> FormatTokens => new object[] { "Play ", this.State.Inventory[this.PlayerToken].Hand[this.Index] };
 
         internal static IEnumerable<Move> GenerateMoves(GameState state)
         {

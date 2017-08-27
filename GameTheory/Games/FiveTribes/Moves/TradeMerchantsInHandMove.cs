@@ -3,12 +3,13 @@
 namespace GameTheory.Games.FiveTribes.Moves
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
 
     /// <summary>
     /// Represents a move to trade the <see cref="Meeple.Merchant">Merchants</see> in hand for <see cref="Resource">Resources</see>.
     /// </summary>
-    public class TradeMerchantsInHandMove : Move
+    public sealed class TradeMerchantsInHandMove : Move
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="TradeMerchantsInHandMove"/> class.
@@ -23,7 +24,7 @@ namespace GameTheory.Games.FiveTribes.Moves
         public override bool IsDeterministic => true;
 
         /// <inheritdoc />
-        public override string ToString() => $"Take {Math.Min(this.State.VisibleResources.Count, this.State.InHand.Count)} resources";
+        public override IList<object> FormatTokens => new object[] { "Take ", Math.Min(this.State.VisibleResources.Count, this.State.InHand.Count), " resources" };
 
         internal override GameState Apply(GameState state)
         {

@@ -2,10 +2,12 @@
 
 namespace GameTheory.Games.FiveTribes.Moves
 {
+    using System.Collections.Generic;
+
     /// <summary>
     /// Represents a move to move the active player's turn marker.
     /// </summary>
-    public class MoveTurnMarkerMove : Move
+    public sealed class MoveTurnMarkerMove : Move
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="MoveTurnMarkerMove"/> class.
@@ -20,7 +22,7 @@ namespace GameTheory.Games.FiveTribes.Moves
         public override bool IsDeterministic => true;
 
         /// <inheritdoc />
-        public override string ToString() => "Move turn marker";
+        public override IList<object> FormatTokens => new object[] { "Move turn marker" };
 
         internal override GameState Apply(GameState state)
         {

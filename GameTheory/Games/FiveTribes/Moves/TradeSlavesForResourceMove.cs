@@ -2,10 +2,12 @@
 
 namespace GameTheory.Games.FiveTribes.Moves
 {
+    using System.Collections.Generic;
+
     /// <summary>
     /// Represents a move to trade a pair of <see cref="FiveTribes.Resource.Slave">Slaves</see> for the specified <see cref="Resource"/>.
     /// </summary>
-    public class TradeSlavesForResourceMove : Move
+    public sealed class TradeSlavesForResourceMove : Move
     {
         private static readonly EnumCollection<Resource> Cost = new EnumCollection<Resource>(Resource.Slave, Resource.Slave);
 
@@ -30,7 +32,7 @@ namespace GameTheory.Games.FiveTribes.Moves
         public override bool IsDeterministic => true;
 
         /// <inheritdoc />
-        public override string ToString() => $"Trade {Cost} for {this.Resource}";
+        public override IList<object> FormatTokens => new object[] { "Trade ", Cost, " for ", this.Resource };
 
         internal override GameState Apply(GameState state)
         {

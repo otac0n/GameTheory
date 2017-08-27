@@ -5,7 +5,7 @@ namespace GameTheory
     /// <summary>
     /// Represents the contract of a move.
     /// </summary>
-    public interface IMove
+    public interface IMove : ITokenFormattable
     {
         /// <summary>
         /// Gets the player who may perform this move.

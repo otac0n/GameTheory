@@ -9,7 +9,7 @@ namespace GameTheory.Games.CenturySpiceRoad.Moves
     /// <summary>
     /// Represents a move to acquire a merchant card.
     /// </summary>
-    public class AcquireMove : Move
+    public sealed class AcquireMove : Move
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="AcquireMove"/> class.
@@ -24,7 +24,7 @@ namespace GameTheory.Games.CenturySpiceRoad.Moves
         public override bool IsDeterministic => this.State.MerchantCardDeck.Count <= 1;
 
         /// <inheritdoc />
-        public override string ToString() => $"Acquire [{this.State.MerchantCardTrack[this.State.MerchantCardIndexAfforded].MerchantCard}]";
+        public override IList<object> FormatTokens => new object[] { "Acquire ", this.State.MerchantCardTrack[this.State.MerchantCardIndexAfforded].MerchantCard };
 
         internal static IEnumerable<Move> GenerateMoves(GameState state)
         {

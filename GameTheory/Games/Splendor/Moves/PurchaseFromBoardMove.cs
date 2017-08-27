@@ -8,7 +8,7 @@ namespace GameTheory.Games.Splendor.Moves
     /// <summary>
     /// Represents a move to purchase a development card from the board.
     /// </summary>
-    public class PurchaseFromBoardMove : Move
+    public sealed class PurchaseFromBoardMove : Move
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="PurchaseFromBoardMove"/> class.
@@ -49,7 +49,7 @@ namespace GameTheory.Games.Splendor.Moves
         public override bool IsDeterministic => this.State.DevelopmentDecks[this.Track].Count <= 1;
 
         /// <inheritdoc />
-        public override string ToString() => $"Purchase {this.Card} for {(this.Cost.Count > 0 ? this.Cost.ToString() : "free")}";
+        public override IList<object> FormatTokens => new object[] { "Purchase ", this.Card, " for ", this.Cost.Count > 0 ? (object)this.Cost : "free" };
 
         internal static IEnumerable<EnumCollection<Token>> GetAffordableTokenCosts(EnumCollection<Token> tokens, int jokerCount, EnumCollection<Token> cost)
         {

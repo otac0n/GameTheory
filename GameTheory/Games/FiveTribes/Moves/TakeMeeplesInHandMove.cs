@@ -2,10 +2,12 @@
 
 namespace GameTheory.Games.FiveTribes.Moves
 {
+    using System.Collections.Generic;
+
     /// <summary>
     /// Represents a move to take all of the <see cref="Meeple">Meeples</see> in hand, and put them in the active player's inventory.
     /// </summary>
-    public class TakeMeeplesInHandMove : Move
+    public sealed class TakeMeeplesInHandMove : Move
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="TakeMeeplesInHandMove"/> class.
@@ -20,7 +22,7 @@ namespace GameTheory.Games.FiveTribes.Moves
         public override bool IsDeterministic => true;
 
         /// <inheritdoc />
-        public override string ToString() => $"Take {this.State.InHand}";
+        public override IList<object> FormatTokens => new object[] { "Take ", this.State.InHand };
 
         internal override GameState Apply(GameState state)
         {

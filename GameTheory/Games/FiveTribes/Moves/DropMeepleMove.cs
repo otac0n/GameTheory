@@ -2,10 +2,12 @@
 
 namespace GameTheory.Games.FiveTribes.Moves
 {
+    using System.Collections.Generic;
+
     /// <summary>
     /// Represents a move where a meeple is dropped on the board.
     /// </summary>
-    public class DropMeepleMove : Move
+    public sealed class DropMeepleMove : Move
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="DropMeepleMove"/> class.
@@ -34,7 +36,7 @@ namespace GameTheory.Games.FiveTribes.Moves
         public override bool IsDeterministic => true;
 
         /// <inheritdoc />
-        public override string ToString() => $"Drop {this.Meeple} at {this.Point}";
+        public override IList<object> FormatTokens => new object[] { "Drop ", this.Meeple, " at ", this.Point };
 
         internal override GameState Apply(GameState state)
         {

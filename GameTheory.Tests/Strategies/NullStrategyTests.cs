@@ -88,6 +88,8 @@ namespace GameTheory.Tests.Strategies
                 public PlayerToken PlayerToken { get; }
 
                 public bool IsDeterministic => true;
+
+                public IList<object> FormatTokens => new object[] { "Test Move" };
             }
         }
     }

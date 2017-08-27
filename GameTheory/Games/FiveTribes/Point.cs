@@ -3,12 +3,13 @@
 namespace GameTheory.Games.FiveTribes
 {
     using System;
+    using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
 
     /// <summary>
     /// Represents a point in the <see cref="Sultanate"/>.
     /// </summary>
-    public struct Point : IComparable<Point>
+    public struct Point : IComparable<Point>, ITokenFormattable
     {
         private readonly byte index;
 
@@ -59,6 +60,9 @@ namespace GameTheory.Games.FiveTribes
         /// </summary>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Y", Justification = "Y is meaningful in the context of coordinates.")]
         public int Y => this.index / Sultanate.Width;
+
+        /// <inheritdoc/>
+        public IList<object> FormatTokens => new object[] { "(", this.X, ", ", this.Y, ")" };
 
         /// <summary>
         /// Converts the specified <see cref="Point"/> object to an index.
@@ -115,7 +119,7 @@ namespace GameTheory.Games.FiveTribes
         }
 
         /// <inheritdoc />
-        public override string ToString() => "(" + this.X + ", " + this.Y + ")";
+        public override string ToString() => string.Concat(this.FlattenFormatTokens());
 
         /// <inheritdoc />
         public int CompareTo(Point other)

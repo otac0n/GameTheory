@@ -3,11 +3,12 @@
 namespace GameTheory.Games.FiveTribes.Moves
 {
     using System;
+    using System.Collections.Generic;
 
     /// <summary>
     /// Represents a move for the payment of a specific amount of <see cref="Meeple">Meeples</see> and <see cref="Resource">Resources</see>.
     /// </summary>
-    public class PayMeeplesAndResourcesMove : Move
+    public sealed class PayMeeplesAndResourcesMove : Move
     {
         private readonly Func<GameState, GameState> after;
 
@@ -52,7 +53,7 @@ namespace GameTheory.Games.FiveTribes.Moves
         public override bool IsDeterministic => true;
 
         /// <inheritdoc />
-        public override string ToString() => $"Pay {this.Meeples}{(this.Meeples.Count > 0 && this.Resources.Count > 0 ? ", " : string.Empty)}{this.Resources}";
+        public override IList<object> FormatTokens => new object[] { "Pay ", this.Meeples, this.Meeples.Count > 0 && this.Resources.Count > 0 ? ", " : string.Empty, this.Resources };
 
         internal override GameState Apply(GameState state)
         {

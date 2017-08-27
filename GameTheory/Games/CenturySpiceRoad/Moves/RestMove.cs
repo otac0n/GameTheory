@@ -8,7 +8,7 @@ namespace GameTheory.Games.CenturySpiceRoad.Moves
     /// <summary>
     /// Represents a rest move.
     /// </summary>
-    public class RestMove : Move
+    public sealed class RestMove : Move
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="RestMove"/> class.
@@ -23,7 +23,7 @@ namespace GameTheory.Games.CenturySpiceRoad.Moves
         public override bool IsDeterministic => true;
 
         /// <inheritdoc />
-        public override string ToString() => "Rest";
+        public override IList<object> FormatTokens => new object[] { "Rest" };
 
         internal static IEnumerable<Move> GenerateMoves(GameState state)
         {

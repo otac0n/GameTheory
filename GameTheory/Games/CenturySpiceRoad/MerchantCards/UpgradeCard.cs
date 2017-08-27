@@ -2,6 +2,8 @@
 
 namespace GameTheory.Games.CenturySpiceRoad.MerchantCards
 {
+    using System.Collections.Generic;
+
     /// <summary>
     /// Represents an upgrade card.
     /// </summary>
@@ -20,6 +22,9 @@ namespace GameTheory.Games.CenturySpiceRoad.MerchantCards
         /// Gets the upgrade amount of the card.
         /// </summary>
         public int UpgradeLevel { get; }
+
+        /// <inheritdoc/>
+        public override IList<object> FormatTokens => new object[] { "Upgrade (", this.UpgradeLevel, ")" };
 
         /// <inheritdoc/>
         public override int CompareTo(MerchantCard other)
@@ -41,8 +46,5 @@ namespace GameTheory.Games.CenturySpiceRoad.MerchantCards
 
             return this.UpgradeLevel.CompareTo(upgradeCard.UpgradeLevel);
         }
-
-        /// <inheritdoc/>
-        public override string ToString() => $"Upgrade ({this.UpgradeLevel})";
     }
 }

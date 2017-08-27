@@ -2,6 +2,8 @@
 
 namespace GameTheory.Games.CenturySpiceRoad.MerchantCards
 {
+    using System.Collections.Generic;
+
     /// <summary>
     /// Represents a trade card.
     /// </summary>
@@ -47,6 +49,9 @@ namespace GameTheory.Games.CenturySpiceRoad.MerchantCards
         public EnumCollection<Spice> Reward { get; }
 
         /// <inheritdoc/>
+        public override IList<object> FormatTokens => new object[] { "Trade ", this.Cost, " for ", this.Reward };
+
+        /// <inheritdoc/>
         public override int CompareTo(MerchantCard other)
         {
             if (other == this)
@@ -74,8 +79,5 @@ namespace GameTheory.Games.CenturySpiceRoad.MerchantCards
 
             return 0;
         }
-
-        /// <inheritdoc/>
-        public override string ToString() => $"Trade {this.Cost} for {this.Reward}";
     }
 }

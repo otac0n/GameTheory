@@ -7,7 +7,7 @@ namespace GameTheory.Games.CenturySpiceRoad.Moves
     /// <summary>
     /// Represents a move to upgrade spices.
     /// </summary>
-    public class UpgradeMove : Move
+    public sealed class UpgradeMove : Move
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="UpgradeMove"/> class.
@@ -20,16 +20,21 @@ namespace GameTheory.Games.CenturySpiceRoad.Moves
             this.StartingSpice = startingSpice;
         }
 
-        /// <inheritdoc />
-        public override bool IsDeterministic => true;
-
         /// <summary>
         /// Gets the starting spice.
         /// </summary>
         public Spice StartingSpice { get; }
 
+        /// <summary>
+        /// Gets the upgraded spice.
+        /// </summary>
+        public Spice UpgradedSpice => (Spice)((int)this.StartingSpice + 1);
+
         /// <inheritdoc />
-        public override string ToString() => $"Upgrade {this.StartingSpice} to {(Spice)((int)this.StartingSpice + 1)}";
+        public override bool IsDeterministic => true;
+
+        /// <inheritdoc />
+        public override IList<object> FormatTokens => new object[] { "Upgrade ", this.StartingSpice, " to ", this.UpgradedSpice };
 
         internal static IEnumerable<Move> GenerateMoves(GameState state)
         {
@@ -49,7 +54,7 @@ namespace GameTheory.Games.CenturySpiceRoad.Moves
             var pInventory = state.Inventory[activePlayer];
 
             pInventory = pInventory.With(
-                caravan: pInventory.Caravan.Remove(this.StartingSpice).Add((Spice)((int)this.StartingSpice + 1)));
+                caravan: pInventory.Caravan.Remove(this.StartingSpice).Add(this.UpgradedSpice));
 
             var upgradesRemaining = state.UpgradesRemaining - 1;
 

@@ -9,7 +9,7 @@ namespace GameTheory.Games.FiveTribes
     /// <summary>
     /// The base class for all Djinns.
     /// </summary>
-    public abstract class Djinn : IComparable<Djinn>
+    public abstract class Djinn : IComparable<Djinn>, ITokenFormattable
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="Djinn"/> class.
@@ -29,6 +29,9 @@ namespace GameTheory.Games.FiveTribes
         /// Gets the value of the Djinn, in victory points (VP).
         /// </summary>
         public int Value { get; }
+
+        /// <inheritdoc />
+        public IList<object> FormatTokens => new object[] { this.Name, " +", this.Value };
 
         /// <summary>
         /// Called for every <see cref="GameState"/>, to allow inclusion of additional <see cref="Move">Moves</see>.
@@ -90,7 +93,7 @@ namespace GameTheory.Games.FiveTribes
         }
 
         /// <inheritdoc />
-        public override string ToString() => $"{this.Name} +{this.Value}";
+        public sealed override string ToString() => string.Concat(this.FlattenFormatTokens());
 
         /// <inheritdoc/>
         public int CompareTo(Djinn other)

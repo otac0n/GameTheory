@@ -2,12 +2,13 @@
 
 namespace GameTheory.Games.TicTacToe
 {
+    using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
 
     /// <summary>
     /// Represents a move in Tic-tac-toe.
     /// </summary>
-    public class Move : IMove
+    public sealed class Move : IMove
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="Move"/> class.
@@ -43,6 +44,9 @@ namespace GameTheory.Games.TicTacToe
         public int Y { get; }
 
         /// <inheritdoc />
-        public override string ToString() => $"({this.X}, {this.Y})";
+        public IList<object> FormatTokens => new object[] { "(", this.X, ", ", this.Y, ")" };
+
+        /// <inheritdoc />
+        public override string ToString() => string.Concat(this.FlattenFormatTokens());
     }
 }

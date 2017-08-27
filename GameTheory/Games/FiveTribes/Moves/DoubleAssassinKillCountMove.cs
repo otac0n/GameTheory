@@ -2,10 +2,12 @@
 
 namespace GameTheory.Games.FiveTribes.Moves
 {
+    using System.Collections.Generic;
+
     /// <summary>
     /// Represents a move to let assassins kill a second <see cref="Meeple"/>.
     /// </summary>
-    public class DoubleAssassinKillCountMove : Move
+    public sealed class DoubleAssassinKillCountMove : Move
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="DoubleAssassinKillCountMove"/> class.
@@ -20,7 +22,7 @@ namespace GameTheory.Games.FiveTribes.Moves
         public override bool IsDeterministic => true;
 
         /// <inheritdoc />
-        public override string ToString() => "Double the number of meeples your Assassins kill this turn";
+        public override IList<object> FormatTokens => new object[] { "Double the number of meeples your Assassins kill this turn" };
 
         internal override GameState Apply(GameState state)
         {

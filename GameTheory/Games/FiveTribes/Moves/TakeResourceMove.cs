@@ -3,11 +3,12 @@
 namespace GameTheory.Games.FiveTribes.Moves
 {
     using System;
+    using System.Collections.Generic;
 
     /// <summary>
     /// Represents a move to take a specified <see cref="Resource"/>.
     /// </summary>
-    public class TakeResourceMove : Move
+    public sealed class TakeResourceMove : Move
     {
         private readonly Func<GameState, GameState> after;
 
@@ -48,7 +49,7 @@ namespace GameTheory.Games.FiveTribes.Moves
         public override bool IsDeterministic => true;
 
         /// <inheritdoc />
-        public override string ToString() => $"Take {this.Resource}";
+        public override IList<object> FormatTokens => new object[] { "Take ", this.Resource };
 
         internal override GameState Apply(GameState state)
         {

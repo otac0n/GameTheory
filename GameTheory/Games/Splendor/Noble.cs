@@ -3,11 +3,12 @@
 namespace GameTheory.Games.Splendor
 {
     using System;
+    using System.Collections.Generic;
 
     /// <summary>
     /// Describes a Noble.
     /// </summary>
-    public class Noble : IComparable<Noble>
+    public sealed class Noble : IComparable<Noble>, ITokenFormattable
     {
         /// <summary>
         /// Gets the prestige awarded by a Noble.
@@ -47,7 +48,10 @@ namespace GameTheory.Games.Splendor
         public EnumCollection<Token> RequiredBonuses { get; }
 
         /// <inheritdoc />
-        public override string ToString() => $"Noble +{PrestigeBonus} {this.RequiredBonuses.ToString()}";
+        public IList<object> FormatTokens => new object[] { "Noble +", PrestigeBonus, " ", this.RequiredBonuses };
+
+        /// <inheritdoc />
+        public override string ToString() => string.Concat(this.FlattenFormatTokens());
 
         /// <inheritdoc/>
         public int CompareTo(Noble other)

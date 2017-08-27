@@ -15,7 +15,7 @@ namespace GameTheory
     /// Provides a compact collection of enumeration values.
     /// </summary>
     /// <typeparam name="TEnum">The type of enumeration values to store in the collection.</typeparam>
-    public class EnumCollection<TEnum> : IEnumerable<TEnum>, IReadOnlyList<TEnum>, IComparable<EnumCollection<TEnum>>
+    public class EnumCollection<TEnum> : IEnumerable<TEnum>, IReadOnlyList<TEnum>, IComparable<EnumCollection<TEnum>>, ITokenFormattable
         where TEnum : struct
     {
         private static readonly int Capacity;
@@ -107,6 +107,36 @@ namespace GameTheory
                         yield return AllKeys[i];
                     }
                 }
+            }
+        }
+
+        /// <inheritdoc/>
+        public IList<object> FormatTokens
+        {
+            get
+            {
+                var tokens = new List<object>();
+                for (var i = 0; i < Capacity; i++)
+                {
+                    var count = this.storage[i];
+                    if (count > 0)
+                    {
+                        if (tokens.Count > 0)
+                        {
+                            tokens.Add(", ");
+                        }
+
+                        if (count > 1)
+                        {
+                            tokens.Add(count);
+                            tokens.Add('\u00D7');
+                        }
+
+                        tokens.Add(AllKeys[i]);
+                    }
+                }
+
+                return tokens;
             }
         }
 
@@ -379,30 +409,7 @@ namespace GameTheory
         }
 
         /// <inheritdoc />
-        public override string ToString()
-        {
-            var sb = new StringBuilder();
-            for (var i = 0; i < Capacity; i++)
-            {
-                var count = this.storage[i];
-                if (count > 0)
-                {
-                    if (sb.Length > 0)
-                    {
-                        sb.Append(", ");
-                    }
-
-                    if (count > 1)
-                    {
-                        sb.Append(count).Append('\u00D7');
-                    }
-
-                    sb.Append(AllKeys[i]);
-                }
-            }
-
-            return sb.ToString();
-        }
+        public override string ToString() => string.Concat(this.FlattenFormatTokens());
 
         /// <inheritdoc/>
         public int CompareTo(EnumCollection<TEnum> other)

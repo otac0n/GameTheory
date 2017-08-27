@@ -3,24 +3,34 @@
 namespace GameTheory
 {
     using System;
+    using System.Collections.Generic;
 
     /// <summary>
     /// Contains a message from the player.
     /// </summary>
-    public class MessageSentEventArgs : EventArgs
+    public class MessageSentEventArgs : EventArgs, ITokenFormattable
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="MessageSentEventArgs"/> class.
         /// </summary>
-        /// <param name="message">The message.</param>
-        public MessageSentEventArgs(string message)
+        /// <param name="formatTokens">The format tokens in the message.</param>
+        public MessageSentEventArgs(params object[] formatTokens)
+            : this((IList<object>)formatTokens)
         {
-            this.Message = message;
         }
 
         /// <summary>
-        /// Gets the message.
+        /// Initializes a new instance of the <see cref="MessageSentEventArgs"/> class.
         /// </summary>
-        public string Message { get; }
+        /// <param name="formatTokens">The format tokens in the message.</param>
+        public MessageSentEventArgs(IList<object> formatTokens)
+        {
+            this.FormatTokens = formatTokens;
+        }
+
+        /// <summary>
+        /// Gets the format tokens in the message.
+        /// </summary>
+        public IList<object> FormatTokens { get; }
     }
 }

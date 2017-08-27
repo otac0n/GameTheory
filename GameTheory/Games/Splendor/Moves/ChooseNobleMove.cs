@@ -8,7 +8,7 @@ namespace GameTheory.Games.Splendor.Moves
     /// <summary>
     /// Represents a move to choose a noble to visit.
     /// </summary>
-    public class ChooseNobleMove : Move
+    public sealed class ChooseNobleMove : Move
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="ChooseNobleMove"/> class.
@@ -35,7 +35,7 @@ namespace GameTheory.Games.Splendor.Moves
         public override bool IsDeterministic => true;
 
         /// <inheritdoc />
-        public override string ToString() => $"Invite {this.Noble} to visit";
+        public override IList<object> FormatTokens => new object[] { "Invite ", this.Noble, " to visit" };
 
         internal static bool ShouldTransitionToPhase(GameState state)
         {

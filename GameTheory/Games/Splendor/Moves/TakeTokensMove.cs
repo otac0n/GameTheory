@@ -8,7 +8,7 @@ namespace GameTheory.Games.Splendor.Moves
     /// <summary>
     /// Represents a move to take tokens from the board.
     /// </summary>
-    public class TakeTokensMove : Move
+    public sealed class TakeTokensMove : Move
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="TakeTokensMove"/> class.
@@ -30,7 +30,7 @@ namespace GameTheory.Games.Splendor.Moves
         public override bool IsDeterministic => true;
 
         /// <inheritdoc />
-        public override string ToString() => $"Take {this.Tokens}";
+        public override IList<object> FormatTokens => new object[] { "Take ", this.Tokens };
 
         internal static IEnumerable<Move> GenerateMoves(GameState state)
         {

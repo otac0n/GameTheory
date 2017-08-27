@@ -3,11 +3,12 @@
 namespace GameTheory.Games.FiveTribes.Moves
 {
     using System;
+    using System.Collections.Generic;
 
     /// <summary>
     /// Represents a move for the payment of a specific amount of Gold Coins (GC).
     /// </summary>
-    public class PayGoldMove : Move
+    public sealed class PayGoldMove : Move
     {
         private readonly Func<GameState, GameState> after;
 
@@ -33,7 +34,7 @@ namespace GameTheory.Games.FiveTribes.Moves
         public override bool IsDeterministic => true;
 
         /// <inheritdoc />
-        public override string ToString() => $"Pay {this.Gold} Gold";
+        public override IList<object> FormatTokens => new object[] { "Pay ", this.Gold, " Gold" };
 
         internal override GameState Apply(GameState state)
         {

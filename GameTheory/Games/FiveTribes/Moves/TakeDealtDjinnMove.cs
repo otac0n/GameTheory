@@ -2,6 +2,7 @@
 
 namespace GameTheory.Games.FiveTribes.Moves
 {
+    using System.Collections.Generic;
     using System.Collections.Immutable;
 
     /// <summary>
@@ -38,7 +39,7 @@ namespace GameTheory.Games.FiveTribes.Moves
         public override bool IsDeterministic => true;
 
         /// <inheritdoc />
-        public override string ToString() => $"Take {this.dealt[this.Index]}";
+        public override IList<object> FormatTokens => new object[] { "Take ", this.dealt[this.Index] };
 
         internal override GameState Apply(GameState state)
         {

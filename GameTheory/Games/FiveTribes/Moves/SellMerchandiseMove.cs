@@ -2,10 +2,12 @@
 
 namespace GameTheory.Games.FiveTribes.Moves
 {
+    using System.Collections.Generic;
+
     /// <summary>
     /// Represents a move to sell merchandise in exchange for Gold Coins (GC).
     /// </summary>
-    public class SellMerchandiseMove : Move
+    public sealed class SellMerchandiseMove : Move
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="SellMerchandiseMove"/> class.
@@ -32,7 +34,7 @@ namespace GameTheory.Games.FiveTribes.Moves
         public override bool IsDeterministic => true;
 
         /// <inheritdoc />
-        public override string ToString() => $"Trade {this.Resources} for {GameState.SuitValues[this.Resources.Count]}";
+        public override IList<object> FormatTokens => new object[] { "Trade ", this.Resources, " for ", GameState.SuitValues[this.Resources.Count] };
 
         internal override GameState Apply(GameState state)
         {

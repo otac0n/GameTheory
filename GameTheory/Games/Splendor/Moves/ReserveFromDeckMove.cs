@@ -7,7 +7,7 @@ namespace GameTheory.Games.Splendor.Moves
     /// <summary>
     /// Represents a move to reserve a development card from a development deck.
     /// </summary>
-    public class ReserveFromDeckMove : Move
+    public sealed class ReserveFromDeckMove : Move
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="ReserveFromDeckMove"/> class.
@@ -29,7 +29,9 @@ namespace GameTheory.Games.Splendor.Moves
         public override bool IsDeterministic => false;
 
         /// <inheritdoc />
-        public override string ToString() => $"Reserve from deck {this.Track + 1}" + (this.State.Tokens[Token.GoldJoker] > 0 ? $" and take {Token.GoldJoker}" : string.Empty);
+        public override IList<object> FormatTokens => this.State.Tokens[Token.GoldJoker] > 0
+            ? new object[] { "Reserve from deck ", this.Track + 1, " and take ", Token.GoldJoker }
+            : new object[] { "Reserve from deck ", this.Track + 1 };
 
         internal static IEnumerable<Move> GenerateMoves(GameState state)
         {

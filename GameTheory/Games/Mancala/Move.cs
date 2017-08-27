@@ -3,6 +3,7 @@
 namespace GameTheory.Games.Mancala
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
 
     /// <summary>
@@ -35,10 +36,13 @@ namespace GameTheory.Games.Mancala
         /// <inheritdoc />
         public bool IsDeterministic => true;
 
+        /// <inheritdoc />
+        public IList<object> FormatTokens => new object[] { "Pick up ", this.State.Board[this.Bin], " stones from (", this.Bin, ")" };
+
         internal GameState State { get; }
 
         /// <inheritdoc />
-        public override string ToString() => $"Pick up {this.State.Board[this.Bin]} stones from ({this.Bin})";
+        public override string ToString() => string.Concat(this.FlattenFormatTokens());
 
         internal GameState Apply(GameState state)
         {

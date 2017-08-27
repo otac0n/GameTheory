@@ -3,11 +3,12 @@
 namespace GameTheory.Games.Splendor
 {
     using System;
+    using System.Collections.Generic;
 
     /// <summary>
     /// Describes a development card.
     /// </summary>
-    public class DevelopmentCard : IComparable<DevelopmentCard>
+    public sealed class DevelopmentCard : IComparable<DevelopmentCard>, ITokenFormattable
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="DevelopmentCard"/> class.
@@ -58,7 +59,12 @@ namespace GameTheory.Games.Splendor
         public int Prestige { get; }
 
         /// <inheritdoc />
-        public override string ToString() => this.Bonus.ToString() + (this.Prestige > 0 ? $" +{this.Prestige}" : string.Empty);
+        public IList<object> FormatTokens => this.Prestige > 0
+            ? new object[] { this.Bonus, " +", this.Prestige }
+            : new object[] { this.Bonus };
+
+        /// <inheritdoc />
+        public override string ToString() => string.Concat(this.FlattenFormatTokens());
 
         /// <inheritdoc/>
         public int CompareTo(DevelopmentCard other)

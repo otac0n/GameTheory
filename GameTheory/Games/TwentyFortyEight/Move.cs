@@ -2,6 +2,8 @@
 
 namespace GameTheory.Games.TwentyFortyEight
 {
+    using System.Collections.Generic;
+
     /// <summary>
     /// Represents a move in 2048.
     /// </summary>
@@ -26,10 +28,16 @@ namespace GameTheory.Games.TwentyFortyEight
         /// <inheritdoc/>
         public abstract bool IsDeterministic { get; }
 
+        /// <inheritdoc/>
+        public abstract IList<object> FormatTokens { get; }
+
         /// <summary>
         /// Gets the <see cref="GameState"/> that this move is based on.
         /// </summary>
         internal GameState State { get; }
+
+        /// <inheritdoc />
+        public sealed override string ToString() => string.Concat(this.FlattenFormatTokens());
 
         internal abstract GameState Apply(GameState state);
     }

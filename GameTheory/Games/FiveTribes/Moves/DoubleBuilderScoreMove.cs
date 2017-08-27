@@ -2,10 +2,12 @@
 
 namespace GameTheory.Games.FiveTribes.Moves
 {
+    using System.Collections.Generic;
+
     /// <summary>
     /// Represents a move to double the amount of Gold Coins (GCs) the active player's <see cref="Meeple.Builder">Builders</see> get this turn.
     /// </summary>
-    public class DoubleBuilderScoreMove : Move
+    public sealed class DoubleBuilderScoreMove : Move
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="DoubleBuilderScoreMove"/> class.
@@ -20,7 +22,7 @@ namespace GameTheory.Games.FiveTribes.Moves
         public override bool IsDeterministic => true;
 
         /// <inheritdoc />
-        public override string ToString() => "Double the amout of GCs your Builders get this turn";
+        public override IList<object> FormatTokens => new object[] { "Double the amout of GCs your Builders get this turn" };
 
         internal override GameState Apply(GameState state)
         {

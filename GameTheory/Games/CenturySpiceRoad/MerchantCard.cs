@@ -3,13 +3,17 @@
 namespace GameTheory.Games.CenturySpiceRoad
 {
     using System;
+    using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
 
     /// <summary>
     /// Represents a Merchant card in Century Spice Road.
     /// </summary>
-    public abstract class MerchantCard : IComparable<MerchantCard>
+    public abstract class MerchantCard : IComparable<MerchantCard>, ITokenFormattable
     {
+        /// <inheritdoc/>
+        public abstract IList<object> FormatTokens { get; }
+
         /// <inheritdoc/>
         [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0", Justification = "The inheriting class must override this method and provide a more specific implementation.")]
         public virtual int CompareTo(MerchantCard other)
@@ -18,6 +22,6 @@ namespace GameTheory.Games.CenturySpiceRoad
         }
 
         /// <inheritdoc/>
-        public abstract override string ToString();
+        public sealed override string ToString() => string.Concat(this.FlattenFormatTokens());
     }
 }

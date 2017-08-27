@@ -2,6 +2,8 @@
 
 namespace GameTheory.Games.CenturySpiceRoad.MerchantCards
 {
+    using System.Collections.Generic;
+
     /// <summary>
     /// Represents a spice producing card.
     /// </summary>
@@ -38,6 +40,9 @@ namespace GameTheory.Games.CenturySpiceRoad.MerchantCards
         public EnumCollection<Spice> Spices { get; }
 
         /// <inheritdoc/>
+        public override IList<object> FormatTokens => new object[] { "Gain ", this.Spices };
+
+        /// <inheritdoc/>
         public override int CompareTo(MerchantCard other)
         {
             if (other == this)
@@ -57,8 +62,5 @@ namespace GameTheory.Games.CenturySpiceRoad.MerchantCards
 
             return this.Spices.CompareTo(spiceCard.Spices);
         }
-
-        /// <inheritdoc/>
-        public override string ToString() => $"Gain {this.Spices}";
     }
 }

@@ -7,7 +7,7 @@ namespace GameTheory.Games.CenturySpiceRoad.Moves
     /// <summary>
     /// Represents a move to pay to afford the next merchant card.
     /// </summary>
-    public class PayMove : Move
+    public sealed class PayMove : Move
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="PayMove"/> class.
@@ -29,7 +29,7 @@ namespace GameTheory.Games.CenturySpiceRoad.Moves
         public Spice Spice { get; }
 
         /// <inheritdoc />
-        public override string ToString() => $"Pay {this.Spice}";
+        public override IList<object> FormatTokens => new object[] { "Pay ", this.Spice };
 
         internal static IEnumerable<Move> GenerateMoves(GameState state)
         {

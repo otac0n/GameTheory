@@ -2,12 +2,13 @@
 
 namespace GameTheory.Games.FiveTribes.Moves
 {
+    using System.Collections.Generic;
     using System.Collections.Immutable;
 
     /// <summary>
     /// Represents a move to draw the top card from the <see cref="Resource"/> pile.
     /// </summary>
-    internal class DrawTopCardMove : Move
+    public sealed class DrawTopCardMove : Move
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="DrawTopCardMove"/> class.
@@ -22,7 +23,7 @@ namespace GameTheory.Games.FiveTribes.Moves
         public override bool IsDeterministic => false;
 
         /// <inheritdoc />
-        public override string ToString() => "Draw the top card from the Resource Pile";
+        public override IList<object> FormatTokens => new object[] { "Draw the top card from the Resource Pile" };
 
         internal override GameState Apply(GameState state)
         {

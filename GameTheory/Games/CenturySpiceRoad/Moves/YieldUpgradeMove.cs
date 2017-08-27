@@ -7,7 +7,7 @@ namespace GameTheory.Games.CenturySpiceRoad.Moves
     /// <summary>
     /// Represents a move to yield remaining upgrades.
     /// </summary>
-    public class YieldUpgradeMove : Move
+    public sealed class YieldUpgradeMove : Move
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="YieldUpgradeMove"/> class.
@@ -22,7 +22,7 @@ namespace GameTheory.Games.CenturySpiceRoad.Moves
         public override bool IsDeterministic => true;
 
         /// <inheritdoc />
-        public override string ToString() => "Yield Upgrade";
+        public override IList<object> FormatTokens => new object[] { "Yield Upgrade" };
 
         internal static IEnumerable<Move> GenerateMoves(GameState state)
         {

@@ -111,6 +111,8 @@ namespace GameTheory.Tests
 
             public bool IsDeterministic => true;
 
+            public IList<object> FormatTokens => new object[] { "Stub Move" };
+
             public string Value { get; }
         }
     }

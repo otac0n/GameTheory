@@ -3,12 +3,13 @@
 namespace GameTheory.Games.FiveTribes.Moves
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
 
     /// <summary>
     /// Represents a move to assassinate specific <see cref="Meeple">Meeples</see> at a specific <see cref="Point"/> on the board.
     /// </summary>
-    public class AssassinateMove : Move
+    public sealed class AssassinateMove : Move
     {
         private readonly Func<GameState, GameState> after;
 
@@ -42,7 +43,7 @@ namespace GameTheory.Games.FiveTribes.Moves
             this.Meeples[Meeple.Merchant] == 0 || !this.State.Inventory[this.State.ActivePlayer].Djinns.Any(d => d is Djinns.Kandicha);
 
         /// <inheritdoc />
-        public override string ToString() => $"Assissinate {this.Meeples} at {this.Point}";
+        public override IList<object> FormatTokens => new object[] { "Assissinate ", this.Meeples, " at ", this.Point };
 
         internal override GameState Apply(GameState state)
         {

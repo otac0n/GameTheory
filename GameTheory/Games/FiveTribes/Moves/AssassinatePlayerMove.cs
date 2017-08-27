@@ -3,11 +3,12 @@
 namespace GameTheory.Games.FiveTribes.Moves
 {
     using System;
+    using System.Collections.Generic;
 
     /// <summary>
     /// Represents a move to assassinate specific <see cref="Meeple">Meeples</see> from a specific player's inventory.
     /// </summary>
-    public class AssassinatePlayerMove : Move
+    public sealed class AssassinatePlayerMove : Move
     {
         private readonly Func<GameState, GameState> after;
 
@@ -40,7 +41,7 @@ namespace GameTheory.Games.FiveTribes.Moves
         public override bool IsDeterministic => true;
 
         /// <inheritdoc />
-        public override string ToString() => $"Assassinate {this.Victim}'s {this.Meeples}";
+        public override IList<object> FormatTokens => new object[] { "Assassinate ", this.Meeples, " in front of ", this.Victim };
 
         internal override GameState Apply(GameState state)
         {

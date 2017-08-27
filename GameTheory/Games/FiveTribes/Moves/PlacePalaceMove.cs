@@ -3,11 +3,12 @@
 namespace GameTheory.Games.FiveTribes.Moves
 {
     using System;
+    using System.Collections.Generic;
 
     /// <summary>
     /// Represents a move to place a Palace at a specified <see cref="Point"/>.
     /// </summary>
-    public class PlacePalaceMove : Move
+    public sealed class PlacePalaceMove : Move
     {
         private Func<GameState, GameState> after;
 
@@ -43,7 +44,7 @@ namespace GameTheory.Games.FiveTribes.Moves
         public override bool IsDeterministic => true;
 
         /// <inheritdoc />
-        public override string ToString() => $"Place a Palace at {this.Point}";
+        public override IList<object> FormatTokens => new object[] { "Place a Palace at ", this.Point };
 
         internal override GameState Apply(GameState state)
         {

@@ -58,7 +58,7 @@ namespace GameTheory.Catalogs
                                          let typeParameters = info.GenericTypeParameters
                                          where typeParameters.Length == 1
                                          let typeParameterInterfaces = typeParameters[0].GetTypeInfo().ImplementedInterfaces.ToList()
-                                         where typeParameterInterfaces.Count == 1 && typeParameterInterfaces[0] == typeof(IMove)
+                                         where typeParameterInterfaces.Any(i => i == typeof(IMove))
                                          let c = t.MakeGenericType(moveType)
                                          where !c.GetTypeInfo().IsAbstract
                                          where playerInterface.GetTypeInfo().IsAssignableFrom(c.GetTypeInfo())

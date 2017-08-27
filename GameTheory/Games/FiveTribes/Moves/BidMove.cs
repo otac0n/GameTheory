@@ -2,10 +2,12 @@
 
 namespace GameTheory.Games.FiveTribes.Moves
 {
+    using System.Collections.Generic;
+
     /// <summary>
     /// Represents a move to bid for position on the <see cref="GameState.TurnOrderTrack"/>.
     /// </summary>
-    public class BidMove : Move
+    public sealed class BidMove : Move
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="BidMove"/> class.
@@ -34,7 +36,7 @@ namespace GameTheory.Games.FiveTribes.Moves
         public override bool IsDeterministic => true;
 
         /// <inheritdoc />
-        public override string ToString() => $"Bid {this.Cost}";
+        public override IList<object> FormatTokens => new object[] { "Bid ", this.Cost };
 
         internal override GameState Apply(GameState state)
         {

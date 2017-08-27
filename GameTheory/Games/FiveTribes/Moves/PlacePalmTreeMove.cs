@@ -3,11 +3,12 @@
 namespace GameTheory.Games.FiveTribes.Moves
 {
     using System;
+    using System.Collections.Generic;
 
     /// <summary>
     /// Represents a move to place a Palm Tree at a specified <see cref="Point"/>.
     /// </summary>
-    public class PlacePalmTreeMove : Move
+    public sealed class PlacePalmTreeMove : Move
     {
         private Func<GameState, GameState> after;
 
@@ -42,8 +43,7 @@ namespace GameTheory.Games.FiveTribes.Moves
         /// <inheritdoc />
         public override bool IsDeterministic => true;
 
-        /// <inheritdoc />
-        public override string ToString() => $"Place a Palm Tree at {this.Point}";
+        public override IList<object> FormatTokens => new object[] { "Place a Palm Tree at ", this.Point };
 
         internal override GameState Apply(GameState state)
         {

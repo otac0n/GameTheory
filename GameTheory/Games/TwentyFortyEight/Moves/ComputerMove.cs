@@ -8,7 +8,7 @@ namespace GameTheory.Games.TwentyFortyEight.Moves
     /// <summary>
     /// Represents a player move.
     /// </summary>
-    public class ComputerMove : Move
+    public sealed class ComputerMove : Move
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="ComputerMove"/> class.
@@ -48,7 +48,7 @@ namespace GameTheory.Games.TwentyFortyEight.Moves
         public override bool IsDeterministic => true;
 
         /// <inheritdoc />
-        public override string ToString() => $"Place {1 << this.Value} at ({this.X}, {this.Y})";
+        public override IList<object> FormatTokens => new object[] { "Place ", 1 << this.Value, " at (", this.X, ", ", this.Y, ")" };
 
         internal static IEnumerable<Move> GetMoves(GameState state)
         {

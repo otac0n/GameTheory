@@ -2,7 +2,6 @@
 
 namespace GameTheory.Games.TwentyFortyEight.Moves
 {
-    using System;
     using System.Collections.Generic;
 
     /// <summary>
@@ -34,7 +33,7 @@ namespace GameTheory.Games.TwentyFortyEight.Moves
     /// <summary>
     /// Represents a player move.
     /// </summary>
-    public class PlayerMove : Move
+    public sealed class PlayerMove : Move
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="PlayerMove"/> class.
@@ -56,7 +55,7 @@ namespace GameTheory.Games.TwentyFortyEight.Moves
         public override bool IsDeterministic => this.State.Players.Count != 1;
 
         /// <inheritdoc />
-        public override string ToString() => this.Direction.ToString();
+        public override IList<object> FormatTokens => new object[] { this.Direction };
 
         internal static IEnumerable<Move> GetMoves(GameState state)
         {

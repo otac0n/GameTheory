@@ -3,12 +3,13 @@
 namespace GameTheory.Games.FiveTribes.Moves
 {
     using System;
+    using System.Collections.Generic;
     using System.Collections.Immutable;
 
     /// <summary>
     /// Represents a move to draw three <see cref="Meeple">Meeples</see> and place them on the specified <see cref="Tile"/>.
     /// </summary>
-    public class AddMeeplesMove : Move
+    public sealed class AddMeeplesMove : Move
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="AddMeeplesMove"/> class.
@@ -30,7 +31,7 @@ namespace GameTheory.Games.FiveTribes.Moves
         public override bool IsDeterministic => false;
 
         /// <inheritdoc />
-        public override string ToString() => $"Draw {Math.Min(this.State.Bag.Count, 3)} Meeples and place at {this.Point}";
+        public override IList<object> FormatTokens => new object[] { "Draw ", Math.Min(this.State.Bag.Count, 3), " Meeples and place at ", this.Point };
 
         internal override GameState Apply(GameState state)
         {

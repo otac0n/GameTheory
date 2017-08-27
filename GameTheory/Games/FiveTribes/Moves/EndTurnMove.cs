@@ -2,13 +2,14 @@
 
 namespace GameTheory.Games.FiveTribes.Moves
 {
+    using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Linq;
 
     /// <summary>
     /// Represents a move to end the active player's turn.
     /// </summary>
-    public class EndTurnMove : Move
+    public sealed class EndTurnMove : Move
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="EndTurnMove"/> class.
@@ -23,7 +24,7 @@ namespace GameTheory.Games.FiveTribes.Moves
         public override bool IsDeterministic => this.State.FindHighestBidIndex() != -1;
 
         /// <inheritdoc />
-        public override string ToString() => "End turn";
+        public override IList<object> FormatTokens => new object[] { "End turn" };
 
         internal override GameState Apply(GameState state)
         {

@@ -2,10 +2,12 @@
 
 namespace GameTheory.Games.FiveTribes.Moves
 {
+    using System.Collections.Generic;
+
     /// <summary>
     /// Represents a move that skips to a specified <see cref="Phase"/>.
     /// </summary>
-    public class ChangePhaseMove : Move
+    public sealed class ChangePhaseMove : Move
     {
         private string description;
 
@@ -31,7 +33,7 @@ namespace GameTheory.Games.FiveTribes.Moves
         public override bool IsDeterministic => true;
 
         /// <inheritdoc />
-        public override string ToString() => this.description;
+        public override IList<object> FormatTokens => new object[] { this.description };
 
         internal override GameState Apply(GameState state)
         {

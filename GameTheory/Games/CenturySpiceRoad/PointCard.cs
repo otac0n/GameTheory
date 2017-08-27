@@ -3,11 +3,12 @@
 namespace GameTheory.Games.CenturySpiceRoad
 {
     using System;
+    using System.Collections.Generic;
 
     /// <summary>
     /// Represents a Point card in Century Spice Road.
     /// </summary>
-    public sealed class PointCard : IComparable<PointCard>
+    public sealed class PointCard : IComparable<PointCard>, ITokenFormattable
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="PointCard"/> class.
@@ -48,6 +49,9 @@ namespace GameTheory.Games.CenturySpiceRoad
         public int Points { get; }
 
         /// <inheritdoc/>
+        public IList<object> FormatTokens => new object[] { "+", this.Points };
+
+        /// <inheritdoc/>
         public int CompareTo(PointCard other)
         {
             if (other == this)
@@ -71,6 +75,6 @@ namespace GameTheory.Games.CenturySpiceRoad
         }
 
         /// <inheritdoc/>
-        public override string ToString() => $"+{this.Points}";
+        public override string ToString() => string.Concat(this.FlattenFormatTokens());
     }
 }

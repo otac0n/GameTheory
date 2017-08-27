@@ -2,8 +2,10 @@
 
 namespace GameTheory.Games.NormalFormGame
 {
+    using System.Collections.Generic;
+
     /// <summary>
-    /// Represents a move in Matching Pennies.
+    /// Represents a move in normal-form games.
     /// </summary>
     /// <typeparam name="T">The type representing the distint moves available.</typeparam>
     public sealed class Move<T> : IMove
@@ -25,12 +27,15 @@ namespace GameTheory.Games.NormalFormGame
         /// <inheritdoc />
         public bool IsDeterministic => true;
 
+        /// <inheritdoc />
+        public IList<object> FormatTokens => new object[] { this.Kind };
+
         /// <summary>
         /// Gets a value indicating the kind of move the player has chosen.
         /// </summary>
         public T Kind { get; }
 
         /// <inheritdoc />
-        public override string ToString() => this.Kind.ToString();
+        public override string ToString() => string.Concat(this.FlattenFormatTokens());
     }
 }
