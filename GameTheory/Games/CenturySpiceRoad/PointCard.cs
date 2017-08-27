@@ -25,13 +25,13 @@ namespace GameTheory.Games.CenturySpiceRoad
         /// </summary>
         /// <param name="points">The points awarded by this card.</param>
         /// <param name="turmeric">The turmeric component of the cost.</param>
-        /// <param name="safran">The safran component of the cost.</param>
+        /// <param name="saffron">The saffron component of the cost.</param>
         /// <param name="cardamom">The cardamom component of the cost.</param>
         /// <param name="cinnamon">The cinnamon component of the cost.</param>
-        public PointCard(int points, int turmeric = 0, int safran = 0, int cardamom = 0, int cinnamon = 0)
+        public PointCard(int points, int turmeric = 0, int saffron = 0, int cardamom = 0, int cinnamon = 0)
             : this(points, EnumCollection<Spice>.Empty
                   .Add(Spice.Turmeric, turmeric)
-                  .Add(Spice.Safran, safran)
+                  .Add(Spice.Saffron, saffron)
                   .Add(Spice.Cardamom, cardamom)
                   .Add(Spice.Cinnamon, cinnamon))
         {

@@ -20,13 +20,13 @@ namespace GameTheory.Games.CenturySpiceRoad.MerchantCards
         /// Initializes a new instance of the <see cref="SpiceCard"/> class.
         /// </summary>
         /// <param name="turmeric">The turmeric produced.</param>
-        /// <param name="safran">The safran produced.</param>
+        /// <param name="saffron">The saffron produced.</param>
         /// <param name="cardamom">The cardamom produced.</param>
         /// <param name="cinnamon">The cinnamon produced.</param>
-        public SpiceCard(int turmeric = 0, int safran = 0, int cardamom = 0, int cinnamon = 0)
+        public SpiceCard(int turmeric = 0, int saffron = 0, int cardamom = 0, int cinnamon = 0)
             : this(EnumCollection<Spice>.Empty
                   .Add(Spice.Turmeric, turmeric)
-                  .Add(Spice.Safran, safran)
+                  .Add(Spice.Saffron, saffron)
                   .Add(Spice.Cardamom, cardamom)
                   .Add(Spice.Cinnamon, cinnamon))
         {

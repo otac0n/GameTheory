@@ -44,8 +44,8 @@ namespace GameTheory.Games.CenturySpiceRoad
                 new EnumCollection<Spice>(Spice.Turmeric, Spice.Turmeric, Spice.Turmeric),
                 new EnumCollection<Spice>(Spice.Turmeric, Spice.Turmeric, Spice.Turmeric, Spice.Turmeric),
                 new EnumCollection<Spice>(Spice.Turmeric, Spice.Turmeric, Spice.Turmeric, Spice.Turmeric),
-                new EnumCollection<Spice>(Spice.Turmeric, Spice.Turmeric, Spice.Turmeric, Spice.Safran),
-                new EnumCollection<Spice>(Spice.Turmeric, Spice.Turmeric, Spice.Turmeric, Spice.Safran));
+                new EnumCollection<Spice>(Spice.Turmeric, Spice.Turmeric, Spice.Turmeric, Spice.Saffron),
+                new EnumCollection<Spice>(Spice.Turmeric, Spice.Turmeric, Spice.Turmeric, Spice.Saffron));
             InitialHand = ImmutableList.Create<MerchantCard>(
                 new UpgradeCard(2),
                 new SpiceCard(turmeric: 2));

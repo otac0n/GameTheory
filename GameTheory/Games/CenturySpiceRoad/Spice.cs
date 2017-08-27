@@ -13,9 +13,9 @@ namespace GameTheory.Games.CenturySpiceRoad
         Turmeric = 0,
 
         /// <summary>
-        /// Represents the red spice Safran.
+        /// Represents the red spice Saffron.  Spelled in the official rules as "safran".
         /// </summary>
-        Safran = 1,
+        Saffron = 1,
 
         /// <summary>
         /// Represents the green spice Cardamom.
