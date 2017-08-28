@@ -20,17 +20,27 @@ namespace GameTheory.ConsoleRunner.ConsoleRenderers
         {
             foreach (var token in FormatUtilities.FlattenFormatTokens(formatTokens))
             {
-                if (token is PlayerToken playerToken)
+                this.RenderToken(state, token);
+            }
+        }
+
+        /// <summary>
+        /// Renders an atomic token.
+        /// </summary>
+        /// <param name="state">The context game state.</param>
+        /// <param name="token">The token to be rendered.</param>
+        protected virtual void RenderToken(IGameState<TMove> state, object token)
+        {
+            if (token is PlayerToken playerToken)
+            {
+                ConsoleInteraction.WithColor(ConsoleInteraction.GetPlayerColor(state, playerToken), () =>
                 {
-                    ConsoleInteraction.WithColor(ConsoleInteraction.GetPlayerColor(state, playerToken), () =>
-                    {
-                        Console.Write(state.GetPlayerName(playerToken));
-                    });
-                }
-                else
-                {
-                    Console.Write(token);
-                }
+                    Console.Write(state.GetPlayerName(playerToken));
+                });
+            }
+            else
+            {
+                Console.Write(token);
             }
         }
 

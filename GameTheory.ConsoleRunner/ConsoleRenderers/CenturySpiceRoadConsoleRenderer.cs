@@ -16,5 +16,38 @@ namespace GameTheory.ConsoleRunner.ConsoleRenderers
         {
             new Templates(playerToken).RenderGameState((GameState)state, Console.Out);
         }
+
+        /// <inheritdoc/>
+        protected override void RenderToken(IGameState<Move> state, object token)
+        {
+            if (token is Spice spice)
+            {
+                var color = ConsoleColor.White;
+                switch (spice)
+                {
+                    case Spice.Turmeric:
+                        color = ConsoleColor.Yellow;
+                        break;
+                    case Spice.Saffron:
+                        color = ConsoleColor.Red;
+                        break;
+                    case Spice.Cardamom:
+                        color = ConsoleColor.Green;
+                        break;
+                    case Spice.Cinnamon:
+                        color = ConsoleColor.DarkRed;
+                        break;
+                }
+
+                ConsoleInteraction.WithColor(color, () =>
+                {
+                    Console.Write(token);
+                });
+            }
+            else
+            {
+                base.RenderToken(state, token);
+            }
+        }
     }
 }

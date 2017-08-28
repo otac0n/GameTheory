@@ -16,5 +16,43 @@ namespace GameTheory.ConsoleRunner.ConsoleRenderers
         {
             new Templates(playerToken).RenderGameState((GameState)state, Console.Out);
         }
+
+        protected override void RenderToken(IGameState<Move> state, object token)
+        {
+            if (token is Token splendorToken)
+            {
+                var color = ConsoleColor.White;
+                switch (splendorToken)
+                {
+                    case Token.Emerald:
+                        color = ConsoleColor.Green;
+                        break;
+                    case Token.Diamond:
+                        color = ConsoleColor.White;
+                        break;
+                    case Token.Sapphire:
+                        color = ConsoleColor.Blue;
+                        break;
+                    case Token.Onyx:
+                        color = ConsoleColor.DarkGray;
+                        break;
+                    case Token.Ruby:
+                        color = ConsoleColor.Red;
+                        break;
+                    case Token.GoldJoker:
+                        color = ConsoleColor.Yellow;
+                        break;
+                }
+
+                ConsoleInteraction.WithColor(color, () =>
+                {
+                    Console.Write(token);
+                });
+            }
+            else
+            {
+                base.RenderToken(state, token);
+            }
+        }
     }
 }

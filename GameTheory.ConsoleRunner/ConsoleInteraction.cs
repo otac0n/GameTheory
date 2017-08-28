@@ -11,11 +11,11 @@ namespace GameTheory.ConsoleRunner
     {
         private static readonly IReadOnlyList<ConsoleColor> PlayerColors = new List<ConsoleColor>
         {
-            ConsoleColor.Green,
-            ConsoleColor.Cyan,
-            ConsoleColor.Yellow,
-            ConsoleColor.Magenta,
-            ConsoleColor.Red,
+            ConsoleColor.DarkGreen,
+            ConsoleColor.DarkCyan,
+            ConsoleColor.DarkYellow,
+            ConsoleColor.DarkMagenta,
+            ConsoleColor.DarkRed,
         }.AsReadOnly();
 
         public static T Choose<T>(IList<T> options, CancellationToken? cancel = null, Action<T> render = null, Func<T, string> skipMessage = null)

@@ -64,9 +64,16 @@ namespace GameTheory.ConsoleRunner
                     Console.WriteLine();
 
                     var result = default(Maybe<TMove>);
+                    var originalColor = Console.ForegroundColor;
                     ConsoleInteraction.WithColor(playerColor, () =>
                     {
-                        result = new Maybe<TMove>(ConsoleInteraction.Choose(moves.ToArray(), cancel, m => this.renderer.Show(state, m)));
+                        result = new Maybe<TMove>(ConsoleInteraction.Choose(moves.ToArray(), cancel, m =>
+                        {
+                            ConsoleInteraction.WithColor(originalColor, () =>
+                            {
+                                this.renderer.Show(state, m);
+                            });
+                        }));
                     });
                     Console.WriteLine();
                     return result;

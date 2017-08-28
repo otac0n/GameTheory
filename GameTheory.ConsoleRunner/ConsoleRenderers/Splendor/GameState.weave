@@ -12,7 +12,7 @@
 {{/if}}
 {{each tr in Enumerable.Range(1, model.DevelopmentTracks.Length).Reverse()}}
   {{ var track = model.DevelopmentTracks[tr - 1]; }}
-  Track {{= tr}}: [remaining: {{= track.Length}}]
+  Track {{= tr}}: [remaining: {{= model.DevelopmentDecks[tr - 1].Count}}]
     {{each card in track}}
       {{if card == null}}
         [empty]

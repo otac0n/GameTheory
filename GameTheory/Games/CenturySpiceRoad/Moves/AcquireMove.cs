@@ -24,7 +24,16 @@ namespace GameTheory.Games.CenturySpiceRoad.Moves
         public override bool IsDeterministic => this.State.MerchantCardDeck.Count <= 1;
 
         /// <inheritdoc />
-        public override IList<object> FormatTokens => new object[] { "Acquire ", this.State.MerchantCardTrack[this.State.MerchantCardIndexAfforded].MerchantCard };
+        public override IList<object> FormatTokens
+        {
+            get
+            {
+                var merchantStall = this.State.MerchantCardTrack[this.State.MerchantCardIndexAfforded];
+                return merchantStall.Spices.Count > 0
+                    ? new object[] { "Acquire ", merchantStall.MerchantCard, " and gain ", merchantStall.Spices }
+                    : new object[] { "Acquire ", merchantStall.MerchantCard };
+            }
+        }
 
         internal static IEnumerable<Move> GenerateMoves(GameState state)
         {
