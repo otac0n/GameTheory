@@ -151,7 +151,7 @@ namespace GameTheory.ConsoleRunner.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0}: {1}.
+        ///   Looks up a localized string similar to {0}: .
         /// </summary>
         internal static string ListItem {
             get {
@@ -196,7 +196,7 @@ namespace GameTheory.ConsoleRunner.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} messaged: {1}.
+        ///   Looks up a localized string similar to {0} messaged: .
         /// </summary>
         internal static string PlayerMessaged {
             get {

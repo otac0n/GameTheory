@@ -9,10 +9,10 @@ namespace GameTheory.ConsoleRunner.ConsoleRenderers
     /// <summary>
     /// Implements a console renderer for the game of <see cref="GameState">FiveTribes</see>.
     /// </summary>
-    public class FiveTribesConsoleRenderer : IConsoleRenderer<Move>
+    public class FiveTribesConsoleRenderer : BaseConsoleRenderer<Move>
     {
         /// <inheritdoc />
-        public void Show(IGameState<Move> state, PlayerToken playerToken)
+        public override void Show(IGameState<Move> state, PlayerToken playerToken)
         {
             var gameState = (GameState)state;
             new Templates(gameState).RenderGameState(gameState, Console.Out);

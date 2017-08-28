@@ -18,6 +18,9 @@ namespace GameTheory
         }
 
         /// <inheritdoc/>
+        public override string ToString() => $"<Player #{this.id.ToString().Split('-')[0]}>";
+
+        /// <inheritdoc/>
         public int CompareTo(PlayerToken other)
         {
             return this == other ? 0 :

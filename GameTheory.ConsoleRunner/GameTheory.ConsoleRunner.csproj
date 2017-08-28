@@ -67,6 +67,7 @@
   <ItemGroup>
     <Compile Include="ConsoleInteraction.cs" />
     <Compile Include="ConsolePlayer.cs" />
+    <Compile Include="ConsoleRenderers\BaseConsoleRenderer.cs" />
     <Compile Include="ConsoleRenderers\ConsoleRenderer.cs" />
     <Compile Include="ConsoleRenderers\CenturySpiceRoad\Templates.cs" />
     <Compile Include="ConsoleRenderers\CenturySpiceRoadConsoleRenderer.cs" />

@@ -17,15 +17,6 @@ namespace GameTheory.ConsoleRunner
     public sealed class ConsolePlayer<TMove> : IPlayer<TMove>
         where TMove : IMove
     {
-        private static readonly IReadOnlyList<ConsoleColor> PlayerColors = new List<ConsoleColor>
-        {
-            ConsoleColor.Green,
-            ConsoleColor.Cyan,
-            ConsoleColor.Yellow,
-            ConsoleColor.Magenta,
-            ConsoleColor.Red,
-        }.AsReadOnly();
-
         private static readonly object Sync = new object();
         private readonly IConsoleRenderer<TMove> renderer;
 
@@ -52,7 +43,7 @@ namespace GameTheory.ConsoleRunner
         /// <inheritdoc />
         public async Task<Maybe<TMove>> ChooseMove(IGameState<TMove> state, CancellationToken cancel)
         {
-            var playerColor = GetColor(state, this.PlayerToken);
+            var playerColor = ConsoleInteraction.GetPlayerColor(state, this.PlayerToken);
 
             await Task.Yield();
 
@@ -75,7 +66,7 @@ namespace GameTheory.ConsoleRunner
                     var result = default(Maybe<TMove>);
                     ConsoleInteraction.WithColor(playerColor, () =>
                     {
-                        result = new Maybe<TMove>(ConsoleInteraction.Choose(moves.ToArray(), cancel));
+                        result = new Maybe<TMove>(ConsoleInteraction.Choose(moves.ToArray(), cancel, m => this.renderer.Show(state, m)));
                     });
                     Console.WriteLine();
                     return result;
@@ -90,22 +81,6 @@ namespace GameTheory.ConsoleRunner
         /// <inheritdoc />
         public void Dispose()
         {
-        }
-
-        private static ConsoleColor GetColor(IGameState<TMove> state, PlayerToken playerToken)
-        {
-            var i = 0;
-            foreach (var player in state.Players)
-            {
-                if (player == playerToken)
-                {
-                    return PlayerColors[i % PlayerColors.Count];
-                }
-
-                i++;
-            }
-
-            return ConsoleColor.White;
         }
     }
 }

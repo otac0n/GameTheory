@@ -148,7 +148,7 @@
     <value>Please choose a number between 1 and {0} (inclusive).</value>
   </data>
   <data name="ListItem" xml:space="preserve">
-    <value>{0}: {1}</value>
+    <value>{0}: </value>
   </data>
   <data name="ListPrompt" xml:space="preserve">
     <value>Please make a selection: [1-{0}]</value>
@@ -163,7 +163,7 @@
     <value>{0}:</value>
   </data>
   <data name="PlayerMessaged" xml:space="preserve">
-    <value>{0} messaged: {1}</value>
+    <value>{0} messaged: </value>
   </data>
   <data name="PlayerMoved" xml:space="preserve">
     <value>{0} moved:</value>

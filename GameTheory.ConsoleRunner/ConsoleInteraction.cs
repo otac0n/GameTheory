@@ -9,7 +9,16 @@ namespace GameTheory.ConsoleRunner
 
     internal static class ConsoleInteraction
     {
-        public static T Choose<T>(IList<T> options, CancellationToken? cancel = null, Func<T, string> skipMessage = null)
+        private static readonly IReadOnlyList<ConsoleColor> PlayerColors = new List<ConsoleColor>
+        {
+            ConsoleColor.Green,
+            ConsoleColor.Cyan,
+            ConsoleColor.Yellow,
+            ConsoleColor.Magenta,
+            ConsoleColor.Red,
+        }.AsReadOnly();
+
+        public static T Choose<T>(IList<T> options, CancellationToken? cancel = null, Action<T> render = null, Func<T, string> skipMessage = null)
         {
             if (options.Count == 0)
             {
@@ -42,7 +51,7 @@ namespace GameTheory.ConsoleRunner
                 parse = int.Parse;
             }
 
-            List(options);
+            List(options, render);
             var selection = Prompt(
                 string.Format(Resources.ListPrompt, options.Count),
                 parse,
@@ -51,12 +60,14 @@ namespace GameTheory.ConsoleRunner
             return options[selection - 1];
         }
 
-        public static void List<T>(IList<T> items, Func<T, string> toString = null)
+        public static void List<T>(IList<T> items, Action<T> render = null)
         {
-            toString = toString ?? new Func<T, string>(item => item?.ToString());
+            render = render ?? new Action<T>(item => Console.Write(item?.ToString()));
             for (var i = 0; i < items.Count; i++)
             {
-                Console.WriteLine(Resources.ListItem, i + 1, toString(items[i]));
+                Console.Write(Resources.ListItem, i + 1);
+                render(items[i]);
+                Console.WriteLine();
             }
         }
 
@@ -106,6 +117,23 @@ namespace GameTheory.ConsoleRunner
             {
                 Console.ForegroundColor = originalColor;
             }
+        }
+
+        public static ConsoleColor GetPlayerColor<TMove>(IGameState<TMove> state, PlayerToken playerToken)
+            where TMove : IMove
+        {
+            var i = 0;
+            foreach (var player in state.Players)
+            {
+                if (player == playerToken)
+                {
+                    return PlayerColors[i % PlayerColors.Count];
+                }
+
+                i++;
+            }
+
+            return ConsoleColor.White;
         }
     }
 }

@@ -9,10 +9,10 @@ namespace GameTheory.ConsoleRunner.ConsoleRenderers
     /// <summary>
     /// Implements a console renderer for the game of <see cref="GameState">CenturySpiceRoad</see>.
     /// </summary>
-    public class CenturySpiceRoadConsoleRenderer : IConsoleRenderer<Move>
+    public class CenturySpiceRoadConsoleRenderer : BaseConsoleRenderer<Move>
     {
         /// <inheritdoc />
-        public void Show(IGameState<Move> state, PlayerToken playerToken)
+        public override void Show(IGameState<Move> state, PlayerToken playerToken)
         {
             new Templates(playerToken).RenderGameState((GameState)state, Console.Out);
         }

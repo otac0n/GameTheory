@@ -9,10 +9,10 @@ namespace GameTheory.ConsoleRunner.ConsoleRenderers
     /// <summary>
     /// Implements a console renderer for the game of <see cref="GameState">TwentyFortyEight</see>.
     /// </summary>
-    public class TwentyFortyEightConsoleRenderer : IConsoleRenderer<Move>
+    public class TwentyFortyEightConsoleRenderer : BaseConsoleRenderer<Move>
     {
         /// <inheritdoc />
-        public void Show(IGameState<Move> state, PlayerToken playerToken)
+        public override void Show(IGameState<Move> state, PlayerToken playerToken)
         {
             var gameState = (GameState)state;
             new Templates().RenderGameState(gameState, Console.Out);

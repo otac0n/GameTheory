@@ -3,12 +3,31 @@
 namespace GameTheory
 {
     using System.Collections.Generic;
+    using System.Linq;
+    using System.Text.RegularExpressions;
 
     /// <summary>
     /// Provides methods for rendering and formatting game objects.
     /// </summary>
     public static class FormatUtilities
     {
+        /// <summary>
+        /// Parses a composite format string to a collection of format tokens.
+        /// </summary>
+        /// <param name="format">A composite format string.</param>
+        /// <param name="args">An object array that contains zero or more objects to format.</param>
+        /// <returns>An enumerable collection containing format tokens.</returns>
+        public static IList<object> ParseStringFormat(string format, params object[] args)
+        {
+            return Regex.Matches(format, @"(^|\G)([^{]+|{(?<index>\d+)})").Cast<Match>().Select(m =>
+            {
+                var index = m.Groups["index"];
+                return index.Success
+                    ? args[int.Parse(index.Value)]
+                    : m.Value;
+            }).ToList();
+        }
+
         /// <summary>
         /// Gets a player name for display.
         /// </summary>

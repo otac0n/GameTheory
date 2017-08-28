@@ -80,14 +80,6 @@ namespace GameTheory.ConsoleRunner
             }
         }
 
-        private static IPlayer<TMove> GetPlayer<TMove>(IList<Player> players, IGameState<TMove> gameState, PlayerToken playerToken)
-            where TMove : IMove
-        {
-            Console.WriteLine(Resources.ChoosePlayer, gameState.GetPlayerName(playerToken));
-            var player = ConsoleInteraction.Choose(players);
-            return (IPlayer<TMove>)ConstructType(player.PlayerType, p => p.Name == nameof(playerToken) && p.ParameterType == typeof(PlayerToken) ? playerToken : GetArgument(p));
-        }
-
         private static void Main()
         {
             var catalog = GameCatalog.Default;
@@ -111,37 +103,48 @@ namespace GameTheory.ConsoleRunner
             return constructor.Invoke(args);
         }
 
-        private static void RunGame<TMove>(IGameState<TMove> gameState)
+        private static void RunGame<TMove>(IGameState<TMove> state)
             where TMove : IMove
         {
-            Console.WriteLine(Resources.GamePlayerCount, string.Format(gameState.Players.Count == 1 ? Resources.SingularPlayer : Resources.PluralPlayers, gameState.Players.Count));
+            Console.WriteLine(Resources.GamePlayerCount, string.Format(state.Players.Count == 1 ? Resources.SingularPlayer : Resources.PluralPlayers, state.Players.Count));
             var catalog = new PlayerCatalog(Assembly.GetExecutingAssembly(), typeof(IGameState<>).Assembly);
             var players = catalog.FindPlayers(typeof(TMove));
             var consoleRenderer = ConsoleRenderer.Default<TMove>();
 
+            IPlayer<TMove> choosePlayer(PlayerToken playerToken)
+            {
+                consoleRenderer.Show(state, FormatUtilities.ParseStringFormat(Resources.ChoosePlayer, playerToken));
+                Console.WriteLine();
+                var player = ConsoleInteraction.Choose(players);
+                return (IPlayer<TMove>)ConstructType(player.PlayerType, p => p.Name == nameof(playerToken) && p.ParameterType == typeof(PlayerToken) ? playerToken : GetArgument(p));
+            }
+
             IPlayer<TMove> getPlayer(PlayerToken playerToken)
             {
-                var player = GetPlayer(players, gameState, playerToken);
+                var player = choosePlayer(playerToken);
                 player.MessageSent += (obj, args) =>
                 {
-                    Console.WriteLine(Resources.PlayerMessaged, gameState.GetPlayerName(playerToken), string.Concat(args.FlattenFormatTokens()));
+                    consoleRenderer.Show(state, FormatUtilities.ParseStringFormat(Resources.PlayerMessaged, playerToken));
+                    consoleRenderer.Show(state, args.FormatTokens);
+                    Console.WriteLine();
                 };
                 return player;
             }
 
-            gameState = GameUtilities.PlayGame(gameState, getPlayer, (prevState, move, state) => ShowMove(state, move, consoleRenderer), TimeSpan.FromMinutes(5)).Result;
+            state = GameUtilities.PlayGame(state, getPlayer, (prevState, move, newState) => ShowMove(newState, move, consoleRenderer), TimeSpan.FromMinutes(5)).Result;
             Console.WriteLine(Resources.FinalState);
 
             Console.WriteLine();
-            consoleRenderer.Show(gameState);
+            consoleRenderer.Show(state);
             Console.WriteLine();
 
             Console.WriteLine(Resources.Winners);
             var anyWinners = false;
-            foreach (var winner in gameState.GetWinners())
+            foreach (var winner in state.GetWinners())
             {
                 anyWinners = true;
-                Console.WriteLine(gameState.GetPlayerName(winner));
+                consoleRenderer.Show(state, new[] { winner });
+                Console.WriteLine();
             }
 
             if (!anyWinners)
@@ -150,14 +153,17 @@ namespace GameTheory.ConsoleRunner
             }
         }
 
-        private static void ShowMove<TMove>(IGameState<TMove> gameState, TMove move, IConsoleRenderer<TMove> consoleRenderer)
+        private static void ShowMove<TMove>(IGameState<TMove> state, TMove move, IConsoleRenderer<TMove> consoleRenderer)
             where TMove : IMove
         {
-            Console.WriteLine(Resources.PlayerMoved, gameState.GetPlayerName(move.PlayerToken));
-            Console.WriteLine(move);
+            consoleRenderer.Show(state, FormatUtilities.ParseStringFormat(Resources.PlayerMoved, move.PlayerToken));
+            Console.WriteLine();
+
+            consoleRenderer.Show(state, move);
+            Console.WriteLine();
 
             Console.WriteLine();
-            consoleRenderer.Show(gameState);
+            consoleRenderer.Show(state);
             Console.WriteLine();
         }
     }
