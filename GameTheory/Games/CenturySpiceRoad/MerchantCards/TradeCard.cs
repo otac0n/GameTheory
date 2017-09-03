@@ -58,26 +58,22 @@ namespace GameTheory.Games.CenturySpiceRoad.MerchantCards
             {
                 return 0;
             }
-            else if (other == null)
+            else if (other is TradeCard tradeCard)
             {
-                return 1;
-            }
+                int comp;
 
-            var tradeCard = other as TradeCard;
-            if (tradeCard == null)
+                if ((comp = this.Cost.CompareTo(tradeCard.Cost)) != 0 ||
+                    (comp = this.Reward.CompareTo(tradeCard.Reward)) != 0)
+                {
+                    return comp;
+                }
+
+                return 0;
+            }
+            else
             {
                 return base.CompareTo(other);
             }
-
-            int comp;
-
-            if ((comp = this.Cost.CompareTo(tradeCard.Cost)) != 0 ||
-                (comp = this.Reward.CompareTo(tradeCard.Reward)) != 0)
-            {
-                return comp;
-            }
-
-            return 0;
         }
     }
 }

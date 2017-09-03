@@ -49,18 +49,14 @@ namespace GameTheory.Games.CenturySpiceRoad.MerchantCards
             {
                 return 0;
             }
-            else if (other == null)
+            else if (other is SpiceCard spiceCard)
             {
-                return 1;
+                return this.Spices.CompareTo(spiceCard.Spices);
             }
-
-            var spiceCard = other as SpiceCard;
-            if (spiceCard == null)
+            else
             {
                 return base.CompareTo(other);
             }
-
-            return this.Spices.CompareTo(spiceCard.Spices);
         }
     }
 }

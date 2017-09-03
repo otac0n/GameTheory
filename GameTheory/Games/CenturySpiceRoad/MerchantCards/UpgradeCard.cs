@@ -33,18 +33,14 @@ namespace GameTheory.Games.CenturySpiceRoad.MerchantCards
             {
                 return 0;
             }
-            else if (other == null)
+            else if (other is UpgradeCard upgradeCard)
             {
-                return 1;
+                return this.UpgradeLevel.CompareTo(upgradeCard.UpgradeLevel);
             }
-
-            var upgradeCard = other as UpgradeCard;
-            if (upgradeCard == null)
+            else
             {
                 return base.CompareTo(other);
             }
-
-            return this.UpgradeLevel.CompareTo(upgradeCard.UpgradeLevel);
         }
     }
 }
