@@ -303,7 +303,7 @@ namespace GameTheory.Games.Splendor
         /// <inheritdoc />
         public IGameState<Move> GetView(PlayerToken playerToken)
         {
-            // TODO: Hide the other player's hands.
+            // TODO: Hide the other players' hands.
             return this;
         }
 

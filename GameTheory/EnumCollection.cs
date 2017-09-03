@@ -9,7 +9,6 @@ namespace GameTheory
     using System.Diagnostics.CodeAnalysis;
     using System.Globalization;
     using System.Linq;
-    using System.Text;
 
     /// <summary>
     /// Provides a compact collection of enumeration values.
