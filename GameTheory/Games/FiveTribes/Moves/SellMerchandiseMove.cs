@@ -3,6 +3,8 @@
 namespace GameTheory.Games.FiveTribes.Moves
 {
     using System.Collections.Generic;
+    using System.Collections.Immutable;
+    using System.Linq;
 
     /// <summary>
     /// Represents a move to sell merchandise in exchange for Gold Coins (GC).
@@ -35,6 +37,18 @@ namespace GameTheory.Games.FiveTribes.Moves
 
         /// <inheritdoc />
         public override IList<object> FormatTokens => new object[] { "Trade ", this.Resources, " for ", GameState.SuitValues[this.Resources.Count] };
+
+        internal static IEnumerable<Move> GenerateMoves(GameState state)
+        {
+            var keys = state.Inventory[state.ActivePlayer].Resources.Keys.ToImmutableList().RemoveAll(r => r == Resource.Slave);
+
+            for (var i = (1 << keys.Count) - 1; i > 0; i--)
+            {
+                var resources = new EnumCollection<Resource>(keys.Select((k, j) => new { k, j }).Where(x => (i & 1 << x.j) != 0).Select(x => x.k));
+
+                yield return new SellMerchandiseMove(state, resources);
+            }
+        }
 
         internal override GameState Apply(GameState state)
         {

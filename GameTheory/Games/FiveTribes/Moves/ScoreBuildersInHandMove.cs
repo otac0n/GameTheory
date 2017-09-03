@@ -32,6 +32,13 @@ namespace GameTheory.Games.FiveTribes.Moves
         /// <inheritdoc />
         public override IList<object> FormatTokens => new object[] { "Score ", this.State.InHand };
 
+        internal static IEnumerable<Move> GenerateMoves(GameState state)
+        {
+            yield return new ScoreBuildersInHandMove(state, 0);
+
+            var moves = Cost.OneOrMoreSlaves(state, (s, paid) => s.WithInterstitialState(new ScoringWithBonus(paid)));
+        }
+
         internal override GameState Apply(GameState state)
         {
             var blueTiles = Sultanate.GetSquarePoints(state.LastPoint).Count(p => state.Sultanate[p].Tile.Color == TileColor.Blue);
@@ -44,6 +51,33 @@ namespace GameTheory.Games.FiveTribes.Moves
                 inHand: EnumCollection<Meeple>.Empty,
                 inventory: state.Inventory.SetItem(player, inventory.With(goldCoins: inventory.GoldCoins + score)),
                 phase: Phase.TileAction);
+        }
+
+        private class ScoringWithBonus : InterstitialState
+        {
+            private int paid;
+
+            public ScoringWithBonus(int paid)
+            {
+                this.paid = paid;
+            }
+
+            public override IEnumerable<Move> GenerateMoves(GameState state)
+            {
+                yield return new ScoreBuildersInHandMove(state, this.paid);
+            }
+
+            public override int CompareTo(InterstitialState other)
+            {
+                if (other is ScoringWithBonus s)
+                {
+                    return this.paid.CompareTo(s.paid);
+                }
+                else
+                {
+                    return base.CompareTo(other);
+                }
+            }
         }
     }
 }

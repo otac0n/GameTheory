@@ -32,7 +32,7 @@ namespace GameTheory.Games.FiveTribes.Djinns
             {
                 foreach (var move in moves.OfType<PlacePalmTreeMove>())
                 {
-                    var newMoves = Cost.OneElderOrOneSlave(state, s1 => s1.WithState(this.stateKey, "true"), s1 => this.GetAppliedCostMoves(s1, move));
+                    var newMoves = Cost.OneElderOrOneSlave(state, s1 => s1.WithState(this.stateKey, "true").WithInterstitialState(new Paid(move.Point, move.Phase)));
 
                     foreach (var m in newMoves)
                     {
@@ -63,11 +63,35 @@ namespace GameTheory.Games.FiveTribes.Djinns
             return newState;
         }
 
-        private IEnumerable<Move> GetAppliedCostMoves(GameState state, PlacePalmTreeMove template)
+        private class Paid : InterstitialState
         {
-            foreach (var point in Sultanate.GetSquarePoints(template.Point))
+            private readonly Point point;
+            private readonly Phase? phase;
+
+            public Paid(Point point, Phase? phase)
             {
-                yield return template.With(state, point);
+                this.point = point;
+                this.phase = phase;
+            }
+
+            public override IEnumerable<Move> GenerateMoves(GameState state)
+            {
+                foreach (var point in Sultanate.GetSquarePoints(this.point))
+                {
+                    yield return new PlacePalmTreeMove(state, point, this.phase);
+                }
+            }
+
+            public override int CompareTo(InterstitialState other)
+            {
+                if (other is Paid p)
+                {
+                    return this.point.CompareTo(p.point);
+                }
+                else
+                {
+                    return base.CompareTo(other);
+                }
             }
         }
     }

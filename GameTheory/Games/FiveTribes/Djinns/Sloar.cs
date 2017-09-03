@@ -2,6 +2,7 @@
 
 namespace GameTheory.Games.FiveTribes.Djinns
 {
+    using System;
     using System.Collections.Generic;
     using GameTheory.Games.FiveTribes.Moves;
 
@@ -21,9 +22,14 @@ namespace GameTheory.Games.FiveTribes.Djinns
         }
 
         /// <inheritdoc />
-        protected override IEnumerable<Move> GetAppliedCostMoves(GameState state)
+        protected override InterstitialState GetInterstitialState() => new Paid();
+
+        private class Paid : InterstitialState
         {
-            yield return new DrawTopCardMove(state);
+            public override IEnumerable<Move> GenerateMoves(GameState state)
+            {
+                yield return new DrawTopCardMove(state);
+            }
         }
     }
 }

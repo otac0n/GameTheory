@@ -30,7 +30,7 @@ namespace GameTheory.Games.FiveTribes.Djinns
         {
             if (this.CanGetMoves(state))
             {
-                return Cost.OneOrMoreSlaves(state, s1 => s1.WithState(this.stateKey, "true"), this.GetAppliedCostMoves);
+                return Cost.OneOrMoreSlaves(state, (s1, paid) => s1.WithState(this.stateKey, "true").WithInterstitialState(new Bidding(paid)));
             }
 
             return base.GetMoves(state);
@@ -67,24 +67,46 @@ namespace GameTheory.Games.FiveTribes.Djinns
             return false;
         }
 
-        private IEnumerable<Move> GetAppliedCostMoves(GameState state, int slaves)
+        private class Bidding : InterstitialState
         {
-            if (slaves > state.TurnOrderTrack.LastIndexOf(null) - 2)
+            private readonly int paid;
+
+            public Bidding(int paid)
             {
-                yield break;
+                this.paid = paid;
             }
 
-            var turnOrderTrackCosts = GameState.TurnOrderTrackCosts.InsertRange(0, new int[slaves]);
-
-            for (var i = 2; i < state.TurnOrderTrack.Count; i++)
+            public override IEnumerable<Move> GenerateMoves(GameState state)
             {
-                if (state.TurnOrderTrack[i] == null && state.Inventory[state.ActivePlayer].GoldCoins >= turnOrderTrackCosts[i])
+                if (this.paid > state.TurnOrderTrack.LastIndexOf(null) - 2)
                 {
-                    var j = i == 2 && state.TurnOrderTrack[0] == null ? 0 :
-                            i == 2 && state.TurnOrderTrack[1] == null ? 1 :
-                            i;
+                    yield break;
+                }
 
-                    yield return new BidMove(state, j, turnOrderTrackCosts[j]);
+                var turnOrderTrackCosts = GameState.TurnOrderTrackCosts.InsertRange(0, new int[this.paid]);
+
+                for (var i = 2; i < state.TurnOrderTrack.Count; i++)
+                {
+                    if (state.TurnOrderTrack[i] == null && state.Inventory[state.ActivePlayer].GoldCoins >= turnOrderTrackCosts[i])
+                    {
+                        var j = i == 2 && state.TurnOrderTrack[0] == null ? 0 :
+                                i == 2 && state.TurnOrderTrack[1] == null ? 1 :
+                                i;
+
+                        yield return new BidMove(state, j, turnOrderTrackCosts[j]);
+                    }
+                }
+            }
+
+            public override int CompareTo(InterstitialState other)
+            {
+                if (other is Bidding b)
+                {
+                    return this.paid.CompareTo(b.paid);
+                }
+                else
+                {
+                    return base.CompareTo(other);
                 }
             }
         }

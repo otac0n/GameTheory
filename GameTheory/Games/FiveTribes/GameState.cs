@@ -51,7 +51,7 @@ namespace GameTheory.Games.FiveTribes
         private static readonly EnumCollection<Resource> Resources;
         private readonly ImmutableDictionary<string, string> additionalState;
         private readonly Lazy<ImmutableList<Move>> subsequentMoves;
-        private readonly Func<GameState, IEnumerable<Move>> subsequentMovesFactory;
+        private readonly InterstitialState interstitialState;
 
         static GameState()
         {
@@ -187,12 +187,12 @@ namespace GameTheory.Games.FiveTribes
             EnumCollection<Resource> resourceDiscards,
             EnumCollection<Resource> resourcePile,
             ImmutableDictionary<PlayerToken, ScoreTable> scoreTables,
-            Func<GameState, IEnumerable<Move>> subsequentMovesFactory,
+            InterstitialState interstitialState,
             ImmutableList<Square> sultanate,
             ImmutableList<PlayerToken> turnOrderTrack,
             ImmutableList<Djinn> visibleDjinns,
             ImmutableList<Resource> visibleResources)
-            : this(subsequentMovesFactory)
+            : this(interstitialState)
         {
             this.additionalState = additionalState;
             this.AssassinationTables = assassinationTables;
@@ -215,10 +215,10 @@ namespace GameTheory.Games.FiveTribes
             this.VisibleResources = visibleResources;
         }
 
-        private GameState(Func<GameState, IEnumerable<Move>> subsequentMovesFactory)
+        private GameState(InterstitialState interstitialState)
         {
-            this.subsequentMovesFactory = subsequentMovesFactory;
-            this.subsequentMoves = subsequentMovesFactory == null ? null : new Lazy<ImmutableList<Move>>(() => this.subsequentMovesFactory(this).ToImmutableList(), LazyThreadSafetyMode.ExecutionAndPublication);
+            this.interstitialState = interstitialState;
+            this.subsequentMoves = this.interstitialState == null ? null : new Lazy<ImmutableList<Move>>(() => this.interstitialState.GenerateMoves(this).ToImmutableList(), LazyThreadSafetyMode.ExecutionAndPublication);
         }
 
         /// <summary>
@@ -264,7 +264,7 @@ namespace GameTheory.Games.FiveTribes
         /// Gets a value indicating whether or not this <see cref="GameState"/> contains subsequent moves.
         /// </summary>
         public bool HasSubsequentMoves =>
-            this.subsequentMovesFactory != null && !this.subsequentMoves.Value.IsEmpty;
+            this.interstitialState != null && !this.subsequentMoves.Value.IsEmpty;
 
         IReadOnlyList<PlayerToken> IGameState<Move>.Players => this.Players;
 
@@ -403,7 +403,7 @@ namespace GameTheory.Games.FiveTribes
         {
             var moves = new List<Move>();
 
-            if (this.subsequentMovesFactory != null)
+            if (this.interstitialState != null)
             {
                 moves.AddRange(this.subsequentMoves.Value);
             }
@@ -412,23 +412,23 @@ namespace GameTheory.Games.FiveTribes
                 switch (this.Phase)
                 {
                     case Phase.Bid:
-                        moves.AddRange(this.GetBidMoves());
+                        moves.AddRange(BidMove.GenerateMoves(this));
                         break;
 
                     case Phase.MoveTurnMarker:
-                        moves.AddRange(this.GetMoveTurnMarkerMoves());
+                        moves.AddRange(MoveTurnMarkerMove.GenerateMoves(this));
                         break;
 
                     case Phase.PickUpMeeples:
-                        moves.AddRange(this.GetPickUpMeeplesMoves());
+                        moves.AddRange(PickUpMeeplesMove.GenerateMoves(this));
                         break;
 
                     case Phase.MoveMeeples:
-                        moves.AddRange(this.GetMoveMeeplesMoves());
+                        moves.AddRange(DropMeepleMove.GenerateMoves(this));
                         break;
 
                     case Phase.TileControlCheck:
-                        moves.AddRange(this.GetTileControlCheckMoves());
+                        moves.AddRange(PlaceCamelMove.GenerateMoves(this));
                         break;
 
                     case Phase.TribesAction:
@@ -436,11 +436,12 @@ namespace GameTheory.Games.FiveTribes
                         break;
 
                     case Phase.TileAction:
-                        moves.AddRange(this.GetTileActionMoves());
+                        moves.AddRange(Tile.GenerateMoves(this));
                         break;
 
                     case Phase.MerchandiseSale:
-                        moves.AddRange(this.GetMerchandiseSaleMoves());
+                        moves.AddRange(EndTurnMove.GenerateMoves(this));
+                        moves.AddRange(SellMerchandiseMove.GenerateMoves(this));
                         break;
                 }
 
@@ -550,8 +551,10 @@ namespace GameTheory.Games.FiveTribes
                 yield break;
             }
 
-            // BUG: Need to enumerate possible outcomes and combine scores with expected occurence probabilities.
-            yield return Weighted.Create(this.MakeMove(move), 1);
+            foreach (var outcome in move.GetOutcomes(this))
+            {
+                yield return outcome;
+            }
         }
 
         /// <summary>
@@ -604,19 +607,9 @@ namespace GameTheory.Games.FiveTribes
         /// <summary>
         /// Creates a new <see cref="GameState"/> with the specified subsequent <see cref="Move">Moves</see>.
         /// </summary>
-        /// <param name="subsequentMoves">A function that generates subsequent <see cref="Move">Moves</see>.</param>
+        /// <param name="interstitialState">An <see cref="InterstitialState"/> that contains moves that will be performed.</param>
         /// <returns>The new <see cref="GameState"/>.</returns>
-        public GameState WithMoves(Func<GameState, Move> subsequentMoves)
-        {
-            return this.WithMoves(s => new[] { subsequentMoves(s) });
-        }
-
-        /// <summary>
-        /// Creates a new <see cref="GameState"/> with the specified subsequent <see cref="Move">Moves</see>.
-        /// </summary>
-        /// <param name="subsequentMoves">A function that generates subsequent <see cref="Move">Moves</see>.</param>
-        /// <returns>The new <see cref="GameState"/>.</returns>
-        public GameState WithMoves(Func<GameState, IEnumerable<Move>> subsequentMoves)
+        public GameState WithInterstitialState(InterstitialState interstitialState)
         {
             return new GameState(
                 this.additionalState,
@@ -634,7 +627,7 @@ namespace GameTheory.Games.FiveTribes
                 this.ResourceDiscards,
                 this.ResourcePile,
                 this.ScoreTables,
-                subsequentMoves,
+                interstitialState,
                 this.Sultanate,
                 this.TurnOrderTrack,
                 this.VisibleDjinns,
@@ -877,19 +870,17 @@ namespace GameTheory.Games.FiveTribes
                 }
             }
 
-            if (this.subsequentMovesFactory != null)
+            if (this.interstitialState != state.interstitialState)
             {
-                if (state.subsequentMovesFactory == null)
+                if (this.interstitialState == null)
                 {
-                    return 1;
+                    return -1;
                 }
 
-                // BUG: These could still possibly represent different subsequent moves.
-                return 0;
-            }
-            else if (state.subsequentMovesFactory != null)
-            {
-                return -1;
+                if ((comp = this.interstitialState.CompareTo(state.interstitialState)) != 0)
+                {
+                    return comp;
+                }
             }
 
             return 0;
@@ -899,10 +890,10 @@ namespace GameTheory.Games.FiveTribes
         {
             var player0 = state.ActivePlayer;
 
-            Func<EnumCollection<Meeple>, IEnumerable<EnumCollection<Meeple>>> combos = killable =>
+            IEnumerable<EnumCollection<Meeple>> combos(EnumCollection<Meeple> killable)
             {
                 return killable.Combinations(Math.Min(killable.Count, state.AssassinationTables[player0].KillCount));
-            };
+            }
 
             foreach (var victim in state.Players.Except(player0))
             {
@@ -913,7 +904,7 @@ namespace GameTheory.Games.FiveTribes
 
                 foreach (var kill in combos(state.Inventory[victim].Meeples))
                 {
-                    yield return new AssassinatePlayerMove(state, victim, kill, s => s.With(phase: FiveTribes.Phase.TileAction));
+                    yield return new AssassinatePlayerMove(state, victim, kill);
                 }
             }
 
@@ -921,21 +912,21 @@ namespace GameTheory.Games.FiveTribes
             {
                 foreach (var kill in combos(state.Sultanate[point].Meeples))
                 {
-                    yield return new AssassinateMove(state, point, kill, s => s.With(phase: FiveTribes.Phase.TileAction));
+                    yield return new AssassinateMove(state, point, kill);
                 }
             }
         }
 
         private static GameState HandleTransition(GameState oldState, GameState newState)
         {
-            if (newState.subsequentMovesFactory != null && newState.subsequentMoves.IsValueCreated)
+            if (newState.interstitialState != null && newState.subsequentMoves.IsValueCreated)
             {
                 throw new InvalidOperationException();
             }
 
             var oldestStates = Djinns.ToImmutableDictionary(d => d, d => oldState);
 
-            var subsequentMoves = newState.subsequentMovesFactory;
+            var interstitialState = newState.interstitialState;
 
             var changedEver = false;
             while (true)
@@ -966,88 +957,12 @@ namespace GameTheory.Games.FiveTribes
                 }
             }
 
-            if (changedEver && subsequentMoves != null)
+            if (changedEver && interstitialState != null)
             {
-                newState = newState.WithMoves(subsequentMoves);
+                newState = newState.WithInterstitialState(interstitialState);
             }
 
             return newState;
-        }
-
-        private IEnumerable<Move> GetBidMoves()
-        {
-            if (this.Phase != FiveTribes.Phase.Bid)
-            {
-                throw new InvalidOperationException();
-            }
-
-            for (var i = 2; i < this.TurnOrderTrack.Count; i++)
-            {
-                if (this.TurnOrderTrack[i] == null && this.Inventory[this.ActivePlayer].GoldCoins >= TurnOrderTrackCosts[i])
-                {
-                    var j = i == 2 && this.TurnOrderTrack[0] == null ? 0 :
-                            i == 2 && this.TurnOrderTrack[1] == null ? 1 :
-                            i;
-
-                    yield return new BidMove(this, j, TurnOrderTrackCosts[j]);
-                }
-            }
-        }
-
-        private IEnumerable<Move> GetMerchandiseSaleMoves()
-        {
-            yield return new EndTurnMove(this);
-
-            var keys = this.Inventory[this.ActivePlayer].Resources.Keys.ToImmutableList().RemoveAll(r => r == Resource.Slave);
-
-            for (var i = (1 << keys.Count) - 1; i > 0; i--)
-            {
-                var resources = new EnumCollection<Resource>(keys.Select((k, j) => new { k, j }).Where(x => (i & 1 << x.j) != 0).Select(x => x.k));
-
-                yield return new SellMerchandiseMove(this, resources);
-            }
-        }
-
-        private IEnumerable<Move> GetMoveMeeplesMoves()
-        {
-            var drops = this.Sultanate.GetMoves(this.LastPoint, this.PreviousPoint, this.InHand);
-            foreach (var drop in drops)
-            {
-                var meeple = drop.Item1;
-                var point = drop.Item2;
-
-                yield return new DropMeepleMove(this, meeple, point);
-            }
-        }
-
-        private IEnumerable<Move> GetMoveTurnMarkerMoves()
-        {
-            yield return new MoveTurnMarkerMove(this);
-        }
-
-        private IEnumerable<Move> GetPickUpMeeplesMoves()
-        {
-            var any = false;
-            foreach (var point in this.Sultanate.GetPickUps())
-            {
-                any = true;
-                yield return new PickUpMeeplesMove(this, point);
-            }
-
-            if (!any)
-            {
-                yield return new ChangePhaseMove(this, "Skip move", FiveTribes.Phase.MerchandiseSale);
-            }
-        }
-
-        private IEnumerable<Move> GetTileActionMoves()
-        {
-            return this.Sultanate[this.LastPoint].Tile.GetTileActionMoves(this);
-        }
-
-        private IEnumerable<Move> GetTileControlCheckMoves()
-        {
-            yield return new PlaceCamelMove(this, this.LastPoint, s => s.With(phase: FiveTribes.Phase.TribesAction));
         }
 
         private IEnumerable<Move> GetTribesActionMoves()
@@ -1058,21 +973,26 @@ namespace GameTheory.Games.FiveTribes
             {
                 case Meeple.Vizier:
                 case Meeple.Elder:
-                    yield return new TakeMeeplesInHandMove(this);
+                    foreach (var m in TakeMeeplesInHandMove.GenerateMoves(this))
+                    {
+                        yield return m;
+                    }
+
                     break;
 
                 case Meeple.Merchant:
-                    yield return new TradeMerchantsInHandMove(this);
+                    foreach (var m in TradeMerchantsInHandMove.GenerateMoves(this))
+                    {
+                        yield return m;
+                    }
+
                     break;
 
                 case Meeple.Builder:
-
-                    yield return new ScoreBuildersInHandMove(this, 0);
-
-                    var moves = Cost.OneOrMoreSlaves(this, s => s, (s1, slaves) => new[]
+                    foreach (var m in ScoreBuildersInHandMove.GenerateMoves(this))
                     {
-                        new ScoreBuildersInHandMove(s1, slaves),
-                    });
+                        yield return m;
+                    }
 
                     break;
 
@@ -1087,10 +1007,10 @@ namespace GameTheory.Games.FiveTribes
 
                     if (!any)
                     {
-                        yield return new ChangePhaseMove(this, "Skip Tribes Action", FiveTribes.Phase.TileAction);
+                        yield return new ChangePhaseMove(this, "Skip Tribes Action", Phase.TileAction);
                     }
 
-                    var costMoves = Cost.OneOrMoreSlaves(this, s => s, GetAssassinationMoves);
+                    var costMoves = Cost.OneOrMoreSlaves(this, (s1, paid) => s1.WithInterstitialState(new ChoosingVictim(paid)));
 
                     foreach (var m in costMoves)
                     {
@@ -1098,6 +1018,21 @@ namespace GameTheory.Games.FiveTribes
                     }
 
                     break;
+            }
+        }
+
+        private class ChoosingVictim : InterstitialState
+        {
+            private readonly int paid;
+
+            public ChoosingVictim(int paid)
+            {
+                this.paid = paid;
+            }
+
+            public override IEnumerable<Move> GenerateMoves(GameState state)
+            {
+                return GetAssassinationMoves(state, this.paid);
             }
         }
     }

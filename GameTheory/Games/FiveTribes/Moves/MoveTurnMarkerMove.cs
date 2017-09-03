@@ -24,6 +24,11 @@ namespace GameTheory.Games.FiveTribes.Moves
         /// <inheritdoc />
         public override IList<object> FormatTokens => new object[] { "Move turn marker" };
 
+        internal static IEnumerable<Move> GenerateMoves(GameState state)
+        {
+            yield return new MoveTurnMarkerMove(state);
+        }
+
         internal override GameState Apply(GameState state)
         {
             var i = state.FindHighestBidIndex();

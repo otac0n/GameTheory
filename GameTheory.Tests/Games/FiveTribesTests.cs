@@ -118,7 +118,7 @@ namespace GameTheory.Tests.Games
                 resourceDiscards: template.ResourceDiscards,
                 resourcePile: new EnumCollection<Resource>(Resource.Slave, Resource.Slave),
                 scoreTables: template.ScoreTables,
-                subsequentMovesFactory: null,
+                interstitialState: null,
                 visibleDjinns: ImmutableList<Djinn>.Empty,
                 visibleResources: ImmutableList<Resource>.Empty);
             state = Transition(template, state);

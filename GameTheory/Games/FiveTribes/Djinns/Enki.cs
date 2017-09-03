@@ -2,6 +2,7 @@
 
 namespace GameTheory.Games.FiveTribes.Djinns
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using GameTheory.Games.FiveTribes.Moves;
@@ -23,11 +24,16 @@ namespace GameTheory.Games.FiveTribes.Djinns
         }
 
         /// <inheritdoc />
-        protected override IEnumerable<Move> GetAppliedCostMoves(GameState state)
+        protected override InterstitialState GetInterstitialState() => new ChoosingSquare();
+
+        private class ChoosingSquare : InterstitialState
         {
-            return Enumerable.Range(0, Sultanate.Width * Sultanate.Height)
-                .Where(i => state.Sultanate[i].Tile is Oasis)
-                .Select(i => new PlacePalmTreeMove(state, i));
+            public override IEnumerable<Move> GenerateMoves(GameState state)
+            {
+                return from i in Enumerable.Range(0, Sultanate.Width * Sultanate.Height)
+                       where state.Sultanate[i].Tile is Oasis
+                       select new PlacePalmTreeMove(state, i);
+            }
         }
     }
 }

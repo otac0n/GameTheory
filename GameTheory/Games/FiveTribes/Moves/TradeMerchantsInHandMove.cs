@@ -26,6 +26,11 @@ namespace GameTheory.Games.FiveTribes.Moves
         /// <inheritdoc />
         public override IList<object> FormatTokens => new object[] { "Take ", Math.Min(this.State.VisibleResources.Count, this.State.InHand.Count), " resources" };
 
+        internal static IEnumerable<Move> GenerateMoves(GameState state)
+        {
+            yield return new TradeMerchantsInHandMove(state);
+        }
+
         internal override GameState Apply(GameState state)
         {
             var player = state.ActivePlayer;

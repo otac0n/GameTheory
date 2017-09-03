@@ -34,16 +34,17 @@ namespace GameTheory.Games.FiveTribes.Djinns
         }
 
         /// <inheritdoc />
-        protected override IEnumerable<Move> GetAppliedCostMoves(GameState state)
-        {
-            var emptySquares = Enumerable.Range(0, Sultanate.Width * Sultanate.Height).Where(i =>
-            {
-                var sq = state.Sultanate[i];
-                return sq.Owner == null && sq.Meeples.Count == 0 && sq.Palaces == 0 && sq.PalmTrees == 0;
-            });
+        protected override InterstitialState GetInterstitialState() => new ChoosingSquare();
 
-            return from i in emptySquares
-                   select new PlaceCamelMove(state, i);
+        private class ChoosingSquare : InterstitialState
+        {
+            public override IEnumerable<Move> GenerateMoves(GameState state)
+            {
+                return from i in Enumerable.Range(0, Sultanate.Width * Sultanate.Height)
+                       let sq = state.Sultanate[i]
+                       where sq.Owner == null && sq.Meeples.Count == 0 && sq.Palaces == 0 && sq.PalmTrees == 0
+                       select new PlaceCamelMove(state, i);
+            }
         }
     }
 }

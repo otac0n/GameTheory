@@ -2,7 +2,6 @@
 
 namespace GameTheory.Games.FiveTribes.Moves
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
 
@@ -11,19 +10,15 @@ namespace GameTheory.Games.FiveTribes.Moves
     /// </summary>
     public sealed class AssassinateMove : Move
     {
-        private readonly Func<GameState, GameState> after;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="AssassinateMove"/> class.
         /// </summary>
         /// <param name="state">The <see cref="GameState"/> that this move is based on.</param>
         /// <param name="point">The <see cref="Point"/> at which the assassination will take place.</param>
         /// <param name="meeples">The <see cref="Meeple">Meeples</see> that will be assassinated.</param>
-        /// <param name="after">A function to perform after the move has taken place.</param>
-        public AssassinateMove(GameState state, Point point, EnumCollection<Meeple> meeples, Func<GameState, GameState> after)
+        public AssassinateMove(GameState state, Point point, EnumCollection<Meeple> meeples)
             : base(state)
         {
-            this.after = after;
             this.Meeples = meeples;
             this.Point = point;
         }
@@ -64,11 +59,38 @@ namespace GameTheory.Games.FiveTribes.Moves
 
             if (newSquare.Meeples.Count == 0 && newSquare.Owner == null && newState.IsPlayerUnderCamelLimit(state.ActivePlayer))
             {
-                return newState.WithMoves(t => new PlaceCamelMove(t, this.Point, this.after));
+                return newState.WithInterstitialState(new AssasinatedLastMeepleAt(this.Point));
             }
             else
             {
-                return this.after(newState);
+                return newState.With(phase: Phase.TileAction);
+            }
+        }
+
+        private class AssasinatedLastMeepleAt : InterstitialState
+        {
+            private Point point;
+
+            public AssasinatedLastMeepleAt(Point point)
+            {
+                this.point = point;
+            }
+
+            public override IEnumerable<Move> GenerateMoves(GameState state)
+            {
+                yield return new PlaceCamelMove(state, this.point, s1 => s1.With(phase: Phase.TileAction));
+            }
+
+            public override int CompareTo(InterstitialState other)
+            {
+                if (other is AssasinatedLastMeepleAt a)
+                {
+                    return this.point.CompareTo(a.point);
+                }
+                else
+                {
+                    return base.CompareTo(other);
+                }
             }
         }
     }

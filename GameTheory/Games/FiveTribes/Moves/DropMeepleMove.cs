@@ -38,19 +38,55 @@ namespace GameTheory.Games.FiveTribes.Moves
         /// <inheritdoc />
         public override IList<object> FormatTokens => new object[] { "Drop ", this.Meeple, " at ", this.Point };
 
+        internal static IEnumerable<Move> GenerateMoves(GameState state)
+        {
+            var drops = state.Sultanate.GetMoves(state.LastPoint, state.PreviousPoint, state.InHand);
+            foreach (var drop in drops)
+            {
+                var meeple = drop.Item1;
+                var point = drop.Item2;
+
+                yield return new DropMeepleMove(state, meeple, point);
+            }
+        }
+
         internal override GameState Apply(GameState state)
         {
             var square = state.Sultanate[this.Point];
-            var s1 = state.With(
+            state = state.With(
                 inHand: state.InHand.Remove(this.Meeple),
                 lastPoint: this.Point,
                 previousPoint: state.LastPoint,
                 sultanate: state.Sultanate.SetItem(this.Point, square.With(meeples: square.Meeples.Add(this.Meeple))));
 
-            return s1.InHand.Count >= 1 ? s1 : s1.WithMoves(s2 => new[]
+            return state.InHand.Count >= 1 ? state : state.WithInterstitialState(new DroppedLastMeeple(this.Meeple));
+        }
+
+        private class DroppedLastMeeple : InterstitialState
+        {
+            private Meeple meeple;
+
+            public DroppedLastMeeple(Meeple meeple)
             {
-                new PickUpTribeMove(s2, this.Meeple),
-            });
+                this.meeple = meeple;
+            }
+
+            public override IEnumerable<Move> GenerateMoves(GameState state)
+            {
+                yield return new PickUpTribeMove(state, this.meeple);
+            }
+
+            public override int CompareTo(InterstitialState other)
+            {
+                if (other is DroppedLastMeeple d)
+                {
+                    return this.meeple.CompareTo(d.meeple);
+                }
+                else
+                {
+                    return base.CompareTo(other);
+                }
+            }
         }
     }
 }

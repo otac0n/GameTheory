@@ -26,23 +26,23 @@ namespace GameTheory.Games.FiveTribes.Djinns
         public override string Name => "Anun-Nak";
 
         /// <inheritdoc />
-        protected override IEnumerable<Move> GetAppliedCostMoves(GameState state)
+        protected override InterstitialState GetInterstitialState() => new ChoosingSquare();
+
+        private class ChoosingSquare : InterstitialState
         {
-            if (state == null)
+            public override IEnumerable<Move> GenerateMoves(GameState state)
             {
-                throw new ArgumentNullException(nameof(state));
-            }
+                var toDraw = Math.Min(state.Bag.Count, 3);
+                if (toDraw == 0)
+                {
+                    return Enumerable.Empty<Move>();
+                }
 
-            var toDraw = Math.Min(state.Bag.Count, 3);
-            if (toDraw == 0)
-            {
-                return Enumerable.Empty<Move>();
+                return from i in Enumerable.Range(0, Sultanate.Width * Sultanate.Height)
+                       let sq = state.Sultanate[i]
+                       where sq.Owner == null && sq.Meeples.Count == 0 && sq.Palaces == 0 && sq.PalmTrees == 0
+                       select new AddMeeplesMove(state, i);
             }
-
-            return from i in Enumerable.Range(0, Sultanate.Width * Sultanate.Height)
-                   let sq = state.Sultanate[i]
-                   where sq.Owner == null && sq.Meeples.Count == 0 && sq.Palaces == 0 && sq.PalmTrees == 0
-                   select new AddMeeplesMove(state, i);
         }
     }
 }

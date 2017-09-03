@@ -38,9 +38,14 @@ namespace GameTheory.Games.FiveTribes.Djinns
         }
 
         /// <inheritdoc />
-        protected override IEnumerable<Move> GetAppliedCostMoves(GameState state)
+        protected override InterstitialState GetInterstitialState() => new Paid();
+
+        private class Paid : InterstitialState
         {
-            yield return new DoubleBuilderScoreMove(state);
+            public override IEnumerable<Move> GenerateMoves(GameState state)
+            {
+                yield return new DoubleBuilderScoreMove(state);
+            }
         }
     }
 }

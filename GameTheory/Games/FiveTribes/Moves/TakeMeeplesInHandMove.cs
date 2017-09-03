@@ -24,6 +24,11 @@ namespace GameTheory.Games.FiveTribes.Moves
         /// <inheritdoc />
         public override IList<object> FormatTokens => new object[] { "Take ", this.State.InHand };
 
+        internal static IEnumerable<Move> GenerateMoves(GameState state)
+        {
+            yield return new TakeMeeplesInHandMove(state);
+        }
+
         internal override GameState Apply(GameState state)
         {
             var player = state.ActivePlayer;

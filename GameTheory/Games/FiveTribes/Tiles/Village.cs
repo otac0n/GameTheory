@@ -23,7 +23,7 @@ namespace GameTheory.Games.FiveTribes.Tiles
         /// <inheritdoc />
         public override IEnumerable<Move> GetTileActionMoves(GameState state)
         {
-            yield return new PlacePalaceMove(state, state.LastPoint, s1 => s1.With(phase: Phase.MerchandiseSale));
+            yield return new PlacePalaceMove(state, state.LastPoint, Phase.MerchandiseSale);
         }
     }
 }

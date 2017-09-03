@@ -58,12 +58,17 @@ namespace GameTheory.Games.FiveTribes
 
             if ((comp = this.Value.CompareTo(other.Value)) != 0 ||
                 (comp = this.Color.CompareTo(other.Color)) != 0 ||
-                (comp = string.Compare(this.GetType().Name, other.GetType().Name, StringComparison.OrdinalIgnoreCase)) != 0)
+                (comp = string.Compare(this.GetType().FullName, other.GetType().FullName, StringComparison.Ordinal)) != 0)
             {
                 return comp;
             }
 
             return 0;
+        }
+
+        internal static IEnumerable<Move> GenerateMoves(GameState state)
+        {
+            return state.Sultanate[state.LastPoint].Tile.GetTileActionMoves(state);
         }
     }
 }

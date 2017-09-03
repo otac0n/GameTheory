@@ -4,7 +4,6 @@ namespace GameTheory.Games.FiveTribes.Tiles
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
     using GameTheory.Games.FiveTribes.Moves;
 
     /// <summary>
@@ -23,6 +22,11 @@ namespace GameTheory.Games.FiveTribes.Tiles
         public const int Gold = 6;
 
         /// <summary>
+        /// The number of <see cref="Resource">Resources</see> the player may choose.
+        /// </summary>
+        public const int Resources = 2;
+
+        /// <summary>
         /// The singleton instance of <see cref="BigMarket"/>.
         /// </summary>
         public static readonly BigMarket Instance = new BigMarket();
@@ -37,21 +41,7 @@ namespace GameTheory.Games.FiveTribes.Tiles
         {
             if (state.VisibleResources.Count > 0)
             {
-                var moves = Cost.Gold(state, Gold, s => s, s1 => from i in Enumerable.Range(0, Math.Min(FirstN, s1.VisibleResources.Count))
-                                                                 select new TakeResourceMove(s1, i, s2 =>
-                                                                 {
-                                                                     if (s2.VisibleResources.Count >= 1)
-                                                                     {
-                                                                         return s2.WithMoves(s3 => Enumerable.Concat(
-                                                                             from j in Enumerable.Range(0, Math.Min(FirstN - 1, s3.VisibleResources.Count))
-                                                                             select new TakeResourceMove(s3, j, s4 => s4.With(phase: Phase.MerchandiseSale)),
-                                                                             new Move[] { new ChangePhaseMove(s3, "Skip second resource", Phase.MerchandiseSale) }));
-                                                                     }
-                                                                     else
-                                                                     {
-                                                                         return s2.With(phase: Phase.MerchandiseSale);
-                                                                     }
-                                                                 }));
+                var moves = Cost.Gold(state, Gold, s => s.WithInterstitialState(new ChoosingResource(Resources)));
 
                 foreach (var m in moves)
                 {
@@ -62,6 +52,53 @@ namespace GameTheory.Games.FiveTribes.Tiles
             foreach (var m in base.GetTileActionMoves(state))
             {
                 yield return m;
+            }
+        }
+
+        private class ChoosingResource : InterstitialState
+        {
+            private readonly int remaining;
+
+            public ChoosingResource(int remaining)
+            {
+                this.remaining = remaining;
+            }
+
+            public override IEnumerable<Move> GenerateMoves(GameState state)
+            {
+                var available = Math.Min(FirstN - (Resources - this.remaining), state.VisibleResources.Count);
+                for (var i = 0; i < available; i++)
+                {
+                    yield return new TakeResourceMove(state, i, s1 =>
+                    {
+                        var remaining = this.remaining - 1;
+                        if (s1.VisibleResources.Count > 0 && remaining > 0)
+                        {
+                            return s1.WithInterstitialState(new ChoosingResource(remaining));
+                        }
+                        else
+                        {
+                            return s1.With(phase: Phase.MerchandiseSale);
+                        }
+                    });
+                }
+
+                if (this.remaining < Resources)
+                {
+                    yield return new ChangePhaseMove(state, "Skip remaining resources", Phase.MerchandiseSale);
+                }
+            }
+
+            public override int CompareTo(InterstitialState other)
+            {
+                if (other is ChoosingResource c)
+                {
+                    return this.remaining.CompareTo(c.remaining);
+                }
+                else
+                {
+                    return base.CompareTo(other);
+                }
             }
         }
     }

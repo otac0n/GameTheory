@@ -38,9 +38,63 @@ namespace GameTheory.Games.FiveTribes.Moves
                 djinnPile: newDjinnPile,
                 djinnDiscards: newDjinnDiscards);
 
-            return s1.WithMoves(s2 => Enumerable.Range(0, toDraw).Select(i => new TakeDealtDjinnMove(s2, dealt, i)));
+            return s1.WithInterstitialState(new ChoosingDjinn(dealt));
+        }
+
+        internal override IEnumerable<IWeighted<GameState>> GetOutcomes(GameState state)
+        {
+            // TODO: Implement outcomes.
+            return base.GetOutcomes(state);
         }
 
         private static int GetDrawCount(GameState state) => Math.Min(3, state.DjinnPile.Count + state.DjinnDiscards.Count);
+
+        private class ChoosingDjinn : InterstitialState
+        {
+            private ImmutableList<Djinn> dealt;
+
+            public ChoosingDjinn(ImmutableList<Djinn> dealt)
+            {
+                this.dealt = dealt;
+            }
+
+            public override IEnumerable<Move> GenerateMoves(GameState state)
+            {
+                for (var i = 0; i < this.dealt.Count; i++)
+                {
+                    yield return new TakeDealtDjinnMove(state, this.dealt, i);
+                }
+            }
+
+            public override int CompareTo(InterstitialState other)
+            {
+                if (other is ChoosingDjinn s)
+                {
+                    if (this.dealt != s.dealt)
+                    {
+                        int comp;
+
+                        if ((comp = this.dealt.Count.CompareTo(s.dealt.Count)) != 0)
+                        {
+                            return comp;
+                        }
+
+                        for (var i = 0; i < this.dealt.Count; i++)
+                        {
+                            if ((comp = this.dealt[i].CompareTo(s.dealt[i])) != 0)
+                            {
+                                return comp;
+                            }
+                        }
+                    }
+
+                    return 0;
+                }
+                else
+                {
+                    return base.CompareTo(other);
+                }
+            }
+        }
     }
 }

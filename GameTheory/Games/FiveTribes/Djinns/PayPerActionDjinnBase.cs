@@ -30,7 +30,7 @@ namespace GameTheory.Games.FiveTribes.Djinns
         {
             if (this.CanGetMoves(state))
             {
-                return this.cost(state, s1 => s1.WithState(this.stateKey, "true"), this.GetAppliedCostMoves);
+                return this.cost(state, s1 => s1.WithState(this.stateKey, "true").WithInterstitialState(this.GetInterstitialState()));
             }
 
             return base.GetMoves(state);
@@ -97,10 +97,9 @@ namespace GameTheory.Games.FiveTribes.Djinns
         }
 
         /// <summary>
-        /// Generate the subsequent moves after the <see cref="Cost"/> has been paid.
+        /// Generate the <see cref="InterstitialState"/> after the <see cref="Cost"/> has been paid.
         /// </summary>
-        /// <param name="state">The <see cref="GameState"/> after the <see cref="Cost"/> has been applied.</param>
-        /// <returns>The <see cref="Move">Moves</see> provided by the <see cref="Djinn"/>.</returns>
-        protected abstract IEnumerable<Move> GetAppliedCostMoves(GameState state);
+        /// <returns>The <see cref="InterstitialState"/> provided by the <see cref="Djinn"/>.</returns>
+        protected abstract InterstitialState GetInterstitialState();
     }
 }

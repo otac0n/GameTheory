@@ -3,7 +3,6 @@
 namespace GameTheory.Games.FiveTribes.Tiles
 {
     using System.Collections.Generic;
-    using System.Linq;
     using GameTheory.Games.FiveTribes.Moves;
 
     /// <summary>
@@ -25,8 +24,7 @@ namespace GameTheory.Games.FiveTribes.Tiles
         {
             if (state.VisibleDjinns.Count >= 1)
             {
-                var moves = Cost.OneElderPlusOneElderOrOneSlave(state, s => s, s1 => from i in Enumerable.Range(0, s1.VisibleDjinns.Count)
-                                                                                     select new TakeDjinnMove(s1, i, s2 => s2.With(phase: Phase.MerchandiseSale)));
+                var moves = Cost.OneElderPlusOneElderOrOneSlave(state, s => s.WithInterstitialState(new ChoosingDjinn()));
 
                 foreach (var move in moves)
                 {
@@ -37,6 +35,29 @@ namespace GameTheory.Games.FiveTribes.Tiles
             foreach (var baseMove in base.GetTileActionMoves(state))
             {
                 yield return baseMove;
+            }
+        }
+
+        private class ChoosingDjinn : InterstitialState
+        {
+            public override IEnumerable<Move> GenerateMoves(GameState state)
+            {
+                for (var i = 0; i < state.VisibleDjinns.Count; i++)
+                {
+                    yield return new TakeDjinnMove(state, i, s1 => s1.With(phase: Phase.MerchandiseSale));
+                }
+            }
+
+            public override int CompareTo(InterstitialState other)
+            {
+                if (other is ChoosingDjinn)
+                {
+                    return 0;
+                }
+                else
+                {
+                    return base.CompareTo(other);
+                }
             }
         }
     }

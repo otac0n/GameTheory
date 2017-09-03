@@ -28,7 +28,7 @@ namespace GameTheory.Games.FiveTribes.Moves
         public Point Point { get; }
 
         /// <inheritdoc />
-        public override bool IsDeterministic => false;
+        public override bool IsDeterministic => this.State.Bag.Count <= 1;
 
         /// <inheritdoc />
         public override IList<object> FormatTokens => new object[] { "Draw ", Math.Min(this.State.Bag.Count, 3), " Meeples and place at ", this.Point };
@@ -40,6 +40,12 @@ namespace GameTheory.Games.FiveTribes.Moves
             return state.With(
                 bag: newBag,
                 sultanate: state.Sultanate.SetItem(this.Point, state.Sultanate[this.Point].With(meeples: new EnumCollection<Meeple>(dealt))));
+        }
+
+        internal override IEnumerable<IWeighted<GameState>> GetOutcomes(GameState state)
+        {
+            // TODO: Implement outcomes.
+            return base.GetOutcomes(state);
         }
     }
 }

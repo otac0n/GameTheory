@@ -13,9 +13,9 @@ namespace GameTheory.Games.FiveTribes
         /// <summary>
         /// Initializes a new instance of the <see cref="Move"/> class.
         /// </summary>
-        /// <param name="state">The <see cref="GameState"/> that this move is based on.  The player for the move will be infered from the active player.</param>
+        /// <param name="state">The <see cref="GameState"/> that this move is based on.</param>
         protected Move(GameState state)
-            : this(state, state == null ? throw new ArgumentNullException(nameof(state)) : state.ActivePlayer)
+            : this(state ?? throw new ArgumentNullException(nameof(state)), state.ActivePlayer)
         {
         }
 
@@ -47,5 +47,7 @@ namespace GameTheory.Games.FiveTribes
         public sealed override string ToString() => string.Concat(this.FlattenFormatTokens());
 
         internal abstract GameState Apply(GameState state);
+
+        internal virtual IEnumerable<IWeighted<GameState>> GetOutcomes(GameState state) => throw new NotImplementedException();
     }
 }

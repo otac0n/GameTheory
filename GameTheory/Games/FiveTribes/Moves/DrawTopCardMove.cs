@@ -39,5 +39,11 @@ namespace GameTheory.Games.FiveTribes.Moves
                 resourceDiscards: newDiscards,
                 resourcePile: newResourcesPile);
         }
+
+        internal override IEnumerable<IWeighted<GameState>> GetOutcomes(GameState state)
+        {
+            // TODO: Implement outcomes.
+            return base.GetOutcomes(state);
+        }
     }
 }

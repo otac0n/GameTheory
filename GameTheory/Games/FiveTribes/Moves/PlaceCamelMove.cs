@@ -46,6 +46,11 @@ namespace GameTheory.Games.FiveTribes.Moves
         /// <inheritdoc />
         public override IList<object> FormatTokens => new object[] { "Place a Camel at ", this.Point };
 
+        internal static IEnumerable<Move> GenerateMoves(GameState state)
+        {
+            yield return new PlaceCamelMove(state, state.LastPoint, s => s.With(phase: Phase.TribesAction));
+        }
+
         internal override GameState Apply(GameState state)
         {
             var owner = state.ActivePlayer;

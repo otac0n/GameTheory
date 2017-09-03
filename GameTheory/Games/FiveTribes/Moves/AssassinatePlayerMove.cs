@@ -2,7 +2,6 @@
 
 namespace GameTheory.Games.FiveTribes.Moves
 {
-    using System;
     using System.Collections.Generic;
 
     /// <summary>
@@ -10,19 +9,15 @@ namespace GameTheory.Games.FiveTribes.Moves
     /// </summary>
     public sealed class AssassinatePlayerMove : Move
     {
-        private readonly Func<GameState, GameState> after;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="AssassinatePlayerMove"/> class.
         /// </summary>
         /// <param name="state">The <see cref="GameState"/> that this move is based on.</param>
         /// <param name="victim">The <see cref="PlayerToken"/> whose <see cref="Meeple">Meeples</see> will be assassinated.</param>
         /// <param name="meeples">The <see cref="Meeple">Meeples</see> that will be assassinated.</param>
-        /// <param name="after">A function to perform after the move has taken place.</param>
-        public AssassinatePlayerMove(GameState state, PlayerToken victim, EnumCollection<Meeple> meeples, Func<GameState, GameState> after)
+        public AssassinatePlayerMove(GameState state, PlayerToken victim, EnumCollection<Meeple> meeples)
             : base(state)
         {
-            this.after = after;
             this.Meeples = meeples;
             this.Victim = victim;
         }
@@ -59,7 +54,7 @@ namespace GameTheory.Games.FiveTribes.Moves
                 }
             }
 
-            return this.after(newState);
+            return newState.With(phase: Phase.TileAction);
         }
     }
 }

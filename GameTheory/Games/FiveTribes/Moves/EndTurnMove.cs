@@ -26,6 +26,11 @@ namespace GameTheory.Games.FiveTribes.Moves
         /// <inheritdoc />
         public override IList<object> FormatTokens => new object[] { "End turn" };
 
+        internal static IEnumerable<Move> GenerateMoves(GameState state)
+        {
+            yield return new EndTurnMove(state);
+        }
+
         internal override GameState Apply(GameState state)
         {
             state = state.With(
@@ -56,6 +61,12 @@ namespace GameTheory.Games.FiveTribes.Moves
                     visibleDjinns: state.VisibleDjinns.AddRange(dealtDjinns),
                     visibleResources: state.VisibleResources.AddRange(dealtResources));
             }
+        }
+
+        internal override IEnumerable<IWeighted<GameState>> GetOutcomes(GameState state)
+        {
+            // TODO: Implement outcomes.
+            return base.GetOutcomes(state);
         }
     }
 }

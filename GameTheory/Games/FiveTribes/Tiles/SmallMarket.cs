@@ -4,7 +4,6 @@ namespace GameTheory.Games.FiveTribes.Tiles
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
     using GameTheory.Games.FiveTribes.Moves;
 
     /// <summary>
@@ -35,10 +34,9 @@ namespace GameTheory.Games.FiveTribes.Tiles
         /// <inheritdoc />
         public override IEnumerable<Move> GetTileActionMoves(GameState state)
         {
-            if (state.VisibleResources.Count >= 1)
+            if (state.VisibleResources.Count > 0)
             {
-                var moves = Cost.Gold(state, Gold, s => s, s1 => from i in Enumerable.Range(0, Math.Min(FirstN, s1.VisibleResources.Count))
-                                                                 select new TakeResourceMove(s1, i, s2 => s2.With(phase: Phase.MerchandiseSale)));
+                var moves = Cost.Gold(state, Gold, s => s.WithInterstitialState(new ChoosingResource()));
 
                 foreach (var m in moves)
                 {
@@ -49,6 +47,30 @@ namespace GameTheory.Games.FiveTribes.Tiles
             foreach (var m in base.GetTileActionMoves(state))
             {
                 yield return m;
+            }
+        }
+
+        private class ChoosingResource : InterstitialState
+        {
+            public override IEnumerable<Move> GenerateMoves(GameState state)
+            {
+                var available = Math.Min(FirstN, state.VisibleResources.Count);
+                for (var i = 0; i < available; i++)
+                {
+                    yield return new TakeResourceMove(state, i, s1 => s1.With(phase: Phase.MerchandiseSale));
+                }
+            }
+
+            public override int CompareTo(InterstitialState other)
+            {
+                if (other is ChoosingResource)
+                {
+                    return 0;
+                }
+                else
+                {
+                    return base.CompareTo(other);
+                }
             }
         }
     }

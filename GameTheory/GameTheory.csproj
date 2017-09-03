@@ -130,6 +130,7 @@
     <Compile Include="Games\FiveTribes\Djinn.cs" />
     <Compile Include="Games\FiveTribes\Djinns\OnAcquireDjinnBase.cs" />
     <Compile Include="Games\FiveTribes\Djinns\PayPerActionDjinnBase.cs" />
+    <Compile Include="Games\FiveTribes\InterstitialState.cs" />
     <Compile Include="Games\FiveTribes\Moves\AddMeeplesMove.cs" />
     <Compile Include="Games\FiveTribes\Moves\DoubleAssassinKillCountMove.cs" />
     <Compile Include="Games\FiveTribes\Moves\DoubleBuilderScoreMove.cs" />

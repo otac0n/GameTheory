@@ -31,6 +31,21 @@ namespace GameTheory.Games.FiveTribes.Moves
         /// <inheritdoc />
         public override IList<object> FormatTokens => new object[] { "Pick up meeples at ", this.Point };
 
+        internal static IEnumerable<Move> GenerateMoves(GameState state)
+        {
+            var any = false;
+            foreach (var point in state.Sultanate.GetPickUps())
+            {
+                any = true;
+                yield return new PickUpMeeplesMove(state, point);
+            }
+
+            if (!any)
+            {
+                yield return new ChangePhaseMove(state, "Skip move", Phase.MerchandiseSale);
+            }
+        }
+
         internal override GameState Apply(GameState state)
         {
             var square = state.Sultanate[this.Point];

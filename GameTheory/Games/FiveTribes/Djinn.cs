@@ -107,7 +107,7 @@ namespace GameTheory.Games.FiveTribes
                 return 1;
             }
 
-            return string.Compare(this.GetType().Name, other.GetType().Name, StringComparison.OrdinalIgnoreCase);
+            return string.Compare(this.GetType().FullName, other.GetType().FullName, StringComparison.Ordinal);
         }
     }
 }

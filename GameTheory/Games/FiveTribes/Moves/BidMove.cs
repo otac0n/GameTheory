@@ -38,6 +38,21 @@ namespace GameTheory.Games.FiveTribes.Moves
         /// <inheritdoc />
         public override IList<object> FormatTokens => new object[] { "Bid ", this.Cost };
 
+        internal static IEnumerable<Move> GenerateMoves(GameState state)
+        {
+            for (var i = 2; i < state.TurnOrderTrack.Count; i++)
+            {
+                if (state.TurnOrderTrack[i] == null && state.Inventory[state.ActivePlayer].GoldCoins >= GameState.TurnOrderTrackCosts[i])
+                {
+                    var j = i == 2 && state.TurnOrderTrack[0] == null ? 0 :
+                            i == 2 && state.TurnOrderTrack[1] == null ? 1 :
+                            i;
+
+                    yield return new BidMove(state, j, GameState.TurnOrderTrackCosts[j]);
+                }
+            }
+        }
+
         internal override GameState Apply(GameState state)
         {
             var player = state.ActivePlayer;
