@@ -12,7 +12,11 @@ namespace GameTheory.Games.TicTacToe
     /// </summary>
     public class GameState : IGameState<Move>
     {
-        private const int Size = 3;
+        /// <summary>
+        /// Indicates the width and height of the playing area.
+        /// </summary>
+        public const int Size = 3;
+
         private readonly ImmutableList<PlayerToken> players;
         private readonly ImmutableList<PlayerToken> winners;
         private readonly PlayerToken winningPlayer;
@@ -107,81 +111,6 @@ namespace GameTheory.Games.TicTacToe
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "y", Justification = "Y is meaningful in the context of coordinates.")]
         public PlayerToken this[int x, int y] => this.field[x, y];
 
-        /// <inheritdoc />
-        public IReadOnlyList<Move> GetAvailableMoves()
-        {
-            if (this.winningPlayer != null)
-            {
-                return ImmutableList<Move>.Empty;
-            }
-
-            var moves = ImmutableList.CreateBuilder<Move>();
-
-            for (var y = 0; y < Size; y++)
-            {
-                for (var x = 0; x < Size; x++)
-                {
-                    if (this.field[x, y] == null)
-                    {
-                        moves.Add(new Move(this.ActivePlayer, x, y));
-                    }
-                }
-            }
-
-            return moves.ToImmutable();
-        }
-
-        /// <inheritdoc />
-        public IReadOnlyCollection<PlayerToken> GetWinners() => this.winners;
-
-        /// <inheritdoc />
-        public IEnumerable<IWeighted<IGameState<Move>>> GetOutcomes(Move move)
-        {
-            yield return Weighted.Create(this.MakeMove(move), 1);
-        }
-
-        /// <inheritdoc />
-        public IGameState<Move> MakeMove(Move move)
-        {
-            if (move == null)
-            {
-                throw new ArgumentNullException(nameof(move));
-            }
-
-            if (move.PlayerToken != this.ActivePlayer ||
-                move.X < 0 ||
-                move.X >= Size ||
-                move.Y < 0 ||
-                move.Y >= Size ||
-                this.field[move.X, move.Y] != null)
-            {
-                throw new ArgumentOutOfRangeException("move");
-            }
-
-            var newField = new PlayerToken[Size, Size];
-            for (var x = 0; x < Size; x++)
-            {
-                for (var y = 0; y < Size; y++)
-                {
-                    newField[x, y] = this.field[x, y];
-                }
-            }
-
-            newField[move.X, move.Y] = move.PlayerToken;
-
-            return new GameState(this.players, newField);
-        }
-
-        /// <inheritdoc />
-        public IGameState<Move> GetView(PlayerToken playerToken) => this;
-
-        /// <inheritdoc />
-        public override string ToString()
-        {
-            var c = new Func<int, int, string>((x, y) => this[x, y] == null ? " " : this[x, y] == this.players[0] ? "X" : "O");
-            return $"{c(0, 0)}|{c(1, 0)}|{c(2, 0)}\n-----\n{c(0, 1)}|{c(1, 1)}|{c(2, 1)}\n-----\n{c(0, 2)}|{c(1, 2)}|{c(2, 2)}";
-        }
-
         /// <inheritdoc/>
         public int CompareTo(IGameState<Move> other)
         {
@@ -221,6 +150,81 @@ namespace GameTheory.Games.TicTacToe
             }
 
             return 0;
+        }
+
+        /// <inheritdoc />
+        public IReadOnlyList<Move> GetAvailableMoves()
+        {
+            if (this.winningPlayer != null)
+            {
+                return ImmutableList<Move>.Empty;
+            }
+
+            var moves = ImmutableList.CreateBuilder<Move>();
+
+            for (var y = 0; y < Size; y++)
+            {
+                for (var x = 0; x < Size; x++)
+                {
+                    if (this.field[x, y] == null)
+                    {
+                        moves.Add(new Move(this.ActivePlayer, x, y));
+                    }
+                }
+            }
+
+            return moves.ToImmutable();
+        }
+
+        /// <inheritdoc />
+        public IEnumerable<IWeighted<IGameState<Move>>> GetOutcomes(Move move)
+        {
+            yield return Weighted.Create(this.MakeMove(move), 1);
+        }
+
+        /// <inheritdoc />
+        public IGameState<Move> GetView(PlayerToken playerToken) => this;
+
+        /// <inheritdoc />
+        public IReadOnlyCollection<PlayerToken> GetWinners() => this.winners;
+
+        /// <inheritdoc />
+        public IGameState<Move> MakeMove(Move move)
+        {
+            if (move == null)
+            {
+                throw new ArgumentNullException(nameof(move));
+            }
+
+            if (move.PlayerToken != this.ActivePlayer ||
+                move.X < 0 ||
+                move.X >= Size ||
+                move.Y < 0 ||
+                move.Y >= Size ||
+                this.field[move.X, move.Y] != null)
+            {
+                throw new ArgumentOutOfRangeException("move");
+            }
+
+            var newField = new PlayerToken[Size, Size];
+            for (var x = 0; x < Size; x++)
+            {
+                for (var y = 0; y < Size; y++)
+                {
+                    newField[x, y] = this.field[x, y];
+                }
+            }
+
+            newField[move.X, move.Y] = move.PlayerToken;
+
+            return new GameState(this.players, newField);
+        }
+
+        /// <inheritdoc />
+        public override string ToString()
+        {
+            var c = new Func<int, int, string>((x, y) => this[x, y] == null ? " " : this[x, y] == this.players[0] ? "X" : "O");
+            return $"{c(0, 0)}|{c(1, 0)}|{c(2, 0)}\n-----\n{c(0, 1)}|{c(1, 1)}|{c(2, 1)}\n-----\n{c(0, 2)}|{c(1, 2)}|{c(2, 2)}";
         }
     }
 }
