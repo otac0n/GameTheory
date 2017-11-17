@@ -200,6 +200,21 @@
     <Compile Include="Games\FiveTribes\TileColor.cs" />
     <Compile Include="Games\FiveTribes\Moves\PlacePalaceMove.cs" />
     <Compile Include="Games\FiveTribes\Tiles\Village.cs" />
+    <Compile Include="Games\Lotus\Flower.cs" />
+    <Compile Include="Games\Lotus\Moves\ClaimScoringTokenMove.cs" />
+    <Compile Include="Games\Lotus\Moves\ClaimSpecialPowerMove.cs" />
+    <Compile Include="Games\Lotus\Moves\DrawCardMove.cs" />
+    <Compile Include="Games\Lotus\FlowerType.cs" />
+    <Compile Include="Games\Lotus\GameState.cs" />
+    <Compile Include="Games\Lotus\Inventory.cs" />
+    <Compile Include="Games\Lotus\Move.cs" />
+    <Compile Include="Games\Lotus\Moves\MoveGuardianMove.cs" />
+    <Compile Include="Games\Lotus\Moves\ExchangePetalCardsMove.cs" />
+    <Compile Include="Games\Lotus\Moves\PlayPetalCardsMove.cs" />
+    <Compile Include="Games\Lotus\Moves\TakeWildflowerMove.cs" />
+    <Compile Include="Games\Lotus\PetalCard.cs" />
+    <Compile Include="Games\Lotus\Phase.cs" />
+    <Compile Include="Games\Lotus\SpecialPower.cs" />
     <Compile Include="Games\Mancala\GameState.cs" />
     <Compile Include="Games\Mancala\Move.cs" />
     <Compile Include="Games\RockPaperScissors\GameState.cs" />
@@ -277,6 +292,7 @@
     <Analyzer Include="..\packages\StyleCop.Analyzers.1.0.2\analyzers\dotnet\cs\StyleCop.Analyzers.CodeFixes.dll" />
     <Analyzer Include="..\packages\StyleCop.Analyzers.1.0.2\analyzers\dotnet\cs\StyleCop.Analyzers.dll" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <Import Project="..\packages\FixMe.0.1.1\build\FixMe.targets" Condition="Exists('..\packages\FixMe.0.1.1\build\FixMe.targets')" />
