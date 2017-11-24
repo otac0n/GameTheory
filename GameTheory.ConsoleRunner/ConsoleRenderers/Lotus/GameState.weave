@@ -1,0 +1,52 @@
+﻿@using System.Linq
+@using GameTheory.Games.Lotus
+@namespace GameTheory.ConsoleRunner.ConsoleRenderers.Lotus
+@static false
+@model GameState
+Field:
+    {{each flowerType in Enum.GetValues(typeof(FlowerType)).Cast<FlowerType>()}}
+        {{= flowerType}} ({{= (int)flowerType}}):
+            {{
+                var flower = model.Field[flowerType];
+            }}
+            {{each petal in flower.Petals}}
+                {{= petal}}{{if petal.Owner != null}} ({{= petal.Owner}}){{/if}}
+            {{/each}}
+            {{each guardian in flower.Guardians}}
+                {{= guardian}}
+            {{/each}}
+    {{/each}}
+
+Wildflowers:
+    {{each wildflower in model.AvailableWildflowers}}
+        {{if wildflower == null}}
+            (taken)
+        {{else}}
+            {{= wildflower}}
+        {{/if}}
+    {{/each}}
+{{if this.playerToken != null}}
+    {{
+        var inventory = model.Inventory[this.playerToken];
+    }}
+
+    Inventory:
+        Hand:
+            {{each card in inventory.Hand}}
+                {{= card}}
+            {{/each}}
+        Special Powers: {{= inventory.SpecialPowers}}
+        Scoring Pile: {{= inventory.ScoringPile.Count}}
+        Scoring Tokens: {{= inventory.ScoringTokens}}
+{{else}}
+    {{each player in model.Players}}
+        {{
+            var inventory = model.Inventory[player];
+        }}
+
+        {{= player}} State:
+            Special Powers: {{= inventory.SpecialPowers}}
+            Scoring Pile: {{= inventory.ScoringPile.Count}}
+            Scoring Tokens: {{= inventory.ScoringTokens}}
+    {{/each}}
+{{/if}}
