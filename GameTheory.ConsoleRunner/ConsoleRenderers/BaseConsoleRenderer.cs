@@ -4,6 +4,8 @@ namespace GameTheory.ConsoleRunner.ConsoleRenderers
 {
     using System;
     using System.Collections.Generic;
+    using System.IO;
+    using System.Text;
 
     /// <summary>
     /// Provides basic rendering for more complex console renderers.
@@ -24,6 +26,12 @@ namespace GameTheory.ConsoleRunner.ConsoleRenderers
             }
         }
 
+        /// <inheritdoc/>
+        public void Show(IGameState<TMove> state, ITokenFormattable tokenFormattable)
+        {
+            this.Show(state, tokenFormattable.FormatTokens);
+        }
+
         /// <summary>
         /// Renders an atomic token.
         /// </summary>
@@ -31,12 +39,20 @@ namespace GameTheory.ConsoleRunner.ConsoleRenderers
         /// <param name="token">The token to be rendered.</param>
         protected virtual void RenderToken(IGameState<TMove> state, object token)
         {
+            ITokenFormattable innerTokens;
             if (token is PlayerToken playerToken)
             {
                 ConsoleInteraction.WithColor(ConsoleInteraction.GetPlayerColor(state, playerToken), () =>
                 {
-                    Console.Write(state.GetPlayerName(playerToken));
+                    this.RenderToken(state, state.GetPlayerName(playerToken));
                 });
+            }
+            else if ((innerTokens = token as ITokenFormattable) != null)
+            {
+                foreach (var innerToken in innerTokens.FormatTokens)
+                {
+                    this.RenderToken(state, innerToken);
+                }
             }
             else
             {
@@ -44,10 +60,62 @@ namespace GameTheory.ConsoleRunner.ConsoleRenderers
             }
         }
 
-        /// <inheritdoc/>
-        public void Show(IGameState<TMove> state, ITokenFormattable tokenFormattable)
+        /// <summary>
+        /// Creates a <see cref="TextWriter"/> that will invoke <see cref="RenderToken"/> for all interactions.
+        /// </summary>
+        /// <param name="state">The state used to invoke <see cref="RenderToken"/>.</param>
+        /// <returns>A new <see cref="TextWriter"/>.</returns>
+        protected TextWriter MakeRenderTokenWriter(IGameState<TMove> state)
         {
-            this.Show(state, tokenFormattable.FormatTokens);
+            return new ConsoleWriter(this, state);
+        }
+
+        private class ConsoleWriter : TextWriter
+        {
+            private readonly BaseConsoleRenderer<TMove> consoleRenderer;
+            private readonly IGameState<TMove> state;
+
+            public ConsoleWriter(BaseConsoleRenderer<TMove> consoleRenderer, IGameState<TMove> state)
+            {
+                this.consoleRenderer = consoleRenderer;
+                this.state = state;
+            }
+
+            /// <inheritdoc />
+            public override Encoding Encoding => Console.Out.Encoding;
+
+            /// <inheritdoc />
+            public override void Write(string value) => this.consoleRenderer.RenderToken(this.state, value);
+
+            /// <inheritdoc />
+            public override void Write(bool value) => this.consoleRenderer.RenderToken(this.state, value);
+
+            /// <inheritdoc />
+            public override void Write(char value) => this.consoleRenderer.RenderToken(this.state, value);
+
+            /// <inheritdoc />
+            public override void Write(decimal value) => this.consoleRenderer.RenderToken(this.state, value);
+
+            /// <inheritdoc />
+            public override void Write(double value) => this.consoleRenderer.RenderToken(this.state, value);
+
+            /// <inheritdoc />
+            public override void Write(float value) => this.consoleRenderer.RenderToken(this.state, value);
+
+            /// <inheritdoc />
+            public override void Write(int value) => this.consoleRenderer.RenderToken(this.state, value);
+
+            /// <inheritdoc />
+            public override void Write(long value) => this.consoleRenderer.RenderToken(this.state, value);
+
+            /// <inheritdoc />
+            public override void Write(object value) => this.consoleRenderer.RenderToken(this.state, value);
+
+            /// <inheritdoc />
+            public override void Write(uint value) => this.consoleRenderer.RenderToken(this.state, value);
+
+            /// <inheritdoc />
+            public override void Write(ulong value) => this.consoleRenderer.RenderToken(this.state, value);
         }
     }
 }

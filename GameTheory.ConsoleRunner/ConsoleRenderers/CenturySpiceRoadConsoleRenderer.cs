@@ -14,7 +14,7 @@ namespace GameTheory.ConsoleRunner.ConsoleRenderers
         /// <inheritdoc />
         public override void Show(IGameState<Move> state, PlayerToken playerToken)
         {
-            new Templates(playerToken).RenderGameState((GameState)state, Console.Out);
+            new Templates(playerToken).RenderGameState((GameState)state, this.MakeRenderTokenWriter(state));
         }
 
         /// <inheritdoc/>
