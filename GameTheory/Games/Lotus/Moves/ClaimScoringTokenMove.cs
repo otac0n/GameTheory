@@ -3,6 +3,7 @@
 namespace GameTheory.Games.Lotus.Moves
 {
     using System.Collections.Generic;
+    using System.Linq;
 
     /// <summary>
     /// Represents a move to claim a scoring token.
@@ -22,12 +23,9 @@ namespace GameTheory.Games.Lotus.Moves
         /// <inheritdoc />
         public override IList<object> FormatTokens => new[] { "Claim a scoring token" };
 
-        /// <inheritdoc />
-        public override bool IsDeterministic => true;
-
         internal static IEnumerable<Move> GenerateMoves(GameState state)
         {
-            foreach (var player in state.ChoosingPlayers)
+            foreach (var player in state.ChoosingPlayers.Take(1))
             {
                 yield return new ClaimScoringTokenMove(state, player);
             }

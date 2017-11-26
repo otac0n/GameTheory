@@ -2,6 +2,7 @@
 
 namespace GameTheory.Games.Lotus.Moves
 {
+    using System;
     using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Linq;
@@ -39,25 +40,36 @@ namespace GameTheory.Games.Lotus.Moves
             }
         }
 
-        /// <inheritdoc />
-        public override bool IsDeterministic => false;
-
         internal static IEnumerable<Move> GenerateMoves(GameState state)
         {
             var inventory = state.Inventory[state.ActivePlayer];
-            for (var i1 = 0; i1 < inventory.Hand.Count; i1++)
+            if (inventory.Deck.Count > 0)
             {
-                for (int i2 = 0; i2 < inventory.Hand.Count; i2++)
+                var distinct = new HashSet<object>();
+
+                for (var i1 = 0; i1 < inventory.Hand.Count; i1++)
                 {
-                    if (i1 == i2)
+                    if (distinct.Add(inventory.Hand[i1]))
                     {
-                        continue;
+                        yield return new ExchangePetalCardsMove(state, ImmutableList.Create(i1));
                     }
 
-                    yield return new ExchangePetalCardsMove(state, ImmutableList.Create(i1, i2));
-                }
+                    if (inventory.Deck.Count > 1)
+                    {
+                        for (int i2 = 0; i2 < inventory.Hand.Count; i2++)
+                        {
+                            if (i1 == i2)
+                            {
+                                continue;
+                            }
 
-                yield return new ExchangePetalCardsMove(state, ImmutableList.Create(i1));
+                            if (distinct.Add(Tuple.Create(inventory.Hand[i1], inventory.Hand[i2])))
+                            {
+                                yield return new ExchangePetalCardsMove(state, ImmutableList.Create(i1, i2));
+                            }
+                        }
+                    }
+                }
             }
         }
 

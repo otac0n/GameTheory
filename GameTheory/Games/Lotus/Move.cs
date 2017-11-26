@@ -36,7 +36,7 @@ namespace GameTheory.Games.Lotus
         public abstract IList<object> FormatTokens { get; }
 
         /// <inheritdoc />
-        public abstract bool IsDeterministic { get; }
+        public bool IsDeterministic => true;
 
         /// <summary>
         /// Gets the player who may perform this move.
@@ -106,17 +106,19 @@ namespace GameTheory.Games.Lotus
                     {
                         foreach (FlowerType flowerType in Enum.GetValues(typeof(FlowerType)))
                         {
+                            var inventory = state.Inventory;
                             var flower = state.Field[flowerType];
                             var petals = flower.Petals;
+
                             if (petals.Count > 0)
                             {
                                 var controllingPlayers = GameState.GetControllingPlayers(flower);
-                                var petalsPerPlayer = petals.Count / controllingPlayers.Count;
+                                var petalsPerPlayer = controllingPlayers.Count == 0
+                                    ? 0
+                                    : petals.Count / controllingPlayers.Count;
 
                                 if (petalsPerPlayer > 0)
                                 {
-                                    var inventory = state.Inventory;
-
                                     foreach (var player in controllingPlayers)
                                     {
                                         var playerInventory = inventory[player];
@@ -129,9 +131,36 @@ namespace GameTheory.Games.Lotus
                                         petals = petals.RemoveRange(0, petalsPerPlayer);
                                     }
 
+                                    flower = flower.With(
+                                        petals: petals);
+
                                     state = state.With(
-                                        inventory: inventory);
+                                        inventory: inventory,
+                                        field: state.Field.SetItem(
+                                            flowerType,
+                                            flower));
                                 }
+                            }
+
+                            if (flower.Guardians.Count > 0)
+                            {
+                                foreach (var guardian in flower.Guardians)
+                                {
+                                    var playerInventory = inventory[guardian];
+                                    inventory = inventory.SetItem(
+                                        guardian,
+                                        playerInventory.With(
+                                            playerInventory.Guardians + 1));
+                                }
+
+                                flower = flower.With(
+                                    guardians: flower.Guardians.Clear());
+
+                                state = state.With(
+                                    inventory: inventory,
+                                    field: state.Field.SetItem(
+                                        flowerType,
+                                        flower));
                             }
                         }
 
@@ -179,7 +208,5 @@ namespace GameTheory.Games.Lotus
 
             return state;
         }
-
-        internal virtual IEnumerable<IWeighted<GameState>> GetOutcomes(GameState state) => throw new NotImplementedException();
     }
 }

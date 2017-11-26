@@ -60,9 +60,6 @@ namespace GameTheory.Games.Lotus.Moves
             }
         }
 
-        /// <inheritdoc />
-        public override bool IsDeterministic => true;
-
         internal static IEnumerable<Move> GenerateMoves(GameState state)
         {
             var playerInventory = state.Inventory[state.ActivePlayer];
@@ -79,10 +76,15 @@ namespace GameTheory.Games.Lotus.Moves
                     maxPlays = Math.Min(maxPlays, CardLimit);
                 }
 
-                for (var c = 1; c <= maxPlays; c++)
+                var distinct = new List<ImmutableList<PetalCard>>();
+                foreach (var combination in indices.Combinations(maxPlays, includeSmaller: true))
                 {
-                    // TODO: Combinations.
-                    yield return new PlayPetalCardsMove(state, indices.Take(c).ToImmutableList());
+                    var key = combination.Select(c => hand[c]).OrderByDescending(c => c.Guardians).ToImmutableList();
+                    if (!distinct.Any(d => d.SequenceEqual(key)))
+                    {
+                        distinct.Add(key);
+                        yield return new PlayPetalCardsMove(state, combination);
+                    }
                 }
             }
         }

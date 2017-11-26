@@ -23,9 +23,6 @@ namespace GameTheory.Games.Lotus.Moves
         /// <inheritdoc />
         public override IList<object> FormatTokens => new object[] { "Take ", this.State.AvailableWildflowers[this.WildflowerIndex] };
 
-        /// <inheritdoc />
-        public override bool IsDeterministic => false;
-
         /// <summary>
         /// Gets the index of the wildflower to take.
         /// </summary>

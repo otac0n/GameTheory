@@ -13,7 +13,7 @@ Field:
                 {{= petal}}{{if petal.Owner != null}} ({{= petal.Owner}}){{/if}}
             {{/each}}
             {{each guardian in flower.Guardians}}
-                {{= guardian}}
+                +1 {{= guardian}}
             {{/each}}
     {{/each}}
 

@@ -141,11 +141,13 @@ namespace GameTheory.Games.Lotus
             var playerPoints = from p in points
                                group p.Guardians by p.Owner into g
                                select new { Owner = g.Key, Guardians = g.Sum() };
-            return playerPoints
+            var controllingPlayers = playerPoints
                 .GroupBy(p => p.Guardians, p => p.Owner)
                 .OrderByDescending(g => g.Key)
-                .First()
-                .ToImmutableList();
+                .Select(g => g.ToImmutableList())
+                .FirstOrDefault();
+
+            return controllingPlayers ?? ImmutableList<PlayerToken>.Empty;
         }
 
         /// <inheritdoc />
@@ -238,12 +240,18 @@ namespace GameTheory.Games.Lotus
                     var wildflower = this.AvailableWildflowers[i];
                     var otherWildflower = state.AvailableWildflowers[i];
 
-                    if (wildflower == null && otherWildflower != null)
+                    if (wildflower == null)
                     {
-                        return -1;
+                        if (otherWildflower != null)
+                        {
+                            return -1;
+                        }
+                        else
+                        {
+                            return 0;
+                        }
                     }
-
-                    if ((comp = wildflower.CompareTo(otherWildflower)) != 0)
+                    else if ((comp = wildflower.CompareTo(otherWildflower)) != 0)
                     {
                         return comp;
                     }
@@ -302,16 +310,7 @@ namespace GameTheory.Games.Lotus
         /// <inheritdoc />
         public IEnumerable<IWeighted<IGameState<Move>>> GetOutcomes(Move move)
         {
-            if (move.IsDeterministic)
-            {
-                yield return Weighted.Create(this.MakeMove(move), 1);
-                yield break;
-            }
-
-            foreach (var outcome in move.GetOutcomes(this))
-            {
-                yield return outcome;
-            }
+            yield return Weighted.Create(this.MakeMove(move), 1);
         }
 
         /// <summary>

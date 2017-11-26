@@ -4,6 +4,7 @@ namespace GameTheory.Games.Lotus.Moves
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
 
     /// <summary>
     /// Represents a move to claim a special power.
@@ -25,9 +26,6 @@ namespace GameTheory.Games.Lotus.Moves
         /// <inheritdoc />
         public override IList<object> FormatTokens => new object[] { "Claim the ", this.SpecialPower, " power" };
 
-        /// <inheritdoc />
-        public override bool IsDeterministic => true;
-
         /// <summary>
         /// Gets the <see cref="Lotus.SpecialPower"/> to be clamed.
         /// </summary>
@@ -35,7 +33,7 @@ namespace GameTheory.Games.Lotus.Moves
 
         internal static IEnumerable<Move> GenerateMoves(GameState state)
         {
-            foreach (var player in state.ChoosingPlayers)
+            foreach (var player in state.ChoosingPlayers.Take(1))
             {
                 foreach (SpecialPower specialPower in Enum.GetValues(typeof(SpecialPower)))
                 {

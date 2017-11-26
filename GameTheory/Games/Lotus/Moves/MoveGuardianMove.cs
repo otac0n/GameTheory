@@ -29,16 +29,16 @@ namespace GameTheory.Games.Lotus.Moves
         /// <inheritdoc />
         public override IList<object> FormatTokens => new object[] { "Move a guardian to the ", this.FlowerType };
 
-        /// <inheritdoc />
-        public override bool IsDeterministic => true;
-
         internal static IEnumerable<Move> GenerateMoves(GameState state)
         {
-            foreach (FlowerType flowerType in Enum.GetValues(typeof(FlowerType)))
+            if (state.Inventory[state.ActivePlayer].Guardians > 0)
             {
-                if (state.Field[flowerType].Petals.Count > 0)
+                foreach (FlowerType flowerType in Enum.GetValues(typeof(FlowerType)))
                 {
-                    yield return new MoveGuardianMove(state, flowerType);
+                    if (state.Field[flowerType].Petals.Count > 0)
+                    {
+                        yield return new MoveGuardianMove(state, flowerType);
+                    }
                 }
             }
         }
