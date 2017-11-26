@@ -35,34 +35,21 @@ namespace GameTheory.Games.Splendor.Moves
         /// </summary>
         public EnumCollection<Token> Cost { get; }
 
+        /// <inheritdoc />
+        public override IList<object> FormatTokens => new object[] { "Purchase ", this.Card, " for ", this.Cost.Count > 0 ? (object)this.Cost : "free" };
+
         /// <summary>
         /// Gets the index in the development track of the card to purchase.
         /// </summary>
         public int Index { get; }
 
+        /// <inheritdoc />
+        public override bool IsDeterministic => this.State.DevelopmentDecks[this.Track].Count <= 1;
+
         /// <summary>
         /// Gets the index of the development track that contains the card to purchase.
         /// </summary>
         public int Track { get; }
-
-        /// <inheritdoc />
-        public override bool IsDeterministic => this.State.DevelopmentDecks[this.Track].Count <= 1;
-
-        /// <inheritdoc />
-        public override IList<object> FormatTokens => new object[] { "Purchase ", this.Card, " for ", this.Cost.Count > 0 ? (object)this.Cost : "free" };
-
-        internal static IEnumerable<EnumCollection<Token>> GetAffordableTokenCosts(EnumCollection<Token> tokens, int jokerCount, EnumCollection<Token> cost)
-        {
-            var jokerCombinations = Enumerable.Concat(new[] { EnumCollection<Token>.Empty }, cost.Combinations(jokerCount, includeSmaller: true));
-            foreach (var jokerCost in jokerCombinations)
-            {
-                var tokenCost = cost.RemoveRange(jokerCost);
-                if (tokenCost.Keys.All(k => tokens[k] >= tokenCost[k]))
-                {
-                    yield return tokenCost.Add(Token.GoldJoker, jokerCost.Count);
-                }
-            }
-        }
 
         internal static IEnumerable<Move> GenerateMoves(GameState state)
         {
@@ -85,6 +72,19 @@ namespace GameTheory.Games.Splendor.Moves
                             yield return new PurchaseFromBoardMove(state, tokenCost, t, i);
                         }
                     }
+                }
+            }
+        }
+
+        internal static IEnumerable<EnumCollection<Token>> GetAffordableTokenCosts(EnumCollection<Token> tokens, int jokerCount, EnumCollection<Token> cost)
+        {
+            var jokerCombinations = Enumerable.Concat(new[] { EnumCollection<Token>.Empty }, cost.Combinations(jokerCount, includeSmaller: true));
+            foreach (var jokerCost in jokerCombinations)
+            {
+                var tokenCost = cost.RemoveRange(jokerCost);
+                if (tokenCost.Keys.All(k => tokens[k] >= tokenCost[k]))
+                {
+                    yield return tokenCost.Add(Token.GoldJoker, jokerCost.Count);
                 }
             }
         }

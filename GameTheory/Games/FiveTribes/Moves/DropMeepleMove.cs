@@ -22,6 +22,12 @@ namespace GameTheory.Games.FiveTribes.Moves
             this.Point = point;
         }
 
+        /// <inheritdoc />
+        public override IList<object> FormatTokens => new object[] { "Drop ", this.Meeple, " at ", this.Point };
+
+        /// <inheritdoc />
+        public override bool IsDeterministic => true;
+
         /// <summary>
         /// Gets the <see cref="Meeple"/> being dropped.
         /// </summary>
@@ -31,12 +37,6 @@ namespace GameTheory.Games.FiveTribes.Moves
         /// Gets the <see cref="Point"/> at which the <see cref="Meeple"/> will be dropped.
         /// </summary>
         public Point Point { get; }
-
-        /// <inheritdoc />
-        public override bool IsDeterministic => true;
-
-        /// <inheritdoc />
-        public override IList<object> FormatTokens => new object[] { "Drop ", this.Meeple, " at ", this.Point };
 
         internal static IEnumerable<Move> GenerateMoves(GameState state)
         {
@@ -71,11 +71,6 @@ namespace GameTheory.Games.FiveTribes.Moves
                 this.meeple = meeple;
             }
 
-            public override IEnumerable<Move> GenerateMoves(GameState state)
-            {
-                yield return new PickUpTribeMove(state, this.meeple);
-            }
-
             public override int CompareTo(InterstitialState other)
             {
                 if (other is DroppedLastMeeple d)
@@ -86,6 +81,11 @@ namespace GameTheory.Games.FiveTribes.Moves
                 {
                     return base.CompareTo(other);
                 }
+            }
+
+            public override IEnumerable<Move> GenerateMoves(GameState state)
+            {
+                yield return new PickUpTribeMove(state, this.meeple);
             }
         }
     }

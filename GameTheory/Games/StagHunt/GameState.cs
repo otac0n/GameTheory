@@ -12,14 +12,14 @@ namespace GameTheory.Games.StagHunt
     public class GameState : NormalFormGame.GameState<string>
     {
         /// <summary>
-        /// A move of "stag".
-        /// </summary>
-        public const string Stag = "Stag";
-
-        /// <summary>
         /// A move of "hare".
         /// </summary>
         public const string Hare = "Hare";
+
+        /// <summary>
+        /// A move of "stag".
+        /// </summary>
+        public const string Stag = "Stag";
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GameState"/> class in the starting position.

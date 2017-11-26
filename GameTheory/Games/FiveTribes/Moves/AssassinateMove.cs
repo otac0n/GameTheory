@@ -23,6 +23,13 @@ namespace GameTheory.Games.FiveTribes.Moves
             this.Point = point;
         }
 
+        /// <inheritdoc />
+        public override IList<object> FormatTokens => new object[] { "Assissinate ", this.Meeples, " at ", this.Point };
+
+        /// <inheritdoc />
+        public override bool IsDeterministic =>
+            this.Meeples[Meeple.Merchant] == 0 || !this.State.Inventory[this.State.ActivePlayer].Djinns.Any(d => d is Djinns.Kandicha);
+
         /// <summary>
         /// Gets the <see cref="Meeple">Meeples</see> that will be assassinated.
         /// </summary>
@@ -32,13 +39,6 @@ namespace GameTheory.Games.FiveTribes.Moves
         /// Gets the <see cref="Point"/> at which the assassination will take place.
         /// </summary>
         public Point Point { get; }
-
-        /// <inheritdoc />
-        public override bool IsDeterministic =>
-            this.Meeples[Meeple.Merchant] == 0 || !this.State.Inventory[this.State.ActivePlayer].Djinns.Any(d => d is Djinns.Kandicha);
-
-        /// <inheritdoc />
-        public override IList<object> FormatTokens => new object[] { "Assissinate ", this.Meeples, " at ", this.Point };
 
         internal override GameState Apply(GameState state)
         {
@@ -76,11 +76,6 @@ namespace GameTheory.Games.FiveTribes.Moves
                 this.point = point;
             }
 
-            public override IEnumerable<Move> GenerateMoves(GameState state)
-            {
-                yield return new PlaceCamelMove(state, this.point, s1 => s1.With(phase: Phase.TileAction));
-            }
-
             public override int CompareTo(InterstitialState other)
             {
                 if (other is AssasinatedLastMeepleAt a)
@@ -91,6 +86,11 @@ namespace GameTheory.Games.FiveTribes.Moves
                 {
                     return base.CompareTo(other);
                 }
+            }
+
+            public override IEnumerable<Move> GenerateMoves(GameState state)
+            {
+                yield return new PlaceCamelMove(state, this.point, s1 => s1.With(phase: Phase.TileAction));
             }
         }
     }

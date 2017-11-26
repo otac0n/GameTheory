@@ -38,19 +38,6 @@ namespace GameTheory.Games.FiveTribes
         /// </summary>
         public int KillCount { get; }
 
-        /// <summary>
-        /// Creates a new <see cref="AssassinationTable"/>, and updates the specified values.
-        /// </summary>
-        /// <param name="hasProtection"><c>null</c> to keep the existing value, or any other value to update <see cref="HasProtection"/>.</param>
-        /// <param name="killCount"><c>null</c> to keep the existing value, or any other value to update <see cref="KillCount"/>.</param>
-        /// <returns>The new <see cref="AssassinationTable"/>.</returns>
-        public AssassinationTable With(bool? hasProtection = null, int? killCount = null)
-        {
-            return new AssassinationTable(
-                hasProtection ?? this.HasProtection,
-                killCount ?? this.KillCount);
-        }
-
         /// <inheritdoc/>
         public int CompareTo(AssassinationTable other)
         {
@@ -72,6 +59,19 @@ namespace GameTheory.Games.FiveTribes
             }
 
             return 0;
+        }
+
+        /// <summary>
+        /// Creates a new <see cref="AssassinationTable"/>, and updates the specified values.
+        /// </summary>
+        /// <param name="hasProtection"><c>null</c> to keep the existing value, or any other value to update <see cref="HasProtection"/>.</param>
+        /// <param name="killCount"><c>null</c> to keep the existing value, or any other value to update <see cref="KillCount"/>.</param>
+        /// <returns>The new <see cref="AssassinationTable"/>.</returns>
+        public AssassinationTable With(bool? hasProtection = null, int? killCount = null)
+        {
+            return new AssassinationTable(
+                hasProtection ?? this.HasProtection,
+                killCount ?? this.KillCount);
         }
     }
 }

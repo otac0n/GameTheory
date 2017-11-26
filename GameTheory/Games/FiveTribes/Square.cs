@@ -54,25 +54,6 @@ namespace GameTheory.Games.FiveTribes
         /// </summary>
         public Tile Tile { get; }
 
-        /// <summary>
-        /// Creates a new <see cref="Square"/>, and updates the specified values.
-        /// </summary>
-        /// <param name="meeples"><c>null</c> to keep the existing value, or any other value to update <see cref="Meeples"/>.</param>
-        /// <param name="owner"><c>null</c> to keep the existing value, or any other value to update <see cref="Owner"/>.</param>
-        /// <param name="palaces"><c>null</c> to keep the existing value, or any other value to update <see cref="Palaces"/>.</param>
-        /// <param name="palmTrees"><c>null</c> to keep the existing value, or any other value to update <see cref="PalmTrees"/>.</param>
-        /// <param name="tile"><c>null</c> to keep the existing value, or any other value to update <see cref="Tile"/>.</param>
-        /// <returns>The new <see cref="Square"/>.</returns>
-        public Square With(EnumCollection<Meeple> meeples = null, PlayerToken owner = null, int? palaces = null, int? palmTrees = null, Tile tile = null)
-        {
-            return new Square(
-                meeples ?? this.Meeples,
-                owner ?? this.Owner,
-                palaces ?? this.Palaces,
-                palmTrees ?? this.PalmTrees,
-                tile ?? this.Tile);
-        }
-
         /// <inheritdoc/>
         public int CompareTo(Square other)
         {
@@ -104,6 +85,25 @@ namespace GameTheory.Games.FiveTribes
             }
 
             return 0;
+        }
+
+        /// <summary>
+        /// Creates a new <see cref="Square"/>, and updates the specified values.
+        /// </summary>
+        /// <param name="meeples"><c>null</c> to keep the existing value, or any other value to update <see cref="Meeples"/>.</param>
+        /// <param name="owner"><c>null</c> to keep the existing value, or any other value to update <see cref="Owner"/>.</param>
+        /// <param name="palaces"><c>null</c> to keep the existing value, or any other value to update <see cref="Palaces"/>.</param>
+        /// <param name="palmTrees"><c>null</c> to keep the existing value, or any other value to update <see cref="PalmTrees"/>.</param>
+        /// <param name="tile"><c>null</c> to keep the existing value, or any other value to update <see cref="Tile"/>.</param>
+        /// <returns>The new <see cref="Square"/>.</returns>
+        public Square With(EnumCollection<Meeple> meeples = null, PlayerToken owner = null, int? palaces = null, int? palmTrees = null, Tile tile = null)
+        {
+            return new Square(
+                meeples ?? this.Meeples,
+                owner ?? this.Owner,
+                palaces ?? this.Palaces,
+                palmTrees ?? this.PalmTrees,
+                tile ?? this.Tile);
         }
     }
 }

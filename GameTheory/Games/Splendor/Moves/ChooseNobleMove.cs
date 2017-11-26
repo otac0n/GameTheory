@@ -21,10 +21,8 @@ namespace GameTheory.Games.Splendor.Moves
             this.Index = index;
         }
 
-        /// <summary>
-        /// Gets the noble who would visit.
-        /// </summary>
-        public Noble Noble => this.State.Nobles[this.Index];
+        /// <inheritdoc />
+        public override IList<object> FormatTokens => new object[] { "Invite ", this.Noble, " to visit" };
 
         /// <summary>
         /// Gets the index of the noble in the nobles list.
@@ -34,19 +32,10 @@ namespace GameTheory.Games.Splendor.Moves
         /// <inheritdoc />
         public override bool IsDeterministic => true;
 
-        /// <inheritdoc />
-        public override IList<object> FormatTokens => new object[] { "Invite ", this.Noble, " to visit" };
-
-        internal static bool ShouldTransitionToPhase(GameState state)
-        {
-            if (state.Phase == Phase.Play || state.Phase == Phase.Discard)
-            {
-                var bonus = state.GetBonus(state.ActivePlayer);
-                return state.Nobles.Any(noble => noble.RequiredBonuses.Keys.All(k => bonus[k] >= noble.RequiredBonuses[k]));
-            }
-
-            return false;
-        }
+        /// <summary>
+        /// Gets the noble who would visit.
+        /// </summary>
+        public Noble Noble => this.State.Nobles[this.Index];
 
         internal static IEnumerable<Move> GenerateMoves(GameState state)
         {
@@ -59,6 +48,17 @@ namespace GameTheory.Games.Splendor.Moves
                     yield return new ChooseNobleMove(state, i);
                 }
             }
+        }
+
+        internal static bool ShouldTransitionToPhase(GameState state)
+        {
+            if (state.Phase == Phase.Play || state.Phase == Phase.Discard)
+            {
+                var bonus = state.GetBonus(state.ActivePlayer);
+                return state.Nobles.Any(noble => noble.RequiredBonuses.Keys.All(k => bonus[k] >= noble.RequiredBonuses[k]));
+            }
+
+            return false;
         }
 
         internal override GameState Apply(GameState state)

@@ -33,6 +33,16 @@ namespace GameTheory.ConsoleRunner.ConsoleRenderers
         }
 
         /// <summary>
+        /// Creates a <see cref="TextWriter"/> that will invoke <see cref="RenderToken"/> for all interactions.
+        /// </summary>
+        /// <param name="state">The state used to invoke <see cref="RenderToken"/>.</param>
+        /// <returns>A new <see cref="TextWriter"/>.</returns>
+        protected TextWriter MakeRenderTokenWriter(IGameState<TMove> state)
+        {
+            return new ConsoleWriter(this, state);
+        }
+
+        /// <summary>
         /// Renders an atomic token.
         /// </summary>
         /// <param name="state">The context game state.</param>
@@ -58,16 +68,6 @@ namespace GameTheory.ConsoleRunner.ConsoleRenderers
             {
                 Console.Write(token);
             }
-        }
-
-        /// <summary>
-        /// Creates a <see cref="TextWriter"/> that will invoke <see cref="RenderToken"/> for all interactions.
-        /// </summary>
-        /// <param name="state">The state used to invoke <see cref="RenderToken"/>.</param>
-        /// <returns>A new <see cref="TextWriter"/>.</returns>
-        protected TextWriter MakeRenderTokenWriter(IGameState<TMove> state)
-        {
-            return new ConsoleWriter(this, state);
         }
 
         private class ConsoleWriter : TextWriter

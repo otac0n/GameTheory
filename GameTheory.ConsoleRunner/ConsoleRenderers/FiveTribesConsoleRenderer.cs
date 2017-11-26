@@ -29,15 +29,19 @@ namespace GameTheory.ConsoleRunner.ConsoleRenderers
                     case Meeple.Vizier:
                         color = ConsoleColor.Yellow;
                         break;
+
                     case Meeple.Assassin:
                         color = ConsoleColor.Red;
                         break;
+
                     case Meeple.Merchant:
                         color = ConsoleColor.Green;
                         break;
+
                     case Meeple.Builder:
                         color = ConsoleColor.Blue;
                         break;
+
                     case Meeple.Elder:
                         color = ConsoleColor.White;
                         break;

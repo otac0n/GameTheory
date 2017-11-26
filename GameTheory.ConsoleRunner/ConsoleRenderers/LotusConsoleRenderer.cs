@@ -27,15 +27,19 @@ namespace GameTheory.ConsoleRunner.ConsoleRenderers
                     case FlowerType.Iris:
                         color = ConsoleColor.DarkMagenta;
                         break;
+
                     case FlowerType.Primrose:
                         color = ConsoleColor.Yellow;
                         break;
+
                     case FlowerType.CherryBlossom:
                         color = ConsoleColor.Red;
                         break;
+
                     case FlowerType.Lily:
                         color = ConsoleColor.White;
                         break;
+
                     case FlowerType.Lotus:
                         color = ConsoleColor.Magenta;
                         break;

@@ -23,13 +23,13 @@ namespace GameTheory.Games.TwentyFortyEight
         }
 
         /// <inheritdoc/>
-        public PlayerToken PlayerToken => this.playerToken;
+        public abstract IList<object> FormatTokens { get; }
 
         /// <inheritdoc/>
         public abstract bool IsDeterministic { get; }
 
         /// <inheritdoc/>
-        public abstract IList<object> FormatTokens { get; }
+        public PlayerToken PlayerToken => this.playerToken;
 
         /// <summary>
         /// Gets the <see cref="GameState"/> that this move is based on.

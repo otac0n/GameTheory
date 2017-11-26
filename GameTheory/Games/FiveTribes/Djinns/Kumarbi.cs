@@ -76,6 +76,18 @@ namespace GameTheory.Games.FiveTribes.Djinns
                 this.paid = paid;
             }
 
+            public override int CompareTo(InterstitialState other)
+            {
+                if (other is Bidding b)
+                {
+                    return this.paid.CompareTo(b.paid);
+                }
+                else
+                {
+                    return base.CompareTo(other);
+                }
+            }
+
             public override IEnumerable<Move> GenerateMoves(GameState state)
             {
                 if (this.paid > state.TurnOrderTrack.LastIndexOf(null) - 2)
@@ -95,18 +107,6 @@ namespace GameTheory.Games.FiveTribes.Djinns
 
                         yield return new BidMove(state, j, turnOrderTrackCosts[j]);
                     }
-                }
-            }
-
-            public override int CompareTo(InterstitialState other)
-            {
-                if (other is Bidding b)
-                {
-                    return this.paid.CompareTo(b.paid);
-                }
-                else
-                {
-                    return base.CompareTo(other);
                 }
             }
         }

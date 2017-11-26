@@ -21,16 +21,16 @@ namespace GameTheory.Games.Splendor.Moves
             this.Tokens = tokens;
         }
 
-        /// <summary>
-        /// Gets the tokens to be taken.
-        /// </summary>
-        public EnumCollection<Token> Tokens { get; }
+        /// <inheritdoc />
+        public override IList<object> FormatTokens => new object[] { "Take ", this.Tokens };
 
         /// <inheritdoc />
         public override bool IsDeterministic => true;
 
-        /// <inheritdoc />
-        public override IList<object> FormatTokens => new object[] { "Take ", this.Tokens };
+        /// <summary>
+        /// Gets the tokens to be taken.
+        /// </summary>
+        public EnumCollection<Token> Tokens { get; }
 
         internal static IEnumerable<Move> GenerateMoves(GameState state)
         {

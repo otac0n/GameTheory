@@ -30,16 +30,16 @@ namespace GameTheory.Games.FiveTribes
             this.PlayerToken = playerToken ?? throw new ArgumentNullException(nameof(playerToken));
         }
 
-        /// <summary>
-        /// Gets the player who may perform this move.
-        /// </summary>
-        public PlayerToken PlayerToken { get; }
+        /// <inheritdoc />
+        public abstract IList<object> FormatTokens { get; }
 
         /// <inheritdoc />
         public abstract bool IsDeterministic { get; }
 
-        /// <inheritdoc />
-        public abstract IList<object> FormatTokens { get; }
+        /// <summary>
+        /// Gets the player who may perform this move.
+        /// </summary>
+        public PlayerToken PlayerToken { get; }
 
         internal GameState State { get; }
 

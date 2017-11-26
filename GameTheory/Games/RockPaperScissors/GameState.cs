@@ -12,14 +12,14 @@ namespace GameTheory.Games.RockPaperScissors
     public class GameState : NormalFormGame.GameState<string>
     {
         /// <summary>
-        /// A move of "rock".
-        /// </summary>
-        public const string Rock = "Rock";
-
-        /// <summary>
         /// A move of "paper".
         /// </summary>
         public const string Paper = "Paper";
+
+        /// <summary>
+        /// A move of "rock".
+        /// </summary>
+        public const string Rock = "Rock";
 
         /// <summary>
         /// A move of "scissors".

@@ -19,10 +19,10 @@ namespace GameTheory.Games.FiveTribes.Moves
         }
 
         /// <inheritdoc />
-        public override bool IsDeterministic => true;
+        public override IList<object> FormatTokens => new object[] { "Double the amout of GCs your Builders get this turn" };
 
         /// <inheritdoc />
-        public override IList<object> FormatTokens => new object[] { "Double the amout of GCs your Builders get this turn" };
+        public override bool IsDeterministic => true;
 
         internal override GameState Apply(GameState state)
         {

@@ -26,11 +26,6 @@ namespace GameTheory.Catalogs
         }
 
         /// <summary>
-        /// Gets the type of the player.
-        /// </summary>
-        public Type PlayerType { get; }
-
-        /// <summary>
         /// Gets the type used for moves.
         /// </summary>
         public Type MoveType { get; }
@@ -39,6 +34,11 @@ namespace GameTheory.Catalogs
         /// Gets the name of the player.
         /// </summary>
         public string Name { get; }
+
+        /// <summary>
+        /// Gets the type of the player.
+        /// </summary>
+        public Type PlayerType { get; }
 
         /// <inheritdoc />
         public override string ToString() => this.Name;

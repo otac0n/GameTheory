@@ -27,18 +27,23 @@ namespace GameTheory.ConsoleRunner.ConsoleRenderers
                     case Token.Emerald:
                         color = ConsoleColor.Green;
                         break;
+
                     case Token.Diamond:
                         color = ConsoleColor.White;
                         break;
+
                     case Token.Sapphire:
                         color = ConsoleColor.Blue;
                         break;
+
                     case Token.Onyx:
                         color = ConsoleColor.DarkGray;
                         break;
+
                     case Token.Ruby:
                         color = ConsoleColor.Red;
                         break;
+
                     case Token.GoldJoker:
                         color = ConsoleColor.Yellow;
                         break;

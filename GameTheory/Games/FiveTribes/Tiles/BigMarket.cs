@@ -64,6 +64,18 @@ namespace GameTheory.Games.FiveTribes.Tiles
                 this.remaining = remaining;
             }
 
+            public override int CompareTo(InterstitialState other)
+            {
+                if (other is ChoosingResource c)
+                {
+                    return this.remaining.CompareTo(c.remaining);
+                }
+                else
+                {
+                    return base.CompareTo(other);
+                }
+            }
+
             public override IEnumerable<Move> GenerateMoves(GameState state)
             {
                 var available = Math.Min(FirstN - (Resources - this.remaining), state.VisibleResources.Count);
@@ -86,18 +98,6 @@ namespace GameTheory.Games.FiveTribes.Tiles
                 if (this.remaining < Resources)
                 {
                     yield return new ChangePhaseMove(state, "Skip remaining resources", Phase.MerchandiseSale);
-                }
-            }
-
-            public override int CompareTo(InterstitialState other)
-            {
-                if (other is ChoosingResource c)
-                {
-                    return this.remaining.CompareTo(c.remaining);
-                }
-                else
-                {
-                    return base.CompareTo(other);
                 }
             }
         }

@@ -50,8 +50,8 @@ namespace GameTheory.Games.FiveTribes
         private static readonly EnumCollection<Meeple> Meeples;
         private static readonly EnumCollection<Resource> Resources;
         private readonly ImmutableDictionary<string, string> additionalState;
-        private readonly Lazy<ImmutableList<Move>> subsequentMoves;
         private readonly InterstitialState interstitialState;
+        private readonly Lazy<ImmutableList<Move>> subsequentMoves;
 
         static GameState()
         {
@@ -266,8 +266,6 @@ namespace GameTheory.Games.FiveTribes
         public bool HasSubsequentMoves =>
             this.interstitialState != null && !this.subsequentMoves.Value.IsEmpty;
 
-        IReadOnlyList<PlayerToken> IGameState<Move>.Players => this.Players;
-
         /// <summary>
         /// Gets the <see cref="Meeple">Meeples</see> in the active player's hand.
         /// </summary>
@@ -287,6 +285,8 @@ namespace GameTheory.Games.FiveTribes
         /// Gets the current <see cref="Phase"/>.
         /// </summary>
         public Phase Phase { get; }
+
+        IReadOnlyList<PlayerToken> IGameState<Move>.Players => this.Players;
 
         /// <summary>
         /// Gets the list of players.
@@ -381,288 +381,6 @@ namespace GameTheory.Games.FiveTribes
             }
 
             return suits.Sum(s => SuitValues[s]);
-        }
-
-        /// <summary>
-        /// Finds the index of the highest non-null value in the <see cref="TurnOrderTrack"/>.
-        /// </summary>
-        /// <returns>The requested index.</returns>
-        public int FindHighestBidIndex()
-        {
-            var nextIndex = this.TurnOrderTrack.Count - 1;
-            while (nextIndex >= 0 && this.TurnOrderTrack[nextIndex] == null)
-            {
-                nextIndex--;
-            }
-
-            return nextIndex;
-        }
-
-        /// <inheritdoc />
-        public IReadOnlyList<Move> GetAvailableMoves()
-        {
-            var moves = new List<Move>();
-
-            if (this.interstitialState != null)
-            {
-                moves.AddRange(this.subsequentMoves.Value);
-            }
-            else
-            {
-                switch (this.Phase)
-                {
-                    case Phase.Bid:
-                        moves.AddRange(BidMove.GenerateMoves(this));
-                        break;
-
-                    case Phase.MoveTurnMarker:
-                        moves.AddRange(MoveTurnMarkerMove.GenerateMoves(this));
-                        break;
-
-                    case Phase.PickUpMeeples:
-                        moves.AddRange(PickUpMeeplesMove.GenerateMoves(this));
-                        break;
-
-                    case Phase.MoveMeeples:
-                        moves.AddRange(DropMeepleMove.GenerateMoves(this));
-                        break;
-
-                    case Phase.TileControlCheck:
-                        moves.AddRange(PlaceCamelMove.GenerateMoves(this));
-                        break;
-
-                    case Phase.TribesAction:
-                        moves.AddRange(this.GetTribesActionMoves());
-                        break;
-
-                    case Phase.TileAction:
-                        moves.AddRange(Tile.GenerateMoves(this));
-                        break;
-
-                    case Phase.MerchandiseSale:
-                        moves.AddRange(EndTurnMove.GenerateMoves(this));
-                        moves.AddRange(SellMerchandiseMove.GenerateMoves(this));
-                        break;
-                }
-
-                foreach (var playerToken in this.Players)
-                {
-                    foreach (var djinn in this.Inventory[playerToken].Djinns)
-                    {
-                        moves.AddRange(djinn.GetMoves(this));
-                    }
-                }
-            }
-
-            var originalMoves = moves.ToImmutableList();
-            foreach (var playerToken in this.Players)
-            {
-                foreach (var djinn in this.Inventory[playerToken].Djinns)
-                {
-                    moves.AddRange(djinn.GetAdditionalMoves(this, originalMoves));
-                }
-            }
-
-            return moves.ToImmutableList();
-        }
-
-        /// <summary>
-        /// Gets the score, in Victory Points (VP), of the specified player.
-        /// </summary>
-        /// <param name="playerToken">The player whose score should be calculated.</param>
-        /// <returns>The specified player's score.</returns>
-        public int GetScore(PlayerToken playerToken)
-        {
-            var inventory = this.Inventory[playerToken];
-            var scoreTable = this.ScoreTables[playerToken];
-            var owned = this.Sultanate.Where(b => b.Owner == playerToken).ToList();
-            var viziers = inventory.Meeples.Count(m => m == Meeple.Vizier);
-            var playersWithFewerViziers = this.Inventory.Values.Count(i => i.Meeples.Count(m => m == Meeple.Vizier) < viziers);
-            return inventory.GoldCoins +
-                   ScoreResources(inventory.Resources) +
-                   viziers * scoreTable.VizierValue +
-                   playersWithFewerViziers * 10 +
-                   inventory.Meeples.Count(m => m == Meeple.Elder) * scoreTable.ElderValue +
-                   owned.Sum(s => s.Tile.Value + s.Palaces * scoreTable.PalaceValue + s.PalmTrees * scoreTable.PalmTreeValue) +
-                   inventory.Djinns.Sum(d => d.Value);
-        }
-
-        /// <inheritdoc />
-        public IReadOnlyCollection<PlayerToken> GetWinners()
-        {
-            if (this.Phase != Phase.End)
-            {
-                return ImmutableList<PlayerToken>.Empty;
-            }
-
-            return this.Players
-                .GroupBy(p => this.GetScore(p))
-                .OrderByDescending(g => g.Key)
-                .First()
-                .ToImmutableList();
-        }
-
-        /// <inheritdoc />
-        IGameState<Move> IGameState<Move>.MakeMove(Move move)
-        {
-            return this.MakeMove(move);
-        }
-
-        /// <inheritdoc />
-        public IGameState<Move> GetView(PlayerToken playerToken) => this;
-
-        /// <summary>
-        /// Gets a value indicating whether or not the specified player has any Camels left.
-        /// </summary>
-        /// <param name="playerToken">The player whose camel count should be checked against the <see cref="CamelLimit"/>.</param>
-        /// <returns><c>true</c> if the player has any remaining camels, <c>false</c> otherwise.</returns>
-        public bool IsPlayerUnderCamelLimit(PlayerToken playerToken)
-        {
-            return this.Sultanate.Count(s => s.Owner == playerToken) < this.CamelLimit;
-        }
-
-        /// <summary>
-        /// Applies the move to the current game state.
-        /// </summary>
-        /// <param name="move">The <see cref="Move"/> to apply.</param>
-        /// <returns>The updated <see cref="GameState"/>.</returns>
-        public GameState MakeMove(Move move)
-        {
-            if (move == null)
-            {
-                throw new ArgumentNullException(nameof(move));
-            }
-
-            if (this.CompareTo(move.State) != 0)
-            {
-                throw new InvalidOperationException();
-            }
-
-            var newState = move.Apply(this);
-            return HandleTransition(this, newState);
-        }
-
-        /// <inheritdoc />
-        public IEnumerable<IWeighted<IGameState<Move>>> GetOutcomes(Move move)
-        {
-            if (move.IsDeterministic)
-            {
-                yield return Weighted.Create(this.MakeMove(move), 1);
-                yield break;
-            }
-
-            foreach (var outcome in move.GetOutcomes(this))
-            {
-                yield return outcome;
-            }
-        }
-
-        /// <summary>
-        /// Creates a new <see cref="GameState"/>, and updates the specified values.
-        /// </summary>
-        /// <param name="assassinationTables"><c>null</c> to keep the existing value, or any other value to update <see cref="AssassinationTables"/>.</param>
-        /// <param name="bag"><c>null</c> to keep the existing value, or any other value to update <see cref="Bag"/>.</param>
-        /// <param name="bidOrderTrack"><c>null</c> to keep the existing value, or any other value to update <see cref="BidOrderTrack"/>.</param>
-        /// <param name="djinnDiscards"><c>null</c> to keep the existing value, or any other value to update <see cref="DjinnDiscards"/>.</param>
-        /// <param name="djinnPile"><c>null</c> to keep the existing value, or any other value to update <see cref="DjinnPile"/>.</param>
-        /// <param name="inHand"><c>null</c> to keep the existing value, or any other value to update <see cref="InHand"/>.</param>
-        /// <param name="inventory"><c>null</c> to keep the existing value, or any other value to update <see cref="Inventory"/>.</param>
-        /// <param name="lastPoint"><c>null</c> to keep the existing value, or any other value to update <see cref="LastPoint"/>.</param>
-        /// <param name="phase"><c>null</c> to keep the existing value, or any other value to update <see cref="Phase"/>.</param>
-        /// <param name="players"><c>null</c> to keep the existing value, or any other value to update <see cref="Players"/>.</param>
-        /// <param name="previousPoint"><c>null</c> to keep the existing value, or any other value to update <see cref="PreviousPoint"/>.</param>
-        /// <param name="resourceDiscards"><c>null</c> to keep the existing value, or any other value to update <see cref="ResourceDiscards"/>.</param>
-        /// <param name="resourcePile"><c>null</c> to keep the existing value, or any other value to update <see cref="ResourcePile"/>.</param>
-        /// <param name="scoreTables"><c>null</c> to keep the existing value, or any other value to update <see cref="ScoreTables"/>.</param>
-        /// <param name="sultanate"><c>null</c> to keep the existing value, or any other value to update <see cref="Sultanate"/>.</param>
-        /// <param name="turnOrderTrack"><c>null</c> to keep the existing value, or any other value to update <see cref="TurnOrderTrack"/>.</param>
-        /// <param name="visibleDjinns"><c>null</c> to keep the existing value, or any other value to update <see cref="VisibleDjinns"/>.</param>
-        /// <param name="visibleResources"><c>null</c> to keep the existing value, or any other value to update <see cref="VisibleResources"/>.</param>
-        /// <returns>The new <see cref="GameState"/>.</returns>
-        public GameState With(ImmutableDictionary<PlayerToken, AssassinationTable> assassinationTables = null, EnumCollection<Meeple> bag = null, ImmutableQueue<PlayerToken> bidOrderTrack = null, ImmutableList<Djinn> djinnDiscards = null, ImmutableList<Djinn> djinnPile = null, EnumCollection<Meeple> inHand = null, ImmutableDictionary<PlayerToken, Inventory> inventory = null, Point? lastPoint = null, Phase? phase = null, ImmutableList<PlayerToken> players = null, Point? previousPoint = null, EnumCollection<Resource> resourceDiscards = null, EnumCollection<Resource> resourcePile = null, ImmutableDictionary<PlayerToken, ScoreTable> scoreTables = null, ImmutableList<Square> sultanate = null, ImmutableList<PlayerToken> turnOrderTrack = null, ImmutableList<Djinn> visibleDjinns = null, ImmutableList<Resource> visibleResources = null)
-        {
-            return new GameState(
-                this.additionalState,
-                assassinationTables ?? this.AssassinationTables,
-                bag ?? this.Bag,
-                bidOrderTrack ?? this.BidOrderTrack,
-                djinnDiscards ?? this.DjinnDiscards,
-                djinnPile ?? this.DjinnPile,
-                inHand ?? this.InHand,
-                inventory ?? this.Inventory,
-                lastPoint ?? this.LastPoint,
-                phase ?? this.Phase,
-                players ?? this.Players,
-                previousPoint ?? this.PreviousPoint,
-                resourceDiscards ?? this.ResourceDiscards,
-                resourcePile ?? this.ResourcePile,
-                scoreTables ?? this.ScoreTables,
-                null,
-                sultanate ?? this.Sultanate,
-                turnOrderTrack ?? this.TurnOrderTrack,
-                visibleDjinns ?? this.VisibleDjinns,
-                visibleResources ?? this.VisibleResources);
-        }
-
-        /// <summary>
-        /// Creates a new <see cref="GameState"/> with the specified subsequent <see cref="Move">Moves</see>.
-        /// </summary>
-        /// <param name="interstitialState">An <see cref="InterstitialState"/> that contains moves that will be performed.</param>
-        /// <returns>The new <see cref="GameState"/>.</returns>
-        public GameState WithInterstitialState(InterstitialState interstitialState)
-        {
-            return new GameState(
-                this.additionalState,
-                this.AssassinationTables,
-                this.Bag,
-                this.BidOrderTrack,
-                this.DjinnDiscards,
-                this.DjinnPile,
-                this.InHand,
-                this.Inventory,
-                this.LastPoint,
-                this.Phase,
-                this.Players,
-                this.PreviousPoint,
-                this.ResourceDiscards,
-                this.ResourcePile,
-                this.ScoreTables,
-                interstitialState,
-                this.Sultanate,
-                this.TurnOrderTrack,
-                this.VisibleDjinns,
-                this.VisibleResources);
-        }
-
-        /// <summary>
-        /// Creates a new <see cref="GameState"/>, and updates the specified state value.
-        /// </summary>
-        /// <param name="key">The state key.</param>
-        /// <param name="value">The state value.</param>
-        /// <returns>The new <see cref="GameState"/>.</returns>
-        public GameState WithState(string key, string value)
-        {
-            return new GameState(
-                value == null ? this.additionalState.Remove(key) : this.additionalState.SetItem(key, value),
-                this.AssassinationTables,
-                this.Bag,
-                this.BidOrderTrack,
-                this.DjinnDiscards,
-                this.DjinnPile,
-                this.InHand,
-                this.Inventory,
-                this.LastPoint,
-                this.Phase,
-                this.Players,
-                this.PreviousPoint,
-                this.ResourceDiscards,
-                this.ResourcePile,
-                this.ScoreTables,
-                null,
-                this.Sultanate,
-                this.TurnOrderTrack,
-                this.VisibleDjinns,
-                this.VisibleResources);
         }
 
         /// <inheritdoc/>
@@ -884,6 +602,288 @@ namespace GameTheory.Games.FiveTribes
             }
 
             return 0;
+        }
+
+        /// <summary>
+        /// Finds the index of the highest non-null value in the <see cref="TurnOrderTrack"/>.
+        /// </summary>
+        /// <returns>The requested index.</returns>
+        public int FindHighestBidIndex()
+        {
+            var nextIndex = this.TurnOrderTrack.Count - 1;
+            while (nextIndex >= 0 && this.TurnOrderTrack[nextIndex] == null)
+            {
+                nextIndex--;
+            }
+
+            return nextIndex;
+        }
+
+        /// <inheritdoc />
+        public IReadOnlyList<Move> GetAvailableMoves()
+        {
+            var moves = new List<Move>();
+
+            if (this.interstitialState != null)
+            {
+                moves.AddRange(this.subsequentMoves.Value);
+            }
+            else
+            {
+                switch (this.Phase)
+                {
+                    case Phase.Bid:
+                        moves.AddRange(BidMove.GenerateMoves(this));
+                        break;
+
+                    case Phase.MoveTurnMarker:
+                        moves.AddRange(MoveTurnMarkerMove.GenerateMoves(this));
+                        break;
+
+                    case Phase.PickUpMeeples:
+                        moves.AddRange(PickUpMeeplesMove.GenerateMoves(this));
+                        break;
+
+                    case Phase.MoveMeeples:
+                        moves.AddRange(DropMeepleMove.GenerateMoves(this));
+                        break;
+
+                    case Phase.TileControlCheck:
+                        moves.AddRange(PlaceCamelMove.GenerateMoves(this));
+                        break;
+
+                    case Phase.TribesAction:
+                        moves.AddRange(this.GetTribesActionMoves());
+                        break;
+
+                    case Phase.TileAction:
+                        moves.AddRange(Tile.GenerateMoves(this));
+                        break;
+
+                    case Phase.MerchandiseSale:
+                        moves.AddRange(EndTurnMove.GenerateMoves(this));
+                        moves.AddRange(SellMerchandiseMove.GenerateMoves(this));
+                        break;
+                }
+
+                foreach (var playerToken in this.Players)
+                {
+                    foreach (var djinn in this.Inventory[playerToken].Djinns)
+                    {
+                        moves.AddRange(djinn.GetMoves(this));
+                    }
+                }
+            }
+
+            var originalMoves = moves.ToImmutableList();
+            foreach (var playerToken in this.Players)
+            {
+                foreach (var djinn in this.Inventory[playerToken].Djinns)
+                {
+                    moves.AddRange(djinn.GetAdditionalMoves(this, originalMoves));
+                }
+            }
+
+            return moves.ToImmutableList();
+        }
+
+        /// <inheritdoc />
+        public IEnumerable<IWeighted<IGameState<Move>>> GetOutcomes(Move move)
+        {
+            if (move.IsDeterministic)
+            {
+                yield return Weighted.Create(this.MakeMove(move), 1);
+                yield break;
+            }
+
+            foreach (var outcome in move.GetOutcomes(this))
+            {
+                yield return outcome;
+            }
+        }
+
+        /// <summary>
+        /// Gets the score, in Victory Points (VP), of the specified player.
+        /// </summary>
+        /// <param name="playerToken">The player whose score should be calculated.</param>
+        /// <returns>The specified player's score.</returns>
+        public int GetScore(PlayerToken playerToken)
+        {
+            var inventory = this.Inventory[playerToken];
+            var scoreTable = this.ScoreTables[playerToken];
+            var owned = this.Sultanate.Where(b => b.Owner == playerToken).ToList();
+            var viziers = inventory.Meeples.Count(m => m == Meeple.Vizier);
+            var playersWithFewerViziers = this.Inventory.Values.Count(i => i.Meeples.Count(m => m == Meeple.Vizier) < viziers);
+            return inventory.GoldCoins +
+                   ScoreResources(inventory.Resources) +
+                   viziers * scoreTable.VizierValue +
+                   playersWithFewerViziers * 10 +
+                   inventory.Meeples.Count(m => m == Meeple.Elder) * scoreTable.ElderValue +
+                   owned.Sum(s => s.Tile.Value + s.Palaces * scoreTable.PalaceValue + s.PalmTrees * scoreTable.PalmTreeValue) +
+                   inventory.Djinns.Sum(d => d.Value);
+        }
+
+        /// <inheritdoc />
+        public IGameState<Move> GetView(PlayerToken playerToken) => this;
+
+        /// <inheritdoc />
+        public IReadOnlyCollection<PlayerToken> GetWinners()
+        {
+            if (this.Phase != Phase.End)
+            {
+                return ImmutableList<PlayerToken>.Empty;
+            }
+
+            return this.Players
+                .GroupBy(p => this.GetScore(p))
+                .OrderByDescending(g => g.Key)
+                .First()
+                .ToImmutableList();
+        }
+
+        /// <summary>
+        /// Gets a value indicating whether or not the specified player has any Camels left.
+        /// </summary>
+        /// <param name="playerToken">The player whose camel count should be checked against the <see cref="CamelLimit"/>.</param>
+        /// <returns><c>true</c> if the player has any remaining camels, <c>false</c> otherwise.</returns>
+        public bool IsPlayerUnderCamelLimit(PlayerToken playerToken)
+        {
+            return this.Sultanate.Count(s => s.Owner == playerToken) < this.CamelLimit;
+        }
+
+        /// <inheritdoc />
+        IGameState<Move> IGameState<Move>.MakeMove(Move move)
+        {
+            return this.MakeMove(move);
+        }
+
+        /// <summary>
+        /// Applies the move to the current game state.
+        /// </summary>
+        /// <param name="move">The <see cref="Move"/> to apply.</param>
+        /// <returns>The updated <see cref="GameState"/>.</returns>
+        public GameState MakeMove(Move move)
+        {
+            if (move == null)
+            {
+                throw new ArgumentNullException(nameof(move));
+            }
+
+            if (this.CompareTo(move.State) != 0)
+            {
+                throw new InvalidOperationException();
+            }
+
+            var newState = move.Apply(this);
+            return HandleTransition(this, newState);
+        }
+
+        /// <summary>
+        /// Creates a new <see cref="GameState"/>, and updates the specified values.
+        /// </summary>
+        /// <param name="assassinationTables"><c>null</c> to keep the existing value, or any other value to update <see cref="AssassinationTables"/>.</param>
+        /// <param name="bag"><c>null</c> to keep the existing value, or any other value to update <see cref="Bag"/>.</param>
+        /// <param name="bidOrderTrack"><c>null</c> to keep the existing value, or any other value to update <see cref="BidOrderTrack"/>.</param>
+        /// <param name="djinnDiscards"><c>null</c> to keep the existing value, or any other value to update <see cref="DjinnDiscards"/>.</param>
+        /// <param name="djinnPile"><c>null</c> to keep the existing value, or any other value to update <see cref="DjinnPile"/>.</param>
+        /// <param name="inHand"><c>null</c> to keep the existing value, or any other value to update <see cref="InHand"/>.</param>
+        /// <param name="inventory"><c>null</c> to keep the existing value, or any other value to update <see cref="Inventory"/>.</param>
+        /// <param name="lastPoint"><c>null</c> to keep the existing value, or any other value to update <see cref="LastPoint"/>.</param>
+        /// <param name="phase"><c>null</c> to keep the existing value, or any other value to update <see cref="Phase"/>.</param>
+        /// <param name="players"><c>null</c> to keep the existing value, or any other value to update <see cref="Players"/>.</param>
+        /// <param name="previousPoint"><c>null</c> to keep the existing value, or any other value to update <see cref="PreviousPoint"/>.</param>
+        /// <param name="resourceDiscards"><c>null</c> to keep the existing value, or any other value to update <see cref="ResourceDiscards"/>.</param>
+        /// <param name="resourcePile"><c>null</c> to keep the existing value, or any other value to update <see cref="ResourcePile"/>.</param>
+        /// <param name="scoreTables"><c>null</c> to keep the existing value, or any other value to update <see cref="ScoreTables"/>.</param>
+        /// <param name="sultanate"><c>null</c> to keep the existing value, or any other value to update <see cref="Sultanate"/>.</param>
+        /// <param name="turnOrderTrack"><c>null</c> to keep the existing value, or any other value to update <see cref="TurnOrderTrack"/>.</param>
+        /// <param name="visibleDjinns"><c>null</c> to keep the existing value, or any other value to update <see cref="VisibleDjinns"/>.</param>
+        /// <param name="visibleResources"><c>null</c> to keep the existing value, or any other value to update <see cref="VisibleResources"/>.</param>
+        /// <returns>The new <see cref="GameState"/>.</returns>
+        public GameState With(ImmutableDictionary<PlayerToken, AssassinationTable> assassinationTables = null, EnumCollection<Meeple> bag = null, ImmutableQueue<PlayerToken> bidOrderTrack = null, ImmutableList<Djinn> djinnDiscards = null, ImmutableList<Djinn> djinnPile = null, EnumCollection<Meeple> inHand = null, ImmutableDictionary<PlayerToken, Inventory> inventory = null, Point? lastPoint = null, Phase? phase = null, ImmutableList<PlayerToken> players = null, Point? previousPoint = null, EnumCollection<Resource> resourceDiscards = null, EnumCollection<Resource> resourcePile = null, ImmutableDictionary<PlayerToken, ScoreTable> scoreTables = null, ImmutableList<Square> sultanate = null, ImmutableList<PlayerToken> turnOrderTrack = null, ImmutableList<Djinn> visibleDjinns = null, ImmutableList<Resource> visibleResources = null)
+        {
+            return new GameState(
+                this.additionalState,
+                assassinationTables ?? this.AssassinationTables,
+                bag ?? this.Bag,
+                bidOrderTrack ?? this.BidOrderTrack,
+                djinnDiscards ?? this.DjinnDiscards,
+                djinnPile ?? this.DjinnPile,
+                inHand ?? this.InHand,
+                inventory ?? this.Inventory,
+                lastPoint ?? this.LastPoint,
+                phase ?? this.Phase,
+                players ?? this.Players,
+                previousPoint ?? this.PreviousPoint,
+                resourceDiscards ?? this.ResourceDiscards,
+                resourcePile ?? this.ResourcePile,
+                scoreTables ?? this.ScoreTables,
+                null,
+                sultanate ?? this.Sultanate,
+                turnOrderTrack ?? this.TurnOrderTrack,
+                visibleDjinns ?? this.VisibleDjinns,
+                visibleResources ?? this.VisibleResources);
+        }
+
+        /// <summary>
+        /// Creates a new <see cref="GameState"/> with the specified subsequent <see cref="Move">Moves</see>.
+        /// </summary>
+        /// <param name="interstitialState">An <see cref="InterstitialState"/> that contains moves that will be performed.</param>
+        /// <returns>The new <see cref="GameState"/>.</returns>
+        public GameState WithInterstitialState(InterstitialState interstitialState)
+        {
+            return new GameState(
+                this.additionalState,
+                this.AssassinationTables,
+                this.Bag,
+                this.BidOrderTrack,
+                this.DjinnDiscards,
+                this.DjinnPile,
+                this.InHand,
+                this.Inventory,
+                this.LastPoint,
+                this.Phase,
+                this.Players,
+                this.PreviousPoint,
+                this.ResourceDiscards,
+                this.ResourcePile,
+                this.ScoreTables,
+                interstitialState,
+                this.Sultanate,
+                this.TurnOrderTrack,
+                this.VisibleDjinns,
+                this.VisibleResources);
+        }
+
+        /// <summary>
+        /// Creates a new <see cref="GameState"/>, and updates the specified state value.
+        /// </summary>
+        /// <param name="key">The state key.</param>
+        /// <param name="value">The state value.</param>
+        /// <returns>The new <see cref="GameState"/>.</returns>
+        public GameState WithState(string key, string value)
+        {
+            return new GameState(
+                value == null ? this.additionalState.Remove(key) : this.additionalState.SetItem(key, value),
+                this.AssassinationTables,
+                this.Bag,
+                this.BidOrderTrack,
+                this.DjinnDiscards,
+                this.DjinnPile,
+                this.InHand,
+                this.Inventory,
+                this.LastPoint,
+                this.Phase,
+                this.Players,
+                this.PreviousPoint,
+                this.ResourceDiscards,
+                this.ResourcePile,
+                this.ScoreTables,
+                null,
+                this.Sultanate,
+                this.TurnOrderTrack,
+                this.VisibleDjinns,
+                this.VisibleResources);
         }
 
         private static IEnumerable<Move> GetAssassinationMoves(GameState state, int slaves = 0)

@@ -21,15 +21,15 @@ namespace GameTheory.Games.CenturySpiceRoad.Moves
         }
 
         /// <inheritdoc />
+        public override IList<object> FormatTokens => new object[] { "Pay ", this.Spice };
+
+        /// <inheritdoc />
         public override bool IsDeterministic => true;
 
         /// <summary>
         /// Gets the spice to pay.
         /// </summary>
         public Spice Spice { get; }
-
-        /// <inheritdoc />
-        public override IList<object> FormatTokens => new object[] { "Pay ", this.Spice };
 
         internal static IEnumerable<Move> GenerateMoves(GameState state)
         {

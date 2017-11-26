@@ -49,6 +49,9 @@ namespace GameTheory.Games.FiveTribes
             this.index = (byte)(Sultanate.Width * y + x);
         }
 
+        /// <inheritdoc/>
+        public IList<object> FormatTokens => new object[] { "(", this.X, ", ", this.Y, ")" };
+
         /// <summary>
         /// Gets the x coordinate of the <see cref="Point"/>.
         /// </summary>
@@ -60,9 +63,6 @@ namespace GameTheory.Games.FiveTribes
         /// </summary>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Y", Justification = "Y is meaningful in the context of coordinates.")]
         public int Y => this.index / Sultanate.Width;
-
-        /// <inheritdoc/>
-        public IList<object> FormatTokens => new object[] { "(", this.X, ", ", this.Y, ")" };
 
         /// <summary>
         /// Converts the specified <see cref="Point"/> object to an index.
@@ -107,21 +107,6 @@ namespace GameTheory.Games.FiveTribes
         }
 
         /// <inheritdoc />
-        public override bool Equals(object obj)
-        {
-            return obj is Point && ((Point)obj).index == this.index;
-        }
-
-        /// <inheritdoc />
-        public override int GetHashCode()
-        {
-            return this.index;
-        }
-
-        /// <inheritdoc />
-        public override string ToString() => string.Concat(this.FlattenFormatTokens());
-
-        /// <inheritdoc />
         public int CompareTo(Point other)
         {
             if (other == this)
@@ -135,5 +120,20 @@ namespace GameTheory.Games.FiveTribes
 
             return this.index.CompareTo(other.index);
         }
+
+        /// <inheritdoc />
+        public override bool Equals(object obj)
+        {
+            return obj is Point && ((Point)obj).index == this.index;
+        }
+
+        /// <inheritdoc />
+        public override int GetHashCode()
+        {
+            return this.index;
+        }
+
+        /// <inheritdoc />
+        public override string ToString() => string.Concat(this.FlattenFormatTokens());
     }
 }

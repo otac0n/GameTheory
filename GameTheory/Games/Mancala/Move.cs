@@ -28,16 +28,16 @@ namespace GameTheory.Games.Mancala
         /// </summary>
         public int Bin { get; }
 
-        /// <summary>
-        /// Gets the player who may perform this move.
-        /// </summary>
-        public PlayerToken PlayerToken { get; }
+        /// <inheritdoc />
+        public IList<object> FormatTokens => new object[] { "Pick up ", this.State.Board[this.Bin], " stones from (", this.Bin, ")" };
 
         /// <inheritdoc />
         public bool IsDeterministic => true;
 
-        /// <inheritdoc />
-        public IList<object> FormatTokens => new object[] { "Pick up ", this.State.Board[this.Bin], " stones from (", this.Bin, ")" };
+        /// <summary>
+        /// Gets the player who may perform this move.
+        /// </summary>
+        public PlayerToken PlayerToken { get; }
 
         internal GameState State { get; }
 

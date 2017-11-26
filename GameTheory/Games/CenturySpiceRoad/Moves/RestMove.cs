@@ -20,10 +20,10 @@ namespace GameTheory.Games.CenturySpiceRoad.Moves
         }
 
         /// <inheritdoc />
-        public override bool IsDeterministic => true;
+        public override IList<object> FormatTokens => new object[] { "Rest" };
 
         /// <inheritdoc />
-        public override IList<object> FormatTokens => new object[] { "Rest" };
+        public override bool IsDeterministic => true;
 
         internal static IEnumerable<Move> GenerateMoves(GameState state)
         {

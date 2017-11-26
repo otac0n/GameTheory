@@ -20,16 +20,16 @@ namespace GameTheory.Games.FiveTribes.Moves
             this.Point = point;
         }
 
-        /// <summary>
-        /// Gets the <see cref="Point"/> in the <see cref="GameState.Sultanate"/> where the <see cref="Meeple">Meeples</see> will be picked up.
-        /// </summary>
-        public Point Point { get; }
+        /// <inheritdoc />
+        public override IList<object> FormatTokens => new object[] { "Pick up meeples at ", this.Point };
 
         /// <inheritdoc />
         public override bool IsDeterministic => true;
 
-        /// <inheritdoc />
-        public override IList<object> FormatTokens => new object[] { "Pick up meeples at ", this.Point };
+        /// <summary>
+        /// Gets the <see cref="Point"/> in the <see cref="GameState.Sultanate"/> where the <see cref="Meeple">Meeples</see> will be picked up.
+        /// </summary>
+        public Point Point { get; }
 
         internal static IEnumerable<Move> GenerateMoves(GameState state)
         {

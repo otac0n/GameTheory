@@ -52,15 +52,6 @@ namespace GameTheory.Games.FiveTribes.Tiles
 
         private class ChoosingResource : InterstitialState
         {
-            public override IEnumerable<Move> GenerateMoves(GameState state)
-            {
-                var available = Math.Min(FirstN, state.VisibleResources.Count);
-                for (var i = 0; i < available; i++)
-                {
-                    yield return new TakeResourceMove(state, i, s1 => s1.With(phase: Phase.MerchandiseSale));
-                }
-            }
-
             public override int CompareTo(InterstitialState other)
             {
                 if (other is ChoosingResource)
@@ -70,6 +61,15 @@ namespace GameTheory.Games.FiveTribes.Tiles
                 else
                 {
                     return base.CompareTo(other);
+                }
+            }
+
+            public override IEnumerable<Move> GenerateMoves(GameState state)
+            {
+                var available = Math.Min(FirstN, state.VisibleResources.Count);
+                for (var i = 0; i < available; i++)
+                {
+                    yield return new TakeResourceMove(state, i, s1 => s1.With(phase: Phase.MerchandiseSale));
                 }
             }
         }

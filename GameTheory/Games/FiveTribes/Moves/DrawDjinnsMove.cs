@@ -5,7 +5,6 @@ namespace GameTheory.Games.FiveTribes.Moves
     using System;
     using System.Collections.Generic;
     using System.Collections.Immutable;
-    using System.Linq;
 
     /// <summary>
     /// Represent a move to draw the top three <see cref="Djinn">Djinns</see> from the Djinn pile.
@@ -22,10 +21,10 @@ namespace GameTheory.Games.FiveTribes.Moves
         }
 
         /// <inheritdoc />
-        public override bool IsDeterministic => false;
+        public override IList<object> FormatTokens => new object[] { "Draw ", GetDrawCount(this.State), " Djinns" };
 
         /// <inheritdoc />
-        public override IList<object> FormatTokens => new object[] { "Draw ", GetDrawCount(this.State), " Djinns" };
+        public override bool IsDeterministic => false;
 
         internal override GameState Apply(GameState state)
         {
@@ -58,14 +57,6 @@ namespace GameTheory.Games.FiveTribes.Moves
                 this.dealt = dealt;
             }
 
-            public override IEnumerable<Move> GenerateMoves(GameState state)
-            {
-                for (var i = 0; i < this.dealt.Count; i++)
-                {
-                    yield return new TakeDealtDjinnMove(state, this.dealt, i);
-                }
-            }
-
             public override int CompareTo(InterstitialState other)
             {
                 if (other is ChoosingDjinn s)
@@ -93,6 +84,14 @@ namespace GameTheory.Games.FiveTribes.Moves
                 else
                 {
                     return base.CompareTo(other);
+                }
+            }
+
+            public override IEnumerable<Move> GenerateMoves(GameState state)
+            {
+                for (var i = 0; i < this.dealt.Count; i++)
+                {
+                    yield return new TakeDealtDjinnMove(state, this.dealt, i);
                 }
             }
         }

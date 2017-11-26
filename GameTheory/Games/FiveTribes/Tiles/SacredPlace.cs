@@ -40,14 +40,6 @@ namespace GameTheory.Games.FiveTribes.Tiles
 
         private class ChoosingDjinn : InterstitialState
         {
-            public override IEnumerable<Move> GenerateMoves(GameState state)
-            {
-                for (var i = 0; i < state.VisibleDjinns.Count; i++)
-                {
-                    yield return new TakeDjinnMove(state, i, s1 => s1.With(phase: Phase.MerchandiseSale));
-                }
-            }
-
             public override int CompareTo(InterstitialState other)
             {
                 if (other is ChoosingDjinn)
@@ -57,6 +49,14 @@ namespace GameTheory.Games.FiveTribes.Tiles
                 else
                 {
                     return base.CompareTo(other);
+                }
+            }
+
+            public override IEnumerable<Move> GenerateMoves(GameState state)
+            {
+                for (var i = 0; i < state.VisibleDjinns.Count; i++)
+                {
+                    yield return new TakeDjinnMove(state, i, s1 => s1.With(phase: Phase.MerchandiseSale));
                 }
             }
         }

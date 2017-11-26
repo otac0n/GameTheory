@@ -17,8 +17,8 @@ namespace GameTheory
     public class EnumCollection<TEnum> : IEnumerable<TEnum>, IReadOnlyList<TEnum>, IComparable<EnumCollection<TEnum>>, ITokenFormattable
         where TEnum : struct
     {
-        private static readonly int Capacity;
         private static readonly TEnum[] AllKeys;
+        private static readonly int Capacity;
         private readonly int count;
         private readonly ImmutableList<int> storage;
 
@@ -92,23 +92,6 @@ namespace GameTheory
         /// <inheritdoc />
         public int Count => this.count;
 
-        /// <summary>
-        /// Gets the distinct list of items contained in the collection.
-        /// </summary>
-        public IEnumerable<TEnum> Keys
-        {
-            get
-            {
-                for (var i = 0; i < Capacity; i++)
-                {
-                    if (this.storage[i] > 0)
-                    {
-                        yield return AllKeys[i];
-                    }
-                }
-            }
-        }
-
         /// <inheritdoc/>
         public IList<object> FormatTokens
         {
@@ -136,6 +119,23 @@ namespace GameTheory
                 }
 
                 return tokens;
+            }
+        }
+
+        /// <summary>
+        /// Gets the distinct list of items contained in the collection.
+        /// </summary>
+        public IEnumerable<TEnum> Keys
+        {
+            get
+            {
+                for (var i = 0; i < Capacity; i++)
+                {
+                    if (this.storage[i] > 0)
+                    {
+                        yield return AllKeys[i];
+                    }
+                }
             }
         }
 
@@ -286,6 +286,36 @@ namespace GameTheory
             }
         }
 
+        /// <inheritdoc/>
+        public int CompareTo(EnumCollection<TEnum> other)
+        {
+            if (other == this)
+            {
+                return 0;
+            }
+            else if (other == null)
+            {
+                return 1;
+            }
+
+            int comp;
+
+            if ((comp = this.count.CompareTo(other.count)) != 0)
+            {
+                return comp;
+            }
+
+            for (var i = 0; i < Capacity; i++)
+            {
+                if ((comp = this.storage[i].CompareTo(other.storage[i])) != 0)
+                {
+                    return comp;
+                }
+            }
+
+            return 0;
+        }
+
         /// <inheritdoc />
         public IEnumerator<TEnum> GetEnumerator()
         {
@@ -409,35 +439,5 @@ namespace GameTheory
 
         /// <inheritdoc />
         public override string ToString() => string.Concat(this.FlattenFormatTokens());
-
-        /// <inheritdoc/>
-        public int CompareTo(EnumCollection<TEnum> other)
-        {
-            if (other == this)
-            {
-                return 0;
-            }
-            else if (other == null)
-            {
-                return 1;
-            }
-
-            int comp;
-
-            if ((comp = this.count.CompareTo(other.count)) != 0)
-            {
-                return comp;
-            }
-
-            for (var i = 0; i < Capacity; i++)
-            {
-                if ((comp = this.storage[i].CompareTo(other.storage[i])) != 0)
-                {
-                    return comp;
-                }
-            }
-
-            return 0;
-        }
     }
 }

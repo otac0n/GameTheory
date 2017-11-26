@@ -26,10 +26,13 @@ namespace GameTheory.Games.TicTacToe
         }
 
         /// <inheritdoc />
-        public PlayerToken PlayerToken { get; }
+        public IList<object> FormatTokens => new object[] { "(", this.X, ", ", this.Y, ")" };
 
         /// <inheritdoc />
         public bool IsDeterministic => true;
+
+        /// <inheritdoc />
+        public PlayerToken PlayerToken { get; }
 
         /// <summary>
         /// Gets the x coordinate of the spot on which the move will me made.
@@ -42,9 +45,6 @@ namespace GameTheory.Games.TicTacToe
         /// </summary>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Y", Justification = "Y is meaningful in the context of coordinates.")]
         public int Y { get; }
-
-        /// <inheritdoc />
-        public IList<object> FormatTokens => new object[] { "(", this.X, ", ", this.Y, ")" };
 
         /// <inheritdoc />
         public override string ToString() => string.Concat(this.FlattenFormatTokens());

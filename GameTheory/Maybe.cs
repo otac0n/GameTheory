@@ -30,11 +30,6 @@ namespace GameTheory
         public bool HasValue => this.hasValue;
 
         /// <summary>
-        /// Gets the possible value, or the defalut value of <typeparamref name="T"/>, if there is no value.
-        /// </summary>
-        public T ValueOrDefault => this.value;
-
-        /// <summary>
         /// Gets the possible value.
         /// </summary>
         /// <exception cref="InvalidOperationException">There is no value.</exception>
@@ -50,6 +45,11 @@ namespace GameTheory
                 return this.value;
             }
         }
+
+        /// <summary>
+        /// Gets the possible value, or the defalut value of <typeparamref name="T"/>, if there is no value.
+        /// </summary>
+        public T ValueOrDefault => this.value;
 
         /// <summary>
         /// Compares two <see cref="Maybe{T}"/> objects. The result specifies whether they are unequal.

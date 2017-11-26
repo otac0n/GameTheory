@@ -125,6 +125,67 @@ namespace GameTheory.Players
         {
         }
 
+        private Mainline CombineOutcomes(IList<IWeighted<Mainline>> mainlines)
+        {
+            if (mainlines.Count == 1)
+            {
+                return mainlines[0].Value;
+            }
+
+            double maxWeight = double.NaN;
+            Mainline maxMainline = null;
+            int minDepth = -1;
+
+            var playerScores = new Dictionary<PlayerToken, IWeighted<TScore>[]>();
+
+            for (var i = 0; i < mainlines.Count; i++)
+            {
+                var weightedMainline = mainlines[i];
+                var weight = weightedMainline.Weight;
+                var mainline = weightedMainline.Value;
+                var score = mainline.Score;
+
+                if (minDepth == -1 || mainline.Depth < minDepth)
+                {
+                    minDepth = mainline.Depth;
+                }
+
+                if (double.IsNaN(maxWeight) || weight > maxWeight)
+                {
+                    maxWeight = weight;
+                    maxMainline = mainline;
+                }
+
+                foreach (var player in score.Keys)
+                {
+                    if (!playerScores.TryGetValue(player, out IWeighted<TScore>[] playerScore))
+                    {
+                        playerScores[player] = playerScore = new IWeighted<TScore>[mainlines.Count];
+                    }
+
+                    playerScore[i] = Weighted.Create(score[player], weight);
+                }
+            }
+
+            var combinedScore = playerScores.ToImmutableDictionary(ps => ps.Key, ps => this.scoringMetric.CombineScores(ps.Value));
+
+            return new Mainline(combinedScore, maxMainline.State, maxMainline.Moves, minDepth);
+        }
+
+        private TScore GetLead(Mainline mainline, PlayerToken player)
+        {
+            if (mainline.State.Players.Count == 1)
+            {
+                return mainline.Score[player];
+            }
+            else
+            {
+                return this.scoringMetric.Difference(
+                    mainline.Score[player],
+                    mainline.Score.Where(s => s.Key != player).OrderByDescending(s => s.Value, this.scoringMetric).First().Value);
+            }
+        }
+
         private Mainline GetMove(IGameState<TMove> state, int ply, CancellationToken cancel)
         {
             if (this.cache.TryGetValue(state, out Mainline cached))
@@ -208,70 +269,9 @@ namespace GameTheory.Players
             }
         }
 
-        private Mainline CombineOutcomes(IList<IWeighted<Mainline>> mainlines)
-        {
-            if (mainlines.Count == 1)
-            {
-                return mainlines[0].Value;
-            }
-
-            double maxWeight = double.NaN;
-            Mainline maxMainline = null;
-            int minDepth = -1;
-
-            var playerScores = new Dictionary<PlayerToken, IWeighted<TScore>[]>();
-
-            for (var i = 0; i < mainlines.Count; i++)
-            {
-                var weightedMainline = mainlines[i];
-                var weight = weightedMainline.Weight;
-                var mainline = weightedMainline.Value;
-                var score = mainline.Score;
-
-                if (minDepth == -1 || mainline.Depth < minDepth)
-                {
-                    minDepth = mainline.Depth;
-                }
-
-                if (double.IsNaN(maxWeight) || weight > maxWeight)
-                {
-                    maxWeight = weight;
-                    maxMainline = mainline;
-                }
-
-                foreach (var player in score.Keys)
-                {
-                    if (!playerScores.TryGetValue(player, out IWeighted<TScore>[] playerScore))
-                    {
-                        playerScores[player] = playerScore = new IWeighted<TScore>[mainlines.Count];
-                    }
-
-                    playerScore[i] = Weighted.Create(score[player], weight);
-                }
-            }
-
-            var combinedScore = playerScores.ToImmutableDictionary(ps => ps.Key, ps => this.scoringMetric.CombineScores(ps.Value));
-
-            return new Mainline(combinedScore, maxMainline.State, maxMainline.Moves, minDepth);
-        }
-
         private IReadOnlyDictionary<PlayerToken, TScore> Score(IGameState<TMove> state)
         {
             return state.Players.ToImmutableDictionary(p => p, p => this.scoringMetric.Score(state, p));
-        }
-
-        private TScore GetLead(Mainline mainline, PlayerToken player)
-        {
-            if (mainline.State.Players.Count == 1)
-            {
-                return mainline.Score[player];
-            }
-            else
-            {
-                return this.scoringMetric.Difference(
-                    mainline.Score[player],
-                    mainline.Score.Where(s => s.Key != player).OrderByDescending(s => s.Value, this.scoringMetric).First().Value);
-            }
         }
 
         private class Mainline : ITokenFormattable
@@ -283,12 +283,6 @@ namespace GameTheory.Players
                 this.Moves = moves;
                 this.Depth = depth;
             }
-
-            public IGameState<TMove> State { get; }
-
-            public ImmutableStack<TMove> Moves { get; }
-
-            public IReadOnlyDictionary<PlayerToken, TScore> Score { get; }
 
             public int Depth { get; }
 
@@ -332,6 +326,12 @@ namespace GameTheory.Players
                     return tokens;
                 }
             }
+
+            public ImmutableStack<TMove> Moves { get; }
+
+            public IReadOnlyDictionary<PlayerToken, TScore> Score { get; }
+
+            public IGameState<TMove> State { get; }
 
             public Mainline AddMove(TMove move)
             {

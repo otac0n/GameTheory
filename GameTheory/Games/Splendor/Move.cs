@@ -21,16 +21,16 @@ namespace GameTheory.Games.Splendor
             this.PlayerToken = state.ActivePlayer;
         }
 
-        /// <summary>
-        /// Gets the player who may perform this move.
-        /// </summary>
-        public PlayerToken PlayerToken { get; }
+        /// <inheritdoc />
+        public abstract IList<object> FormatTokens { get; }
 
         /// <inheritdoc />
         public abstract bool IsDeterministic { get; }
 
-        /// <inheritdoc />
-        public abstract IList<object> FormatTokens { get; }
+        /// <summary>
+        /// Gets the player who may perform this move.
+        /// </summary>
+        public PlayerToken PlayerToken { get; }
 
         internal GameState State { get; }
 

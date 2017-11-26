@@ -32,6 +32,9 @@ namespace GameTheory.Games.Splendor.Moves
         /// </summary>
         public EnumCollection<Token> Cost { get; }
 
+        /// <inheritdoc />
+        public override IList<object> FormatTokens => new object[] { "Purchase ", this.Card, " for ", this.Cost.Count > 0 ? (object)this.Cost : "free" };
+
         /// <summary>
         /// Gets the index in the development track of the card to purchase.
         /// </summary>
@@ -39,9 +42,6 @@ namespace GameTheory.Games.Splendor.Moves
 
         /// <inheritdoc />
         public override bool IsDeterministic => true;
-
-        /// <inheritdoc />
-        public override IList<object> FormatTokens => new object[] { "Purchase ", this.Card, " for ", this.Cost.Count > 0 ? (object)this.Cost : "free" };
 
         internal static IEnumerable<Move> GenerateMoves(GameState state)
         {

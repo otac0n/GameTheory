@@ -218,11 +218,6 @@ namespace GameTheory.Games.Splendor
         public PlayerToken ActivePlayer { get; }
 
         /// <summary>
-        /// Gets the phase of the game.
-        /// </summary>
-        public Phase Phase { get; }
-
-        /// <summary>
         /// Gets the decks of development cards.
         /// </summary>
         public ImmutableArray<ImmutableList<DevelopmentCard>> DevelopmentDecks { get; }
@@ -242,6 +237,11 @@ namespace GameTheory.Games.Splendor
         /// </summary>
         public ImmutableList<Noble> Nobles { get; }
 
+        /// <summary>
+        /// Gets the phase of the game.
+        /// </summary>
+        public Phase Phase { get; }
+
         IReadOnlyList<PlayerToken> IGameState<Move>.Players => this.Players;
 
         /// <summary>
@@ -253,118 +253,6 @@ namespace GameTheory.Games.Splendor
         /// Gets available tokens.
         /// </summary>
         public EnumCollection<Token> Tokens { get; }
-
-        /// <inheritdoc />
-        public IReadOnlyList<Move> GetAvailableMoves()
-        {
-            var moves = ImmutableList.CreateBuilder<Move>();
-
-            switch (this.Phase)
-            {
-                case Phase.Play:
-                    moves.AddRange(Moves.TakeTokensMove.GenerateMoves(this));
-                    moves.AddRange(Moves.ReserveFromDeckMove.GenerateMoves(this));
-                    moves.AddRange(Moves.ReserveFromBoardMove.GenerateMoves(this));
-                    moves.AddRange(Moves.PurchaseFromHandMove.GenerateMoves(this));
-                    moves.AddRange(Moves.PurchaseFromBoardMove.GenerateMoves(this));
-                    break;
-
-                case Phase.Discard:
-                    moves.AddRange(Moves.DiscardTokensMove.GenerateMoves(this));
-                    break;
-
-                case Phase.ChooseNoble:
-                    moves.AddRange(Moves.ChooseNobleMove.GenerateMoves(this));
-                    break;
-
-                case Phase.End:
-                    break;
-            }
-
-            return moves.ToImmutable();
-        }
-
-        /// <summary>
-        /// Gets the total bonus for the specified player.
-        /// </summary>
-        /// <param name="player">The player whose bonuses should be tallied.</param>
-        /// <returns>The specified player's bonus.</returns>
-        public EnumCollection<Token> GetBonus(PlayerToken player) =>
-            new EnumCollection<Token>(this.Inventory[player].DevelopmentCards.Select(c => c.Bonus));
-
-        /// <summary>
-        /// Gets the score of the specified player.
-        /// </summary>
-        /// <param name="player">The player whose score should be calculated.</param>
-        /// <returns>The specified player's score.</returns>
-        public int GetScore(PlayerToken player) =>
-            this.Inventory[player].DevelopmentCards.Sum(c => c.Prestige) + this.Inventory[player].Nobles.Count * Noble.PrestigeBonus;
-
-        /// <inheritdoc />
-        public IGameState<Move> GetView(PlayerToken playerToken)
-        {
-            // TODO: Hide the other players' hands.
-            return this;
-        }
-
-        /// <inheritdoc />
-        public IReadOnlyCollection<PlayerToken> GetWinners()
-        {
-            if (this.Phase != Phase.End)
-            {
-                return ImmutableList<PlayerToken>.Empty;
-            }
-
-            return this.Players
-                .GroupBy(p => this.GetScore(p))
-                .OrderByDescending(g => g.Key)
-                .First()
-                .GroupBy(p => this.Inventory[p].DevelopmentCards.Count)
-                .OrderBy(g => g.Key)
-                .First()
-                .ToImmutableList();
-        }
-
-        /// <inheritdoc />
-        IGameState<Move> IGameState<Move>.MakeMove(Move move)
-        {
-            return this.MakeMove(move);
-        }
-
-        /// <summary>
-        /// Applies the move to the current game state.
-        /// </summary>
-        /// <param name="move">The <see cref="Move"/> to apply.</param>
-        /// <returns>The updated <see cref="GameState"/>.</returns>
-        public GameState MakeMove(Move move)
-        {
-            if (move == null)
-            {
-                throw new ArgumentNullException(nameof(move));
-            }
-
-            if (this.CompareTo(move.State) != 0)
-            {
-                throw new InvalidOperationException();
-            }
-
-            return move.Apply(this);
-        }
-
-        /// <inheritdoc />
-        public IEnumerable<IWeighted<IGameState<Move>>> GetOutcomes(Move move)
-        {
-            if (move.IsDeterministic)
-            {
-                yield return Weighted.Create(this.MakeMove(move), 1);
-                yield break;
-            }
-
-            foreach (var outcome in move.GetOutcomes(this))
-            {
-                yield return outcome;
-            }
-        }
 
         /// <inheritdoc/>
         public int CompareTo(IGameState<Move> other)
@@ -433,6 +321,118 @@ namespace GameTheory.Games.Splendor
             }
 
             return 0;
+        }
+
+        /// <inheritdoc />
+        public IReadOnlyList<Move> GetAvailableMoves()
+        {
+            var moves = ImmutableList.CreateBuilder<Move>();
+
+            switch (this.Phase)
+            {
+                case Phase.Play:
+                    moves.AddRange(Moves.TakeTokensMove.GenerateMoves(this));
+                    moves.AddRange(Moves.ReserveFromDeckMove.GenerateMoves(this));
+                    moves.AddRange(Moves.ReserveFromBoardMove.GenerateMoves(this));
+                    moves.AddRange(Moves.PurchaseFromHandMove.GenerateMoves(this));
+                    moves.AddRange(Moves.PurchaseFromBoardMove.GenerateMoves(this));
+                    break;
+
+                case Phase.Discard:
+                    moves.AddRange(Moves.DiscardTokensMove.GenerateMoves(this));
+                    break;
+
+                case Phase.ChooseNoble:
+                    moves.AddRange(Moves.ChooseNobleMove.GenerateMoves(this));
+                    break;
+
+                case Phase.End:
+                    break;
+            }
+
+            return moves.ToImmutable();
+        }
+
+        /// <summary>
+        /// Gets the total bonus for the specified player.
+        /// </summary>
+        /// <param name="player">The player whose bonuses should be tallied.</param>
+        /// <returns>The specified player's bonus.</returns>
+        public EnumCollection<Token> GetBonus(PlayerToken player) =>
+            new EnumCollection<Token>(this.Inventory[player].DevelopmentCards.Select(c => c.Bonus));
+
+        /// <inheritdoc />
+        public IEnumerable<IWeighted<IGameState<Move>>> GetOutcomes(Move move)
+        {
+            if (move.IsDeterministic)
+            {
+                yield return Weighted.Create(this.MakeMove(move), 1);
+                yield break;
+            }
+
+            foreach (var outcome in move.GetOutcomes(this))
+            {
+                yield return outcome;
+            }
+        }
+
+        /// <summary>
+        /// Gets the score of the specified player.
+        /// </summary>
+        /// <param name="player">The player whose score should be calculated.</param>
+        /// <returns>The specified player's score.</returns>
+        public int GetScore(PlayerToken player) =>
+            this.Inventory[player].DevelopmentCards.Sum(c => c.Prestige) + this.Inventory[player].Nobles.Count * Noble.PrestigeBonus;
+
+        /// <inheritdoc />
+        public IGameState<Move> GetView(PlayerToken playerToken)
+        {
+            // TODO: Hide the other players' hands.
+            return this;
+        }
+
+        /// <inheritdoc />
+        public IReadOnlyCollection<PlayerToken> GetWinners()
+        {
+            if (this.Phase != Phase.End)
+            {
+                return ImmutableList<PlayerToken>.Empty;
+            }
+
+            return this.Players
+                .GroupBy(p => this.GetScore(p))
+                .OrderByDescending(g => g.Key)
+                .First()
+                .GroupBy(p => this.Inventory[p].DevelopmentCards.Count)
+                .OrderBy(g => g.Key)
+                .First()
+                .ToImmutableList();
+        }
+
+        /// <inheritdoc />
+        IGameState<Move> IGameState<Move>.MakeMove(Move move)
+        {
+            return this.MakeMove(move);
+        }
+
+        /// <summary>
+        /// Applies the move to the current game state.
+        /// </summary>
+        /// <param name="move">The <see cref="Move"/> to apply.</param>
+        /// <returns>The updated <see cref="GameState"/>.</returns>
+        public GameState MakeMove(Move move)
+        {
+            if (move == null)
+            {
+                throw new ArgumentNullException(nameof(move));
+            }
+
+            if (this.CompareTo(move.State) != 0)
+            {
+                throw new InvalidOperationException();
+            }
+
+            return move.Apply(this);
         }
 
         internal GameState With(

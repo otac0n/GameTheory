@@ -2,7 +2,6 @@
 
 namespace GameTheory.ConsoleRunner.ConsoleRenderers
 {
-    using System;
     using Games.TwentyFortyEight;
     using TwentyFortyEight;
 

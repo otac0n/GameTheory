@@ -65,21 +65,13 @@ namespace GameTheory.Games.FiveTribes.Djinns
 
         private class Paid : InterstitialState
         {
-            private readonly Point point;
             private readonly Phase? phase;
+            private readonly Point point;
 
             public Paid(Point point, Phase? phase)
             {
                 this.point = point;
                 this.phase = phase;
-            }
-
-            public override IEnumerable<Move> GenerateMoves(GameState state)
-            {
-                foreach (var point in Sultanate.GetSquarePoints(this.point))
-                {
-                    yield return new PlacePalmTreeMove(state, point, this.phase);
-                }
             }
 
             public override int CompareTo(InterstitialState other)
@@ -91,6 +83,14 @@ namespace GameTheory.Games.FiveTribes.Djinns
                 else
                 {
                     return base.CompareTo(other);
+                }
+            }
+
+            public override IEnumerable<Move> GenerateMoves(GameState state)
+            {
+                foreach (var point in Sultanate.GetSquarePoints(this.point))
+                {
+                    yield return new PlacePalmTreeMove(state, point, this.phase);
                 }
             }
         }

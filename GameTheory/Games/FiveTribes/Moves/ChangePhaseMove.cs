@@ -24,16 +24,16 @@ namespace GameTheory.Games.FiveTribes.Moves
             this.Phase = phase;
         }
 
-        /// <summary>
-        /// Gets the phase that the move will change to.
-        /// </summary>
-        public Phase Phase { get; }
+        /// <inheritdoc />
+        public override IList<object> FormatTokens => new object[] { this.description };
 
         /// <inheritdoc />
         public override bool IsDeterministic => true;
 
-        /// <inheritdoc />
-        public override IList<object> FormatTokens => new object[] { this.description };
+        /// <summary>
+        /// Gets the phase that the move will change to.
+        /// </summary>
+        public Phase Phase { get; }
 
         internal override GameState Apply(GameState state)
         {

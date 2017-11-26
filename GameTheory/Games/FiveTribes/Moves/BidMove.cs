@@ -27,6 +27,9 @@ namespace GameTheory.Games.FiveTribes.Moves
         /// </summary>
         public int Cost { get; }
 
+        /// <inheritdoc />
+        public override IList<object> FormatTokens => new object[] { "Bid ", this.Cost };
+
         /// <summary>
         /// Gets the position on the <see cref="GameState.TurnOrderTrack"/> being bid on.
         /// </summary>
@@ -34,9 +37,6 @@ namespace GameTheory.Games.FiveTribes.Moves
 
         /// <inheritdoc />
         public override bool IsDeterministic => true;
-
-        /// <inheritdoc />
-        public override IList<object> FormatTokens => new object[] { "Bid ", this.Cost };
 
         internal static IEnumerable<Move> GenerateMoves(GameState state)
         {

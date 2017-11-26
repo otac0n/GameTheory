@@ -58,31 +58,6 @@ namespace GameTheory.Tests
             }
         }
 
-        public IReadOnlyList<Move> GetAvailableMoves()
-        {
-            return this.moves.AsReadOnly();
-        }
-
-        public IReadOnlyCollection<PlayerToken> GetWinners()
-        {
-            return this.winnersReadOnly.Distinct().ToList().AsReadOnly();
-        }
-
-        public IGameState<Move> MakeMove(Move move)
-        {
-            return this;
-        }
-
-        public IEnumerable<IWeighted<IGameState<Move>>> GetOutcomes(Move move)
-        {
-            yield return Weighted.Create(this.MakeMove(move), 1);
-        }
-
-        public IGameState<Move> GetView(PlayerToken playerToken)
-        {
-            return this;
-        }
-
         public int CompareTo(IGameState<Move> other)
         {
             if (other == this)
@@ -99,6 +74,31 @@ namespace GameTheory.Tests
             return this.id.CompareTo(state.id);
         }
 
+        public IReadOnlyList<Move> GetAvailableMoves()
+        {
+            return this.moves.AsReadOnly();
+        }
+
+        public IEnumerable<IWeighted<IGameState<Move>>> GetOutcomes(Move move)
+        {
+            yield return Weighted.Create(this.MakeMove(move), 1);
+        }
+
+        public IGameState<Move> GetView(PlayerToken playerToken)
+        {
+            return this;
+        }
+
+        public IReadOnlyCollection<PlayerToken> GetWinners()
+        {
+            return this.winnersReadOnly.Distinct().ToList().AsReadOnly();
+        }
+
+        public IGameState<Move> MakeMove(Move move)
+        {
+            return this;
+        }
+
         public class Move : IMove
         {
             public Move(PlayerToken playerToken, string value)
@@ -107,11 +107,11 @@ namespace GameTheory.Tests
                 this.Value = value;
             }
 
-            public PlayerToken PlayerToken { get; }
+            public IList<object> FormatTokens => new object[] { "Stub Move" };
 
             public bool IsDeterministic => true;
 
-            public IList<object> FormatTokens => new object[] { "Stub Move" };
+            public PlayerToken PlayerToken { get; }
 
             public string Value { get; }
         }

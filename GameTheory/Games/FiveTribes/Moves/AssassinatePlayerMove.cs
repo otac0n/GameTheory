@@ -22,6 +22,12 @@ namespace GameTheory.Games.FiveTribes.Moves
             this.Victim = victim;
         }
 
+        /// <inheritdoc />
+        public override IList<object> FormatTokens => new object[] { "Assassinate ", this.Meeples, " in front of ", this.Victim };
+
+        /// <inheritdoc />
+        public override bool IsDeterministic => true;
+
         /// <summary>
         /// Gets the <see cref="Meeple">Meeples</see> that will be assassinated.
         /// </summary>
@@ -31,12 +37,6 @@ namespace GameTheory.Games.FiveTribes.Moves
         /// Gets the <see cref="PlayerToken"/> whose <see cref="Meeple">Meeples</see> will be assassinated.
         /// </summary>
         public PlayerToken Victim { get; }
-
-        /// <inheritdoc />
-        public override bool IsDeterministic => true;
-
-        /// <inheritdoc />
-        public override IList<object> FormatTokens => new object[] { "Assassinate ", this.Meeples, " in front of ", this.Victim };
 
         internal override GameState Apply(GameState state)
         {

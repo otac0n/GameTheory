@@ -53,18 +53,15 @@ namespace GameTheory.Games.Splendor
         /// </summary>
         public EnumCollection<Token> Cost { get; }
 
-        /// <summary>
-        /// Gets the prestige awarded by this card.
-        /// </summary>
-        public int Prestige { get; }
-
         /// <inheritdoc />
         public IList<object> FormatTokens => this.Prestige > 0
             ? new object[] { this.Bonus, " +", this.Prestige }
             : new object[] { this.Bonus };
 
-        /// <inheritdoc />
-        public override string ToString() => string.Concat(this.FlattenFormatTokens());
+        /// <summary>
+        /// Gets the prestige awarded by this card.
+        /// </summary>
+        public int Prestige { get; }
 
         /// <inheritdoc/>
         public int CompareTo(DevelopmentCard other)
@@ -88,5 +85,8 @@ namespace GameTheory.Games.Splendor
 
             return 0;
         }
+
+        /// <inheritdoc />
+        public override string ToString() => string.Concat(this.FlattenFormatTokens());
     }
 }

@@ -43,13 +43,13 @@ namespace GameTheory.Games.CenturySpiceRoad
         /// </summary>
         public EnumCollection<Spice> Cost { get; }
 
+        /// <inheritdoc/>
+        public IList<object> FormatTokens => new object[] { "+", this.Points };
+
         /// <summary>
         /// Gets the points awarded by this card.
         /// </summary>
         public int Points { get; }
-
-        /// <inheritdoc/>
-        public IList<object> FormatTokens => new object[] { "+", this.Points };
 
         /// <inheritdoc/>
         public int CompareTo(PointCard other)

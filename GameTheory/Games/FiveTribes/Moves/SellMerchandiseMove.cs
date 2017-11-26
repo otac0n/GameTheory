@@ -22,6 +22,12 @@ namespace GameTheory.Games.FiveTribes.Moves
             this.Resources = resources;
         }
 
+        /// <inheritdoc />
+        public override IList<object> FormatTokens => new object[] { "Trade ", this.Resources, " for ", GameState.SuitValues[this.Resources.Count] };
+
+        /// <inheritdoc />
+        public override bool IsDeterministic => true;
+
         /// <summary>
         /// Gets the <see cref="Resource">Resources</see> being sold.
         /// </summary>
@@ -31,12 +37,6 @@ namespace GameTheory.Games.FiveTribes.Moves
         /// Gets the value of the <see cref="Resource">Resources</see> being sold, in Gold Coins (GC).
         /// </summary>
         public int Value => GameState.ScoreResources(this.Resources);
-
-        /// <inheritdoc />
-        public override bool IsDeterministic => true;
-
-        /// <inheritdoc />
-        public override IList<object> FormatTokens => new object[] { "Trade ", this.Resources, " for ", GameState.SuitValues[this.Resources.Count] };
 
         internal static IEnumerable<Move> GenerateMoves(GameState state)
         {

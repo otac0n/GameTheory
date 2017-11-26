@@ -33,10 +33,10 @@ namespace GameTheory.Games.CenturySpiceRoad
         /// </summary>
         public const int PointCardLimit = 5;
 
-        private static readonly ImmutableList<PointCard> InitialPointCards;
-        private static readonly ImmutableList<MerchantCard> InitialMerchantCards;
-        private static readonly ImmutableList<EnumCollection<Spice>> InitialSpices;
         private static readonly ImmutableList<MerchantCard> InitialHand;
+        private static readonly ImmutableList<MerchantCard> InitialMerchantCards;
+        private static readonly ImmutableList<PointCard> InitialPointCards;
+        private static readonly ImmutableList<EnumCollection<Spice>> InitialSpices;
 
         static GameState()
         {
@@ -191,14 +191,14 @@ namespace GameTheory.Games.CenturySpiceRoad
         public ImmutableDictionary<PlayerToken, Inventory> Inventory { get; }
 
         /// <summary>
-        /// Gets the index of the Merchant card the player can currently acquire.
-        /// </summary>
-        public int MerchantCardIndexAfforded { get; }
-
-        /// <summary>
         /// Gets the deck of Merchant cards.
         /// </summary>
         public ImmutableList<MerchantCard> MerchantCardDeck { get; }
+
+        /// <summary>
+        /// Gets the index of the Merchant card the player can currently acquire.
+        /// </summary>
+        public int MerchantCardIndexAfforded { get; }
 
         /// <summary>
         /// Gets the visible track of Merchant cards.
@@ -215,6 +215,9 @@ namespace GameTheory.Games.CenturySpiceRoad
         /// </summary>
         public ImmutableList<PlayerToken> Players { get; }
 
+        /// <inheritdoc />
+        IReadOnlyList<PlayerToken> IGameState<Move>.Players => this.Players;
+
         /// <summary>
         /// Gets the deck of Point cards.
         /// </summary>
@@ -230,13 +233,10 @@ namespace GameTheory.Games.CenturySpiceRoad
         /// </summary>
         public EnumCollection<Token> Tokens { get; }
 
-        /// <inheritdoc />
-        IReadOnlyList<PlayerToken> IGameState<Move>.Players => this.Players;
-
         /// <summary>
         /// Gets the number of upgrades remaining.
         /// </summary>
-        public int UpgradesRemaining { get;  }
+        public int UpgradesRemaining { get; }
 
         /// <inheritdoc />
         public int CompareTo(IGameState<Move> other)

@@ -51,11 +51,11 @@ namespace GameTheory.Games.TwentyFortyEight.Moves
         /// </summary>
         public MoveDirection Direction { get; }
 
-        /// <inheritdoc/>
-        public override bool IsDeterministic => this.State.Players.Count != 1;
-
         /// <inheritdoc />
         public override IList<object> FormatTokens => new object[] { this.Direction };
+
+        /// <inheritdoc/>
+        public override bool IsDeterministic => this.State.Players.Count != 1;
 
         internal static IEnumerable<Move> GetMoves(GameState state)
         {
@@ -133,16 +133,19 @@ namespace GameTheory.Games.TwentyFortyEight.Moves
                     ix = 1;
                     jy = 1;
                     break;
+
                 case MoveDirection.Right:
                     iy = 1;
                     jx = -1;
                     ox = GameState.Size - 1;
                     break;
+
                 case MoveDirection.Down:
                     ix = 1;
                     jy = -1;
                     oy = GameState.Size - 1;
                     break;
+
                 case MoveDirection.Left:
                     iy = 1;
                     jx = 1;

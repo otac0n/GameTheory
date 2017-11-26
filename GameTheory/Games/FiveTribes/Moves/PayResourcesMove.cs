@@ -36,16 +36,16 @@ namespace GameTheory.Games.FiveTribes.Moves
             this.Resources = resources;
         }
 
-        /// <summary>
-        /// Gets the cost, in <see cref="Resource">Resources</see>.
-        /// </summary>
-        public EnumCollection<Resource> Resources { get; }
+        /// <inheritdoc />
+        public override IList<object> FormatTokens => new object[] { "Pay ", this.Resources };
 
         /// <inheritdoc />
         public override bool IsDeterministic => true;
 
-        /// <inheritdoc />
-        public override IList<object> FormatTokens => new object[] { "Pay ", this.Resources };
+        /// <summary>
+        /// Gets the cost, in <see cref="Resource">Resources</see>.
+        /// </summary>
+        public EnumCollection<Resource> Resources { get; }
 
         internal override GameState Apply(GameState state)
         {

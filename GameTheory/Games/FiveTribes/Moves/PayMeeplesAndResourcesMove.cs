@@ -39,6 +39,12 @@ namespace GameTheory.Games.FiveTribes.Moves
             this.Resources = resources;
         }
 
+        /// <inheritdoc />
+        public override IList<object> FormatTokens => new object[] { "Pay ", this.Meeples, this.Meeples.Count > 0 && this.Resources.Count > 0 ? ", " : string.Empty, this.Resources };
+
+        /// <inheritdoc />
+        public override bool IsDeterministic => true;
+
         /// <summary>
         /// Gets the <see cref="Meeple"/> portion of the cost.
         /// </summary>
@@ -48,12 +54,6 @@ namespace GameTheory.Games.FiveTribes.Moves
         /// Gets the <see cref="Resource"/> portion of the cost.
         /// </summary>
         public EnumCollection<Resource> Resources { get; }
-
-        /// <inheritdoc />
-        public override bool IsDeterministic => true;
-
-        /// <inheritdoc />
-        public override IList<object> FormatTokens => new object[] { "Pay ", this.Meeples, this.Meeples.Count > 0 && this.Resources.Count > 0 ? ", " : string.Empty, this.Resources };
 
         internal override GameState Apply(GameState state)
         {

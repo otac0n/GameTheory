@@ -18,13 +18,13 @@ namespace GameTheory.Games.CenturySpiceRoad.MerchantCards
             this.UpgradeLevel = upgradeLevel;
         }
 
+        /// <inheritdoc/>
+        public override IList<object> FormatTokens => new object[] { "Upgrade (", this.UpgradeLevel, ")" };
+
         /// <summary>
         /// Gets the upgrade amount of the card.
         /// </summary>
         public int UpgradeLevel { get; }
-
-        /// <inheritdoc/>
-        public override IList<object> FormatTokens => new object[] { "Upgrade (", this.UpgradeLevel, ")" };
 
         /// <inheritdoc/>
         public override int CompareTo(MerchantCard other)

@@ -20,6 +20,12 @@ namespace GameTheory.Games.CenturySpiceRoad.Moves
             this.StartingSpice = startingSpice;
         }
 
+        /// <inheritdoc />
+        public override IList<object> FormatTokens => new object[] { "Upgrade ", this.StartingSpice, " to ", this.UpgradedSpice };
+
+        /// <inheritdoc />
+        public override bool IsDeterministic => true;
+
         /// <summary>
         /// Gets the starting spice.
         /// </summary>
@@ -29,12 +35,6 @@ namespace GameTheory.Games.CenturySpiceRoad.Moves
         /// Gets the upgraded spice.
         /// </summary>
         public Spice UpgradedSpice => (Spice)((int)this.StartingSpice + 1);
-
-        /// <inheritdoc />
-        public override bool IsDeterministic => true;
-
-        /// <inheritdoc />
-        public override IList<object> FormatTokens => new object[] { "Upgrade ", this.StartingSpice, " to ", this.UpgradedSpice };
 
         internal static IEnumerable<Move> GenerateMoves(GameState state)
         {

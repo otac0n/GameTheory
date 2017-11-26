@@ -4,7 +4,6 @@ namespace GameTheory.Games.FiveTribes
 {
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics.CodeAnalysis;
 
     /// <summary>
     /// Provides the base class for interstitial states.

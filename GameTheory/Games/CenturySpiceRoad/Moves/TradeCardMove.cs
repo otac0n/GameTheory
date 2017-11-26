@@ -22,6 +22,9 @@ namespace GameTheory.Games.CenturySpiceRoad.Moves
             this.Index = index;
         }
 
+        /// <inheritdoc />
+        public override IList<object> FormatTokens => new object[] { "Play ", this.State.Inventory[this.PlayerToken].Hand[this.Index] };
+
         /// <summary>
         /// Gets the index of the card to play.
         /// </summary>
@@ -29,9 +32,6 @@ namespace GameTheory.Games.CenturySpiceRoad.Moves
 
         /// <inheritdoc />
         public override bool IsDeterministic => true;
-
-        /// <inheritdoc />
-        public override IList<object> FormatTokens => new object[] { "Play ", this.State.Inventory[this.PlayerToken].Hand[this.Index] };
 
         internal static IEnumerable<Move> GenerateMoves(GameState state)
         {

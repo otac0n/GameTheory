@@ -60,6 +60,23 @@ namespace GameTheory.ConsoleRunner
             return options[selection - 1];
         }
 
+        public static ConsoleColor GetPlayerColor<TMove>(IGameState<TMove> state, PlayerToken playerToken)
+            where TMove : IMove
+        {
+            var i = 0;
+            foreach (var player in state.Players)
+            {
+                if (player == playerToken)
+                {
+                    return PlayerColors[i % PlayerColors.Count];
+                }
+
+                i++;
+            }
+
+            return ConsoleColor.White;
+        }
+
         public static void List<T>(IList<T> items, Action<T> render = null)
         {
             render = render ?? new Action<T>(item => Console.Write(item?.ToString()));
@@ -117,23 +134,6 @@ namespace GameTheory.ConsoleRunner
             {
                 Console.ForegroundColor = originalColor;
             }
-        }
-
-        public static ConsoleColor GetPlayerColor<TMove>(IGameState<TMove> state, PlayerToken playerToken)
-            where TMove : IMove
-        {
-            var i = 0;
-            foreach (var player in state.Players)
-            {
-                if (player == playerToken)
-                {
-                    return PlayerColors[i % PlayerColors.Count];
-                }
-
-                i++;
-            }
-
-            return ConsoleColor.White;
         }
     }
 }

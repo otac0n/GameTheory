@@ -28,12 +28,15 @@ namespace GameTheory.ConsoleRunner.ConsoleRenderers
                     case Spice.Turmeric:
                         color = ConsoleColor.Yellow;
                         break;
+
                     case Spice.Saffron:
                         color = ConsoleColor.Red;
                         break;
+
                     case Spice.Cardamom:
                         color = ConsoleColor.Green;
                         break;
+
                     case Spice.Cinnamon:
                         color = ConsoleColor.DarkRed;
                         break;

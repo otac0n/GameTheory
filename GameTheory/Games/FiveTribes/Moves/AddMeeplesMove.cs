@@ -22,16 +22,16 @@ namespace GameTheory.Games.FiveTribes.Moves
             this.Point = point;
         }
 
-        /// <summary>
-        /// Gets the <see cref="Point"/> where the <see cref="Meeple">Meeples</see> will be added.
-        /// </summary>
-        public Point Point { get; }
+        /// <inheritdoc />
+        public override IList<object> FormatTokens => new object[] { "Draw ", Math.Min(this.State.Bag.Count, 3), " Meeples and place at ", this.Point };
 
         /// <inheritdoc />
         public override bool IsDeterministic => this.State.Bag.Count <= 1;
 
-        /// <inheritdoc />
-        public override IList<object> FormatTokens => new object[] { "Draw ", Math.Min(this.State.Bag.Count, 3), " Meeples and place at ", this.Point };
+        /// <summary>
+        /// Gets the <see cref="Point"/> where the <see cref="Meeple">Meeples</see> will be added.
+        /// </summary>
+        public Point Point { get; }
 
         internal override GameState Apply(GameState state)
         {

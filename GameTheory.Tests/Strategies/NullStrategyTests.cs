@@ -37,31 +37,6 @@ namespace GameTheory.Tests.Strategies
 
             public IReadOnlyList<PlayerToken> Players => this.players;
 
-            public IReadOnlyList<Move> GetAvailableMoves()
-            {
-                return this.players.Select(p => new Move(p)).ToList().AsReadOnly();
-            }
-
-            public IReadOnlyCollection<PlayerToken> GetWinners()
-            {
-                return new List<PlayerToken>().AsReadOnly();
-            }
-
-            public IGameState<Move> MakeMove(Move move)
-            {
-                return this;
-            }
-
-            public IEnumerable<IWeighted<IGameState<Move>>> GetOutcomes(Move move)
-            {
-                yield return Weighted.Create(this.MakeMove(move), 1);
-            }
-
-            public IGameState<Move> GetView(PlayerToken playerToken)
-            {
-                return this;
-            }
-
             public int CompareTo(IGameState<Move> other)
             {
                 if (other == this)
@@ -78,6 +53,31 @@ namespace GameTheory.Tests.Strategies
                 return this.id.CompareTo(state.id);
             }
 
+            public IReadOnlyList<Move> GetAvailableMoves()
+            {
+                return this.players.Select(p => new Move(p)).ToList().AsReadOnly();
+            }
+
+            public IEnumerable<IWeighted<IGameState<Move>>> GetOutcomes(Move move)
+            {
+                yield return Weighted.Create(this.MakeMove(move), 1);
+            }
+
+            public IGameState<Move> GetView(PlayerToken playerToken)
+            {
+                return this;
+            }
+
+            public IReadOnlyCollection<PlayerToken> GetWinners()
+            {
+                return new List<PlayerToken>().AsReadOnly();
+            }
+
+            public IGameState<Move> MakeMove(Move move)
+            {
+                return this;
+            }
+
             public class Move : IMove
             {
                 public Move(PlayerToken playerToken)
@@ -85,11 +85,11 @@ namespace GameTheory.Tests.Strategies
                     this.PlayerToken = playerToken;
                 }
 
-                public PlayerToken PlayerToken { get; }
+                public IList<object> FormatTokens => new object[] { "Test Move" };
 
                 public bool IsDeterministic => true;
 
-                public IList<object> FormatTokens => new object[] { "Test Move" };
+                public PlayerToken PlayerToken { get; }
             }
         }
     }

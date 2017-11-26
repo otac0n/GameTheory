@@ -27,6 +27,17 @@ namespace GameTheory.Games.TwentyFortyEight.Moves
             this.Value = value;
         }
 
+        /// <inheritdoc />
+        public override IList<object> FormatTokens => new object[] { "Place ", 1 << this.Value, " at (", this.X, ", ", this.Y, ")" };
+
+        /// <inheritdoc/>
+        public override bool IsDeterministic => true;
+
+        /// <summary>
+        /// Gets the value that will be added.
+        /// </summary>
+        public byte Value { get; }
+
         /// <summary>
         /// Gets the x coordinate of the spot on which the move will me made.
         /// </summary>
@@ -38,17 +49,6 @@ namespace GameTheory.Games.TwentyFortyEight.Moves
         /// </summary>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Y", Justification = "Y is meaningful in the context of coordinates.")]
         public int Y { get; }
-
-        /// <summary>
-        /// Gets the value that will be added.
-        /// </summary>
-        public byte Value { get; }
-
-        /// <inheritdoc/>
-        public override bool IsDeterministic => true;
-
-        /// <inheritdoc />
-        public override IList<object> FormatTokens => new object[] { "Place ", 1 << this.Value, " at (", this.X, ", ", this.Y, ")" };
 
         internal static IEnumerable<Move> GetMoves(GameState state)
         {

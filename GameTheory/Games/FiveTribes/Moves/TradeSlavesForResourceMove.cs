@@ -23,16 +23,16 @@ namespace GameTheory.Games.FiveTribes.Moves
             this.Resource = resource;
         }
 
-        /// <summary>
-        /// Gets the <see cref="Resource"/> that will be received by the player.
-        /// </summary>
-        public Resource Resource { get; }
+        /// <inheritdoc />
+        public override IList<object> FormatTokens => new object[] { "Trade ", Cost, " for ", this.Resource };
 
         /// <inheritdoc />
         public override bool IsDeterministic => true;
 
-        /// <inheritdoc />
-        public override IList<object> FormatTokens => new object[] { "Trade ", Cost, " for ", this.Resource };
+        /// <summary>
+        /// Gets the <see cref="Resource"/> that will be received by the player.
+        /// </summary>
+        public Resource Resource { get; }
 
         internal override GameState Apply(GameState state)
         {

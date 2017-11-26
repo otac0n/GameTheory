@@ -2,7 +2,6 @@
 
 namespace GameTheory.Games.FiveTribes.Moves
 {
-    using System;
     using System.Collections.Generic;
 
     /// <summary>
@@ -23,6 +22,12 @@ namespace GameTheory.Games.FiveTribes.Moves
             this.Phase = phase;
         }
 
+        /// <inheritdoc />
+        public override IList<object> FormatTokens => new object[] { "Place a Palm Tree at ", this.Point };
+
+        /// <inheritdoc />
+        public override bool IsDeterministic => true;
+
         /// <summary>
         /// Gets the <see cref="Phase"/> to transition to after the move has taken place.
         /// </summary>
@@ -32,12 +37,6 @@ namespace GameTheory.Games.FiveTribes.Moves
         /// Gets the <see cref="Point"/> where a Palm Tree will be placed.
         /// </summary>
         public Point Point { get; }
-
-        /// <inheritdoc />
-        public override bool IsDeterministic => true;
-
-        /// <inheritdoc />
-        public override IList<object> FormatTokens => new object[] { "Place a Palm Tree at ", this.Point };
 
         internal override GameState Apply(GameState state)
         {

@@ -34,13 +34,13 @@ namespace GameTheory.Games.CenturySpiceRoad.MerchantCards
         {
         }
 
+        /// <inheritdoc/>
+        public override IList<object> FormatTokens => new object[] { "Gain ", this.Spices };
+
         /// <summary>
         /// Gets the spices produced by this card.
         /// </summary>
         public EnumCollection<Spice> Spices { get; }
-
-        /// <inheritdoc/>
-        public override IList<object> FormatTokens => new object[] { "Gain ", this.Spices };
 
         /// <inheritdoc/>
         public override int CompareTo(MerchantCard other)

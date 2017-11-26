@@ -20,6 +20,9 @@ namespace GameTheory.Games.FiveTribes
             this.Value = value;
         }
 
+        /// <inheritdoc />
+        public IList<object> FormatTokens => new object[] { this.Name, " +", this.Value };
+
         /// <summary>
         /// Gets the name of the Djinn.
         /// </summary>
@@ -30,8 +33,20 @@ namespace GameTheory.Games.FiveTribes
         /// </summary>
         public int Value { get; }
 
-        /// <inheritdoc />
-        public IList<object> FormatTokens => new object[] { this.Name, " +", this.Value };
+        /// <inheritdoc/>
+        public int CompareTo(Djinn other)
+        {
+            if (other == this)
+            {
+                return 0;
+            }
+            else if (other == null)
+            {
+                return 1;
+            }
+
+            return string.Compare(this.GetType().FullName, other.GetType().FullName, StringComparison.Ordinal);
+        }
 
         /// <summary>
         /// Called for every <see cref="GameState"/>, to allow inclusion of additional <see cref="Move">Moves</see>.
@@ -94,20 +109,5 @@ namespace GameTheory.Games.FiveTribes
 
         /// <inheritdoc />
         public sealed override string ToString() => string.Concat(this.FlattenFormatTokens());
-
-        /// <inheritdoc/>
-        public int CompareTo(Djinn other)
-        {
-            if (other == this)
-            {
-                return 0;
-            }
-            else if (other == null)
-            {
-                return 1;
-            }
-
-            return string.Compare(this.GetType().FullName, other.GetType().FullName, StringComparison.Ordinal);
-        }
     }
 }

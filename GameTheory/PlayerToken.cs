@@ -11,6 +11,14 @@ namespace GameTheory
     {
         private readonly Guid id = Guid.NewGuid();
 
+        /// <inheritdoc/>
+        public int CompareTo(PlayerToken other)
+        {
+            return this == other ? 0 :
+                other == null ? 1 :
+                this.id.CompareTo(other.id);
+        }
+
         /// <inheritdoc />
         public bool Equals(PlayerToken other)
         {
@@ -19,13 +27,5 @@ namespace GameTheory
 
         /// <inheritdoc/>
         public override string ToString() => $"<Player #{this.id.ToString().Split('-')[0]}>";
-
-        /// <inheritdoc/>
-        public int CompareTo(PlayerToken other)
-        {
-            return this == other ? 0 :
-                other == null ? 1 :
-                this.id.CompareTo(other.id);
-        }
     }
 }

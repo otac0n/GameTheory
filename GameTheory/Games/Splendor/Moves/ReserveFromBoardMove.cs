@@ -27,23 +27,23 @@ namespace GameTheory.Games.Splendor.Moves
         /// </summary>
         public DevelopmentCard Card => this.State.DevelopmentTracks[this.Track][this.Index];
 
+        /// <inheritdoc />
+        public override IList<object> FormatTokens => this.State.Tokens[Token.GoldJoker] > 0
+            ? new object[] { "Reserve ", this.Card, " (cost: ", this.Card.Cost, ")", " and take ", Token.GoldJoker }
+            : new object[] { "Reserve ", this.Card, " (cost: ", this.Card.Cost, ")" };
+
         /// <summary>
         /// Gets the index in the development track of the card to reserve.
         /// </summary>
         public int Index { get; }
 
+        /// <inheritdoc />
+        public override bool IsDeterministic => this.State.DevelopmentDecks[this.Track].Count <= 1;
+
         /// <summary>
         /// Gets the index of the development track that contains the card to reserve.
         /// </summary>
         public int Track { get; }
-
-        /// <inheritdoc />
-        public override bool IsDeterministic => this.State.DevelopmentDecks[this.Track].Count <= 1;
-
-        /// <inheritdoc />
-        public override IList<object> FormatTokens => this.State.Tokens[Token.GoldJoker] > 0
-            ? new object[] { "Reserve ", this.Card, " (cost: ", this.Card.Cost, ")", " and take ", Token.GoldJoker }
-            : new object[] { "Reserve ", this.Card, " (cost: ", this.Card.Cost, ")" };
 
         internal static IEnumerable<Move> GenerateMoves(GameState state)
         {

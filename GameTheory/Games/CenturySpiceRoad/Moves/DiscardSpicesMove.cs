@@ -20,21 +20,16 @@ namespace GameTheory.Games.CenturySpiceRoad.Moves
             this.Spices = spices;
         }
 
-        /// <summary>
-        /// Gets the available spices.
-        /// </summary>
-        public EnumCollection<Spice> Spices { get; }
+        /// <inheritdoc />
+        public override IList<object> FormatTokens => new object[] { "Discard ", this.Spices };
 
         /// <inheritdoc />
         public override bool IsDeterministic => true;
 
-        /// <inheritdoc />
-        public override IList<object> FormatTokens => new object[] { "Discard ", this.Spices };
-
-        internal static bool ShouldTransitionToPhase(GameState state)
-        {
-            return state.Inventory[state.ActivePlayer].Caravan.Count > GameState.CaravanLimit;
-        }
+        /// <summary>
+        /// Gets the available spices.
+        /// </summary>
+        public EnumCollection<Spice> Spices { get; }
 
         internal static IEnumerable<Move> GenerateMoves(GameState state)
         {
@@ -44,6 +39,11 @@ namespace GameTheory.Games.CenturySpiceRoad.Moves
             {
                 yield return new DiscardSpicesMove(state, discardSpices);
             }
+        }
+
+        internal static bool ShouldTransitionToPhase(GameState state)
+        {
+            return state.Inventory[state.ActivePlayer].Caravan.Count > GameState.CaravanLimit;
         }
 
         internal override GameState Apply(GameState state)

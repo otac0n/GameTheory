@@ -49,23 +49,6 @@ namespace GameTheory.Games.FiveTribes
         /// </summary>
         public EnumCollection<Resource> Resources { get; }
 
-        /// <summary>
-        /// Creates a new <see cref="Inventory"/>, and updates the specified values.
-        /// </summary>
-        /// <param name="djinns"><c>null</c> to keep the existing value, or any other value to update <see cref="Djinns"/>.</param>
-        /// <param name="goldCoins"><c>null</c> to keep the existing value, or any other value to update <see cref="GoldCoins"/>.</param>
-        /// <param name="meeples"><c>null</c> to keep the existing value, or any other value to update <see cref="Meeples"/>.</param>
-        /// <param name="resources"><c>null</c> to keep the existing value, or any other value to update <see cref="Resources"/>.</param>
-        /// <returns>The new <see cref="Inventory"/>.</returns>
-        public Inventory With(ImmutableList<Djinn> djinns = null, int? goldCoins = null, EnumCollection<Meeple> meeples = null, EnumCollection<Resource> resources = null)
-        {
-            return new Inventory(
-                djinns ?? this.Djinns,
-                meeples ?? this.Meeples,
-                goldCoins ?? this.GoldCoins,
-                resources ?? this.Resources);
-        }
-
         /// <inheritdoc/>
         public int CompareTo(Inventory other)
         {
@@ -104,6 +87,23 @@ namespace GameTheory.Games.FiveTribes
             }
 
             return 0;
+        }
+
+        /// <summary>
+        /// Creates a new <see cref="Inventory"/>, and updates the specified values.
+        /// </summary>
+        /// <param name="djinns"><c>null</c> to keep the existing value, or any other value to update <see cref="Djinns"/>.</param>
+        /// <param name="goldCoins"><c>null</c> to keep the existing value, or any other value to update <see cref="GoldCoins"/>.</param>
+        /// <param name="meeples"><c>null</c> to keep the existing value, or any other value to update <see cref="Meeples"/>.</param>
+        /// <param name="resources"><c>null</c> to keep the existing value, or any other value to update <see cref="Resources"/>.</param>
+        /// <returns>The new <see cref="Inventory"/>.</returns>
+        public Inventory With(ImmutableList<Djinn> djinns = null, int? goldCoins = null, EnumCollection<Meeple> meeples = null, EnumCollection<Resource> resources = null)
+        {
+            return new Inventory(
+                djinns ?? this.Djinns,
+                meeples ?? this.Meeples,
+                goldCoins ?? this.GoldCoins,
+                resources ?? this.Resources);
         }
     }
 }

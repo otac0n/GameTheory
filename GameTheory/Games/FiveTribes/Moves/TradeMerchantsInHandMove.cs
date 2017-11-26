@@ -21,10 +21,10 @@ namespace GameTheory.Games.FiveTribes.Moves
         }
 
         /// <inheritdoc />
-        public override bool IsDeterministic => true;
+        public override IList<object> FormatTokens => new object[] { "Take ", Math.Min(this.State.VisibleResources.Count, this.State.InHand.Count), " resources" };
 
         /// <inheritdoc />
-        public override IList<object> FormatTokens => new object[] { "Take ", Math.Min(this.State.VisibleResources.Count, this.State.InHand.Count), " resources" };
+        public override bool IsDeterministic => true;
 
         internal static IEnumerable<Move> GenerateMoves(GameState state)
         {

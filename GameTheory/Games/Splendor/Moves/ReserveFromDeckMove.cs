@@ -20,18 +20,18 @@ namespace GameTheory.Games.Splendor.Moves
             this.Track = track;
         }
 
-        /// <summary>
-        /// Gets the index of the development track that contains the card to reserve.
-        /// </summary>
-        public int Track { get; }
-
-        /// <inheritdoc />
-        public override bool IsDeterministic => false;
-
         /// <inheritdoc />
         public override IList<object> FormatTokens => this.State.Tokens[Token.GoldJoker] > 0
             ? new object[] { "Reserve from deck ", this.Track + 1, " and take ", Token.GoldJoker }
             : new object[] { "Reserve from deck ", this.Track + 1 };
+
+        /// <inheritdoc />
+        public override bool IsDeterministic => false;
+
+        /// <summary>
+        /// Gets the index of the development track that contains the card to reserve.
+        /// </summary>
+        public int Track { get; }
 
         internal static IEnumerable<Move> GenerateMoves(GameState state)
         {

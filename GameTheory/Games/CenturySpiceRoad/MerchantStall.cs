@@ -21,33 +21,20 @@ namespace GameTheory.Games.CenturySpiceRoad
             this.Spices = spices;
         }
 
-        /// <summary>
-        /// Gets the <see cref="Spice">Spices</see> at this <see cref="MerchantStall"/>.
-        /// </summary>
-        public EnumCollection<Spice> Spices { get; }
-
-        /// <summary>
-        /// Gets the <see cref="MerchantCard"/> at this <see cref="MerchantStall"/>.
-        /// </summary>
-        public MerchantCard MerchantCard { get; }
-
         /// <inheritdoc/>
         public IList<object> FormatTokens => this.Spices.Count > 0
             ? new object[] { this.MerchantCard, " with ", this.Spices }
             : new object[] { this.MerchantCard };
 
         /// <summary>
-        /// Creates a new <see cref="MerchantStall"/>, and updates the specified values.
+        /// Gets the <see cref="MerchantCard"/> at this <see cref="MerchantStall"/>.
         /// </summary>
-        /// <param name="merchantCard"><c>null</c> to keep the existing value, or any other value to update <see cref="MerchantCard"/>.</param>
-        /// <param name="spices"><c>null</c> to keep the existing value, or any other value to update <see cref="Spices"/>.</param>
-        /// <returns>The new <see cref="MerchantStall"/>.</returns>
-        public MerchantStall With(MerchantCard merchantCard = null, EnumCollection<Spice> spices = null)
-        {
-            return new MerchantStall(
-                merchantCard ?? this.MerchantCard,
-                spices ?? this.Spices);
-        }
+        public MerchantCard MerchantCard { get; }
+
+        /// <summary>
+        /// Gets the <see cref="Spice">Spices</see> at this <see cref="MerchantStall"/>.
+        /// </summary>
+        public EnumCollection<Spice> Spices { get; }
 
         /// <inheritdoc/>
         public int CompareTo(MerchantStall other)
@@ -74,5 +61,18 @@ namespace GameTheory.Games.CenturySpiceRoad
 
         /// <inheritdoc/>
         public override string ToString() => string.Concat(this.FlattenFormatTokens());
+
+        /// <summary>
+        /// Creates a new <see cref="MerchantStall"/>, and updates the specified values.
+        /// </summary>
+        /// <param name="merchantCard"><c>null</c> to keep the existing value, or any other value to update <see cref="MerchantCard"/>.</param>
+        /// <param name="spices"><c>null</c> to keep the existing value, or any other value to update <see cref="Spices"/>.</param>
+        /// <returns>The new <see cref="MerchantStall"/>.</returns>
+        public MerchantStall With(MerchantCard merchantCard = null, EnumCollection<Spice> spices = null)
+        {
+            return new MerchantStall(
+                merchantCard ?? this.MerchantCard,
+                spices ?? this.Spices);
+        }
     }
 }

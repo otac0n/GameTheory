@@ -32,6 +32,11 @@ namespace GameTheory.Games.TwentyFortyEight
     public class GameState : IGameState<Move>
     {
         /// <summary>
+        /// The larger value that can be added by the computer player.
+        /// </summary>
+        public const byte LargeValue = 2;
+
+        /// <summary>
         /// Indicates the width and height of the playing area.
         /// </summary>
         public const int Size = 4;
@@ -41,15 +46,10 @@ namespace GameTheory.Games.TwentyFortyEight
         /// </summary>
         public const byte SmallValue = 1;
 
-        /// <summary>
-        /// The larger value that can be added by the computer player.
-        /// </summary>
-        public const byte LargeValue = 2;
-
-        private const int WinThreshold = 11;
         private const double SmallValueWeight = 0.9;
-        private readonly IReadOnlyList<PlayerToken> players;
+        private const int WinThreshold = 11;
         private readonly byte[,] field;
+        private readonly IReadOnlyList<PlayerToken> players;
         private readonly Turn turn;
 
         /// <summary>
@@ -91,6 +91,57 @@ namespace GameTheory.Games.TwentyFortyEight
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "x", Justification = "X is meaningful in the context of coordinates.")]
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "y", Justification = "Y is meaningful in the context of coordinates.")]
         public byte this[int x, int y] => this.field[x, y];
+
+        /// <inheritdoc/>
+        public int CompareTo(IGameState<Move> other)
+        {
+            if (other == this)
+            {
+                return 0;
+            }
+
+            var state = other as GameState;
+            if (state == null)
+            {
+                return 1;
+            }
+
+            int comp;
+
+            if ((comp = this.turn.CompareTo(state.turn)) != 0)
+            {
+                return comp;
+            }
+
+            if (this.players != state.players)
+            {
+                if ((comp = this.players.Count.CompareTo(state.players.Count)) != 0)
+                {
+                    return comp;
+                }
+
+                for (var i = 0; i < this.players.Count; i++)
+                {
+                    if ((comp = this.players[i].CompareTo(state.players[i])) != 0)
+                    {
+                        return comp;
+                    }
+                }
+            }
+
+            for (var y = 0; y < Size; y++)
+            {
+                for (var x = 0; x < Size; x++)
+                {
+                    if ((comp = this.field[x, y].CompareTo(state.field[x, y])) != 0)
+                    {
+                        return comp;
+                    }
+                }
+            }
+
+            return 0;
+        }
 
         /// <inheritdoc/>
         public IReadOnlyList<Move> GetAvailableMoves()
@@ -187,57 +238,6 @@ namespace GameTheory.Games.TwentyFortyEight
             }
 
             return state;
-        }
-
-        /// <inheritdoc/>
-        public int CompareTo(IGameState<Move> other)
-        {
-            if (other == this)
-            {
-                return 0;
-            }
-
-            var state = other as GameState;
-            if (state == null)
-            {
-                return 1;
-            }
-
-            int comp;
-
-            if ((comp = this.turn.CompareTo(state.turn)) != 0)
-            {
-                return comp;
-            }
-
-            if (this.players != state.players)
-            {
-                if ((comp = this.players.Count.CompareTo(state.players.Count)) != 0)
-                {
-                    return comp;
-                }
-
-                for (var i = 0; i < this.players.Count; i++)
-                {
-                    if ((comp = this.players[i].CompareTo(state.players[i])) != 0)
-                    {
-                        return comp;
-                    }
-                }
-            }
-
-            for (var y = 0; y < Size; y++)
-            {
-                for (var x = 0; x < Size; x++)
-                {
-                    if ((comp = this.field[x, y].CompareTo(state.field[x, y])) != 0)
-                    {
-                        return comp;
-                    }
-                }
-            }
-
-            return 0;
         }
 
         internal GameState With(

@@ -35,21 +35,21 @@ namespace GameTheory.Games.FiveTribes.Moves
             this.after = after;
         }
 
+        /// <inheritdoc />
+        public override IList<object> FormatTokens => new object[] { "Take ", this.Resource };
+
         /// <summary>
         /// Gets the index of the <see cref="Resource"/> that will be taken.
         /// </summary>
         public int Index { get; }
 
+        /// <inheritdoc />
+        public override bool IsDeterministic => true;
+
         /// <summary>
         /// Gets the <see cref="Resource"/> that will be taken.
         /// </summary>
         public Resource Resource => this.State.VisibleResources[this.Index];
-
-        /// <inheritdoc />
-        public override bool IsDeterministic => true;
-
-        /// <inheritdoc />
-        public override IList<object> FormatTokens => new object[] { "Take ", this.Resource };
 
         internal override GameState Apply(GameState state)
         {

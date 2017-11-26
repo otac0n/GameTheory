@@ -4,7 +4,6 @@ namespace GameTheory.Games.Lotus.Moves
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
 
     /// <summary>
     /// Represents a move to claim a special power.

@@ -23,7 +23,7 @@ namespace GameTheory.Games.CenturySpiceRoad.Moves
         }
 
         /// <inheritdoc />
-        public override bool IsDeterministic => this.State.PointCardDeck.Count <= 1;
+        public override IList<object> FormatTokens => new object[] { "Claim ", this.State.PointCardTrack[this.Index] };
 
         /// <summary>
         /// Gets the index of the card to claim.
@@ -31,7 +31,7 @@ namespace GameTheory.Games.CenturySpiceRoad.Moves
         public int Index { get; }
 
         /// <inheritdoc />
-        public override IList<object> FormatTokens => new object[] { "Claim ", this.State.PointCardTrack[this.Index] };
+        public override bool IsDeterministic => this.State.PointCardDeck.Count <= 1;
 
         internal static IEnumerable<Move> GenerateMoves(GameState state)
         {

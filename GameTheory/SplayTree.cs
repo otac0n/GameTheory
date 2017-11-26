@@ -15,8 +15,8 @@ namespace GameTheory
     public class SplayTree<TKey, TValue> : IDictionary<TKey, TValue>
         where TKey : IComparable<TKey>
     {
-        private SplayTreeNode root;
         private int count;
+        private SplayTreeNode root;
         private int version = 0;
 
         /// <inheritdoc/>
@@ -77,6 +77,19 @@ namespace GameTheory
         }
 
         /// <inheritdoc/>
+        public bool Contains(KeyValuePair<TKey, TValue> item)
+        {
+            if (this.count == 0)
+            {
+                return false;
+            }
+
+            this.Splay(item.Key);
+
+            return item.Key.CompareTo(this.root.Key) == 0 && (object.ReferenceEquals(this.root.Value, item.Value) || (!object.ReferenceEquals(item.Value, null) && item.Value.Equals(this.root.Value)));
+        }
+
+        /// <inheritdoc/>
         public bool ContainsKey(TKey key)
         {
             if (this.count == 0)
@@ -90,17 +103,19 @@ namespace GameTheory
         }
 
         /// <inheritdoc/>
-        public bool Contains(KeyValuePair<TKey, TValue> item)
+        public void CopyTo(KeyValuePair<TKey, TValue>[] array, int arrayIndex)
         {
-            if (this.count == 0)
-            {
-                return false;
-            }
-
-            this.Splay(item.Key);
-
-            return item.Key.CompareTo(this.root.Key) == 0 && (object.ReferenceEquals(this.root.Value, item.Value) || (!object.ReferenceEquals(item.Value, null) && item.Value.Equals(this.root.Value)));
+            this.AsList(node => new KeyValuePair<TKey, TValue>(node.Key, node.Value)).CopyTo(array, arrayIndex);
         }
+
+        /// <inheritdoc/>
+        public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
+        {
+            return new TiedList<KeyValuePair<TKey, TValue>>(this, this.version, this.AsList(node => new KeyValuePair<TKey, TValue>(node.Key, node.Value))).GetEnumerator();
+        }
+
+        /// <inheritdoc/>
+        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
         /// <inheritdoc/>
         public bool Remove(TKey key)
@@ -131,26 +146,6 @@ namespace GameTheory
 
             this.version++;
             this.count--;
-            return true;
-        }
-
-        /// <inheritdoc/>
-        public bool TryGetValue(TKey key, out TValue value)
-        {
-            if (this.count == 0)
-            {
-                value = default(TValue);
-                return false;
-            }
-
-            this.Splay(key);
-            if (key.CompareTo(this.root.Key) != 0)
-            {
-                value = default(TValue);
-                return false;
-            }
-
-            value = this.root.Value;
             return true;
         }
 
@@ -186,18 +181,6 @@ namespace GameTheory
             return true;
         }
 
-        /// <inheritdoc/>
-        public void CopyTo(KeyValuePair<TKey, TValue>[] array, int arrayIndex)
-        {
-            this.AsList(node => new KeyValuePair<TKey, TValue>(node.Key, node.Value)).CopyTo(array, arrayIndex);
-        }
-
-        /// <inheritdoc/>
-        public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
-        {
-            return new TiedList<KeyValuePair<TKey, TValue>>(this, this.version, this.AsList(node => new KeyValuePair<TKey, TValue>(node.Key, node.Value))).GetEnumerator();
-        }
-
         /// <summary>
         /// Removes items from the tree based on how deep they are in the tree.
         /// </summary>
@@ -230,7 +213,50 @@ namespace GameTheory
         }
 
         /// <inheritdoc/>
-        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
+        public bool TryGetValue(TKey key, out TValue value)
+        {
+            if (this.count == 0)
+            {
+                value = default(TValue);
+                return false;
+            }
+
+            this.Splay(key);
+            if (key.CompareTo(this.root.Key) != 0)
+            {
+                value = default(TValue);
+                return false;
+            }
+
+            value = this.root.Value;
+            return true;
+        }
+
+        private IList<TEnumerator> AsList<TEnumerator>(Func<SplayTreeNode, TEnumerator> selector)
+        {
+            if (this.root == null)
+            {
+                return new TEnumerator[0];
+            }
+
+            var result = new List<TEnumerator>(this.count);
+            this.PopulateList(this.root, result, selector);
+            return result;
+        }
+
+        private void PopulateList<TEnumerator>(SplayTreeNode node, List<TEnumerator> list, Func<SplayTreeNode, TEnumerator> selector)
+        {
+            if (node.LeftChild != null)
+            {
+                this.PopulateList(node.LeftChild, list, selector);
+            }
+
+            list.Add(selector(node));
+            if (node.RightChild != null)
+            {
+                this.PopulateList(node.RightChild, list, selector);
+            }
+        }
 
         private void Set(TKey key, TValue value, bool throwOnExisting)
         {
@@ -370,32 +396,6 @@ namespace GameTheory
             }
         }
 
-        private IList<TEnumerator> AsList<TEnumerator>(Func<SplayTreeNode, TEnumerator> selector)
-        {
-            if (this.root == null)
-            {
-                return new TEnumerator[0];
-            }
-
-            var result = new List<TEnumerator>(this.count);
-            this.PopulateList(this.root, result, selector);
-            return result;
-        }
-
-        private void PopulateList<TEnumerator>(SplayTreeNode node, List<TEnumerator> list, Func<SplayTreeNode, TEnumerator> selector)
-        {
-            if (node.LeftChild != null)
-            {
-                this.PopulateList(node.LeftChild, list, selector);
-            }
-
-            list.Add(selector(node));
-            if (node.RightChild != null)
-            {
-                this.PopulateList(node.RightChild, list, selector);
-            }
-        }
-
         private sealed class SplayTreeNode
         {
             public SplayTreeNode(TKey key, TValue value)
@@ -406,19 +406,19 @@ namespace GameTheory
 
             public TKey Key { get; }
 
-            public TValue Value { get; set; }
-
             public SplayTreeNode LeftChild { get; set; }
 
             public SplayTreeNode RightChild { get; set; }
+
+            public TValue Value { get; set; }
         }
 
         [DebuggerDisplay("Count = {Count}")]
         private sealed class TiedList<T> : IList<T>
         {
+            private readonly IList<T> backingList;
             private readonly SplayTree<TKey, TValue> tree;
             private readonly int version;
-            private readonly IList<T> backingList;
 
             public TiedList(SplayTree<TKey, TValue> tree, int version, IList<T> backingList)
             {
@@ -447,26 +447,6 @@ namespace GameTheory
                 {
                     throw new NotSupportedException();
                 }
-            }
-
-            public int IndexOf(T item)
-            {
-                if (this.tree.version != this.version)
-                {
-                    throw new InvalidOperationException("The collection has been modified.");
-                }
-
-                return this.backingList.IndexOf(item);
-            }
-
-            public void Insert(int index, T item)
-            {
-                throw new NotSupportedException();
-            }
-
-            public void RemoveAt(int index)
-            {
-                throw new NotSupportedException();
             }
 
             public void Add(T item)
@@ -499,11 +479,6 @@ namespace GameTheory
                 this.backingList.CopyTo(array, arrayIndex);
             }
 
-            public bool Remove(T item)
-            {
-                throw new NotSupportedException();
-            }
-
             public IEnumerator<T> GetEnumerator()
             {
                 if (this.tree.version != this.version)
@@ -522,6 +497,31 @@ namespace GameTheory
             }
 
             IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
+
+            public int IndexOf(T item)
+            {
+                if (this.tree.version != this.version)
+                {
+                    throw new InvalidOperationException("The collection has been modified.");
+                }
+
+                return this.backingList.IndexOf(item);
+            }
+
+            public void Insert(int index, T item)
+            {
+                throw new NotSupportedException();
+            }
+
+            public bool Remove(T item)
+            {
+                throw new NotSupportedException();
+            }
+
+            public void RemoveAt(int index)
+            {
+                throw new NotSupportedException();
+            }
         }
     }
 }

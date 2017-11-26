@@ -21,16 +21,16 @@ namespace GameTheory.Games.FiveTribes.Moves
             this.SpentSlaves = spentSlaves;
         }
 
-        /// <summary>
-        /// Gets the number of <see cref="Resource.Slave">Slaves</see> spent.
-        /// </summary>
-        public int SpentSlaves { get; }
+        /// <inheritdoc />
+        public override IList<object> FormatTokens => new object[] { "Score ", this.State.InHand };
 
         /// <inheritdoc />
         public override bool IsDeterministic => true;
 
-        /// <inheritdoc />
-        public override IList<object> FormatTokens => new object[] { "Score ", this.State.InHand };
+        /// <summary>
+        /// Gets the number of <see cref="Resource.Slave">Slaves</see> spent.
+        /// </summary>
+        public int SpentSlaves { get; }
 
         internal static IEnumerable<Move> GenerateMoves(GameState state)
         {
@@ -62,11 +62,6 @@ namespace GameTheory.Games.FiveTribes.Moves
                 this.paid = paid;
             }
 
-            public override IEnumerable<Move> GenerateMoves(GameState state)
-            {
-                yield return new ScoreBuildersInHandMove(state, this.paid);
-            }
-
             public override int CompareTo(InterstitialState other)
             {
                 if (other is ScoringWithBonus s)
@@ -77,6 +72,11 @@ namespace GameTheory.Games.FiveTribes.Moves
                 {
                     return base.CompareTo(other);
                 }
+            }
+
+            public override IEnumerable<Move> GenerateMoves(GameState state)
+            {
+                yield return new ScoreBuildersInHandMove(state, this.paid);
             }
         }
     }

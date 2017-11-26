@@ -315,9 +315,9 @@ namespace GameTheory.Tests.Games
                 this.nextState = nextState;
             }
 
-            public override bool IsDeterministic => true;
-
             public override IList<object> FormatTokens => new object[] { "OK" };
+
+            public override bool IsDeterministic => true;
 
             internal override GameState Apply(GameState state)
             {

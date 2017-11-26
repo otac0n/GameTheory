@@ -32,16 +32,6 @@ namespace GameTheory.Games.FiveTribes
         /// </summary>
         public int Value { get; }
 
-        /// <summary>
-        /// Generates moves for the specified <see cref="GameState"/>.
-        /// </summary>
-        /// <param name="state">The <see cref="GameState"/> for which <see cref="Move">Moves</see> are being generated.</param>
-        /// <returns>The <see cref="Move">Moves</see> provided by the <see cref="Tile"/>.</returns>
-        public virtual IEnumerable<Move> GetTileActionMoves(GameState state)
-        {
-            yield return new ChangePhaseMove(state, "Skip Tile Action", Phase.MerchandiseSale);
-        }
-
         /// <inheritdoc/>
         public int CompareTo(Tile other)
         {
@@ -64,6 +54,16 @@ namespace GameTheory.Games.FiveTribes
             }
 
             return 0;
+        }
+
+        /// <summary>
+        /// Generates moves for the specified <see cref="GameState"/>.
+        /// </summary>
+        /// <param name="state">The <see cref="GameState"/> for which <see cref="Move">Moves</see> are being generated.</param>
+        /// <returns>The <see cref="Move">Moves</see> provided by the <see cref="Tile"/>.</returns>
+        public virtual IEnumerable<Move> GetTileActionMoves(GameState state)
+        {
+            yield return new ChangePhaseMove(state, "Skip Tile Action", Phase.MerchandiseSale);
         }
 
         internal static IEnumerable<Move> GenerateMoves(GameState state)

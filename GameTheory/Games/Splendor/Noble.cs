@@ -42,16 +42,13 @@ namespace GameTheory.Games.Splendor
         {
         }
 
+        /// <inheritdoc />
+        public IList<object> FormatTokens => new object[] { "Noble +", PrestigeBonus, " ", this.RequiredBonuses };
+
         /// <summary>
         /// Gets the bonuses required for this Noble to visit.
         /// </summary>
         public EnumCollection<Token> RequiredBonuses { get; }
-
-        /// <inheritdoc />
-        public IList<object> FormatTokens => new object[] { "Noble +", PrestigeBonus, " ", this.RequiredBonuses };
-
-        /// <inheritdoc />
-        public override string ToString() => string.Concat(this.FlattenFormatTokens());
 
         /// <inheritdoc/>
         public int CompareTo(Noble other)
@@ -67,5 +64,8 @@ namespace GameTheory.Games.Splendor
 
             return this.RequiredBonuses.CompareTo(other.RequiredBonuses);
         }
+
+        /// <inheritdoc />
+        public override string ToString() => string.Concat(this.FlattenFormatTokens());
     }
 }

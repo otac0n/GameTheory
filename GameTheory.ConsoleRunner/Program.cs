@@ -3,7 +3,6 @@
 namespace GameTheory.ConsoleRunner
 {
     using System;
-    using System.Collections.Generic;
     using System.Diagnostics;
     using System.Linq;
     using System.Reflection;
@@ -13,6 +12,14 @@ namespace GameTheory.ConsoleRunner
 
     internal class Program
     {
+        private static object ConstructType(Type type, Func<ParameterInfo, object> getParameter = null)
+        {
+            getParameter = getParameter ?? (p => GetArgument(p));
+            var constructor = ConsoleInteraction.Choose(type.GetConstructors(), skipMessage: _ => Resources.SingleConstructor);
+            var args = constructor.GetParameters().Select(getParameter).ToArray();
+            return constructor.Invoke(args);
+        }
+
         private static object GetArgument(ParameterInfo parameter)
         {
             Console.Write(Resources.ParameterName, parameter.Name);
@@ -93,14 +100,6 @@ namespace GameTheory.ConsoleRunner
             {
                 Console.ReadKey(intercept: true);
             }
-        }
-
-        private static object ConstructType(Type type, Func<ParameterInfo, object> getParameter = null)
-        {
-            getParameter = getParameter ?? (p => GetArgument(p));
-            var constructor = ConsoleInteraction.Choose(type.GetConstructors(), skipMessage: _ => Resources.SingleConstructor);
-            var args = constructor.GetParameters().Select(getParameter).ToArray();
-            return constructor.Invoke(args);
         }
 
         private static void RunGame<TMove>(IGameState<TMove> state)

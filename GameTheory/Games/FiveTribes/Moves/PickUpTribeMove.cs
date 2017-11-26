@@ -20,16 +20,16 @@ namespace GameTheory.Games.FiveTribes.Moves
             this.Tribe = tribe;
         }
 
-        /// <summary>
-        /// Gets the <see cref="Meeple"/> tribe to pick up.
-        /// </summary>
-        public Meeple Tribe { get; }
+        /// <inheritdoc />
+        public override IList<object> FormatTokens => new object[] { "Pick up all ", this.Tribe, " at ", this.State.LastPoint };
 
         /// <inheritdoc />
         public override bool IsDeterministic => true;
 
-        /// <inheritdoc />
-        public override IList<object> FormatTokens => new object[] { "Pick up all ", this.Tribe, " at ", this.State.LastPoint };
+        /// <summary>
+        /// Gets the <see cref="Meeple"/> tribe to pick up.
+        /// </summary>
+        public Meeple Tribe { get; }
 
         internal override GameState Apply(GameState state)
         {

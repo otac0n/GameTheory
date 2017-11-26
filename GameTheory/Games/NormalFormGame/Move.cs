@@ -22,18 +22,18 @@ namespace GameTheory.Games.NormalFormGame
         }
 
         /// <inheritdoc />
-        public PlayerToken PlayerToken { get; }
+        public IList<object> FormatTokens => new object[] { this.Kind };
 
         /// <inheritdoc />
         public bool IsDeterministic => true;
-
-        /// <inheritdoc />
-        public IList<object> FormatTokens => new object[] { this.Kind };
 
         /// <summary>
         /// Gets a value indicating the kind of move the player has chosen.
         /// </summary>
         public T Kind { get; }
+
+        /// <inheritdoc />
+        public PlayerToken PlayerToken { get; }
 
         /// <inheritdoc />
         public override string ToString() => string.Concat(this.FlattenFormatTokens());

@@ -20,10 +20,10 @@ namespace GameTheory.Games.FiveTribes.Moves
         }
 
         /// <inheritdoc />
-        public override bool IsDeterministic => false;
+        public override IList<object> FormatTokens => new object[] { "Draw the top card from the Resource Pile" };
 
         /// <inheritdoc />
-        public override IList<object> FormatTokens => new object[] { "Draw the top card from the Resource Pile" };
+        public override bool IsDeterministic => false;
 
         internal override GameState Apply(GameState state)
         {

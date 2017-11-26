@@ -4,7 +4,6 @@ namespace GameTheory.Games.Lotus
 {
     using System;
     using System.Collections.Generic;
-    using System.Collections.Immutable;
     using System.Linq;
 
     /// <summary>

@@ -21,10 +21,10 @@ namespace GameTheory.Games.FiveTribes.Moves
         }
 
         /// <inheritdoc />
-        public override bool IsDeterministic => this.State.FindHighestBidIndex() != -1;
+        public override IList<object> FormatTokens => new object[] { "End turn" };
 
         /// <inheritdoc />
-        public override IList<object> FormatTokens => new object[] { "End turn" };
+        public override bool IsDeterministic => this.State.FindHighestBidIndex() != -1;
 
         internal static IEnumerable<Move> GenerateMoves(GameState state)
         {

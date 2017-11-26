@@ -30,6 +30,9 @@ namespace GameTheory.Games.FiveTribes.Moves
         /// </summary>
         public Djinn Djinn => this.dealt[this.Index];
 
+        /// <inheritdoc />
+        public override IList<object> FormatTokens => new object[] { "Take ", this.dealt[this.Index] };
+
         /// <summary>
         /// Gets the index of the <see cref="Djinn"/> that will be taken.
         /// </summary>
@@ -37,9 +40,6 @@ namespace GameTheory.Games.FiveTribes.Moves
 
         /// <inheritdoc />
         public override bool IsDeterministic => true;
-
-        /// <inheritdoc />
-        public override IList<object> FormatTokens => new object[] { "Take ", this.dealt[this.Index] };
 
         internal override GameState Apply(GameState state)
         {

@@ -35,97 +35,18 @@ namespace GameTheory.Games.NormalFormGame
         }
 
         /// <summary>
+        /// Gets the choices that have been made.
+        /// </summary>
+        public ImmutableArray<T> Choices { get; }
+
+        /// <summary>
         /// Gets a list of players in the current game state.
         /// </summary>
         /// <returns>The list of players in the current game state.</returns>
         public ImmutableArray<PlayerToken> Players { get; }
 
-        /// <summary>
-        /// Gets the choices that have been made.
-        /// </summary>
-        public ImmutableArray<T> Choices { get; }
-
         /// <inheritdoc />
         IReadOnlyList<PlayerToken> IGameState<Move<T>>.Players => this.Players;
-
-        /// <inheritdoc />
-        public IReadOnlyList<Move<T>> GetAvailableMoves()
-        {
-            return this.Players
-                .Where(p => this.Choices[this.Players.IndexOf(p)] == null)
-                .SelectMany(p => this.GetMoveKinds(p).Select(k => new Move<T>(p, k)))
-                .ToImmutableArray();
-        }
-
-        /// <inheritdoc />
-        public IReadOnlyCollection<PlayerToken> GetWinners()
-        {
-            if (this.Choices.Any(c => c == null))
-            {
-                return ImmutableArray<PlayerToken>.Empty;
-            }
-
-            return this.Players
-                .GroupBy(p => this.GetScore(p))
-                .OrderByDescending(g => g.Key)
-                .First()
-                .ToImmutableList();
-        }
-
-        /// <summary>
-        /// Gets the payoff of the specified player.
-        /// </summary>
-        /// <param name="player">The player to evaluate.</param>
-        /// <returns>The payoff of the specified player.</returns>
-        public abstract double GetScore(PlayerToken player);
-
-        /// <inheritdoc />
-        IGameState<Move<T>> IGameState<Move<T>>.MakeMove(Move<T> move) => this.MakeMove(move);
-
-        /// <summary>
-        /// Applies the move to the current game state.
-        /// </summary>
-        /// <param name="move">The <see cref="Move{T}"/> to apply.</param>
-        /// <returns>The updated <see cref="GameState{T}"/>.</returns>
-        public GameState<T> MakeMove(Move<T> move)
-        {
-            if (move == null)
-            {
-                throw new ArgumentNullException(nameof(move));
-            }
-
-            var index = this.Players.IndexOf(move.PlayerToken);
-
-            return this.WithChoices(
-                this.Choices.SetItem(index, move.Kind));
-        }
-
-        /// <inheritdoc />
-        public IEnumerable<IWeighted<IGameState<Move<T>>>> GetOutcomes(Move<T> move)
-        {
-            yield return Weighted.Create(this.MakeMove(move), 1);
-        }
-
-        /// <inheritdoc />
-        public IGameState<Move<T>> GetView(PlayerToken playerToken)
-        {
-            var index = this.Players.IndexOf(playerToken);
-            if (index == -1)
-            {
-                throw new InvalidOperationException();
-            }
-
-            return this.WithChoices(
-                this.Choices.SetItem(1 - index, null));
-        }
-
-        /// <inheritdoc />
-        public override string ToString()
-        {
-            string Render(T choice) => choice == null ? "?" : choice.ToString();
-
-            return $"[{Render(this.Choices[0])}, {Render(this.Choices[1])}]";
-        }
 
         /// <inheritdoc/>
         public int CompareTo(IGameState<Move<T>> other)
@@ -190,6 +111,85 @@ namespace GameTheory.Games.NormalFormGame
             }
 
             return 0;
+        }
+
+        /// <inheritdoc />
+        public IReadOnlyList<Move<T>> GetAvailableMoves()
+        {
+            return this.Players
+                .Where(p => this.Choices[this.Players.IndexOf(p)] == null)
+                .SelectMany(p => this.GetMoveKinds(p).Select(k => new Move<T>(p, k)))
+                .ToImmutableArray();
+        }
+
+        /// <inheritdoc />
+        public IEnumerable<IWeighted<IGameState<Move<T>>>> GetOutcomes(Move<T> move)
+        {
+            yield return Weighted.Create(this.MakeMove(move), 1);
+        }
+
+        /// <summary>
+        /// Gets the payoff of the specified player.
+        /// </summary>
+        /// <param name="player">The player to evaluate.</param>
+        /// <returns>The payoff of the specified player.</returns>
+        public abstract double GetScore(PlayerToken player);
+
+        /// <inheritdoc />
+        public IGameState<Move<T>> GetView(PlayerToken playerToken)
+        {
+            var index = this.Players.IndexOf(playerToken);
+            if (index == -1)
+            {
+                throw new InvalidOperationException();
+            }
+
+            return this.WithChoices(
+                this.Choices.SetItem(1 - index, null));
+        }
+
+        /// <inheritdoc />
+        public IReadOnlyCollection<PlayerToken> GetWinners()
+        {
+            if (this.Choices.Any(c => c == null))
+            {
+                return ImmutableArray<PlayerToken>.Empty;
+            }
+
+            return this.Players
+                .GroupBy(p => this.GetScore(p))
+                .OrderByDescending(g => g.Key)
+                .First()
+                .ToImmutableList();
+        }
+
+        /// <inheritdoc />
+        IGameState<Move<T>> IGameState<Move<T>>.MakeMove(Move<T> move) => this.MakeMove(move);
+
+        /// <summary>
+        /// Applies the move to the current game state.
+        /// </summary>
+        /// <param name="move">The <see cref="Move{T}"/> to apply.</param>
+        /// <returns>The updated <see cref="GameState{T}"/>.</returns>
+        public GameState<T> MakeMove(Move<T> move)
+        {
+            if (move == null)
+            {
+                throw new ArgumentNullException(nameof(move));
+            }
+
+            var index = this.Players.IndexOf(move.PlayerToken);
+
+            return this.WithChoices(
+                this.Choices.SetItem(index, move.Kind));
+        }
+
+        /// <inheritdoc />
+        public override string ToString()
+        {
+            string Render(T choice) => choice == null ? "?" : choice.ToString();
+
+            return $"[{Render(this.Choices[0])}, {Render(this.Choices[1])}]";
         }
 
         /// <summary>

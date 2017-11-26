@@ -20,16 +20,25 @@ namespace GameTheory.Games.Splendor.Moves
             this.Tokens = tokens;
         }
 
+        /// <inheritdoc />
+        public override IList<object> FormatTokens => new object[] { "Discard ", this.Tokens };
+
+        /// <inheritdoc />
+        public override bool IsDeterministic => true;
+
         /// <summary>
         /// Gets the tokens to discard.
         /// </summary>
         public EnumCollection<Token> Tokens { get; }
 
-        /// <inheritdoc />
-        public override bool IsDeterministic => true;
-
-        /// <inheritdoc />
-        public override IList<object> FormatTokens => new object[] { "Discard ", this.Tokens };
+        internal static IEnumerable<Move> GenerateMoves(GameState state)
+        {
+            var toDiscard = state.Inventory[state.ActivePlayer].Tokens.Count - GameState.TokenLimit;
+            foreach (var discardTokens in state.Inventory[state.ActivePlayer].Tokens.Combinations(toDiscard))
+            {
+                yield return new DiscardTokensMove(state, discardTokens);
+            }
+        }
 
         internal static bool ShouldTransitionToPhase(GameState state)
         {
@@ -39,15 +48,6 @@ namespace GameTheory.Games.Splendor.Moves
             }
 
             return false;
-        }
-
-        internal static IEnumerable<Move> GenerateMoves(GameState state)
-        {
-            var toDiscard = state.Inventory[state.ActivePlayer].Tokens.Count - GameState.TokenLimit;
-            foreach (var discardTokens in state.Inventory[state.ActivePlayer].Tokens.Combinations(toDiscard))
-            {
-                yield return new DiscardTokensMove(state, discardTokens);
-            }
         }
 
         internal override GameState Apply(GameState state)

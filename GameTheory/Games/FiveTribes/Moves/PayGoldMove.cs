@@ -25,6 +25,9 @@ namespace GameTheory.Games.FiveTribes.Moves
             this.Gold = gold;
         }
 
+        /// <inheritdoc />
+        public override IList<object> FormatTokens => new object[] { "Pay ", this.Gold, " Gold" };
+
         /// <summary>
         /// Gets the amount of Gold Coins (GC) that will be paid.
         /// </summary>
@@ -32,9 +35,6 @@ namespace GameTheory.Games.FiveTribes.Moves
 
         /// <inheritdoc />
         public override bool IsDeterministic => true;
-
-        /// <inheritdoc />
-        public override IList<object> FormatTokens => new object[] { "Pay ", this.Gold, " Gold" };
 
         internal override GameState Apply(GameState state)
         {

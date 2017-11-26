@@ -8,11 +8,6 @@ namespace GameTheory
     public interface IMove : ITokenFormattable
     {
         /// <summary>
-        /// Gets the player who may perform this move.
-        /// </summary>
-        PlayerToken PlayerToken { get; }
-
-        /// <summary>
         /// Gets a value indicating whether or not the immediate outcome of this move is certain.
         /// </summary>
         /// <remarks>
@@ -20,5 +15,10 @@ namespace GameTheory
         /// A value of <c>false</c> means that the outcome may vary.
         /// </remarks>
         bool IsDeterministic { get; }
+
+        /// <summary>
+        /// Gets the player who may perform this move.
+        /// </summary>
+        PlayerToken PlayerToken { get; }
     }
 }
