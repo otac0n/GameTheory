@@ -13,6 +13,75 @@ namespace GameTheory
     public static class EnumerableExtensions
     {
         /// <summary>
+        /// Gets an enumerable collection containing the combinations of counts of unique items.
+        /// </summary>
+        /// <returns>An enumerable collection of combinations.</returns>
+        /// <param name="itemCounts">The count of each disctinct item available.</param>
+        /// <param name="count">The size of the combinations.</param>
+        /// <param name="includeSmaller">A value indicating whether or not smaller combinations should also be returned.</param>
+        /// <returns>A sequence that contains ways of choosing elements from the specified list.</returns>
+        public static IEnumerable<ImmutableList<int>> Combinations(IList<int> itemCounts, int count, bool includeSmaller = false)
+        {
+            if (count <= 0)
+            {
+                yield break;
+            }
+
+            if (!includeSmaller && count > itemCounts.Sum())
+            {
+                yield break;
+            }
+
+            var storage = new int[itemCounts.Count];
+            var digitalSum = 0;
+
+            bool increment(int i)
+            {
+                if (i >= itemCounts.Count)
+                {
+                    return true;
+                }
+
+                var digit = ++storage[i];
+                digitalSum++;
+
+                if (digitalSum > count || digit > Math.Min(count, itemCounts[i]))
+                {
+                    storage[i] = 0;
+                    digitalSum -= digit;
+                    return increment(i + 1);
+                }
+
+                return false;
+            }
+
+            while (!increment(0))
+            {
+                if (includeSmaller || digitalSum == count)
+                {
+                    yield return storage.ToImmutableList();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets an enumerable collection containing all combinations of the items in the specified list.
+        /// </summary>
+        /// <returns>An enumerable collection of combinations.</returns>
+        /// <typeparam name="T">The type of the elements of the input sequence.</typeparam>
+        /// <param name="source">A list whose elements will chosen.</param>
+        /// <param name="count">The size of the combinations.</param>
+        /// <param name="includeSmaller">A value indicating whether or not smaller combinations should also be returned.</param>
+        /// <returns>A sequence that contains ways of choosing elements from the specified list.</returns>
+        public static IEnumerable<ImmutableList<T>> Combinations<T>(this IList<T> source, int count, bool includeSmaller = false)
+        {
+            foreach (var combinations in Combinations(source.Select(i => 1).ToArray(), count, includeSmaller))
+            {
+                yield return combinations.SelectMany((c, i) => Enumerable.Range(0, c).Select(_ => source[i])).ToImmutableList();
+            }
+        }
+
+        /// <summary>
         /// Produces the set difference of two sequences by using the default equality comparer to compare values.
         /// </summary>
         /// <typeparam name="T">The type of the elements of the input sequences.</typeparam>
@@ -43,7 +112,7 @@ namespace GameTheory
         /// <param name="source">An enumerable collection whose elements will partitioned.</param>
         /// <param name="count">The size of each partition.</param>
         /// <returns>A sequence that contains partitions of the specified size.</returns>
-        public static IEnumerable<IReadOnlyList<T>> Partition<T>(this IEnumerable<T> source, int count)
+        public static IEnumerable<ImmutableList<T>> Partition<T>(this IEnumerable<T> source, int count)
         {
             if (count <= 0)
             {
@@ -80,6 +149,18 @@ namespace GameTheory
             {
                 yield return value;
             }
+        }
+
+        /// <summary>
+        /// Initializes a <see cref="HashSet{T}"/> from the specified source.
+        /// </summary>
+        /// <typeparam name="T">The type of the elements in the set.</typeparam>
+        /// <param name="source">The source of the elements in the set.</param>
+        /// <param name="comparer">An option comparer to use.</param>
+        /// <returns>The newly created set.</returns>
+        public static HashSet<T> ToSet<T>(this IEnumerable<T> source, IEqualityComparer<T> comparer = null)
+        {
+            return comparer == null ? new HashSet<T>(source) : new HashSet<T>(source, comparer);
         }
     }
 }

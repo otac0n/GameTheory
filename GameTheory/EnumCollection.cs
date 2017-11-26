@@ -249,7 +249,7 @@ namespace GameTheory
                 yield break;
             }
 
-            if (count > this.count)
+            if (!includeSmaller && count > this.count)
             {
                 yield break;
             }
