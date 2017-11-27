@@ -70,7 +70,15 @@ namespace GameTheory
             var players = getPlayers(playerTokens);
             try
             {
-                var getTasks = new Func<CancellationToken, Task<Maybe<TMove>>[]>(cancel => players.Select(p => p.ChooseMove(state.GetView(p.PlayerToken), cancel)).ToArray());
+                var getTasks = new Func<CancellationToken, Task<Maybe<TMove>>[]>(cancel =>
+                {
+                    return players.Select(async p =>
+                    {
+                        var move = await p.ChooseMove(state.GetView(p.PlayerToken), cancel);
+                        return move.HasValue && move.Value.PlayerToken == p.PlayerToken ? move : default(Maybe<TMove>);
+                    }).ToArray();
+                });
+
                 while (true)
                 {
                     var cts = new CancellationTokenSource();
@@ -86,10 +94,12 @@ namespace GameTheory
                         if (finishedTask.Result.HasValue)
                         {
                             chosenMove = finishedTask.Result;
-                            cts.Cancel();
                             break;
                         }
                     }
+
+                    var wasCancelled = cts.IsCancellationRequested;
+                    cts.Cancel();
 
                     if (!chosenMove.HasValue)
                     {
