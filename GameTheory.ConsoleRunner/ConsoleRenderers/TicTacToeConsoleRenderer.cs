@@ -4,6 +4,7 @@ namespace GameTheory.ConsoleRunner.ConsoleRenderers
 {
     using System;
     using Games.TicTacToe;
+    using TicTacToe;
 
     /// <summary>
     /// Implements a console renderer for the game of <see cref="GameState">TicTacToe</see>.
@@ -13,7 +14,8 @@ namespace GameTheory.ConsoleRunner.ConsoleRenderers
         /// <inheritdoc/>
         public override void Show(IGameState<Move> state, PlayerToken playerToken = null)
         {
-            Console.WriteLine(state);
+            var gameState = (GameState)state;
+            new Templates().RenderGameState(gameState, this.MakeRenderTokenWriter(state));
         }
 
         /// <inheritdoc/>

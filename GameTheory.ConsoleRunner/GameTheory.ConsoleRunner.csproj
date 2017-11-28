@@ -105,6 +105,7 @@
     <WeaveTemplate Include="ConsoleRenderers\TwentyFortyEight\GameState.weave" />
     <WeaveTemplate Include="ConsoleRenderers\CenturySpiceRoad\GameState.weave" />
     <WeaveTemplate Include="ConsoleRenderers\Lotus\GameState.weave" />
+    <WeaveTemplate Include="ConsoleRenderers\TicTacToe\GameState.weave" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

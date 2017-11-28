@@ -1,0 +1,10 @@
+﻿@using System.Linq
+@using GameTheory.Games.TicTacToe
+@namespace GameTheory.ConsoleRunner.ConsoleRenderers.TicTacToe
+@static false
+@model GameState
+{{each y in Enumerable.Range(0, GameState.Size)}}
+{{each x in Enumerable.Range(0, GameState.Size)}}{{= model[x, y] ?? (object)" "}}{{delimit}}│{{/each}}
+{{delimit}}
+─┼─┼─
+{{/each}}
