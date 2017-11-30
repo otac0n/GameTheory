@@ -189,9 +189,10 @@ namespace GameTheory.Games.Lotus
                         {
                             if (state.AvailableWildflowers[i] == null)
                             {
-                                var deck = state.WildflowerDeck.Deal(out PetalCard dealt);
+                                var dealtIndex = state.WildflowerDeck.Count - 1;
+                                var dealt = state.WildflowerDeck[dealtIndex];
                                 state = state.With(
-                                    wildflowerDeck: deck,
+                                    wildflowerDeck: state.WildflowerDeck.RemoveAt(dealtIndex),
                                     availableWildflowers: state.AvailableWildflowers.SetItem(
                                         i,
                                         dealt));
