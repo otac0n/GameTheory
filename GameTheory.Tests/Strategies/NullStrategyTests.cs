@@ -63,9 +63,9 @@ namespace GameTheory.Tests.Strategies
                 yield return Weighted.Create(this.MakeMove(move), 1);
             }
 
-            public IGameState<Move> GetView(PlayerToken playerToken)
+            public IEnumerable<IGameState<Move>> GetView(PlayerToken playerToken, int maxStates)
             {
-                return this;
+                yield return this;
             }
 
             public IReadOnlyCollection<PlayerToken> GetWinners()

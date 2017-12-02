@@ -187,7 +187,10 @@ namespace GameTheory.Games.TwentyFortyEight
         }
 
         /// <inheritdoc/>
-        public IGameState<Move> GetView(PlayerToken playerToken) => this;
+        public IEnumerable<IGameState<Move>> GetView(PlayerToken playerToken, int maxStates)
+        {
+            yield return this;
+        }
 
         /// <inheritdoc/>
         public IReadOnlyCollection<PlayerToken> GetWinners()

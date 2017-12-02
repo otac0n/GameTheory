@@ -136,7 +136,7 @@ namespace GameTheory.Games.NormalFormGame
         public abstract double GetScore(PlayerToken player);
 
         /// <inheritdoc />
-        public IGameState<Move<T>> GetView(PlayerToken playerToken)
+        public IEnumerable<IGameState<Move<T>>> GetView(PlayerToken playerToken, int maxStates)
         {
             var index = this.Players.IndexOf(playerToken);
             if (index == -1)
@@ -144,7 +144,7 @@ namespace GameTheory.Games.NormalFormGame
                 throw new InvalidOperationException();
             }
 
-            return this.WithChoices(
+            yield return this.WithChoices(
                 this.Choices.SetItem(1 - index, null));
         }
 

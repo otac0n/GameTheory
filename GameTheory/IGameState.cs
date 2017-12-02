@@ -35,11 +35,12 @@ namespace GameTheory
         IEnumerable<IWeighted<IGameState<TMove>>> GetOutcomes(TMove move);
 
         /// <summary>
-        /// Returns a view of the game with only information available to the specified player.
+        /// Returns a view of the game with only information available to the specified player, or multiple possible states up to the specified maximum.
         /// </summary>
         /// <param name="playerToken">The player whose view will be returned.</param>
-        /// <returns>A view of the game from the specified player's view.</returns>
-        IGameState<TMove> GetView(PlayerToken playerToken);
+        /// <param name="maxStates">The maximum number of states to return.</param>
+        /// <returns>A view of the game from the specified player's perspective.</returns>
+        IEnumerable<IGameState<TMove>> GetView(PlayerToken playerToken, int maxStates);
 
         /// <summary>
         /// Returns any winners for the current game state.

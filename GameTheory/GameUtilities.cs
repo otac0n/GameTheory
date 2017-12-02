@@ -74,7 +74,7 @@ namespace GameTheory
                 {
                     return players.Select(async p =>
                     {
-                        var move = await p.ChooseMove(state.GetView(p.PlayerToken), cancel);
+                        var move = await p.ChooseMove(state.GetView(p.PlayerToken, maxStates: 1).First(), cancel);
                         return move.HasValue && move.Value.PlayerToken == p.PlayerToken ? move : default(Maybe<TMove>);
                     }).ToArray();
                 });

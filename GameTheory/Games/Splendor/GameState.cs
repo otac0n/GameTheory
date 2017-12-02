@@ -385,10 +385,10 @@ namespace GameTheory.Games.Splendor
             this.Inventory[player].DevelopmentCards.Sum(c => c.Prestige) + this.Inventory[player].Nobles.Count * Noble.PrestigeBonus;
 
         /// <inheritdoc />
-        public IGameState<Move> GetView(PlayerToken playerToken)
+        public IEnumerable<IGameState<Move>> GetView(PlayerToken playerToken, int maxStates)
         {
             // TODO: Hide the other players' hands.
-            return this;
+            yield return this;
         }
 
         /// <inheritdoc />

@@ -325,10 +325,10 @@ namespace GameTheory.Games.Lotus
         }
 
         /// <inheritdoc />
-        public IGameState<Move> GetView(PlayerToken playerToken)
+        public IEnumerable<IGameState<Move>> GetView(PlayerToken playerToken, int maxStates)
         {
             // TODO: Hide hands from other players.
-            return this;
+            yield return this;
         }
 
         /// <inheritdoc />
