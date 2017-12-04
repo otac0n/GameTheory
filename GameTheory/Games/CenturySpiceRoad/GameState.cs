@@ -257,25 +257,10 @@ namespace GameTheory.Games.CenturySpiceRoad
             if ((comp = this.Phase.CompareTo(state.Phase)) != 0 ||
                 (comp = this.ActivePlayer.CompareTo(state.ActivePlayer)) != 0 ||
                 (comp = this.MerchantCardIndexAfforded.CompareTo(state.MerchantCardIndexAfforded)) != 0 ||
-                (comp = this.UpgradesRemaining.CompareTo(state.UpgradesRemaining)) != 0)
+                (comp = this.UpgradesRemaining.CompareTo(state.UpgradesRemaining)) != 0 ||
+                (comp = CompareUtilities.CompareLists(this.Players, state.Players)) != 0)
             {
                 return comp;
-            }
-
-            if (this.Players != state.Players)
-            {
-                if ((comp = this.Players.Count.CompareTo(state.Players.Count)) != 0)
-                {
-                    return comp;
-                }
-
-                for (var i = 0; i < this.Players.Count; i++)
-                {
-                    if ((comp = this.Players[i].CompareTo(state.Players[i])) != 0)
-                    {
-                        return comp;
-                    }
-                }
             }
 
             if (this.Inventory != state.Inventory)
@@ -290,36 +275,10 @@ namespace GameTheory.Games.CenturySpiceRoad
                 }
             }
 
-            if (this.MerchantCardTrack != state.MerchantCardTrack)
+            if ((comp = CompareUtilities.CompareLists(this.MerchantCardTrack, state.MerchantCardTrack)) != 0 ||
+                (comp = CompareUtilities.CompareLists(this.PointCardTrack, state.PointCardTrack)) != 0)
             {
-                if ((comp = this.MerchantCardTrack.Count.CompareTo(state.MerchantCardTrack.Count)) != 0)
-                {
-                    return comp;
-                }
-
-                for (var i = 0; i < this.MerchantCardTrack.Count; i++)
-                {
-                    if ((comp = this.MerchantCardTrack[i].CompareTo(state.MerchantCardTrack[i])) != 0)
-                    {
-                        return comp;
-                    }
-                }
-            }
-
-            if (this.PointCardTrack != state.PointCardTrack)
-            {
-                if ((comp = this.PointCardTrack.Count.CompareTo(state.PointCardTrack.Count)) != 0)
-                {
-                    return comp;
-                }
-
-                for (var i = 0; i < this.PointCardTrack.Count; i++)
-                {
-                    if ((comp = this.PointCardTrack[i].CompareTo(state.PointCardTrack[i])) != 0)
-                    {
-                        return comp;
-                    }
-                }
+                return comp;
             }
 
             return 0;

@@ -271,25 +271,10 @@ namespace GameTheory.Games.Splendor
             int comp;
 
             if ((comp = this.Phase.CompareTo(state.Phase)) != 0 ||
-                (comp = this.ActivePlayer.CompareTo(state.ActivePlayer)) != 0)
+                (comp = this.ActivePlayer.CompareTo(state.ActivePlayer)) != 0 ||
+                (comp = CompareUtilities.CompareLists(this.Players, state.Players)) != 0)
             {
                 return comp;
-            }
-
-            if (this.Players != state.Players)
-            {
-                if ((comp = this.Players.Count.CompareTo(state.Players.Count)) != 0)
-                {
-                    return comp;
-                }
-
-                for (var i = 0; i < this.Players.Count; i++)
-                {
-                    if ((comp = this.Players[i].CompareTo(state.Players[i])) != 0)
-                    {
-                        return comp;
-                    }
-                }
             }
 
             if (this.Inventory != state.Inventory)

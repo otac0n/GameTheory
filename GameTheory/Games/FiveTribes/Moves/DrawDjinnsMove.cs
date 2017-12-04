@@ -61,25 +61,7 @@ namespace GameTheory.Games.FiveTribes.Moves
             {
                 if (other is ChoosingDjinn s)
                 {
-                    if (this.dealt != s.dealt)
-                    {
-                        int comp;
-
-                        if ((comp = this.dealt.Count.CompareTo(s.dealt.Count)) != 0)
-                        {
-                            return comp;
-                        }
-
-                        for (var i = 0; i < this.dealt.Count; i++)
-                        {
-                            if ((comp = this.dealt[i].CompareTo(s.dealt[i])) != 0)
-                            {
-                                return comp;
-                            }
-                        }
-                    }
-
-                    return 0;
+                    return CompareUtilities.CompareLists(this.dealt, s.dealt);
                 }
                 else
                 {

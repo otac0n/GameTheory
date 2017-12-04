@@ -94,57 +94,12 @@ namespace GameTheory.Games.Lotus
 
             if ((comp = this.Guardians.CompareTo(other.Guardians)) != 0 ||
                 (comp = this.ScoringTokens.CompareTo(other.ScoringTokens)) != 0 ||
-                (comp = this.SpecialPowers.CompareTo(other.SpecialPowers)) != 0)
+                (comp = this.SpecialPowers.CompareTo(other.SpecialPowers)) != 0 ||
+                (comp = CompareUtilities.CompareLists(this.Hand, other.Hand)) != 0 ||
+                (comp = CompareUtilities.CompareLists(this.Deck, other.Deck)) != 0 ||
+                (comp = CompareUtilities.CompareLists(this.ScoringPile, other.ScoringPile)) != 0)
             {
                 return comp;
-            }
-
-            if (this.Hand != other.Hand)
-            {
-                if ((comp = this.Hand.Count.CompareTo(other.Hand.Count)) != 0)
-                {
-                    return comp;
-                }
-
-                for (var i = 0; i < this.Hand.Count; i++)
-                {
-                    if ((comp = this.Hand[i].CompareTo(other.Hand[i])) != 0)
-                    {
-                        return comp;
-                    }
-                }
-            }
-
-            if (this.Deck != other.Deck)
-            {
-                if ((comp = this.Deck.Count.CompareTo(other.Deck.Count)) != 0)
-                {
-                    return comp;
-                }
-
-                for (var i = 0; i < this.Deck.Count; i++)
-                {
-                    if ((comp = this.Deck[i].CompareTo(other.Deck[i])) != 0)
-                    {
-                        return comp;
-                    }
-                }
-            }
-
-            if (this.ScoringPile != other.ScoringPile)
-            {
-                if ((comp = this.ScoringPile.Count.CompareTo(other.ScoringPile.Count)) != 0)
-                {
-                    return comp;
-                }
-
-                for (var i = 0; i < this.ScoringPile.Count; i++)
-                {
-                    if ((comp = this.ScoringPile[i].CompareTo(other.ScoringPile[i])) != 0)
-                    {
-                        return comp;
-                    }
-                }
             }
 
             return 0;

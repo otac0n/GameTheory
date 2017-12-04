@@ -168,25 +168,10 @@ namespace GameTheory.Games.Lotus
 
             if ((comp = this.Phase.CompareTo(state.Phase)) != 0 ||
                 (comp = this.RemainingActions.CompareTo(state.RemainingActions)) != 0 ||
-                (comp = this.ActivePlayer.CompareTo(state.ActivePlayer)) != 0)
+                (comp = this.ActivePlayer.CompareTo(state.ActivePlayer)) != 0 ||
+                (comp = CompareUtilities.CompareLists(this.Players, state.Players)) != 0)
             {
                 return comp;
-            }
-
-            if (this.Players != state.Players)
-            {
-                if ((comp = this.Players.Count.CompareTo(state.Players.Count)) != 0)
-                {
-                    return comp;
-                }
-
-                for (var i = 0; i < this.Players.Count; i++)
-                {
-                    if ((comp = this.Players[i].CompareTo(state.Players[i])) != 0)
-                    {
-                        return comp;
-                    }
-                }
             }
 
             if (this.Inventory != state.Inventory)
@@ -201,20 +186,9 @@ namespace GameTheory.Games.Lotus
                 }
             }
 
-            if (this.ChoosingPlayers != state.ChoosingPlayers)
+            if ((comp = CompareUtilities.CompareLists(this.ChoosingPlayers, state.ChoosingPlayers)) != 0)
             {
-                if ((comp = this.ChoosingPlayers.Count.CompareTo(state.ChoosingPlayers.Count)) != 0)
-                {
-                    return comp;
-                }
-
-                for (var i = 0; i < this.ChoosingPlayers.Count; i++)
-                {
-                    if ((comp = this.ChoosingPlayers[i].CompareTo(state.ChoosingPlayers[i])) != 0)
-                    {
-                        return comp;
-                    }
-                }
+                return comp;
             }
 
             if (this.Field != state.Field)
@@ -228,50 +202,10 @@ namespace GameTheory.Games.Lotus
                 }
             }
 
-            if (this.AvailableWildflowers != state.AvailableWildflowers)
+            if ((comp = CompareUtilities.CompareLists(this.AvailableWildflowers, state.AvailableWildflowers)) != 0 ||
+                (comp = CompareUtilities.CompareLists(this.WildflowerDeck, state.WildflowerDeck)) != 0)
             {
-                if ((comp = this.AvailableWildflowers.Count.CompareTo(state.AvailableWildflowers.Count)) != 0)
-                {
-                    return comp;
-                }
-
-                for (var i = 0; i < this.AvailableWildflowers.Count; i++)
-                {
-                    var wildflower = this.AvailableWildflowers[i];
-                    var otherWildflower = state.AvailableWildflowers[i];
-
-                    if (wildflower == null)
-                    {
-                        if (otherWildflower != null)
-                        {
-                            return -1;
-                        }
-                        else
-                        {
-                            return 0;
-                        }
-                    }
-                    else if ((comp = wildflower.CompareTo(otherWildflower)) != 0)
-                    {
-                        return comp;
-                    }
-                }
-            }
-
-            if (this.WildflowerDeck != state.WildflowerDeck)
-            {
-                if ((comp = this.WildflowerDeck.Count.CompareTo(state.WildflowerDeck.Count)) != 0)
-                {
-                    return comp;
-                }
-
-                for (var i = 0; i < this.WildflowerDeck.Count; i++)
-                {
-                    if ((comp = this.WildflowerDeck[i].CompareTo(state.WildflowerDeck[i])) != 0)
-                    {
-                        return comp;
-                    }
-                }
+                return comp;
             }
 
             return 0;

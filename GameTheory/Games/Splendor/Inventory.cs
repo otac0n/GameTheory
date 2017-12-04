@@ -64,57 +64,12 @@ namespace GameTheory.Games.Splendor
 
             int comp;
 
-            if ((comp = this.Tokens.CompareTo(other.Tokens)) != 0)
+            if ((comp = this.Tokens.CompareTo(other.Tokens)) != 0 ||
+                (comp = CompareUtilities.CompareLists(this.DevelopmentCards, other.DevelopmentCards)) != 0 ||
+                (comp = CompareUtilities.CompareLists(this.Hand, other.Hand)) != 0 ||
+                (comp = CompareUtilities.CompareLists(this.Nobles, other.Nobles)) != 0)
             {
                 return comp;
-            }
-
-            if (this.DevelopmentCards != other.DevelopmentCards)
-            {
-                if ((comp = this.DevelopmentCards.Count.CompareTo(other.DevelopmentCards.Count)) != 0)
-                {
-                    return comp;
-                }
-
-                for (var i = 0; i < this.DevelopmentCards.Count; i++)
-                {
-                    if ((comp = this.DevelopmentCards[i].CompareTo(other.DevelopmentCards[i])) != 0)
-                    {
-                        return comp;
-                    }
-                }
-            }
-
-            if (this.Hand != other.Hand)
-            {
-                if ((comp = this.Hand.Count.CompareTo(other.Hand.Count)) != 0)
-                {
-                    return comp;
-                }
-
-                for (var i = 0; i < this.Hand.Count; i++)
-                {
-                    if ((comp = this.Hand[i].CompareTo(other.Hand[i])) != 0)
-                    {
-                        return comp;
-                    }
-                }
-            }
-
-            if (this.Nobles != other.Nobles)
-            {
-                if ((comp = this.Nobles.Count.CompareTo(other.Nobles.Count)) != 0)
-                {
-                    return comp;
-                }
-
-                for (var i = 0; i < this.Nobles.Count; i++)
-                {
-                    if ((comp = this.Nobles[i].CompareTo(other.Nobles[i])) != 0)
-                    {
-                        return comp;
-                    }
-                }
             }
 
             return 0;

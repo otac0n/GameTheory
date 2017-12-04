@@ -64,50 +64,10 @@ namespace GameTheory.Games.NormalFormGame
 
             int comp;
 
-            if (this.Players != state.Players)
+            if ((comp = CompareUtilities.CompareLists(this.Players, state.Players)) != 0 ||
+                (comp = CompareUtilities.CompareLists(this.Choices, state.Choices)) != 0)
             {
-                if ((comp = this.Players.Length.CompareTo(state.Players.Length)) != 0)
-                {
-                    return comp;
-                }
-
-                for (var i = 0; i < this.Players.Length; i++)
-                {
-                    if ((comp = this.Players[i].CompareTo(state.Players[i])) != 0)
-                    {
-                        return comp;
-                    }
-                }
-            }
-
-            if (this.Choices != state.Choices)
-            {
-                if ((comp = this.Choices.Length.CompareTo(state.Choices.Length)) != 0)
-                {
-                    return comp;
-                }
-
-                for (var i = 0; i < this.Players.Length; i++)
-                {
-                    var choice = this.Choices[i];
-                    var otherChoice = state.Choices[i];
-                    if (choice != otherChoice)
-                    {
-                        if (choice == null)
-                        {
-                            return -1;
-                        }
-                        else if (otherChoice == null)
-                        {
-                            return 1;
-                        }
-
-                        if ((comp = choice.CompareTo(otherChoice)) != 0)
-                        {
-                            return comp;
-                        }
-                    }
-                }
+                return comp;
             }
 
             return 0;

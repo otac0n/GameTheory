@@ -415,20 +415,9 @@ namespace GameTheory.Games.FiveTribes
                 }
             }
 
-            if (this.Players != state.Players)
+            if ((comp = CompareUtilities.CompareLists(this.Players, state.Players)) != 0)
             {
-                if ((comp = this.Players.Count.CompareTo(state.Players.Count)) != 0)
-                {
-                    return comp;
-                }
-
-                for (var i = 0; i < this.Players.Count; i++)
-                {
-                    if ((comp = this.Players[i].CompareTo(state.Players[i])) != 0)
-                    {
-                        return comp;
-                    }
-                }
+                return comp;
             }
 
             if (this.BidOrderTrack != state.BidOrderTrack)
@@ -453,25 +442,9 @@ namespace GameTheory.Games.FiveTribes
                 }
             }
 
-            if (this.TurnOrderTrack != state.TurnOrderTrack)
+            if ((comp = CompareUtilities.CompareLists(this.TurnOrderTrack, state.TurnOrderTrack)) != 0)
             {
-                if ((comp = this.TurnOrderTrack.Count.CompareTo(state.TurnOrderTrack.Count)) != 0)
-                {
-                    return comp;
-                }
-
-                for (var i = 0; i < this.TurnOrderTrack.Count; i++)
-                {
-                    var element = this.TurnOrderTrack[i];
-                    var otherElement = state.TurnOrderTrack[i];
-                    if (element != otherElement)
-                    {
-                        if ((comp = element == null ? -1 : element.CompareTo(otherElement)) != 0)
-                        {
-                            return comp;
-                        }
-                    }
-                }
+                return comp;
             }
 
             if (this.Inventory != state.Inventory)
@@ -486,15 +459,9 @@ namespace GameTheory.Games.FiveTribes
                 }
             }
 
-            if (this.Sultanate != state.Sultanate)
+            if ((comp = CompareUtilities.CompareLists(this.Sultanate, state.Sultanate)) != 0)
             {
-                for (var i = 0; i < this.Sultanate.Count; i++)
-                {
-                    if ((comp = this.Sultanate[i].CompareTo(state.Sultanate[i])) != 0)
-                    {
-                        return comp;
-                    }
-                }
+                return comp;
             }
 
             if (this.AssassinationTables != state.AssassinationTables)
@@ -521,52 +488,11 @@ namespace GameTheory.Games.FiveTribes
                 }
             }
 
-            if (this.VisibleResources != state.VisibleResources)
+            if ((comp = CompareUtilities.CompareEnumLists(this.VisibleResources, state.VisibleResources)) != 0 ||
+                (comp = CompareUtilities.CompareLists(this.VisibleDjinns, state.VisibleDjinns)) != 0 ||
+                (comp = CompareUtilities.CompareLists(this.DjinnDiscards, state.DjinnDiscards)) != 0)
             {
-                if ((comp = this.VisibleResources.Count.CompareTo(state.VisibleResources.Count)) != 0)
-                {
-                    return comp;
-                }
-
-                for (var i = 0; i < this.VisibleResources.Count; i++)
-                {
-                    if ((comp = this.VisibleResources[i].CompareTo(state.VisibleResources[i])) != 0)
-                    {
-                        return comp;
-                    }
-                }
-            }
-
-            if (this.VisibleDjinns != state.VisibleDjinns)
-            {
-                if ((comp = this.VisibleDjinns.Count.CompareTo(state.VisibleDjinns.Count)) != 0)
-                {
-                    return comp;
-                }
-
-                for (var i = 0; i < this.VisibleDjinns.Count; i++)
-                {
-                    if ((comp = this.VisibleDjinns[i].CompareTo(state.VisibleDjinns[i])) != 0)
-                    {
-                        return comp;
-                    }
-                }
-            }
-
-            if (this.DjinnDiscards != state.DjinnDiscards)
-            {
-                if ((comp = this.DjinnDiscards.Count.CompareTo(state.DjinnDiscards.Count)) != 0)
-                {
-                    return comp;
-                }
-
-                for (var i = 0; i < this.DjinnDiscards.Count; i++)
-                {
-                    if ((comp = this.DjinnDiscards[i].CompareTo(state.DjinnDiscards[i])) != 0)
-                    {
-                        return comp;
-                    }
-                }
+                return comp;
             }
 
             if (this.additionalState != state.additionalState)

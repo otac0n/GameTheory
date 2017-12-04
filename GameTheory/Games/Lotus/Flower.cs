@@ -49,36 +49,10 @@ namespace GameTheory.Games.Lotus
 
             int comp;
 
-            if (this.Guardians != other.Guardians)
+            if ((comp = CompareUtilities.CompareLists(this.Guardians, other.Guardians)) != 0 ||
+                (comp = CompareUtilities.CompareLists(this.Petals, other.Petals)) != 0)
             {
-                if ((comp = this.Guardians.Count.CompareTo(other.Guardians.Count)) != 0)
-                {
-                    return comp;
-                }
-
-                for (var i = 0; i < this.Guardians.Count; i++)
-                {
-                    if ((comp = this.Guardians[i].CompareTo(other.Guardians[i])) != 0)
-                    {
-                        return comp;
-                    }
-                }
-            }
-
-            if (this.Petals != other.Petals)
-            {
-                if ((comp = this.Petals.Count.CompareTo(other.Petals.Count)) != 0)
-                {
-                    return comp;
-                }
-
-                for (var i = 0; i < this.Petals.Count; i++)
-                {
-                    if ((comp = this.Petals[i].CompareTo(other.Petals[i])) != 0)
-                    {
-                        return comp;
-                    }
-                }
+                return comp;
             }
 
             return 0;

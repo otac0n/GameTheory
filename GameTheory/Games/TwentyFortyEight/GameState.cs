@@ -108,25 +108,10 @@ namespace GameTheory.Games.TwentyFortyEight
 
             int comp;
 
-            if ((comp = this.turn.CompareTo(state.turn)) != 0)
+            if ((comp = this.turn.CompareTo(state.turn)) != 0 ||
+                (comp = CompareUtilities.CompareReadOnlyLists(this.players, state.players)) != 0)
             {
                 return comp;
-            }
-
-            if (this.players != state.players)
-            {
-                if ((comp = this.players.Count.CompareTo(state.players.Count)) != 0)
-                {
-                    return comp;
-                }
-
-                for (var i = 0; i < this.players.Count; i++)
-                {
-                    if ((comp = this.players[i].CompareTo(state.players[i])) != 0)
-                    {
-                        return comp;
-                    }
-                }
             }
 
             for (var y = 0; y < Size; y++)

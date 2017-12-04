@@ -84,27 +84,10 @@ namespace GameTheory.Games.Mancala
 
             int comp;
 
-            if (this.Players != state.Players)
+            if ((comp = CompareUtilities.CompareLists(this.Players, state.Players)) != 0 ||
+                (comp = CompareUtilities.CompareValueLists(this.Board, state.Board)) != 0)
             {
-                for (var i = 0; i < this.Players.Count; i++)
-                {
-                    if ((comp = this.Players[i].CompareTo(state.Players[i])) != 0)
-                    {
-                        return comp;
-                    }
-                }
-            }
-
-            if (this.Board != state.Board)
-            {
-                var length = this.Board.Length;
-                for (var i = 0; i < length; i++)
-                {
-                    if ((comp = this.Board[i].CompareTo(state.Board[i])) != 0)
-                    {
-                        return comp;
-                    }
-                }
+                return comp;
             }
 
             return 0;

@@ -74,57 +74,12 @@ namespace GameTheory.Games.CenturySpiceRoad
             int comp;
 
             if ((comp = this.Caravan.CompareTo(other.Caravan)) != 0 ||
-                (comp = this.Tokens.CompareTo(other.Tokens)) != 0)
+                (comp = this.Tokens.CompareTo(other.Tokens)) != 0 ||
+                (comp = CompareUtilities.CompareLists(this.PointCards, other.PointCards)) != 0 ||
+                (comp = CompareUtilities.CompareLists(this.Hand, other.Hand)) != 0 ||
+                (comp = CompareUtilities.CompareLists(this.PlayedCards, other.PlayedCards)) != 0)
             {
                 return comp;
-            }
-
-            if (this.PointCards != other.PointCards)
-            {
-                if ((comp = this.PointCards.Count.CompareTo(other.PointCards.Count)) != 0)
-                {
-                    return comp;
-                }
-
-                for (var i = 0; i < this.PointCards.Count; i++)
-                {
-                    if ((comp = this.PointCards[i].CompareTo(other.PointCards[i])) != 0)
-                    {
-                        return comp;
-                    }
-                }
-            }
-
-            if (this.Hand != other.Hand)
-            {
-                if ((comp = this.Hand.Count.CompareTo(other.Hand.Count)) != 0)
-                {
-                    return comp;
-                }
-
-                for (var i = 0; i < this.Hand.Count; i++)
-                {
-                    if ((comp = this.Hand[i].CompareTo(other.Hand[i])) != 0)
-                    {
-                        return comp;
-                    }
-                }
-            }
-
-            if (this.PlayedCards != other.PlayedCards)
-            {
-                if ((comp = this.PlayedCards.Count.CompareTo(other.PlayedCards.Count)) != 0)
-                {
-                    return comp;
-                }
-
-                for (var i = 0; i < this.PlayedCards.Count; i++)
-                {
-                    if ((comp = this.PlayedCards[i].CompareTo(other.PlayedCards[i])) != 0)
-                    {
-                        return comp;
-                    }
-                }
             }
 
             return 0;

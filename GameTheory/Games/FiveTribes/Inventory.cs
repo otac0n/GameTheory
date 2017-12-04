@@ -65,25 +65,10 @@ namespace GameTheory.Games.FiveTribes
 
             if ((comp = this.GoldCoins.CompareTo(other.GoldCoins)) != 0 ||
                 (comp = this.Meeples.CompareTo(other.Meeples)) != 0 ||
-                (comp = this.Resources.CompareTo(other.Resources)) != 0)
+                (comp = this.Resources.CompareTo(other.Resources)) != 0 ||
+                (comp = CompareUtilities.CompareLists(this.Djinns, other.Djinns)) != 0)
             {
                 return comp;
-            }
-
-            if (this.Djinns != other.Djinns)
-            {
-                if ((comp = this.Djinns.Count.CompareTo(other.Djinns.Count)) != 0)
-                {
-                    return comp;
-                }
-
-                for (var i = 0; i < this.Djinns.Count; i++)
-                {
-                    if ((comp = this.Djinns[i].CompareTo(other.Djinns[i])) != 0)
-                    {
-                        return comp;
-                    }
-                }
             }
 
             return 0;
