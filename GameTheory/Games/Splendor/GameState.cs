@@ -414,7 +414,15 @@ namespace GameTheory.Games.Splendor
 
             if (this.CompareTo(move.State) != 0)
             {
-                throw new InvalidOperationException();
+                var equivalentMove = this.GetAvailableMoves().Where(m => m.CompareTo(move) == 0).FirstOrDefault();
+                if (equivalentMove != null)
+                {
+                    move = equivalentMove;
+                }
+                else
+                {
+                    throw new InvalidOperationException();
+                }
             }
 
             return move.Apply(this);

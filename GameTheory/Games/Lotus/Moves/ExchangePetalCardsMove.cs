@@ -40,6 +40,28 @@ namespace GameTheory.Games.Lotus.Moves
             }
         }
 
+        /// <inheritdoc />
+        public override int CompareTo(Move other)
+        {
+            if (other is ExchangePetalCardsMove move)
+            {
+                int comp;
+
+                if ((comp = this.PlayerToken.CompareTo(other.PlayerToken)) != 0 ||
+                    (comp = CompareUtilities.CompareValueLists(this.CardIndices, move.CardIndices)) != 0 ||
+                    (comp = CompareUtilities.CompareLists(this.State.Inventory[this.PlayerToken].Hand, move.State.Inventory[move.PlayerToken].Hand)) != 0)
+                {
+                    return comp;
+                }
+
+                return 0;
+            }
+            else
+            {
+                return base.CompareTo(other);
+            }
+        }
+
         internal static IEnumerable<Move> GenerateMoves(GameState state)
         {
             var inventory = state.Inventory[state.ActivePlayer];

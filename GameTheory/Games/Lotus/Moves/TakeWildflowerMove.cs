@@ -28,6 +28,28 @@ namespace GameTheory.Games.Lotus.Moves
         /// </summary>
         public int WildflowerIndex { get; }
 
+        /// <inheritdoc />
+        public override int CompareTo(Move other)
+        {
+            if (other is TakeWildflowerMove move)
+            {
+                int comp;
+
+                if ((comp = this.PlayerToken.CompareTo(other.PlayerToken)) != 0 ||
+                    (comp = this.WildflowerIndex.CompareTo(move.WildflowerIndex)) != 0 ||
+                    (comp = CompareUtilities.CompareLists(this.State.AvailableWildflowers, move.State.AvailableWildflowers)) != 0)
+                {
+                    return comp;
+                }
+
+                return 0;
+            }
+            else
+            {
+                return base.CompareTo(other);
+            }
+        }
+
         internal static IEnumerable<Move> GenerateMoves(GameState state)
         {
             for (var i = 0; i < state.AvailableWildflowers.Count; i++)

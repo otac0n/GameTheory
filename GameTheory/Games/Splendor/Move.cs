@@ -9,7 +9,7 @@ namespace GameTheory.Games.Splendor
     /// <summary>
     /// Represents a move in Splendor.
     /// </summary>
-    public abstract class Move : IMove
+    public abstract class Move : IMove, IComparable<Move>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="Move"/> class.
@@ -33,6 +33,21 @@ namespace GameTheory.Games.Splendor
         public PlayerToken PlayerToken { get; }
 
         internal GameState State { get; }
+
+        /// <inheritdoc />
+        public virtual int CompareTo(Move other)
+        {
+            if (object.ReferenceEquals(this, other))
+            {
+                return 0;
+            }
+            else if (object.ReferenceEquals(other, null))
+            {
+                return 1;
+            }
+
+            return this.GetType().Name.CompareTo(other.GetType().Name);
+        }
 
         /// <inheritdoc />
         public sealed override string ToString() => string.Concat(this.FlattenFormatTokens());

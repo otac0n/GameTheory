@@ -37,6 +37,28 @@ namespace GameTheory.Games.Splendor.Moves
         /// </summary>
         public Noble Noble => this.State.Nobles[this.Index];
 
+        /// <inheritdoc />
+        public override int CompareTo(Move other)
+        {
+            if (other is ChooseNobleMove move)
+            {
+                int comp;
+
+                if ((comp = this.PlayerToken.CompareTo(move.PlayerToken)) != 0 ||
+                    (comp = this.Index.CompareTo(move.Index)) != 0 ||
+                    (comp = this.State.Nobles[this.Index].CompareTo(move.State.Nobles[move.Index])) != 0)
+                {
+                    return comp;
+                }
+
+                return 0;
+            }
+            else
+            {
+                return base.CompareTo(other);
+            }
+        }
+
         internal static IEnumerable<Move> GenerateMoves(GameState state)
         {
             var bonus = state.GetBonus(state.ActivePlayer);

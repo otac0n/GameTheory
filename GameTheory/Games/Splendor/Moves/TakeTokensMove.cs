@@ -32,6 +32,27 @@ namespace GameTheory.Games.Splendor.Moves
         /// </summary>
         public EnumCollection<Token> Tokens { get; }
 
+        /// <inheritdoc />
+        public override int CompareTo(Move other)
+        {
+            if (other is TakeTokensMove move)
+            {
+                int comp;
+
+                if ((comp = this.PlayerToken.CompareTo(move.PlayerToken)) != 0 ||
+                    (comp = this.Tokens.CompareTo(move.Tokens)) != 0)
+                {
+                    return comp;
+                }
+
+                return 0;
+            }
+            else
+            {
+                return base.CompareTo(other);
+            }
+        }
+
         internal static IEnumerable<Move> GenerateMoves(GameState state)
         {
             var stacks = state.Tokens.Keys.Where(t => t != Token.GoldJoker).ToArray();

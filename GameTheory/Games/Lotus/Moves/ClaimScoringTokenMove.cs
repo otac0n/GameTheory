@@ -23,6 +23,19 @@ namespace GameTheory.Games.Lotus.Moves
         /// <inheritdoc />
         public override IList<object> FormatTokens => new[] { "Claim a scoring token" };
 
+        /// <inheritdoc />
+        public override int CompareTo(Move other)
+        {
+            if (other is ClaimScoringTokenMove)
+            {
+                return this.PlayerToken.CompareTo(other.PlayerToken);
+            }
+            else
+            {
+                return base.CompareTo(other);
+            }
+        }
+
         internal static IEnumerable<Move> GenerateMoves(GameState state)
         {
             foreach (var player in state.ChoosingPlayers.Take(1))

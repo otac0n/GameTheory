@@ -29,6 +29,27 @@ namespace GameTheory.Games.Lotus.Moves
         /// <inheritdoc />
         public override IList<object> FormatTokens => new object[] { "Move a guardian to the ", this.FlowerType };
 
+        /// <inheritdoc />
+        public override int CompareTo(Move other)
+        {
+            if (other is MoveGuardianMove move)
+            {
+                int comp;
+
+                if ((comp = this.PlayerToken.CompareTo(other.PlayerToken)) != 0 ||
+                    (comp = this.FlowerType.CompareTo(move.FlowerType)) != 0)
+                {
+                    return comp;
+                }
+
+                return 0;
+            }
+            else
+            {
+                return base.CompareTo(other);
+            }
+        }
+
         internal static IEnumerable<Move> GenerateMoves(GameState state)
         {
             if (state.Inventory[state.ActivePlayer].Guardians > 0)

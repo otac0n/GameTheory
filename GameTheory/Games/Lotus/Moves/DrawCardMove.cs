@@ -21,6 +21,19 @@ namespace GameTheory.Games.Lotus.Moves
         /// <inheritdoc />
         public override IList<object> FormatTokens => new object[] { "Draw a card" };
 
+        /// <inheritdoc />
+        public override int CompareTo(Move other)
+        {
+            if (other is DrawCardMove)
+            {
+                return this.PlayerToken.CompareTo(other.PlayerToken);
+            }
+            else
+            {
+                return base.CompareTo(other);
+            }
+        }
+
         internal static IEnumerable<Move> GenerateMoves(GameState state)
         {
             if (state.Inventory[state.ActivePlayer].Deck.Count > 0)

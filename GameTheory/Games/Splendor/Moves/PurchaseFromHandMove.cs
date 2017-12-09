@@ -43,6 +43,28 @@ namespace GameTheory.Games.Splendor.Moves
         /// <inheritdoc />
         public override bool IsDeterministic => true;
 
+        /// <inheritdoc />
+        public override int CompareTo(Move other)
+        {
+            if (other is PurchaseFromHandMove move)
+            {
+                int comp;
+
+                if ((comp = this.PlayerToken.CompareTo(move.PlayerToken)) != 0 ||
+                    (comp = this.Index.CompareTo(move.Index)) != 0 ||
+                    (comp = this.Card.CompareTo(move.Card)) != 0)
+                {
+                    return comp;
+                }
+
+                return 0;
+            }
+            else
+            {
+                return base.CompareTo(other);
+            }
+        }
+
         internal static IEnumerable<Move> GenerateMoves(GameState state)
         {
             var tokens = state.Inventory[state.ActivePlayer].Tokens;

@@ -31,6 +31,27 @@ namespace GameTheory.Games.Lotus.Moves
         /// </summary>
         public SpecialPower SpecialPower { get; }
 
+        /// <inheritdoc />
+        public override int CompareTo(Move other)
+        {
+            if (other is ClaimSpecialPowerMove move)
+            {
+                int comp;
+
+                if ((comp = this.PlayerToken.CompareTo(other.PlayerToken)) != 0 ||
+                    (comp = this.SpecialPower.CompareTo(move.SpecialPower)) != 0)
+                {
+                    return comp;
+                }
+
+                return 0;
+            }
+            else
+            {
+                return base.CompareTo(other);
+            }
+        }
+
         internal static IEnumerable<Move> GenerateMoves(GameState state)
         {
             foreach (var player in state.ChoosingPlayers.Take(1))
