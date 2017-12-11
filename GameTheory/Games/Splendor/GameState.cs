@@ -372,8 +372,61 @@ namespace GameTheory.Games.Splendor
         /// <inheritdoc />
         public IEnumerable<IGameState<Move>> GetView(PlayerToken playerToken, int maxStates)
         {
-            // TODO: Hide the other players' hands.
-            yield return this;
+            var levelsInHands = new HashSet<DevelopmentLevel>();
+
+            var shuffler = new GameShuffler<GameState>(this);
+
+            foreach (var p in this.Players)
+            {
+                if (p == playerToken)
+                {
+                    continue;
+                }
+
+                var player = p;
+                var hand = this.Inventory[player].Hand;
+                for (var i = 0; i < hand.Count; i++)
+                {
+                    var index = i;
+                    var item = hand[index];
+                    levelsInHands.Add(item.Level);
+                    shuffler.Add(
+                        item.Level.ToString(),
+                        item,
+                        (state, value) => state.With(
+                            inventory: state.Inventory.SetItem(
+                                player,
+                                state.Inventory[player].With(
+                                    hand: state.Inventory[player].Hand.SetItem(index, value)))));
+                }
+            }
+
+            if (levelsInHands.Count == 0)
+            {
+                return new[] { this };
+            }
+            else
+            {
+                foreach (var level in levelsInHands)
+                {
+                    var levelIndex = (int)level;
+                    var deck = this.DevelopmentDecks[levelIndex];
+                    for (var i = 0; i < deck.Count; i++)
+                    {
+                        var index = i;
+                        var item = deck[index];
+                        shuffler.Add(
+                            item.Level.ToString(),
+                            item,
+                            (state, value) => state.With(
+                                developmentDecks: state.DevelopmentDecks.SetItem(
+                                    levelIndex,
+                                    state.DevelopmentDecks[levelIndex].SetItem(index, value))));
+                    }
+                }
+
+                return shuffler.Take(maxStates);
+            }
         }
 
         /// <inheritdoc />
