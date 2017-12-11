@@ -11,6 +11,11 @@ namespace GameTheory
     {
         private readonly Guid id = Guid.NewGuid();
 
+        /// <summary>
+        /// Gets an identifier unique to this player.
+        /// </summary>
+        public Guid Id => this.id;
+
         /// <inheritdoc/>
         public int CompareTo(PlayerToken other)
         {

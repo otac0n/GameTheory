@@ -261,8 +261,58 @@ namespace GameTheory.Games.Lotus
         /// <inheritdoc />
         public IEnumerable<IGameState<Move>> GetView(PlayerToken playerToken, int maxStates)
         {
-            // TODO: Hide hands from other players.
-            yield return this;
+            var shuffler = new GameShuffler<GameState>(this);
+
+            for (var i = 0; i < this.WildflowerDeck.Count; i++)
+            {
+                var index = i;
+                shuffler.Add(
+                    "Wildflowers",
+                    this.WildflowerDeck[index],
+                    (state, value) => state.With(
+                        wildflowerDeck: state.WildflowerDeck.SetItem(index, value)));
+            }
+
+            foreach (var p in this.Players)
+            {
+                var player = p;
+                var groupPrefix = $"{player.Id}/";
+
+                for (var i = 0; i < this.Inventory[player].Deck.Count; i++)
+                {
+                    var index = i;
+                    var cardGroup = (this.Inventory[player].Deck[index].Owner?.Id)?.ToString() ?? "Wildflower";
+                    shuffler.Add(
+                        $"{groupPrefix}{cardGroup}",
+                        this.Inventory[player].Deck[index],
+                        (state, value) => state.With(
+                            inventory: state.Inventory.SetItem(
+                                player,
+                                state.Inventory[player].With(
+                                    deck: state.Inventory[player].Deck.SetItem(index, value)))));
+                }
+
+                if (player == playerToken)
+                {
+                    continue;
+                }
+
+                for (var i = 0; i < this.Inventory[player].Hand.Count; i++)
+                {
+                    var index = i;
+                    var cardGroup = (this.Inventory[player].Hand[index].Owner?.Id)?.ToString() ?? "Wildflower";
+                    shuffler.Add(
+                        $"{groupPrefix}{cardGroup}",
+                        this.Inventory[player].Hand[index],
+                        (state, value) => state.With(
+                            inventory: state.Inventory.SetItem(
+                                player,
+                                state.Inventory[player].With(
+                                    hand: state.Inventory[player].Hand.SetItem(index, value)))));
+                }
+            }
+
+            return shuffler.Take(maxStates);
         }
 
         /// <inheritdoc />
