@@ -279,7 +279,7 @@ namespace GameTheory.Players
                 mainlines[move] = weighted;
             }
 
-            return mainlines.Values.Pick();
+            return mainlines.Values.GroupBy(v => v.Weight).OrderByDescending(g => g.Key).First().Pick();
         }
 
         private Mainline GetMove(IGameState<TMove> state, int ply, CancellationToken cancel)
