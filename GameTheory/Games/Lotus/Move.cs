@@ -198,20 +198,17 @@ namespace GameTheory.Games.Lotus
                 }
                 else
                 {
-                    if (state.WildflowerDeck.Count > 0 && state.AvailableWildflowers.Any(c => c == null))
+                    for (var i = 0; state.WildflowerDeck.Count > 0 && i < state.AvailableWildflowers.Count; i++)
                     {
-                        for (var i = 0; i < state.AvailableWildflowers.Count; i++)
+                        if (state.AvailableWildflowers[i] == null)
                         {
-                            if (state.AvailableWildflowers[i] == null)
-                            {
-                                var dealtIndex = state.WildflowerDeck.Count - 1;
-                                var dealt = state.WildflowerDeck[dealtIndex];
-                                state = state.With(
-                                    wildflowerDeck: state.WildflowerDeck.RemoveAt(dealtIndex),
-                                    availableWildflowers: state.AvailableWildflowers.SetItem(
-                                        i,
-                                        dealt));
-                            }
+                            var dealtIndex = state.WildflowerDeck.Count - 1;
+                            var dealt = state.WildflowerDeck[dealtIndex];
+                            state = state.With(
+                                wildflowerDeck: state.WildflowerDeck.RemoveAt(dealtIndex),
+                                availableWildflowers: state.AvailableWildflowers.SetItem(
+                                    i,
+                                    dealt));
                         }
                     }
 
