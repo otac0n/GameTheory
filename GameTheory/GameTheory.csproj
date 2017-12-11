@@ -104,6 +104,7 @@
     <Compile Include="EnumCollection.cs" />
     <Compile Include="EnumerableExtensions.cs" />
     <Compile Include="FormatUtilities.cs" />
+    <Compile Include="GameShuffler.cs" />
     <Compile Include="Games\CenturySpiceRoad\GameState.cs" />
     <Compile Include="Games\CenturySpiceRoad\Inventory.cs" />
     <Compile Include="Games\CenturySpiceRoad\MerchantCard.cs" />
