@@ -92,6 +92,14 @@ namespace GameTheory.Players
         {
             await Task.Yield();
 
+            var players = state.GetAvailableMoves().Select(m => m.PlayerToken).ToImmutableHashSet();
+            if (!players.Contains(this.PlayerToken))
+            {
+                // We can avoid any further calculation at this state, because it is not our turn.
+                // TODO: Consider "pondering."
+                return default(Maybe<TMove>);
+            }
+
             Mainline mainline;
             lock (this.cache)
             {
@@ -252,12 +260,6 @@ namespace GameTheory.Players
             {
                 var allMoves = state.GetAvailableMoves();
                 var players = allMoves.Select(m => m.PlayerToken).ToImmutableHashSet();
-
-                if (ply == this.minPly && players.Count == 1 && this.PlayerToken != players.Single())
-                {
-                    // We can avoid any further calculation at this ply, because it is not our turn.
-                    return null;
-                }
 
                 // If only one player can move, they must choose a move.
                 // If more than one player can move, then we assume that players will play moves that improve their position as well as moves that would result in a smaller loss than the best move of an opponent.
