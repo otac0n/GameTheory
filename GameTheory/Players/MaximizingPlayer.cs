@@ -87,6 +87,11 @@ namespace GameTheory.Players
         /// <inheritdoc />
         public PlayerToken PlayerToken { get; }
 
+        /// <summary>
+        /// Gets the maximum number of states to sample from all possible initial states.
+        /// </summary>
+        protected virtual int InitialSamples => 30;
+
         /// <inheritdoc />
         public async Task<Maybe<TMove>> ChooseMove(IGameState<TMove> state, CancellationToken cancel)
         {
@@ -100,10 +105,20 @@ namespace GameTheory.Players
                 return default(Maybe<TMove>);
             }
 
+            var states = state.GetView(this.PlayerToken, this.InitialSamples).ToList();
+
             Mainline mainline;
             lock (this.cache)
             {
-                mainline = this.GetMove(state, this.minPly, cancel);
+                if (states.Count == 1)
+                {
+                    mainline = this.GetMove(states.Single(), this.minPly, cancel);
+                }
+                else
+                {
+                    mainline = this.GetMove(states, this.minPly, cancel);
+                }
+
                 this.cache.Trim(TrimDepth);
             }
 
@@ -242,6 +257,31 @@ namespace GameTheory.Players
             return maxMoves;
         }
 
+        private Mainline GetMove(IList<IGameState<TMove>> states, int ply, CancellationToken cancel)
+        {
+            var mainlines = new Dictionary<TMove, IWeighted<Mainline>>(new ComparableEqualityComparer<TMove>());
+
+            foreach (var state in states)
+            {
+                var mainline = this.GetMove(state, ply - 1, cancel);
+                var move = mainline.Moves.Peek();
+
+                IWeighted<Mainline> weighted;
+                if (mainlines.TryGetValue(move, out weighted))
+                {
+                    weighted = Weighted.Create(weighted.Value, weighted.Weight + 1);
+                }
+                else
+                {
+                    weighted = Weighted.Create(mainline, 1);
+                }
+
+                mainlines[move] = weighted;
+            }
+
+            return mainlines.Values.Pick();
+        }
+
         private Mainline GetMove(IGameState<TMove> state, int ply, CancellationToken cancel)
         {
             if (this.cache.TryGetValue(state, out Mainline cached))
@@ -358,6 +398,31 @@ namespace GameTheory.Players
         private IReadOnlyDictionary<PlayerToken, TScore> Score(IGameState<TMove> state)
         {
             return state.Players.ToImmutableDictionary(p => p, p => this.scoringMetric.Score(state, p));
+        }
+
+        private class ComparableEqualityComparer<T> : IEqualityComparer<T>
+        {
+            public bool Equals(T x, T y)
+            {
+                IComparable<T> comparable;
+                if (object.ReferenceEquals(null, x))
+                {
+                    return object.ReferenceEquals(null, y);
+                }
+                else if ((comparable = x as IComparable<T>) != null)
+                {
+                    return comparable.CompareTo(y) == 0;
+                }
+                else
+                {
+                    return x.Equals(y);
+                }
+            }
+
+            public int GetHashCode(T obj)
+            {
+                return 0;
+            }
         }
 
         private class Mainline : ITokenFormattable
