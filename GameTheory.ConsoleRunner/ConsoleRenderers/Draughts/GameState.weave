@@ -1,0 +1,12 @@
+﻿@using System.Linq
+@using GameTheory.Games.Draughts
+@namespace GameTheory.ConsoleRunner.ConsoleRenderers.Draughts
+@static false
+@model GameState
+┌{{each x in Enumerable.Range(0, model.Variant.Width)}}─{{delimit}}┬{{/each}}┐
+{{each y in Enumerable.Range(0, model.Variant.Height)}}
+│{{each x in Enumerable.Range(0, model.Variant.Width)}}{{= model.Variant.GetPieceAt(model.Board, x, y)}}{{delimit}}│{{/each}}│
+{{delimit}}
+├{{each x in Enumerable.Range(0, model.Variant.Width)}}─{{delimit}}┼{{/each}}┤
+{{/each}}
+└{{each x in Enumerable.Range(0, model.Variant.Width)}}─{{delimit}}┴{{/each}}┘

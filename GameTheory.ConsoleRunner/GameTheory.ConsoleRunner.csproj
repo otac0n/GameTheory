@@ -73,6 +73,7 @@
     <Compile Include="ConsoleRenderers\CenturySpiceRoadConsoleRenderer.cs" />
     <Compile Include="ConsoleRenderers\Lotus\Templates.cs" />
     <Compile Include="ConsoleRenderers\LotusConsoleRenderer.cs" />
+    <Compile Include="ConsoleRenderers\DraughtsConsoleRenderer.cs" />
     <Compile Include="ConsoleRenderers\TicTacToeConsoleRenderer.cs" />
     <Compile Include="ConsoleRenderers\TwentyFortyEightConsoleRenderer.cs" />
     <Compile Include="ConsoleRenderers\FiveTribes\Templates.cs" />
@@ -106,6 +107,7 @@
     <WeaveTemplate Include="ConsoleRenderers\CenturySpiceRoad\GameState.weave" />
     <WeaveTemplate Include="ConsoleRenderers\Lotus\GameState.weave" />
     <WeaveTemplate Include="ConsoleRenderers\TicTacToe\GameState.weave" />
+    <WeaveTemplate Include="ConsoleRenderers\Draughts\GameState.weave" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

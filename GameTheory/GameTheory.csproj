@@ -127,6 +127,17 @@
     <Compile Include="Games\CenturySpiceRoad\PointCard.cs" />
     <Compile Include="Games\CenturySpiceRoad\Spice.cs" />
     <Compile Include="Games\CenturySpiceRoad\Token.cs" />
+    <Compile Include="Games\Draughts\MovePriorities.cs" />
+    <Compile Include="Games\Draughts\Moves\CaptureMove.cs" />
+    <Compile Include="Games\Draughts\GameState.cs" />
+    <Compile Include="Games\Draughts\Move.cs" />
+    <Compile Include="Games\Draughts\Moves\BasicMove.cs" />
+    <Compile Include="Games\Draughts\Moves\RemovePieceMove.cs" />
+    <Compile Include="Games\Draughts\Moves\YieldCaptureMove.cs" />
+    <Compile Include="Games\Draughts\Moves\YieldRemovePieceMove.cs" />
+    <Compile Include="Games\Draughts\Phase.cs" />
+    <Compile Include="Games\Draughts\Piece.cs" />
+    <Compile Include="Games\Draughts\Variant.cs" />
     <Compile Include="Games\FiveTribes\AssassinationTable.cs" />
     <Compile Include="Games\FiveTribes\Cost.cs" />
     <Compile Include="Games\FiveTribes\Djinn.cs" />
@@ -257,6 +268,7 @@
     <Compile Include="MessageSentEventArgs.cs" />
     <Compile Include="Players\MaximizingPlayer.cs" />
     <Compile Include="Players\MaximizingPlayers\FiveTribesMaximizingPlayer.cs" />
+    <Compile Include="Players\MaximizingPlayers\DraughtsMaximizingPlayer.cs" />
     <Compile Include="Players\MaximizingPlayers\MancalaMaximizingPlayer.cs" />
     <Compile Include="Players\MaximizingPlayers\CenturySpiceRoadMaximizingPlayer.cs" />
     <Compile Include="Players\MaximizingPlayers\LotusMaximizingPlayer.cs" />
