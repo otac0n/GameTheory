@@ -186,6 +186,50 @@ namespace GameTheory
         }
 
         /// <summary>
+        /// Compares two nullable elements.
+        /// </summary>
+        /// <typeparam name="T">The underlying type of nullable elements to compare.</typeparam>
+        /// <param name="a">The first item.</param>
+        /// <param name="b">The second item.</param>
+        /// <returns>A value that indicates the relative order of the objects being compared.</returns>
+        public static int CompareTo<T>(this T? a, T? b)
+            where T : struct, IComparable<T>
+        {
+            if (a == null)
+            {
+                return b == null ? 0 : -1;
+            }
+            else if (b == null)
+            {
+                return 1;
+            }
+
+            return a.Value.CompareTo(b.Value);
+        }
+
+        /// <summary>
+        /// Compares two <see cref="Maybe{T}"/> values.
+        /// </summary>
+        /// <typeparam name="T">The type of value elements to compare.</typeparam>
+        /// <param name="a">The first item.</param>
+        /// <param name="b">The second item.</param>
+        /// <returns>A value that indicates the relative order of the objects being compared.</returns>
+        public static int CompareTo<T>(this Maybe<T> a, Maybe<T> b)
+            where T : struct, IComparable<T>
+        {
+            if (!a.HasValue)
+            {
+                return !b.HasValue ? 0 : -1;
+            }
+            else if (!b.HasValue)
+            {
+                return 1;
+            }
+
+            return a.Value.CompareTo(b.Value);
+        }
+
+        /// <summary>
         /// Compares two lists of comparable elements.
         /// </summary>
         /// <typeparam name="T">The type of elements in each list.</typeparam>

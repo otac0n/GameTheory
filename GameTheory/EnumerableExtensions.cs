@@ -13,6 +13,132 @@ namespace GameTheory
     public static class EnumerableExtensions
     {
         /// <summary>
+        /// Gets the collection of elements that match the maximum according to the specified comparer.
+        /// </summary>
+        /// <typeparam name="T">The type of items in the collection.</typeparam>
+        /// <param name="source">The list of elements to compare.</param>
+        /// <param name="comparer">The comparer to use.</param>
+        /// <returns>The collection of elements that match the maximum.</returns>
+        public static List<T> AllMax<T>(this IEnumerable<T> source, IComparer<T> comparer)
+        {
+            var max = default(T);
+            var list = new List<T>();
+            foreach (var item in source)
+            {
+                var comp = list.Count == 0 ? 1 : comparer.Compare(item, max);
+                if (comp == 0)
+                {
+                    list.Add(item);
+                }
+                else if (comp > 0)
+                {
+                    max = item;
+                    list.Clear();
+                    list.Add(item);
+                }
+            }
+
+            return list;
+        }
+
+        /// <summary>
+        /// Gets the collection of elements that match the maximum according to the specified element selector and comparer.
+        /// </summary>
+        /// <typeparam name="TItem">The type of items in the collection.</typeparam>
+        /// <typeparam name="TElement">The type of element used to compare items.</typeparam>
+        /// <param name="source">The list of items to compare.</param>
+        /// <param name="elementSelector">Gets the element to compare for each item in the collection.</param>
+        /// <param name="comparer">The comparer to use.</param>
+        /// <returns>The collection of elements that match the maximum.</returns>
+        public static List<TItem> AllMaxBy<TItem, TElement>(this IEnumerable<TItem> source, Func<TItem, TElement> elementSelector, IComparer<TElement> comparer = null)
+        {
+            comparer = comparer ?? Comparer<TElement>.Default;
+
+            var max = default(TElement);
+            var list = new List<TItem>();
+            foreach (var item in source)
+            {
+                var element = elementSelector(item);
+                var comp = list.Count == 0 ? 1 : comparer.Compare(element, max);
+                if (comp == 0)
+                {
+                    list.Add(item);
+                }
+                else if (comp > 0)
+                {
+                    max = element;
+                    list.Clear();
+                    list.Add(item);
+                }
+            }
+
+            return list;
+        }
+
+        /// <summary>
+        /// Gets the collection of elements that match the minimum according to the specified comparer.
+        /// </summary>
+        /// <typeparam name="T">The type of items in the collection.</typeparam>
+        /// <param name="source">The list of elements to compare.</param>
+        /// <param name="comparer">The comparer to use.</param>
+        /// <returns>The collection of elements that match the minimum.</returns>
+        public static List<T> AllMin<T>(this IEnumerable<T> source, IComparer<T> comparer)
+        {
+            var min = default(T);
+            var list = new List<T>();
+            foreach (var item in source)
+            {
+                var comp = list.Count == 0 ? -1 : comparer.Compare(item, min);
+                if (comp == 0)
+                {
+                    list.Add(item);
+                }
+                else if (comp < 0)
+                {
+                    min = item;
+                    list.Clear();
+                    list.Add(item);
+                }
+            }
+
+            return list;
+        }
+
+        /// <summary>
+        /// Gets the collection of elements that match the minimum according to the specified element selector and comparer.
+        /// </summary>
+        /// <typeparam name="TItem">The type of items in the collection.</typeparam>
+        /// <typeparam name="TElement">The type of element used to compare items.</typeparam>
+        /// <param name="source">The list of items to compare.</param>
+        /// <param name="elementSelector">Gets the element to compare for each item in the collection.</param>
+        /// <param name="comparer">The comparer to use.</param>
+        /// <returns>The collection of elements that match the minimum.</returns>
+        public static List<TItem> AllMinBy<TItem, TElement>(this IEnumerable<TItem> source, Func<TItem, TElement> elementSelector, IComparer<TElement> comparer = null)
+        {
+            comparer = comparer ?? Comparer<TElement>.Default;
+
+            var min = default(TElement);
+            var list = new List<TItem>();
+            foreach (var item in source)
+            {
+                var element = elementSelector(item);
+                var comp = list.Count == 0 ? -1 : comparer.Compare(element, min);
+                if (comp == 0)
+                {
+                    list.Add(item);
+                }
+                else if (comp < 0)
+                {
+                    min = element;
+                    list.Clear();
+                    list.Add(item);
+                }
+            }
+
+            return list;
+        }
+
+        /// <summary>
         /// Gets an enumerable collection containing the combinations of counts of unique items.
         /// </summary>
         /// <returns>An enumerable collection of combinations.</returns>
@@ -103,6 +229,54 @@ namespace GameTheory
         public static IEnumerable<T> Intersect<T>(this IEnumerable<T> source, params T[] second)
         {
             return source.Intersect(second.AsEnumerable());
+        }
+
+        /// <summary>
+        /// Gets the maximum element in a collection according to the specified comparer.
+        /// </summary>
+        /// <typeparam name="T">The type of elements in the collection.</typeparam>
+        /// <param name="source">The list of elements to compare.</param>
+        /// <param name="comparer">The comparer to use.</param>
+        /// <returns>The maxumum element.</returns>
+        public static T Max<T>(this IEnumerable<T> source, IComparer<T> comparer)
+        {
+            var any = false;
+            var max = default(T);
+            foreach (var item in source)
+            {
+                if (!any || comparer.Compare(item, max) > 0)
+                {
+                    max = item;
+                }
+
+                any = true;
+            }
+
+            return max;
+        }
+
+        /// <summary>
+        /// Gets the minimum element in a collection according to the specified comparer.
+        /// </summary>
+        /// <typeparam name="T">The type of elements in the collection.</typeparam>
+        /// <param name="source">The list of elements to compare.</param>
+        /// <param name="comparer">The comparer to use.</param>
+        /// <returns>The minimum element.</returns>
+        public static T Min<T>(this IEnumerable<T> source, IComparer<T> comparer)
+        {
+            var any = false;
+            var min = default(T);
+            foreach (var item in source)
+            {
+                if (!any || comparer.Compare(item, min) < 0)
+                {
+                    min = item;
+                }
+
+                any = true;
+            }
+
+            return min;
         }
 
         /// <summary>
