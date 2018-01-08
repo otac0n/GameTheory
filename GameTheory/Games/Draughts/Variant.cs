@@ -73,6 +73,17 @@ namespace GameTheory.Games.Draughts
         public static Variant AmericanCheckers => Variant.EnglishDraughts;
 
         /// <summary>
+        /// Gets the Canadian Checkers variant.
+        /// </summary>
+        public static Variant CanadianCheckers => new Variant(
+            width: 12,
+            height: 12,
+            flyingKings: true,
+            menCaptureBackwards: true,
+            movePriority: MovePriorities.LongestCaptureSequence,
+            movePriorityImpact: MovePriorityImpact.IllegalMove);
+
+        /// <summary>
         /// Gets the English Draughts variant.
         /// </summary>
         public static Variant EnglishDraughts { get; } = new Variant(
@@ -82,13 +93,34 @@ namespace GameTheory.Games.Draughts
             movePriorityImpact: MovePriorityImpact.IllegalMove);
 
         /// <summary>
-        /// Gets the Russian Draughts variant.
+        /// Gets the International Draughts variant.
         /// </summary>
         public static Variant InternationalDraughts => new Variant(
             width: 10,
             height: 10,
+            flyingKings: true,
             menCaptureBackwards: true,
             movePriority: MovePriorities.LongestCaptureSequence,
+            movePriorityImpact: MovePriorityImpact.IllegalMove);
+
+        /// <summary>
+        /// Gets the Italian Draughts variant.
+        /// </summary>
+        public static Variant ItalianDraughts => new Variant(
+            width: 8,
+            height: 8,
+            movePriority: MovePriorities.LongestCaptureSequenceWithKingMostKings,
+            movePriorityImpact: MovePriorityImpact.IllegalMove);
+
+        /// <summary>
+        /// Gets the Pool Checkers variant.
+        /// </summary>
+        public static Variant PoolCheckers => new Variant(
+            width: 8,
+            height: 8,
+            flyingKings: true,
+            menCaptureBackwards: true,
+            movePriority: MovePriorities.MustCapture,
             movePriorityImpact: MovePriorityImpact.IllegalMove);
 
         /// <summary>
@@ -97,9 +129,20 @@ namespace GameTheory.Games.Draughts
         public static Variant RussianDraughts => new Variant(
             width: 8,
             height: 8,
+            flyingKings: true,
             menCaptureBackwards: true,
             crownOnEntry: true,
-            movePriority: MovePriorities.LongestCaptureSequence,
+            movePriority: MovePriorities.MustCapture,
+            movePriorityImpact: MovePriorityImpact.IllegalMove);
+
+        /// <summary>
+        /// Gets the Spanish Draughts variant.
+        /// </summary>
+        public static Variant SpanishDraughts => new Variant(
+            width: 8,
+            height: 8,
+            flyingKings: true,
+            movePriority: MovePriorities.LongestCaptureSequenceMostKings,
             movePriorityImpact: MovePriorityImpact.IllegalMove);
 
         /// <summary>

@@ -256,6 +256,30 @@ namespace GameTheory
         }
 
         /// <summary>
+        /// Gets the maximum element in a collection according to the specified comparison.
+        /// </summary>
+        /// <typeparam name="T">The type of elements in the collection.</typeparam>
+        /// <param name="source">The list of elements to compare.</param>
+        /// <param name="comparison">The comparison to use.</param>
+        /// <returns>The maxumum element.</returns>
+        public static T Max<T>(this IEnumerable<T> source, Comparison<T> comparison)
+        {
+            var any = false;
+            var max = default(T);
+            foreach (var item in source)
+            {
+                if (!any || comparison(item, max) > 0)
+                {
+                    max = item;
+                }
+
+                any = true;
+            }
+
+            return max;
+        }
+
+        /// <summary>
         /// Gets the minimum element in a collection according to the specified comparer.
         /// </summary>
         /// <typeparam name="T">The type of elements in the collection.</typeparam>
@@ -269,6 +293,30 @@ namespace GameTheory
             foreach (var item in source)
             {
                 if (!any || comparer.Compare(item, min) < 0)
+                {
+                    min = item;
+                }
+
+                any = true;
+            }
+
+            return min;
+        }
+
+        /// <summary>
+        /// Gets the minimum element in a collection according to the specified comparison.
+        /// </summary>
+        /// <typeparam name="T">The type of elements in the collection.</typeparam>
+        /// <param name="source">The list of elements to compare.</param>
+        /// <param name="comparison">The comparison to use.</param>
+        /// <returns>The minimum element.</returns>
+        public static T Min<T>(this IEnumerable<T> source, Comparison<T> comparison)
+        {
+            var any = false;
+            var min = default(T);
+            foreach (var item in source)
+            {
+                if (!any || comparison(item, min) < 0)
                 {
                     min = item;
                 }
