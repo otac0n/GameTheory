@@ -15,14 +15,34 @@ namespace GameTheory.ConsoleRunner
         private static object ConstructType(Type type, Func<ParameterInfo, object> getParameter = null)
         {
             getParameter = getParameter ?? (p => GetArgument(p));
-            var constructor = ConsoleInteraction.Choose(type.GetConstructors(), skipMessage: _ => Resources.SingleConstructor);
-            var args = constructor.GetParameters().Select(getParameter).ToArray();
-            return constructor.Invoke(args);
+
+            var constructors = from constructor in type.GetConstructors()
+                               let parameters = constructor.GetParameters()
+                               let name = parameters.Length == 0 ? "(default)" : string.Join(", ", parameters.Select(p => p.Name))
+                               let accessor = new Func<object>(() => constructor.Invoke(constructor.GetParameters().Select(getParameter).ToArray()))
+                               select ConsoleInteraction.MakeChoice(name, accessor);
+            var staticProperties = from staticProperty in type.GetProperties(BindingFlags.Public | BindingFlags.Static)
+                                   let accessor = new Func<object>(() => staticProperty.GetValue(null))
+                                   select ConsoleInteraction.MakeChoice(staticProperty.Name, accessor);
+
+            var sources = constructors.Concat(staticProperties).ToList();
+            var source = ConsoleInteraction.Choose(sources, skipMessage: _ => Resources.SingleConstructor);
+            return source.Value();
         }
 
         private static object GetArgument(ParameterInfo parameter)
         {
             Console.Write(Resources.ParameterName, parameter.Name);
+
+            if (parameter.ParameterType != typeof(string) &&
+                parameter.ParameterType != typeof(bool) &&
+                parameter.ParameterType != typeof(int) &&
+                !parameter.ParameterType.IsEnum)
+            {
+                Console.WriteLine();
+
+                return ConstructType(parameter.ParameterType);
+            }
 
             if (parameter.HasDefaultValue)
             {
@@ -48,7 +68,22 @@ namespace GameTheory.ConsoleRunner
                     }
                 }
 
-                if (parameter.ParameterType == typeof(int))
+                if (parameter.ParameterType == typeof(string))
+                {
+                    return line;
+                }
+                else if (parameter.ParameterType.IsEnum)
+                {
+                    try
+                    {
+                        return Enum.Parse(parameter.ParameterType, line, ignoreCase: true);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(Resources.InvalidInput, ex.Message);
+                    }
+                }
+                else if (parameter.ParameterType == typeof(int))
                 {
                     if (int.TryParse(line, out int selection))
                     {

@@ -88,6 +88,8 @@ namespace GameTheory.ConsoleRunner
             }
         }
 
+        public static Choice<T> MakeChoice<T>(string name, T value) => new Choice<T>(name, value);
+
         public static string Prompt(string prompt, Func<string, string> validate = null)
         {
             return Prompt(prompt, x => x, validate);
@@ -134,6 +136,21 @@ namespace GameTheory.ConsoleRunner
             {
                 Console.ForegroundColor = originalColor;
             }
+        }
+
+        public struct Choice<T>
+        {
+            public Choice(string name, T value)
+            {
+                this.Name = name;
+                this.Value = value;
+            }
+
+            public string Name { get; }
+
+            public T Value { get; }
+
+            public override string ToString() => this.Name;
         }
     }
 }

@@ -14,14 +14,6 @@ namespace GameTheory.Games.Draughts
     public sealed class GameState : IGameState<Move>
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="GameState"/> class using the <see cref="Variant.AmericanCheckers"/> variant.
-        /// </summary>
-        public GameState()
-            : this(Variant.AmericanCheckers)
-        {
-        }
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="GameState"/> class.
         /// </summary>
         /// <param name="variant">The variant of Draughts being played.</param>
