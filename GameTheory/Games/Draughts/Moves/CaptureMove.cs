@@ -29,7 +29,7 @@ namespace GameTheory.Games.Draughts.Moves
             return state.LastCapturingIndex.HasValue && CaptureMove.GenerateMoves(state).Any();
         }
 
-        internal static new IEnumerable<Move> GenerateMoves(GameState state)
+        internal static new IEnumerable<CaptureMove> GenerateMoves(GameState state)
         {
             var variant = state.Variant;
             var board = state.Board;

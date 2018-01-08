@@ -84,12 +84,22 @@ namespace GameTheory.Games.Draughts
         /// <summary>
         /// Gets the Russian Draughts variant.
         /// </summary>
+        public static Variant InternationalDraughts => new Variant(
+            width: 10,
+            height: 10,
+            menCaptureBackwards: true,
+            movePriority: MovePriorities.LongestCaptureSequence,
+            movePriorityImpact: MovePriorityImpact.IllegalMove);
+
+        /// <summary>
+        /// Gets the Russian Draughts variant.
+        /// </summary>
         public static Variant RussianDraughts => new Variant(
             width: 8,
             height: 8,
             menCaptureBackwards: true,
             crownOnEntry: true,
-            movePriority: MovePriorities.MustCapture,
+            movePriority: MovePriorities.LongestCaptureSequence,
             movePriorityImpact: MovePriorityImpact.IllegalMove);
 
         /// <summary>

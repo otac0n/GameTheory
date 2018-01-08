@@ -18,7 +18,7 @@ namespace GameTheory.Games.Draughts.Moves
         /// <inheritdoc/>
         public override IList<object> FormatTokens => new object[] { "Remove nothing" };
 
-        internal static IEnumerable<Move> GenerateMoves(GameState state)
+        internal static IEnumerable<YieldRemovePieceMove> GenerateMoves(GameState state)
         {
             if (state.Phase == Phase.RemovePiece)
             {

@@ -24,7 +24,7 @@ namespace GameTheory.Games.Draughts.Moves
         /// </summary>
         public int RemoveIndex { get; }
 
-        internal static IEnumerable<Move> GenerateMoves(GameState state)
+        internal static IEnumerable<RemovePieceMove> GenerateMoves(GameState state)
         {
             if (state.Phase == Phase.RemovePiece)
             {

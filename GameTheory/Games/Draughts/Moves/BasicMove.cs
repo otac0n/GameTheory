@@ -29,7 +29,7 @@ namespace GameTheory.Games.Draughts.Moves
         /// </summary>
         public int ToIndex { get; }
 
-        internal static IEnumerable<Move> GenerateMoves(GameState state)
+        internal static IEnumerable<BasicMove> GenerateMoves(GameState state)
         {
             if (state.LastCapturingIndex.HasValue)
             {
