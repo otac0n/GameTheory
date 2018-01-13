@@ -384,7 +384,7 @@ namespace GameTheory.Games.Lotus
 
         private static ImmutableList<PetalCard> MakeDeck(PlayerToken player, int players)
         {
-            int remove = 0;
+            var remove = 0;
             switch (players)
             {
                 case 4:

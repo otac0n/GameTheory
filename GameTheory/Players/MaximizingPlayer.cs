@@ -157,7 +157,7 @@ namespace GameTheory.Players
 
             var maxWeight = default(Maybe<double>);
             var maxMainlines = new List<Mainline>();
-            int minDepth = -1;
+            var minDepth = -1;
 
             var playerScores = new Dictionary<PlayerToken, IWeighted<TScore>[]>();
 

@@ -380,7 +380,7 @@ namespace GameTheory
             }
             else
             {
-                int count = 1;
+                var count = 1;
 
                 if (node.LeftChild != null)
                 {

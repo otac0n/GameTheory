@@ -78,7 +78,7 @@ namespace GameTheory.Games.Lotus.Moves
 
                     if (inventory.Deck.Count > 1)
                     {
-                        for (int i2 = 0; i2 < inventory.Hand.Count; i2++)
+                        for (var i2 = 0; i2 < inventory.Hand.Count; i2++)
                         {
                             if (i1 == i2)
                             {

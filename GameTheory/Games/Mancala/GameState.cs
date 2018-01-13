@@ -96,7 +96,7 @@ namespace GameTheory.Games.Mancala
         /// <inheritdoc />
         public IReadOnlyList<Move> GetAvailableMoves()
         {
-            int bins = this.BinsPerSide;
+            var bins = this.BinsPerSide;
             var moves = new Move[bins];
 
             var playerOffset = this.GetPlayerIndexOffset(this.ActivePlayer);

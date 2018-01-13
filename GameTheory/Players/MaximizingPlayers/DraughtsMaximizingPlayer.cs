@@ -44,7 +44,7 @@ namespace GameTheory.Players.MaximizingPlayers
 
                 var score = 0.0;
 
-                for (int i = 0; i < board.Length; i++)
+                for (var i = 0; i < board.Length; i++)
                 {
                     var square = board[i];
                     if (square.HasFlag(playerColor))

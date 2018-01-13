@@ -279,7 +279,7 @@ namespace GameTheory
 
             instance = instance ?? Instance;
 
-            T current = default(T);
+            var current = default(T);
 
             var i = 0;
             foreach (var item in items)
