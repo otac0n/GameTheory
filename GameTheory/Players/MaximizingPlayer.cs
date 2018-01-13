@@ -97,12 +97,20 @@ namespace GameTheory.Players
         {
             await Task.Yield();
 
-            var players = state.GetAvailableMoves().Select(m => m.PlayerToken).ToImmutableHashSet();
+            var moves = state.GetAvailableMoves();
+
+            var players = moves.Select(m => m.PlayerToken).ToImmutableHashSet();
             if (!players.Contains(this.PlayerToken))
             {
                 // We can avoid any further calculation at this state, because it is not our turn.
                 // TODO: Consider "pondering."
                 return default(Maybe<TMove>);
+            }
+
+            if (players.Count == 1 && moves.Count == 1)
+            {
+                // If we are forced to move, don't spend any calculation determining the correct move.
+                return new Maybe<TMove>(moves.Single());
             }
 
             var states = state.GetView(this.PlayerToken, this.InitialSamples).ToList();
