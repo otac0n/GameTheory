@@ -75,7 +75,7 @@ namespace GameTheory.Players.MaximizingPlayer
             if (players.Count == 1 && moves.Count == 1)
             {
                 // If we are forced to move, don't spend any calculation determining the correct move.
-                return new Maybe<TMove>(moves.Single());
+                return moves.Single();
             }
 
             var states = state.GetView(this.PlayerToken, this.InitialSamples).ToList();
@@ -102,7 +102,7 @@ namespace GameTheory.Players.MaximizingPlayer
             else
             {
                 this.MessageSent?.Invoke(this, new MessageSentEventArgs(mainline));
-                return new Maybe<TMove>(mainline.Moves.Peek());
+                return mainline.Moves.Peek();
             }
         }
 
@@ -128,7 +128,7 @@ namespace GameTheory.Players.MaximizingPlayer
                 return mainlines[0].Value;
             }
 
-            var maxWeight = default(Maybe<double>);
+            double? maxWeight = null;
             var maxMainlines = new List<Mainline>();
             var minDepth = -1;
 
@@ -146,16 +146,16 @@ namespace GameTheory.Players.MaximizingPlayer
                     minDepth = mainline.Depth;
                 }
 
-                if (!maxWeight.HasValue)
+                if (maxWeight == null)
                 {
-                    maxWeight = new Maybe<double>(weight);
+                    maxWeight = weight;
                     maxMainlines.Add(mainline);
                 }
-                else if (weight >= maxWeight.Value)
+                else if (weight >= maxWeight)
                 {
-                    if (weight > maxWeight.Value)
+                    if (weight > maxWeight)
                     {
-                        maxWeight = new Maybe<double>(weight);
+                        maxWeight = weight;
                         maxMainlines.Clear();
                     }
 
@@ -207,7 +207,7 @@ namespace GameTheory.Players.MaximizingPlayer
                 var mainline = moveScores[m];
                 if (!maxLead.HasValue)
                 {
-                    maxLead = new Maybe<TScore>(this.GetLead(mainline, player));
+                    maxLead = this.GetLead(mainline, player);
                     maxMoves.Add(mainline);
                 }
                 else
@@ -218,7 +218,7 @@ namespace GameTheory.Players.MaximizingPlayer
                     {
                         if (comp > 0)
                         {
-                            maxLead = new Maybe<TScore>(lead);
+                            maxLead = lead;
                             maxMoves.Clear();
                         }
 

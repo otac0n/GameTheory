@@ -54,7 +54,7 @@ namespace GameTheory.Players
                 count = max;
             }
 
-            return count == 0 ? default(Maybe<TMove>) : new Maybe<TMove>(chosenMove);
+            return count == 0 ? default(Maybe<TMove>) : chosenMove;
         }
 
         /// <inheritdoc />

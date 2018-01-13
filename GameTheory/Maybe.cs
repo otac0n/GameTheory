@@ -52,6 +52,12 @@ namespace GameTheory
         public T ValueOrDefault => this.value;
 
         /// <summary>
+        /// Implicitly constructs a <see cref="Maybe{T}"/> value given an existing value.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        public static implicit operator Maybe<T>(T value) => new Maybe<T>(value);
+
+        /// <summary>
         /// Compares two <see cref="Maybe{T}"/> objects. The result specifies whether they are unequal.
         /// </summary>
         /// <param name="left">The first <see cref="Maybe{T}"/> to compare.</param>

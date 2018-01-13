@@ -33,7 +33,7 @@ namespace GameTheory.Strategies
                 var nextState = state.MakeMove(move);
                 if (nextState.GetWinners().Contains(playerToken))
                 {
-                    return new Maybe<TMove>(move);
+                    return move;
                 }
             }
 

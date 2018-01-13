@@ -143,7 +143,7 @@ namespace GameTheory.Games.Draughts.Moves
 
             state = state.With(
                 board: board.SetItem(this.CaptureIndex, board[this.CaptureIndex] | Piece.Captured),
-                lastCapturingIndex: new Maybe<int>(this.ToIndex));
+                lastCapturingIndex: this.ToIndex);
 
             return base.Apply(state);
         }
