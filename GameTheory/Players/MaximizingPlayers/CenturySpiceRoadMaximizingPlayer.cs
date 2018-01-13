@@ -2,7 +2,6 @@
 
 namespace GameTheory.Players.MaximizingPlayers
 {
-    using System.Linq;
     using Games.CenturySpiceRoad;
 
     /// <summary>

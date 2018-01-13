@@ -2,7 +2,6 @@
 
 namespace GameTheory.Games.Draughts.Moves
 {
-    using System;
     using System.Collections.Generic;
 
     /// <summary>
