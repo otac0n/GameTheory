@@ -18,20 +18,20 @@ namespace GameTheory.Players.MaximizingPlayers
         /// <param name="playerToken">The token that represents the player.</param>
         /// <param name="minPly">The minimum number of ply to think ahead.</param>
         public TwentyFortyEightMaximizingPlayer(PlayerToken playerToken, int minPly)
-            : base(playerToken, new ScoringMetric(), minPly)
+            : base(playerToken, new PlayerScoringMetric(), minPly)
         {
         }
 
         /// <summary>
         /// Provides a scoring metric for Tic-tac-toe.
         /// </summary>
-        private class ScoringMetric : IScoringMetric
+        private class PlayerScoringMetric : IPlayerScoringMetric
         {
             private static readonly double[] Pow = Enumerable.Range(0, GameState.Size * GameState.Size).Select(value => Math.Pow(10, value)).ToArray();
 
             /// <inheritdoc/>
-            public double CombineScores(IWeighted<double>[] scores) =>
-                scores.Sum(s => s.Value * s.Weight) / scores.Sum(s => s.Weight);
+            public double Combine(IWeighted<double>[] scores) =>
+                ScoringMetric.Combine(scores);
 
             /// <inheritdoc/>
             public int Compare(double x, double y) =>
@@ -42,15 +42,10 @@ namespace GameTheory.Players.MaximizingPlayers
                 playerScore - opponentScore;
 
             /// <inheritdoc/>
-            public double Score(IGameState<Move> state, PlayerToken playerToken)
+            public double Score(PlayerState playerState)
             {
-                if (state == null)
-                {
-                    throw new ArgumentNullException(nameof(state));
-                }
-
-                var gameState = (GameState)state;
-                if (playerToken == gameState.Players[0])
+                var state = (GameState)playerState.GameState;
+                if (state.Players[0] == playerState.PlayerToken)
                 {
                     var sums = new[] { 0.0, 0.0, 0.0, 0.0 };
 
@@ -59,13 +54,13 @@ namespace GameTheory.Players.MaximizingPlayers
                     {
                         for (var x = 0; x < GameState.Size; x++)
                         {
-                            var value = gameState[x, y];
+                            var value = state[x, y];
                             if (value != 0)
                             {
-                                var l = x == 0 ? -1 : gameState[x - 1, y];
-                                var u = y == 0 ? -1 : gameState[x, y - 1];
-                                var r = x == GameState.Size - 1 ? -1 : gameState[x + 1, y];
-                                var d = y == GameState.Size - 1 ? -1 : gameState[x, y + 1];
+                                var l = x == 0 ? -1 : state[x - 1, y];
+                                var u = y == 0 ? -1 : state[x, y - 1];
+                                var r = x == GameState.Size - 1 ? -1 : state[x + 1, y];
+                                var d = y == GameState.Size - 1 ? -1 : state[x, y + 1];
 
                                 const int Lower = -1, Higher = 1, Equal = 0, Edge = 2, Empty = 3;
                                 var l2 = l == -1 ? Edge : l == 0 ? Empty : (l > value ? Higher : l < value ? Lower : Equal);

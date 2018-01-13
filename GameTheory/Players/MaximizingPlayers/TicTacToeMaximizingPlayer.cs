@@ -2,7 +2,6 @@
 
 namespace GameTheory.Players.MaximizingPlayers
 {
-    using System;
     using System.Linq;
     using Games.TicTacToe;
 
@@ -17,18 +16,18 @@ namespace GameTheory.Players.MaximizingPlayers
         /// <param name="playerToken">The token that represents the player.</param>
         /// <param name="minPly">The minimum number of ply to think ahead.</param>
         public TicTacToeMaximizingPlayer(PlayerToken playerToken, int minPly = 6)
-            : base(playerToken, new ScoringMetric(), minPly)
+            : base(playerToken, new PlayerScoringMetric(), minPly)
         {
         }
 
         /// <summary>
         /// Provides a scoring metric for Tic-tac-toe.
         /// </summary>
-        private class ScoringMetric : IScoringMetric
+        private class PlayerScoringMetric : IPlayerScoringMetric
         {
             /// <inheritdoc/>
-            public double CombineScores(IWeighted<double>[] scores) =>
-                scores.Sum(s => s.Value * s.Weight) / scores.Sum(s => s.Weight);
+            public double Combine(IWeighted<double>[] scores) =>
+                ScoringMetric.Combine(scores);
 
             /// <inheritdoc/>
             public int Compare(double x, double y) =>
@@ -39,13 +38,10 @@ namespace GameTheory.Players.MaximizingPlayers
                 playerScore - opponentScore;
 
             /// <inheritdoc/>
-            public double Score(IGameState<Move> state, PlayerToken playerToken)
+            public double Score(PlayerState playerState)
             {
-                if (state == null)
-                {
-                    throw new ArgumentNullException(nameof(state));
-                }
-
+                var state = playerState.GameState;
+                var playerToken = playerState.PlayerToken;
                 return state.GetWinners().Any(w => w == playerToken) ? 1 : 0;
             }
         }

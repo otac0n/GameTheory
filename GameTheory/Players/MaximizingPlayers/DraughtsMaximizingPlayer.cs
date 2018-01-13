@@ -2,7 +2,6 @@
 
 namespace GameTheory.Players.MaximizingPlayers
 {
-    using System.Linq;
     using GameTheory.Games.Draughts;
 
     /// <summary>
@@ -16,15 +15,15 @@ namespace GameTheory.Players.MaximizingPlayers
         /// <param name="playerToken">The token that represents the player.</param>
         /// <param name="minPly">The minimum number of ply to think ahead.</param>
         public DraughtsMaximizingPlayer(PlayerToken playerToken, int minPly = 6)
-            : base(playerToken, new ScoringMetric(), minPly)
+            : base(playerToken, new PlayerScoringMetric(), minPly)
         {
         }
 
-        private class ScoringMetric : IScoringMetric
+        private class PlayerScoringMetric : IPlayerScoringMetric
         {
             /// <inheritdoc/>
-            public double CombineScores(IWeighted<double>[] scores) =>
-                scores.Sum(s => s.Value * s.Weight) / scores.Sum(s => s.Weight);
+            public double Combine(IWeighted<double>[] scores) =>
+                ScoringMetric.Combine(scores);
 
             /// <inheritdoc/>
             public int Compare(double x, double y) =>
@@ -35,11 +34,11 @@ namespace GameTheory.Players.MaximizingPlayers
                 playerScore - opponentScore;
 
             /// <inheritdoc/>
-            public double Score(IGameState<Move> state, PlayerToken playerToken)
+            public double Score(PlayerState playerState)
             {
-                var gameState = (GameState)state;
-                var board = gameState.Board;
-                var playerIndex = gameState.Players.IndexOf(playerToken);
+                var state = (GameState)playerState.GameState;
+                var board = state.Board;
+                var playerIndex = state.Players.IndexOf(playerState.PlayerToken);
                 var playerColor = (Piece)(1 << playerIndex);
 
                 var score = 0.0;

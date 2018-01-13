@@ -39,7 +39,7 @@ namespace GameTheory.Games.Draughts
         /// </summary>
         public static IComparer<Move> LongestCaptureSequence { get; } = MakeMaximizingComparer(
             c => 1,
-            (a, b) => a + b,
+            scores => scores.Sum(s => s.Value),
             (a, b) => a.CompareTo(b));
 
         /// <summary>
@@ -51,10 +51,10 @@ namespace GameTheory.Games.Draughts
                 Pieces = 1,
                 Kings = c.State.Board[c.CaptureIndex].HasFlag(Piece.Crowned) ? 1 : 0,
             },
-            (a, b) => new
+            scores => new
             {
-                Pieces = a.Pieces + b.Pieces,
-                Kings = a.Kings + b.Kings,
+                Pieces = scores.Sum(s => s.Value.Pieces),
+                Kings = scores.Sum(s => s.Value.Kings),
             },
             (a, b) =>
             {
@@ -78,11 +78,11 @@ namespace GameTheory.Games.Draughts
                 WithKing = c.State.Board[c.FromIndex].HasFlag(Piece.Crowned),
                 Kings = c.State.Board[c.CaptureIndex].HasFlag(Piece.Crowned) ? 1 : 0,
             },
-            (a, b) => new
+            scores => new
             {
-                Pieces = a.Pieces + b.Pieces,
-                WithKing = a.WithKing & b.WithKing,
-                Kings = a.Kings + b.Kings,
+                Pieces = scores.Sum(s => s.Value.Pieces),
+                WithKing = scores.First().Value.WithKing,
+                Kings = scores.Sum(s => s.Value.Kings),
             },
             (a, b) =>
             {
@@ -109,11 +109,12 @@ namespace GameTheory.Games.Draughts
         /// </summary>
         /// <typeparam name="T">The type representing the score.</typeparam>
         /// <param name="scoreCapture">The scoring function to use.</param>
-        /// <param name="addScores">Adds two scores together.</param>
+        /// <param name="combineScores">Adds two scores together.</param>
         /// <param name="scoreComparison">Compares two scores.</param>
         /// <returns>A comparer that evaluates moves based on their maximum potential score.</returns>
-        public static IComparer<Move> MakeMaximizingComparer<T>(Func<CaptureMove, T> scoreCapture, Func<T, T, T> addScores, Comparison<T> scoreComparison)
+        public static IComparer<Move> MakeMaximizingComparer<T>(Func<CaptureMove, T> scoreCapture, Func<IWeighted<T>[], T> combineScores, Comparison<T> scoreComparison)
         {
+            var scoringMetric = ScoringMetric.Create(scoreCapture, combineScores, scoreComparison);
             return Comparer<Move>.Create((a, b) =>
             {
                 int comp;
@@ -140,10 +141,10 @@ namespace GameTheory.Games.Draughts
 
                 var state = capA.State;
                 var player = state.ActivePlayer;
-                var scoreA = MeasureCaptures(state, player, capA, scoreCapture, addScores, scoreComparison);
-                var scoreB = MeasureCaptures(state, player, capA, scoreCapture, addScores, scoreComparison);
+                var scoreA = MeasureCaptures(state, player, capA, scoringMetric);
+                var scoreB = MeasureCaptures(state, player, capA, scoringMetric);
 
-                return scoreComparison(scoreA, scoreB);
+                return scoringMetric.Compare(scoreA, scoreB);
             });
         }
 
@@ -154,18 +155,18 @@ namespace GameTheory.Games.Draughts
         /// <param name="state">The state to measure.</param>
         /// <param name="player">The player whose turn is being evaluated.</param>
         /// <param name="move">The move to score.</param>
-        /// <param name="scoreCapture">The scoring function to use.</param>
-        /// <param name="addScores">Adds two scores together.</param>
-        /// <param name="scoreComparison">Compares two scores.</param>
+        /// <param name="scoringMetric">The scoring metric to use.</param>
         /// <returns>The maximum score possible.</returns>
-        public static T MeasureCaptures<T>(GameState state, PlayerToken player, CaptureMove move, Func<CaptureMove, T> scoreCapture, Func<T, T, T> addScores, Comparison<T> scoreComparison)
+        public static T MeasureCaptures<T>(GameState state, PlayerToken player, CaptureMove move, IScoringMetric<CaptureMove, T> scoringMetric)
         {
-            var score = scoreCapture(move);
+            var score = scoringMetric.Score(move);
 
             var nextState = (GameState)state.MakeMove(move);
             if (nextState.ActivePlayer == player)
             {
-                score = addScores(score, CaptureMove.GenerateMoves(nextState).Select(m => MeasureCaptures(nextState, player, m, scoreCapture, addScores, scoreComparison)).Max(scoreComparison));
+                score = scoringMetric.Combine(
+                    Weighted.Create(score, 1),
+                    Weighted.Create(CaptureMove.GenerateMoves(nextState).Select(m => MeasureCaptures(nextState, player, m, scoringMetric)).Max(scoringMetric), 1));
             }
 
             return score;

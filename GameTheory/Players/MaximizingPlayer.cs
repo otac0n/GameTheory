@@ -23,7 +23,7 @@ namespace GameTheory.Players
         private const int TrimDepth = 32;
         private readonly SplayTree<IGameState<TMove>, Mainline> cache = new SplayTree<IGameState<TMove>, Mainline>();
         private readonly int minPly;
-        private readonly IScoringMetric scoringMetric;
+        private readonly IPlayerScoringMetric scoringMetric;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MaximizingPlayer{TMove, TScore}"/> class.
@@ -31,7 +31,7 @@ namespace GameTheory.Players
         /// <param name="playerToken">The token that represents the player.</param>
         /// <param name="scoringMetric">The scoring metric to use.</param>
         /// <param name="minPly">The minimum number of ply to think ahead.</param>
-        protected MaximizingPlayer(PlayerToken playerToken, IScoringMetric scoringMetric, int minPly)
+        protected MaximizingPlayer(PlayerToken playerToken, IPlayerScoringMetric scoringMetric, int minPly)
         {
             this.PlayerToken = playerToken;
             this.scoringMetric = scoringMetric ?? throw new ArgumentOutOfRangeException(nameof(scoringMetric));
@@ -52,21 +52,8 @@ namespace GameTheory.Players
         /// <summary>
         /// Provides an interface for the <see cref="MaximizingPlayer{TMove, TScore}"/> class to score game states.
         /// </summary>
-        protected interface IScoringMetric : IComparer<TScore>
+        protected interface IPlayerScoringMetric : IScoringMetric<PlayerState, TScore>
         {
-            /// <summary>
-            /// Combines one or more scores with the specified weights.
-            /// </summary>
-            /// <param name="scores">The weighted scores to combine.</param>
-            /// <returns>The combines score.</returns>
-            /// <remarks>
-            /// <para>The length of scores and weights must be the same.</para>
-            /// <para>If given a single score, that score should be returned without change.
-            /// If given multiple scores, the function should return a expected score based on the specified weights.</para>
-            /// <para>The player will use negative weights to subtract one score from another.</para>
-            /// </remarks>
-            TScore CombineScores(IWeighted<TScore>[] scores);
-
             /// <summary>
             /// Gets the difference between two players' scores.
             /// </summary>
@@ -74,14 +61,6 @@ namespace GameTheory.Players
             /// <param name="opponentScore">The score to subtract.</param>
             /// <returns>A score representing the difference between the specified scores.</returns>
             TScore Difference(TScore playerScore, TScore opponentScore);
-
-            /// <summary>
-            /// Scores a <see cref="IGameState{TMove}"/> for the specified player.
-            /// </summary>
-            /// <param name="state">The game state to score.</param>
-            /// <param name="playerToken">The player whose score should be returned.</param>
-            /// <returns>The player's score.</returns>
-            TScore Score(IGameState<TMove> state, PlayerToken playerToken);
         }
 
         /// <inheritdoc />
@@ -208,7 +187,7 @@ namespace GameTheory.Players
                 }
             }
 
-            var combinedScore = playerScores.ToImmutableDictionary(ps => ps.Key, ps => this.scoringMetric.CombineScores(ps.Value));
+            var combinedScore = playerScores.ToImmutableDictionary(ps => ps.Key, ps => this.scoringMetric.Combine(ps.Value));
 
             var maxMainline = maxMainlines.Pick();
             return new Mainline(combinedScore, maxMainline.State, maxMainline.Moves, minDepth);
@@ -405,7 +384,34 @@ namespace GameTheory.Players
 
         private IReadOnlyDictionary<PlayerToken, TScore> Score(IGameState<TMove> state)
         {
-            return state.Players.ToImmutableDictionary(p => p, p => this.scoringMetric.Score(state, p));
+            return state.Players.ToImmutableDictionary(p => p, p => this.scoringMetric.Score(new PlayerState(p, state)));
+        }
+
+        /// <summary>
+        /// A tuple of a player token and a game state.
+        /// </summary>
+        protected struct PlayerState
+        {
+            /// <summary>
+            /// Initializes a new instance of the <see cref="PlayerState"/> struct.
+            /// </summary>
+            /// <param name="playerToken">The player token.</param>
+            /// <param name="gameState">The current state of the game.</param>
+            public PlayerState(PlayerToken playerToken, IGameState<TMove> gameState)
+            {
+                this.PlayerToken = playerToken;
+                this.GameState = gameState;
+            }
+
+            /// <summary>
+            /// Gets the current state of the game.
+            /// </summary>
+            public IGameState<TMove> GameState { get; }
+
+            /// <summary>
+            /// Gets the player token.
+            /// </summary>
+            public PlayerToken PlayerToken { get; }
         }
 
         private class ComparableEqualityComparer<T> : IEqualityComparer<T>

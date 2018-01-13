@@ -16,15 +16,15 @@ namespace GameTheory.Players.MaximizingPlayers
         /// <param name="playerToken">The token that represents the player.</param>
         /// <param name="minPly">The minimum number of ply to think ahead.</param>
         public LotusMaximizingPlayer(PlayerToken playerToken, int minPly)
-            : base(playerToken, new ScoringMetric(), minPly)
+            : base(playerToken, new PlayerScoringMetric(), minPly)
         {
         }
 
-        private class ScoringMetric : IScoringMetric
+        private class PlayerScoringMetric : IPlayerScoringMetric
         {
             /// <inheritdoc/>
-            public double CombineScores(IWeighted<double>[] scores) =>
-                scores.Sum(s => s.Value * s.Weight) / scores.Sum(s => s.Weight);
+            public double Combine(IWeighted<double>[] scores) =>
+                ScoringMetric.Combine(scores);
 
             /// <inheritdoc/>
             public int Compare(double x, double y) =>
@@ -35,18 +35,18 @@ namespace GameTheory.Players.MaximizingPlayers
                 playerScore - opponentScore;
 
             /// <inheritdoc/>
-            public double Score(IGameState<Move> state, PlayerToken playerToken)
+            public double Score(PlayerState playerState)
             {
-                var gameState = (GameState)state;
-                double score = gameState.GetScore(playerToken);
-                if (gameState.Phase != Phase.End)
+                var state = (GameState)playerState.GameState;
+                double score = state.GetScore(playerState.PlayerToken);
+                if (state.Phase != Phase.End)
                 {
-                    foreach (var flower in gameState.Field.Values)
+                    foreach (var flower in state.Field.Values)
                     {
                         if (!flower.Petals.IsEmpty)
                         {
                             var controllingPlayers = GameState.GetControllingPlayers(flower);
-                            if (controllingPlayers.Contains(playerToken))
+                            if (controllingPlayers.Contains(playerState.PlayerToken))
                             {
                                 score += (double)flower.Petals.Count / controllingPlayers.Count;
                             }

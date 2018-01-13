@@ -261,6 +261,7 @@
     <Compile Include="IGameState.cs" />
     <Compile Include="IMove.cs" />
     <Compile Include="IPlayer.cs" />
+    <Compile Include="IScoringMetric.cs" />
     <Compile Include="IStrategy.cs" />
     <Compile Include="ITokenFormattable.cs" />
     <Compile Include="IWeighted.cs" />
@@ -276,6 +277,7 @@
     <Compile Include="Players\MaximizingPlayers\TwentyFortyEightMaximizingPlayer.cs" />
     <Compile Include="Players\MaximizingPlayers\TicTacToeMaximizingPlayer.cs" />
     <Compile Include="Players\StrategyPlayer.cs" />
+    <Compile Include="ScoringMetric.cs" />
     <Compile Include="SplayTree.cs" />
     <Compile Include="Strategies\CompositeStrategy.cs" />
     <Compile Include="Strategies\ImmediateWinStrategy.cs" />

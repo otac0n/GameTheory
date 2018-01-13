@@ -2,7 +2,6 @@
 
 namespace GameTheory.Players.MaximizingPlayers
 {
-    using System.Linq;
     using GameTheory.Games.Mancala;
 
     /// <summary>
@@ -16,15 +15,15 @@ namespace GameTheory.Players.MaximizingPlayers
         /// <param name="playerToken">The token that represents the player.</param>
         /// <param name="minPly">The minimum number of ply to think ahead.</param>
         public MancalaMaximizingPlayer(PlayerToken playerToken, int minPly = 8)
-            : base(playerToken, new ScoringMetric(), minPly)
+            : base(playerToken, new PlayerScoringMetric(), minPly)
         {
         }
 
-        private class ScoringMetric : IScoringMetric
+        private class PlayerScoringMetric : IPlayerScoringMetric
         {
             /// <inheritdoc/>
-            public double CombineScores(IWeighted<double>[] scores) =>
-                scores.Sum(s => s.Value * s.Weight) / scores.Sum(s => s.Weight);
+            public double Combine(IWeighted<double>[] scores) =>
+                ScoringMetric.Combine(scores);
 
             /// <inheritdoc/>
             public int Compare(double x, double y) =>
@@ -35,10 +34,10 @@ namespace GameTheory.Players.MaximizingPlayers
                 playerScore - opponentScore;
 
             /// <inheritdoc/>
-            public double Score(IGameState<Move> state, PlayerToken playerToken)
+            public double Score(PlayerState playerState)
             {
-                var gameState = (GameState)state;
-                return gameState.Board[gameState.GetPlayerIndexOffset(playerToken) + gameState.BinsPerSide];
+                var state = (GameState)playerState.GameState;
+                return state.Board[state.GetPlayerIndexOffset(playerState.PlayerToken) + state.BinsPerSide];
             }
         }
     }
