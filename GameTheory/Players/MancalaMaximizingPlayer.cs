@@ -10,36 +10,22 @@ namespace GameTheory.Players.MaximizingPlayers
     /// </summary>
     public class MancalaMaximizingPlayer : MaximizingPlayer<Move, double>
     {
+        private static readonly IScoringMetric<PlayerState, double> Metric = ScoringMetric.Create<PlayerState>(Score);
+
         /// <summary>
         /// Initializes a new instance of the <see cref="MancalaMaximizingPlayer"/> class.
         /// </summary>
         /// <param name="playerToken">The token that represents the player.</param>
         /// <param name="minPly">The minimum number of ply to think ahead.</param>
         public MancalaMaximizingPlayer(PlayerToken playerToken, int minPly = 8)
-            : base(playerToken, new PlayerScoringMetric(), minPly)
+            : base(playerToken, Metric, minPly)
         {
         }
 
-        private class PlayerScoringMetric : IPlayerScoringMetric
+        private static double Score(PlayerState playerState)
         {
-            /// <inheritdoc/>
-            public double Combine(IWeighted<double>[] scores) =>
-                ScoringMetric.Combine(scores);
-
-            /// <inheritdoc/>
-            public int Compare(double x, double y) =>
-                x.CompareTo(y);
-
-            /// <inheritdoc/>
-            public double Difference(double playerScore, double opponentScore) =>
-                playerScore - opponentScore;
-
-            /// <inheritdoc/>
-            public double Score(PlayerState playerState)
-            {
-                var state = (GameState)playerState.GameState;
-                return state.Board[state.GetPlayerIndexOffset(playerState.PlayerToken) + state.BinsPerSide];
-            }
+            var state = (GameState)playerState.GameState;
+            return state.Board[state.GetPlayerIndexOffset(playerState.PlayerToken) + state.BinsPerSide];
         }
     }
 }

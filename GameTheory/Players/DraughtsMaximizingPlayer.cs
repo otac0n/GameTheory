@@ -10,55 +10,41 @@ namespace GameTheory.Players.MaximizingPlayers
     /// </summary>
     public class DraughtsMaximizingPlayer : MaximizingPlayer<Move, double>
     {
+        private static readonly IScoringMetric<PlayerState, double> Metric = ScoringMetric.Create<PlayerState>(Score);
+
         /// <summary>
         /// Initializes a new instance of the <see cref="DraughtsMaximizingPlayer"/> class.
         /// </summary>
         /// <param name="playerToken">The token that represents the player.</param>
         /// <param name="minPly">The minimum number of ply to think ahead.</param>
         public DraughtsMaximizingPlayer(PlayerToken playerToken, int minPly = 6)
-            : base(playerToken, new PlayerScoringMetric(), minPly)
+            : base(playerToken, Metric, minPly)
         {
         }
 
-        private class PlayerScoringMetric : IPlayerScoringMetric
+        private static double Score(PlayerState playerState)
         {
-            /// <inheritdoc/>
-            public double Combine(IWeighted<double>[] scores) =>
-                ScoringMetric.Combine(scores);
+            var state = (GameState)playerState.GameState;
+            var board = state.Board;
+            var playerIndex = state.Players.IndexOf(playerState.PlayerToken);
+            var playerColor = (Piece)(1 << playerIndex);
 
-            /// <inheritdoc/>
-            public int Compare(double x, double y) =>
-                x.CompareTo(y);
+            var score = 0.0;
 
-            /// <inheritdoc/>
-            public double Difference(double playerScore, double opponentScore) =>
-                playerScore - opponentScore;
-
-            /// <inheritdoc/>
-            public double Score(PlayerState playerState)
+            for (var i = 0; i < board.Length; i++)
             {
-                var state = (GameState)playerState.GameState;
-                var board = state.Board;
-                var playerIndex = state.Players.IndexOf(playerState.PlayerToken);
-                var playerColor = (Piece)(1 << playerIndex);
-
-                var score = 0.0;
-
-                for (var i = 0; i < board.Length; i++)
+                var square = board[i];
+                if (square.HasFlag(playerColor))
                 {
-                    var square = board[i];
-                    if (square.HasFlag(playerColor))
+                    score += 1.0;
+                    if (square.HasFlag(Piece.Crowned))
                     {
-                        score += 1.0;
-                        if (square.HasFlag(Piece.Crowned))
-                        {
-                            score += 0.75;
-                        }
+                        score += 0.75;
                     }
                 }
-
-                return score;
             }
+
+            return score;
         }
     }
 }

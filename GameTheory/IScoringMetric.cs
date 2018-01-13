@@ -23,6 +23,14 @@ namespace GameTheory
         TScore Combine(params IWeighted<TScore>[] scores);
 
         /// <summary>
+        /// Gets the difference between two scores.
+        /// </summary>
+        /// <param name="minuend">The score to subtract from.</param>
+        /// <param name="subtrahend">The score to subtract.</param>
+        /// <returns>A score representing the difference between the specified scores.</returns>
+        TScore Difference(TScore minuend, TScore subtrahend);
+
+        /// <summary>
         /// Computes the score for the specified subject.
         /// </summary>
         /// <param name="subject">The subject to be scored.</param>

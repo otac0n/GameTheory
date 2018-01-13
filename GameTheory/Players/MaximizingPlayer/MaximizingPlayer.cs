@@ -23,7 +23,7 @@ namespace GameTheory.Players.MaximizingPlayer
         private const int TrimDepth = 32;
         private readonly SplayTree<IGameState<TMove>, Mainline> cache = new SplayTree<IGameState<TMove>, Mainline>();
         private readonly int minPly;
-        private readonly IPlayerScoringMetric scoringMetric;
+        private readonly IScoringMetric<PlayerState, TScore> scoringMetric;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MaximizingPlayer{TMove, TScore}"/> class.
@@ -31,7 +31,7 @@ namespace GameTheory.Players.MaximizingPlayer
         /// <param name="playerToken">The token that represents the player.</param>
         /// <param name="scoringMetric">The scoring metric to use.</param>
         /// <param name="minPly">The minimum number of ply to think ahead.</param>
-        protected MaximizingPlayer(PlayerToken playerToken, IPlayerScoringMetric scoringMetric, int minPly)
+        protected MaximizingPlayer(PlayerToken playerToken, IScoringMetric<PlayerState, TScore> scoringMetric, int minPly)
         {
             this.PlayerToken = playerToken;
             this.scoringMetric = scoringMetric ?? throw new ArgumentOutOfRangeException(nameof(scoringMetric));
@@ -48,20 +48,6 @@ namespace GameTheory.Players.MaximizingPlayer
 
         /// <inheritdoc />
         public event EventHandler<MessageSentEventArgs> MessageSent;
-
-        /// <summary>
-        /// Provides an interface for the <see cref="MaximizingPlayer{TMove, TScore}"/> class to score game states.
-        /// </summary>
-        protected interface IPlayerScoringMetric : IScoringMetric<PlayerState, TScore>
-        {
-            /// <summary>
-            /// Gets the difference between two players' scores.
-            /// </summary>
-            /// <param name="playerScore">The score to subtract from.</param>
-            /// <param name="opponentScore">The score to subtract.</param>
-            /// <returns>A score representing the difference between the specified scores.</returns>
-            TScore Difference(TScore playerScore, TScore opponentScore);
-        }
 
         /// <inheritdoc />
         public PlayerToken PlayerToken { get; }

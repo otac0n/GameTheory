@@ -114,7 +114,7 @@ namespace GameTheory.Games.Draughts
         /// <returns>A comparer that evaluates moves based on their maximum potential score.</returns>
         public static IComparer<Move> MakeMaximizingComparer<T>(Func<CaptureMove, T> scoreCapture, Func<IWeighted<T>[], T> combineScores, Comparison<T> scoreComparison)
         {
-            var scoringMetric = ScoringMetric.Create(scoreCapture, combineScores, scoreComparison);
+            var scoringMetric = ScoringMetric.Create(scoreCapture, combineScores, scoreComparison, (a, b) => throw new NotImplementedException());
             return Comparer<Move>.Create((a, b) =>
             {
                 int comp;
