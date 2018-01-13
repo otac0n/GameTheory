@@ -2,23 +2,28 @@
 
 namespace GameTheory.Players.MaximizingPlayers
 {
-    using GameTheory.Games.FiveTribes;
+    using System.Linq;
+    using Games.TicTacToe;
+    using GameTheory.Players.MaximizingPlayer;
 
     /// <summary>
-    /// A maximizing player for the game of <see cref="GameState">Five Tribes</see>.
+    /// A maximizing player for the game of <see cref="GameState">Tic tac toe</see>.
     /// </summary>
-    public class FiveTribesMaximizingPlayer : MaximizingPlayer<Move, double>
+    public sealed class TicTacToeMaximizingPlayer : MaximizingPlayer<Move, double>
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="FiveTribesMaximizingPlayer"/> class.
+        /// Initializes a new instance of the <see cref="TicTacToeMaximizingPlayer"/> class.
         /// </summary>
         /// <param name="playerToken">The token that represents the player.</param>
         /// <param name="minPly">The minimum number of ply to think ahead.</param>
-        public FiveTribesMaximizingPlayer(PlayerToken playerToken, int minPly)
+        public TicTacToeMaximizingPlayer(PlayerToken playerToken, int minPly = 6)
             : base(playerToken, new PlayerScoringMetric(), minPly)
         {
         }
 
+        /// <summary>
+        /// Provides a scoring metric for Tic-tac-toe.
+        /// </summary>
         private class PlayerScoringMetric : IPlayerScoringMetric
         {
             /// <inheritdoc/>
@@ -36,8 +41,9 @@ namespace GameTheory.Players.MaximizingPlayers
             /// <inheritdoc/>
             public double Score(PlayerState playerState)
             {
-                var state = (GameState)playerState.GameState;
-                return state.GetScore(playerState.PlayerToken);
+                var state = playerState.GameState;
+                var playerToken = playerState.PlayerToken;
+                return state.GetWinners().Any(w => w == playerToken) ? 1 : 0;
             }
         }
     }

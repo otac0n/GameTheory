@@ -6,6 +6,7 @@ namespace GameTheory.Players.MaximizingPlayers
     using System.Collections.Generic;
     using System.Linq;
     using Games.TwentyFortyEight;
+    using GameTheory.Players.MaximizingPlayer;
 
     /// <summary>
     /// A maximizing player for the game of <see cref="GameState">Tic tac toe</see>.

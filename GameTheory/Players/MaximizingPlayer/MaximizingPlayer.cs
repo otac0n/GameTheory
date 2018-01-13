@@ -1,6 +1,6 @@
 ﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
-namespace GameTheory.Players
+namespace GameTheory.Players.MaximizingPlayer
 {
     using System;
     using System.Collections.Generic;

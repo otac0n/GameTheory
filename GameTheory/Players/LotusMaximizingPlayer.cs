@@ -2,19 +2,21 @@
 
 namespace GameTheory.Players.MaximizingPlayers
 {
-    using GameTheory.Games.Draughts;
+    using System.Linq;
+    using Games.Lotus;
+    using GameTheory.Players.MaximizingPlayer;
 
     /// <summary>
-    /// A maximizing player for the game of <see cref="GameState">Draughts</see>.
+    /// A maximizing player for the game of <see cref="GameState">Lotus</see>.
     /// </summary>
-    public class DraughtsMaximizingPlayer : MaximizingPlayer<Move, double>
+    public class LotusMaximizingPlayer : MaximizingPlayer<Move, double>
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="DraughtsMaximizingPlayer"/> class.
+        /// Initializes a new instance of the <see cref="LotusMaximizingPlayer"/> class.
         /// </summary>
         /// <param name="playerToken">The token that represents the player.</param>
         /// <param name="minPly">The minimum number of ply to think ahead.</param>
-        public DraughtsMaximizingPlayer(PlayerToken playerToken, int minPly = 6)
+        public LotusMaximizingPlayer(PlayerToken playerToken, int minPly)
             : base(playerToken, new PlayerScoringMetric(), minPly)
         {
         }
@@ -37,21 +39,18 @@ namespace GameTheory.Players.MaximizingPlayers
             public double Score(PlayerState playerState)
             {
                 var state = (GameState)playerState.GameState;
-                var board = state.Board;
-                var playerIndex = state.Players.IndexOf(playerState.PlayerToken);
-                var playerColor = (Piece)(1 << playerIndex);
-
-                var score = 0.0;
-
-                for (var i = 0; i < board.Length; i++)
+                double score = state.GetScore(playerState.PlayerToken);
+                if (state.Phase != Phase.End)
                 {
-                    var square = board[i];
-                    if (square.HasFlag(playerColor))
+                    foreach (var flower in state.Field.Values)
                     {
-                        score += 1.0;
-                        if (square.HasFlag(Piece.Crowned))
+                        if (!flower.Petals.IsEmpty)
                         {
-                            score += 0.75;
+                            var controllingPlayers = GameState.GetControllingPlayers(flower);
+                            if (controllingPlayers.Contains(playerState.PlayerToken))
+                            {
+                                score += (double)flower.Petals.Count / controllingPlayers.Count;
+                            }
                         }
                     }
                 }

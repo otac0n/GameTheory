@@ -2,19 +2,20 @@
 
 namespace GameTheory.Players.MaximizingPlayers
 {
-    using GameTheory.Games.Mancala;
+    using GameTheory.Games.Draughts;
+    using GameTheory.Players.MaximizingPlayer;
 
     /// <summary>
-    /// A maximizing player for the game of <see cref="GameState">Mancala</see>.
+    /// A maximizing player for the game of <see cref="GameState">Draughts</see>.
     /// </summary>
-    public class MancalaMaximizingPlayer : MaximizingPlayer<Move, double>
+    public class DraughtsMaximizingPlayer : MaximizingPlayer<Move, double>
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="MancalaMaximizingPlayer"/> class.
+        /// Initializes a new instance of the <see cref="DraughtsMaximizingPlayer"/> class.
         /// </summary>
         /// <param name="playerToken">The token that represents the player.</param>
         /// <param name="minPly">The minimum number of ply to think ahead.</param>
-        public MancalaMaximizingPlayer(PlayerToken playerToken, int minPly = 8)
+        public DraughtsMaximizingPlayer(PlayerToken playerToken, int minPly = 6)
             : base(playerToken, new PlayerScoringMetric(), minPly)
         {
         }
@@ -37,7 +38,26 @@ namespace GameTheory.Players.MaximizingPlayers
             public double Score(PlayerState playerState)
             {
                 var state = (GameState)playerState.GameState;
-                return state.Board[state.GetPlayerIndexOffset(playerState.PlayerToken) + state.BinsPerSide];
+                var board = state.Board;
+                var playerIndex = state.Players.IndexOf(playerState.PlayerToken);
+                var playerColor = (Piece)(1 << playerIndex);
+
+                var score = 0.0;
+
+                for (var i = 0; i < board.Length; i++)
+                {
+                    var square = board[i];
+                    if (square.HasFlag(playerColor))
+                    {
+                        score += 1.0;
+                        if (square.HasFlag(Piece.Crowned))
+                        {
+                            score += 0.75;
+                        }
+                    }
+                }
+
+                return score;
             }
         }
     }

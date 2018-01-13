@@ -2,20 +2,20 @@
 
 namespace GameTheory.Players.MaximizingPlayers
 {
-    using System.Linq;
-    using Games.Lotus;
+    using Games.CenturySpiceRoad;
+    using GameTheory.Players.MaximizingPlayer;
 
     /// <summary>
-    /// A maximizing player for the game of <see cref="GameState">Lotus</see>.
+    /// A maximizing player for the game of <see cref="GameState">CenturySpiceRoad</see>.
     /// </summary>
-    public class LotusMaximizingPlayer : MaximizingPlayer<Move, double>
+    public class CenturySpiceRoadMaximizingPlayer : MaximizingPlayer<Move, double>
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="LotusMaximizingPlayer"/> class.
+        /// Initializes a new instance of the <see cref="CenturySpiceRoadMaximizingPlayer"/> class.
         /// </summary>
         /// <param name="playerToken">The token that represents the player.</param>
         /// <param name="minPly">The minimum number of ply to think ahead.</param>
-        public LotusMaximizingPlayer(PlayerToken playerToken, int minPly)
+        public CenturySpiceRoadMaximizingPlayer(PlayerToken playerToken, int minPly)
             : base(playerToken, new PlayerScoringMetric(), minPly)
         {
         }
@@ -38,23 +38,7 @@ namespace GameTheory.Players.MaximizingPlayers
             public double Score(PlayerState playerState)
             {
                 var state = (GameState)playerState.GameState;
-                double score = state.GetScore(playerState.PlayerToken);
-                if (state.Phase != Phase.End)
-                {
-                    foreach (var flower in state.Field.Values)
-                    {
-                        if (!flower.Petals.IsEmpty)
-                        {
-                            var controllingPlayers = GameState.GetControllingPlayers(flower);
-                            if (controllingPlayers.Contains(playerState.PlayerToken))
-                            {
-                                score += (double)flower.Petals.Count / controllingPlayers.Count;
-                            }
-                        }
-                    }
-                }
-
-                return score;
+                return state.GetScore(playerState.PlayerToken);
             }
         }
     }
