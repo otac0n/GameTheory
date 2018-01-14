@@ -37,6 +37,10 @@ namespace GameTheory.Games.FiveTribes.Moves
             yield return new ScoreBuildersInHandMove(state, 0);
 
             var moves = Cost.OneOrMoreSlaves(state, (s, paid) => s.WithInterstitialState(new ScoringWithBonus(paid)));
+            foreach (var move in moves)
+            {
+                yield return move;
+            }
         }
 
         internal override GameState Apply(GameState state)
