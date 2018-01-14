@@ -10,7 +10,7 @@ namespace GameTheory.Games.FiveTribes.Djinns
     /// <summary>
     /// At game end, each pair of Slaves you hold acts as 1 Wild Merchandise of your choice.
     /// </summary>
-    public class AlAmin : Djinn
+    public sealed class AlAmin : Djinn
     {
         /// <summary>
         /// The singleton instance of <see cref="AlAmin"/>.

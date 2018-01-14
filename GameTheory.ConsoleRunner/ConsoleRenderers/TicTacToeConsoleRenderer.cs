@@ -7,7 +7,7 @@ namespace GameTheory.ConsoleRunner.ConsoleRenderers
     using TicTacToe;
 
     /// <summary>
-    /// Implements a console renderer for the game of <see cref="GameState">TicTacToe</see>.
+    /// Provides a console renderer for the game of <see cref="GameState">TicTacToe</see>.
     /// </summary>
     public class TicTacToeConsoleRenderer : BaseConsoleRenderer<Move>
     {

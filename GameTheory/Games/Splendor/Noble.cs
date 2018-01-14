@@ -6,7 +6,7 @@ namespace GameTheory.Games.Splendor
     using System.Collections.Generic;
 
     /// <summary>
-    /// Describes a Noble.
+    /// Represents a Noble.
     /// </summary>
     public sealed class Noble : IComparable<Noble>, ITokenFormattable
     {

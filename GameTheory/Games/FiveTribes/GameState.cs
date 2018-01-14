@@ -12,9 +12,9 @@ namespace GameTheory.Games.FiveTribes
     using GameTheory.Games.FiveTribes.Tiles;
 
     /// <summary>
-    /// Represents the current state of a game of Five Tribes.
+    /// Represents the current state in a game of Five Tribes.
     /// </summary>
-    public class GameState : IGameState<Move>
+    public sealed class GameState : IGameState<Move>
     {
         /// <summary>
         /// The maximum number of supported players.
@@ -282,7 +282,7 @@ namespace GameTheory.Games.FiveTribes
         public Point LastPoint { get; }
 
         /// <summary>
-        /// Gets the current <see cref="Phase"/>.
+        /// Gets the current phase of the game.
         /// </summary>
         public Phase Phase { get; }
 

@@ -7,7 +7,7 @@ namespace GameTheory.Games.FiveTribes.Djinns
     /// <summary>
     /// Each time a Meeple is dropped on one of your Tiles during a Move, collect 1 GC if you did the Move; 2 GCs if one of your opponents did.
     /// </summary>
-    public class Marid : Djinn
+    public sealed class Marid : Djinn
     {
         /// <summary>
         /// The singleton instance of <see cref="Marid"/>.

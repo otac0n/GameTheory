@@ -7,9 +7,9 @@ namespace GameTheory.Games.StagHunt
     using System.Linq;
 
     /// <summary>
-    /// Implements the game of Stag Hunt.
+    /// Represents the current state in a game of Stag Hunt.
     /// </summary>
-    public class GameState : NormalFormGame.GameState<string>
+    public sealed class GameState : NormalFormGame.GameState<string>
     {
         /// <summary>
         /// A move of "hare".

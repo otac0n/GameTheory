@@ -7,9 +7,9 @@ namespace GameTheory.Games.RockPaperScissors
     using System.Linq;
 
     /// <summary>
-    /// Implements the game of Stag Hunt.
+    /// Represents the current state in a game of Rock Paper Scissors.
     /// </summary>
-    public class GameState : NormalFormGame.GameState<string>
+    public sealed class GameState : NormalFormGame.GameState<string>
     {
         /// <summary>
         /// A move of "paper".

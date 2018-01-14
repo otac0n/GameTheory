@@ -7,7 +7,7 @@ namespace GameTheory.Games.FiveTribes.Djinns
     /// <summary>
     /// Each time Assassins kill Meeple(s), collect 1 GC if you did the Killing; 2 GCs if an opponent did.
     /// </summary>
-    public class Nekir : Djinn
+    public sealed class Nekir : Djinn
     {
         /// <summary>
         /// The singleton instance of <see cref="Nekir"/>.

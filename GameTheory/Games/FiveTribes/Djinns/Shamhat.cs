@@ -7,7 +7,7 @@ namespace GameTheory.Games.FiveTribes.Djinns
     /// <summary>
     /// At game end, each of your Elders is worth 4 VPs instead of 2.
     /// </summary>
-    public class Shamhat : OnAcquireDjinnBase
+    public sealed class Shamhat : OnAcquireDjinnBase
     {
         /// <summary>
         /// The singleton instance of <see cref="Shamhat"/>.

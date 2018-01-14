@@ -9,7 +9,7 @@ namespace GameTheory.Games.Draughts
     using GameTheory.Games.Draughts.Moves;
 
     /// <summary>
-    /// Describes the impact of choosing a move that doesn't maximize the move priority.
+    /// Represents the impact of choosing a move that doesn't maximize the move priority.
     /// </summary>
     public enum MovePriorityImpact : byte
     {

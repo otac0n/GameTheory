@@ -68,7 +68,7 @@ namespace GameTheory.Games.Splendor.Moves
             }
         }
 
-        internal static IEnumerable<Move> GenerateMoves(GameState state)
+        internal static IEnumerable<ReserveFromBoardMove> GenerateMoves(GameState state)
         {
             var pInventory = state.Inventory[state.ActivePlayer];
 

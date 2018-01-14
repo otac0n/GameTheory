@@ -26,7 +26,7 @@ namespace GameTheory.Games.FiveTribes
         /// <param name="goldAmount">The amount of gold that will be paid.</param>
         /// <param name="after">A function that should apply any necessary changes immediately after the cost is applied.</param>
         /// <returns>The cost's available moves.  This sequence will be empty if the active player cannot afford the cost, or if the cost results in no subsequent moves.</returns>
-        public static IEnumerable<Move> Gold(GameState state, int goldAmount, Func<GameState, GameState> after)
+        public static IEnumerable<PayGoldMove> Gold(GameState state, int goldAmount, Func<GameState, GameState> after)
         {
             if (state.Inventory[state.ActivePlayer].GoldCoins >= goldAmount)
             {
@@ -107,7 +107,7 @@ namespace GameTheory.Games.FiveTribes
         /// <param name="state">The initial state.</param>
         /// <param name="after">A function that should apply any necessary changes immediately after the cost is applied.</param>
         /// <returns>The cost's available moves.  This sequence will be empty if the active player cannot afford the cost, or if the cost results in no subsequent moves.</returns>
-        public static IEnumerable<Move> OneOrMoreSlaves(GameState state, Func<GameState, int, GameState> after)
+        public static IEnumerable<PayResourcesMove> OneOrMoreSlaves(GameState state, Func<GameState, int, GameState> after)
         {
             var slaves = state.Inventory[state.ActivePlayer].Resources[Resource.Slave];
             for (var count = 1; count <= slaves; count++)
@@ -127,7 +127,7 @@ namespace GameTheory.Games.FiveTribes
         /// <param name="state">The initial state.</param>
         /// <param name="after">A function that should apply any necessary changes immediately after the cost is applied.</param>
         /// <returns>The cost's available moves.  This sequence will be empty if the active player cannot afford the cost, or if the cost results in no subsequent moves.</returns>
-        public static IEnumerable<Move> OneSlave(GameState state, Func<GameState, GameState> after)
+        public static IEnumerable<PayResourcesMove> OneSlave(GameState state, Func<GameState, GameState> after)
         {
             if (state.Inventory[state.ActivePlayer].Resources[Resource.Slave] >= 1)
             {

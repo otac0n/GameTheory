@@ -10,7 +10,7 @@ namespace GameTheory.Games.FiveTribes.Djinns
     /// <summary>
     /// Pay <see cref="Cost.OneElderPlusOneElderOrOneSlave"/> to take control of 1 empty Tile (no Camel, Meeple, Palm Tree or Palace); place 1 of your Camels on it.
     /// </summary>
-    public class Leta : PayPerActionDjinnBase
+    public sealed class Leta : PayPerActionDjinnBase
     {
         /// <summary>
         /// The singleton instance of <see cref="Leta"/>.

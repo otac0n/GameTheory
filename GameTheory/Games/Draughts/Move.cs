@@ -7,7 +7,7 @@ namespace GameTheory.Games.Draughts
     using GameTheory.Games.Draughts.Moves;
 
     /// <summary>
-    /// Describes a move in <see cref="GameState">Draughts</see>.
+    /// Represents a move in <see cref="GameState">Draughts</see>.
     /// </summary>
     public abstract class Move : IMove
     {

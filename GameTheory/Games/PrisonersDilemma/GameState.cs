@@ -7,9 +7,9 @@ namespace GameTheory.Games.PrisonersDilemma
     using System.Linq;
 
     /// <summary>
-    /// Implements the game of Prisoner's Dilemma.
+    /// Represents the current state in a game of Prisoner's Dilemma.
     /// </summary>
-    public class GameState : NormalFormGame.GameState<string>
+    public sealed class GameState : NormalFormGame.GameState<string>
     {
         /// <summary>
         /// A move of "cooperate".

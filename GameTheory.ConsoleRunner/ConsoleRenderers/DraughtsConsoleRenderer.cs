@@ -7,7 +7,7 @@ namespace GameTheory.ConsoleRunner.ConsoleRenderers
     using Games.Draughts;
 
     /// <summary>
-    /// Implements a console renderer for the game of <see cref="GameState">Draughts</see>.
+    /// Provides a console renderer for the game of <see cref="GameState">Draughts</see>.
     /// </summary>
     public class DraughtsConsoleRenderer : BaseConsoleRenderer<Move>
     {

@@ -5,7 +5,7 @@ namespace GameTheory.Games.CenturySpiceRoad
     /// <summary>
     /// Represents a spice.
     /// </summary>
-    public enum Spice
+    public enum Spice : byte
     {
         /// <summary>
         /// Represents the yellow spice Turmeric.

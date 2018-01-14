@@ -10,7 +10,7 @@ namespace GameTheory.Games.FiveTribes.Djinns
     /// <summary>
     /// Pay <see cref="Cost.OneOrMoreSlaves"/>: for each Slave you discard your bidding cost is reduced by 1 spot.
     /// </summary>
-    public class Kumarbi : Djinn
+    public sealed class Kumarbi : Djinn
     {
         /// <summary>
         /// The singleton instance of <see cref="Kumarbi"/>.

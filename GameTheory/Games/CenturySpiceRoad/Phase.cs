@@ -3,9 +3,9 @@
 namespace GameTheory.Games.CenturySpiceRoad
 {
     /// <summary>
-    /// The current phase of the game.
+    /// Represents the current phase of the game.
     /// </summary>
-    public enum Phase
+    public enum Phase : byte
     {
         /// <summary>
         /// The game is in play.

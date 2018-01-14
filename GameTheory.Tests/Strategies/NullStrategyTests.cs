@@ -25,7 +25,7 @@ namespace GameTheory.Tests.Strategies
             }
         }
 
-        public class TestGameState : IGameState<TestGameState.Move>
+        private class TestGameState : IGameState<TestGameState.Move>
         {
             private readonly Guid id = Guid.NewGuid();
             private readonly ReadOnlyCollection<PlayerToken> players;

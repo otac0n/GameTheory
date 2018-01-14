@@ -6,7 +6,7 @@ namespace GameTheory.ConsoleRunner.ConsoleRenderers
     using TwentyFortyEight;
 
     /// <summary>
-    /// Implements a console renderer for the game of <see cref="GameState">TwentyFortyEight</see>.
+    /// Provides a console renderer for the game of <see cref="GameState">TwentyFortyEight</see>.
     /// </summary>
     public class TwentyFortyEightConsoleRenderer : BaseConsoleRenderer<Move>
     {

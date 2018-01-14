@@ -6,9 +6,9 @@ namespace GameTheory.Games.Lotus.Moves
     using System.Collections.Generic;
 
     /// <summary>
-    /// Represnts a move to add a guardian to a flower.
+    /// Represents a move to add a guardian to a flower.
     /// </summary>
-    public class MoveGuardianMove : Move
+    public sealed class MoveGuardianMove : Move
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="MoveGuardianMove"/> class.
@@ -50,7 +50,7 @@ namespace GameTheory.Games.Lotus.Moves
             }
         }
 
-        internal static IEnumerable<Move> GenerateMoves(GameState state)
+        internal static IEnumerable<MoveGuardianMove> GenerateMoves(GameState state)
         {
             if (state.Inventory[state.ActivePlayer].Guardians > 0)
             {

@@ -8,7 +8,7 @@ namespace GameTheory.Games.NormalFormGame
     using System.Linq;
 
     /// <summary>
-    /// Implements a normal-form game.
+    /// Represents the current state in a normal-form game.
     /// </summary>
     /// <typeparam name="T">The type of choices tracked in this game.</typeparam>
     public abstract class GameState<T> : IGameState<Move<T>>

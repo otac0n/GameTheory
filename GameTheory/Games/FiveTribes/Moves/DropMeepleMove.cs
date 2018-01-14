@@ -38,7 +38,7 @@ namespace GameTheory.Games.FiveTribes.Moves
         /// </summary>
         public Point Point { get; }
 
-        internal static IEnumerable<Move> GenerateMoves(GameState state)
+        internal static IEnumerable<DropMeepleMove> GenerateMoves(GameState state)
         {
             var drops = state.Sultanate.GetMoves(state.LastPoint, state.PreviousPoint, state.InHand);
             foreach (var drop in drops)

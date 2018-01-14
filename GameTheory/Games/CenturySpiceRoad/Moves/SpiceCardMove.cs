@@ -32,7 +32,7 @@ namespace GameTheory.Games.CenturySpiceRoad.Moves
         /// <inheritdoc/>
         public override bool IsDeterministic => true;
 
-        internal static IEnumerable<Move> GenerateMoves(GameState state)
+        internal static IEnumerable<SpiceCardMove> GenerateMoves(GameState state)
         {
             var hand = state.Inventory[state.ActivePlayer].Hand;
             for (var i = 0; i < hand.Count; i++)

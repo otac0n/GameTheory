@@ -7,7 +7,7 @@ namespace GameTheory.ConsoleRunner.ConsoleRenderers
     using Games.CenturySpiceRoad;
 
     /// <summary>
-    /// Implements a console renderer for the game of <see cref="GameState">CenturySpiceRoad</see>.
+    /// Provides a console renderer for the game of <see cref="GameState">CenturySpiceRoad</see>.
     /// </summary>
     public class CenturySpiceRoadConsoleRenderer : BaseConsoleRenderer<Move>
     {

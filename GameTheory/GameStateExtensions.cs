@@ -7,7 +7,7 @@ namespace GameTheory
     using System.Linq;
 
     /// <summary>
-    /// Extensions for all implementations of <see cref="IGameState{TMove}"/>.
+    /// Provides extensions for all implementations of <see cref="IGameState{TMove}"/>.
     /// </summary>
     public static class GameStateExtensions
     {

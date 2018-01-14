@@ -8,9 +8,9 @@ namespace GameTheory.Games.TicTacToe
     using System.Diagnostics.CodeAnalysis;
 
     /// <summary>
-    /// Implements the game of Tic-tac-toe.
+    /// Represents the current state in a game of Tic-tac-toe.
     /// </summary>
-    public class GameState : IGameState<Move>
+    public sealed class GameState : IGameState<Move>
     {
         /// <summary>
         /// Indicates the width and height of the playing area.

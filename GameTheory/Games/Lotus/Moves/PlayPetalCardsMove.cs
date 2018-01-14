@@ -10,7 +10,7 @@ namespace GameTheory.Games.Lotus.Moves
     /// <summary>
     /// Represents a move to play petal cards to a flower.
     /// </summary>
-    public class PlayPetalCardsMove : Move
+    public sealed class PlayPetalCardsMove : Move
     {
         private const int CardLimit = 2;
 
@@ -82,7 +82,7 @@ namespace GameTheory.Games.Lotus.Moves
             }
         }
 
-        internal static IEnumerable<Move> GenerateMoves(GameState state)
+        internal static IEnumerable<PlayPetalCardsMove> GenerateMoves(GameState state)
         {
             var playerInventory = state.Inventory[state.ActivePlayer];
             var hand = playerInventory.Hand;

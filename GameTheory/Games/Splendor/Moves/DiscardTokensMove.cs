@@ -52,7 +52,7 @@ namespace GameTheory.Games.Splendor.Moves
             }
         }
 
-        internal static IEnumerable<Move> GenerateMoves(GameState state)
+        internal static IEnumerable<DiscardTokensMove> GenerateMoves(GameState state)
         {
             var toDiscard = state.Inventory[state.ActivePlayer].Tokens.Count - GameState.TokenLimit;
             foreach (var discardTokens in state.Inventory[state.ActivePlayer].Tokens.Combinations(toDiscard))

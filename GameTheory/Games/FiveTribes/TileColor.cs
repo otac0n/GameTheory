@@ -5,7 +5,7 @@ namespace GameTheory.Games.FiveTribes
     /// <summary>
     /// Represents the color of a <see cref="Tile"/>.
     /// </summary>
-    public enum TileColor
+    public enum TileColor : byte
     {
         /// <summary>
         /// Represents a blue <see cref="Tile"/>.

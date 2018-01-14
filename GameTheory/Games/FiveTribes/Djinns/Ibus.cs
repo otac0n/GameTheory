@@ -10,7 +10,7 @@ namespace GameTheory.Games.FiveTribes.Djinns
     /// <summary>
     /// Pay <see cref="Cost.OneElderOrOneSlave"/> to let your Assassins kill 2 Meeples of any color on the same Tile or kill 2 Elders and/or Viziers from the same opponent.
     /// </summary>
-    public class Ibus : PayPerActionDjinnBase
+    public sealed class Ibus : PayPerActionDjinnBase
     {
         /// <summary>
         /// The singleton instance of <see cref="Ibus"/>.

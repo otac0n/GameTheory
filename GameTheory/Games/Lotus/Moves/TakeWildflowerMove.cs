@@ -7,7 +7,7 @@ namespace GameTheory.Games.Lotus.Moves
     /// <summary>
     /// Represents a move to take a wildflower.
     /// </summary>
-    public class TakeWildflowerMove : Move
+    public sealed class TakeWildflowerMove : Move
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="TakeWildflowerMove"/> class.
@@ -50,7 +50,7 @@ namespace GameTheory.Games.Lotus.Moves
             }
         }
 
-        internal static IEnumerable<Move> GenerateMoves(GameState state)
+        internal static IEnumerable<TakeWildflowerMove> GenerateMoves(GameState state)
         {
             for (var i = 0; i < state.AvailableWildflowers.Count; i++)
             {

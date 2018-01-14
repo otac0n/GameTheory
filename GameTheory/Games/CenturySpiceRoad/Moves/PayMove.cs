@@ -31,7 +31,7 @@ namespace GameTheory.Games.CenturySpiceRoad.Moves
         /// </summary>
         public Spice Spice { get; }
 
-        internal static IEnumerable<Move> GenerateMoves(GameState state)
+        internal static IEnumerable<PayMove> GenerateMoves(GameState state)
         {
             if (state.MerchantCardIndexAfforded < state.MerchantCardTrack.Count - 1)
             {

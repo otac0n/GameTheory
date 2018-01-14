@@ -36,7 +36,7 @@ namespace GameTheory.Games.CenturySpiceRoad.Moves
         /// </summary>
         public Spice UpgradedSpice => (Spice)((int)this.StartingSpice + 1);
 
-        internal static IEnumerable<Move> GenerateMoves(GameState state)
+        internal static IEnumerable<UpgradeMove> GenerateMoves(GameState state)
         {
             foreach (var spice in state.Inventory[state.ActivePlayer].Caravan.Keys)
             {

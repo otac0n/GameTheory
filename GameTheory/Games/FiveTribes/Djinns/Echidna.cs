@@ -10,7 +10,7 @@ namespace GameTheory.Games.FiveTribes.Djinns
     /// <summary>
     /// Pay <see cref="Cost.OneElderPlusOneElderOrOneSlave"/> to double the amount of GCs your Builders get this turn.
     /// </summary>
-    public class Echidna : PayPerActionDjinnBase
+    public sealed class Echidna : PayPerActionDjinnBase
     {
         /// <summary>
         /// The singleton instance of <see cref="Echidna"/>.

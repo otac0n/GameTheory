@@ -305,7 +305,7 @@ namespace GameTheory.Tests.Games
             return from.MakeMove(move);
         }
 
-        public class ReturnGameStateMove : Move
+        private class ReturnGameStateMove : Move
         {
             private readonly GameState nextState;
 

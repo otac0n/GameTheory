@@ -26,7 +26,7 @@ namespace GameTheory.Games.FiveTribes.Moves
         /// <inheritdoc />
         public override bool IsDeterministic => this.State.FindHighestBidIndex() != -1;
 
-        internal static IEnumerable<Move> GenerateMoves(GameState state)
+        internal static IEnumerable<EndTurnMove> GenerateMoves(GameState state)
         {
             yield return new EndTurnMove(state);
         }

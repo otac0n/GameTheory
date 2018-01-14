@@ -6,7 +6,7 @@ namespace GameTheory.Games.Splendor
     using System.Collections.Generic;
 
     /// <summary>
-    /// The initial development deck the development card appeared in.
+    /// Represents the initial development deck that a development card appeared in.
     /// </summary>
     public enum DevelopmentLevel : byte
     {
@@ -27,7 +27,7 @@ namespace GameTheory.Games.Splendor
     }
 
     /// <summary>
-    /// Describes a development card.
+    /// Represents a development card.
     /// </summary>
     public sealed class DevelopmentCard : IComparable<DevelopmentCard>, ITokenFormattable
     {

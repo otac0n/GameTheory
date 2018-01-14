@@ -10,7 +10,7 @@ namespace GameTheory.Games.FiveTribes.Djinns
     /// <summary>
     /// Pay <see cref="Cost.OneElderOrOneSlave"/> so that when placing a Palace, you may drop it on any neighboring Tile instead.
     /// </summary>
-    public class Hagis : Djinn
+    public sealed class Hagis : Djinn
     {
         /// <summary>
         /// The singleton instance of <see cref="Hagis"/>.

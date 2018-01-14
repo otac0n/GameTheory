@@ -8,7 +8,7 @@ namespace GameTheory.Games.FiveTribes.Djinns
     /// <summary>
     /// Each time a Palace is placed, collect 1 GC if you did it; 2 GCs if your opponents did.
     /// </summary>
-    public class Monkir : Djinn
+    public sealed class Monkir : Djinn
     {
         /// <summary>
         /// The singleton instance of <see cref="Monkir"/>.

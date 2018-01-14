@@ -5,7 +5,7 @@ namespace GameTheory
     using System;
 
     /// <summary>
-    /// A token allocated by a game as a token representing a particular player in the game.
+    /// A token allocated by a game representing a particular player in the game.
     /// </summary>
     public sealed class PlayerToken : IEquatable<PlayerToken>, IComparable<PlayerToken>
     {

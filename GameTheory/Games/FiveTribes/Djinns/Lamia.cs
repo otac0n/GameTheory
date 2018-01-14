@@ -10,7 +10,7 @@ namespace GameTheory.Games.FiveTribes.Djinns
     /// <summary>
     /// Pay <see cref="Cost.OneElderOrOneSlave"/> so that when building a Palm Tree, you may place it on a neighboring Tile instead.
     /// </summary>
-    public class Lamia : Djinn
+    public sealed class Lamia : Djinn
     {
         /// <summary>
         /// The singleton instance of <see cref="Lamia"/>.

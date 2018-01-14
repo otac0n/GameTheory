@@ -7,9 +7,9 @@ namespace GameTheory.Games.MatchingPennies
     using System.Linq;
 
     /// <summary>
-    /// Implements the game of matching pennies.
+    /// Represents the current state in a game of Matching Pennies.
     /// </summary>
-    public class GameState : NormalFormGame.GameState<string>
+    public sealed class GameState : NormalFormGame.GameState<string>
     {
         /// <summary>
         /// A move of "heads".

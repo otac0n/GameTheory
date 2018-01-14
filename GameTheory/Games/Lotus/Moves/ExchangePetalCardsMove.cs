@@ -10,7 +10,7 @@ namespace GameTheory.Games.Lotus.Moves
     /// <summary>
     /// Represents a move to exchange cards from the player deck.
     /// </summary>
-    public class ExchangePetalCardsMove : Move
+    public sealed class ExchangePetalCardsMove : Move
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="ExchangePetalCardsMove"/> class.
@@ -62,7 +62,7 @@ namespace GameTheory.Games.Lotus.Moves
             }
         }
 
-        internal static IEnumerable<Move> GenerateMoves(GameState state)
+        internal static IEnumerable<ExchangePetalCardsMove> GenerateMoves(GameState state)
         {
             var inventory = state.Inventory[state.ActivePlayer];
             if (inventory.Deck.Count > 0)

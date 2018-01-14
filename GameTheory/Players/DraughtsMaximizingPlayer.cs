@@ -6,7 +6,7 @@ namespace GameTheory.Players.MaximizingPlayers
     using GameTheory.Players.MaximizingPlayer;
 
     /// <summary>
-    /// A maximizing player for the game of <see cref="GameState">Draughts</see>.
+    /// Provides a maximizing player for the game of <see cref="GameState">Draughts</see>.
     /// </summary>
     public class DraughtsMaximizingPlayer : MaximizingPlayer<Move, double>
     {

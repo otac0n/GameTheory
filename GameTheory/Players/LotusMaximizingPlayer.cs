@@ -7,7 +7,7 @@ namespace GameTheory.Players.MaximizingPlayers
     using GameTheory.Players.MaximizingPlayer;
 
     /// <summary>
-    /// A maximizing player for the game of <see cref="GameState">Lotus</see>.
+    /// Provides a maximizing player for the game of <see cref="GameState">Lotus</see>.
     /// </summary>
     public class LotusMaximizingPlayer : MaximizingPlayer<Move, double>
     {

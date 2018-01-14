@@ -5,7 +5,7 @@ namespace GameTheory.Games.CenturySpiceRoad
     /// <summary>
     /// Represents a token.
     /// </summary>
-    public enum Token
+    public enum Token : byte
     {
         /// <summary>
         /// Represents a gold token.

@@ -3,7 +3,7 @@
 namespace GameTheory.Games.FiveTribes
 {
     /// <summary>
-    /// Marks the current phase of a <see cref="GameState"/>.
+    /// Represents the current phase the game.
     /// </summary>
     public enum Phase : byte
     {

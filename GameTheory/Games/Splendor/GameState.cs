@@ -8,9 +8,9 @@ namespace GameTheory.Games.Splendor
     using System.Linq;
 
     /// <summary>
-    /// Represents the current state of a game of Splendor.
+    /// Represents the current state in a game of plendor.
     /// </summary>
-    public class GameState : IGameState<Move>
+    public sealed class GameState : IGameState<Move>
     {
         /// <summary>
         /// The maxumum number of cards allowed in a player's hand.
@@ -238,7 +238,7 @@ namespace GameTheory.Games.Splendor
         public ImmutableList<Noble> Nobles { get; }
 
         /// <summary>
-        /// Gets the phase of the game.
+        /// Gets the current phase of the game.
         /// </summary>
         public Phase Phase { get; }
 

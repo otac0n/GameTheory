@@ -3,9 +3,9 @@
 namespace GameTheory.Games.Draughts
 {
     /// <summary>
-    /// The current phase of the game.
+    /// Represents the current phase of the game.
     /// </summary>
-    public enum Phase
+    public enum Phase : byte
     {
         /// <summary>
         /// The game is in play.
@@ -13,7 +13,7 @@ namespace GameTheory.Games.Draughts
         Play,
 
         /// <summary>
-        /// The player is removing a piece.
+        /// The active player may remove a piece.
         /// </summary>
         RemovePiece,
 

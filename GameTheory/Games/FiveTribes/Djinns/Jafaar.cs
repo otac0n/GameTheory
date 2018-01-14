@@ -7,7 +7,7 @@ namespace GameTheory.Games.FiveTribes.Djinns
     /// <summary>
     /// At game end, each Vizier you hold is worth 3 VPs instead of 1.
     /// </summary>
-    public class Jafaar : OnAcquireDjinnBase
+    public sealed class Jafaar : OnAcquireDjinnBase
     {
         /// <summary>
         /// The singleton instance of <see cref="Jafaar"/>.

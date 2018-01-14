@@ -6,7 +6,7 @@ namespace GameTheory.Players.MaximizingPlayers
     using GameTheory.Players.MaximizingPlayer;
 
     /// <summary>
-    /// A maximizing player for the game of <see cref="GameState">Splendor</see>.
+    /// Provides a maximizing player for the game of <see cref="GameState">Splendor</see>.
     /// </summary>
     public class SplendorMaximizingPlayer : MaximizingPlayer<Move, double>
     {

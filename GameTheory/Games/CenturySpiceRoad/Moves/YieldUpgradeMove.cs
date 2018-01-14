@@ -24,7 +24,7 @@ namespace GameTheory.Games.CenturySpiceRoad.Moves
         /// <inheritdoc />
         public override bool IsDeterministic => true;
 
-        internal static IEnumerable<Move> GenerateMoves(GameState state)
+        internal static IEnumerable<YieldUpgradeMove> GenerateMoves(GameState state)
         {
             yield return new YieldUpgradeMove(state);
         }

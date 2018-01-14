@@ -9,9 +9,9 @@ namespace GameTheory.Games.CenturySpiceRoad
     using GameTheory.Games.CenturySpiceRoad.MerchantCards;
 
     /// <summary>
-    /// Represents the current state of a game of Century Spice Road.
+    /// Represents the current state in a game of Century Spice Road.
     /// </summary>
-    public class GameState : IGameState<Move>
+    public sealed class GameState : IGameState<Move>
     {
         /// <summary>
         /// The maxumum number of spices allowed in a player's caravan.
@@ -206,7 +206,7 @@ namespace GameTheory.Games.CenturySpiceRoad
         public ImmutableList<MerchantStall> MerchantCardTrack { get; }
 
         /// <summary>
-        /// Gets the phase of the game.
+        /// Gets the current phase of the game.
         /// </summary>
         public Phase Phase { get; }
 

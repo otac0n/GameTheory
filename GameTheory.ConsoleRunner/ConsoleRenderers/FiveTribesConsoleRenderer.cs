@@ -7,7 +7,7 @@ namespace GameTheory.ConsoleRunner.ConsoleRenderers
     using Games.FiveTribes;
 
     /// <summary>
-    /// Implements a console renderer for the game of <see cref="GameState">FiveTribes</see>.
+    /// Provides a console renderer for the game of <see cref="GameState">FiveTribes</see>.
     /// </summary>
     public class FiveTribesConsoleRenderer : BaseConsoleRenderer<Move>
     {

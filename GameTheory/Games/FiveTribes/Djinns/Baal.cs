@@ -8,7 +8,7 @@ namespace GameTheory.Games.FiveTribes.Djinns
     /// <summary>
     /// Each time someone gets a Djinn, collect 1 GC if it's you, 2 GCSs if it's an opponent.
     /// </summary>
-    public class Baal : Djinn
+    public sealed class Baal : Djinn
     {
         /// <summary>
         /// The singleton instance of <see cref="Baal"/>.

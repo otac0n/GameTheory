@@ -7,7 +7,7 @@ namespace GameTheory.Games.FiveTribes.Djinns
     /// <summary>
     /// Your Elders and Viziers are protected from Assassins.
     /// </summary>
-    public class Boaz : OnAcquireDjinnBase
+    public sealed class Boaz : OnAcquireDjinnBase
     {
         /// <summary>
         /// The singleton instance of <see cref="Boaz"/>.

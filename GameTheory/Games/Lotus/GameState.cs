@@ -8,9 +8,9 @@ namespace GameTheory.Games.Lotus
     using System.Linq;
 
     /// <summary>
-    /// Implements the game of Lotus.
+    /// Represents the current state in a game of Lotus.
     /// </summary>
-    public class GameState : IGameState<Move>
+    public sealed class GameState : IGameState<Move>
     {
         /// <summary>
         /// The number of actions each player may perform on each turn.
@@ -109,7 +109,7 @@ namespace GameTheory.Games.Lotus
         public ImmutableDictionary<PlayerToken, Inventory> Inventory { get; }
 
         /// <summary>
-        /// Gets the phase of the game.
+        /// Gets the current phase of the game.
         /// </summary>
         public Phase Phase { get; }
 

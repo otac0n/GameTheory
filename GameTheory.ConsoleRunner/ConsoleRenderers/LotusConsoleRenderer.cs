@@ -7,7 +7,7 @@ namespace GameTheory.ConsoleRunner.ConsoleRenderers
     using Lotus;
 
     /// <summary>
-    /// Implements a console renderer for the game of <see cref="GameState">Splendor</see>.
+    /// Provides a console renderer for the game of <see cref="GameState">Splendor</see>.
     /// </summary>
     public class LotusConsoleRenderer : BaseConsoleRenderer<Move>
     {

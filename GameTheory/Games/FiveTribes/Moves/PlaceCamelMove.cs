@@ -46,7 +46,7 @@ namespace GameTheory.Games.FiveTribes.Moves
         /// </summary>
         public Point Point { get; }
 
-        internal static IEnumerable<Move> GenerateMoves(GameState state)
+        internal static IEnumerable<PlaceCamelMove> GenerateMoves(GameState state)
         {
             yield return new PlaceCamelMove(state, state.LastPoint, s => s.With(phase: Phase.TribesAction));
         }

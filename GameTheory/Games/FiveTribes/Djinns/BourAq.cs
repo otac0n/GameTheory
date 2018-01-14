@@ -10,7 +10,7 @@ namespace GameTheory.Games.FiveTribes.Djinns
     /// <summary>
     /// Pay <see cref="Cost.OneElderOrOneSlave"/> to place 1 Palace on any Village.
     /// </summary>
-    public class Bouraq : PayPerActionDjinnBase
+    public sealed class Bouraq : PayPerActionDjinnBase
     {
         /// <summary>
         /// The singleton instance of <see cref="Bouraq"/>.

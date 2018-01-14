@@ -6,7 +6,7 @@ namespace GameTheory.Games.Lotus
     using System.Collections.Immutable;
 
     /// <summary>
-    /// Describes the state of a single flower in the playing area.
+    /// Represents the state of a single flower in the playing area.
     /// </summary>
     public class Flower : IComparable<Flower>
     {

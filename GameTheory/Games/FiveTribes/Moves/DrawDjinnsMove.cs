@@ -7,7 +7,7 @@ namespace GameTheory.Games.FiveTribes.Moves
     using System.Collections.Immutable;
 
     /// <summary>
-    /// Represent a move to draw the top three <see cref="Djinn">Djinns</see> from the Djinn pile.
+    /// Represents a move to draw the top three <see cref="Djinn">Djinns</see> from the Djinn pile.
     /// </summary>
     public sealed class DrawDjinnsMove : Move
     {

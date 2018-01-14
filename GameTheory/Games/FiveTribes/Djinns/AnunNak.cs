@@ -10,7 +10,7 @@ namespace GameTheory.Games.FiveTribes.Djinns
     /// <summary>
     /// Pay <see cref="Cost.OneElderOrOneSlave"/> to choose an empty Tile (with no Camel, Meeple, Palm Tree or Palace). Place 3 Meeples on that tile (drawn at random from the bag).
     /// </summary>
-    public class AnunNak : PayPerActionDjinnBase
+    public sealed class AnunNak : PayPerActionDjinnBase
     {
         /// <summary>
         /// The singleton instance of <see cref="AnunNak"/>.

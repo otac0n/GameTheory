@@ -7,7 +7,7 @@ namespace GameTheory.Games.FiveTribes.Djinns
     /// <summary>
     /// Each time someone gets a Vizier, collect 1 GC if it's you, 2 GCSs if it's an opponent.
     /// </summary>
-    public class Dhenim : Djinn
+    public sealed class Dhenim : Djinn
     {
         /// <summary>
         /// The singleton instance of <see cref="Dhenim"/>.

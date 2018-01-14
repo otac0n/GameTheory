@@ -3,12 +3,12 @@
 namespace GameTheory.Games.Lotus
 {
     /// <summary>
-    /// The flower to which a <see cref="PetalCard"/> belongs.
+    /// Represents a specific type of flower.
     /// </summary>
     /// <remarks>
     /// The integer value of the card corresponds to the number of petals in each flower.
     /// </remarks>
-    public enum FlowerType
+    public enum FlowerType : byte
     {
         /// <summary>
         /// A flower with three petals.

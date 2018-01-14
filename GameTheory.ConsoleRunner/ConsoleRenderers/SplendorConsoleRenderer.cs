@@ -7,7 +7,7 @@ namespace GameTheory.ConsoleRunner.ConsoleRenderers
     using Splendor;
 
     /// <summary>
-    /// Implements a console renderer for the game of <see cref="GameState">Splendor</see>.
+    /// Provides a console renderer for the game of <see cref="GameState">Splendor</see>.
     /// </summary>
     public class SplendorConsoleRenderer : BaseConsoleRenderer<Move>
     {

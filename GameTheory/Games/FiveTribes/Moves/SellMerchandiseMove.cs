@@ -38,7 +38,7 @@ namespace GameTheory.Games.FiveTribes.Moves
         /// </summary>
         public int Value => GameState.ScoreResources(this.Resources);
 
-        internal static IEnumerable<Move> GenerateMoves(GameState state)
+        internal static IEnumerable<SellMerchandiseMove> GenerateMoves(GameState state)
         {
             var keys = state.Inventory[state.ActivePlayer].Resources.Keys.ToImmutableList().RemoveAll(r => r == Resource.Slave);
 

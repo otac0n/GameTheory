@@ -53,7 +53,7 @@ namespace GameTheory.Games.Splendor.Moves
             }
         }
 
-        internal static IEnumerable<Move> GenerateMoves(GameState state)
+        internal static IEnumerable<TakeTokensMove> GenerateMoves(GameState state)
         {
             var stacks = state.Tokens.Keys.Where(t => t != Token.GoldJoker).ToArray();
 

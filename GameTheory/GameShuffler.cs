@@ -8,7 +8,7 @@ namespace GameTheory
     using System.Linq;
 
     /// <summary>
-    /// Facilitates Monte-Carlo methods of exploring game state variations.
+    /// Provides methods to facilitate Monte-Carlo approaches to exploring game state variations.
     /// </summary>
     /// <typeparam name="TState">The type of gamestate being shuffled.</typeparam>
     public class GameShuffler<TState> : IEnumerable<TState>

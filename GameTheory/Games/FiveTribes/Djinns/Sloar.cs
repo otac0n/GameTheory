@@ -8,7 +8,7 @@ namespace GameTheory.Games.FiveTribes.Djinns
     /// <summary>
     /// Pay <see cref="Cost.OneSlave"/> to take the top card from the Resource pile.
     /// </summary>
-    public class Sloar : PayPerActionDjinnBase
+    public sealed class Sloar : PayPerActionDjinnBase
     {
         /// <summary>
         /// The singleton instance of <see cref="Sloar"/>.

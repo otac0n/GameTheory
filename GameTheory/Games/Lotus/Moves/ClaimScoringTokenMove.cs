@@ -8,7 +8,7 @@ namespace GameTheory.Games.Lotus.Moves
     /// <summary>
     /// Represents a move to claim a scoring token.
     /// </summary>
-    public class ClaimScoringTokenMove : Move
+    public sealed class ClaimScoringTokenMove : Move
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="ClaimScoringTokenMove"/> class.
@@ -36,7 +36,7 @@ namespace GameTheory.Games.Lotus.Moves
             }
         }
 
-        internal static IEnumerable<Move> GenerateMoves(GameState state)
+        internal static IEnumerable<ClaimScoringTokenMove> GenerateMoves(GameState state)
         {
             foreach (var player in state.ChoosingPlayers.Take(1))
             {

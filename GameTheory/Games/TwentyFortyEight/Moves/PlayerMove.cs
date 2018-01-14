@@ -7,7 +7,7 @@ namespace GameTheory.Games.TwentyFortyEight.Moves
     /// <summary>
     /// Represents the possible move directions.
     /// </summary>
-    public enum MoveDirection
+    public enum MoveDirection : byte
     {
         /// <summary>
         /// Shift tiles upwards.

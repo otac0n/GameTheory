@@ -5,35 +5,35 @@ namespace GameTheory.Games.Splendor
     /// <summary>
     /// Represents a token.
     /// </summary>
-    public enum Token
+    public enum Token : byte
     {
         /// <summary>
-        /// Represents the Emerald token.
+        /// The Emerald token.
         /// </summary>
         Emerald,
 
         /// <summary>
-        /// Represents the Diamond token.
+        /// The Diamond token.
         /// </summary>
         Diamond,
 
         /// <summary>
-        /// Represents the Sapphire token.
+        /// The Sapphire token.
         /// </summary>
         Sapphire,
 
         /// <summary>
-        /// Represents the Onyx token.
+        /// The Onyx token.
         /// </summary>
         Onyx,
 
         /// <summary>
-        /// Represents the Ruby token.
+        /// The Ruby token.
         /// </summary>
         Ruby,
 
         /// <summary>
-        /// Represents the Gold Joker token.
+        /// The Gold Joker token.
         /// </summary>
         GoldJoker,
     }

@@ -31,7 +31,7 @@ namespace GameTheory.Games.CenturySpiceRoad.Moves
         /// </summary>
         public EnumCollection<Spice> Spices { get; }
 
-        internal static IEnumerable<Move> GenerateMoves(GameState state)
+        internal static IEnumerable<DiscardSpicesMove> GenerateMoves(GameState state)
         {
             var toDiscard = state.Inventory[state.ActivePlayer].Caravan.Count - GameState.CaravanLimit;
 

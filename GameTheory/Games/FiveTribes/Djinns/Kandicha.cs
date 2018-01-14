@@ -9,7 +9,7 @@ namespace GameTheory.Games.FiveTribes.Djinns
     /// <summary>
     /// Each time your Assassins kill: a Merchant, draw 1 Resource card from the top of the Resource pile; a Builder, take the GCs that Builder would have taken; a Vizier or Elder, place it in front of you instead of killing it.
     /// </summary>
-    public class Kandicha : Djinn
+    public sealed class Kandicha : Djinn
     {
         /// <summary>
         /// The singleton instance of <see cref="Kandicha"/>.

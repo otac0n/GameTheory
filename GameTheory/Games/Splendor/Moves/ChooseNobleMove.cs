@@ -59,7 +59,7 @@ namespace GameTheory.Games.Splendor.Moves
             }
         }
 
-        internal static IEnumerable<Move> GenerateMoves(GameState state)
+        internal static IEnumerable<ChooseNobleMove> GenerateMoves(GameState state)
         {
             var bonus = state.GetBonus(state.ActivePlayer);
             for (var i = 0; i < state.Nobles.Count; i++)

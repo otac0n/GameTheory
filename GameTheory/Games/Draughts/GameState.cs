@@ -63,7 +63,7 @@ namespace GameTheory.Games.Draughts
         /// <summary>
         /// Gets a value indicating whether or not the opponend will be allowed to remove a piece.
         /// </summary>
-        public bool OpponentMayRemovePiece { get; private set; }
+        public bool OpponentMayRemovePiece { get; }
 
         /// <summary>
         /// Gets the current phase of the game.

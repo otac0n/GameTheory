@@ -10,7 +10,7 @@ namespace GameTheory.Games.FiveTribes.Djinns
     /// <summary>
     /// Pay <see cref="Cost.OneElderOrOneSlave"/> to place 1 Palm Tree on any Oasis.
     /// </summary>
-    public class Enki : PayPerActionDjinnBase
+    public sealed class Enki : PayPerActionDjinnBase
     {
         /// <summary>
         /// The singleton instance of <see cref="Enki"/>.

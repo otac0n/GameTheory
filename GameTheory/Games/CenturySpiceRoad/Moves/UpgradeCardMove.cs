@@ -32,7 +32,7 @@ namespace GameTheory.Games.CenturySpiceRoad.Moves
         /// <inheritdoc />
         public override bool IsDeterministic => true;
 
-        internal static IEnumerable<Move> GenerateMoves(GameState state)
+        internal static IEnumerable<UpgradeCardMove> GenerateMoves(GameState state)
         {
             var inventory = state.Inventory[state.ActivePlayer];
             if (inventory.Caravan.Count > inventory.Caravan[Spice.Cinnamon])

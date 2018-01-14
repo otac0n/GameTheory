@@ -6,7 +6,7 @@ namespace GameTheory.Players.MaximizingPlayers
     using GameTheory.Players.MaximizingPlayer;
 
     /// <summary>
-    /// A maximizing player for the game of <see cref="GameState">CenturySpiceRoad</see>.
+    /// Provides a maximizing player for the game of <see cref="GameState">CenturySpiceRoad</see>.
     /// </summary>
     public class CenturySpiceRoadMaximizingPlayer : MaximizingPlayer<Move, double>
     {

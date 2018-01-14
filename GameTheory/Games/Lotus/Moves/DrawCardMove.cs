@@ -7,7 +7,7 @@ namespace GameTheory.Games.Lotus.Moves
     /// <summary>
     /// Represents a move to draw a card from the player deck.
     /// </summary>
-    public class DrawCardMove : Move
+    public sealed class DrawCardMove : Move
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="DrawCardMove"/> class.
@@ -34,7 +34,7 @@ namespace GameTheory.Games.Lotus.Moves
             }
         }
 
-        internal static IEnumerable<Move> GenerateMoves(GameState state)
+        internal static IEnumerable<DrawCardMove> GenerateMoves(GameState state)
         {
             if (state.Inventory[state.ActivePlayer].Deck.Count > 0)
             {

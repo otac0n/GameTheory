@@ -65,7 +65,7 @@ namespace GameTheory.Games.Splendor.Moves
             }
         }
 
-        internal static IEnumerable<Move> GenerateMoves(GameState state)
+        internal static IEnumerable<PurchaseFromHandMove> GenerateMoves(GameState state)
         {
             var tokens = state.Inventory[state.ActivePlayer].Tokens;
             var jokerCount = tokens[Token.GoldJoker];

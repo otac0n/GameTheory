@@ -8,9 +8,9 @@ namespace GameTheory.Games.Mancala
     using System.Linq;
 
     /// <summary>
-    /// Represents the current state of a game of Mancala.
+    /// Represents the current state in a game of Mancala.
     /// </summary>
-    public class GameState : IGameState<Move>
+    public sealed class GameState : IGameState<Move>
     {
         private readonly PlayerToken player0;
         private readonly PlayerToken player1;

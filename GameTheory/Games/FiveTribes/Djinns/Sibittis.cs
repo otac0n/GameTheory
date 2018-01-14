@@ -9,7 +9,7 @@ namespace GameTheory.Games.FiveTribes.Djinns
     /// <summary>
     /// Pay <see cref="Cost.OneElderPlusOneElderOrOneSlave"/> to draw the top 3 Djinns from the top of the Djinns pile; keep 1, discard the 2 others.
     /// </summary>
-    public class Sibittis : PayPerActionDjinnBase
+    public sealed class Sibittis : PayPerActionDjinnBase
     {
         /// <summary>
         /// The singleton instance of <see cref="Sibittis"/>.

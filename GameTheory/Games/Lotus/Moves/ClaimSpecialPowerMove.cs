@@ -9,7 +9,7 @@ namespace GameTheory.Games.Lotus.Moves
     /// <summary>
     /// Represents a move to claim a special power.
     /// </summary>
-    public class ClaimSpecialPowerMove : Move
+    public sealed class ClaimSpecialPowerMove : Move
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="ClaimSpecialPowerMove"/> class.
@@ -52,7 +52,7 @@ namespace GameTheory.Games.Lotus.Moves
             }
         }
 
-        internal static IEnumerable<Move> GenerateMoves(GameState state)
+        internal static IEnumerable<ClaimSpecialPowerMove> GenerateMoves(GameState state)
         {
             foreach (var player in state.ChoosingPlayers.Take(1))
             {

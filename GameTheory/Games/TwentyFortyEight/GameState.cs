@@ -27,9 +27,9 @@ namespace GameTheory.Games.TwentyFortyEight
     }
 
     /// <summary>
-    /// Implements the game of 2048.
+    /// Represents the current state in a game of 2048.
     /// </summary>
-    public class GameState : IGameState<Move>
+    public sealed class GameState : IGameState<Move>
     {
         /// <summary>
         /// The larger value that can be added by the computer player.

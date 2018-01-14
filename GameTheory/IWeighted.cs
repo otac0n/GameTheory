@@ -3,7 +3,7 @@
 namespace GameTheory
 {
     /// <summary>
-    /// Encapsulates weighted value.
+    /// Represents a weighted value.
     /// </summary>
     /// <typeparam name="T">The type of value being weighted.</typeparam>
     public interface IWeighted<out T>

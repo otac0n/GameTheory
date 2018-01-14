@@ -5,10 +5,10 @@ namespace GameTheory.Games.Lotus
     using System;
 
     /// <summary>
-    /// Special powers available to players.
+    /// Represents the special powers available to players.
     /// </summary>
     [Flags]
-    public enum SpecialPower
+    public enum SpecialPower : byte
     {
         /// <summary>
         /// No special powers.

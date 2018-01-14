@@ -7,7 +7,7 @@ namespace GameTheory.Games.FiveTribes.Djinns
     /// <summary>
     /// At game end, each of your Palm Trees is worth 5 VPs instead of 3.
     /// </summary>
-    public class Haurvatat : OnAcquireDjinnBase
+    public sealed class Haurvatat : OnAcquireDjinnBase
     {
         /// <summary>
         /// The singleton instance of <see cref="Haurvatat"/>.

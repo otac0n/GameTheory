@@ -7,7 +7,7 @@ namespace GameTheory
     using System.Threading.Tasks;
 
     /// <summary>
-    /// Extensions for all implementations of <see cref="IStrategy{TMove}"/>.
+    /// Provides extensions for all implementations of <see cref="IStrategy{TMove}"/>.
     /// </summary>
     public static class StrategyExtensions
     {

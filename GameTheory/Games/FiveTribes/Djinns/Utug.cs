@@ -10,7 +10,7 @@ namespace GameTheory.Games.FiveTribes.Djinns
     /// <summary>
     /// Pay <see cref="Cost.OneElderPlusOneElderOrOneSlave"/> to take control of 1 Tile with only Meeples on it (no Camel, Palm Tree or Palace); place 1 of your Camels on it.
     /// </summary>
-    public class Utug : PayPerActionDjinnBase
+    public sealed class Utug : PayPerActionDjinnBase
     {
         /// <summary>
         /// The singleton instance of <see cref="Utug"/>.

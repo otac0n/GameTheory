@@ -24,7 +24,7 @@ namespace GameTheory.Games.FiveTribes.Moves
         /// <inheritdoc />
         public override bool IsDeterministic => true;
 
-        internal static IEnumerable<Move> GenerateMoves(GameState state)
+        internal static IEnumerable<MoveTurnMarkerMove> GenerateMoves(GameState state)
         {
             yield return new MoveTurnMarkerMove(state);
         }

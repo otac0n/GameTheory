@@ -6,7 +6,7 @@ namespace GameTheory.Games.CenturySpiceRoad
     using System.Collections.Generic;
 
     /// <summary>
-    /// A merchant stall represents the in-game unit of a card and the spices placed atop.
+    /// Represents the in-game unit of a card and the spices placed atop.
     /// </summary>
     public sealed class MerchantStall : IComparable<MerchantStall>, ITokenFormattable
     {
