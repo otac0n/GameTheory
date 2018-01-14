@@ -230,6 +230,7 @@
     <Compile Include="Games\Lotus\SpecialPower.cs" />
     <Compile Include="Games\Mancala\GameState.cs" />
     <Compile Include="Games\Mancala\Move.cs" />
+    <Compile Include="Games\Mancala\Phase.cs" />
     <Compile Include="Games\RockPaperScissors\GameState.cs" />
     <Compile Include="Games\StagHunt\GameState.cs" />
     <Compile Include="Games\PrisonersDilemma\GameState.cs" />

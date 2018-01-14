@@ -95,10 +95,12 @@ namespace GameTheory.Games.Mancala
                 activePlayer = otherPlayer;
             }
 
+            var phase = state.Phase;
             var playerBins = Enumerable.Range(captureMin, binsPerSide);
             var othersBins = Enumerable.Range(othersBinsMin, binsPerSide);
             if (playerBins.All(i => board[i] == 0))
             {
+                phase = Phase.End;
                 foreach (var i in othersBins)
                 {
                     board = board
@@ -108,6 +110,7 @@ namespace GameTheory.Games.Mancala
             }
             else if (othersBins.All(i => board[i] == 0))
             {
+                phase = Phase.End;
                 foreach (var i in playerBins)
                 {
                     board = board
@@ -117,8 +120,9 @@ namespace GameTheory.Games.Mancala
             }
 
             return state.With(
-                board: board,
-                activePlayer: activePlayer);
+                activePlayer: activePlayer,
+                phase: phase,
+                board: board);
         }
     }
 }

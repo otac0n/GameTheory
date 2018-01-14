@@ -26,6 +26,7 @@ namespace GameTheory.Games.Mancala
             this.player0 = this.Players[0];
             this.player1 = this.Players[1];
             this.ActivePlayer = this.player0;
+            this.Phase = Phase.Play;
             this.BinsPerSide = binsPerSide;
             var bins = Enumerable.Repeat(initialStonesPerBin, binsPerSide);
             var side = Enumerable.Concat(bins, Enumerable.Repeat(0, 1));
@@ -35,12 +36,14 @@ namespace GameTheory.Games.Mancala
         private GameState(
             ImmutableList<PlayerToken> players,
             PlayerToken activePlayer,
+            Phase phase,
             ImmutableArray<int> board)
         {
             this.Players = players;
             this.player0 = this.Players[0];
             this.player1 = this.Players[1];
             this.ActivePlayer = activePlayer;
+            this.Phase = phase;
             this.BinsPerSide = board.Length / 2 - 1;
             this.Board = board;
         }
@@ -59,6 +62,11 @@ namespace GameTheory.Games.Mancala
         /// Gets the board.
         /// </summary>
         public ImmutableArray<int> Board { get; }
+
+        /// <summary>
+        /// Gets the current phase of the game.
+        /// </summary>
+        public Phase Phase { get; }
 
         /// <inheritdoc />
         IReadOnlyList<PlayerToken> IGameState<Move>.Players => this.Players;
@@ -157,6 +165,11 @@ namespace GameTheory.Games.Mancala
         /// <inheritdoc />
         public IReadOnlyCollection<PlayerToken> GetWinners()
         {
+            if (this.Phase != Phase.End)
+            {
+                return ImmutableList<PlayerToken>.Empty;
+            }
+
             return this.Players
                 .GroupBy(p => this.GetScore(p))
                 .OrderByDescending(g => g.Key)
@@ -199,11 +212,13 @@ namespace GameTheory.Games.Mancala
 
         internal GameState With(
             PlayerToken activePlayer = null,
+            Phase? phase = null,
             ImmutableArray<int>? board = null)
         {
             return new GameState(
                 this.Players,
                 activePlayer ?? this.ActivePlayer,
+                phase ?? this.Phase,
                 board ?? this.Board);
         }
     }
