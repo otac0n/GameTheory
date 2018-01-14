@@ -14,24 +14,24 @@ namespace GameTheory
         /// Compares two lists of comparable elements.
         /// </summary>
         /// <typeparam name="T">The type of elements in each list.</typeparam>
-        /// <param name="a">The first list.</param>
-        /// <param name="b">The second list.</param>
+        /// <param name="left">The first list.</param>
+        /// <param name="right">The second list.</param>
         /// <returns>A value indicating whether the lists are the same length and contain the same elements.</returns>
-        public static int CompareEnumLists<T>(IList<T> a, IList<T> b)
+        public static int CompareEnumLists<T>(IList<T> left, IList<T> right)
             where T : IComparable
         {
             var comp = 0;
 
-            if (!object.ReferenceEquals(a, b))
+            if (!object.ReferenceEquals(left, right))
             {
-                if ((comp = a.Count.CompareTo(b.Count)) != 0)
+                if ((comp = left.Count.CompareTo(right.Count)) != 0)
                 {
                     return comp;
                 }
 
-                for (var i = 0; i < a.Count; i++)
+                for (var i = 0; i < left.Count; i++)
                 {
-                    if ((comp = a[i].CompareTo(b[i])) != 0)
+                    if ((comp = left[i].CompareTo(right[i])) != 0)
                     {
                         return comp;
                     }
@@ -45,33 +45,33 @@ namespace GameTheory
         /// Compares two lists of comparable elements.
         /// </summary>
         /// <typeparam name="T">The type of elements in each list.</typeparam>
-        /// <param name="a">The first list.</param>
-        /// <param name="b">The second list.</param>
+        /// <param name="left">The first list.</param>
+        /// <param name="right">The second list.</param>
         /// <returns>A value indicating whether the lists are the same length and contain the same elements.</returns>
-        public static int CompareLists<T>(IList<T> a, IList<T> b)
+        public static int CompareLists<T>(IList<T> left, IList<T> right)
             where T : class, IComparable<T>
         {
             var comp = 0;
 
-            if (!object.ReferenceEquals(a, b))
+            if (!object.ReferenceEquals(left, right))
             {
-                if ((comp = a.Count.CompareTo(b.Count)) != 0)
+                if ((comp = left.Count.CompareTo(right.Count)) != 0)
                 {
                     return comp;
                 }
 
-                for (var i = 0; i < a.Count; i++)
+                for (var i = 0; i < left.Count; i++)
                 {
-                    var left = a[i];
-                    var right = b[i];
-                    if (!object.ReferenceEquals(left, right))
+                    var l = left[i];
+                    var r = right[i];
+                    if (!object.ReferenceEquals(l, r))
                     {
-                        if (left == null)
+                        if (l == null)
                         {
                             return -1;
                         }
 
-                        if ((comp = left.CompareTo(right)) != 0)
+                        if ((comp = l.CompareTo(r)) != 0)
                         {
                             return comp;
                         }
@@ -86,24 +86,24 @@ namespace GameTheory
         /// Compares two lists of comparable elements.
         /// </summary>
         /// <typeparam name="T">The type of elements in each list.</typeparam>
-        /// <param name="a">The first list.</param>
-        /// <param name="b">The second list.</param>
+        /// <param name="left">The first list.</param>
+        /// <param name="right">The second list.</param>
         /// <returns>A value indicating whether the lists are the same length and contain the same elements.</returns>
-        public static int CompareReadOnlyEnumLists<T>(IReadOnlyList<T> a, IReadOnlyList<T> b)
+        public static int CompareReadOnlyEnumLists<T>(IReadOnlyList<T> left, IReadOnlyList<T> right)
             where T : IComparable
         {
             var comp = 0;
 
-            if (!object.ReferenceEquals(a, b))
+            if (!object.ReferenceEquals(left, right))
             {
-                if ((comp = a.Count.CompareTo(b.Count)) != 0)
+                if ((comp = left.Count.CompareTo(right.Count)) != 0)
                 {
                     return comp;
                 }
 
-                for (var i = 0; i < a.Count; i++)
+                for (var i = 0; i < left.Count; i++)
                 {
-                    if ((comp = a[i].CompareTo(b[i])) != 0)
+                    if ((comp = left[i].CompareTo(right[i])) != 0)
                     {
                         return comp;
                     }
@@ -117,33 +117,33 @@ namespace GameTheory
         /// Compares two lists of comparable elements.
         /// </summary>
         /// <typeparam name="T">The type of elements in each list.</typeparam>
-        /// <param name="a">The first list.</param>
-        /// <param name="b">The second list.</param>
+        /// <param name="left">The first list.</param>
+        /// <param name="right">The second list.</param>
         /// <returns>A value indicating whether the lists are the same length and contain the same elements.</returns>
-        public static int CompareReadOnlyLists<T>(IReadOnlyList<T> a, IReadOnlyList<T> b)
+        public static int CompareReadOnlyLists<T>(IReadOnlyList<T> left, IReadOnlyList<T> right)
             where T : class, IComparable<T>
         {
             var comp = 0;
 
-            if (!object.ReferenceEquals(a, b))
+            if (!object.ReferenceEquals(left, right))
             {
-                if ((comp = a.Count.CompareTo(b.Count)) != 0)
+                if ((comp = left.Count.CompareTo(right.Count)) != 0)
                 {
                     return comp;
                 }
 
-                for (var i = 0; i < a.Count; i++)
+                for (var i = 0; i < left.Count; i++)
                 {
-                    var left = a[i];
-                    var right = b[i];
-                    if (!object.ReferenceEquals(left, right))
+                    var l = left[i];
+                    var r = right[i];
+                    if (!object.ReferenceEquals(l, r))
                     {
-                        if (left == null)
+                        if (l == null)
                         {
                             return -1;
                         }
 
-                        if ((comp = left.CompareTo(right)) != 0)
+                        if ((comp = l.CompareTo(r)) != 0)
                         {
                             return comp;
                         }
@@ -158,24 +158,24 @@ namespace GameTheory
         /// Compares two lists of comparable elements.
         /// </summary>
         /// <typeparam name="T">The type of elements in each list.</typeparam>
-        /// <param name="a">The first list.</param>
-        /// <param name="b">The second list.</param>
+        /// <param name="left">The first list.</param>
+        /// <param name="right">The second list.</param>
         /// <returns>A value indicating whether the lists are the same length and contain the same elements.</returns>
-        public static int CompareReadOnlyValueLists<T>(IReadOnlyList<T> a, IReadOnlyList<T> b)
+        public static int CompareReadOnlyValueLists<T>(IReadOnlyList<T> left, IReadOnlyList<T> right)
             where T : struct, IComparable<T>
         {
             var comp = 0;
 
-            if (!object.ReferenceEquals(a, b))
+            if (!object.ReferenceEquals(left, right))
             {
-                if ((comp = a.Count.CompareTo(b.Count)) != 0)
+                if ((comp = left.Count.CompareTo(right.Count)) != 0)
                 {
                     return comp;
                 }
 
-                for (var i = 0; i < a.Count; i++)
+                for (var i = 0; i < left.Count; i++)
                 {
-                    if ((comp = a[i].CompareTo(b[i])) != 0)
+                    if ((comp = left[i].CompareTo(right[i])) != 0)
                     {
                         return comp;
                     }
@@ -189,68 +189,68 @@ namespace GameTheory
         /// Compares two nullable elements.
         /// </summary>
         /// <typeparam name="T">The underlying type of nullable elements to compare.</typeparam>
-        /// <param name="a">The first item.</param>
-        /// <param name="b">The second item.</param>
+        /// <param name="left">The first item.</param>
+        /// <param name="right">The second item.</param>
         /// <returns>A value that indicates the relative order of the objects being compared.</returns>
-        public static int CompareTo<T>(this T? a, T? b)
+        public static int CompareTo<T>(this T? left, T? right)
             where T : struct, IComparable<T>
         {
-            if (a == null)
+            if (left == null)
             {
-                return b == null ? 0 : -1;
+                return right == null ? 0 : -1;
             }
-            else if (b == null)
+            else if (right == null)
             {
                 return 1;
             }
 
-            return a.Value.CompareTo(b.Value);
+            return left.Value.CompareTo(right.Value);
         }
 
         /// <summary>
         /// Compares two <see cref="Maybe{T}"/> values.
         /// </summary>
         /// <typeparam name="T">The type of value elements to compare.</typeparam>
-        /// <param name="a">The first item.</param>
-        /// <param name="b">The second item.</param>
+        /// <param name="left">The first item.</param>
+        /// <param name="right">The second item.</param>
         /// <returns>A value that indicates the relative order of the objects being compared.</returns>
-        public static int CompareTo<T>(this Maybe<T> a, Maybe<T> b)
+        public static int CompareTo<T>(this Maybe<T> left, Maybe<T> right)
             where T : struct, IComparable<T>
         {
-            if (!a.HasValue)
+            if (!left.HasValue)
             {
-                return !b.HasValue ? 0 : -1;
+                return !right.HasValue ? 0 : -1;
             }
-            else if (!b.HasValue)
+            else if (!right.HasValue)
             {
                 return 1;
             }
 
-            return a.Value.CompareTo(b.Value);
+            return left.Value.CompareTo(right.Value);
         }
 
         /// <summary>
         /// Compares two lists of comparable elements.
         /// </summary>
         /// <typeparam name="T">The type of elements in each list.</typeparam>
-        /// <param name="a">The first list.</param>
-        /// <param name="b">The second list.</param>
+        /// <param name="left">The first list.</param>
+        /// <param name="right">The second list.</param>
         /// <returns>A value indicating whether the lists are the same length and contain the same elements.</returns>
-        public static int CompareValueLists<T>(IList<T> a, IList<T> b)
+        public static int CompareValueLists<T>(IList<T> left, IList<T> right)
             where T : struct, IComparable<T>
         {
             var comp = 0;
 
-            if (!object.ReferenceEquals(a, b))
+            if (!object.ReferenceEquals(left, right))
             {
-                if ((comp = a.Count.CompareTo(b.Count)) != 0)
+                if ((comp = left.Count.CompareTo(right.Count)) != 0)
                 {
                     return comp;
                 }
 
-                for (var i = 0; i < a.Count; i++)
+                for (var i = 0; i < left.Count; i++)
                 {
-                    if ((comp = a[i].CompareTo(b[i])) != 0)
+                    if ((comp = left[i].CompareTo(right[i])) != 0)
                     {
                         return comp;
                     }

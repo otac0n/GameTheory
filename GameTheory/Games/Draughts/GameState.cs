@@ -24,11 +24,11 @@ namespace GameTheory.Games.Draughts
             this.Players = ImmutableList.Create(new PlayerToken(), new PlayerToken());
             this.ActivePlayer = this.Players[0];
             this.Board = variant.InitialBoardState;
-            this.MaxMovePieceIndices = ImmutableSortedSet<int>.Empty;
+            this.MaxMovePieceIndexes = ImmutableSortedSet<int>.Empty;
             this.OpponentMayRemovePiece = false;
         }
 
-        private GameState(Variant variant, Phase phase, ImmutableList<PlayerToken> players, PlayerToken activePlayer, ImmutableArray<Piece> board, Maybe<int> lastCapturingIndex, ImmutableSortedSet<int> maxMovePieceIndices, bool opponentMayRemovePiece)
+        private GameState(Variant variant, Phase phase, ImmutableList<PlayerToken> players, PlayerToken activePlayer, ImmutableArray<Piece> board, Maybe<int> lastCapturingIndex, ImmutableSortedSet<int> maxMovePieceIndexes, bool opponentMayRemovePiece)
         {
             this.Variant = variant;
             this.Phase = phase;
@@ -36,7 +36,7 @@ namespace GameTheory.Games.Draughts
             this.ActivePlayer = activePlayer;
             this.Board = board;
             this.LastCapturingIndex = lastCapturingIndex;
-            this.MaxMovePieceIndices = maxMovePieceIndices;
+            this.MaxMovePieceIndexes = maxMovePieceIndexes;
             this.OpponentMayRemovePiece = opponentMayRemovePiece;
         }
 
@@ -56,9 +56,9 @@ namespace GameTheory.Games.Draughts
         public Maybe<int> LastCapturingIndex { get; }
 
         /// <summary>
-        /// Gets the indices that could have made the maximum length move.
+        /// Gets the indexes that could have made the maximum length move.
         /// </summary>
-        public ImmutableSortedSet<int> MaxMovePieceIndices { get; }
+        public ImmutableSortedSet<int> MaxMovePieceIndexes { get; }
 
         /// <summary>
         /// Gets a value indicating whether or not the opponend will be allowed to remove a piece.
@@ -108,7 +108,7 @@ namespace GameTheory.Games.Draughts
                 (comp = this.LastCapturingIndex.CompareTo(state.LastCapturingIndex)) != 0 ||
                 (comp = this.OpponentMayRemovePiece.CompareTo(state.OpponentMayRemovePiece)) != 0 ||
                 (comp = CompareUtilities.CompareEnumLists(this.Board, state.Board)) != 0 ||
-                (comp = CompareUtilities.CompareValueLists(this.MaxMovePieceIndices, state.MaxMovePieceIndices)) != 0 ||
+                (comp = CompareUtilities.CompareValueLists(this.MaxMovePieceIndexes, state.MaxMovePieceIndexes)) != 0 ||
                 (comp = CompareUtilities.CompareLists(this.Players, state.Players)) != 0)
             {
                 return comp;
@@ -175,7 +175,7 @@ namespace GameTheory.Games.Draughts
                 if (!state.LastCapturingIndex.HasValue)
                 {
                     state = state.With(
-                        maxMovePieceIndices: ImmutableSortedSet.CreateRange(maxMoves.OfType<CaptureMove>().Select(m => m.FromIndex)));
+                        maxMovePieceIndexes: ImmutableSortedSet.CreateRange(maxMoves.OfType<CaptureMove>().Select(m => m.FromIndex)));
                 }
 
                 if (!state.OpponentMayRemovePiece && priority.Compare(maxMoves.First(), move) > 0)
@@ -231,7 +231,7 @@ namespace GameTheory.Games.Draughts
             PlayerToken activePlayer = null,
             ImmutableArray<Piece>? board = null,
             Maybe<int>? lastCapturingIndex = null,
-            ImmutableSortedSet<int> maxMovePieceIndices = null,
+            ImmutableSortedSet<int> maxMovePieceIndexes = null,
             bool? opponentMayRemovePiece = null)
         {
             return new GameState(
@@ -241,7 +241,7 @@ namespace GameTheory.Games.Draughts
                 activePlayer: activePlayer ?? this.ActivePlayer,
                 board: board ?? this.Board,
                 lastCapturingIndex: lastCapturingIndex ?? this.LastCapturingIndex,
-                maxMovePieceIndices: maxMovePieceIndices ?? this.MaxMovePieceIndices,
+                maxMovePieceIndexes: maxMovePieceIndexes ?? this.MaxMovePieceIndexes,
                 opponentMayRemovePiece: opponentMayRemovePiece ?? this.OpponentMayRemovePiece);
         }
     }

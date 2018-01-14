@@ -35,7 +35,7 @@ namespace GameTheory.Games.Draughts
             {
                 state = state.With(
                     phase: Phase.Play,
-                    maxMovePieceIndices: ImmutableSortedSet<int>.Empty);
+                    maxMovePieceIndexes: ImmutableSortedSet<int>.Empty);
             }
             else if (!CaptureMove.CapturesRemaining(state))
             {
@@ -80,7 +80,7 @@ namespace GameTheory.Games.Draughts
                 {
                     state = state.With(
                         phase: Phase.Play,
-                        maxMovePieceIndices: ImmutableSortedSet<int>.Empty);
+                        maxMovePieceIndexes: ImmutableSortedSet<int>.Empty);
                 }
 
                 state = state.With(

@@ -164,7 +164,7 @@ namespace GameTheory.Players.MaximizingPlayer
 
                 foreach (var player in score.Keys)
                 {
-                    if (!playerScores.TryGetValue(player, out IWeighted<ResultScore<TScore>>[] playerScore))
+                    if (!playerScores.TryGetValue(player, out var playerScore))
                     {
                         playerScores[player] = playerScore = new IWeighted<ResultScore<TScore>>[mainlines.Count];
                     }
@@ -239,8 +239,7 @@ namespace GameTheory.Players.MaximizingPlayer
                 var mainline = this.GetMove(state, ply - 1, cancel);
                 var move = mainline.Moves.Peek();
 
-                IWeighted<Mainline<TMove, ResultScore<TScore>>> weighted;
-                if (mainlines.TryGetValue(move, out weighted))
+                if (mainlines.TryGetValue(move, out var weighted))
                 {
                     weighted = Weighted.Create(weighted.Value, weighted.Weight + 1);
                 }
@@ -257,7 +256,7 @@ namespace GameTheory.Players.MaximizingPlayer
 
         private Mainline<TMove, ResultScore<TScore>> GetMove(IGameState<TMove> state, int ply, CancellationToken cancel)
         {
-            if (this.cache.TryGetValue(state, out Mainline<TMove, ResultScore<TScore>> cached))
+            if (this.cache.TryGetValue(state, out var cached))
             {
                 if (cached.Depth >= ply)
                 {
@@ -399,6 +398,52 @@ namespace GameTheory.Players.MaximizingPlayer
             /// Gets the player token.
             /// </summary>
             public PlayerToken PlayerToken { get; }
+
+            /// <summary>
+            /// Compares two <see cref="PlayerState"/> objects. The result specifies whether they are unequal.
+            /// </summary>
+            /// <param name="left">The first <see cref="PlayerState"/> to compare.</param>
+            /// <param name="right">The second <see cref="PlayerState"/> to compare.</param>
+            /// <returns><c>true</c> if <paramref name="left"/> and <paramref name="right"/> differ; otherwise, <c>false</c>.</returns>
+            public static bool operator !=(PlayerState left, PlayerState right)
+            {
+                return !(left == right);
+            }
+
+            /// <summary>
+            /// Compares two <see cref="PlayerState"/> objects. The result specifies whether they are equal.
+            /// </summary>
+            /// <param name="left">The first <see cref="PlayerState"/> to compare.</param>
+            /// <param name="right">The second <see cref="PlayerState"/> to compare.</param>
+            /// <returns><c>true</c> if <paramref name="left"/> and <paramref name="right"/> are equal; otherwise, <c>false</c>.</returns>
+            public static bool operator ==(PlayerState left, PlayerState right)
+            {
+                return left.Equals(right);
+            }
+
+            /// <inheritdoc/>
+            public override bool Equals(object obj)
+            {
+                if (obj is PlayerState other)
+                {
+                    return this.Equals(other);
+                }
+
+                return false;
+            }
+
+            /// <summary>
+            /// Indicates whether this instance and a specified object are equal.
+            /// </summary>
+            /// <param name="other">The object to compare with the current instance.</param>
+            /// <returns><c>true</c> if <paramref name="other"/> and this instance represent the same value; otherwise, <c>false</c>.</returns>
+            public bool Equals(PlayerState other) =>
+                this.GameState == other.GameState &&
+                this.PlayerToken == other.PlayerToken;
+
+            /// <inheritdoc/>
+            public override int GetHashCode() =>
+                this.GameState.GetHashCode() ^ this.PlayerToken.GetHashCode();
         }
 
         private class ComparableEqualityComparer<T> : IEqualityComparer<T>
@@ -420,10 +465,7 @@ namespace GameTheory.Players.MaximizingPlayer
                 }
             }
 
-            public int GetHashCode(T obj)
-            {
-                return 0;
-            }
+            public int GetHashCode(T obj) => 0;
         }
 
         private class ResultScoringMetric : IComparer<ResultScore<TScore>>

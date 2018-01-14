@@ -114,11 +114,11 @@ namespace GameTheory.Games.Draughts.Moves
 
             if (variant.MovePriorityImpact == MovePriorityImpact.PieceRemoval)
             {
-                var indices = state.MaxMovePieceIndices;
-                if (indices.Contains(this.FromIndex))
+                var indexes = state.MaxMovePieceIndexes;
+                if (indexes.Contains(this.FromIndex))
                 {
                     state = state.With(
-                        maxMovePieceIndices: indices.Remove(this.FromIndex).Add(this.ToIndex));
+                        maxMovePieceIndexes: indexes.Remove(this.FromIndex).Add(this.ToIndex));
                 }
             }
 

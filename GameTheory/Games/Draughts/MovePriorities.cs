@@ -117,18 +117,18 @@ namespace GameTheory.Games.Draughts
             var scoringMetric = ScoringMetric.Create(scoreCapture, combineScores, scoreComparison, (a, b) => throw new NotImplementedException());
             return Comparer<Move>.Create((a, b) =>
             {
+                var capA = a as CaptureMove;
+                var capB = b as CaptureMove;
+
                 int comp;
-                if ((comp = (a is CaptureMove).CompareTo(b is CaptureMove)) != 0)
+                if ((comp = (capA != null).CompareTo(capB != null)) != 0)
                 {
                     return comp;
                 }
-                else if (!(a is CaptureMove))
+                else if (capA == null)
                 {
                     return 0;
                 }
-
-                var capA = (CaptureMove)a;
-                var capB = (CaptureMove)b;
 
                 if ((comp = capA.FromIndex.CompareTo(capB.FromIndex)) == 0 &&
                     (comp = capA.ToIndex.CompareTo(capB.ToIndex)) == 0 &&

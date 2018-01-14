@@ -3,6 +3,7 @@
 namespace GameTheory
 {
     using System;
+    using System.Diagnostics.CodeAnalysis;
 
     /// <summary>
     /// Represents a possible value that can be either a reference or value type.
@@ -55,6 +56,7 @@ namespace GameTheory
         /// Implicitly constructs a <see cref="Maybe{T}"/> value given an existing value.
         /// </summary>
         /// <param name="value">The value.</param>
+        [SuppressMessage("Microsoft.Usage", "CA2225:OperatorOverloadsHaveNamedAlternates", Justification = "This implicit operator is itself an alternate name for the constructor.")]
         public static implicit operator Maybe<T>(T value) => new Maybe<T>(value);
 
         /// <summary>

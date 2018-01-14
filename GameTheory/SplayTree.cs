@@ -26,16 +26,10 @@ namespace GameTheory
         public bool IsReadOnly => false;
 
         /// <inheritdoc/>
-        public ICollection<TKey> Keys
-        {
-            get { return new TiedList<TKey>(this, this.version, this.AsList(node => node.Key)); }
-        }
+        public ICollection<TKey> Keys => new TiedList<TKey>(this, this.version, this.AsList(node => node.Key));
 
         /// <inheritdoc/>
-        public ICollection<TValue> Values
-        {
-            get { return new TiedList<TValue>(this, this.version, this.AsList(node => node.Value)); }
-        }
+        public ICollection<TValue> Values => new TiedList<TValue>(this, this.version, this.AsList(node => node.Value));
 
         /// <inheritdoc/>
         public TValue this[TKey key]
@@ -449,15 +443,9 @@ namespace GameTheory
                 }
             }
 
-            public void Add(T item)
-            {
-                throw new NotSupportedException();
-            }
+            public void Add(T item) => throw new NotSupportedException();
 
-            public void Clear()
-            {
-                throw new NotSupportedException();
-            }
+            public void Clear() => throw new NotSupportedException();
 
             public bool Contains(T item)
             {
@@ -508,20 +496,11 @@ namespace GameTheory
                 return this.backingList.IndexOf(item);
             }
 
-            public void Insert(int index, T item)
-            {
-                throw new NotSupportedException();
-            }
+            public void Insert(int index, T item) => throw new NotSupportedException();
 
-            public bool Remove(T item)
-            {
-                throw new NotSupportedException();
-            }
+            public bool Remove(T item) => throw new NotSupportedException();
 
-            public void RemoveAt(int index)
-            {
-                throw new NotSupportedException();
-            }
+            public void RemoveAt(int index) => throw new NotSupportedException();
         }
     }
 }

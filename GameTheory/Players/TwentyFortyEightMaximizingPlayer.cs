@@ -34,7 +34,6 @@ namespace GameTheory.Players.MaximizingPlayers
             {
                 var sums = new[] { 0.0, 0.0, 0.0, 0.0 };
 
-                var cells = new List<byte>();
                 for (var y = 0; y < GameState.Size; y++)
                 {
                     for (var x = 0; x < GameState.Size; x++)

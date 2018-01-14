@@ -16,17 +16,17 @@ namespace GameTheory.Games.Lotus.Moves
         /// Initializes a new instance of the <see cref="ExchangePetalCardsMove"/> class.
         /// </summary>
         /// <param name="state">The <see cref="GameState"/> that this move is based on.</param>
-        /// <param name="cardIndices">The indices of cards being exchanged.</param>
-        public ExchangePetalCardsMove(GameState state, ImmutableList<int> cardIndices)
+        /// <param name="cardIndexes">The indexes of cards being exchanged.</param>
+        public ExchangePetalCardsMove(GameState state, ImmutableList<int> cardIndexes)
             : base(state)
         {
-            this.CardIndices = cardIndices;
+            this.CardIndexes = cardIndexes;
         }
 
         /// <summary>
-        /// Gets the number of cards being exchanged.
+        /// Gets the indexes of the cards being exchanged.
         /// </summary>
-        public ImmutableList<int> CardIndices { get; }
+        public ImmutableList<int> CardIndexes { get; }
 
         /// <inheritdoc />
         public override IList<object> FormatTokens
@@ -34,9 +34,9 @@ namespace GameTheory.Games.Lotus.Moves
             get
             {
                 var hand = this.State.Inventory[this.PlayerToken].Hand;
-                return this.CardIndices.Count == 1
-                    ? new object[] { "Exchange ", hand[this.CardIndices[0]] }
-                    : new object[] { "Exchange ", hand[this.CardIndices[0]], " and ", hand[this.CardIndices[1]] };
+                return this.CardIndexes.Count == 1
+                    ? new object[] { "Exchange ", hand[this.CardIndexes[0]] }
+                    : new object[] { "Exchange ", hand[this.CardIndexes[0]], " and ", hand[this.CardIndexes[1]] };
             }
         }
 
@@ -48,7 +48,7 @@ namespace GameTheory.Games.Lotus.Moves
                 int comp;
 
                 if ((comp = this.PlayerToken.CompareTo(other.PlayerToken)) != 0 ||
-                    (comp = CompareUtilities.CompareValueLists(this.CardIndices, move.CardIndices)) != 0 ||
+                    (comp = CompareUtilities.CompareValueLists(this.CardIndexes, move.CardIndexes)) != 0 ||
                     (comp = CompareUtilities.CompareLists(this.State.Inventory[this.PlayerToken].Hand, move.State.Inventory[move.PlayerToken].Hand)) != 0)
                 {
                     return comp;
@@ -98,9 +98,9 @@ namespace GameTheory.Games.Lotus.Moves
         internal override GameState Apply(GameState state)
         {
             var playerInventory = state.Inventory[this.PlayerToken];
-            var removed = this.CardIndices.Select(i => playerInventory.Hand[i]).ToList();
+            var removed = this.CardIndexes.Select(i => playerInventory.Hand[i]).ToList();
 
-            foreach (var i in this.CardIndices.OrderByDescending(i => i))
+            foreach (var i in this.CardIndexes.OrderByDescending(i => i))
             {
                 var dealtIndex = playerInventory.Deck.Count - 1;
                 var dealt = playerInventory.Deck[dealtIndex];

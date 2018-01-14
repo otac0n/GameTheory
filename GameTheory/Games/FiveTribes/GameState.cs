@@ -342,7 +342,7 @@ namespace GameTheory.Games.FiveTribes
         {
             get
             {
-                this.additionalState.TryGetValue(key, out string result);
+                this.additionalState.TryGetValue(key, out var result);
                 return result;
             }
         }

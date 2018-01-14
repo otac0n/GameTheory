@@ -17,6 +17,7 @@ namespace GameTheory.ConsoleRunner.ConsoleRenderers
             new Templates(playerToken).RenderGameState((GameState)state, this.MakeRenderTokenWriter(state));
         }
 
+        /// <inheritdoc/>
         protected override void RenderToken(IGameState<Move> state, object token)
         {
             if (token is Token splendorToken)

@@ -27,8 +27,7 @@ namespace GameTheory.Games.Lotus
         public Inventory(ImmutableList<PetalCard> deck)
             : this(StartingGuardians, ImmutableList<PetalCard>.Empty, deck, ImmutableList<PetalCard>.Empty, 0, SpecialPower.None)
         {
-            ImmutableList<PetalCard> dealt;
-            this.Deck = this.Deck.Deal(StartingHandCount, out dealt);
+            this.Deck = this.Deck.Deal(StartingHandCount, out var dealt);
             this.Hand = dealt;
         }
 

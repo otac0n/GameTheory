@@ -39,10 +39,7 @@ namespace GameTheory
         /// <typeparam name="TItem">The type of the item being added.</typeparam>
         /// <param name="item">The item that can be shuffled.</param>
         /// <param name="setValue">A function that will overwrite the item with another item in the same group.</param>
-        public void Add<TItem>(TItem item, Func<TState, TItem, TState> setValue)
-        {
-            this.Add(null, item, setValue);
-        }
+        public void Add<TItem>(TItem item, Func<TState, TItem, TState> setValue) => this.Add(null, item, setValue);
 
         /// <summary>
         /// Adds a shuffleable item to the collection in the specified group.
@@ -56,10 +53,9 @@ namespace GameTheory
         /// <param name="setValue">A function that will overwrite the item with another item in the same group.</param>
         public void Add<TItem>(string group, TItem item, Func<TState, TItem, TState> setValue)
         {
-            IGrouping value;
             Grouping<TItem> grouping;
             var key = Tuple.Create(group, typeof(TItem));
-            if (this.storage.TryGetValue(key, out value))
+            if (this.storage.TryGetValue(key, out var value))
             {
                 grouping = (Grouping<TItem>)value;
             }
@@ -94,11 +90,10 @@ namespace GameTheory
         {
             public TState Shuffle(TState state)
             {
-                var indices = Enumerable.Range(0, this.Count).Shuffle();
-
+                var indexes = Enumerable.Range(0, this.Count).Shuffle();
                 for (var sourceIndex = 0; sourceIndex < this.Count; sourceIndex++)
                 {
-                    var destIndex = indices[sourceIndex];
+                    var destIndex = indexes[sourceIndex];
                     state = this[destIndex].Item2(state, this[sourceIndex].Item1);
                 }
 

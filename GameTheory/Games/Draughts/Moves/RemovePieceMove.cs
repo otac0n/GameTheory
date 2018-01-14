@@ -27,7 +27,7 @@ namespace GameTheory.Games.Draughts.Moves
         {
             if (state.Phase == Phase.RemovePiece)
             {
-                foreach (var index in state.MaxMovePieceIndices)
+                foreach (var index in state.MaxMovePieceIndexes)
                 {
                     yield return new RemovePieceMove(state, index);
                 }

@@ -38,6 +38,7 @@ namespace GameTheory
         /// <param name="score">Computes the score for the specified subject.</param>
         /// <param name="combine">Combines one or more scores using the specified weights.</param>
         /// <param name="comparison">Compares two scores and returns a value indicating whether one is less than, equal to, or greater than the other.</param>
+        /// <param name="difference">Gets the difference between two scores.</param>
         /// <returns>The scoring metric.</returns>
         public static IScoringMetric<TSubject, TScore> Create<TSubject, TScore>(Func<TSubject, TScore> score, Func<IWeighted<TScore>[], TScore> combine, Comparison<TScore> comparison, Func<TScore, TScore, TScore> difference) =>
             new FuncScoringMetric<TSubject, TScore>(score, combine, comparison, difference);

@@ -19,7 +19,7 @@ namespace GameTheory.ConsoleRunner.ConsoleRenderers
         internal static IConsoleRenderer<TMove> Default<TMove>()
             where TMove : IMove
         {
-            if (DefaultMap.TryGetValue(typeof(TMove), out Type rendererType))
+            if (DefaultMap.TryGetValue(typeof(TMove), out var rendererType))
             {
                 return (IConsoleRenderer<TMove>)Activator.CreateInstance(rendererType);
             }

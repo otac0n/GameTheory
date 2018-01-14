@@ -18,17 +18,17 @@ namespace GameTheory.Games.Lotus.Moves
         /// Initializes a new instance of the <see cref="PlayPetalCardsMove"/> class.
         /// </summary>
         /// <param name="state">The <see cref="GameState"/> that this move is based on.</param>
-        /// <param name="cardIndices">The indices of cards being played.</param>
-        public PlayPetalCardsMove(GameState state, ImmutableList<int> cardIndices)
+        /// <param name="cardIndexes">The indexes of cards being played.</param>
+        public PlayPetalCardsMove(GameState state, ImmutableList<int> cardIndexes)
             : base(state)
         {
-            this.CardIndices = cardIndices;
+            this.CardIndexes = cardIndexes;
         }
 
         /// <summary>
-        /// Gets the indices of cards being played.
+        /// Gets the indexes of the cards being played.
         /// </summary>
-        public ImmutableList<int> CardIndices { get; }
+        public ImmutableList<int> CardIndexes { get; }
 
         /// <inheritdoc />
         public override IList<object> FormatTokens
@@ -38,22 +38,22 @@ namespace GameTheory.Games.Lotus.Moves
                 var tokens = new List<object>();
 
                 var hand = this.State.Inventory[this.PlayerToken].Hand;
-                for (var i = 0; i < this.CardIndices.Count; i++)
+                for (var i = 0; i < this.CardIndexes.Count; i++)
                 {
                     if (i == 0)
                     {
                         tokens.Add("Play ");
                     }
-                    else if (i == this.CardIndices.Count - 1)
+                    else if (i == this.CardIndexes.Count - 1)
                     {
-                        tokens.Add(this.CardIndices.Count > 2 ? ", and " : " and ");
+                        tokens.Add(this.CardIndexes.Count > 2 ? ", and " : " and ");
                     }
                     else
                     {
                         tokens.Add(", ");
                     }
 
-                    tokens.Add(hand[this.CardIndices[i]]);
+                    tokens.Add(hand[this.CardIndexes[i]]);
                 }
 
                 return tokens;
@@ -68,7 +68,7 @@ namespace GameTheory.Games.Lotus.Moves
                 int comp;
 
                 if ((comp = this.PlayerToken.CompareTo(other.PlayerToken)) != 0 ||
-                    (comp = CompareUtilities.CompareValueLists(this.CardIndices, move.CardIndices)) != 0 ||
+                    (comp = CompareUtilities.CompareValueLists(this.CardIndexes, move.CardIndexes)) != 0 ||
                     (comp = CompareUtilities.CompareLists(this.State.Inventory[this.PlayerToken].Hand, move.State.Inventory[move.PlayerToken].Hand)) != 0)
                 {
                     return comp;
@@ -89,17 +89,17 @@ namespace GameTheory.Games.Lotus.Moves
             var flowerTypes = hand.Select(c => c.FlowerType).Distinct().ToList();
             foreach (var flowerType in flowerTypes)
             {
-                var indices = Enumerable.Range(0, hand.Count).Where(i => hand[i].FlowerType == flowerType).ToList();
+                var indexes = Enumerable.Range(0, hand.Count).Where(i => hand[i].FlowerType == flowerType).ToList();
 
                 var maxPlays = (int)flowerType - state.Field[flowerType].Petals.Count;
-                maxPlays = Math.Min(maxPlays, indices.Count);
+                maxPlays = Math.Min(maxPlays, indexes.Count);
                 if (!playerInventory.SpecialPowers.HasFlag(SpecialPower.InfiniteGrowth))
                 {
                     maxPlays = Math.Min(maxPlays, CardLimit);
                 }
 
                 var distinct = new List<ImmutableList<PetalCard>>();
-                foreach (var combination in indices.Combinations(maxPlays, includeSmaller: true))
+                foreach (var combination in indexes.Combinations(maxPlays, includeSmaller: true))
                 {
                     var key = combination.Select(c => hand[c]).OrderByDescending(c => c.Guardians).ToImmutableList();
                     if (!distinct.Any(d => d.SequenceEqual(key)))
@@ -115,9 +115,9 @@ namespace GameTheory.Games.Lotus.Moves
         {
             var playerInventory = state.Inventory[this.PlayerToken];
             var hand = playerInventory.Hand;
-            var played = this.CardIndices.Select(i => hand[i]).ToList();
+            var played = this.CardIndexes.Select(i => hand[i]).ToList();
 
-            foreach (var i in this.CardIndices.OrderByDescending(i => i))
+            foreach (var i in this.CardIndexes.OrderByDescending(i => i))
             {
                 hand = hand.RemoveAt(i);
             }

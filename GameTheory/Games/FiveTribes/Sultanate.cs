@@ -206,15 +206,12 @@ namespace GameTheory.Games.FiveTribes
         /// </summary>
         /// <param name="point">The center point of the requested square.</param>
         /// <returns>All of the points within the requested square.</returns>
-        public static ImmutableList<Point> GetSquarePoints(Point point)
-        {
-            return SquarePoints[point];
-        }
+        public static ImmutableList<Point> GetSquarePoints(Point point) => SquarePoints[point];
 
         private static ImmutableHashSet<Point> FindDestinations(Point lastPoint, Point previousPoint, int meeples)
         {
             var key = Tuple.Create(lastPoint, previousPoint, meeples);
-            return Storage.TryGetValue(key, out ImmutableHashSet<Point> result) ? result : Storage[key] = FindDestinationsImpl(lastPoint, previousPoint, meeples);
+            return Storage.TryGetValue(key, out var result) ? result : Storage[key] = FindDestinationsImpl(lastPoint, previousPoint, meeples);
         }
 
         private static ImmutableHashSet<Point> FindDestinationsImpl(Point lastPoint, Point previousPoint, int meeples)

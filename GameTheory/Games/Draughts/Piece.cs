@@ -2,9 +2,12 @@
 
 namespace GameTheory.Games.Draughts
 {
+    using System;
+
     /// <summary>
     /// Represents the state of a piece at a certain square.
     /// </summary>
+    [Flags]
     public enum Piece : byte
     {
         /// <summary>
