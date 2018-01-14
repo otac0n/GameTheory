@@ -124,6 +124,9 @@ namespace GameTheory.ConsoleRunner
 
         private static void Main()
         {
+            NativeMethods.SetConsoleFont();
+            NativeMethods.Maximize();
+
             var catalog = GameCatalog.Default;
             var game = ConsoleInteraction.Choose(catalog.AvailableGames);
             var gameType = game.GameStateType;
