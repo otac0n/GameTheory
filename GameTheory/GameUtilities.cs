@@ -4,6 +4,7 @@ namespace GameTheory
 {
     using System;
     using System.Collections.Generic;
+    using System.Collections.Immutable;
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
@@ -13,6 +14,49 @@ namespace GameTheory
     /// </summary>
     public static class GameUtilities
     {
+        /// <summary>
+        /// Finds the next player in the specified game state's players collection.
+        /// </summary>
+        /// <typeparam name="TMove">The type of moves in the game state.</typeparam>
+        /// <param name="state">The game state to search.</param>
+        /// <param name="currentPlayer">The current player.</param>
+        /// <returns>The next player, or the first player if the current player was not found.</returns>
+        public static PlayerToken GetNextPlayer<TMove>(this IGameState<TMove> state, PlayerToken currentPlayer)
+                    where TMove : IMove
+        {
+            return state.Players.GetNextPlayer(currentPlayer);
+        }
+
+        /// <summary>
+        /// Finds the next player in the specified list of players.
+        /// </summary>
+        /// <param name="players">The list of players to search.</param>
+        /// <param name="currentPlayer">The current player.</param>
+        /// <returns>The next player, or the first player if the current player was not found.</returns>
+        public static PlayerToken GetNextPlayer(this IReadOnlyList<PlayerToken> players, PlayerToken currentPlayer)
+        {
+            return players[(players.IndexOf(currentPlayer) + 1) % players.Count];
+        }
+
+        /// <summary>
+        /// Finds the next player in the specified list of players.
+        /// </summary>
+        /// <param name="players">The list of players to search.</param>
+        /// <param name="currentPlayer">The current player.</param>
+        /// <returns>The next player, or the first player if the current player was not found.</returns>
+        public static PlayerToken GetNextPlayer(this IList<PlayerToken> players, PlayerToken currentPlayer)
+        {
+            return players[(players.IndexOf(currentPlayer) + 1) % players.Count];
+        }
+
+        /// <summary>
+        /// Finds the next player in the specified list of players.
+        /// </summary>
+        /// <param name="players">The list of players to search.</param>
+        /// <param name="currentPlayer">The current player.</param>
+        /// <returns>The next player, or the first player if the current player was not found.</returns>
+        public static PlayerToken GetNextPlayer(this ImmutableList<PlayerToken> players, PlayerToken currentPlayer) => ((IList<PlayerToken>)players).GetNextPlayer(currentPlayer);
+
         /// <summary>
         /// Gets a player number for display.
         /// </summary>
@@ -28,15 +72,8 @@ namespace GameTheory
                 throw new ArgumentNullException(nameof(state));
             }
 
-            for (var i = 0; i < state.Players.Count; i++)
-            {
-                if (state.Players[i] == playerToken)
-                {
-                    return i + 1;
-                }
-            }
-
-            return -1;
+            var ix = state.Players.IndexOf(playerToken);
+            return ix > -1 ? (ix + 1) : ix;
         }
 
         /// <summary>

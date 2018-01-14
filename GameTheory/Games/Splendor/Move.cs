@@ -67,7 +67,7 @@ namespace GameTheory.Games.Splendor
             }
 
             state = state.With(
-                activePlayer: state.Players[(state.Players.IndexOf(state.ActivePlayer) + 1) % state.Players.Count],
+                activePlayer: state.Players.GetNextPlayer(state.ActivePlayer),
                 phase: Phase.Play);
 
             if (state.ActivePlayer == state.Players[0] && state.Players.Any(p => state.GetScore(p) >= GameState.ScoreLimit))

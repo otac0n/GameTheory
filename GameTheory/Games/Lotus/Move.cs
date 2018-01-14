@@ -213,7 +213,7 @@ namespace GameTheory.Games.Lotus
                     }
 
                     state = state.With(
-                        activePlayer: state.Players[(state.Players.IndexOf(activePlayer) + 1) % state.Players.Count],
+                        activePlayer: state.Players.GetNextPlayer(activePlayer),
                         remainingActions: GameState.ActionsPerTurn,
                         phase: Phase.Play);
                 }

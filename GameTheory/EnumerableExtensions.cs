@@ -220,6 +220,34 @@ namespace GameTheory
         }
 
         /// <summary>
+        /// Implements IndexOf for the <see cref="IReadOnlyList{T}"/> interface.
+        /// </summary>
+        /// <typeparam name="T">The type of elements in the list.</typeparam>
+        /// <param name="list">The list to search.</param>
+        /// <param name="item">The item to search for in the list.</param>
+        /// <returns>The index of the item, if it is found; <c>-1</c>, otherwise.</returns>
+        public static int IndexOf<T>(this IReadOnlyList<T> list, T item)
+        {
+            for (var i = 0; i < list.Count; i++)
+            {
+                var element = list[i];
+                if (element == null)
+                {
+                    if (item == null)
+                    {
+                        return i;
+                    }
+                }
+                else if (element.Equals(item))
+                {
+                    return i;
+                }
+            }
+
+            return -1;
+        }
+
+        /// <summary>
         /// Produces the set intersection of two sequences by using the default equality comparer to compare values.
         /// </summary>
         /// <typeparam name="T">The type of the elements of the input sequences.</typeparam>

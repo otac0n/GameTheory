@@ -48,7 +48,7 @@ namespace GameTheory.Games.CenturySpiceRoad
             if (state.Phase == Phase.Play)
             {
                 state = state.With(
-                    activePlayer: state.Players[(state.Players.IndexOf(state.ActivePlayer) + 1) % state.Players.Count]);
+                    activePlayer: state.Players.GetNextPlayer(state.ActivePlayer));
             }
 
             if (state.ActivePlayer == state.Players[0] && state.Players.Any(p => state.Inventory[p].PointCards.Count >= GameState.PointCardLimit))
