@@ -90,20 +90,6 @@ namespace GameTheory.Players.MaximizingPlayer
         /// </summary>
         public IReadOnlyDictionary<PlayerToken, TScore> Scores { get; }
 
-        /// <summary>
-        /// Returns a new game state with the specified move prepended.
-        /// </summary>
-        /// <param name="move">The move necessary to arrive at this mainline.</param>
-        /// <returns>The new mainline.</returns>
-        public Mainline<TMove, TScore> AddMove(TMove move)
-        {
-            return new Mainline<TMove, TScore>(
-                this.Scores,
-                this.GameState,
-                this.Moves.Push(move),
-                this.Depth + 1);
-        }
-
         /// <inheritdoc/>
         public override string ToString() => string.Concat(this.FlattenFormatTokens());
     }

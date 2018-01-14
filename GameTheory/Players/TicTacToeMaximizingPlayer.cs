@@ -11,7 +11,7 @@ namespace GameTheory.Players.MaximizingPlayers
     /// </summary>
     public sealed class TicTacToeMaximizingPlayer : MaximizingPlayer<Move, double>
     {
-        private static readonly IScoringMetric<PlayerState, double> scoringMetric = ScoringMetric.Create<PlayerState>(Score);
+        private static readonly IScoringMetric<PlayerState, double> Metric = ScoringMetric.Create<PlayerState>(s => 0);
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TicTacToeMaximizingPlayer"/> class.
@@ -19,15 +19,8 @@ namespace GameTheory.Players.MaximizingPlayers
         /// <param name="playerToken">The token that represents the player.</param>
         /// <param name="minPly">The minimum number of ply to think ahead.</param>
         public TicTacToeMaximizingPlayer(PlayerToken playerToken, int minPly = 6)
-            : base(playerToken, scoringMetric, minPly)
+            : base(playerToken, Metric, minPly)
         {
-        }
-
-        private static double Score(PlayerState playerState)
-        {
-            var state = playerState.GameState;
-            var playerToken = playerState.PlayerToken;
-            return state.GetWinners().Any(w => w == playerToken) ? 1 : 0;
         }
     }
 }

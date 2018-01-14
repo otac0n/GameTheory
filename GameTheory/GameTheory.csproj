@@ -274,6 +274,7 @@
     <Compile Include="Players\MancalaMaximizingPlayer.cs" />
     <Compile Include="Players\CenturySpiceRoadMaximizingPlayer.cs" />
     <Compile Include="Players\LotusMaximizingPlayer.cs" />
+    <Compile Include="Players\MaximizingPlayer\ResultScore.cs" />
     <Compile Include="Players\SplendorMaximizingPlayer.cs" />
     <Compile Include="Players\TwentyFortyEightMaximizingPlayer.cs" />
     <Compile Include="Players\TicTacToeMaximizingPlayer.cs" />
