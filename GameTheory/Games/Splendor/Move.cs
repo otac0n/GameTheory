@@ -17,7 +17,7 @@ namespace GameTheory.Games.Splendor
         /// <param name="state">The <see cref="GameState"/> that this move is based on.</param>
         protected Move(GameState state)
         {
-            this.State = state ?? throw new ArgumentOutOfRangeException(nameof(state));
+            this.State = state ?? throw new ArgumentNullException(nameof(state));
             this.PlayerToken = state.ActivePlayer;
         }
 

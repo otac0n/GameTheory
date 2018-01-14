@@ -34,7 +34,7 @@ namespace GameTheory.Players.MaximizingPlayer
         protected MaximizingPlayer(PlayerToken playerToken, IScoringMetric<PlayerState, TScore> scoringMetric, int minPly)
         {
             this.PlayerToken = playerToken;
-            this.scoringMetric = new ResultScoringMetric(scoringMetric ?? throw new ArgumentOutOfRangeException(nameof(scoringMetric)));
+            this.scoringMetric = new ResultScoringMetric(scoringMetric ?? throw new ArgumentNullException(nameof(scoringMetric)));
             this.minPly = minPly > -1 ? minPly : throw new ArgumentOutOfRangeException(nameof(minPly));
         }
 

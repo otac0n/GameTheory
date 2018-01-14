@@ -17,7 +17,7 @@ namespace GameTheory.Games.Lotus
         /// <param name="state">The <see cref="GameState"/> that this move is based on.</param>
         protected Move(GameState state)
         {
-            this.State = state ?? throw new ArgumentOutOfRangeException(nameof(state));
+            this.State = state ?? throw new ArgumentNullException(nameof(state));
             this.PlayerToken = state.ActivePlayer;
         }
 
@@ -28,7 +28,7 @@ namespace GameTheory.Games.Lotus
         /// <param name="player">The <see cref="PlayerToken">player</see> that may choose this move.</param>
         protected Move(GameState state, PlayerToken player)
         {
-            this.State = state ?? throw new ArgumentOutOfRangeException(nameof(state));
+            this.State = state ?? throw new ArgumentNullException(nameof(state));
             this.PlayerToken = player;
         }
 
