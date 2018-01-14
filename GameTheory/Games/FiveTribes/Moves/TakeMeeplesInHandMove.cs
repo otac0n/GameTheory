@@ -19,7 +19,7 @@ namespace GameTheory.Games.FiveTribes.Moves
         }
 
         /// <inheritdoc />
-        public override IList<object> FormatTokens => new object[] { "Take ", this.State.InHand };
+        public override IList<object> FormatTokens => new object[] { "Take ", this.GameState.InHand };
 
         /// <inheritdoc />
         public override bool IsDeterministic => true;

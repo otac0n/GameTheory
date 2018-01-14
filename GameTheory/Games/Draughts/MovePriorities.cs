@@ -49,7 +49,7 @@ namespace GameTheory.Games.Draughts
             c => new
             {
                 Pieces = 1,
-                Kings = c.State.Board[c.CaptureIndex].HasFlag(Piece.Crowned) ? 1 : 0,
+                Kings = c.GameState.Board[c.CaptureIndex].HasFlag(Piece.Crowned) ? 1 : 0,
             },
             scores => new
             {
@@ -75,8 +75,8 @@ namespace GameTheory.Games.Draughts
             c => new
             {
                 Pieces = 1,
-                WithKing = c.State.Board[c.FromIndex].HasFlag(Piece.Crowned),
-                Kings = c.State.Board[c.CaptureIndex].HasFlag(Piece.Crowned) ? 1 : 0,
+                WithKing = c.GameState.Board[c.FromIndex].HasFlag(Piece.Crowned),
+                Kings = c.GameState.Board[c.CaptureIndex].HasFlag(Piece.Crowned) ? 1 : 0,
             },
             scores => new
             {
@@ -137,9 +137,9 @@ namespace GameTheory.Games.Draughts
                     return 0;
                 }
 
-                Debug.Assert(capA.State.CompareTo(capB.State) == 0, "Moves are not comparable if not in the same state.");
+                Debug.Assert(capA.GameState.CompareTo(capB.GameState) == 0, "Moves are not comparable if not in the same state.");
 
-                var state = capA.State;
+                var state = capA.GameState;
                 var player = state.ActivePlayer;
                 var scoreA = MeasureCaptures(state, player, capA, scoringMetric);
                 var scoreB = MeasureCaptures(state, player, capA, scoringMetric);

@@ -23,10 +23,10 @@ namespace GameTheory.Games.FiveTribes.Moves
         }
 
         /// <inheritdoc />
-        public override IList<object> FormatTokens => new object[] { "Draw ", Math.Min(this.State.Bag.Count, 3), " Meeples and place at ", this.Point };
+        public override IList<object> FormatTokens => new object[] { "Draw ", Math.Min(this.GameState.Bag.Count, 3), " Meeples and place at ", this.Point };
 
         /// <inheritdoc />
-        public override bool IsDeterministic => this.State.Bag.Count <= 1;
+        public override bool IsDeterministic => this.GameState.Bag.Count <= 1;
 
         /// <summary>
         /// Gets the <see cref="Point"/> where the <see cref="Meeple">Meeples</see> will be added.

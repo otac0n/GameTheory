@@ -49,7 +49,7 @@ namespace GameTheory.Games.FiveTribes.Moves
         /// <summary>
         /// Gets the <see cref="Resource"/> that will be taken.
         /// </summary>
-        public Resource Resource => this.State.VisibleResources[this.Index];
+        public Resource Resource => this.GameState.VisibleResources[this.Index];
 
         internal override GameState Apply(GameState state)
         {

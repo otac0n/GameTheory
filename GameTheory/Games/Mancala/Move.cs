@@ -14,11 +14,11 @@ namespace GameTheory.Games.Mancala
         /// <summary>
         /// Initializes a new instance of the <see cref="Move"/> class.
         /// </summary>
-        /// <param name="state">The <see cref="GameState"/> that this move is based on.</param>
+        /// <param name="state">The <see cref="Mancala.GameState"/> that this move is based on.</param>
         /// <param name="bin">The index of the bin.</param>
         internal Move(GameState state, int bin)
         {
-            this.State = state ?? throw new ArgumentNullException(nameof(state));
+            this.GameState = state ?? throw new ArgumentNullException(nameof(state));
             this.PlayerToken = state.ActivePlayer;
             this.Bin = bin;
         }
@@ -29,7 +29,7 @@ namespace GameTheory.Games.Mancala
         public int Bin { get; }
 
         /// <inheritdoc />
-        public IList<object> FormatTokens => new object[] { "Pick up ", this.State.Board[this.Bin], " stones from (", this.Bin, ")" };
+        public IList<object> FormatTokens => new object[] { "Pick up ", this.GameState.Board[this.Bin], " stones from (", this.Bin, ")" };
 
         /// <inheritdoc />
         public bool IsDeterministic => true;
@@ -39,7 +39,7 @@ namespace GameTheory.Games.Mancala
         /// </summary>
         public PlayerToken PlayerToken { get; }
 
-        internal GameState State { get; }
+        internal GameState GameState { get; }
 
         /// <inheritdoc />
         public override string ToString() => string.Concat(this.FlattenFormatTokens());

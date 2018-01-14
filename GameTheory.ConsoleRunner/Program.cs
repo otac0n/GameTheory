@@ -130,9 +130,9 @@ namespace GameTheory.ConsoleRunner
             var catalog = GameCatalog.Default;
             var game = ConsoleInteraction.Choose(catalog.AvailableGames);
             var gameType = game.GameStateType;
-            var gameState = ConstructType(gameType);
+            var state = ConstructType(gameType);
 
-            typeof(Program).GetMethod(nameof(RunGame), BindingFlags.Static | BindingFlags.NonPublic).MakeGenericMethod(game.MoveType).Invoke(null, new object[] { gameState });
+            typeof(Program).GetMethod(nameof(RunGame), BindingFlags.Static | BindingFlags.NonPublic).MakeGenericMethod(game.MoveType).Invoke(null, new object[] { state });
 
             if (Debugger.IsAttached)
             {

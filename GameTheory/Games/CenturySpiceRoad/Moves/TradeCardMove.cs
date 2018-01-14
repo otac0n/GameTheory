@@ -23,7 +23,7 @@ namespace GameTheory.Games.CenturySpiceRoad.Moves
         }
 
         /// <inheritdoc />
-        public override IList<object> FormatTokens => new object[] { "Play ", this.State.Inventory[this.PlayerToken].Hand[this.Index] };
+        public override IList<object> FormatTokens => new object[] { "Play ", this.GameState.Inventory[this.PlayerToken].Hand[this.Index] };
 
         /// <summary>
         /// Gets the index of the card to play.

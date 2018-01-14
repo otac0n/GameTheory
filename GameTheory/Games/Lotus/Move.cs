@@ -14,21 +14,21 @@ namespace GameTheory.Games.Lotus
         /// <summary>
         /// Initializes a new instance of the <see cref="Move"/> class.
         /// </summary>
-        /// <param name="state">The <see cref="GameState"/> that this move is based on.</param>
+        /// <param name="state">The <see cref="Lotus.GameState"/> that this move is based on.</param>
         protected Move(GameState state)
         {
-            this.State = state ?? throw new ArgumentNullException(nameof(state));
+            this.GameState = state ?? throw new ArgumentNullException(nameof(state));
             this.PlayerToken = state.ActivePlayer;
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Move"/> class.
         /// </summary>
-        /// <param name="state">The <see cref="GameState"/> that this move is based on.</param>
+        /// <param name="state">The <see cref="Lotus.GameState"/> that this move is based on.</param>
         /// <param name="player">The <see cref="PlayerToken">player</see> that may choose this move.</param>
         protected Move(GameState state, PlayerToken player)
         {
-            this.State = state ?? throw new ArgumentNullException(nameof(state));
+            this.GameState = state ?? throw new ArgumentNullException(nameof(state));
             this.PlayerToken = player;
         }
 
@@ -43,7 +43,7 @@ namespace GameTheory.Games.Lotus
         /// </summary>
         public PlayerToken PlayerToken { get; }
 
-        internal GameState State { get; }
+        internal GameState GameState { get; }
 
         /// <inheritdoc />
         public virtual int CompareTo(Move other)

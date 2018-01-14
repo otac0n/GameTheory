@@ -25,7 +25,7 @@ namespace GameTheory.Games.Splendor.Moves
         /// <summary>
         /// Gets the development card to purchase.
         /// </summary>
-        public DevelopmentCard Card => this.State.Inventory[this.State.ActivePlayer].Hand[this.Index];
+        public DevelopmentCard Card => this.GameState.Inventory[this.GameState.ActivePlayer].Hand[this.Index];
 
         /// <summary>
         /// Gets the effective token cost of this card, including substituted jokers and bonuses.

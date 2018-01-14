@@ -21,7 +21,7 @@ namespace GameTheory.Games.Splendor.Moves
         }
 
         /// <inheritdoc />
-        public override IList<object> FormatTokens => this.State.Tokens[Token.GoldJoker] > 0
+        public override IList<object> FormatTokens => this.GameState.Tokens[Token.GoldJoker] > 0
             ? new object[] { "Reserve from deck ", this.Track + 1, " and take ", Token.GoldJoker }
             : new object[] { "Reserve from deck ", this.Track + 1 };
 

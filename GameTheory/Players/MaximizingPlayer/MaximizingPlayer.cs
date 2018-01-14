@@ -382,11 +382,11 @@ namespace GameTheory.Players.MaximizingPlayer
             /// Initializes a new instance of the <see cref="PlayerState"/> struct.
             /// </summary>
             /// <param name="playerToken">The player token.</param>
-            /// <param name="gameState">The current state of the game.</param>
-            public PlayerState(PlayerToken playerToken, IGameState<TMove> gameState)
+            /// <param name="state">The current state of the game.</param>
+            public PlayerState(PlayerToken playerToken, IGameState<TMove> state)
             {
                 this.PlayerToken = playerToken;
-                this.GameState = gameState;
+                this.GameState = state;
             }
 
             /// <summary>

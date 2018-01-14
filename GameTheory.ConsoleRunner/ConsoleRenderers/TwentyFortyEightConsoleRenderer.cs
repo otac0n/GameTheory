@@ -11,10 +11,11 @@ namespace GameTheory.ConsoleRunner.ConsoleRenderers
     public class TwentyFortyEightConsoleRenderer : BaseConsoleRenderer<Move>
     {
         /// <inheritdoc />
-        public override void Show(IGameState<Move> state, PlayerToken playerToken)
+        public override void Show(IGameState<Move> state, PlayerToken playerToken = null) => this.Show((GameState)state, playerToken);
+
+        private void Show(GameState state, PlayerToken playerToken)
         {
-            var gameState = (GameState)state;
-            new Templates().RenderGameState(gameState, this.MakeRenderTokenWriter(state));
+            new Templates().RenderGameState(state, this.MakeRenderTokenWriter(state));
         }
     }
 }

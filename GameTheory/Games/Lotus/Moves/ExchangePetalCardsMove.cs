@@ -33,7 +33,7 @@ namespace GameTheory.Games.Lotus.Moves
         {
             get
             {
-                var hand = this.State.Inventory[this.PlayerToken].Hand;
+                var hand = this.GameState.Inventory[this.PlayerToken].Hand;
                 return this.CardIndexes.Count == 1
                     ? new object[] { "Exchange ", hand[this.CardIndexes[0]] }
                     : new object[] { "Exchange ", hand[this.CardIndexes[0]], " and ", hand[this.CardIndexes[1]] };
@@ -49,7 +49,7 @@ namespace GameTheory.Games.Lotus.Moves
 
                 if ((comp = this.PlayerToken.CompareTo(other.PlayerToken)) != 0 ||
                     (comp = CompareUtilities.CompareValueLists(this.CardIndexes, move.CardIndexes)) != 0 ||
-                    (comp = CompareUtilities.CompareLists(this.State.Inventory[this.PlayerToken].Hand, move.State.Inventory[move.PlayerToken].Hand)) != 0)
+                    (comp = CompareUtilities.CompareLists(this.GameState.Inventory[this.PlayerToken].Hand, move.GameState.Inventory[move.PlayerToken].Hand)) != 0)
                 {
                     return comp;
                 }

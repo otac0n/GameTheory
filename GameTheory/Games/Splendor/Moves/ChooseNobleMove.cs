@@ -35,7 +35,7 @@ namespace GameTheory.Games.Splendor.Moves
         /// <summary>
         /// Gets the noble who would visit.
         /// </summary>
-        public Noble Noble => this.State.Nobles[this.Index];
+        public Noble Noble => this.GameState.Nobles[this.Index];
 
         /// <inheritdoc />
         public override int CompareTo(Move other)
@@ -46,7 +46,7 @@ namespace GameTheory.Games.Splendor.Moves
 
                 if ((comp = this.PlayerToken.CompareTo(move.PlayerToken)) != 0 ||
                     (comp = this.Index.CompareTo(move.Index)) != 0 ||
-                    (comp = this.State.Nobles[this.Index].CompareTo(move.State.Nobles[move.Index])) != 0)
+                    (comp = this.GameState.Nobles[this.Index].CompareTo(move.GameState.Nobles[move.Index])) != 0)
                 {
                     return comp;
                 }

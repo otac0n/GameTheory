@@ -17,10 +17,10 @@ namespace GameTheory.Tests.Strategies
         [Test]
         public async Task GetMove_Always_ReturnsNoMove()
         {
-            var gameState = new TestGameState();
+            var state = new TestGameState();
             using (var strategy = new NullStrategy<TestGameState.Move>())
             {
-                var maybeMove = await strategy.ChooseMove(gameState, gameState.Players[0], CancellationToken.None);
+                var maybeMove = await strategy.ChooseMove(state, state.Players[0], CancellationToken.None);
                 Assert.That(maybeMove.HasValue, Is.False);
             }
         }

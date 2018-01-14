@@ -161,7 +161,7 @@ namespace GameTheory.Games.Draughts
                 throw new ArgumentNullException(nameof(move));
             }
 
-            if (this.CompareTo(move.State) != 0)
+            if (this.CompareTo(move.GameState) != 0)
             {
                 throw new InvalidOperationException();
             }

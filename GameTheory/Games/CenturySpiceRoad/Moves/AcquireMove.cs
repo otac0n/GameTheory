@@ -25,7 +25,7 @@ namespace GameTheory.Games.CenturySpiceRoad.Moves
         {
             get
             {
-                var merchantStall = this.State.MerchantCardTrack[this.State.MerchantCardIndexAfforded];
+                var merchantStall = this.GameState.MerchantCardTrack[this.GameState.MerchantCardIndexAfforded];
                 return merchantStall.Spices.Count > 0
                     ? new object[] { "Acquire ", merchantStall.MerchantCard, " and gain ", merchantStall.Spices }
                     : new object[] { "Acquire ", merchantStall.MerchantCard };
@@ -33,7 +33,7 @@ namespace GameTheory.Games.CenturySpiceRoad.Moves
         }
 
         /// <inheritdoc />
-        public override bool IsDeterministic => this.State.MerchantCardDeck.Count <= 1;
+        public override bool IsDeterministic => this.GameState.MerchantCardDeck.Count <= 1;
 
         internal static IEnumerable<AcquireMove> GenerateMoves(GameState state)
         {

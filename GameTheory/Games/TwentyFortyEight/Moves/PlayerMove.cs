@@ -55,7 +55,7 @@ namespace GameTheory.Games.TwentyFortyEight.Moves
         public override IList<object> FormatTokens => new object[] { this.Direction };
 
         /// <inheritdoc/>
-        public override bool IsDeterministic => this.State.Players.Count != 1;
+        public override bool IsDeterministic => this.GameState.Players.Count != 1;
 
         internal static IEnumerable<Move> GetMoves(GameState state)
         {

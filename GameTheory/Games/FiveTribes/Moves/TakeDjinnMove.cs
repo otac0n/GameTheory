@@ -38,7 +38,7 @@ namespace GameTheory.Games.FiveTribes.Moves
         /// <summary>
         /// Gets the <see cref="Djinn"/> that will be taken.
         /// </summary>
-        public Djinn Djinn => this.State.VisibleDjinns[this.Index];
+        public Djinn Djinn => this.GameState.VisibleDjinns[this.Index];
 
         /// <inheritdoc />
         public override IList<object> FormatTokens => new object[] { "Take ", this.Djinn };

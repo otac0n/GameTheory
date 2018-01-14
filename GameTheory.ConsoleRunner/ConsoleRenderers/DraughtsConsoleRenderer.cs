@@ -12,11 +12,7 @@ namespace GameTheory.ConsoleRunner.ConsoleRenderers
     public class DraughtsConsoleRenderer : BaseConsoleRenderer<Move>
     {
         /// <inheritdoc/>
-        public override void Show(IGameState<Move> state, PlayerToken playerToken = null)
-        {
-            var gameState = (GameState)state;
-            new Templates().RenderGameState(gameState, this.MakeRenderTokenWriter(state));
-        }
+        public override void Show(IGameState<Move> state, PlayerToken playerToken = null) => this.Show((GameState)state, playerToken);
 
         /// <inheritdoc/>
         protected override void RenderToken(IGameState<Move> state, object token)
@@ -67,6 +63,11 @@ namespace GameTheory.ConsoleRunner.ConsoleRenderers
             {
                 base.RenderToken(state, token);
             }
+        }
+
+        private void Show(GameState state, PlayerToken playerToken)
+        {
+            new Templates().RenderGameState(state, this.MakeRenderTokenWriter(state));
         }
     }
 }

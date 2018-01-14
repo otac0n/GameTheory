@@ -21,7 +21,7 @@ namespace GameTheory.Games.Lotus.Moves
         }
 
         /// <inheritdoc />
-        public override IList<object> FormatTokens => new object[] { "Take ", this.State.AvailableWildflowers[this.WildflowerIndex] };
+        public override IList<object> FormatTokens => new object[] { "Take ", this.GameState.AvailableWildflowers[this.WildflowerIndex] };
 
         /// <summary>
         /// Gets the index of the wildflower to take.
@@ -37,7 +37,7 @@ namespace GameTheory.Games.Lotus.Moves
 
                 if ((comp = this.PlayerToken.CompareTo(other.PlayerToken)) != 0 ||
                     (comp = this.WildflowerIndex.CompareTo(move.WildflowerIndex)) != 0 ||
-                    (comp = CompareUtilities.CompareLists(this.State.AvailableWildflowers, move.State.AvailableWildflowers)) != 0)
+                    (comp = CompareUtilities.CompareLists(this.GameState.AvailableWildflowers, move.GameState.AvailableWildflowers)) != 0)
                 {
                     return comp;
                 }

@@ -28,7 +28,7 @@ namespace GameTheory.Games.Splendor.Moves
         /// <summary>
         /// Gets the development card to purchase.
         /// </summary>
-        public DevelopmentCard Card => this.State.DevelopmentTracks[this.Track][this.Index];
+        public DevelopmentCard Card => this.GameState.DevelopmentTracks[this.Track][this.Index];
 
         /// <summary>
         /// Gets the effective token cost of this card, including substituted jokers and bonuses.
@@ -44,7 +44,7 @@ namespace GameTheory.Games.Splendor.Moves
         public int Index { get; }
 
         /// <inheritdoc />
-        public override bool IsDeterministic => this.State.DevelopmentDecks[this.Track].Count <= 1;
+        public override bool IsDeterministic => this.GameState.DevelopmentDecks[this.Track].Count <= 1;
 
         /// <summary>
         /// Gets the index of the development track that contains the card to purchase.

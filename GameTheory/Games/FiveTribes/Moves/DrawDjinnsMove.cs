@@ -21,7 +21,7 @@ namespace GameTheory.Games.FiveTribes.Moves
         }
 
         /// <inheritdoc />
-        public override IList<object> FormatTokens => new object[] { "Draw ", GetDrawCount(this.State), " Djinns" };
+        public override IList<object> FormatTokens => new object[] { "Draw ", GetDrawCount(this.GameState), " Djinns" };
 
         /// <inheritdoc />
         public override bool IsDeterministic => false;

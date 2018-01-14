@@ -28,7 +28,7 @@ namespace GameTheory.Games.FiveTribes.Moves
 
         /// <inheritdoc />
         public override bool IsDeterministic =>
-            this.Meeples[Meeple.Merchant] == 0 || !this.State.Inventory[this.State.ActivePlayer].Djinns.Any(d => d is Djinns.Kandicha);
+            this.Meeples[Meeple.Merchant] == 0 || !this.GameState.Inventory[this.GameState.ActivePlayer].Djinns.Any(d => d is Djinns.Kandicha);
 
         /// <summary>
         /// Gets the <see cref="Meeple">Meeples</see> that will be assassinated.

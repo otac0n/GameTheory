@@ -7,13 +7,14 @@ namespace GameTheory.Games.Draughts
     using GameTheory.Games.Draughts.Moves;
 
     /// <summary>
-    /// Represents a move in <see cref="GameState">Draughts</see>.
+    /// Represents a move in <see cref="Draughts.GameState">Draughts</see>.
     /// </summary>
     public abstract class Move : IMove
     {
         internal Move(GameState state)
         {
-            this.State = state;
+            this.GameState = state;
+            this.PlayerToken = state.ActivePlayer;
         }
 
         /// <inheritdoc/>
@@ -23,9 +24,9 @@ namespace GameTheory.Games.Draughts
         public bool IsDeterministic => true;
 
         /// <inheritdoc/>
-        public PlayerToken PlayerToken => this.State.ActivePlayer;
+        public PlayerToken PlayerToken { get; }
 
-        internal GameState State { get; }
+        internal GameState GameState { get; }
 
         internal virtual GameState Apply(GameState state)
         {

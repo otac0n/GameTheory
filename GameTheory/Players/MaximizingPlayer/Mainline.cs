@@ -17,13 +17,13 @@ namespace GameTheory.Players.MaximizingPlayer
         /// Initializes a new instance of the <see cref="Mainline{TMove, TScore}"/> class.
         /// </summary>
         /// <param name="scores">The computed scores for all players in the resulting state.</param>
-        /// <param name="gameState">The resulting game state.</param>
+        /// <param name="state">The resulting game state.</param>
         /// <param name="moves">The sequence of moves necessary to arrive at the resulting game state.</param>
         /// <param name="depth">The depth to which the score was computed.</param>
-        public Mainline(IReadOnlyDictionary<PlayerToken, TScore> scores, IGameState<TMove> gameState, ImmutableStack<TMove> moves, int depth)
+        public Mainline(IReadOnlyDictionary<PlayerToken, TScore> scores, IGameState<TMove> state, ImmutableStack<TMove> moves, int depth)
         {
             this.Scores = scores;
-            this.GameState = gameState;
+            this.GameState = state;
             this.Moves = moves;
             this.Depth = depth;
         }

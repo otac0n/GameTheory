@@ -13,7 +13,7 @@ namespace GameTheory.Games.FiveTribes
         /// <summary>
         /// Initializes a new instance of the <see cref="Move"/> class.
         /// </summary>
-        /// <param name="state">The <see cref="GameState"/> that this move is based on.</param>
+        /// <param name="state">The <see cref="FiveTribes.GameState"/> that this move is based on.</param>
         protected Move(GameState state)
             : this(state ?? throw new ArgumentNullException(nameof(state)), state.ActivePlayer)
         {
@@ -22,11 +22,11 @@ namespace GameTheory.Games.FiveTribes
         /// <summary>
         /// Initializes a new instance of the <see cref="Move"/> class.
         /// </summary>
-        /// <param name="state">The <see cref="GameState"/> that this move is based on.</param>
+        /// <param name="state">The <see cref="FiveTribes.GameState"/> that this move is based on.</param>
         /// <param name="playerToken">The player who may perform this move.</param>
         protected Move(GameState state, PlayerToken playerToken)
         {
-            this.State = state;
+            this.GameState = state;
             this.PlayerToken = playerToken ?? throw new ArgumentNullException(nameof(playerToken));
         }
 
@@ -41,7 +41,7 @@ namespace GameTheory.Games.FiveTribes
         /// </summary>
         public PlayerToken PlayerToken { get; }
 
-        internal GameState State { get; }
+        internal GameState GameState { get; }
 
         /// <inheritdoc />
         public sealed override string ToString() => string.Concat(this.FlattenFormatTokens());

@@ -343,7 +343,7 @@ namespace GameTheory.Games.Lotus
                 throw new ArgumentNullException(nameof(move));
             }
 
-            if (this.CompareTo(move.State) != 0)
+            if (this.CompareTo(move.GameState) != 0)
             {
                 var equivalentMove = this.GetAvailableMoves().Where(m => m.CompareTo(move) == 0).FirstOrDefault();
                 if (equivalentMove != null)

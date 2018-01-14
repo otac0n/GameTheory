@@ -25,10 +25,10 @@ namespace GameTheory.Games.Splendor.Moves
         /// <summary>
         /// Gets the development card to reserve.
         /// </summary>
-        public DevelopmentCard Card => this.State.DevelopmentTracks[this.Track][this.Index];
+        public DevelopmentCard Card => this.GameState.DevelopmentTracks[this.Track][this.Index];
 
         /// <inheritdoc />
-        public override IList<object> FormatTokens => this.State.Tokens[Token.GoldJoker] > 0
+        public override IList<object> FormatTokens => this.GameState.Tokens[Token.GoldJoker] > 0
             ? new object[] { "Reserve ", this.Card, " (cost: ", this.Card.Cost, ")", " and take ", Token.GoldJoker }
             : new object[] { "Reserve ", this.Card, " (cost: ", this.Card.Cost, ")" };
 
@@ -38,7 +38,7 @@ namespace GameTheory.Games.Splendor.Moves
         public int Index { get; }
 
         /// <inheritdoc />
-        public override bool IsDeterministic => this.State.DevelopmentDecks[this.Track].Count <= 1;
+        public override bool IsDeterministic => this.GameState.DevelopmentDecks[this.Track].Count <= 1;
 
         /// <summary>
         /// Gets the index of the development track that contains the card to reserve.
