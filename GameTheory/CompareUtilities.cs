@@ -4,12 +4,62 @@ namespace GameTheory
 {
     using System;
     using System.Collections.Generic;
+    using System.Collections.Immutable;
+    using System.Linq;
 
     /// <summary>
     /// Provides utility methods for composing comparable objects.
     /// </summary>
     public static class CompareUtilities
     {
+        /// <summary>
+        /// Compares two dictionaries of comparable keys and elements.
+        /// </summary>
+        /// <typeparam name="TKey">The type of keys in each dictionary.</typeparam>
+        /// <typeparam name="TValue">The type of values in each dictionary.</typeparam>
+        /// <param name="left">The first dictionary.</param>
+        /// <param name="right">The second dictionary.</param>
+        /// <param name="keyComparer">An optional comparer to use when evaluating keys.</param>
+        /// <param name="valueComparer">An optional comparer to use when evaluating values.</param>
+        /// <returns>A value indicating whether the dictionaries are the same size and contain the same keys and elements.</returns>
+        public static int CompareDictionaries<TKey, TValue>(ImmutableDictionary<TKey, TValue> left, ImmutableDictionary<TKey, TValue> right, IComparer<TKey> keyComparer = null, IComparer<TValue> valueComparer = null)
+            where TKey : IComparable<TKey>
+            where TValue : IComparable<TValue>
+        {
+            if (left == right)
+            {
+                return 0;
+            }
+
+            int comp;
+
+            if ((comp = left.Count.CompareTo(right.Count)) != 0)
+            {
+                return comp;
+            }
+
+            keyComparer = keyComparer ?? Comparer<TKey>.Default;
+            valueComparer = valueComparer ?? Comparer<TValue>.Default;
+
+            var otherKeys = new List<TKey>(right.Count);
+            otherKeys.AddRange(right.Keys);
+            otherKeys.Sort(keyComparer);
+
+            var i = 0;
+            foreach (var a in left.Keys.OrderBy(k => k, keyComparer))
+            {
+                var b = otherKeys[i++];
+
+                if ((comp = keyComparer.Compare(a, b)) != 0 ||
+                    (comp = valueComparer.Compare(left[a], right[b])) != 0)
+                {
+                    return comp;
+                }
+            }
+
+            return 0;
+        }
+
         /// <summary>
         /// Compares two lists of comparable elements.
         /// </summary>

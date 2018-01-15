@@ -170,11 +170,7 @@ namespace GameTheory.Games.Mancala
                 return ImmutableList<PlayerToken>.Empty;
             }
 
-            return this.Players
-                .GroupBy(p => this.GetScore(p))
-                .OrderByDescending(g => g.Key)
-                .First()
-                .ToImmutableList();
+            return this.Players.AllMaxBy(p => this.GetScore(p)).ToImmutableList();
         }
 
         /// <inheritdoc />

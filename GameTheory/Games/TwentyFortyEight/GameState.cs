@@ -55,7 +55,7 @@ namespace GameTheory.Games.TwentyFortyEight
         /// <summary>
         /// Initializes a new instance of the <see cref="GameState"/> class in the starting position.
         /// </summary>
-        /// <param name="players">The number of players playing.</param>
+        /// <param name="players">The number of players.</param>
         public GameState(int players = 1)
             : this(Enumerable.Range(0, players).Select(i => new PlayerToken()).ToImmutableArray(), Turn.Computer, new byte[Size, Size])
         {

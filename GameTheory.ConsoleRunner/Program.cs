@@ -22,6 +22,7 @@ namespace GameTheory.ConsoleRunner
                                let accessor = new Func<object>(() => constructor.Invoke(constructor.GetParameters().Select(getParameter).ToArray()))
                                select ConsoleInteraction.MakeChoice(name, accessor);
             var staticProperties = from staticProperty in type.GetProperties(BindingFlags.Public | BindingFlags.Static)
+                                   where staticProperty.PropertyType == type
                                    let accessor = new Func<object>(() => staticProperty.GetValue(null))
                                    select ConsoleInteraction.MakeChoice(staticProperty.Name, accessor);
 

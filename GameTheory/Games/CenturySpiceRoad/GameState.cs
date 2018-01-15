@@ -265,9 +265,8 @@ namespace GameTheory.Games.CenturySpiceRoad
 
             if (this.Inventory != state.Inventory)
             {
-                for (var i = 0; i < this.Players.Count; i++)
+                foreach (var player in this.Players)
                 {
-                    var player = this.Players[i];
                     if ((comp = this.Inventory[player].CompareTo(state.Inventory[player])) != 0)
                     {
                         return comp;
@@ -362,11 +361,7 @@ namespace GameTheory.Games.CenturySpiceRoad
                 return ImmutableList<PlayerToken>.Empty;
             }
 
-            return this.Players
-                .GroupBy(p => this.GetScore(p))
-                .OrderByDescending(g => g.Key)
-                .First()
-                .ToImmutableList();
+            return this.Players.AllMaxBy(p => this.GetScore(p)).ToImmutableList();
         }
 
         /// <inheritdoc />

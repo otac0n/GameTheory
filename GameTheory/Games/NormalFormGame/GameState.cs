@@ -116,11 +116,7 @@ namespace GameTheory.Games.NormalFormGame
                 return ImmutableArray<PlayerToken>.Empty;
             }
 
-            return this.Players
-                .GroupBy(p => this.GetScore(p))
-                .OrderByDescending(g => g.Key)
-                .First()
-                .ToImmutableList();
+            return this.Players.AllMaxBy(p => this.GetScore(p)).ToImmutableList();
         }
 
         /// <inheritdoc />

@@ -449,9 +449,8 @@ namespace GameTheory.Games.FiveTribes
 
             if (this.Inventory != state.Inventory)
             {
-                for (var i = 0; i < this.Players.Count; i++)
+                foreach (var player in this.Players)
                 {
-                    var player = this.Players[i];
                     if ((comp = this.Inventory[player].CompareTo(state.Inventory[player])) != 0)
                     {
                         return comp;
@@ -466,9 +465,8 @@ namespace GameTheory.Games.FiveTribes
 
             if (this.AssassinationTables != state.AssassinationTables)
             {
-                for (var i = 0; i < this.Players.Count; i++)
+                foreach (var player in this.Players)
                 {
-                    var player = this.Players[i];
                     if ((comp = this.AssassinationTables[player].CompareTo(state.AssassinationTables[player])) != 0)
                     {
                         return comp;
@@ -478,9 +476,8 @@ namespace GameTheory.Games.FiveTribes
 
             if (this.ScoreTables != state.ScoreTables)
             {
-                for (var i = 0; i < this.Players.Count; i++)
+                foreach (var player in this.Players)
                 {
-                    var player = this.Players[i];
                     if ((comp = this.ScoreTables[player].CompareTo(state.ScoreTables[player])) != 0)
                     {
                         return comp;
@@ -490,28 +487,10 @@ namespace GameTheory.Games.FiveTribes
 
             if ((comp = CompareUtilities.CompareEnumLists(this.VisibleResources, state.VisibleResources)) != 0 ||
                 (comp = CompareUtilities.CompareLists(this.VisibleDjinns, state.VisibleDjinns)) != 0 ||
-                (comp = CompareUtilities.CompareLists(this.DjinnDiscards, state.DjinnDiscards)) != 0)
+                (comp = CompareUtilities.CompareLists(this.DjinnDiscards, state.DjinnDiscards)) != 0 ||
+                (comp = CompareUtilities.CompareDictionaries(this.additionalState, state.additionalState, StringComparer.Ordinal, StringComparer.Ordinal)) != 0)
             {
                 return comp;
-            }
-
-            if (this.additionalState != state.additionalState)
-            {
-                if ((comp = this.additionalState.Count.CompareTo(state.additionalState.Count)) != 0)
-                {
-                    return comp;
-                }
-
-                var keys = this.additionalState.Keys.OrderBy(k => k);
-                var otherKeys = state.additionalState.Keys.OrderBy(k => k);
-                foreach (var keyPair in keys.Zip(otherKeys, (a, b) => new { a, b }))
-                {
-                    if ((comp = string.Compare(keyPair.a, keyPair.b, StringComparison.OrdinalIgnoreCase)) != 0 ||
-                        (comp = string.Compare(this.additionalState[keyPair.a], state.additionalState[keyPair.b], StringComparison.OrdinalIgnoreCase)) != 0)
-                    {
-                        return comp;
-                    }
-                }
             }
 
             if (this.interstitialState != state.interstitialState)
@@ -663,11 +642,7 @@ namespace GameTheory.Games.FiveTribes
                 return ImmutableList<PlayerToken>.Empty;
             }
 
-            return this.Players
-                .GroupBy(p => this.GetScore(p))
-                .OrderByDescending(g => g.Key)
-                .First()
-                .ToImmutableList();
+            return this.Players.AllMaxBy(p => this.GetScore(p)).ToImmutableList();
         }
 
         /// <summary>

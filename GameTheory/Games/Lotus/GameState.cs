@@ -176,9 +176,8 @@ namespace GameTheory.Games.Lotus
 
             if (this.Inventory != state.Inventory)
             {
-                for (var i = 0; i < this.Players.Count; i++)
+                foreach (var player in this.Players)
                 {
-                    var player = this.Players[i];
                     if ((comp = this.Inventory[player].CompareTo(state.Inventory[player])) != 0)
                     {
                         return comp;
