@@ -2,7 +2,6 @@
 
 namespace GameTheory.Players.MaximizingPlayers
 {
-    using System.Linq;
     using Games.TicTacToe;
     using GameTheory.Players.MaximizingPlayer;
 

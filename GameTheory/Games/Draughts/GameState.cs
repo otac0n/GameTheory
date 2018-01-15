@@ -124,7 +124,7 @@ namespace GameTheory.Games.Draughts
 
             if (this.Variant.MovePriorityImpact == MovePriorityImpact.IllegalMove)
             {
-                return moves.AllMax(this.Variant.MovePriority).ToImmutableList();
+                moves = moves.AllMax(this.Variant.MovePriority);
             }
 
             return moves.ToImmutableList();

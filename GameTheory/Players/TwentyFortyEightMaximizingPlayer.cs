@@ -3,7 +3,6 @@
 namespace GameTheory.Players.MaximizingPlayers
 {
     using System;
-    using System.Collections.Generic;
     using System.Linq;
     using Games.TwentyFortyEight;
     using GameTheory.Players.MaximizingPlayer;

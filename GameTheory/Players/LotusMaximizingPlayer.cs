@@ -2,7 +2,6 @@
 
 namespace GameTheory.Players.MaximizingPlayers
 {
-    using System.Linq;
     using Games.Lotus;
     using GameTheory.Players.MaximizingPlayer;
 
