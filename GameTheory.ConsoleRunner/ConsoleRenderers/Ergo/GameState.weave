@@ -1,0 +1,21 @@
+﻿@using System.Linq
+@using GameTheory.Games.Ergo
+@namespace GameTheory.ConsoleRunner.ConsoleRenderers.Ergo
+@static false
+@model GameState
+Proof:
+    {{each line in model.Proof}}
+        [ {{each placement in line}}{{= placement.Symbol }}{{delimit}} {{/each}} ]
+    {{/each}}
+
+{{if this.playerToken != null}}
+    Hand:
+        {{each card in model.Hands[this.playerToken]}}
+            {{= card}}
+        {{/each}}
+{{/if}}
+
+Scores:
+    {{each player in model.Players}}
+        {{= player}}: {{= model.Scores[player]}}
+    {{/each}}

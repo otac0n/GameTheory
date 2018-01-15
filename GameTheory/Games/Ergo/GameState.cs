@@ -1,0 +1,361 @@
+﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+
+namespace GameTheory.Games.Ergo
+{
+    using System;
+    using System.Collections.Generic;
+    using System.Collections.Immutable;
+    using System.Diagnostics;
+    using System.Linq;
+    using GameTheory.Games.Ergo.Cards;
+
+    /// <summary>
+    /// Represents the current state in a game of Ergo.
+    /// </summary>
+    public sealed class GameState : IGameState<Move>
+    {
+        public const int ActionsPerTurn = 2;
+        public const int FallacyTurns = 3;
+        public const int InitialHandSize = 5;
+        public const int MaxPlayers = 4;
+        public const int MinPlayers = 2;
+        public const int PremiseLines = 4;
+        public const int TargetPoints = 50;
+
+        static GameState()
+        {
+            StartingDeck = ImmutableList.Create(new Card[]
+            {
+                SymbolCard.VariableA, SymbolCard.VariableA, SymbolCard.VariableA, SymbolCard.VariableA,
+                SymbolCard.VariableB, SymbolCard.VariableB, SymbolCard.VariableB, SymbolCard.VariableB,
+                SymbolCard.VariableC, SymbolCard.VariableC, SymbolCard.VariableC, SymbolCard.VariableC,
+                SymbolCard.VariableD, SymbolCard.VariableD, SymbolCard.VariableD, SymbolCard.VariableD,
+                SymbolCard.And, SymbolCard.And, SymbolCard.And, SymbolCard.And,
+                SymbolCard.Or, SymbolCard.Or, SymbolCard.Or, SymbolCard.Or,
+                SymbolCard.Then, SymbolCard.Then, SymbolCard.Then, SymbolCard.Then,
+                SymbolCard.Not, SymbolCard.Not, SymbolCard.Not, SymbolCard.Not, SymbolCard.Not, SymbolCard.Not,
+                SymbolCard.Parenthesis, SymbolCard.Parenthesis, SymbolCard.Parenthesis, SymbolCard.Parenthesis,
+                SymbolCard.Parenthesis, SymbolCard.Parenthesis, SymbolCard.Parenthesis, SymbolCard.Parenthesis,
+                FallacyCard.Instance, FallacyCard.Instance, FallacyCard.Instance,
+                JustificationCard.Instance, JustificationCard.Instance, JustificationCard.Instance,
+                ErgoCard.Instance, ErgoCard.Instance, ErgoCard.Instance,
+                TabulaRasaCard.Instance,
+                RevolutionCard.Instance,
+                SymbolCard.WildVariable,
+                SymbolCard.WildOperator,
+            });
+
+            StartingProof = Enumerable.Range(0, PremiseLines).Select(i => ImmutableList<PlacedCard>.Empty).ToImmutableList();
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="GameState"/> class.
+        /// </summary>
+        /// <param name="players">The number of players.</param>
+        public GameState(int players)
+        {
+            if (players < MinPlayers || players > MaxPlayers)
+            {
+                throw new ArgumentOutOfRangeException(nameof(players));
+            }
+
+            this.Players = Enumerable.Range(0, players).Select(i => new PlayerToken()).ToImmutableList();
+            this.Dealer = this.Players.Last();
+            this.ActivePlayer = this.Dealer;
+            this.Phase = Phase.Deal;
+            this.RemainingActions = ActionsPerTurn;
+            this.IsRoundOver = false;
+            this.Deck = ImmutableList<Card>.Empty;
+            this.Scores = this.Players.ToImmutableDictionary(p => p, p => 0);
+            this.Hands = this.Players.ToImmutableDictionary(p => p, p => ImmutableList<Card>.Empty);
+            this.FallacyCounter = this.Players.ToImmutableDictionary(p => p, p => 0);
+            this.Proof = StartingProof;
+        }
+
+        private GameState(
+            ImmutableList<PlayerToken> players,
+            Phase phase,
+            int remainingActions,
+            PlayerToken activePlayer,
+            PlayerToken dealer,
+            ImmutableList<Card> deck,
+            ImmutableDictionary<PlayerToken, int> scores,
+            ImmutableDictionary<PlayerToken, ImmutableList<Card>> hands,
+            ImmutableDictionary<PlayerToken, int> fallacyCounter,
+            ImmutableList<ImmutableList<PlacedCard>> proof,
+            bool isRoundOver)
+        {
+            this.Players = players;
+            this.Phase = phase;
+            this.RemainingActions = remainingActions;
+            this.ActivePlayer = activePlayer;
+            this.Dealer = dealer;
+            this.Deck = deck;
+            this.Scores = scores;
+            this.Hands = hands;
+            this.FallacyCounter = fallacyCounter;
+            this.Proof = proof;
+            this.IsRoundOver = isRoundOver;
+        }
+
+        public static ImmutableList<Card> StartingDeck { get; }
+
+        public static ImmutableList<ImmutableList<PlacedCard>> StartingProof { get; }
+
+        /// <summary>
+        /// Gets the active player.
+        /// </summary>
+        public PlayerToken ActivePlayer { get; }
+
+        /// <summary>
+        /// Gets the dealer.
+        /// </summary>
+        public PlayerToken Dealer { get; }
+
+        public ImmutableList<Card> Deck { get; }
+
+        public ImmutableDictionary<PlayerToken, int> FallacyCounter { get; }
+
+        public ImmutableDictionary<PlayerToken, ImmutableList<Card>> Hands { get; }
+
+        public bool IsRoundOver { get; }
+
+        /// <summary>
+        /// Gets the current phase of the game.
+        /// </summary>
+        public Phase Phase { get; }
+
+        /// <summary>
+        /// Gets the list of players.
+        /// </summary>
+        public ImmutableList<PlayerToken> Players { get; }
+
+        /// <inheritdoc />
+        IReadOnlyList<PlayerToken> IGameState<Move>.Players => this.Players;
+
+        public ImmutableList<ImmutableList<PlacedCard>> Proof { get; }
+
+        public int RemainingActions { get; }
+
+        public ImmutableDictionary<PlayerToken, int> Scores { get; }
+
+        /// <inheritdoc/>
+        public int CompareTo(IGameState<Move> other)
+        {
+            if (other == this)
+            {
+                return 0;
+            }
+
+            var state = other as GameState;
+            if (state == null)
+            {
+                return 1;
+            }
+
+            int comp;
+
+            if ((comp = this.Phase.CompareTo(state.Phase)) != 0 ||
+                (comp = this.RemainingActions.CompareTo(state.RemainingActions)) != 0 ||
+                (comp = this.IsRoundOver.CompareTo(state.IsRoundOver)) != 0 ||
+                (comp = this.ActivePlayer.CompareTo(state.ActivePlayer)) != 0 ||
+                (comp = this.Dealer.CompareTo(state.Dealer)) != 0 ||
+                (comp = CompareUtilities.CompareLists(this.Deck, state.Deck)) != 0 ||
+                (comp = CompareUtilities.CompareLists(this.Players, state.Players)) != 0)
+            {
+                return comp;
+            }
+
+            for (var i = 0; i < StartingProof.Count; i++)
+            {
+                if ((comp = CompareUtilities.CompareLists(this.Proof[i], state.Proof[i])) != 0)
+                {
+                    return comp;
+                }
+            }
+
+            foreach (var player in this.Players)
+            {
+                if ((comp = this.Scores[player].CompareTo(state.Scores[player])) != 0 ||
+                    (comp = CompareUtilities.CompareLists(this.Hands[player], state.Hands[player])) != 0)
+                {
+                    return comp;
+                }
+            }
+
+            return 0;
+        }
+
+        /// <inheritdoc/>
+        public IReadOnlyList<Move> GetAvailableMoves()
+        {
+            var moves = new List<Move>();
+
+            moves.AddRange(Moves.DealMove.GenerateMoves(this));
+            moves.AddRange(Moves.DrawCardsMove.GenerateMoves(this));
+            moves.AddRange(Moves.PlayFallacyMove.GenerateMoves(this));
+            moves.AddRange(GetContinuationMoves(this));
+            moves.AddRange(Moves.PlayErgoMove.GenerateMoves(this));
+            moves.AddRange(Moves.PlayJustificationMove.GenerateMoves(this));
+            moves.AddRange(Moves.DiscardMove.GenerateMoves(this));
+
+            if (this.Phase == Phase.Play)
+            {
+                Debug.WriteLine($"Eliminated {moves.RemoveAll(m => !HasLegalContinuations(this, this.ActivePlayer, m))} illegal moves.");
+            }
+
+            return moves.ToImmutableList();
+        }
+
+        /// <inheritdoc/>
+        public IEnumerable<IWeighted<IGameState<Move>>> GetOutcomes(Move move)
+        {
+            if (move.IsDeterministic)
+            {
+                yield return Weighted.Create(this.MakeMove(move), 1);
+                yield break;
+            }
+
+            foreach (var outcome in move.GetOutcomes(this))
+            {
+                yield return outcome;
+            }
+        }
+
+        /// <inheritdoc/>
+        public IEnumerable<IGameState<Move>> GetView(PlayerToken playerToken, int maxStates)
+        {
+            var shuffler = new GameShuffler<GameState>(this);
+
+            for (var i = 0; i < this.Deck.Count; i++)
+            {
+                var index = i;
+                shuffler.Add(
+                    "Cards",
+                    this.Deck[index],
+                    (state, value) => state.With(
+                        deck: state.Deck.SetItem(index, value)));
+            }
+
+            foreach (var p in this.Players)
+            {
+                var player = p;
+                if (player == playerToken)
+                {
+                    continue;
+                }
+
+                for (var i = 0; i < this.Hands[player].Count; i++)
+                {
+                    var index = i;
+                    shuffler.Add(
+                        "Cards",
+                        this.Hands[player][index],
+                        (state, value) => state.With(
+                            hands: state.Hands.SetItem(player, state.Hands[player].SetItem(index, value))));
+                }
+            }
+
+            return shuffler.Take(maxStates);
+        }
+
+        /// <inheritdoc/>
+        public IReadOnlyCollection<PlayerToken> GetWinners()
+        {
+            if (this.Phase != Phase.End)
+            {
+                return ImmutableList<PlayerToken>.Empty;
+            }
+
+            return this.Players.AllMaxBy(p => this.Scores[p]).ToImmutableList();
+        }
+
+        /// <inheritdoc />
+        IGameState<Move> IGameState<Move>.MakeMove(Move move) => this.MakeMove(move);
+
+        /// <summary>
+        /// Applies the move to the current game state.
+        /// </summary>
+        /// <param name="move">The <see cref="Move"/> to apply.</param>
+        /// <returns>The updated <see cref="GameState"/>.</returns>
+        public GameState MakeMove(Move move)
+        {
+            if (move == null)
+            {
+                throw new ArgumentNullException(nameof(move));
+            }
+
+            if (this.CompareTo(move.GameState) != 0)
+            {
+                var equivalentMove = this.GetAvailableMoves().Where(m => m.CompareTo(move) == 0).FirstOrDefault();
+                if (equivalentMove != null)
+                {
+                    move = equivalentMove;
+                }
+                else
+                {
+                    throw new InvalidOperationException();
+                }
+            }
+
+            return move.Apply(this);
+        }
+
+        internal GameState With(
+            Phase? phase = null,
+            int? remainingActions = null,
+            PlayerToken activePlayer = null,
+            PlayerToken dealer = null,
+            ImmutableList<Card> deck = null,
+            ImmutableDictionary<PlayerToken, int> scores = null,
+            ImmutableDictionary<PlayerToken, ImmutableList<Card>> hands = null,
+            ImmutableDictionary<PlayerToken, int> fallacyCounter = null,
+            ImmutableList<ImmutableList<PlacedCard>> proof = null,
+            bool? isRoundOver = null)
+        {
+            return new GameState(
+                players: this.Players,
+                phase: phase ?? this.Phase,
+                remainingActions: remainingActions ?? this.RemainingActions,
+                activePlayer: activePlayer ?? this.ActivePlayer,
+                dealer: dealer ?? this.Dealer,
+                deck: deck ?? this.Deck,
+                scores: scores ?? this.Scores,
+                hands: hands ?? this.Hands,
+                fallacyCounter: fallacyCounter ?? this.FallacyCounter,
+                proof: proof ?? this.Proof,
+                isRoundOver: isRoundOver ?? this.IsRoundOver);
+        }
+
+        private static IEnumerable<Move> GetContinuationMoves(GameState state)
+        {
+            foreach (var move in Moves.PlaceSymbolMove.GenerateMoves(state))
+            {
+                yield return move;
+            }
+
+            foreach (var move in Moves.PlayTabulaRasaMove.GenerateMoves(state))
+            {
+                yield return move;
+            }
+
+            foreach (var move in Moves.PlayRevolutionMove.GenerateMoves(state))
+            {
+                yield return move;
+            }
+        }
+
+        private static bool HasLegalContinuations(GameState state, PlayerToken player, Move move)
+        {
+            state = state.MakeMove(move);
+            var valid = Compiler.IsValid(state.Proof);
+
+            if (!valid && state.ActivePlayer == player)
+            {
+                valid = GetContinuationMoves(state).Any(m => HasLegalContinuations(state, player, m));
+            }
+
+            return valid;
+        }
+    }
+}
