@@ -280,6 +280,7 @@
     <Compile Include="Games\TwentyFortyEight\Moves\ComputerMove.cs" />
     <Compile Include="Games\TwentyFortyEight\Moves\PlayerMove.cs" />
     <Compile Include="GameUtilities.cs" />
+    <Compile Include="HashUtilities.cs" />
     <Compile Include="IGameState.cs" />
     <Compile Include="IMove.cs" />
     <Compile Include="IPlayer.cs" />

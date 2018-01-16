@@ -16,7 +16,7 @@ namespace GameTheory.Games.Ergo
         /// <inheritdoc/>
         public virtual int CompareTo(Card other)
         {
-            if (other == null)
+            if (object.ReferenceEquals(other, null))
             {
                 return 1;
             }

@@ -29,7 +29,7 @@ namespace GameTheory.Games.CenturySpiceRoad.MerchantCards
         /// <inheritdoc/>
         public override int CompareTo(MerchantCard other)
         {
-            if (other == this)
+            if (object.ReferenceEquals(other, this))
             {
                 return 0;
             }

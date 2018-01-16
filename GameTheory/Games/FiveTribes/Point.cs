@@ -109,11 +109,11 @@ namespace GameTheory.Games.FiveTribes
         /// <inheritdoc />
         public int CompareTo(Point other)
         {
-            if (other == this)
+            if (object.ReferenceEquals(other, this))
             {
                 return 0;
             }
-            else if (other == null)
+            else if (object.ReferenceEquals(other, null))
             {
                 return 1;
             }

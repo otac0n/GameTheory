@@ -20,11 +20,11 @@ namespace GameTheory.Players.MaximizingPlayer
     public abstract class MaximizingPlayer<TMove, TScore> : IPlayer<TMove>
         where TMove : IMove
     {
-        private const int TrimDepth = 32;
-        private const bool UseCache = true;
-        private readonly SplayTree<IGameState<TMove>, Mainline> cache = !UseCache ? null : new SplayTree<IGameState<TMove>, Mainline>();
         private readonly int minPly;
+
         private readonly ResultScoringMetric scoringMetric;
+
+        private ICache cache = new Caches.SplayTreeCache();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MaximizingPlayer{TMove, TScore}"/> class.
@@ -49,6 +49,15 @@ namespace GameTheory.Players.MaximizingPlayer
 
         /// <inheritdoc />
         public event EventHandler<MessageSentEventArgs> MessageSent;
+
+        private interface ICache
+        {
+            void Set(IGameState<TMove> state, Mainline result);
+
+            void Trim();
+
+            bool TryGetValue(IGameState<TMove> state, out Mainline cached);
+        }
 
         /// <inheritdoc />
         public PlayerToken PlayerToken { get; }
@@ -91,10 +100,7 @@ namespace GameTheory.Players.MaximizingPlayer
                 mainline = this.GetMove(states, this.minPly, cancel);
             }
 
-            if (UseCache)
-            {
-                this.cache.Trim(TrimDepth);
-            }
+            this.cache.Trim();
 
             if (mainline == null || !mainline.Moves.Any() || mainline.Moves.Peek().PlayerToken != this.PlayerToken)
             {
@@ -246,7 +252,7 @@ namespace GameTheory.Players.MaximizingPlayer
 
         private Mainline GetMove(IGameState<TMove> state, int ply, CancellationToken cancel)
         {
-            if (UseCache && this.cache.TryGetValue(state, out var cached) && cached.Depth >= ply)
+            if (this.cache.TryGetValue(state, out var cached) && cached.Depth >= ply)
             {
                 return cached;
             }
@@ -362,10 +368,7 @@ namespace GameTheory.Players.MaximizingPlayer
                 }
             }
 
-            if (UseCache)
-            {
-                this.cache[state] = result;
-            }
+            this.cache.Set(state, result);
 
             return result;
         }
@@ -441,6 +444,50 @@ namespace GameTheory.Players.MaximizingPlayer
             /// <inheritdoc/>
             public override int GetHashCode() =>
                 this.GameState.GetHashCode() ^ this.PlayerToken.GetHashCode();
+        }
+
+        private static class Caches
+        {
+            public class DictionaryCache : ICache
+            {
+                private readonly Dictionary<IGameState<TMove>, Mainline> storage = new Dictionary<IGameState<TMove>, Mainline>();
+
+                public void Set(IGameState<TMove> state, Mainline result) => this.storage[state] = result;
+
+                public void Trim() => this.storage.Clear();
+
+                public bool TryGetValue(IGameState<TMove> state, out Mainline cached) => this.storage.TryGetValue(state, out cached);
+            }
+
+            public class NullCache : ICache
+            {
+                public void Set(IGameState<TMove> state, Mainline result)
+                {
+                }
+
+                public void Trim()
+                {
+                }
+
+                public bool TryGetValue(IGameState<TMove> state, out Mainline cached)
+                {
+                    cached = default(Mainline);
+                    return false;
+                }
+            }
+
+            public class SplayTreeCache : ICache
+            {
+                private const int TrimDepth = 32;
+
+                private readonly SplayTree<IGameState<TMove>, Mainline> storage = new SplayTree<IGameState<TMove>, Mainline>();
+
+                public void Set(IGameState<TMove> state, Mainline result) => this.storage[state] = result;
+
+                public void Trim() => this.storage.Trim(TrimDepth);
+
+                public bool TryGetValue(IGameState<TMove> state, out Mainline cached) => this.storage.TryGetValue(state, out cached);
+            }
         }
 
         private class ComparableEqualityComparer<T> : IEqualityComparer<T>

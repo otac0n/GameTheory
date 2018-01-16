@@ -13,7 +13,7 @@ namespace GameTheory.Games.FiveTribes
         /// <inheritdoc />
         public virtual int CompareTo(InterstitialState other)
         {
-            if (other == null)
+            if (object.ReferenceEquals(other, null))
             {
                 return 1;
             }

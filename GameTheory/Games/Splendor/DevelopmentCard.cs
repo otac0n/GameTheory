@@ -95,16 +95,17 @@ namespace GameTheory.Games.Splendor
         /// <inheritdoc/>
         public int CompareTo(DevelopmentCard other)
         {
-            if (other == this)
+            if (object.ReferenceEquals(other, this))
             {
                 return 0;
             }
-            else if (other == null)
+            else if (object.ReferenceEquals(other, null))
             {
                 return 1;
             }
 
             int comp;
+
             if ((comp = this.Prestige.CompareTo(other.Prestige)) != 0 ||
                 (comp = this.Cost.CompareTo(other.Cost)) != 0 ||
                 (comp = this.Bonus.CompareTo(other.Bonus)) != 0)

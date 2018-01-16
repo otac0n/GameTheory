@@ -16,7 +16,7 @@ namespace GameTheory.Games.CenturySpiceRoad
         /// <inheritdoc/>
         public virtual int CompareTo(MerchantCard other)
         {
-            if (other == null)
+            if (object.ReferenceEquals(other, null))
             {
                 return 1;
             }

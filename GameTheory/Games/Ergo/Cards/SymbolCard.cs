@@ -112,7 +112,7 @@ namespace GameTheory.Games.Ergo.Cards
         /// <inheritdoc/>
         public override int CompareTo(Card other)
         {
-            if (other == this)
+            if (object.ReferenceEquals(other, this))
             {
                 return 0;
             }

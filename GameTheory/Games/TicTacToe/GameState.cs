@@ -114,13 +114,13 @@ namespace GameTheory.Games.TicTacToe
         /// <inheritdoc/>
         public int CompareTo(IGameState<Move> other)
         {
-            if (other == this)
+            if (object.ReferenceEquals(other, this))
             {
                 return 0;
             }
 
             var state = other as GameState;
-            if (state == null)
+            if (object.ReferenceEquals(state, null))
             {
                 return 1;
             }
@@ -152,6 +152,9 @@ namespace GameTheory.Games.TicTacToe
             return 0;
         }
 
+        /// <inheritdoc/>
+        public override bool Equals(object obj) => this.CompareTo(obj as IGameState<Move>) == 0;
+
         /// <inheritdoc />
         public IReadOnlyList<Move> GetAvailableMoves()
         {
@@ -174,6 +177,25 @@ namespace GameTheory.Games.TicTacToe
             }
 
             return moves.ToImmutable();
+        }
+
+        /// <inheritdoc/>
+        public override int GetHashCode()
+        {
+            var hash = HashUtilities.Seed;
+            HashUtilities.Combine(ref hash, this.players[0].GetHashCode());
+            HashUtilities.Combine(ref hash, this.players[1].GetHashCode());
+
+            for (var y = 0; y < Size; y++)
+            {
+                for (var x = 0; x < Size; x++)
+                {
+                    var p = this.field[x, y];
+                    HashUtilities.Combine(ref hash, p == null ? 0 : p.GetHashCode());
+                }
+            }
+
+            return hash;
         }
 
         /// <inheritdoc />

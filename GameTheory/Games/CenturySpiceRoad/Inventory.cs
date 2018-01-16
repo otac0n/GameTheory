@@ -62,11 +62,11 @@ namespace GameTheory.Games.CenturySpiceRoad
         /// <inheritdoc/>
         public int CompareTo(Inventory other)
         {
-            if (other == this)
+            if (object.ReferenceEquals(other, this))
             {
                 return 0;
             }
-            else if (other == null)
+            else if (object.ReferenceEquals(other, null))
             {
                 return 1;
             }

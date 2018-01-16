@@ -19,9 +19,16 @@ namespace GameTheory
         /// <inheritdoc/>
         public int CompareTo(PlayerToken other)
         {
-            return this == other ? 0 :
-                other == null ? 1 :
-                this.id.CompareTo(other.id);
+            if (object.ReferenceEquals(other, this))
+            {
+                return 0;
+            }
+            else if (object.ReferenceEquals(other, null))
+            {
+                return 1;
+            }
+
+            return this.id.CompareTo(other.id);
         }
 
         /// <inheritdoc />

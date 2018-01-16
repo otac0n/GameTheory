@@ -43,16 +43,17 @@ namespace GameTheory.Games.Ergo
         /// <inheritdoc/>
         public int CompareTo(PlacedCard other)
         {
-            if (other == this)
+            if (object.ReferenceEquals(other, this))
             {
                 return 0;
             }
-            else if (other == null)
+            else if (object.ReferenceEquals(other, null))
             {
                 return 1;
             }
 
             int comp;
+
             if ((comp = this.SymbolIndex.CompareTo(other.SymbolIndex)) != 0 ||
                 (comp = this.Card.CompareTo(other.Card)) != 0)
             {

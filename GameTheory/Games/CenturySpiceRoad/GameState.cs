@@ -241,13 +241,13 @@ namespace GameTheory.Games.CenturySpiceRoad
         /// <inheritdoc />
         public int CompareTo(IGameState<Move> other)
         {
-            if (other == this)
+            if (object.ReferenceEquals(other, this))
             {
                 return 0;
             }
 
             var state = other as GameState;
-            if (state == null)
+            if (object.ReferenceEquals(state, null))
             {
                 return 1;
             }

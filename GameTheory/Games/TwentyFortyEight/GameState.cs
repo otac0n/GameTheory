@@ -108,13 +108,13 @@ namespace GameTheory.Games.TwentyFortyEight
         /// <inheritdoc/>
         public int CompareTo(IGameState<Move> other)
         {
-            if (other == this)
+            if (object.ReferenceEquals(other, this))
             {
                 return 0;
             }
 
             var state = other as GameState;
-            if (state == null)
+            if (object.ReferenceEquals(state, null))
             {
                 return 1;
             }
@@ -142,6 +142,9 @@ namespace GameTheory.Games.TwentyFortyEight
         }
 
         /// <inheritdoc/>
+        public override bool Equals(object obj) => this.CompareTo(obj as IGameState<Move>) == 0;
+
+        /// <inheritdoc/>
         public IReadOnlyList<Move> GetAvailableMoves()
         {
             if (this.turn == 0)
@@ -152,6 +155,24 @@ namespace GameTheory.Games.TwentyFortyEight
             {
                 return ComputerMove.GetMoves(this).ToArray();
             }
+        }
+
+        /// <inheritdoc/>
+        public override int GetHashCode()
+        {
+            var hash = HashUtilities.Seed;
+            HashUtilities.Combine(ref hash, (int)this.turn);
+            HashUtilities.Combine(ref hash, (int)this.turn);
+
+            for (var y = 0; y < Size; y++)
+            {
+                for (var x = 0; x < Size; x++)
+                {
+                    HashUtilities.Combine(ref hash, (int)this.field[x, y]);
+                }
+            }
+
+            return hash;
         }
 
         /// <inheritdoc/>

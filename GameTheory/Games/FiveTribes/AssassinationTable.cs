@@ -41,7 +41,7 @@ namespace GameTheory.Games.FiveTribes
         /// <inheritdoc/>
         public int CompareTo(AssassinationTable other)
         {
-            if (other == this)
+            if (object.ReferenceEquals(other, this))
             {
                 return 0;
             }
