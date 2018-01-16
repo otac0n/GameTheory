@@ -110,33 +110,30 @@ namespace GameTheory.Games.Ergo.Moves
 
         internal static IEnumerable<PlayRevolutionMove> GenerateMoves(GameState state)
         {
-            if (state.Phase == Phase.Play)
+            var activePlayer = state.ActivePlayer;
+            if (state.FallacyCounter[activePlayer] <= 0 && state.Hands[activePlayer].Contains(RevolutionCard.Instance))
             {
-                var activePlayer = state.ActivePlayer;
-                if (state.FallacyCounter[activePlayer] <= 0 && state.Hands[activePlayer].Contains(RevolutionCard.Instance))
+                for (var p1 = 0; p1 < state.Proof.Count; p1++)
                 {
-                    for (var p1 = 0; p1 < state.Proof.Count; p1++)
+                    var premise1 = state.Proof[p1];
+                    for (var i1 = 0; i1 < premise1.Count; i1++)
                     {
-                        var premise1 = state.Proof[p1];
-                        for (var i1 = 0; i1 < premise1.Count; i1++)
+                        var card1 = premise1[i1].Card;
+                        if (RotationGroups.TryGetValue(card1, out var group1))
                         {
-                            var card1 = premise1[i1].Card;
-                            if (RotationGroups.TryGetValue(card1, out var group1))
+                            for (var p2 = p1; p2 < state.Proof.Count; p2++)
                             {
-                                for (var p2 = p1; p2 < state.Proof.Count; p2++)
+                                var premise2 = state.Proof[p2];
+                                for (var i2 = p2 == p1 ? i1 + 1 : 0; i2 < premise2.Count; i2++)
                                 {
-                                    var premise2 = state.Proof[p2];
-                                    for (var i2 = p2 == p1 ? i1 + 1 : 0; i2 < premise2.Count; i2++)
+                                    var card2 = premise2[i2].Card;
+                                    if (RotationGroups.TryGetValue(card2, out var group2) && group1 == group2)
                                     {
-                                        var card2 = premise2[i2].Card;
-                                        if (RotationGroups.TryGetValue(card2, out var group2) && group1 == group2)
+                                        for (var s1 = 0; s1 < card1.Symbols.Count; s1++)
                                         {
-                                            for (var s1 = 0; s1 < card1.Symbols.Count; s1++)
+                                            for (var s2 = 0; s2 < card2.Symbols.Count; s2++)
                                             {
-                                                for (var s2 = 0; s2 < card2.Symbols.Count; s2++)
-                                                {
-                                                    yield return new PlayRevolutionMove(state, RevolutionCard.Instance, p1, i1, s1, p2, i2, s2);
-                                                }
+                                                yield return new PlayRevolutionMove(state, RevolutionCard.Instance, p1, i1, s1, p2, i2, s2);
                                             }
                                         }
                                     }

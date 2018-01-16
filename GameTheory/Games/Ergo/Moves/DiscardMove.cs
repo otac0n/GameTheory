@@ -47,12 +47,9 @@ namespace GameTheory.Games.Ergo.Moves
 
         internal static IEnumerable<DiscardMove> GenerateMoves(GameState state)
         {
-            if (state.Phase == Phase.Play)
+            foreach (var card in state.Hands[state.ActivePlayer].Distinct())
             {
-                foreach (var card in state.Hands[state.ActivePlayer].Distinct())
-                {
-                    yield return new DiscardMove(state, card);
-                }
+                yield return new DiscardMove(state, card);
             }
         }
 

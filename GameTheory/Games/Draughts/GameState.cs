@@ -20,20 +20,28 @@ namespace GameTheory.Games.Draughts
         public GameState(Variant variant)
         {
             this.Variant = variant;
-            this.Phase = Phase.Play;
-            this.Players = ImmutableList.Create(new PlayerToken(), new PlayerToken());
+            this.Players = ImmutableArray.Create(new PlayerToken(), new PlayerToken());
             this.ActivePlayer = this.Players[0];
+            this.Phase = Phase.Play;
             this.Board = variant.InitialBoardState;
             this.MaxMovePieceIndexes = ImmutableSortedSet<int>.Empty;
             this.OpponentMayRemovePiece = false;
         }
 
-        private GameState(Variant variant, Phase phase, ImmutableList<PlayerToken> players, PlayerToken activePlayer, ImmutableArray<Piece> board, Maybe<int> lastCapturingIndex, ImmutableSortedSet<int> maxMovePieceIndexes, bool opponentMayRemovePiece)
+        private GameState(
+            Variant variant,
+            ImmutableArray<PlayerToken> players,
+            Phase phase,
+            PlayerToken activePlayer,
+            ImmutableArray<Piece> board,
+            Maybe<int> lastCapturingIndex,
+            ImmutableSortedSet<int> maxMovePieceIndexes,
+            bool opponentMayRemovePiece)
         {
             this.Variant = variant;
-            this.Phase = phase;
             this.Players = players;
             this.ActivePlayer = activePlayer;
+            this.Phase = phase;
             this.Board = board;
             this.LastCapturingIndex = lastCapturingIndex;
             this.MaxMovePieceIndexes = maxMovePieceIndexes;
@@ -73,7 +81,7 @@ namespace GameTheory.Games.Draughts
         /// <summary>
         /// Gets a list of players in the current game state.
         /// </summary>
-        public ImmutableList<PlayerToken> Players { get; }
+        public ImmutableArray<PlayerToken> Players { get; }
 
         IReadOnlyList<PlayerToken> IGameState<Move>.Players => this.Players;
 
@@ -227,7 +235,6 @@ namespace GameTheory.Games.Draughts
 
         internal GameState With(
             Phase? phase = null,
-            ImmutableList<PlayerToken> players = null,
             PlayerToken activePlayer = null,
             ImmutableArray<Piece>? board = null,
             Maybe<int>? lastCapturingIndex = null,
@@ -235,9 +242,9 @@ namespace GameTheory.Games.Draughts
             bool? opponentMayRemovePiece = null)
         {
             return new GameState(
-                variant: this.Variant,
+                this.Variant,
+                this.Players,
                 phase: phase ?? this.Phase,
-                players: players ?? this.Players,
                 activePlayer: activePlayer ?? this.ActivePlayer,
                 board: board ?? this.Board,
                 lastCapturingIndex: lastCapturingIndex ?? this.LastCapturingIndex,

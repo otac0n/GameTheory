@@ -37,6 +37,16 @@ namespace GameTheory.Games.TwentyFortyEight
         public const byte LargeValue = 2;
 
         /// <summary>
+        /// The maximum number of supported players.
+        /// </summary>
+        public const int MaxPlayers = 2;
+
+        /// <summary>
+        /// The minimum number of supported players.
+        /// </summary>
+        public const int MinPlayers = 1;
+
+        /// <summary>
         /// Indicates the width and height of the playing area.
         /// </summary>
         public const int Size = 4;
@@ -59,7 +69,7 @@ namespace GameTheory.Games.TwentyFortyEight
         public GameState(int players = 1)
             : this(Enumerable.Range(0, players).Select(i => new PlayerToken()).ToImmutableArray(), Turn.Computer, new byte[Size, Size])
         {
-            if (players < 1 || players > 2)
+            if (players < MinPlayers || players > MaxPlayers)
             {
                 throw new ArgumentOutOfRangeException(nameof(players));
             }
@@ -72,11 +82,14 @@ namespace GameTheory.Games.TwentyFortyEight
             }
         }
 
-        private GameState(IReadOnlyList<PlayerToken> players, Turn turn, byte[,] field)
+        private GameState(
+            IReadOnlyList<PlayerToken> players,
+            Turn turn,
+            byte[,] field)
         {
             this.players = players;
-            this.field = field;
             this.turn = turn;
+            this.field = field;
         }
 
         /// <inheritdoc/>

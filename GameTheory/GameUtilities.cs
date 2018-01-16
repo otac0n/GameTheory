@@ -58,6 +58,14 @@ namespace GameTheory
         public static PlayerToken GetNextPlayer(this ImmutableList<PlayerToken> players, PlayerToken currentPlayer) => ((IList<PlayerToken>)players).GetNextPlayer(currentPlayer);
 
         /// <summary>
+        /// Finds the next player in the specified list of players.
+        /// </summary>
+        /// <param name="players">The list of players to search.</param>
+        /// <param name="currentPlayer">The current player.</param>
+        /// <returns>The next player, or the first player if the current player was not found.</returns>
+        public static PlayerToken GetNextPlayer(this ImmutableArray<PlayerToken> players, PlayerToken currentPlayer) => ((IList<PlayerToken>)players).GetNextPlayer(currentPlayer);
+
+        /// <summary>
         /// Gets a player number for display.
         /// </summary>
         /// <typeparam name="TMove">The type of object that represents a move in the game state.</typeparam>

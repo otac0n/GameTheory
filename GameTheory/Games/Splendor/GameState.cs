@@ -161,7 +161,7 @@ namespace GameTheory.Games.Splendor
                 throw new ArgumentOutOfRangeException(nameof(players));
             }
 
-            this.Players = Enumerable.Range(0, players).Select(i => new PlayerToken()).ToImmutableList();
+            this.Players = Enumerable.Range(0, players).Select(i => new PlayerToken()).ToImmutableArray();
             this.ActivePlayer = this.Players[0];
             this.Phase = Phase.Play;
 
@@ -193,7 +193,7 @@ namespace GameTheory.Games.Splendor
         }
 
         private GameState(
-            ImmutableList<PlayerToken> players,
+            ImmutableArray<PlayerToken> players,
             PlayerToken activePlayer,
             Phase phase,
             EnumCollection<Token> tokens,
@@ -247,7 +247,7 @@ namespace GameTheory.Games.Splendor
         /// <summary>
         /// Gets the list of players.
         /// </summary>
-        public ImmutableList<PlayerToken> Players { get; }
+        public ImmutableArray<PlayerToken> Players { get; }
 
         /// <summary>
         /// Gets available tokens.

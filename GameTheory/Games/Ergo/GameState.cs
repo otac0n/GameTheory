@@ -17,8 +17,17 @@ namespace GameTheory.Games.Ergo
         public const int ActionsPerTurn = 2;
         public const int FallacyTurns = 3;
         public const int InitialHandSize = 5;
+
+        /// <summary>
+        /// The maximum number of supported players.
+        /// </summary>
         public const int MaxPlayers = 4;
+
+        /// <summary>
+        /// The minimum number of supported players.
+        /// </summary>
         public const int MinPlayers = 2;
+
         public const int PremiseLines = 4;
         public const int TargetPoints = 50;
 
@@ -59,7 +68,7 @@ namespace GameTheory.Games.Ergo
                 throw new ArgumentOutOfRangeException(nameof(players));
             }
 
-            this.Players = Enumerable.Range(0, players).Select(i => new PlayerToken()).ToImmutableList();
+            this.Players = Enumerable.Range(0, players).Select(i => new PlayerToken()).ToImmutableArray();
             this.Dealer = this.Players.Last();
             this.ActivePlayer = this.Dealer;
             this.Phase = Phase.Deal;
@@ -70,10 +79,11 @@ namespace GameTheory.Games.Ergo
             this.Hands = this.Players.ToImmutableDictionary(p => p, p => ImmutableList<Card>.Empty);
             this.FallacyCounter = this.Players.ToImmutableDictionary(p => p, p => 0);
             this.Proof = StartingProof;
+            this.IsProofValid = true;
         }
 
         private GameState(
-            ImmutableList<PlayerToken> players,
+            ImmutableArray<PlayerToken> players,
             Phase phase,
             int remainingActions,
             PlayerToken activePlayer,
@@ -83,7 +93,8 @@ namespace GameTheory.Games.Ergo
             ImmutableDictionary<PlayerToken, ImmutableList<Card>> hands,
             ImmutableDictionary<PlayerToken, int> fallacyCounter,
             ImmutableList<ImmutableList<PlacedCard>> proof,
-            bool isRoundOver)
+            bool isRoundOver,
+            bool isProofValid)
         {
             this.Players = players;
             this.Phase = phase;
@@ -96,6 +107,7 @@ namespace GameTheory.Games.Ergo
             this.FallacyCounter = fallacyCounter;
             this.Proof = proof;
             this.IsRoundOver = isRoundOver;
+            this.IsProofValid = isProofValid;
         }
 
         public static ImmutableList<Card> StartingDeck { get; }
@@ -118,6 +130,8 @@ namespace GameTheory.Games.Ergo
 
         public ImmutableDictionary<PlayerToken, ImmutableList<Card>> Hands { get; }
 
+        public bool IsProofValid { get; }
+
         public bool IsRoundOver { get; }
 
         /// <summary>
@@ -128,7 +142,7 @@ namespace GameTheory.Games.Ergo
         /// <summary>
         /// Gets the list of players.
         /// </summary>
-        public ImmutableList<PlayerToken> Players { get; }
+        public ImmutableArray<PlayerToken> Players { get; }
 
         /// <inheritdoc />
         IReadOnlyList<PlayerToken> IGameState<Move>.Players => this.Players;
@@ -191,17 +205,29 @@ namespace GameTheory.Games.Ergo
         {
             var moves = new List<Move>();
 
-            moves.AddRange(Moves.DealMove.GenerateMoves(this));
-            moves.AddRange(Moves.DrawCardsMove.GenerateMoves(this));
-            moves.AddRange(Moves.PlayFallacyMove.GenerateMoves(this));
-            moves.AddRange(GetContinuationMoves(this));
-            moves.AddRange(Moves.PlayErgoMove.GenerateMoves(this));
-            moves.AddRange(Moves.PlayJustificationMove.GenerateMoves(this));
-            moves.AddRange(Moves.DiscardMove.GenerateMoves(this));
-
-            if (this.Phase == Phase.Play)
+            switch (this.Phase)
             {
-                Debug.WriteLine($"Eliminated {moves.RemoveAll(m => !HasLegalContinuations(this, this.ActivePlayer, m))} illegal moves.");
+                case Phase.Deal:
+                    moves.AddRange(Moves.DealMove.GenerateMoves(this));
+                    break;
+
+                case Phase.Draw:
+                    moves.AddRange(Moves.DrawCardsMove.GenerateMoves(this));
+                    break;
+
+                case Phase.Play:
+                    moves.AddRange(GetContinuationMoves(this));
+                    moves.RemoveAll(m => !HasLegalContinuations(this, this.ActivePlayer, m));
+
+                    if (this.IsProofValid)
+                    {
+                        moves.AddRange(Moves.PlayFallacyMove.GenerateMoves(this));
+                        moves.AddRange(Moves.PlayErgoMove.GenerateMoves(this));
+                        moves.AddRange(Moves.PlayJustificationMove.GenerateMoves(this));
+                        moves.AddRange(Moves.DiscardMove.GenerateMoves(this));
+                    }
+
+                    break;
             }
 
             return moves.ToImmutableList();
@@ -314,17 +340,18 @@ namespace GameTheory.Games.Ergo
             bool? isRoundOver = null)
         {
             return new GameState(
-                players: this.Players,
-                phase: phase ?? this.Phase,
-                remainingActions: remainingActions ?? this.RemainingActions,
-                activePlayer: activePlayer ?? this.ActivePlayer,
-                dealer: dealer ?? this.Dealer,
-                deck: deck ?? this.Deck,
-                scores: scores ?? this.Scores,
-                hands: hands ?? this.Hands,
-                fallacyCounter: fallacyCounter ?? this.FallacyCounter,
-                proof: proof ?? this.Proof,
-                isRoundOver: isRoundOver ?? this.IsRoundOver);
+                this.Players,
+                phase ?? this.Phase,
+                remainingActions ?? this.RemainingActions,
+                activePlayer ?? this.ActivePlayer,
+                dealer ?? this.Dealer,
+                deck ?? this.Deck,
+                scores ?? this.Scores,
+                hands ?? this.Hands,
+                fallacyCounter ?? this.FallacyCounter,
+                proof ?? this.Proof,
+                isRoundOver ?? this.IsRoundOver,
+                proof == null ? this.IsProofValid : Compiler.IsValid(proof));
         }
 
         private static IEnumerable<Move> GetContinuationMoves(GameState state)
@@ -348,7 +375,7 @@ namespace GameTheory.Games.Ergo
         private static bool HasLegalContinuations(GameState state, PlayerToken player, Move move)
         {
             state = state.MakeMove(move);
-            var valid = Compiler.IsValid(state.Proof);
+            var valid = state.IsProofValid;
 
             if (!valid && state.ActivePlayer == player)
             {

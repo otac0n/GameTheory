@@ -12,9 +12,6 @@ namespace GameTheory.Games.Mancala
     /// </summary>
     public sealed class GameState : IGameState<Move>
     {
-        private readonly PlayerToken player0;
-        private readonly PlayerToken player1;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="GameState"/> class.
         /// </summary>
@@ -22,10 +19,8 @@ namespace GameTheory.Games.Mancala
         /// <param name="initialStonesPerBin">The number of stones initially in each bin.</param>
         public GameState(int binsPerSide = 6, int initialStonesPerBin = 4)
         {
-            this.Players = ImmutableList.Create(new PlayerToken(), new PlayerToken());
-            this.player0 = this.Players[0];
-            this.player1 = this.Players[1];
-            this.ActivePlayer = this.player0;
+            this.Players = ImmutableArray.Create(new PlayerToken(), new PlayerToken());
+            this.ActivePlayer = this.Players[0];
             this.Phase = Phase.Play;
             this.BinsPerSide = binsPerSide;
             var bins = Enumerable.Repeat(initialStonesPerBin, binsPerSide);
@@ -34,14 +29,12 @@ namespace GameTheory.Games.Mancala
         }
 
         private GameState(
-            ImmutableList<PlayerToken> players,
+            ImmutableArray<PlayerToken> players,
             PlayerToken activePlayer,
             Phase phase,
             ImmutableArray<int> board)
         {
             this.Players = players;
-            this.player0 = this.Players[0];
-            this.player1 = this.Players[1];
             this.ActivePlayer = activePlayer;
             this.Phase = phase;
             this.BinsPerSide = board.Length / 2 - 1;
@@ -74,7 +67,7 @@ namespace GameTheory.Games.Mancala
         /// <summary>
         /// Gets the list of players.
         /// </summary>
-        public ImmutableList<PlayerToken> Players { get; }
+        public ImmutableArray<PlayerToken> Players { get; }
 
         /// <inheritdoc/>
         public int CompareTo(IGameState<Move> other)
@@ -142,8 +135,8 @@ namespace GameTheory.Games.Mancala
         /// <param name="playerToken">The player whose starting index should be returned.</param>
         /// <returns>The lowest index representing a bin owned by this player.</returns>
         public int GetPlayerIndexOffset(PlayerToken playerToken) =>
-            playerToken == this.player0 ? 0 :
-            playerToken == this.player1 ? this.BinsPerSide + 1 :
+            playerToken == this.Players[0] ? 0 :
+            playerToken == this.Players[1] ? this.BinsPerSide + 1 :
             throw new ArgumentOutOfRangeException(nameof(playerToken));
 
         /// <summary>

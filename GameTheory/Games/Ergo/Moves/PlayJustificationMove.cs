@@ -55,17 +55,14 @@ namespace GameTheory.Games.Ergo.Moves
 
         internal static IEnumerable<PlayJustificationMove> GenerateMoves(GameState state)
         {
-            if (state.Phase == Phase.Play)
+            var activePlayer = state.ActivePlayer;
+            if (state.FallacyCounter[activePlayer] > 0)
             {
-                var activePlayer = state.ActivePlayer;
-                if (state.FallacyCounter[activePlayer] > 0)
+                foreach (var justification in JustificationCards)
                 {
-                    foreach (var justification in JustificationCards)
+                    if (state.Hands[activePlayer].Contains(justification))
                     {
-                        if (state.Hands[activePlayer].Contains(justification))
-                        {
-                            yield return new PlayJustificationMove(state, justification);
-                        }
+                        yield return new PlayJustificationMove(state, justification);
                     }
                 }
             }

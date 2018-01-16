@@ -143,7 +143,7 @@ namespace GameTheory.Games.CenturySpiceRoad
                 throw new ArgumentOutOfRangeException(nameof(players));
             }
 
-            this.Players = Enumerable.Range(0, players).Select(i => new PlayerToken()).ToImmutableList();
+            this.Players = Enumerable.Range(0, players).Select(i => new PlayerToken()).ToImmutableArray();
             this.ActivePlayer = this.Players[0];
             this.Phase = Phase.Play;
             this.Inventory = Enumerable.Range(0, players).ToImmutableDictionary(i => this.Players[i], i => new Inventory(InitialSpices[i], InitialHand));
@@ -155,7 +155,7 @@ namespace GameTheory.Games.CenturySpiceRoad
         }
 
         private GameState(
-            ImmutableList<PlayerToken> players,
+            ImmutableArray<PlayerToken> players,
             PlayerToken activePlayer,
             Phase phase,
             int merchantCardIndexAfforded,
@@ -213,7 +213,7 @@ namespace GameTheory.Games.CenturySpiceRoad
         /// <summary>
         /// Gets the list of players.
         /// </summary>
-        public ImmutableList<PlayerToken> Players { get; }
+        public ImmutableArray<PlayerToken> Players { get; }
 
         /// <inheritdoc />
         IReadOnlyList<PlayerToken> IGameState<Move>.Players => this.Players;
@@ -388,7 +388,6 @@ namespace GameTheory.Games.CenturySpiceRoad
         }
 
         internal GameState With(
-            ImmutableList<PlayerToken> players = null,
             PlayerToken activePlayer = null,
             Phase? phase = null,
             int? merchantCardIndexAfforded = null,
@@ -401,7 +400,7 @@ namespace GameTheory.Games.CenturySpiceRoad
             ImmutableList<PointCard> pointCardTrack = null)
         {
             return new GameState(
-                players ?? this.Players,
+                this.Players,
                 activePlayer ?? this.ActivePlayer,
                 phase ?? this.Phase,
                 merchantCardIndexAfforded ?? this.MerchantCardIndexAfforded,

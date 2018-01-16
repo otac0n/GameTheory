@@ -33,10 +33,7 @@ namespace GameTheory.Games.Ergo.Moves
 
         internal static IEnumerable<DrawCardsMove> GenerateMoves(GameState state)
         {
-            if (state.Phase == Phase.Draw)
-            {
-                yield return new DrawCardsMove(state);
-            }
+            yield return new DrawCardsMove(state);
         }
 
         internal override GameState Apply(GameState state)

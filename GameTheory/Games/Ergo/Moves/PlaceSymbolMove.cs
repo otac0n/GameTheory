@@ -72,22 +72,19 @@ namespace GameTheory.Games.Ergo.Moves
 
         internal static IEnumerable<PlaceSymbolMove> GenerateMoves(GameState state)
         {
-            if (state.Phase == Phase.Play)
+            var activePlayer = state.ActivePlayer;
+            if (state.FallacyCounter[activePlayer] <= 0)
             {
-                var activePlayer = state.ActivePlayer;
-                if (state.FallacyCounter[activePlayer] <= 0)
+                foreach (var card in state.Hands[activePlayer].OfType<SymbolCard>().Distinct())
                 {
-                    foreach (var card in state.Hands[activePlayer].OfType<SymbolCard>().Distinct())
+                    for (var p = 0; p < state.Proof.Count; p++)
                     {
-                        for (var p = 0; p < state.Proof.Count; p++)
+                        var premise = state.Proof[p];
+                        for (var i = 0; i <= premise.Count; i++)
                         {
-                            var premise = state.Proof[p];
-                            for (var i = 0; i <= premise.Count; i++)
+                            for (var s = 0; s < card.Symbols.Count; s++)
                             {
-                                for (var s = 0; s < card.Symbols.Count; s++)
-                                {
-                                    yield return new PlaceSymbolMove(state, card, s, p, i);
-                                }
+                                yield return new PlaceSymbolMove(state, card, s, p, i);
                             }
                         }
                     }

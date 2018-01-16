@@ -50,7 +50,7 @@ namespace GameTheory.Games.Lotus
                 throw new ArgumentOutOfRangeException(nameof(players));
             }
 
-            this.Players = Enumerable.Range(0, players).Select(i => new PlayerToken()).ToImmutableList();
+            this.Players = Enumerable.Range(0, players).Select(i => new PlayerToken()).ToImmutableArray();
             this.ActivePlayer = this.Players[0];
             this.Phase = Phase.Play;
             this.Inventory = Enumerable.Range(0, players).ToImmutableDictionary(i => this.Players[i], i => new Inventory(MakeDeck(this.Players[i], players)));
@@ -62,7 +62,7 @@ namespace GameTheory.Games.Lotus
         }
 
         private GameState(
-            ImmutableList<PlayerToken> players,
+            ImmutableArray<PlayerToken> players,
             PlayerToken activePlayer,
             Phase phase,
             ImmutableDictionary<PlayerToken, Inventory> inventory,
@@ -116,7 +116,7 @@ namespace GameTheory.Games.Lotus
         /// <summary>
         /// Gets the list of players.
         /// </summary>
-        public ImmutableList<PlayerToken> Players { get; }
+        public ImmutableArray<PlayerToken> Players { get; }
 
         IReadOnlyList<PlayerToken> IGameState<Move>.Players => this.Players;
 
@@ -359,7 +359,6 @@ namespace GameTheory.Games.Lotus
         }
 
         internal GameState With(
-            ImmutableList<PlayerToken> players = null,
             PlayerToken activePlayer = null,
             Phase? phase = null,
             ImmutableDictionary<PlayerToken, Inventory> inventory = null,
@@ -370,7 +369,7 @@ namespace GameTheory.Games.Lotus
             ImmutableList<PetalCard> availableWildflowers = null)
         {
             return new GameState(
-                players ?? this.Players,
+                this.Players,
                 activePlayer ?? this.ActivePlayer,
                 phase ?? this.Phase,
                 inventory ?? this.Inventory,

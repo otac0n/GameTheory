@@ -58,18 +58,15 @@ namespace GameTheory.Games.Ergo.Moves
 
         internal static IEnumerable<PlayErgoMove> GenerateMoves(GameState state)
         {
-            if (state.Phase == Phase.Play)
+            foreach (var ergo in ErgoCards)
             {
-                foreach (var ergo in ErgoCards)
+                if (state.Hands[state.ActivePlayer].Contains(ergo))
                 {
-                    if (state.Hands[state.ActivePlayer].Contains(ergo))
+                    var needed = new HashSet<Symbol>(SymbolCard.WildVariable.Symbols);
+                    needed.ExceptWith(state.Proof.SelectMany(p => p.Select(c => c.Symbol)));
+                    if (needed.Count == 0)
                     {
-                        var needed = new HashSet<Symbol>(SymbolCard.WildVariable.Symbols);
-                        needed.ExceptWith(state.Proof.SelectMany(p => p.Select(c => c.Symbol)));
-                        if (needed.Count == 0)
-                        {
-                            yield return new PlayErgoMove(state, ergo);
-                        }
+                        yield return new PlayErgoMove(state, ergo);
                     }
                 }
             }

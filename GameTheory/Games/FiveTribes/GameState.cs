@@ -153,7 +153,7 @@ namespace GameTheory.Games.FiveTribes
                 throw new ArgumentOutOfRangeException(nameof(players));
             }
 
-            this.Players = Enumerable.Range(0, players).Select(i => new PlayerToken()).ToImmutableList();
+            this.Players = Enumerable.Range(0, players).Select(i => new PlayerToken()).ToImmutableArray();
             this.Phase = Phase.Bid;
             this.BidOrderTrack = ImmutableQueue.CreateRange((players == 2 ? this.Players.Concat(this.Players) : this.Players).Shuffle());
             this.TurnOrderTrack = ImmutableList.CreateRange(new PlayerToken[TurnOrderTrackCosts.Count]);
@@ -172,7 +172,9 @@ namespace GameTheory.Games.FiveTribes
         }
 
         internal GameState(
+            ImmutableArray<PlayerToken> players,
             ImmutableDictionary<string, string> additionalState,
+            InterstitialState interstitialState,
             ImmutableDictionary<PlayerToken, AssassinationTable> assassinationTables,
             EnumCollection<Meeple> bag,
             ImmutableQueue<PlayerToken> bidOrderTrack,
@@ -182,12 +184,10 @@ namespace GameTheory.Games.FiveTribes
             ImmutableDictionary<PlayerToken, Inventory> inventory,
             Point lastPoint,
             Phase phase,
-            ImmutableList<PlayerToken> players,
             Point previousPoint,
             EnumCollection<Resource> resourceDiscards,
             EnumCollection<Resource> resourcePile,
             ImmutableDictionary<PlayerToken, ScoreTable> scoreTables,
-            InterstitialState interstitialState,
             ImmutableList<Square> sultanate,
             ImmutableList<PlayerToken> turnOrderTrack,
             ImmutableList<Djinn> visibleDjinns,
@@ -248,7 +248,7 @@ namespace GameTheory.Games.FiveTribes
         /// <summary>
         /// Gets the per-player Camel limit.
         /// </summary>
-        public int CamelLimit => this.Players.Count > 2 ? 8 : 11;
+        public int CamelLimit => this.Players.Length > 2 ? 8 : 11;
 
         /// <summary>
         /// Gets the <see cref="Djinn"/> discard pile.
@@ -291,7 +291,7 @@ namespace GameTheory.Games.FiveTribes
         /// <summary>
         /// Gets the list of players.
         /// </summary>
-        public ImmutableList<PlayerToken> Players { get; }
+        public ImmutableArray<PlayerToken> Players { get; }
 
         /// <summary>
         /// Gets the previous-to-last <see cref="Point"/> in the <see cref="Sultanate"/> that had <see cref="Meeple">Meeples</see> picked up or dropped.
@@ -704,10 +704,29 @@ namespace GameTheory.Games.FiveTribes
         /// <param name="visibleDjinns"><c>null</c> to keep the existing value, or any other value to update <see cref="VisibleDjinns"/>.</param>
         /// <param name="visibleResources"><c>null</c> to keep the existing value, or any other value to update <see cref="VisibleResources"/>.</param>
         /// <returns>The new <see cref="GameState"/>.</returns>
-        public GameState With(ImmutableDictionary<PlayerToken, AssassinationTable> assassinationTables = null, EnumCollection<Meeple> bag = null, ImmutableQueue<PlayerToken> bidOrderTrack = null, ImmutableList<Djinn> djinnDiscards = null, ImmutableList<Djinn> djinnPile = null, EnumCollection<Meeple> inHand = null, ImmutableDictionary<PlayerToken, Inventory> inventory = null, Point? lastPoint = null, Phase? phase = null, ImmutableList<PlayerToken> players = null, Point? previousPoint = null, EnumCollection<Resource> resourceDiscards = null, EnumCollection<Resource> resourcePile = null, ImmutableDictionary<PlayerToken, ScoreTable> scoreTables = null, ImmutableList<Square> sultanate = null, ImmutableList<PlayerToken> turnOrderTrack = null, ImmutableList<Djinn> visibleDjinns = null, ImmutableList<Resource> visibleResources = null)
+        public GameState With(
+            ImmutableDictionary<PlayerToken, AssassinationTable> assassinationTables = null,
+            EnumCollection<Meeple> bag = null,
+            ImmutableQueue<PlayerToken> bidOrderTrack = null,
+            ImmutableList<Djinn> djinnDiscards = null,
+            ImmutableList<Djinn> djinnPile = null,
+            EnumCollection<Meeple> inHand = null,
+            ImmutableDictionary<PlayerToken, Inventory> inventory = null,
+            Point? lastPoint = null,
+            Phase? phase = null,
+            Point? previousPoint = null,
+            EnumCollection<Resource> resourceDiscards = null,
+            EnumCollection<Resource> resourcePile = null,
+            ImmutableDictionary<PlayerToken, ScoreTable> scoreTables = null,
+            ImmutableList<Square> sultanate = null,
+            ImmutableList<PlayerToken> turnOrderTrack = null,
+            ImmutableList<Djinn> visibleDjinns = null,
+            ImmutableList<Resource> visibleResources = null)
         {
             return new GameState(
+                this.Players,
                 this.additionalState,
+                null,
                 assassinationTables ?? this.AssassinationTables,
                 bag ?? this.Bag,
                 bidOrderTrack ?? this.BidOrderTrack,
@@ -717,12 +736,10 @@ namespace GameTheory.Games.FiveTribes
                 inventory ?? this.Inventory,
                 lastPoint ?? this.LastPoint,
                 phase ?? this.Phase,
-                players ?? this.Players,
                 previousPoint ?? this.PreviousPoint,
                 resourceDiscards ?? this.ResourceDiscards,
                 resourcePile ?? this.ResourcePile,
                 scoreTables ?? this.ScoreTables,
-                null,
                 sultanate ?? this.Sultanate,
                 turnOrderTrack ?? this.TurnOrderTrack,
                 visibleDjinns ?? this.VisibleDjinns,
@@ -737,7 +754,9 @@ namespace GameTheory.Games.FiveTribes
         public GameState WithInterstitialState(InterstitialState interstitialState)
         {
             return new GameState(
+                this.Players,
                 this.additionalState,
+                interstitialState,
                 this.AssassinationTables,
                 this.Bag,
                 this.BidOrderTrack,
@@ -747,12 +766,10 @@ namespace GameTheory.Games.FiveTribes
                 this.Inventory,
                 this.LastPoint,
                 this.Phase,
-                this.Players,
                 this.PreviousPoint,
                 this.ResourceDiscards,
                 this.ResourcePile,
                 this.ScoreTables,
-                interstitialState,
                 this.Sultanate,
                 this.TurnOrderTrack,
                 this.VisibleDjinns,
@@ -768,7 +785,9 @@ namespace GameTheory.Games.FiveTribes
         public GameState WithState(string key, string value)
         {
             return new GameState(
+                this.Players,
                 value == null ? this.additionalState.Remove(key) : this.additionalState.SetItem(key, value),
+                null,
                 this.AssassinationTables,
                 this.Bag,
                 this.BidOrderTrack,
@@ -778,12 +797,10 @@ namespace GameTheory.Games.FiveTribes
                 this.Inventory,
                 this.LastPoint,
                 this.Phase,
-                this.Players,
                 this.PreviousPoint,
                 this.ResourceDiscards,
                 this.ResourcePile,
                 this.ScoreTables,
-                null,
                 this.Sultanate,
                 this.TurnOrderTrack,
                 this.VisibleDjinns,

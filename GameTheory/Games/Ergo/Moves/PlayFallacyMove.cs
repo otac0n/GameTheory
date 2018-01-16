@@ -53,20 +53,17 @@ namespace GameTheory.Games.Ergo.Moves
 
         internal static IEnumerable<PlayFallacyMove> GenerateMoves(GameState state)
         {
-            if (state.Phase == Phase.Play)
+            var activePlayer = state.ActivePlayer;
+            if (state.Hands[activePlayer].Contains(FallacyCard.Instance))
             {
-                var activePlayer = state.ActivePlayer;
-                if (state.Hands[activePlayer].Contains(FallacyCard.Instance))
+                foreach (var victim in state.Players)
                 {
-                    foreach (var victim in state.Players)
+                    if (victim == activePlayer || state.FallacyCounter[victim] < 0)
                     {
-                        if (victim == activePlayer || state.FallacyCounter[victim] < 0)
-                        {
-                            continue;
-                        }
-
-                        yield return new PlayFallacyMove(state, FallacyCard.Instance, victim);
+                        continue;
                     }
+
+                    yield return new PlayFallacyMove(state, FallacyCard.Instance, victim);
                 }
             }
         }

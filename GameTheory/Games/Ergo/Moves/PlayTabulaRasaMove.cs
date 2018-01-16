@@ -61,18 +61,15 @@ namespace GameTheory.Games.Ergo.Moves
 
         internal static IEnumerable<PlayTabulaRasaMove> GenerateMoves(GameState state)
         {
-            if (state.Phase == Phase.Play)
+            var activePlayer = state.ActivePlayer;
+            if (state.FallacyCounter[activePlayer] <= 0 && state.Hands[activePlayer].Contains(TabulaRasaCard.Instance))
             {
-                var activePlayer = state.ActivePlayer;
-                if (state.FallacyCounter[activePlayer] <= 0 && state.Hands[activePlayer].Contains(TabulaRasaCard.Instance))
+                for (var p = 0; p < state.Proof.Count; p++)
                 {
-                    for (var p = 0; p < state.Proof.Count; p++)
+                    var premise = state.Proof[p];
+                    for (var i = 0; i < premise.Count; i++)
                     {
-                        var premise = state.Proof[p];
-                        for (var i = 0; i < premise.Count; i++)
-                        {
-                            yield return new PlayTabulaRasaMove(state, TabulaRasaCard.Instance, p, i);
-                        }
+                        yield return new PlayTabulaRasaMove(state, TabulaRasaCard.Instance, p, i);
                     }
                 }
             }

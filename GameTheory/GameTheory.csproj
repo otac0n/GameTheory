@@ -289,7 +289,6 @@
     <Compile Include="IWeighted.cs" />
     <Compile Include="Maybe.cs" />
     <Compile Include="MessageSentEventArgs.cs" />
-    <Compile Include="Players\MaximizingPlayer\Mainline.cs" />
     <Compile Include="Players\MaximizingPlayer\MaximizingPlayer.cs" />
     <Compile Include="Players\FiveTribesMaximizingPlayer.cs" />
     <Compile Include="Players\DraughtsMaximizingPlayer.cs" />

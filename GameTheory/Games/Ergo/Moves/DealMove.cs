@@ -39,10 +39,7 @@ namespace GameTheory.Games.Ergo.Moves
 
         internal static IEnumerable<DealMove> GenerateMoves(GameState state)
         {
-            if (state.Phase == Phase.Deal)
-            {
-                yield return new DealMove(state);
-            }
+            yield return new DealMove(state);
         }
 
         internal override GameState Apply(GameState state)

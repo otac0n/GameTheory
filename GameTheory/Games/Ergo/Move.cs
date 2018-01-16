@@ -80,7 +80,7 @@ namespace GameTheory.Games.Ergo
                     if (state.Deck.Count == 0 || state.IsRoundOver)
                     {
                         IList<PlayerToken> winningPlayers;
-                        if (Compiler.IsValid(state.Proof) && Compiler.TryCompileProof(state.Proof, out var compiled))
+                        if (state.IsProofValid && Compiler.TryCompileProof(state.Proof, out var compiled))
                         {
                             var compiledFunc = compiled.Compile();
                             var satisfied = Enumerable.Range(0, 1 << GameState.MaxPlayers)
@@ -90,7 +90,7 @@ namespace GameTheory.Games.Ergo
 
                             winningPlayers = satisfied.Count == 0
                                 ? (IList<PlayerToken>)ImmutableList<PlayerToken>.Empty
-                                : Enumerable.Range(0, state.Players.Count).Where(i => satisfied.All(x => x[i])).Select(i => state.Players[i]).ToList();
+                                : Enumerable.Range(0, state.Players.Length).Where(i => satisfied.All(x => x[i])).Select(i => state.Players[i]).ToList();
                         }
                         else
                         {
