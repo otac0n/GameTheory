@@ -17,6 +17,7 @@ namespace GameTheory.Games.Ergo.Moves
         {
             RotationGroups = ImmutableDictionary.CreateRange(new Dictionary<Card, int>
             {
+                [SymbolCard.Parenthesis] = 0,
                 [SymbolCard.VariableA] = 1,
                 [SymbolCard.VariableB] = 1,
                 [SymbolCard.VariableC] = 1,
