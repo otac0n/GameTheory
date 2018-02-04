@@ -94,6 +94,9 @@ namespace GameTheory.Games.Mancala
             return 0;
         }
 
+        /// <inheritdoc/>
+        public override bool Equals(object obj) => this.CompareTo(obj as IGameState<Move>) == 0;
+
         /// <inheritdoc />
         public IReadOnlyList<Move> GetAvailableMoves()
         {
@@ -113,6 +116,21 @@ namespace GameTheory.Games.Mancala
 
             Array.Resize(ref moves, b);
             return moves;
+        }
+
+        /// <inheritdoc/>
+        public override int GetHashCode()
+        {
+            var hash = HashUtilities.Seed;
+            HashUtilities.Combine(ref hash, this.Players[0].GetHashCode());
+            HashUtilities.Combine(ref hash, this.Players[1].GetHashCode());
+
+            for (var i = 0; i < this.Board.Length; i++)
+            {
+                HashUtilities.Combine(ref hash, this.Board[i]);
+            }
+
+            return hash;
         }
 
         /// <inheritdoc />
