@@ -47,20 +47,41 @@ namespace GameTheory.Catalogs
 
         private IEnumerable<Player> FindPlayersInternal(Type moveType)
         {
-            var playerInterface = typeof(IPlayer<>).MakeGenericType(moveType);
+            var playerUnconstructed = typeof(IPlayer<>);
+            var playerInterface = playerUnconstructed.MakeGenericType(moveType);
             foreach (var assembly in this.assemblies)
             {
                 var staticPlayers = from t in assembly.ExportedTypes
                                     where playerInterface.GetTypeInfo().IsAssignableFrom(t.GetTypeInfo())
                                     select t;
+
+                var candidateTypeParameters = new List<Type> { moveType };
+                if (moveType.IsConstructedGenericType && moveType.GenericTypeArguments.Length == 1)
+                {
+                    candidateTypeParameters.Add(moveType.GenericTypeArguments.Single());
+                }
+
+                var tryMakePlayerType = new Func<Type, Type, Type>((playerType, argument) =>
+                {
+                    try
+                    {
+                        return playerType.MakeGenericType(argument);
+                    }
+                    catch (ArgumentException)
+                    {
+                        return null;
+                    }
+                });
+
                 var constructedPlayers = from t in assembly.ExportedTypes
                                          let info = t.GetTypeInfo()
                                          let typeParameters = info.GenericTypeParameters
                                          where typeParameters.Length == 1
-                                         let typeParameterInterfaces = typeParameters[0].GetTypeInfo().ImplementedInterfaces.ToList()
-                                         where typeParameterInterfaces.Any(i => i == typeof(IMove))
-                                         let c = t.MakeGenericType(moveType)
-                                         where !c.GetTypeInfo().IsAbstract
+                                         where info.ImplementedInterfaces.Any(i => i == playerUnconstructed || (i.IsConstructedGenericType && i.GetGenericTypeDefinition() == playerUnconstructed))
+                                         let constraints = typeParameters[0].GetTypeInfo().GetGenericParameterConstraints()
+                                         from candidate in candidateTypeParameters
+                                         let c = tryMakePlayerType(t, candidate)
+                                         where c != null && !c.GetTypeInfo().IsAbstract
                                          where playerInterface.GetTypeInfo().IsAssignableFrom(c.GetTypeInfo())
                                          select c;
 
