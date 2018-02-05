@@ -128,6 +128,28 @@ namespace GameTheory.Players.MaximizingPlayer
         {
         }
 
+        /// <summary>
+        /// Gets the lead of a specific player over the field.  In order to support games of 3 or more players, this class tries to maximize the lead rather than the actual score value.
+        /// In cooperative games, override this to ensure that coalitions of players cooperate.
+        /// </summary>
+        /// <param name="score">Contains the scores for the players in the specified game state.</param>
+        /// <param name="state">The <see cref="IGameState{TMove}"/> that was scored.</param>
+        /// <param name="player">The player whose lead should be retrieved.</param>
+        /// <returns>The player's lead, as a score.</returns>
+        protected virtual ResultScore<TScore> GetLead(IDictionary<PlayerToken, ResultScore<TScore>> score, IGameState<TMove> state, PlayerToken player)
+        {
+            if (state.Players.Count == 1)
+            {
+                return score[player];
+            }
+            else
+            {
+                return this.scoringMetric.Difference(
+                    score[player],
+                    score.Where(s => s.Key != player).OrderByDescending(s => s.Value, this.scoringMetric).First().Value);
+            }
+        }
+
         private Mainline CombineOutcomes(IList<IWeighted<Mainline>> mainlines)
         {
             if (mainlines.Count == 1)
@@ -178,20 +200,6 @@ namespace GameTheory.Players.MaximizingPlayer
         private ResultScore<TScore> GetLead(Mainline mainline, PlayerToken player)
         {
             return this.GetLead(mainline.Scores, mainline.GameState, player);
-        }
-
-        private ResultScore<TScore> GetLead(IDictionary<PlayerToken, ResultScore<TScore>> score, IGameState<TMove> state, PlayerToken player)
-        {
-            if (state.Players.Count == 1)
-            {
-                return score[player];
-            }
-            else
-            {
-                return this.scoringMetric.Difference(
-                    score[player],
-                    score.Where(s => s.Key != player).OrderByDescending(s => s.Value, this.scoringMetric).First().Value);
-            }
         }
 
         private List<Mainline> GetMaximizingMoves(PlayerToken player, IList<Mainline> moveScores)
