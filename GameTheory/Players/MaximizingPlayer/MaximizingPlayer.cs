@@ -158,6 +158,7 @@ namespace GameTheory.Players.MaximizingPlayer
             }
 
             var maxWeight = double.NegativeInfinity;
+            var maxPlayerToken = (PlayerToken)null;
             Mainline maxMainline = null;
             var minDepth = int.MaxValue;
 
@@ -169,11 +170,15 @@ namespace GameTheory.Players.MaximizingPlayer
                 var weight = weightedMainline.Weight;
                 var mainline = weightedMainline.Value;
                 var score = mainline.Scores;
+                var playerToken = !mainline.Moves.IsEmpty ? mainline.Moves.Peek().PlayerToken : null;
 
-                if (weight > maxWeight)
+                var playerCompare = (playerToken == this.PlayerToken).CompareTo(maxPlayerToken == this.PlayerToken);
+                var weightCompare = weight.CompareTo(maxWeight);
+                if (playerCompare > 0 || (playerCompare == 0 && weightCompare > 0))
                 {
                     maxWeight = weight;
                     maxMainline = mainline;
+                    maxPlayerToken = playerToken;
                 }
 
                 if (mainline.Depth < minDepth)
@@ -369,7 +374,6 @@ namespace GameTheory.Players.MaximizingPlayer
                                 }
                             }
 
-                            // TODO: We should typically choose our own move if available.
                             result = this.CombineOutcomes(improvingMoves.Select(m => Weighted.Create(m.MaxMove, 1)).ToList());
                         }
                     }
