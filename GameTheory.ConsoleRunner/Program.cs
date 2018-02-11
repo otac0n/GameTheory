@@ -162,9 +162,12 @@ namespace GameTheory.ConsoleRunner
                 var player = choosePlayer(playerToken);
                 player.MessageSent += (obj, args) =>
                 {
-                    consoleRenderer.Show(state, FormatUtilities.ParseStringFormat(Resources.PlayerMessaged, playerToken));
-                    consoleRenderer.Show(state, args.FormatTokens);
-                    Console.WriteLine();
+                    ConsoleInteraction.WithLock(() =>
+                    {
+                        consoleRenderer.Show(state, FormatUtilities.ParseStringFormat(Resources.PlayerMessaged, playerToken));
+                        consoleRenderer.Show(state, args.FormatTokens);
+                        Console.WriteLine();
+                    });
                 };
                 return player;
             }

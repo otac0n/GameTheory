@@ -138,6 +138,22 @@ namespace GameTheory.ConsoleRunner
             }
         }
 
+        public static void WithLock(Action action)
+        {
+            lock (Console.Out)
+            {
+                action();
+            }
+        }
+
+        public static T WithLock<T>(Func<T> action)
+        {
+            lock (Console.Out)
+            {
+                return action();
+            }
+        }
+
         public struct Choice<T>
         {
             public Choice(string name, T value)

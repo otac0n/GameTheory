@@ -16,7 +16,6 @@ namespace GameTheory.ConsoleRunner
     public sealed class ConsolePlayer<TMove> : IPlayer<TMove>
         where TMove : IMove
     {
-        private static readonly object Sync = new object();
         private readonly IConsoleRenderer<TMove> renderer;
 
         /// <summary>
@@ -49,7 +48,7 @@ namespace GameTheory.ConsoleRunner
             var moves = state.GetAvailableMoves(this.PlayerToken);
             if (moves.Any())
             {
-                lock (Sync)
+                return ConsoleInteraction.WithLock(() =>
                 {
                     cancel.ThrowIfCancellationRequested();
 
@@ -76,7 +75,7 @@ namespace GameTheory.ConsoleRunner
                     });
                     Console.WriteLine();
                     return result;
-                }
+                });
             }
             else
             {
