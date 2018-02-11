@@ -78,6 +78,8 @@
     <Compile Include="ConsoleRenderers\Lotus\Templates.cs" />
     <Compile Include="ConsoleRenderers\LotusConsoleRenderer.cs" />
     <Compile Include="ConsoleRenderers\DraughtsConsoleRenderer.cs" />
+    <Compile Include="ConsoleRenderers\PositivelyPerfectParfaitGameConsoleRenderer.cs" />
+    <Compile Include="ConsoleRenderers\PositivelyPerfectParfaitGame\Templates.cs" />
     <Compile Include="ConsoleRenderers\TicTacToeConsoleRenderer.cs" />
     <Compile Include="ConsoleRenderers\TwentyFortyEightConsoleRenderer.cs" />
     <Compile Include="ConsoleRenderers\FiveTribes\Templates.cs" />
@@ -114,6 +116,7 @@
     <WeaveTemplate Include="ConsoleRenderers\TicTacToe\GameState.weave" />
     <WeaveTemplate Include="ConsoleRenderers\Draughts\GameState.weave" />
     <WeaveTemplate Include="ConsoleRenderers\Ergo\GameState.weave" />
+    <WeaveTemplate Include="ConsoleRenderers\PositivelyPerfectParfaitGame\GameState.weave" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

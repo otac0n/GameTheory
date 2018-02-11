@@ -1,0 +1,18 @@
+﻿@using System.Linq
+@using GameTheory.Games.PositivelyPerfectParfaitGame
+@namespace GameTheory.ConsoleRunner.ConsoleRenderers.PositivelyPerfectParfaitGame
+@static false
+@model GameState
+
+Available Scoops:
+  {{= model.RemainingScoops}}
+
+{{each playerToken in model.Players}}
+    {{= playerToken}}
+      {{ var parfait = model.Parfaits[playerToken]; }}
+      {{if parfait.Cherry}}
+          {{= CherrySentinel}}
+      {{/if}}
+      {{= parfait.Flavors }}
+
+{{/each}}
