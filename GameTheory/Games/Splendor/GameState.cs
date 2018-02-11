@@ -8,7 +8,7 @@ namespace GameTheory.Games.Splendor
     using System.Linq;
 
     /// <summary>
-    /// Represents the current state in a game of plendor.
+    /// Represents the current state in a game of Splendor.
     /// </summary>
     public sealed class GameState : IGameState<Move>
     {
