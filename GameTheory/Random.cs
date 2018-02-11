@@ -264,6 +264,15 @@ namespace GameTheory
         public static T Pick<T>(this List<T> items, System.Random instance = null) => Pick((IList<T>)items, instance);
 
         /// <summary>
+        /// Selects a random element from a list.
+        /// </summary>
+        /// <typeparam name="T">The type of items in the list.</typeparam>
+        /// <param name="items">The items to choose from.</param>
+        /// <param name="instance">An instance of <see cref="System.Random"/> to use.</param>
+        /// <returns>The selected element.</returns>
+        public static T Pick<T>(this ImmutableArray<T> items, System.Random instance = null) => Pick((IList<T>)items, instance);
+
+        /// <summary>
         /// Selects a random element from a collection.
         /// </summary>
         /// <typeparam name="T">The type of items in the collection.</typeparam>
@@ -335,6 +344,15 @@ namespace GameTheory
         /// <param name="instance">An instance of <see cref="System.Random"/> to use.</param>
         /// <returns>The selected element.</returns>
         public static T Pick<T>(this List<IWeighted<T>> weightedItems, System.Random instance = null) => Pick((IList<IWeighted<T>>)weightedItems, instance);
+
+        /// <summary>
+        /// Selects a random element from a list of weighted items.
+        /// </summary>
+        /// <typeparam name="T">The type of items in the list.</typeparam>
+        /// <param name="weightedItems">The weighted items to choose from.</param>
+        /// <param name="instance">An instance of <see cref="System.Random"/> to use.</param>
+        /// <returns>The selected element.</returns>
+        public static T Pick<T>(this ImmutableArray<IWeighted<T>> weightedItems, System.Random instance = null) => Pick((IList<IWeighted<T>>)weightedItems, instance);
 
         /// <summary>
         /// Selects a random element from a collection of weighted items.
