@@ -50,8 +50,6 @@ namespace GameTheory.ConsoleRunner
             {
                 return ConsoleInteraction.WithLock(() =>
                 {
-                    cancel.ThrowIfCancellationRequested();
-
                     ConsoleInteraction.WithColor(playerColor, () =>
                     {
                         Console.WriteLine(Resources.CurrentState);
@@ -63,8 +61,10 @@ namespace GameTheory.ConsoleRunner
 
                     var result = default(Maybe<TMove>);
                     var originalColor = Console.ForegroundColor;
+
                     ConsoleInteraction.WithColor(playerColor, () =>
                     {
+                        cancel.ThrowIfCancellationRequested();
                         result = ConsoleInteraction.Choose(moves.ToArray(), cancel, m =>
                         {
                             ConsoleInteraction.WithColor(originalColor, () =>

@@ -197,15 +197,18 @@ namespace GameTheory.ConsoleRunner
         private static void ShowMove<TMove>(IGameState<TMove> state, TMove move, IConsoleRenderer<TMove> consoleRenderer)
             where TMove : IMove
         {
-            consoleRenderer.Show(state, FormatUtilities.ParseStringFormat(Resources.PlayerMoved, move.PlayerToken));
-            Console.WriteLine();
+            ConsoleInteraction.WithLock(() =>
+            {
+                consoleRenderer.Show(state, FormatUtilities.ParseStringFormat(Resources.PlayerMoved, move.PlayerToken));
+                Console.WriteLine();
 
-            consoleRenderer.Show(state, move);
-            Console.WriteLine();
+                consoleRenderer.Show(state, move);
+                Console.WriteLine();
 
-            Console.WriteLine();
-            consoleRenderer.Show(state);
-            Console.WriteLine();
+                Console.WriteLine();
+                consoleRenderer.Show(state);
+                Console.WriteLine();
+            });
         }
     }
 }
