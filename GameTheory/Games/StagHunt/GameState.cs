@@ -45,7 +45,7 @@ namespace GameTheory.Games.StagHunt
             var match = this.Choices[0] == this.Choices[1];
             var p = this.Players.IndexOf(player);
             return match
-                ? this.Choices[p] == Stag ? 3 : 2
+                ? this.Choices[p] == Stag ? 3 : 1
                 : this.Choices[p] == Hare ? 2 : 0;
         }
 
