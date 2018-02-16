@@ -301,6 +301,7 @@
     <Compile Include="Maybe.cs" />
     <Compile Include="MessageSentEventArgs.cs" />
     <Compile Include="Players\MaximizingPlayer\MaximizingPlayer.cs" />
+    <Compile Include="Players\NormalFormGameMaximizingPlayer.cs" />
     <Compile Include="Players\FiveTribesMaximizingPlayer.cs" />
     <Compile Include="Players\DraughtsMaximizingPlayer.cs" />
     <Compile Include="Players\MancalaMaximizingPlayer.cs" />
