@@ -67,6 +67,11 @@ namespace GameTheory.Players.MaximizingPlayer
         /// </summary>
         protected virtual int InitialSamples => 30;
 
+        /// <summary>
+        /// Gets a value indicating whether or not the player will calculate during an opponent's turn.
+        /// </summary>
+        protected virtual bool Ponder => true;
+
         /// <inheritdoc />
         public async Task<Maybe<TMove>> ChooseMove(IGameState<TMove> state, CancellationToken cancel)
         {
@@ -74,18 +79,27 @@ namespace GameTheory.Players.MaximizingPlayer
 
             var moves = state.GetAvailableMoves();
 
+            var ply = this.minPly;
+
             var players = moves.Select(m => m.PlayerToken).ToImmutableHashSet();
             if (!players.Contains(this.PlayerToken))
             {
-                // We can avoid any further calculation at this state, because it is not our turn.
-                // TODO: Consider "pondering."
-                return default(Maybe<TMove>);
+                if (!this.Ponder || moves.Count == 0)
+                {
+                    return default(Maybe<TMove>);
+                }
+                else
+                {
+                    ply += 1;
+                }
             }
-
-            if (players.Count == 1 && moves.Count == 1)
+            else
             {
-                // If we are forced to move, don't spend any calculation determining the correct move.
-                return moves.Single();
+                if (players.Count == 1 && moves.Count == 1)
+                {
+                    // If we are forced to move, don't spend any time determining the correct move.
+                    return moves.Single();
+                }
             }
 
             var states = state.GetView(this.PlayerToken, this.InitialSamples).ToList();
@@ -93,14 +107,12 @@ namespace GameTheory.Players.MaximizingPlayer
             Mainline mainline;
             if (states.Count == 1)
             {
-                mainline = this.GetMove(states.Single(), this.minPly, cancel);
+                mainline = this.GetMove(states.Single(), ply, cancel);
             }
             else
             {
-                mainline = this.GetMove(states, this.minPly, cancel);
+                mainline = this.GetMove(states, ply, cancel);
             }
-
-            this.cache.Trim();
 
             if (mainline == null || mainline.PlayerToken != this.PlayerToken)
             {
@@ -109,6 +121,7 @@ namespace GameTheory.Players.MaximizingPlayer
             else
             {
                 this.MessageSent?.Invoke(this, new MessageSentEventArgs(mainline));
+                this.cache.Trim();
                 return mainline.Strategies.Peek().Pick();
             }
         }
