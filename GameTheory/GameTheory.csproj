@@ -300,7 +300,11 @@
     <Compile Include="IWeighted.cs" />
     <Compile Include="Maybe.cs" />
     <Compile Include="MessageSentEventArgs.cs" />
+    <Compile Include="IGameStateScoringMetric.cs" />
+    <Compile Include="Players\MaximizingPlayer\IScorePlyExtender.cs" />
     <Compile Include="Players\MaximizingPlayer\MaximizingPlayer.cs" />
+    <Compile Include="PlayerState.cs" />
+    <Compile Include="Players\MaximizingPlayer\ResultScoringMetric.cs" />
     <Compile Include="Players\NormalFormGameMaximizingPlayer.cs" />
     <Compile Include="Players\FiveTribesMaximizingPlayer.cs" />
     <Compile Include="Players\DraughtsMaximizingPlayer.cs" />

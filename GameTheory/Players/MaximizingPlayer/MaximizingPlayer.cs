@@ -22,7 +22,8 @@ namespace GameTheory.Players.MaximizingPlayer
     {
         private readonly int minPly;
 
-        private readonly ResultScoringMetric scoringMetric;
+        private readonly IScorePlyExtender<TScore> scoreExtender;
+        private readonly IGameStateScoringMetric<TMove, TScore> scoringMetric;
 
         private ICache cache = new Caches.SplayTreeCache();
 
@@ -32,10 +33,11 @@ namespace GameTheory.Players.MaximizingPlayer
         /// <param name="playerToken">The token that represents the player.</param>
         /// <param name="scoringMetric">The scoring metric to use.</param>
         /// <param name="minPly">The minimum number of ply to think ahead.</param>
-        protected MaximizingPlayer(PlayerToken playerToken, IScoringMetric<PlayerState, TScore> scoringMetric, int minPly)
+        protected MaximizingPlayer(PlayerToken playerToken, IGameStateScoringMetric<TMove, TScore> scoringMetric, int minPly)
         {
             this.PlayerToken = playerToken;
-            this.scoringMetric = new ResultScoringMetric(scoringMetric ?? throw new ArgumentNullException(nameof(scoringMetric)));
+            this.scoringMetric = scoringMetric ?? throw new ArgumentNullException(nameof(scoringMetric));
+            this.scoreExtender = this.scoringMetric as IScorePlyExtender<TScore>;
             this.minPly = minPly > -1 ? minPly : throw new ArgumentOutOfRangeException(nameof(minPly));
         }
 
@@ -149,7 +151,7 @@ namespace GameTheory.Players.MaximizingPlayer
         /// <param name="state">The <see cref="IGameState{TMove}"/> that was scored.</param>
         /// <param name="player">The player whose lead should be retrieved.</param>
         /// <returns>The player's lead, as a score.</returns>
-        protected virtual ResultScore<TScore> GetLead(IDictionary<PlayerToken, ResultScore<TScore>> score, IGameState<TMove> state, PlayerToken player)
+        protected virtual TScore GetLead(IDictionary<PlayerToken, TScore> score, IGameState<TMove> state, PlayerToken player)
         {
             if (state.Players.Count == 1)
             {
@@ -175,7 +177,7 @@ namespace GameTheory.Players.MaximizingPlayer
             Mainline maxMainline = null;
             var minDepth = int.MaxValue;
 
-            var playerScores = new Dictionary<PlayerToken, IWeighted<ResultScore<TScore>>[]>();
+            var playerScores = new Dictionary<PlayerToken, IWeighted<TScore>[]>();
 
             for (var i = 0; i < mainlines.Count; i++)
             {
@@ -203,7 +205,7 @@ namespace GameTheory.Players.MaximizingPlayer
                 {
                     if (!playerScores.TryGetValue(player, out var playerScore))
                     {
-                        playerScores[player] = playerScore = new IWeighted<ResultScore<TScore>>[mainlines.Count];
+                        playerScores[player] = playerScore = new IWeighted<TScore>[mainlines.Count];
                     }
 
                     playerScore[i] = Weighted.Create(score[player], weight);
@@ -215,14 +217,14 @@ namespace GameTheory.Players.MaximizingPlayer
             return new Mainline(combinedScore, maxMainline.GameState, maxMainline.PlayerToken, maxMainline.Strategies, minDepth);
         }
 
-        private ResultScore<TScore> GetLead(Mainline mainline, PlayerToken player)
+        private TScore GetLead(Mainline mainline, PlayerToken player)
         {
             return this.GetLead(mainline.Scores, mainline.GameState, player);
         }
 
         private Mainline GetMaximizingMoves(PlayerToken player, IList<Mainline> moveScores)
         {
-            var maxLead = default(Maybe<ResultScore<TScore>>);
+            var maxLead = default(Maybe<TScore>);
             var maxMainlines = new List<Mainline>();
             for (var m = 0; m < moveScores.Count; m++)
             {
@@ -319,7 +321,9 @@ namespace GameTheory.Players.MaximizingPlayer
                         moveScores[m] = this.CombineOutcomes(outcomes.Select(o =>
                         {
                             var mainline = this.GetMove(o.Value, ply - 1, cancel);
-                            var newScores = ImmutableDictionary.CreateRange(mainline.Scores.Select(kvp => new KeyValuePair<PlayerToken, ResultScore<TScore>>(kvp.Key, new ResultScore<TScore>(kvp.Value.Result, kvp.Value.InPly + 1, kvp.Value.Likelihood, kvp.Value.Rest))));
+                            var newScores = this.scoreExtender != null
+                                ? ImmutableDictionary.CreateRange(mainline.Scores.Select(kvp => new KeyValuePair<PlayerToken, TScore>(kvp.Key, this.scoreExtender.Extend(kvp.Value))))
+                                : mainline.Scores;
                             var newMainline = new Mainline(newScores, mainline.GameState, move.PlayerToken, mainline.Strategies.Push(ImmutableArray.Create(Weighted.Create(move, 1))), mainline.Depth + 1);
                             return Weighted.Create(newMainline, o.Weight);
                         }).ToList());
@@ -407,79 +411,6 @@ namespace GameTheory.Players.MaximizingPlayer
             return result;
         }
 
-        /// <summary>
-        /// A tuple of a player token and a game state.
-        /// </summary>
-        protected struct PlayerState
-        {
-            /// <summary>
-            /// Initializes a new instance of the <see cref="PlayerState"/> struct.
-            /// </summary>
-            /// <param name="playerToken">The player token.</param>
-            /// <param name="state">The current state of the game.</param>
-            public PlayerState(PlayerToken playerToken, IGameState<TMove> state)
-            {
-                this.PlayerToken = playerToken;
-                this.GameState = state;
-            }
-
-            /// <summary>
-            /// Gets the current state of the game.
-            /// </summary>
-            public IGameState<TMove> GameState { get; }
-
-            /// <summary>
-            /// Gets the player token.
-            /// </summary>
-            public PlayerToken PlayerToken { get; }
-
-            /// <summary>
-            /// Compares two <see cref="PlayerState"/> objects. The result specifies whether they are unequal.
-            /// </summary>
-            /// <param name="left">The first <see cref="PlayerState"/> to compare.</param>
-            /// <param name="right">The second <see cref="PlayerState"/> to compare.</param>
-            /// <returns><c>true</c> if <paramref name="left"/> and <paramref name="right"/> differ; otherwise, <c>false</c>.</returns>
-            public static bool operator !=(PlayerState left, PlayerState right)
-            {
-                return !(left == right);
-            }
-
-            /// <summary>
-            /// Compares two <see cref="PlayerState"/> objects. The result specifies whether they are equal.
-            /// </summary>
-            /// <param name="left">The first <see cref="PlayerState"/> to compare.</param>
-            /// <param name="right">The second <see cref="PlayerState"/> to compare.</param>
-            /// <returns><c>true</c> if <paramref name="left"/> and <paramref name="right"/> are equal; otherwise, <c>false</c>.</returns>
-            public static bool operator ==(PlayerState left, PlayerState right)
-            {
-                return left.Equals(right);
-            }
-
-            /// <inheritdoc/>
-            public override bool Equals(object obj)
-            {
-                if (obj is PlayerState other)
-                {
-                    return this.Equals(other);
-                }
-
-                return false;
-            }
-
-            /// <summary>
-            /// Indicates whether this instance and a specified object are equal.
-            /// </summary>
-            /// <param name="other">The object to compare with the current instance.</param>
-            /// <returns><c>true</c> if <paramref name="other"/> and this instance represent the same value; otherwise, <c>false</c>.</returns>
-            public bool Equals(PlayerState other) =>
-                this.GameState == other.GameState &&
-                this.PlayerToken == other.PlayerToken;
-
-            /// <inheritdoc/>
-            public override int GetHashCode() =>
-                this.GameState.GetHashCode() ^ this.PlayerToken.GetHashCode();
-        }
-
         private static class Caches
         {
             public class DictionaryCache : ICache
@@ -559,7 +490,7 @@ namespace GameTheory.Players.MaximizingPlayer
             /// <param name="strategies">The sequence of moves necessary to arrive at the resulting game state.</param>
             /// <param name="playerToken">The player who moves next in the sequence or <c>null</c> if there are no moves.</param>
             /// <param name="depth">The depth to which the score was computed.</param>
-            public Mainline(IDictionary<PlayerToken, ResultScore<TScore>> scores, IGameState<TMove> state, PlayerToken playerToken, ImmutableStack<ImmutableArray<IWeighted<TMove>>> strategies, int depth)
+            public Mainline(IDictionary<PlayerToken, TScore> scores, IGameState<TMove> state, PlayerToken playerToken, ImmutableStack<ImmutableArray<IWeighted<TMove>>> strategies, int depth)
             {
                 this.Scores = scores;
                 this.GameState = state;
@@ -658,7 +589,7 @@ namespace GameTheory.Players.MaximizingPlayer
             /// <summary>
             /// Gets the computed scores for all players in the resulting state.
             /// </summary>
-            public IDictionary<PlayerToken, ResultScore<TScore>> Scores { get; }
+            public IDictionary<PlayerToken, TScore> Scores { get; }
 
             /// <summary>
             /// Gets the sequence of moves/strategies necessary to arrive at the resulting game state.
@@ -667,106 +598,6 @@ namespace GameTheory.Players.MaximizingPlayer
 
             /// <inheritdoc/>
             public override string ToString() => string.Concat(this.FlattenFormatTokens());
-        }
-
-        private class ResultScoringMetric : IComparer<ResultScore<TScore>>
-        {
-            private readonly IScoringMetric<PlayerState, TScore> scoringMetric;
-
-            public ResultScoringMetric(IScoringMetric<PlayerState, TScore> scoringMetric)
-            {
-                this.scoringMetric = scoringMetric;
-            }
-
-            public ResultScore<TScore> Combine(params IWeighted<ResultScore<TScore>>[] scores)
-            {
-                var results = Enum.GetValues(typeof(Result)).Cast<Result>().ToDictionary(result => result, result => new
-                {
-                    Weight = 0.0,
-                    Liklihood = 0.0,
-                    InPly = double.NaN,
-                });
-
-                var totalWeight = 0.0;
-                var weightedRest = new IWeighted<TScore>[scores.Length];
-                for (var i = scores.Length - 1; i >= 0; i--)
-                {
-                    var score = scores[i];
-                    var resultScore = score.Value;
-                    weightedRest[i] = Weighted.Create(resultScore.Rest, score.Weight);
-                    totalWeight += score.Weight;
-                    var c = results[resultScore.Result];
-                    results[resultScore.Result] = new
-                    {
-                        Weight = c.Weight + score.Weight,
-                        Liklihood = c.Liklihood + score.Value.Likelihood * score.Weight,
-                        InPly = double.IsNaN(c.InPly) || c.InPly.CompareTo(resultScore.InPly) > 0 ? resultScore.InPly : c.InPly,
-                    };
-                }
-
-                var pessimisticResult = results.Where(r => r.Value.Weight > 0).OrderBy(r => r.Key).First();
-                var rest = this.scoringMetric.Combine(weightedRest);
-
-                return new ResultScore<TScore>(pessimisticResult.Key, pessimisticResult.Value.InPly, pessimisticResult.Value.Liklihood / totalWeight, rest);
-            }
-
-            public int Compare(ResultScore<TScore> x, ResultScore<TScore> y)
-            {
-                int comp;
-                if ((comp = x.Result.CompareTo(y.Result)) != 0)
-                {
-                    return comp;
-                }
-
-                if ((comp = y.Likelihood.CompareTo(x.Likelihood)) != 0 ||
-                    (comp = x.InPly.CompareTo(y.InPly)) != 0)
-                {
-                    return InPlySortDirection(x.Result, comp);
-                }
-
-                return this.scoringMetric.Compare(x.Rest, y.Rest);
-            }
-
-            public ResultScore<TScore> Difference(ResultScore<TScore> x, ResultScore<TScore> y)
-            {
-                var result = x.Result;
-                var rest = this.scoringMetric.Difference(x.Rest, y.Rest);
-                var inPly = result != y.Result ? x.InPly : x.InPly - y.InPly;
-
-                return new ResultScore<TScore>(result, inPly, double.NaN, rest);
-            }
-
-            public IDictionary<PlayerToken, ResultScore<TScore>> Score(IGameState<TMove> state)
-            {
-                var winners = state.GetWinners();
-                var sharedResult = winners.Count == 0 ? (state.GetAvailableMoves().Count == 0 ? (state.Players.Count == 1 ? Result.Loss : Result.Impasse) : Result.None) : (Result?)null;
-                var winnersSet = winners.ToSet();
-                return state.Players.ToDictionary(p => p, p =>
-                {
-                    var result = sharedResult ?? (winnersSet.Contains(p) ? (winnersSet.Count == 1 ? Result.Win : Result.SharedWin) : Result.Loss);
-                    return new ResultScore<TScore>(result, 0, 1, this.scoringMetric.Score(new PlayerState(p, state)));
-                });
-            }
-
-            private static int InPlySortDirection(Result result, int comparison)
-            {
-                switch (result)
-                {
-                    case Result.Loss:
-                    case Result.Impasse:
-                    case Result.None:
-                        return comparison;
-
-                    case Result.Win:
-                    case Result.SharedWin:
-                        return comparison < 0 ? 1 :
-                               comparison > 0 ? -1 :
-                               0;
-
-                    default:
-                        return 0;
-                }
-            }
         }
     }
 }

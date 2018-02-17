@@ -8,9 +8,10 @@ namespace GameTheory.Players.MaximizingPlayers
     /// <summary>
     /// Provides a maximizing player for the game of <see cref="GameState">Draughts</see>.
     /// </summary>
-    public class DraughtsMaximizingPlayer : MaximizingPlayer<Move, double>
+    public class DraughtsMaximizingPlayer : MaximizingPlayer<Move, ResultScore<double>>
     {
-        private static readonly IScoringMetric<PlayerState, double> Metric = ScoringMetric.Create<PlayerState>(Score);
+        private static readonly ResultScoringMetric<Move, double> Metric =
+            new ResultScoringMetric<Move, double>(ScoringMetric.Create<Move>(Score));
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DraughtsMaximizingPlayer"/> class.
@@ -22,7 +23,7 @@ namespace GameTheory.Players.MaximizingPlayers
         {
         }
 
-        private static double Score(PlayerState playerState)
+        private static double Score(PlayerState<Move> playerState)
         {
             var state = (GameState)playerState.GameState;
             var board = state.Board;

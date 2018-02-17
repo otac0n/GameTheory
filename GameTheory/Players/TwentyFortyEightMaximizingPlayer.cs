@@ -10,9 +10,10 @@ namespace GameTheory.Players.MaximizingPlayers
     /// <summary>
     /// Provides a maximizing player for the game of <see cref="GameState">Tic tac toe</see>.
     /// </summary>
-    public sealed class TwentyFortyEightMaximizingPlayer : MaximizingPlayer<Move, double>
+    public sealed class TwentyFortyEightMaximizingPlayer : MaximizingPlayer<Move, ResultScore<double>>
     {
-        private static readonly IScoringMetric<PlayerState, double> Metric = ScoringMetric.Create<PlayerState>(Score);
+        private static readonly ResultScoringMetric<Move, double> Metric =
+            new ResultScoringMetric<Move, double>(ScoringMetric.Create<Move>(Score));
 
         private static readonly double[] Pow = Enumerable.Range(0, GameState.Size * GameState.Size).Select(value => Math.Pow(10, value)).ToArray();
 
@@ -26,7 +27,7 @@ namespace GameTheory.Players.MaximizingPlayers
         {
         }
 
-        private static double Score(PlayerState playerState)
+        private static double Score(PlayerState<Move> playerState)
         {
             var state = (GameState)playerState.GameState;
             if (state.Players[0] == playerState.PlayerToken)

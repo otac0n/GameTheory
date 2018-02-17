@@ -14,7 +14,7 @@ namespace GameTheory.Players.MaximizingPlayers
     public class NormalFormGameMaximizingPlayer<T> : MaximizingPlayer<Move<T>, double>
         where T : class, IComparable<T>
     {
-        private static readonly IScoringMetric<PlayerState, double> Metric = ScoringMetric.Create<PlayerState>(Score);
+        private static readonly IGameStateScoringMetric<Move<T>, double> Metric = ScoringMetric.Create<Move<T>>(Score);
 
         /// <summary>
         /// Initializes a new instance of the <see cref="NormalFormGameMaximizingPlayer{T}"/> class.
@@ -27,12 +27,12 @@ namespace GameTheory.Players.MaximizingPlayers
         }
 
         /// <inheritdoc/>
-        protected override ResultScore<double> GetLead(IDictionary<PlayerToken, ResultScore<double>> score, IGameState<Move<T>> state, PlayerToken player)
+        protected override double GetLead(IDictionary<PlayerToken, double> score, IGameState<Move<T>> state, PlayerToken player)
         {
             return score[player];
         }
 
-        private static double Score(PlayerState playerState)
+        private static double Score(PlayerState<Move<T>> playerState)
         {
             var state = (GameState<T>)playerState.GameState;
             return state.GetScore(playerState.PlayerToken);

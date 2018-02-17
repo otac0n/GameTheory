@@ -8,9 +8,10 @@ namespace GameTheory.Players.MaximizingPlayers
     /// <summary>
     /// Provides a maximizing player for the game of <see cref="GameState">Tic tac toe</see>.
     /// </summary>
-    public sealed class TicTacToeMaximizingPlayer : MaximizingPlayer<Move, double>
+    public sealed class TicTacToeMaximizingPlayer : MaximizingPlayer<Move, ResultScore<double>>
     {
-        private static readonly IScoringMetric<PlayerState, double> Metric = ScoringMetric.Create<PlayerState>(s => 0);
+        private static readonly ResultScoringMetric<Move, double> Metric =
+            new ResultScoringMetric<Move, double>(ScoringMetric.Create((PlayerState<Move> s) => 0));
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TicTacToeMaximizingPlayer"/> class.

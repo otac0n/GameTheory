@@ -10,9 +10,10 @@ namespace GameTheory.Players.MaximizingPlayers
     /// <summary>
     /// Provides a maximizing player for the game of <see cref="GameState">Splendor</see>.
     /// </summary>
-    public class PositivelyPerfectParfaitGameMaximizingPlayer : MaximizingPlayer<Move, double>
+    public class PositivelyPerfectParfaitGameMaximizingPlayer : MaximizingPlayer<Move, ResultScore<double>>
     {
-        private static readonly IScoringMetric<PlayerState, double> Metric = ScoringMetric.Create<PlayerState>(s => ((GameState)s.GameState).Parfaits[s.PlayerToken].Flavors.Keys.Count());
+        private static readonly ResultScoringMetric<Move, double> Metric =
+            new ResultScoringMetric<Move, double>(ScoringMetric.Create((PlayerState<Move> s) => ((GameState)s.GameState).Parfaits[s.PlayerToken].Flavors.Keys.Count()));
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PositivelyPerfectParfaitGameMaximizingPlayer"/> class.
