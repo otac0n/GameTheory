@@ -37,7 +37,7 @@ namespace GameTheory.Games.Lotus.Moves
                 int comp;
 
                 if ((comp = this.PlayerToken.CompareTo(other.PlayerToken)) != 0 ||
-                    (comp = this.FlowerType.CompareTo(move.FlowerType)) != 0)
+                    (comp = EnumComparer<FlowerType>.Default.Compare(this.FlowerType, move.FlowerType)) != 0)
                 {
                     return comp;
                 }

@@ -80,7 +80,7 @@ namespace GameTheory.Games.Lotus
 
             int comp;
 
-            if ((comp = this.FlowerType.CompareTo(other.FlowerType)) != 0 ||
+            if ((comp = EnumComparer<FlowerType>.Default.Compare(this.FlowerType, other.FlowerType)) != 0 ||
                 (comp = this.Guardians.CompareTo(other.Guardians)) != 0)
             {
                 return comp;

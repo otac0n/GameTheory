@@ -108,7 +108,7 @@ namespace GameTheory.Games.Splendor
 
             if ((comp = this.Prestige.CompareTo(other.Prestige)) != 0 ||
                 (comp = this.Cost.CompareTo(other.Cost)) != 0 ||
-                (comp = this.Bonus.CompareTo(other.Bonus)) != 0)
+                (comp = EnumComparer<Token>.Default.Compare(this.Bonus, other.Bonus)) != 0)
             {
                 return comp;
             }

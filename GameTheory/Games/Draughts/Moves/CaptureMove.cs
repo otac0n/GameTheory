@@ -54,9 +54,9 @@ namespace GameTheory.Games.Draughts.Moves
             for (; i < count; i++)
             {
                 var square = board[i];
-                if (square.HasFlag(playerColor))
+                if ((square & playerColor) == playerColor)
                 {
-                    var crowned = square.HasFlag(Piece.Crowned);
+                    var crowned = (square & Piece.Crowned) == Piece.Crowned;
                     variant.GetCoordinates(i, out int x, out int y);
 
                     for (var f = 1; f >= -1; f -= 2)
@@ -80,7 +80,7 @@ namespace GameTheory.Games.Draughts.Moves
                                 }
 
                                 var captureSquare = board[capIndex];
-                                if (captureSquare.HasFlag(opponentColor) && !captureSquare.HasFlag(Piece.Captured) && (variant.MenCanCaptureKings || !captureSquare.HasFlag(Piece.Crowned)))
+                                if ((captureSquare & opponentColor) == opponentColor && (captureSquare & Piece.Captured) != Piece.Captured && (variant.MenCanCaptureKings || (captureSquare & Piece.Crowned) != Piece.Crowned))
                                 {
                                     captureIndex = capIndex;
                                     break;

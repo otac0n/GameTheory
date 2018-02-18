@@ -47,7 +47,7 @@ namespace GameTheory.Games.FiveTribes
             int comp;
 
             if ((comp = this.Value.CompareTo(other.Value)) != 0 ||
-                (comp = this.Color.CompareTo(other.Color)) != 0 ||
+                (comp = EnumComparer<TileColor>.Default.Compare(this.Color, other.Color)) != 0 ||
                 (comp = string.Compare(this.GetType().FullName, other.GetType().FullName, StringComparison.Ordinal)) != 0)
             {
                 return comp;

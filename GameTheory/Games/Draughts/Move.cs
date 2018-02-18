@@ -54,7 +54,7 @@ namespace GameTheory.Games.Draughts
                         if (index != -1)
                         {
                             var square = board[index];
-                            if (square.HasFlag(playerColor) && !square.HasFlag(Piece.Crowned))
+                            if ((square & playerColor) == playerColor && (square & Piece.Crowned) != Piece.Crowned)
                             {
                                 board = board
                                     .SetItem(index, square | Piece.Crowned);
@@ -65,7 +65,7 @@ namespace GameTheory.Games.Draughts
 
                 for (var i = 0; i < board.Length; i++)
                 {
-                    if (board[i].HasFlag(Piece.Captured))
+                    if ((board[i] & Piece.Captured) == Piece.Captured)
                     {
                         board = board.SetItem(i, Piece.None);
                     }

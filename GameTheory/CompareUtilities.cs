@@ -79,12 +79,42 @@ namespace GameTheory
                     return comp;
                 }
 
+                var comparer = EnumComparer<T>.Default;
                 for (var i = 0; i < left.Count; i++)
                 {
-                    if ((comp = left[i].CompareTo(right[i])) != 0)
+                    if ((comp = comparer.Compare(left[i], right[i])) != 0)
                     {
                         return comp;
                     }
+                }
+            }
+
+            return comp;
+        }
+
+        /// <summary>
+        /// Compares two lists of comparable elements.
+        /// </summary>
+        /// <typeparam name="T">The type of elements in each list.</typeparam>
+        /// <param name="left">The first list.</param>
+        /// <param name="right">The second list.</param>
+        /// <returns>A value indicating whether the lists are the same length and contain the same elements.</returns>
+        public static int CompareEnumLists<T>(ImmutableArray<T> left, ImmutableArray<T> right)
+            where T : IComparable
+        {
+            var comp = 0;
+
+            if ((comp = left.Length.CompareTo(right.Length)) != 0)
+            {
+                return comp;
+            }
+
+            var comparer = EnumComparer<T>.Default;
+            for (var i = 0; i < left.Length; i++)
+            {
+                if ((comp = comparer.Compare(left[i], right[i])) != 0)
+                {
+                    return comp;
                 }
             }
 
@@ -139,6 +169,44 @@ namespace GameTheory
         /// <param name="left">The first list.</param>
         /// <param name="right">The second list.</param>
         /// <returns>A value indicating whether the lists are the same length and contain the same elements.</returns>
+        public static int CompareLists<T>(ImmutableArray<T> left, ImmutableArray<T> right)
+            where T : class, IComparable<T>
+        {
+            var comp = 0;
+
+            if ((comp = left.Length.CompareTo(right.Length)) != 0)
+            {
+                return comp;
+            }
+
+            for (var i = 0; i < left.Length; i++)
+            {
+                var l = left[i];
+                var r = right[i];
+                if (!object.ReferenceEquals(l, r))
+                {
+                    if (l == null)
+                    {
+                        return -1;
+                    }
+
+                    if ((comp = l.CompareTo(r)) != 0)
+                    {
+                        return comp;
+                    }
+                }
+            }
+
+            return comp;
+        }
+
+        /// <summary>
+        /// Compares two lists of comparable elements.
+        /// </summary>
+        /// <typeparam name="T">The type of elements in each list.</typeparam>
+        /// <param name="left">The first list.</param>
+        /// <param name="right">The second list.</param>
+        /// <returns>A value indicating whether the lists are the same length and contain the same elements.</returns>
         public static int CompareReadOnlyEnumLists<T>(IReadOnlyList<T> left, IReadOnlyList<T> right)
             where T : IComparable
         {
@@ -151,9 +219,10 @@ namespace GameTheory
                     return comp;
                 }
 
+                var comparer = EnumComparer<T>.Default;
                 for (var i = 0; i < left.Count; i++)
                 {
-                    if ((comp = left[i].CompareTo(right[i])) != 0)
+                    if ((comp = comparer.Compare(left[i], right[i])) != 0)
                     {
                         return comp;
                     }
@@ -304,6 +373,34 @@ namespace GameTheory
                     {
                         return comp;
                     }
+                }
+            }
+
+            return comp;
+        }
+
+        /// <summary>
+        /// Compares two lists of comparable elements.
+        /// </summary>
+        /// <typeparam name="T">The type of elements in each list.</typeparam>
+        /// <param name="left">The first list.</param>
+        /// <param name="right">The second list.</param>
+        /// <returns>A value indicating whether the lists are the same length and contain the same elements.</returns>
+        public static int CompareValueLists<T>(ImmutableArray<T> left, ImmutableArray<T> right)
+            where T : struct, IComparable<T>
+        {
+            var comp = 0;
+
+            if ((comp = left.Length.CompareTo(right.Length)) != 0)
+            {
+                return comp;
+            }
+
+            for (var i = 0; i < left.Length; i++)
+            {
+                if ((comp = left[i].CompareTo(right[i])) != 0)
+                {
+                    return comp;
                 }
             }
 

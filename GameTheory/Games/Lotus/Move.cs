@@ -192,7 +192,7 @@ namespace GameTheory.Games.Lotus
 
             if (state.Phase == Phase.Draw)
             {
-                if ((activePlayerInventory.Deck.Count > 0 || state.AvailableWildflowers.Any(c => c != null)) && activePlayerInventory.Hand.Count < Inventory.StartingHandCount + (activePlayerInventory.SpecialPowers.HasFlag(SpecialPower.EnlightenedPath) ? 1 : 0))
+                if ((activePlayerInventory.Deck.Count > 0 || state.AvailableWildflowers.Any(c => c != null)) && activePlayerInventory.Hand.Count < Inventory.StartingHandCount + ((activePlayerInventory.SpecialPowers & SpecialPower.EnlightenedPath) == SpecialPower.EnlightenedPath ? 1 : 0))
                 {
                     // Continue drawing.
                 }

@@ -117,7 +117,7 @@ namespace GameTheory.Games.PositivelyPerfectParfaitGame
 
             int comp;
 
-            if ((comp = this.Phase.CompareTo(state.Phase)) != 0 ||
+            if ((comp = EnumComparer<Phase>.Default.Compare(this.Phase, state.Phase)) != 0 ||
                 (comp = this.ActivePlayer.CompareTo(state.ActivePlayer)) != 0 ||
                 (comp = CompareUtilities.CompareLists(this.Players, state.Players)) != 0)
             {

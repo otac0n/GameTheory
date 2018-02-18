@@ -111,7 +111,7 @@ namespace GameTheory.Games.Draughts
 
             int comp;
 
-            if ((comp = this.Phase.CompareTo(state.Phase)) != 0 ||
+            if ((comp = EnumComparer<Phase>.Default.Compare(this.Phase, state.Phase)) != 0 ||
                 (comp = this.ActivePlayer.CompareTo(state.ActivePlayer)) != 0 ||
                 (comp = this.LastCapturingIndex.CompareTo(state.LastCapturingIndex)) != 0 ||
                 (comp = this.OpponentMayRemovePiece.CompareTo(state.OpponentMayRemovePiece)) != 0 ||

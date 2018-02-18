@@ -75,7 +75,7 @@ namespace GameTheory.Games.FiveTribes.Moves
             {
                 if (other is DroppedLastMeeple d)
                 {
-                    return this.meeple.CompareTo(d.meeple);
+                    return EnumComparer<Meeple>.Default.Compare(this.meeple, d.meeple);
                 }
                 else
                 {

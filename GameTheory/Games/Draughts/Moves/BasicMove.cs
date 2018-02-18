@@ -46,9 +46,9 @@ namespace GameTheory.Games.Draughts.Moves
             for (var i = 0; i < count; i++)
             {
                 var square = board[i];
-                if (square.HasFlag(playerColor))
+                if ((square & playerColor) == playerColor)
                 {
-                    var crowned = square.HasFlag(Piece.Crowned);
+                    var crowned = (square & Piece.Crowned) == Piece.Crowned;
                     variant.GetCoordinates(i, out int x, out int y);
 
                     for (var f = 1; f >= -1; f -= 2)
@@ -100,7 +100,7 @@ namespace GameTheory.Games.Draughts.Moves
                 .SetItem(this.ToIndex, board[this.FromIndex])
                 .SetItem(this.FromIndex, Piece.None);
 
-            if (variant.CrownOnEntry && !board[this.ToIndex].HasFlag(Piece.Crowned))
+            if (variant.CrownOnEntry && (board[this.ToIndex] & Piece.Crowned) != Piece.Crowned)
             {
                 var playerIndex = state.Players.IndexOf(state.ActivePlayer);
                 var promoteRank = (variant.Height - 1) * playerIndex;

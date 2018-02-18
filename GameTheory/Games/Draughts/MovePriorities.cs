@@ -49,7 +49,7 @@ namespace GameTheory.Games.Draughts
             c => new
             {
                 Pieces = 1,
-                Kings = c.GameState.Board[c.CaptureIndex].HasFlag(Piece.Crowned) ? 1 : 0,
+                Kings = (c.GameState.Board[c.CaptureIndex] & Piece.Crowned) == Piece.Crowned ? 1 : 0,
             },
             scores => new
             {
@@ -75,8 +75,8 @@ namespace GameTheory.Games.Draughts
             c => new
             {
                 Pieces = 1,
-                WithKing = c.GameState.Board[c.FromIndex].HasFlag(Piece.Crowned),
-                Kings = c.GameState.Board[c.CaptureIndex].HasFlag(Piece.Crowned) ? 1 : 0,
+                WithKing = (c.GameState.Board[c.FromIndex] & Piece.Crowned) == Piece.Crowned,
+                Kings = (c.GameState.Board[c.CaptureIndex] & Piece.Crowned) == Piece.Crowned ? 1 : 0,
             },
             scores => new
             {

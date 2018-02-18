@@ -399,7 +399,7 @@ namespace GameTheory.Games.FiveTribes
 
             int comp;
 
-            if ((comp = this.Phase.CompareTo(state.Phase)) != 0 ||
+            if ((comp = EnumComparer<Phase>.Default.Compare(this.Phase, state.Phase)) != 0 ||
                 (comp = this.PreviousPoint.CompareTo(state.PreviousPoint)) != 0 ||
                 (comp = this.LastPoint.CompareTo(state.LastPoint)) != 0 ||
                 (comp = this.ResourceDiscards.CompareTo(state.ResourceDiscards)) != 0)

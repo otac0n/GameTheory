@@ -93,7 +93,7 @@ namespace GameTheory.Games.Lotus
 
             if ((comp = this.Guardians.CompareTo(other.Guardians)) != 0 ||
                 (comp = this.ScoringTokens.CompareTo(other.ScoringTokens)) != 0 ||
-                (comp = this.SpecialPowers.CompareTo(other.SpecialPowers)) != 0 ||
+                (comp = EnumComparer<SpecialPower>.Default.Compare(this.SpecialPowers, other.SpecialPowers)) != 0 ||
                 (comp = CompareUtilities.CompareLists(this.Hand, other.Hand)) != 0 ||
                 (comp = CompareUtilities.CompareLists(this.Deck, other.Deck)) != 0 ||
                 (comp = CompareUtilities.CompareLists(this.ScoringPile, other.ScoringPile)) != 0)

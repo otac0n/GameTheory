@@ -35,10 +35,10 @@ namespace GameTheory.Players.MaximizingPlayers
             for (var i = 0; i < board.Length; i++)
             {
                 var square = board[i];
-                if (square.HasFlag(playerColor))
+                if ((square & playerColor) == playerColor)
                 {
                     score += 1.0;
-                    if (square.HasFlag(Piece.Crowned))
+                    if ((square & Piece.Crowned) == Piece.Crowned)
                     {
                         score += 0.75;
                     }

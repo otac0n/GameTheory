@@ -169,7 +169,7 @@ namespace GameTheory.Games.Ergo
 
             int comp;
 
-            if ((comp = this.Phase.CompareTo(state.Phase)) != 0 ||
+            if ((comp = EnumComparer<Phase>.Default.Compare(this.Phase, state.Phase)) != 0 ||
                 (comp = this.RemainingActions.CompareTo(state.RemainingActions)) != 0 ||
                 (comp = this.IsRoundOver.CompareTo(state.IsRoundOver)) != 0 ||
                 (comp = this.ActivePlayer.CompareTo(state.ActivePlayer)) != 0 ||

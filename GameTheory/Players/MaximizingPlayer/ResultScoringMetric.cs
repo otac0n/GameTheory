@@ -62,7 +62,7 @@ namespace GameTheory.Players.MaximizingPlayer
         public int Compare(ResultScore<TScore> x, ResultScore<TScore> y)
         {
             int comp;
-            if ((comp = x.Result.CompareTo(y.Result)) != 0)
+            if ((comp = EnumComparer<Result>.Default.Compare(x.Result, y.Result)) != 0)
             {
                 return comp;
             }

@@ -39,7 +39,7 @@ namespace GameTheory.Games.Lotus.Moves
                 int comp;
 
                 if ((comp = this.PlayerToken.CompareTo(other.PlayerToken)) != 0 ||
-                    (comp = this.SpecialPower.CompareTo(move.SpecialPower)) != 0)
+                    (comp = EnumComparer<SpecialPower>.Default.Compare(this.SpecialPower, move.SpecialPower)) != 0)
                 {
                     return comp;
                 }
@@ -58,7 +58,7 @@ namespace GameTheory.Games.Lotus.Moves
             {
                 foreach (SpecialPower specialPower in Enum.GetValues(typeof(SpecialPower)))
                 {
-                    if (specialPower != SpecialPower.None && !state.Inventory[player].SpecialPowers.HasFlag(specialPower))
+                    if (specialPower != SpecialPower.None && (state.Inventory[player].SpecialPowers & specialPower) != specialPower)
                     {
                         yield return new ClaimSpecialPowerMove(state, player, specialPower);
                     }

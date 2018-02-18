@@ -121,7 +121,7 @@ namespace GameTheory.Games.TwentyFortyEight
 
             int comp;
 
-            if ((comp = this.turn.CompareTo(state.turn)) != 0 ||
+            if ((comp = EnumComparer<Turn>.Default.Compare(this.turn, state.turn)) != 0 ||
                 (comp = CompareUtilities.CompareReadOnlyLists(this.players, state.players)) != 0)
             {
                 return comp;

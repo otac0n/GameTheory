@@ -102,6 +102,7 @@
     <Compile Include="Combinatorics.cs" />
     <Compile Include="CompareUtilities.cs" />
     <Compile Include="EnumCollection.cs" />
+    <Compile Include="EnumComparer.cs" />
     <Compile Include="EnumerableExtensions.cs" />
     <Compile Include="FormatUtilities.cs" />
     <Compile Include="GameShuffler.cs" />
