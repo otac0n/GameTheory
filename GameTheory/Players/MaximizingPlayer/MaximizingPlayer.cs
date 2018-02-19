@@ -175,7 +175,7 @@ namespace GameTheory.Players.MaximizingPlayer
             var maxWeight = double.NegativeInfinity;
             var maxPlayerToken = (PlayerToken)null;
             Mainline maxMainline = null;
-            var minDepth = int.MaxValue;
+            var fullyDetermined = true;
 
             var playerScores = new Dictionary<PlayerToken, IWeighted<TScore>[]>();
 
@@ -196,10 +196,7 @@ namespace GameTheory.Players.MaximizingPlayer
                     maxPlayerToken = playerToken;
                 }
 
-                if (mainline.Depth < minDepth)
-                {
-                    minDepth = mainline.Depth;
-                }
+                fullyDetermined &= mainline.FullyDetermined;
 
                 foreach (var player in score.Keys)
                 {
@@ -213,8 +210,8 @@ namespace GameTheory.Players.MaximizingPlayer
             }
 
             var combinedScore = playerScores.ToDictionary(ps => ps.Key, ps => this.scoringMetric.Combine(ps.Value));
-
-            return new Mainline(combinedScore, maxMainline.GameState, maxMainline.PlayerToken, maxMainline.Strategies, minDepth);
+            var depth = fullyDetermined ? mainlines.Max(m => m.Value.Depth) : mainlines.Where(m => !m.Value.FullyDetermined).Min(m => m.Value.Depth);
+            return new Mainline(combinedScore, maxMainline.GameState, maxMainline.PlayerToken, maxMainline.Strategies, depth, fullyDetermined);
         }
 
         private TScore GetLead(Mainline mainline, PlayerToken player)
@@ -225,10 +222,13 @@ namespace GameTheory.Players.MaximizingPlayer
         private Mainline GetMaximizingMoves(PlayerToken player, IList<Mainline> moveScores)
         {
             var maxLead = default(Maybe<TScore>);
+            var fullyDetermined = true;
             var maxMainlines = new List<Mainline>();
             for (var m = 0; m < moveScores.Count; m++)
             {
                 var mainline = moveScores[m];
+                fullyDetermined &= mainline.FullyDetermined;
+
                 if (!maxLead.HasValue)
                 {
                     maxLead = this.GetLead(mainline, player);
@@ -253,20 +253,23 @@ namespace GameTheory.Players.MaximizingPlayer
 
             var sourceMainline = maxMainlines.Pick();
             var maxMoves = maxMainlines.SelectMany(m => m.Strategies.Peek()).ToImmutableArray();
-            return new Mainline(sourceMainline.Scores, sourceMainline.GameState, sourceMainline.PlayerToken, sourceMainline.Strategies.Pop().Push(maxMoves), maxMainlines.Min(m => m.Depth));
+            var depth = fullyDetermined ? moveScores.Max(m => m.Depth) : moveScores.Where(m => !m.FullyDetermined).Min(m => m.Depth);
+            return new Mainline(sourceMainline.Scores, sourceMainline.GameState, sourceMainline.PlayerToken, sourceMainline.Strategies.Pop().Push(maxMoves), depth, fullyDetermined);
         }
 
         private Mainline GetMove(IList<IGameState<TMove>> states, int ply, CancellationToken cancel)
         {
-            var mainlines = new List<Mainline>();
+            var mainlines = new List<Mainline>(states.Count);
             var moveWeights = new Dictionary<TMove, IWeighted<Mainline>>(new ComparableEqualityComparer<TMove>());
+            var fullyDetermined = true;
 
             foreach (var state in states)
             {
                 var mainline = this.GetMove(state, ply - 1, cancel);
                 mainlines.Add(mainline);
-                var strategy = mainline.Strategies.Peek();
+                fullyDetermined &= mainline.FullyDetermined;
 
+                var strategy = mainline.Strategies.Peek();
                 foreach (var move in strategy)
                 {
                     if (moveWeights.TryGetValue(move.Value, out var weighted))
@@ -284,20 +287,24 @@ namespace GameTheory.Players.MaximizingPlayer
 
             var sourceMainline = mainlines.Pick();
             var maxMoves = moveWeights.Select(m => Weighted.Create(m.Key, m.Value.Weight)).ToImmutableArray();
-            return new Mainline(sourceMainline.Scores, sourceMainline.GameState, sourceMainline.PlayerToken, sourceMainline.Strategies.Pop().Push(maxMoves), mainlines.Min(m => m.Depth));
+            var depth = fullyDetermined ? mainlines.Max(m => m.Depth) : mainlines.Where(m => !m.FullyDetermined).Min(m => m.Depth);
+            return new Mainline(sourceMainline.Scores, sourceMainline.GameState, sourceMainline.PlayerToken, sourceMainline.Strategies.Pop().Push(maxMoves), depth, fullyDetermined);
         }
 
         private Mainline GetMove(IGameState<TMove> state, int ply, CancellationToken cancel)
         {
-            if (this.cache.TryGetValue(state, out var cached) && cached.Depth >= ply)
+            if (this.cache.TryGetValue(state, out var cached))
             {
-                return cached;
+                if (cached.Depth >= ply || cached.FullyDetermined)
+                {
+                    return cached;
+                }
             }
 
             Mainline result;
             if (ply == 0)
             {
-                result = new Mainline(this.scoringMetric.Score(state), state, null, ImmutableStack<ImmutableArray<IWeighted<TMove>>>.Empty, 0);
+                result = new Mainline(this.scoringMetric.Score(state), state, null, ImmutableStack<ImmutableArray<IWeighted<TMove>>>.Empty, depth: 0, fullyDetermined: false);
             }
             else
             {
@@ -309,7 +316,7 @@ namespace GameTheory.Players.MaximizingPlayer
                 // If this is a stalemate (or there are no moves), we return no move and score the current position (recurse with ply 0)
                 if (players.Count == 0)
                 {
-                    result = new Mainline(this.scoringMetric.Score(state), state, null, ImmutableStack<ImmutableArray<IWeighted<TMove>>>.Empty, ply);
+                    result = new Mainline(this.scoringMetric.Score(state), state, null, ImmutableStack<ImmutableArray<IWeighted<TMove>>>.Empty, depth: 0, fullyDetermined: true);
                 }
                 else
                 {
@@ -324,7 +331,7 @@ namespace GameTheory.Players.MaximizingPlayer
                             var newScores = this.scoreExtender != null
                                 ? ImmutableDictionary.CreateRange(mainline.Scores.Select(kvp => new KeyValuePair<PlayerToken, TScore>(kvp.Key, this.scoreExtender.Extend(kvp.Value))))
                                 : mainline.Scores;
-                            var newMainline = new Mainline(newScores, mainline.GameState, move.PlayerToken, mainline.Strategies.Push(ImmutableArray.Create(Weighted.Create(move, 1))), mainline.Depth + 1);
+                            var newMainline = new Mainline(newScores, mainline.GameState, move.PlayerToken, mainline.Strategies.Push(ImmutableArray.Create(Weighted.Create(move, 1))), mainline.Depth + 1, mainline.FullyDetermined);
                             return Weighted.Create(newMainline, o.Weight);
                         }).ToList());
                     }
@@ -372,7 +379,9 @@ namespace GameTheory.Players.MaximizingPlayer
                         if (improvingMoves.Count == 0)
                         {
                             // This is a stalemate? Without time controls, there is no incentive for any player to move.
-                            result = new Mainline(this.scoringMetric.Score(state), state, null, ImmutableStack<ImmutableArray<IWeighted<TMove>>>.Empty, ply);
+                            var fullyDetermined = moveScores.All(m => m.FullyDetermined);
+                            var depth = fullyDetermined ? moveScores.Max(m => m.Depth) : moveScores.Where(m => !m.FullyDetermined).Min(m => m.Depth);
+                            result = new Mainline(this.scoringMetric.Score(state), state, null, ImmutableStack<ImmutableArray<IWeighted<TMove>>>.Empty, depth, fullyDetermined);
                         }
                         else
                         {
@@ -490,13 +499,14 @@ namespace GameTheory.Players.MaximizingPlayer
             /// <param name="strategies">The sequence of moves necessary to arrive at the resulting game state.</param>
             /// <param name="playerToken">The player who moves next in the sequence or <c>null</c> if there are no moves.</param>
             /// <param name="depth">The depth to which the score was computed.</param>
-            public Mainline(IDictionary<PlayerToken, TScore> scores, IGameState<TMove> state, PlayerToken playerToken, ImmutableStack<ImmutableArray<IWeighted<TMove>>> strategies, int depth)
+            public Mainline(IDictionary<PlayerToken, TScore> scores, IGameState<TMove> state, PlayerToken playerToken, ImmutableStack<ImmutableArray<IWeighted<TMove>>> strategies, int depth, bool fullyDetermined)
             {
                 this.Scores = scores;
                 this.GameState = state;
                 this.PlayerToken = playerToken;
                 this.Strategies = strategies;
                 this.Depth = depth;
+                this.FullyDetermined = fullyDetermined;
             }
 
             /// <summary>
@@ -570,11 +580,24 @@ namespace GameTheory.Players.MaximizingPlayer
                         first = false;
                     }
 
-                    tokens.Add("]");
+                    tokens.Add("] (depth ");
+
+                    if (!this.FullyDetermined)
+                    {
+                        tokens.Add(">=");
+                    }
+
+                    tokens.Add(this.Depth);
+                    tokens.Add(")");
 
                     return tokens;
                 }
             }
+
+            /// <summary>
+            /// Gets a value indicating whether or not the entire game tree has been searched at this level.
+            /// </summary>
+            public bool FullyDetermined { get; }
 
             /// <summary>
             /// Gets the resulting game state.
