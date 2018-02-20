@@ -1,30 +1,25 @@
 ﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
-namespace GameTheory.Games.RockPaperScissors
+namespace GameTheory.Games.NormalFormGame.MatchingPennies
 {
     using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Linq;
 
     /// <summary>
-    /// Represents the current state in a game of Rock Paper Scissors.
+    /// Represents the current state in a game of Matching Pennies.
     /// </summary>
-    public sealed class GameState : NormalFormGame.GameState<string>
+    public sealed class GameState : GameState<string>
     {
         /// <summary>
-        /// A move of "paper".
+        /// A move of "heads".
         /// </summary>
-        public const string Paper = nameof(Paper);
+        public const string Heads = nameof(Heads);
 
         /// <summary>
-        /// A move of "rock".
+        /// A move of "tails".
         /// </summary>
-        public const string Rock = nameof(Rock);
-
-        /// <summary>
-        /// A move of "scissors".
-        /// </summary>
-        public const string Scissors = nameof(Scissors);
+        public const string Tails = nameof(Tails);
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GameState"/> class in the starting position.
@@ -47,27 +42,18 @@ namespace GameTheory.Games.RockPaperScissors
                 return 0;
             }
 
-            var p = this.Players.IndexOf(player);
-            var o = 1 - p;
-
-            if ((this.Choices[p] == Rock && this.Choices[o] == Scissors) ||
-                (this.Choices[p] == Paper && this.Choices[o] == Rock) ||
-                (this.Choices[p] == Scissors && this.Choices[o] == Paper))
-            {
-                return 1;
-            }
-
-            return 0;
+            var match = this.Choices[0] == this.Choices[1];
+            return ((player == this.Players[0]) ^ match) ? 0 : 1;
         }
 
         /// <inheritdoc />
         protected override IEnumerable<string> GetMoveKinds(PlayerToken playerToken)
         {
-            return new[] { Rock, Paper, Scissors };
+            return new[] { Heads, Tails };
         }
 
         /// <inheritdoc />
-        protected override NormalFormGame.GameState<string> WithChoices(ImmutableArray<string> choices)
+        protected override GameState<string> WithChoices(ImmutableArray<string> choices)
         {
             return new GameState(this.Players, choices);
         }

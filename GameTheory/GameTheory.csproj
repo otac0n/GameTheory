@@ -263,10 +263,10 @@
     <Compile Include="Games\PositivelyPerfectParfaitGame\Moves\SpinMove.cs" />
     <Compile Include="Games\PositivelyPerfectParfaitGame\Moves\SwitchAScoopMove.cs" />
     <Compile Include="Games\PositivelyPerfectParfaitGame\Phase.cs" />
-    <Compile Include="Games\RockPaperScissors\GameState.cs" />
-    <Compile Include="Games\StagHunt\GameState.cs" />
-    <Compile Include="Games\PrisonersDilemma\GameState.cs" />
-    <Compile Include="Games\MatchingPennies\GameState.cs" />
+    <Compile Include="Games\NormalFormGame\RockPaperScissors\GameState.cs" />
+    <Compile Include="Games\NormalFormGame\StagHunt\GameState.cs" />
+    <Compile Include="Games\NormalFormGame\PrisonersDilemma\GameState.cs" />
+    <Compile Include="Games\NormalFormGame\MatchingPennies\GameState.cs" />
     <Compile Include="Games\NormalFormGame\GameState.cs" />
     <Compile Include="Games\NormalFormGame\Move.cs" />
     <Compile Include="Games\Splendor\DevelopmentCard.cs" />

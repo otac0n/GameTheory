@@ -2,7 +2,7 @@
 
 namespace GameTheory.Tests.Games
 {
-    using GameTheory.Games.MatchingPennies;
+    using GameTheory.Games.NormalFormGame.MatchingPennies;
     using NUnit.Framework;
 
     [TestFixture]
