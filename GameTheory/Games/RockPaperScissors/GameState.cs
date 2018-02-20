@@ -14,17 +14,17 @@ namespace GameTheory.Games.RockPaperScissors
         /// <summary>
         /// A move of "paper".
         /// </summary>
-        public const string Paper = "Paper";
+        public const string Paper = nameof(Paper);
 
         /// <summary>
         /// A move of "rock".
         /// </summary>
-        public const string Rock = "Rock";
+        public const string Rock = nameof(Rock);
 
         /// <summary>
         /// A move of "scissors".
         /// </summary>
-        public const string Scissors = "Scissors";
+        public const string Scissors = nameof(Scissors);
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GameState"/> class in the starting position.

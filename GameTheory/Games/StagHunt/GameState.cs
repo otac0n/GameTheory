@@ -14,12 +14,12 @@ namespace GameTheory.Games.StagHunt
         /// <summary>
         /// A move of "hare".
         /// </summary>
-        public const string Hare = "Hare";
+        public const string Hare = nameof(Hare);
 
         /// <summary>
         /// A move of "stag".
         /// </summary>
-        public const string Stag = "Stag";
+        public const string Stag = nameof(Stag);
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GameState"/> class in the starting position.

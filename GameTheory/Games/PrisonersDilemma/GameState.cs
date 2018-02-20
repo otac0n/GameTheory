@@ -14,12 +14,12 @@ namespace GameTheory.Games.PrisonersDilemma
         /// <summary>
         /// A move of "cooperate".
         /// </summary>
-        public const string Cooperate = "Cooperate";
+        public const string Cooperate = nameof(Cooperate);
 
         /// <summary>
         /// A move of "defect".
         /// </summary>
-        public const string Defect = "Defect";
+        public const string Defect = nameof(Defect);
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GameState"/> class in the starting position.

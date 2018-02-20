@@ -14,12 +14,12 @@ namespace GameTheory.Games.MatchingPennies
         /// <summary>
         /// A move of "heads".
         /// </summary>
-        public const string Heads = "Heads";
+        public const string Heads = nameof(Heads);
 
         /// <summary>
         /// A move of "tails".
         /// </summary>
-        public const string Tails = "Tails";
+        public const string Tails = nameof(Tails);
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GameState"/> class in the starting position.
