@@ -240,6 +240,7 @@
     <Compile Include="Games\Mancala\GameState.cs" />
     <Compile Include="Games\Mancala\Move.cs" />
     <Compile Include="Games\Mancala\Phase.cs" />
+    <Compile Include="Games\NormalFormGame\Chicken\GameState.cs" />
     <Compile Include="Games\NormalFormGame\MatchingPennies\GameState.cs" />
     <Compile Include="Games\NormalFormGame\PrisonersDilemma\GameState.cs" />
     <Compile Include="Games\NormalFormGame\RockPaperScissors\GameState.cs" />
