@@ -45,7 +45,7 @@ namespace GameTheory.Games.Draughts
         /// <summary>
         /// Gets a comparer that enforces the longest available capturing sequence, breaking ties with the sequence containing the most captured kings.
         /// </summary>
-        public static IComparer<Move> LongestCaptureSequenceMostKings { get; } = MakeMaximizingComparer(
+        public static IComparer<Move> LongestCaptureSequenceCapturingMostKings { get; } = MakeMaximizingComparer(
             c => new
             {
                 Pieces = 1,
@@ -71,7 +71,7 @@ namespace GameTheory.Games.Draughts
         /// <summary>
         /// Gets a comparer that enforces the longest available capturing sequence, breaking ties with sequences using a king then the sequence containing the most captured kings.
         /// </summary>
-        public static IComparer<Move> LongestCaptureSequenceWithKingMostKings { get; } = MakeMaximizingComparer(
+        public static IComparer<Move> LongestCaptureSequenceByKingCapturingMostKings { get; } = MakeMaximizingComparer(
             c => new
             {
                 Pieces = 1,

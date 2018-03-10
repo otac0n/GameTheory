@@ -73,6 +73,13 @@ namespace GameTheory.Games.Draughts
         public static Variant AmericanCheckers => Variant.EnglishDraughts;
 
         /// <summary>
+        /// Gets the Casual Checkers variant.
+        /// </summary>
+        public static Variant CasualCheckers { get; } = new Variant(
+            width: 8,
+            height: 8);
+
+        /// <summary>
         /// Gets the Canadian Checkers variant.
         /// </summary>
         public static Variant CanadianCheckers => new Variant(
@@ -109,7 +116,8 @@ namespace GameTheory.Games.Draughts
         public static Variant ItalianDraughts => new Variant(
             width: 8,
             height: 8,
-            movePriority: MovePriorities.LongestCaptureSequenceWithKingMostKings,
+            menCanCaptureKings: false,
+            movePriority: MovePriorities.LongestCaptureSequenceByKingCapturingMostKings,
             movePriorityImpact: MovePriorityImpact.IllegalMove);
 
         /// <summary>
@@ -142,7 +150,7 @@ namespace GameTheory.Games.Draughts
             width: 8,
             height: 8,
             flyingKings: true,
-            movePriority: MovePriorities.LongestCaptureSequenceMostKings,
+            movePriority: MovePriorities.LongestCaptureSequenceCapturingMostKings,
             movePriorityImpact: MovePriorityImpact.IllegalMove);
 
         /// <summary>
