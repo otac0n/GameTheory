@@ -1,0 +1,19 @@
+﻿@using System.Linq
+@using GameTheory.Games.Skull
+@namespace GameTheory.ConsoleRunner.ConsoleRenderers.Skull
+@static false
+@model GameState
+{{each player in model.Players}}
+    {{
+        var inventory = model.Inventory[player];
+    }}
+    {{= player}} State:
+        Challenges Won: {{= inventory.ChallengesWon}}
+        {{if player == this.playerToken}}
+            Hand: {{= inventory.Hand}}
+            Stack: [{{each card in inventory.Stack}}{{= card}}{{delimit}}, {{/each}}]{{if inventory.Revealed.Count > 0}} {{= inventory.Revealed}}{{/if}}
+        {{else}}
+            Hand: {{if inventory.Hand.Count > 0}}{{= inventory.Hand.Count}}x????{{/if}}
+            Stack: [{{if inventory.Stack.Count > 0}}{{= inventory.Stack.Count}}x????{{/if}}]{{if inventory.Revealed.Count > 0}} {{= inventory.Revealed}}{{/if}}
+        {{/if}}
+{{/each}}
