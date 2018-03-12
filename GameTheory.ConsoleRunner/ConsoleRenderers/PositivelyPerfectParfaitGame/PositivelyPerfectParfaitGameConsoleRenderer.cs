@@ -1,10 +1,9 @@
 ﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
-namespace GameTheory.ConsoleRunner.ConsoleRenderers
+namespace GameTheory.ConsoleRunner.ConsoleRenderers.PositivelyPerfectParfaitGame
 {
     using System;
     using Games.PositivelyPerfectParfaitGame;
-    using PositivelyPerfectParfaitGame;
 
     /// <summary>
     /// Provides a console renderer for the game of <see cref="GameState">Positively Perfect Parfait Game</see>.

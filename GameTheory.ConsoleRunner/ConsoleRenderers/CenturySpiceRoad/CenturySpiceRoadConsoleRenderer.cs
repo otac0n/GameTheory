@@ -1,45 +1,43 @@
 ﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
-namespace GameTheory.ConsoleRunner.ConsoleRenderers
+namespace GameTheory.ConsoleRunner.ConsoleRenderers.CenturySpiceRoad
 {
     using System;
-    using FiveTribes;
-    using Games.FiveTribes;
+    using Games.CenturySpiceRoad;
 
     /// <summary>
-    /// Provides a console renderer for the game of <see cref="GameState">FiveTribes</see>.
+    /// Provides a console renderer for the game of <see cref="GameState">CenturySpiceRoad</see>.
     /// </summary>
-    public class FiveTribesConsoleRenderer : BaseConsoleRenderer<Move>
+    public class CenturySpiceRoadConsoleRenderer : BaseConsoleRenderer<Move>
     {
         /// <inheritdoc />
-        public override void Show(IGameState<Move> state, PlayerToken playerToken = null) => this.Show((GameState)state, playerToken);
+        public override void Show(IGameState<Move> state, PlayerToken playerToken)
+        {
+            new Templates(playerToken).RenderGameState((GameState)state, this.MakeRenderTokenWriter(state));
+        }
 
         /// <inheritdoc/>
         protected override void RenderToken(IGameState<Move> state, object token)
         {
-            if (token is Meeple meeple)
+            if (token is Spice spice)
             {
                 var color = ConsoleColor.White;
-                switch (meeple)
+                switch (spice)
                 {
-                    case Meeple.Vizier:
+                    case Spice.Turmeric:
                         color = ConsoleColor.Yellow;
                         break;
 
-                    case Meeple.Assassin:
+                    case Spice.Saffron:
                         color = ConsoleColor.Red;
                         break;
 
-                    case Meeple.Merchant:
+                    case Spice.Cardamom:
                         color = ConsoleColor.Green;
                         break;
 
-                    case Meeple.Builder:
-                        color = ConsoleColor.Blue;
-                        break;
-
-                    case Meeple.Elder:
-                        color = ConsoleColor.White;
+                    case Spice.Cinnamon:
+                        color = ConsoleColor.DarkRed;
                         break;
                 }
 
@@ -52,11 +50,6 @@ namespace GameTheory.ConsoleRunner.ConsoleRenderers
             {
                 base.RenderToken(state, token);
             }
-        }
-
-        private void Show(GameState state, PlayerToken playerToken)
-        {
-            new Templates(state).RenderGameState(state, this.MakeRenderTokenWriter(state));
         }
     }
 }

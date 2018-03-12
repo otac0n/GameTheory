@@ -1,9 +1,8 @@
 ﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
-namespace GameTheory.ConsoleRunner.ConsoleRenderers
+namespace GameTheory.ConsoleRunner.ConsoleRenderers.Draughts
 {
     using System;
-    using Draughts;
     using Games.Draughts;
 
     /// <summary>

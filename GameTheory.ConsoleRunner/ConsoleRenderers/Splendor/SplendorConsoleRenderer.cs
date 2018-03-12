@@ -1,15 +1,14 @@
 ﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
-namespace GameTheory.ConsoleRunner.ConsoleRenderers
+namespace GameTheory.ConsoleRunner.ConsoleRenderers.Splendor
 {
     using System;
-    using CenturySpiceRoad;
-    using Games.CenturySpiceRoad;
+    using Games.Splendor;
 
     /// <summary>
-    /// Provides a console renderer for the game of <see cref="GameState">CenturySpiceRoad</see>.
+    /// Provides a console renderer for the game of <see cref="GameState">Splendor</see>.
     /// </summary>
-    public class CenturySpiceRoadConsoleRenderer : BaseConsoleRenderer<Move>
+    public class SplendorConsoleRenderer : BaseConsoleRenderer<Move>
     {
         /// <inheritdoc />
         public override void Show(IGameState<Move> state, PlayerToken playerToken)
@@ -20,25 +19,33 @@ namespace GameTheory.ConsoleRunner.ConsoleRenderers
         /// <inheritdoc/>
         protected override void RenderToken(IGameState<Move> state, object token)
         {
-            if (token is Spice spice)
+            if (token is Token splendorToken)
             {
                 var color = ConsoleColor.White;
-                switch (spice)
+                switch (splendorToken)
                 {
-                    case Spice.Turmeric:
-                        color = ConsoleColor.Yellow;
-                        break;
-
-                    case Spice.Saffron:
-                        color = ConsoleColor.Red;
-                        break;
-
-                    case Spice.Cardamom:
+                    case Token.Emerald:
                         color = ConsoleColor.Green;
                         break;
 
-                    case Spice.Cinnamon:
-                        color = ConsoleColor.DarkRed;
+                    case Token.Diamond:
+                        color = ConsoleColor.White;
+                        break;
+
+                    case Token.Sapphire:
+                        color = ConsoleColor.Blue;
+                        break;
+
+                    case Token.Onyx:
+                        color = ConsoleColor.DarkGray;
+                        break;
+
+                    case Token.Ruby:
+                        color = ConsoleColor.Red;
+                        break;
+
+                    case Token.GoldJoker:
+                        color = ConsoleColor.Yellow;
                         break;
                 }
 

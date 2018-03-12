@@ -1,15 +1,14 @@
 ﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
-namespace GameTheory.ConsoleRunner.ConsoleRenderers
+namespace GameTheory.ConsoleRunner.ConsoleRenderers.Lotus
 {
     using System;
-    using Games.Splendor;
-    using Splendor;
+    using Games.Lotus;
 
     /// <summary>
     /// Provides a console renderer for the game of <see cref="GameState">Splendor</see>.
     /// </summary>
-    public class SplendorConsoleRenderer : BaseConsoleRenderer<Move>
+    public class LotusConsoleRenderer : BaseConsoleRenderer<Move>
     {
         /// <inheritdoc />
         public override void Show(IGameState<Move> state, PlayerToken playerToken)
@@ -20,33 +19,29 @@ namespace GameTheory.ConsoleRunner.ConsoleRenderers
         /// <inheritdoc/>
         protected override void RenderToken(IGameState<Move> state, object token)
         {
-            if (token is Token splendorToken)
+            if (token is FlowerType)
             {
-                var color = ConsoleColor.White;
-                switch (splendorToken)
+                var color = ConsoleColor.Green;
+                switch ((FlowerType)token)
                 {
-                    case Token.Emerald:
-                        color = ConsoleColor.Green;
+                    case FlowerType.Iris:
+                        color = ConsoleColor.DarkMagenta;
                         break;
 
-                    case Token.Diamond:
-                        color = ConsoleColor.White;
+                    case FlowerType.Primrose:
+                        color = ConsoleColor.Yellow;
                         break;
 
-                    case Token.Sapphire:
-                        color = ConsoleColor.Blue;
-                        break;
-
-                    case Token.Onyx:
-                        color = ConsoleColor.DarkGray;
-                        break;
-
-                    case Token.Ruby:
+                    case FlowerType.CherryBlossom:
                         color = ConsoleColor.Red;
                         break;
 
-                    case Token.GoldJoker:
-                        color = ConsoleColor.Yellow;
+                    case FlowerType.Lily:
+                        color = ConsoleColor.White;
+                        break;
+
+                    case FlowerType.Lotus:
+                        color = ConsoleColor.Magenta;
                         break;
                 }
 
