@@ -467,7 +467,7 @@ namespace GameTheory.Games.Splendor
                 }
                 else
                 {
-                    throw new InvalidOperationException();
+                    throw new ArgumentOutOfRangeException(nameof(move));
                 }
             }
 

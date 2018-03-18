@@ -35,8 +35,8 @@ namespace GameTheory.Games.Draughts.Moves
             var board = state.Board;
             var playerIndex = state.Players.IndexOf(state.ActivePlayer);
             var opponentIndex = 1 - playerIndex;
-            var playerColor = (Piece)(1 << playerIndex);
-            var opponentColor = (Piece)(1 << opponentIndex);
+            var playerColor = (Pieces)(1 << playerIndex);
+            var opponentColor = (Pieces)(1 << opponentIndex);
             var forwardDirection = playerIndex * 2 - 1;
 
             int i, count;
@@ -56,7 +56,7 @@ namespace GameTheory.Games.Draughts.Moves
                 var square = board[i];
                 if ((square & playerColor) == playerColor)
                 {
-                    var crowned = (square & Piece.Crowned) == Piece.Crowned;
+                    var crowned = (square & Pieces.Crowned) == Pieces.Crowned;
                     variant.GetCoordinates(i, out int x, out int y);
 
                     for (var f = 1; f >= -1; f -= 2)
@@ -80,12 +80,12 @@ namespace GameTheory.Games.Draughts.Moves
                                 }
 
                                 var captureSquare = board[capIndex];
-                                if ((captureSquare & opponentColor) == opponentColor && (captureSquare & Piece.Captured) != Piece.Captured && (variant.MenCanCaptureKings || (captureSquare & Piece.Crowned) != Piece.Crowned))
+                                if ((captureSquare & opponentColor) == opponentColor && (captureSquare & Pieces.Captured) != Pieces.Captured && (variant.MenCanCaptureKings || (captureSquare & Pieces.Crowned) != Pieces.Crowned))
                                 {
                                     captureIndex = capIndex;
                                     break;
                                 }
-                                else if (captureSquare == Piece.None && crowned && variant.FlyingKings)
+                                else if (captureSquare == Pieces.None && crowned && variant.FlyingKings)
                                 {
                                     continue;
                                 }
@@ -112,7 +112,7 @@ namespace GameTheory.Games.Draughts.Moves
                                 }
 
                                 var toSquare = board[toIndex];
-                                if (toSquare == Piece.None)
+                                if (toSquare == Pieces.None)
                                 {
                                     yield return new CaptureMove(state, i, toIndex, captureIndex);
 
@@ -142,7 +142,7 @@ namespace GameTheory.Games.Draughts.Moves
             var board = state.Board;
 
             state = state.With(
-                board: board.SetItem(this.CaptureIndex, board[this.CaptureIndex] | Piece.Captured),
+                board: board.SetItem(this.CaptureIndex, board[this.CaptureIndex] | Pieces.Captured),
                 lastCapturingIndex: this.ToIndex);
 
             return base.Apply(state);

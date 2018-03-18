@@ -23,6 +23,9 @@ namespace GameTheory.Games.FiveTribes.Djinns
         }
 
         /// <inheritdoc />
+        protected override InterstitialState InterstitialState => new Paid();
+
+        /// <inheritdoc />
         protected override GameState CleanUp(GameState state)
         {
             if (state == null)
@@ -36,9 +39,6 @@ namespace GameTheory.Games.FiveTribes.Djinns
             return state.With(
                 scoreTables: state.ScoreTables.SetItem(player, scoreTable.With(builderMultiplier: scoreTable.BuilderMultiplier / 2)));
         }
-
-        /// <inheritdoc />
-        protected override InterstitialState GetInterstitialState() => new Paid();
 
         private class Paid : InterstitialState
         {

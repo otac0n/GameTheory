@@ -28,7 +28,7 @@ namespace GameTheory.Players.MaximizingPlayers
             var state = (GameState)playerState.GameState;
             var board = state.Board;
             var playerIndex = state.Players.IndexOf(playerState.PlayerToken);
-            var playerColor = (Piece)(1 << playerIndex);
+            var playerColor = (Pieces)(1 << playerIndex);
 
             var score = 0.0;
 
@@ -38,7 +38,7 @@ namespace GameTheory.Players.MaximizingPlayers
                 if ((square & playerColor) == playerColor)
                 {
                     score += 1.0;
-                    if ((square & Piece.Crowned) == Piece.Crowned)
+                    if ((square & Pieces.Crowned) == Pieces.Crowned)
                     {
                         score += 0.75;
                     }

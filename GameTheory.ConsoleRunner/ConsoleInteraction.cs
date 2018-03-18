@@ -18,6 +18,8 @@ namespace GameTheory.ConsoleRunner
             ConsoleColor.DarkRed,
         }.AsReadOnly();
 
+        private static object @lock = new object();
+
         public static T Choose<T>(IList<T> options, CancellationToken? cancel = null, Action<T> render = null, Func<T, string> skipMessage = null)
         {
             if (options.Count == 0)
@@ -140,7 +142,7 @@ namespace GameTheory.ConsoleRunner
 
         public static void WithLock(Action action)
         {
-            lock (Console.Out)
+            lock (@lock)
             {
                 action();
             }
@@ -148,7 +150,7 @@ namespace GameTheory.ConsoleRunner
 
         public static T WithLock<T>(Func<T> action)
         {
-            lock (Console.Out)
+            lock (@lock)
             {
                 return action();
             }

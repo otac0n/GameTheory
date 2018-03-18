@@ -27,10 +27,7 @@ namespace GameTheory.ConsoleRunner.ConsoleRenderers
         }
 
         /// <inheritdoc/>
-        public void Show(IGameState<TMove> state, ITokenFormattable tokenFormattable)
-        {
-            this.Show(state, tokenFormattable.FormatTokens);
-        }
+        public void Show(IGameState<TMove> state, ITokenFormattable tokenFormattable) => this.Show(state, tokenFormattable.FormatTokens);
 
         /// <summary>
         /// Creates a <see cref="TextWriter"/> that will invoke <see cref="RenderToken"/> for all interactions.

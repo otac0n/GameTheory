@@ -5,6 +5,7 @@ namespace GameTheory.Games.Draughts
     using System;
     using System.Collections.Generic;
     using System.Collections.Immutable;
+    using System.Diagnostics.CodeAnalysis;
 
     /// <summary>
     /// Describes the rules for a variant of <see cref="GameState">Draughts</see>.
@@ -47,7 +48,7 @@ namespace GameTheory.Games.Draughts
 
             var files = width / 2;
             var filledRows = height / 2 - 1;
-            var board = new Piece[files * height];
+            var board = new Pieces[files * height];
             for (var y = 0; y < height; y++)
             {
                 for (var x = 0; x < files; x++)
@@ -55,11 +56,11 @@ namespace GameTheory.Games.Draughts
                     var i = y * files + x;
                     if (y < filledRows)
                     {
-                        board[i] = Piece.Black;
+                        board[i] = Pieces.Black;
                     }
                     else if (height - 1 - y < filledRows)
                     {
-                        board[i] = Piece.White;
+                        board[i] = Pieces.White;
                     }
                 }
             }
@@ -73,13 +74,6 @@ namespace GameTheory.Games.Draughts
         public static Variant AmericanCheckers => Variant.EnglishDraughts;
 
         /// <summary>
-        /// Gets the Casual Checkers variant.
-        /// </summary>
-        public static Variant CasualCheckers { get; } = new Variant(
-            width: 8,
-            height: 8);
-
-        /// <summary>
         /// Gets the Canadian Checkers variant.
         /// </summary>
         public static Variant CanadianCheckers => new Variant(
@@ -89,6 +83,13 @@ namespace GameTheory.Games.Draughts
             menCaptureBackwards: true,
             movePriority: MovePriorities.LongestCaptureSequence,
             movePriorityImpact: MovePriorityImpact.IllegalMove);
+
+        /// <summary>
+        /// Gets the Casual Checkers variant.
+        /// </summary>
+        public static Variant CasualCheckers { get; } = new Variant(
+            width: 8,
+            height: 8);
 
         /// <summary>
         /// Gets the English Draughts variant.
@@ -171,7 +172,7 @@ namespace GameTheory.Games.Draughts
         /// <summary>
         /// Gets the initial contents of the board.
         /// </summary>
-        public ImmutableArray<Piece> InitialBoardState { get; }
+        public ImmutableArray<Pieces> InitialBoardState { get; }
 
         /// <summary>
         /// Gets a value indicating whether or not men can capture kings.
@@ -209,6 +210,8 @@ namespace GameTheory.Games.Draughts
         /// <param name="index">The index to convert.</param>
         /// <param name="x">The horizontal component of the vector.</param>
         /// <param name="y">The vertical component of the vector.</param>
+        [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "x", Justification = "X is meaningful in the context of coordinates.")]
+        [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "y", Justification = "Y is meaningful in the context of coordinates.")]
         public void GetCoordinates(int index, out int x, out int y)
         {
             var stride = this.Width / 2;
@@ -222,6 +225,8 @@ namespace GameTheory.Games.Draughts
         /// <param name="x">The file number.</param>
         /// <param name="y">The rank number.</param>
         /// <returns>The index of the specified piece or <c>-1</c> if the coordinates don't refer to a piece.</returns>
+        [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "x", Justification = "X is meaningful in the context of coordinates.")]
+        [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "y", Justification = "Y is meaningful in the context of coordinates.")]
         public int GetIndexOf(int x, int y)
         {
             if (x < 0 || y < 0 || x >= this.Width || y >= this.Height)
@@ -245,11 +250,13 @@ namespace GameTheory.Games.Draughts
         /// <param name="board">The board to access.</param>
         /// <param name="x">The horizontal component of the vector.</param>
         /// <param name="y">The vertical component of the vector.</param>
-        /// <returns>The index of the specified piece or <see cref="Piece.None"/> if the coordinates don't refer to a piece.</returns>
-        public Piece GetPieceAt(ImmutableArray<Piece> board, int x, int y)
+        /// <returns>The index of the specified piece or <see cref="Pieces.None"/> if the coordinates don't refer to a piece.</returns>
+        [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "x", Justification = "X is meaningful in the context of coordinates.")]
+        [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "y", Justification = "Y is meaningful in the context of coordinates.")]
+        public Pieces GetPieceAt(ImmutableArray<Pieces> board, int x, int y)
         {
             var index = this.GetIndexOf(x, y);
-            return index < 0 ? Piece.None : board[index];
+            return index < 0 ? Pieces.None : board[index];
         }
     }
 }

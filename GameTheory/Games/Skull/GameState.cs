@@ -235,7 +235,7 @@ namespace GameTheory.Games.Skull
                 }
                 else
                 {
-                    throw new InvalidOperationException();
+                    throw new ArgumentOutOfRangeException(nameof(move));
                 }
             }
 

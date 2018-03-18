@@ -12,11 +12,9 @@ namespace GameTheory.ConsoleRunner.ConsoleRenderers.Ergo
     public class ErgoConsoleRenderer : BaseConsoleRenderer<Move>
     {
         /// <inheritdoc />
-        public override void Show(IGameState<Move> state, PlayerToken playerToken)
-        {
-            new Templates(playerToken).RenderGameState((GameState)state, this.MakeRenderTokenWriter(state));
-        }
+        public override void Show(IGameState<Move> state, PlayerToken playerToken) => new Templates(playerToken).RenderGameState((GameState)state, this.MakeRenderTokenWriter(state));
 
+        /// <inheritdoc/>
         protected override void RenderToken(IGameState<Move> state, object token)
         {
             if (token is PlayerToken playerToken)
@@ -28,8 +26,8 @@ namespace GameTheory.ConsoleRunner.ConsoleRenderers.Ergo
             }
             else if (token is Symbol symbol)
             {
-                var color = (ConsoleColor?)null;
-                string display;
+                ConsoleColor? color = null;
+                string display = null;
 
                 switch (symbol)
                 {
@@ -57,20 +55,18 @@ namespace GameTheory.ConsoleRunner.ConsoleRenderers.Ergo
                         display = ")";
                         break;
 
-                    case Symbol.A:
-                    case Symbol.B:
-                    case Symbol.C:
-                    case Symbol.D:
+                    case Symbol.PlayerA:
+                    case Symbol.PlayerB:
+                    case Symbol.PlayerC:
+                    case Symbol.PlayerD:
                         var index = (int)symbol;
                         if (index < state.Players.Count)
                         {
                             color = ConsoleInteraction.GetPlayerColor(state, state.Players[index]);
                         }
 
-                        goto default;
-
-                    default:
                         display = symbol.ToString();
+                        display = display.Substring(display.Length - 1);
                         break;
                 }
 

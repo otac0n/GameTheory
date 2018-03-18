@@ -5,7 +5,6 @@ namespace GameTheory.Games.Ergo
     using System;
     using System.Collections.Generic;
     using System.Collections.Immutable;
-    using System.Diagnostics;
     using System.Linq;
     using GameTheory.Games.Ergo.Cards;
 
@@ -14,8 +13,19 @@ namespace GameTheory.Games.Ergo
     /// </summary>
     public sealed class GameState : IGameState<Move>
     {
+        /// <summary>
+        /// The number of actions played per turn.
+        /// </summary>
         public const int ActionsPerTurn = 2;
+
+        /// <summary>
+        /// The number of turns a fallacy is in effect.
+        /// </summary>
         public const int FallacyTurns = 3;
+
+        /// <summary>
+        /// The initial size of a player's hand.
+        /// </summary>
         public const int InitialHandSize = 5;
 
         /// <summary>
@@ -28,7 +38,14 @@ namespace GameTheory.Games.Ergo
         /// </summary>
         public const int MinPlayers = 2;
 
+        /// <summary>
+        /// The number of premise lines in the proof.
+        /// </summary>
         public const int PremiseLines = 4;
+
+        /// <summary>
+        /// The target number of points.
+        /// </summary>
         public const int TargetPoints = 50;
 
         static GameState()
@@ -110,8 +127,14 @@ namespace GameTheory.Games.Ergo
             this.IsProofValid = isProofValid;
         }
 
+        /// <summary>
+        /// Gets the starting deck.
+        /// </summary>
         public static ImmutableList<Card> StartingDeck { get; }
 
+        /// <summary>
+        /// Gets the starting proof.
+        /// </summary>
         public static ImmutableList<ImmutableList<PlacedCard>> StartingProof { get; }
 
         /// <summary>
@@ -124,14 +147,24 @@ namespace GameTheory.Games.Ergo
         /// </summary>
         public PlayerToken Dealer { get; }
 
+        /// <summary>
+        /// Gets the deck.
+        /// </summary>
         public ImmutableList<Card> Deck { get; }
 
+        /// <summary>
+        /// Gets the fallacy counters.
+        /// </summary>
         public ImmutableDictionary<PlayerToken, int> FallacyCounter { get; }
 
+        /// <summary>
+        /// Gets the player's hands.
+        /// </summary>
         public ImmutableDictionary<PlayerToken, ImmutableList<Card>> Hands { get; }
 
-        public bool IsProofValid { get; }
-
+        /// <summary>
+        /// Gets a value indicating whether or not the round is over.
+        /// </summary>
         public bool IsRoundOver { get; }
 
         /// <summary>
@@ -147,11 +180,22 @@ namespace GameTheory.Games.Ergo
         /// <inheritdoc />
         IReadOnlyList<PlayerToken> IGameState<Move>.Players => this.Players;
 
+        /// <summary>
+        /// Gets the proof.
+        /// </summary>
         public ImmutableList<ImmutableList<PlacedCard>> Proof { get; }
 
+        /// <summary>
+        /// Gets the active players remaining actions.
+        /// </summary>
         public int RemainingActions { get; }
 
+        /// <summary>
+        /// Gets the player's scores.
+        /// </summary>
         public ImmutableDictionary<PlayerToken, int> Scores { get; }
+
+        internal bool IsProofValid { get; }
 
         /// <inheritdoc/>
         public int CompareTo(IGameState<Move> other)
@@ -312,7 +356,7 @@ namespace GameTheory.Games.Ergo
                 }
                 else
                 {
-                    throw new InvalidOperationException();
+                    throw new ArgumentOutOfRangeException(nameof(move));
                 }
             }
 

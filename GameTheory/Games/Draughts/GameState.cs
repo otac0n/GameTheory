@@ -33,7 +33,7 @@ namespace GameTheory.Games.Draughts
             ImmutableArray<PlayerToken> players,
             Phase phase,
             PlayerToken activePlayer,
-            ImmutableArray<Piece> board,
+            ImmutableArray<Pieces> board,
             Maybe<int> lastCapturingIndex,
             ImmutableSortedSet<int> maxMovePieceIndexes,
             bool opponentMayRemovePiece)
@@ -56,7 +56,7 @@ namespace GameTheory.Games.Draughts
         /// <summary>
         /// Gets the current state of the board.
         /// </summary>
-        public ImmutableArray<Piece> Board { get; }
+        public ImmutableArray<Pieces> Board { get; }
 
         /// <summary>
         /// Gets the index of the square that contains the piece that made the most recent capture.
@@ -171,7 +171,7 @@ namespace GameTheory.Games.Draughts
 
             if (this.CompareTo(move.GameState) != 0)
             {
-                throw new InvalidOperationException();
+                throw new ArgumentOutOfRangeException(nameof(move));
             }
 
             var state = this;
@@ -236,7 +236,7 @@ namespace GameTheory.Games.Draughts
         internal GameState With(
             Phase? phase = null,
             PlayerToken activePlayer = null,
-            ImmutableArray<Piece>? board = null,
+            ImmutableArray<Pieces>? board = null,
             Maybe<int>? lastCapturingIndex = null,
             ImmutableSortedSet<int> maxMovePieceIndexes = null,
             bool? opponentMayRemovePiece = null)

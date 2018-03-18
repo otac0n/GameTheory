@@ -39,7 +39,7 @@ namespace GameTheory.Games.Draughts.Moves
             var variant = state.Variant;
             var board = state.Board;
             var playerIndex = state.Players.IndexOf(state.ActivePlayer);
-            var playerColor = (Piece)(1 << playerIndex);
+            var playerColor = (Pieces)(1 << playerIndex);
             var forwardDirection = playerIndex * 2 - 1;
 
             var count = board.Length;
@@ -48,7 +48,7 @@ namespace GameTheory.Games.Draughts.Moves
                 var square = board[i];
                 if ((square & playerColor) == playerColor)
                 {
-                    var crowned = (square & Piece.Crowned) == Piece.Crowned;
+                    var crowned = (square & Pieces.Crowned) == Pieces.Crowned;
                     variant.GetCoordinates(i, out int x, out int y);
 
                     for (var f = 1; f >= -1; f -= 2)
@@ -67,7 +67,7 @@ namespace GameTheory.Games.Draughts.Moves
                                     break;
                                 }
 
-                                if (board[toIndex] == Piece.None)
+                                if (board[toIndex] == Pieces.None)
                                 {
                                     yield return new BasicMove(state, i, toIndex);
 
@@ -98,9 +98,9 @@ namespace GameTheory.Games.Draughts.Moves
             var board = state.Board;
             board = board
                 .SetItem(this.ToIndex, board[this.FromIndex])
-                .SetItem(this.FromIndex, Piece.None);
+                .SetItem(this.FromIndex, Pieces.None);
 
-            if (variant.CrownOnEntry && (board[this.ToIndex] & Piece.Crowned) != Piece.Crowned)
+            if (variant.CrownOnEntry && (board[this.ToIndex] & Pieces.Crowned) != Pieces.Crowned)
             {
                 var playerIndex = state.Players.IndexOf(state.ActivePlayer);
                 var promoteRank = (variant.Height - 1) * playerIndex;
@@ -108,7 +108,7 @@ namespace GameTheory.Games.Draughts.Moves
                 if (y == promoteRank)
                 {
                     board = board
-                        .SetItem(this.ToIndex, board[this.ToIndex] | Piece.Crowned);
+                        .SetItem(this.ToIndex, board[this.ToIndex] | Pieces.Crowned);
                 }
             }
 

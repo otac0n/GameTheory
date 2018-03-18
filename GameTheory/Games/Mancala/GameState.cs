@@ -204,7 +204,7 @@ namespace GameTheory.Games.Mancala
 
             if (this.CompareTo(move.GameState) != 0)
             {
-                throw new InvalidOperationException();
+                throw new ArgumentOutOfRangeException(nameof(move));
             }
 
             return move.Apply(this);

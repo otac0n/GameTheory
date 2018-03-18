@@ -5,12 +5,14 @@ namespace GameTheory
     using System;
     using System.Collections;
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
 
     /// <summary>
     /// Provides methods to facilitate Monte-Carlo approaches to exploring game state variations.
     /// </summary>
     /// <typeparam name="TState">The type of gamestate being shuffled.</typeparam>
+    [SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix", Justification = "This type implements IEnumerable for convenience of interface, but is not semantically a collection.")]
     public class GameShuffler<TState> : IEnumerable<TState>
     {
         private readonly TState startingState;

@@ -246,7 +246,7 @@ namespace GameTheory.Games.TwentyFortyEight
 
             if (this.CompareTo(move.GameState) != 0)
             {
-                throw new InvalidOperationException();
+                throw new ArgumentOutOfRangeException(nameof(move));
             }
 
             var state = move.Apply(this);

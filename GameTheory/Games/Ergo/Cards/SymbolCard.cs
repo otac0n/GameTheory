@@ -5,17 +5,59 @@ namespace GameTheory.Games.Ergo.Cards
     using System.Collections.Generic;
     using System.Collections.Immutable;
 
+    /// <summary>
+    /// Represents a symbol on a card.
+    /// </summary>
     public enum Symbol
     {
-        A = 0,
-        B = 1,
-        C = 2,
-        D = 3,
+        /// <summary>
+        /// The symbol for player A ('A').
+        /// </summary>
+        PlayerA = 0,
+
+        /// <summary>
+        /// The symbol for player B ('B').
+        /// </summary>
+        PlayerB = 1,
+
+        /// <summary>
+        /// The symbol for player C ('C').
+        /// </summary>
+        PlayerC = 2,
+
+        /// <summary>
+        /// The symbol for player D ('D').
+        /// </summary>
+        PlayerD = 3,
+
+        /// <summary>
+        /// The And symbol ('Λ').
+        /// </summary>
         And,
+
+        /// <summary>
+        /// The Or symbol ('ν').
+        /// </summary>
         Or,
+
+        /// <summary>
+        /// The Then symbol ('⊃').
+        /// </summary>
         Then,
+
+        /// <summary>
+        /// The Not symbol ('~').
+        /// </summary>
         Not,
+
+        /// <summary>
+        /// The Left Parenthesis symbol ('(').
+        /// </summary>
         LeftParenthesis,
+
+        /// <summary>
+        /// The Rigth Parenthesis symbol (')').
+        /// </summary>
         RightParenthesis,
     }
 
@@ -52,22 +94,22 @@ namespace GameTheory.Games.Ergo.Cards
         /// <summary>
         /// The single instance of the A symbol card.
         /// </summary>
-        public static readonly SymbolCard VariableA = new SymbolCard(Symbol.A);
+        public static readonly SymbolCard VariableA = new SymbolCard(Symbol.PlayerA);
 
         /// <summary>
         /// The single instance of the B symbol card.
         /// </summary>
-        public static readonly SymbolCard VariableB = new SymbolCard(Symbol.B);
+        public static readonly SymbolCard VariableB = new SymbolCard(Symbol.PlayerB);
 
         /// <summary>
         /// The single instance of the C symbol card.
         /// </summary>
-        public static readonly SymbolCard VariableC = new SymbolCard(Symbol.C);
+        public static readonly SymbolCard VariableC = new SymbolCard(Symbol.PlayerC);
 
         /// <summary>
         /// The single instance of the D symbol card.
         /// </summary>
-        public static readonly SymbolCard VariableD = new SymbolCard(Symbol.D);
+        public static readonly SymbolCard VariableD = new SymbolCard(Symbol.PlayerD);
 
         /// <summary>
         /// The single instance of the Wild Operator symbol card.
@@ -77,7 +119,7 @@ namespace GameTheory.Games.Ergo.Cards
         /// <summary>
         /// The single instance of the Wild Variable symbol card.
         /// </summary>
-        public static readonly SymbolCard WildVariable = new SymbolCard(Symbol.A, Symbol.B, Symbol.C, Symbol.D);
+        public static readonly SymbolCard WildVariable = new SymbolCard(Symbol.PlayerA, Symbol.PlayerB, Symbol.PlayerC, Symbol.PlayerD);
 
         private SymbolCard(params Symbol[] symbols)
         {

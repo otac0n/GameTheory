@@ -40,7 +40,7 @@ namespace GameTheory.Games.PositivelyPerfectParfaitGame.Moves
         {
             var activePlayer = this.PlayerToken;
 
-            foreach (Flavor flavor in Enum.GetValues(typeof(Flavor)))
+            foreach (var flavor in EnumUtilities.GetValues<Flavor>())
             {
                 var flavorState = state;
                 if (state.RemainingScoops[flavor] > 0 && state.Parfaits[activePlayer].Flavors[flavor] == 0)

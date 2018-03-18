@@ -4,6 +4,7 @@ namespace GameTheory
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using System.Linq.Expressions;
     using System.Reflection;
@@ -20,6 +21,7 @@ namespace GameTheory
         /// <summary>
         /// The singleton instance of the comparer.
         /// </summary>
+        [SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes", Justification = "Intended to match the API contract of EqualityComparer<T>.Default.")]
         public static readonly EnumComparer<T> Default = new EnumComparer<T>();
 
         private static Func<T, T, int> compare;

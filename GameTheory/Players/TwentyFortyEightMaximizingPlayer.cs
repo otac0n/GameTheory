@@ -8,7 +8,7 @@ namespace GameTheory.Players.MaximizingPlayers
     using GameTheory.Players.MaximizingPlayer;
 
     /// <summary>
-    /// Provides a maximizing player for the game of <see cref="GameState">Tic tac toe</see>.
+    /// Provides a maximizing player for the game of <see cref="GameState">2048</see>.
     /// </summary>
     public sealed class TwentyFortyEightMaximizingPlayer : MaximizingPlayer<Move, ResultScore<double>>
     {

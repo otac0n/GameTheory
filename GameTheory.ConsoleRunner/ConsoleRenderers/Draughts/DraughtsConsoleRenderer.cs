@@ -11,38 +11,38 @@ namespace GameTheory.ConsoleRunner.ConsoleRenderers.Draughts
     public class DraughtsConsoleRenderer : BaseConsoleRenderer<Move>
     {
         /// <inheritdoc/>
-        public override void Show(IGameState<Move> state, PlayerToken playerToken = null) => this.Show((GameState)state, playerToken);
+        public override void Show(IGameState<Move> state, PlayerToken playerToken = null) => this.Show((GameState)state);
 
         /// <inheritdoc/>
         protected override void RenderToken(IGameState<Move> state, object token)
         {
-            if (token is Piece piece)
+            if (token is Pieces piece)
             {
                 PlayerToken player = null;
                 var pieceStr = " ";
-                switch (piece & (Piece.White | Piece.Black | Piece.Crowned))
+                switch (piece & (Pieces.White | Pieces.Black | Pieces.Crowned))
                 {
-                    case Piece.White:
+                    case Pieces.White:
                         player = state.Players[0];
                         pieceStr = "o";
                         break;
 
-                    case Piece.Black:
+                    case Pieces.Black:
                         player = state.Players[1];
                         pieceStr = "o";
                         break;
 
-                    case Piece.White | Piece.Crowned:
+                    case Pieces.White | Pieces.Crowned:
                         player = state.Players[0];
                         pieceStr = "8";
                         break;
 
-                    case Piece.Black | Piece.Crowned:
+                    case Pieces.Black | Pieces.Crowned:
                         player = state.Players[1];
                         pieceStr = "8";
                         break;
 
-                    case Piece.None:
+                    case Pieces.None:
                         break;
                 }
 
@@ -64,9 +64,6 @@ namespace GameTheory.ConsoleRunner.ConsoleRenderers.Draughts
             }
         }
 
-        private void Show(GameState state, PlayerToken playerToken)
-        {
-            new Templates().RenderGameState(state, this.MakeRenderTokenWriter(state));
-        }
+        private void Show(GameState state) => new Templates().RenderGameState(state, this.MakeRenderTokenWriter(state));
     }
 }

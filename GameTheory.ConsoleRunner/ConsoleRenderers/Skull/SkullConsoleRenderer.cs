@@ -11,10 +11,7 @@ namespace GameTheory.ConsoleRunner.ConsoleRenderers.Skull
     public class SkullConsoleRenderer : BaseConsoleRenderer<Move>
     {
         /// <inheritdoc />
-        public override void Show(IGameState<Move> state, PlayerToken playerToken)
-        {
-            new Templates(playerToken).RenderGameState((GameState)state, this.MakeRenderTokenWriter(state));
-        }
+        public override void Show(IGameState<Move> state, PlayerToken playerToken) => new Templates(playerToken).RenderGameState((GameState)state, this.MakeRenderTokenWriter(state));
 
         /// <inheritdoc/>
         protected override void RenderToken(IGameState<Move> state, object token)

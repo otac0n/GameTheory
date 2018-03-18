@@ -22,10 +22,10 @@ namespace GameTheory.Games.Ergo
 
         private static readonly ImmutableDictionary<Symbol, ParameterExpression> Variables = ImmutableDictionary.CreateRange(new Dictionary<Symbol, ParameterExpression>
         {
-            [Symbol.A] = A,
-            [Symbol.B] = B,
-            [Symbol.C] = C,
-            [Symbol.D] = D,
+            [Symbol.PlayerA] = A,
+            [Symbol.PlayerB] = B,
+            [Symbol.PlayerC] = C,
+            [Symbol.PlayerD] = D,
         });
 
         public static Expression CompilePremise(IEnumerable<Symbol> proof)
@@ -84,10 +84,10 @@ namespace GameTheory.Games.Ergo
             {
                 switch (symbol)
                 {
-                    case Symbol.A:
-                    case Symbol.B:
-                    case Symbol.C:
-                    case Symbol.D:
+                    case Symbol.PlayerA:
+                    case Symbol.PlayerB:
+                    case Symbol.PlayerC:
+                    case Symbol.PlayerD:
                         push(Variables[symbol]);
                         break;
 
@@ -168,10 +168,10 @@ namespace GameTheory.Games.Ergo
             {
                 switch (symbol)
                 {
-                    case Symbol.A:
-                    case Symbol.B:
-                    case Symbol.C:
-                    case Symbol.D:
+                    case Symbol.PlayerA:
+                    case Symbol.PlayerB:
+                    case Symbol.PlayerC:
+                    case Symbol.PlayerD:
                         if ((st & Var) == 0)
                         {
                             return false;

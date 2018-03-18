@@ -675,7 +675,7 @@ namespace GameTheory.Games.FiveTribes
 
             if (this.CompareTo(move.GameState) != 0)
             {
-                throw new InvalidOperationException();
+                throw new ArgumentOutOfRangeException(nameof(move));
             }
 
             var newState = move.Apply(this);
@@ -694,7 +694,6 @@ namespace GameTheory.Games.FiveTribes
         /// <param name="inventory"><c>null</c> to keep the existing value, or any other value to update <see cref="Inventory"/>.</param>
         /// <param name="lastPoint"><c>null</c> to keep the existing value, or any other value to update <see cref="LastPoint"/>.</param>
         /// <param name="phase"><c>null</c> to keep the existing value, or any other value to update <see cref="Phase"/>.</param>
-        /// <param name="players"><c>null</c> to keep the existing value, or any other value to update <see cref="Players"/>.</param>
         /// <param name="previousPoint"><c>null</c> to keep the existing value, or any other value to update <see cref="PreviousPoint"/>.</param>
         /// <param name="resourceDiscards"><c>null</c> to keep the existing value, or any other value to update <see cref="ResourceDiscards"/>.</param>
         /// <param name="resourcePile"><c>null</c> to keep the existing value, or any other value to update <see cref="ResourcePile"/>.</param>

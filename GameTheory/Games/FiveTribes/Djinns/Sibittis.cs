@@ -22,6 +22,9 @@ namespace GameTheory.Games.FiveTribes.Djinns
         }
 
         /// <inheritdoc />
+        protected override InterstitialState InterstitialState => new Paid();
+
+        /// <inheritdoc />
         protected override bool CanGetMoves(GameState state)
         {
             if (state == null)
@@ -31,9 +34,6 @@ namespace GameTheory.Games.FiveTribes.Djinns
 
             return base.CanGetMoves(state) && (state.DjinnPile.Count + state.DjinnDiscards.Count) >= 1;
         }
-
-        /// <inheritdoc />
-        protected override InterstitialState GetInterstitialState() => new Paid();
 
         private class Paid : InterstitialState
         {

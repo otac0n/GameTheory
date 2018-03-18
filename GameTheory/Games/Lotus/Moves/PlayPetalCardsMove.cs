@@ -93,7 +93,7 @@ namespace GameTheory.Games.Lotus.Moves
 
                 var maxPlays = (int)flowerType - state.Field[flowerType].Petals.Count;
                 maxPlays = Math.Min(maxPlays, indexes.Count);
-                if ((playerInventory.SpecialPowers & SpecialPower.InfiniteGrowth) != SpecialPower.InfiniteGrowth)
+                if ((playerInventory.SpecialPowers & SpecialPowers.InfiniteGrowth) != SpecialPowers.InfiniteGrowth)
                 {
                     maxPlays = Math.Min(maxPlays, CardLimit);
                 }

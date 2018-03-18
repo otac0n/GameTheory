@@ -45,7 +45,7 @@ namespace GameTheory.Games.Ergo
                 return 1;
             }
 
-            return this.GetType().Name.CompareTo(other.GetType().Name);
+            return string.Compare(this.GetType().Name, other.GetType().Name, StringComparison.Ordinal);
         }
 
         /// <inheritdoc />

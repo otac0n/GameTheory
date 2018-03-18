@@ -23,7 +23,7 @@ namespace GameTheory.Games.Skull.Moves
         }
 
         /// <inheritdoc />
-        public override IList<object> FormatTokens => 
+        public override IList<object> FormatTokens =>
             this.GameState.ActivePlayer == this.RevealedPlayer
             ? new object[] { "Reveal all of your cards" }
             : new object[] { "Reveal a card from ", this.RevealedPlayer };

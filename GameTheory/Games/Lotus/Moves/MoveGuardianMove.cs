@@ -54,7 +54,7 @@ namespace GameTheory.Games.Lotus.Moves
         {
             if (state.Inventory[state.ActivePlayer].Guardians > 0)
             {
-                foreach (FlowerType flowerType in Enum.GetValues(typeof(FlowerType)))
+                foreach (var flowerType in EnumUtilities.GetValues<FlowerType>())
                 {
                     if (state.Field[flowerType].Petals.Count > 0)
                     {

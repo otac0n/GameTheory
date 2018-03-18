@@ -2,12 +2,15 @@
 
 namespace GameTheory.Games.Lotus
 {
+    using System.Diagnostics.CodeAnalysis;
+
     /// <summary>
     /// Represents a specific type of flower.
     /// </summary>
     /// <remarks>
     /// The integer value of the card corresponds to the number of petals in each flower.
     /// </remarks>
+    [SuppressMessage("Microsoft.Design", "CA1008:EnumsShouldHaveZeroValue", Justification = "Adding a None value here would necessitate extra logic in most places that deal with sets of flowers and would thus have a performance cost.")]
     public enum FlowerType : byte
     {
         /// <summary>

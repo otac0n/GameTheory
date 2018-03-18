@@ -52,12 +52,29 @@ namespace GameTheory.Players.MaximizingPlayer
         /// <inheritdoc />
         public event EventHandler<MessageSentEventArgs> MessageSent;
 
+        /// <summary>
+        /// Represents a cache, primarily for use as a transposition table.
+        /// </summary>
         private interface ICache
         {
-            void Set(IGameState<TMove> state, Mainline result);
+            /// <summary>
+            /// Overwrites an item or adds an item into the cache.
+            /// </summary>
+            /// <param name="state">The game state used as the key.</param>
+            /// <param name="result">The mainline used as the value.</param>
+            void SetValue(IGameState<TMove> state, Mainline result);
 
+            /// <summary>
+            /// Instructs the cache to free available memory.
+            /// </summary>
             void Trim();
 
+            /// <summary>
+            /// Searches the cache for the specified item and returns the value if found.
+            /// </summary>
+            /// <param name="state">The game state used as the key.</param>
+            /// <param name="cached">The mainline value stored in the cache.</param>
+            /// <returns><c>true</c>, if the item was found in the cache; <c>false</c>, otherwise.</returns>
             bool TryGetValue(IGameState<TMove> state, out Mainline cached);
         }
 
@@ -214,10 +231,7 @@ namespace GameTheory.Players.MaximizingPlayer
             return new Mainline(combinedScore, maxMainline.GameState, maxMainline.PlayerToken, maxMainline.Strategies, depth, fullyDetermined);
         }
 
-        private TScore GetLead(Mainline mainline, PlayerToken player)
-        {
-            return this.GetLead(mainline.Scores, mainline.GameState, player);
-        }
+        private TScore GetLead(Mainline mainline, PlayerToken player) => this.GetLead(mainline.Scores, mainline.GameState, player);
 
         private Mainline GetMaximizingMoves(PlayerToken player, IList<Mainline> moveScores)
         {
@@ -320,12 +334,12 @@ namespace GameTheory.Players.MaximizingPlayer
                 }
                 else
                 {
-                    var moveScores = new Mainline[allMoves.Count];
+                    var mainlines = new Mainline[allMoves.Count];
                     for (var m = 0; m < allMoves.Count; m++)
                     {
                         var move = allMoves[m];
                         var outcomes = state.GetOutcomes(move);
-                        moveScores[m] = this.CombineOutcomes(outcomes.Select(o =>
+                        mainlines[m] = this.CombineOutcomes(outcomes.Select(o =>
                         {
                             var mainline = this.GetMove(o.Value, ply - 1, cancel);
                             var newScores = this.scoreExtender != null
@@ -338,30 +352,24 @@ namespace GameTheory.Players.MaximizingPlayer
 
                     cancel.ThrowIfCancellationRequested();
 
-                    var playerMoves = (from pm in allMoves.Select((m, i) => new { Move = m, MoveScore = moveScores[i] })
-                                       group pm.MoveScore by pm.Move.PlayerToken into g
-                                       select new
-                                       {
-                                           Player = g.Key,
-                                           Mainline = this.GetMaximizingMoves(g.Key, g.ToList()),
-                                       }).ToList();
-
                     if (players.Count == 1)
                     {
-                        result = playerMoves.Single().Mainline;
+                        result = this.GetMaximizingMoves(players.Single(), mainlines);
                     }
                     else
                     {
                         var currentScore = this.scoringMetric.Score(state);
-                        var playerLeads = (from pm in playerMoves
+                        var playerLeads = (from pm in allMoves.Select((m, i) => new { Move = m, Mainline = mainlines[i] })
+                                           group pm.Mainline by pm.Move.PlayerToken into g
+                                           let mainline = this.GetMaximizingMoves(g.Key, g.ToList())
                                            select new
                                            {
-                                               pm.Mainline,
-                                               pm.Player,
-                                               Lead = this.GetLead(pm.Mainline, pm.Player),
+                                               Mainline = mainline,
+                                               PlayerToken = g.Key,
+                                               Lead = this.GetLead(mainline, g.Key),
                                            }).ToList();
                         var improvingMoves = (from pm in playerLeads
-                                              let currentLead = this.GetLead(currentScore, state, pm.Player)
+                                              let currentLead = this.GetLead(currentScore, state, pm.PlayerToken)
                                               let comp = this.scoringMetric.Compare(pm.Lead, currentLead)
                                               where comp > 0
                                               select pm).ToSet();
@@ -370,7 +378,7 @@ namespace GameTheory.Players.MaximizingPlayer
                         {
                             // TODO: Perhaps only the winning player would prefer to avoid a stalemate and would be the only player willing to play to avoid a stalemate.
                             improvingMoves = (from pm in playerLeads
-                                              let currentLead = this.GetLead(currentScore, state, pm.Player)
+                                              let currentLead = this.GetLead(currentScore, state, pm.PlayerToken)
                                               let comp = this.scoringMetric.Compare(pm.Lead, currentLead)
                                               where comp >= 0
                                               select pm).ToSet();
@@ -379,8 +387,8 @@ namespace GameTheory.Players.MaximizingPlayer
                         if (improvingMoves.Count == 0)
                         {
                             // This is a stalemate? Without time controls, there is no incentive for any player to move.
-                            var fullyDetermined = moveScores.All(m => m.FullyDetermined);
-                            var depth = fullyDetermined ? moveScores.Max(m => m.Depth) : moveScores.Where(m => !m.FullyDetermined).Min(m => m.Depth);
+                            var fullyDetermined = mainlines.All(m => m.FullyDetermined);
+                            var depth = fullyDetermined ? mainlines.Max(m => m.Depth) : mainlines.Where(m => !m.FullyDetermined).Min(m => m.Depth);
                             result = new Mainline(this.scoringMetric.Score(state), state, null, ImmutableStack<ImmutableArray<IWeighted<TMove>>>.Empty, depth, fullyDetermined);
                         }
                         else
@@ -395,7 +403,7 @@ namespace GameTheory.Players.MaximizingPlayer
 
                                 var preemptiveMoves = (from pm in remainingLeads
                                                        where (from m in improvingMoves
-                                                              let alternativeLead = this.GetLead(m.Mainline.Scores, state, pm.Player)
+                                                              let alternativeLead = this.GetLead(m.Mainline.Scores, state, pm.PlayerToken)
                                                               let comp = this.scoringMetric.Compare(pm.Lead, alternativeLead)
                                                               where comp > 0
                                                               select m).Any()
@@ -415,81 +423,15 @@ namespace GameTheory.Players.MaximizingPlayer
                 }
             }
 
-            this.cache.Set(state, result);
+            this.cache.SetValue(state, result);
 
             return result;
-        }
-
-        private static class Caches
-        {
-            public class DictionaryCache : ICache
-            {
-                private readonly Dictionary<IGameState<TMove>, Mainline> storage = new Dictionary<IGameState<TMove>, Mainline>();
-
-                public void Set(IGameState<TMove> state, Mainline result) => this.storage[state] = result;
-
-                public void Trim() => this.storage.Clear();
-
-                public bool TryGetValue(IGameState<TMove> state, out Mainline cached) => this.storage.TryGetValue(state, out cached);
-            }
-
-            public class NullCache : ICache
-            {
-                public void Set(IGameState<TMove> state, Mainline result)
-                {
-                }
-
-                public void Trim()
-                {
-                }
-
-                public bool TryGetValue(IGameState<TMove> state, out Mainline cached)
-                {
-                    cached = default(Mainline);
-                    return false;
-                }
-            }
-
-            public class SplayTreeCache : ICache
-            {
-                private const int TrimDepth = 32;
-
-                private readonly SplayTree<IGameState<TMove>, Mainline> storage = new SplayTree<IGameState<TMove>, Mainline>();
-
-                public void Set(IGameState<TMove> state, Mainline result) => this.storage[state] = result;
-
-                public void Trim() => this.storage.Trim(TrimDepth);
-
-                public bool TryGetValue(IGameState<TMove> state, out Mainline cached) => this.storage.TryGetValue(state, out cached);
-            }
-        }
-
-        private class ComparableEqualityComparer<T> : IEqualityComparer<T>
-        {
-            public bool Equals(T x, T y)
-            {
-                IComparable<T> comparable;
-                if (object.ReferenceEquals(null, x))
-                {
-                    return object.ReferenceEquals(null, y);
-                }
-                else if ((comparable = x as IComparable<T>) != null)
-                {
-                    return comparable.CompareTo(y) == 0;
-                }
-                else
-                {
-                    return x.Equals(y);
-                }
-            }
-
-            public int GetHashCode(T obj) => 0;
         }
 
         /// <summary>
         /// Records a possible line of gameplay and it's computed scores.
         /// </summary>
-        private class Mainline : ITokenFormattable
+        protected class Mainline : ITokenFormattable
         {
             /// <summary>
             /// Initializes a new instance of the <see cref="Mainline"/> class.
@@ -499,6 +441,7 @@ namespace GameTheory.Players.MaximizingPlayer
             /// <param name="strategies">The sequence of moves necessary to arrive at the resulting game state.</param>
             /// <param name="playerToken">The player who moves next in the sequence or <c>null</c> if there are no moves.</param>
             /// <param name="depth">The depth to which the score was computed.</param>
+            /// <param name="fullyDetermined">A flag indicating whether or not the game tree has been exhaustively searched at this node.</param>
             public Mainline(IDictionary<PlayerToken, TScore> scores, IGameState<TMove> state, PlayerToken playerToken, ImmutableStack<ImmutableArray<IWeighted<TMove>>> strategies, int depth, bool fullyDetermined)
             {
                 this.Scores = scores;
@@ -621,6 +564,93 @@ namespace GameTheory.Players.MaximizingPlayer
 
             /// <inheritdoc/>
             public override string ToString() => string.Concat(this.FlattenFormatTokens());
+        }
+
+        /// <summary>
+        /// Contians implementations of caches suitable for use as a transposition table.
+        /// </summary>
+        private static class Caches
+        {
+            /// <summary>
+            /// A cache for types that overrides <see cref="object.GetHashCode"/> and <see cref="object.Equals(object)"/>.
+            /// </summary>
+            public class DictionaryCache : ICache
+            {
+                private readonly Dictionary<IGameState<TMove>, Mainline> storage = new Dictionary<IGameState<TMove>, Mainline>();
+
+                /// <inheritdoc/>
+                public void SetValue(IGameState<TMove> state, Mainline result) => this.storage[state] = result;
+
+                /// <inheritdoc/>
+                public void Trim() => this.storage.Clear();
+
+                /// <inheritdoc/>
+                public bool TryGetValue(IGameState<TMove> state, out Mainline cached) => this.storage.TryGetValue(state, out cached);
+            }
+
+            /// <summary>
+            /// A null-object cache, meaning a cache that does not store any items and implements the interface by returning default values.
+            /// </summary>
+            public class NullCache : ICache
+            {
+                /// <inheritdoc/>
+                public void SetValue(IGameState<TMove> state, Mainline result)
+                {
+                }
+
+                /// <inheritdoc/>
+                public void Trim()
+                {
+                }
+
+                /// <inheritdoc/>
+                public bool TryGetValue(IGameState<TMove> state, out Mainline cached)
+                {
+                    cached = default(Mainline);
+                    return false;
+                }
+            }
+
+            /// <summary>
+            /// A cache for types that implements <see cref="IComparable{T}"/>.
+            /// </summary>
+            public class SplayTreeCache : ICache
+            {
+                private const int TrimDepth = 32;
+
+                private readonly SplayTreeDictionary<IGameState<TMove>, Mainline> storage = new SplayTreeDictionary<IGameState<TMove>, Mainline>();
+
+                /// <inheritdoc/>
+                public void SetValue(IGameState<TMove> state, Mainline result) => this.storage[state] = result;
+
+                /// <inheritdoc/>
+                public void Trim() => this.storage.Trim(TrimDepth);
+
+                /// <inheritdoc/>
+                public bool TryGetValue(IGameState<TMove> state, out Mainline cached) => this.storage.TryGetValue(state, out cached);
+            }
+        }
+
+        private class ComparableEqualityComparer<T> : IEqualityComparer<T>
+        {
+            public bool Equals(T x, T y)
+            {
+                IComparable<T> comparable;
+                if (object.ReferenceEquals(null, x))
+                {
+                    return object.ReferenceEquals(null, y);
+                }
+                else if ((comparable = x as IComparable<T>) != null)
+                {
+                    return comparable.CompareTo(y) == 0;
+                }
+                else
+                {
+                    return x.Equals(y);
+                }
+            }
+
+            public int GetHashCode(T obj) => 0;
         }
     }
 }

@@ -28,7 +28,7 @@ namespace GameTheory.Players.MaximizingPlayer
         /// <inheritdoc/>
         public ResultScore<TScore> Combine(params IWeighted<ResultScore<TScore>>[] scores)
         {
-            var results = Enum.GetValues(typeof(Result)).Cast<Result>().ToDictionary(result => result, result => new
+            var results = EnumUtilities.GetValues<Result>().ToDictionary(result => result, result => new
             {
                 Weight = 0.0,
                 Liklihood = 0.0,
@@ -48,7 +48,7 @@ namespace GameTheory.Players.MaximizingPlayer
                 {
                     Weight = c.Weight + score.Weight,
                     Liklihood = c.Liklihood + score.Value.Likelihood * score.Weight,
-                    InPly = double.IsNaN(c.InPly) || c.InPly.CompareTo(resultScore.InPly) > 0 ? resultScore.InPly : c.InPly,
+                    InPly = double.IsNaN(c.InPly) || c.InPly.CompareTo(resultScore.InPly) > 0 ? resultScore.InPly : c.InPly, // TODO: Should use PlyCountSortDirection?
                 };
             }
 
@@ -77,11 +77,11 @@ namespace GameTheory.Players.MaximizingPlayer
         }
 
         /// <inheritdoc/>
-        public ResultScore<TScore> Difference(ResultScore<TScore> x, ResultScore<TScore> y)
+        public ResultScore<TScore> Difference(ResultScore<TScore> minuend, ResultScore<TScore> subtrahend)
         {
-            var result = x.Result;
-            var rest = this.scoringMetric.Difference(x.Rest, y.Rest);
-            var inPly = result != y.Result ? x.InPly : x.InPly - y.InPly;
+            var result = minuend.Result;
+            var rest = this.scoringMetric.Difference(minuend.Rest, subtrahend.Rest);
+            var inPly = result != subtrahend.Result ? minuend.InPly : minuend.InPly - subtrahend.InPly;
 
             return new ResultScore<TScore>(result, inPly, double.NaN, rest);
         }

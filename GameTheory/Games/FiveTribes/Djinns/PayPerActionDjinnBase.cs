@@ -25,12 +25,18 @@ namespace GameTheory.Games.FiveTribes.Djinns
             this.stateKey = this.GetType().Name + "Used";
         }
 
+        /// <summary>
+        /// Gets the <see cref="FiveTribes.InterstitialState"/> after the <see cref="Cost"/> has been paid.
+        /// </summary>
+        /// <returns>The <see cref="FiveTribes.InterstitialState"/> provided by the <see cref="Djinn"/>.</returns>
+        protected abstract InterstitialState InterstitialState { get; }
+
         /// <inheritdoc />
         public sealed override IEnumerable<Move> GetMoves(GameState state)
         {
             if (this.CanGetMoves(state))
             {
-                return this.cost(state, s1 => s1.WithState(this.stateKey, "true").WithInterstitialState(this.GetInterstitialState()));
+                return this.cost(state, s1 => s1.WithState(this.stateKey, "true").WithInterstitialState(this.InterstitialState));
             }
 
             return base.GetMoves(state);
@@ -95,11 +101,5 @@ namespace GameTheory.Games.FiveTribes.Djinns
         {
             return state;
         }
-
-        /// <summary>
-        /// Generate the <see cref="InterstitialState"/> after the <see cref="Cost"/> has been paid.
-        /// </summary>
-        /// <returns>The <see cref="InterstitialState"/> provided by the <see cref="Djinn"/>.</returns>
-        protected abstract InterstitialState GetInterstitialState();
     }
 }

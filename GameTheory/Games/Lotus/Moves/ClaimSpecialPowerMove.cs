@@ -16,8 +16,8 @@ namespace GameTheory.Games.Lotus.Moves
         /// </summary>
         /// <param name="state">The <see cref="GameState"/> that this move is based on.</param>
         /// <param name="player">The <see cref="PlayerToken">player</see> that may choose this move.</param>
-        /// <param name="specialPower">The <see cref="Lotus.SpecialPower"/> to be clamed.</param>
-        public ClaimSpecialPowerMove(GameState state, PlayerToken player, SpecialPower specialPower)
+        /// <param name="specialPower">The <see cref="Lotus.SpecialPowers"/> to be clamed.</param>
+        public ClaimSpecialPowerMove(GameState state, PlayerToken player, SpecialPowers specialPower)
             : base(state, player)
         {
             this.SpecialPower = specialPower;
@@ -27,9 +27,9 @@ namespace GameTheory.Games.Lotus.Moves
         public override IList<object> FormatTokens => new object[] { "Claim the ", this.SpecialPower, " power" };
 
         /// <summary>
-        /// Gets the <see cref="Lotus.SpecialPower"/> to be clamed.
+        /// Gets the <see cref="Lotus.SpecialPowers"/> to be clamed.
         /// </summary>
-        public SpecialPower SpecialPower { get; }
+        public SpecialPowers SpecialPower { get; }
 
         /// <inheritdoc />
         public override int CompareTo(Move other)
@@ -39,7 +39,7 @@ namespace GameTheory.Games.Lotus.Moves
                 int comp;
 
                 if ((comp = this.PlayerToken.CompareTo(other.PlayerToken)) != 0 ||
-                    (comp = EnumComparer<SpecialPower>.Default.Compare(this.SpecialPower, move.SpecialPower)) != 0)
+                    (comp = EnumComparer<SpecialPowers>.Default.Compare(this.SpecialPower, move.SpecialPower)) != 0)
                 {
                     return comp;
                 }
@@ -56,9 +56,9 @@ namespace GameTheory.Games.Lotus.Moves
         {
             foreach (var player in state.ChoosingPlayers.Take(1))
             {
-                foreach (SpecialPower specialPower in Enum.GetValues(typeof(SpecialPower)))
+                foreach (var specialPower in EnumUtilities.GetValues<SpecialPowers>())
                 {
-                    if (specialPower != SpecialPower.None && (state.Inventory[player].SpecialPowers & specialPower) != specialPower)
+                    if (specialPower != SpecialPowers.None && (state.Inventory[player].SpecialPowers & specialPower) != specialPower)
                     {
                         yield return new ClaimSpecialPowerMove(state, player, specialPower);
                     }

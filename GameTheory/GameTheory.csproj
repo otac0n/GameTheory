@@ -124,7 +124,7 @@
     <Compile Include="Games\Draughts\Move.cs" />
     <Compile Include="Games\Draughts\MovePriorities.cs" />
     <Compile Include="Games\Draughts\Phase.cs" />
-    <Compile Include="Games\Draughts\Piece.cs" />
+    <Compile Include="Games\Draughts\Pieces.cs" />
     <Compile Include="Games\Draughts\Variant.cs" />
     <Compile Include="Games\Ergo\Cards\ErgoCard.cs" />
     <Compile Include="Games\Ergo\Cards\FallacyCard.cs" />
@@ -236,7 +236,7 @@
     <Compile Include="Games\Lotus\Move.cs" />
     <Compile Include="Games\Lotus\PetalCard.cs" />
     <Compile Include="Games\Lotus\Phase.cs" />
-    <Compile Include="Games\Lotus\SpecialPower.cs" />
+    <Compile Include="Games\Lotus\SpecialPowers.cs" />
     <Compile Include="Games\Mancala\GameState.cs" />
     <Compile Include="Games\Mancala\Move.cs" />
     <Compile Include="Games\Mancala\Phase.cs" />
@@ -323,6 +323,7 @@
     <Compile Include="EnumCollection.cs" />
     <Compile Include="EnumComparer.cs" />
     <Compile Include="EnumerableExtensions.cs" />
+    <Compile Include="EnumUtilities.cs" />
     <Compile Include="FormatUtilities.cs" />
     <Compile Include="GameShuffler.cs" />
     <Compile Include="GameStateExtensions.cs" />
@@ -345,7 +346,7 @@
     <Compile Include="PlayerToken.cs" />
     <Compile Include="Random.cs" />
     <Compile Include="ScoringMetric.cs" />
-    <Compile Include="SplayTree.cs" />
+    <Compile Include="SplayTreeDictionary.cs" />
     <Compile Include="StrategyExtensions.cs" />
     <AdditionalFiles Include="..\stylecop.json">
       <Link>stylecop.json</Link>

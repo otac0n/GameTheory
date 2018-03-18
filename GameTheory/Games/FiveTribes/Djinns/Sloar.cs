@@ -21,7 +21,7 @@ namespace GameTheory.Games.FiveTribes.Djinns
         }
 
         /// <inheritdoc />
-        protected override InterstitialState GetInterstitialState() => new Paid();
+        protected override InterstitialState InterstitialState => new Paid();
 
         private class Paid : InterstitialState
         {

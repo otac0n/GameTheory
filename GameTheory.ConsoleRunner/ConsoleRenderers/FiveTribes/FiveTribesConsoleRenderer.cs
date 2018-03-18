@@ -11,7 +11,7 @@ namespace GameTheory.ConsoleRunner.ConsoleRenderers.FiveTribes
     public class FiveTribesConsoleRenderer : BaseConsoleRenderer<Move>
     {
         /// <inheritdoc />
-        public override void Show(IGameState<Move> state, PlayerToken playerToken = null) => this.Show((GameState)state, playerToken);
+        public override void Show(IGameState<Move> state, PlayerToken playerToken = null) => this.Show((GameState)state);
 
         /// <inheritdoc/>
         protected override void RenderToken(IGameState<Move> state, object token)
@@ -53,9 +53,6 @@ namespace GameTheory.ConsoleRunner.ConsoleRenderers.FiveTribes
             }
         }
 
-        private void Show(GameState state, PlayerToken playerToken)
-        {
-            new Templates(state).RenderGameState(state, this.MakeRenderTokenWriter(state));
-        }
+        private void Show(GameState state) => new Templates(state).RenderGameState(state, this.MakeRenderTokenWriter(state));
     }
 }

@@ -33,7 +33,7 @@ namespace GameTheory.Games.FiveTribes.Djinns
             {
                 if (state.Inventory[owner].Resources[Resource.Slave] >= 2)
                 {
-                    foreach (var wild in Enum.GetValues(typeof(Resource)).Cast<Resource>().Except(Resource.Slave))
+                    foreach (var wild in EnumUtilities.GetValues<Resource>().Except(Resource.Slave))
                     {
                         yield return new TradeSlavesForResourceMove(state, owner, wild);
                     }

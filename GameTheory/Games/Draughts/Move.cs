@@ -47,17 +47,17 @@ namespace GameTheory.Games.Draughts
                 if (!variant.CrownOnEntry)
                 {
                     var promoteRank = (variant.Height - 1) * playerIndex;
-                    var playerColor = (Piece)(1 << playerIndex);
+                    var playerColor = (Pieces)(1 << playerIndex);
                     for (var x = 0; x < variant.Width; x++)
                     {
                         var index = variant.GetIndexOf(x, promoteRank);
                         if (index != -1)
                         {
                             var square = board[index];
-                            if ((square & playerColor) == playerColor && (square & Piece.Crowned) != Piece.Crowned)
+                            if ((square & playerColor) == playerColor && (square & Pieces.Crowned) != Pieces.Crowned)
                             {
                                 board = board
-                                    .SetItem(index, square | Piece.Crowned);
+                                    .SetItem(index, square | Pieces.Crowned);
                             }
                         }
                     }
@@ -65,9 +65,9 @@ namespace GameTheory.Games.Draughts
 
                 for (var i = 0; i < board.Length; i++)
                 {
-                    if ((board[i] & Piece.Captured) == Piece.Captured)
+                    if ((board[i] & Pieces.Captured) == Pieces.Captured)
                     {
-                        board = board.SetItem(i, Piece.None);
+                        board = board.SetItem(i, Pieces.None);
                     }
                 }
 

@@ -57,7 +57,7 @@ namespace GameTheory.Games.Lotus
                 return 1;
             }
 
-            return this.GetType().Name.CompareTo(other.GetType().Name);
+            return string.Compare(this.GetType().Name, other.GetType().Name, StringComparison.Ordinal);
         }
 
         /// <inheritdoc />
@@ -70,7 +70,7 @@ namespace GameTheory.Games.Lotus
 
             if (state.Phase == Phase.Play)
             {
-                foreach (FlowerType flowerType in Enum.GetValues(typeof(FlowerType)))
+                foreach (var flowerType in EnumUtilities.GetValues<FlowerType>())
                 {
                     var flower = state.Field[flowerType];
                     if (flower.Petals.Count == (int)flowerType)
@@ -119,7 +119,7 @@ namespace GameTheory.Games.Lotus
                 {
                     if (activePlayerInventory.Deck.Count == 0)
                     {
-                        foreach (FlowerType flowerType in Enum.GetValues(typeof(FlowerType)))
+                        foreach (var flowerType in EnumUtilities.GetValues<FlowerType>())
                         {
                             var inventory = state.Inventory;
                             var flower = state.Field[flowerType];
@@ -192,7 +192,7 @@ namespace GameTheory.Games.Lotus
 
             if (state.Phase == Phase.Draw)
             {
-                if ((activePlayerInventory.Deck.Count > 0 || state.AvailableWildflowers.Any(c => c != null)) && activePlayerInventory.Hand.Count < Inventory.StartingHandCount + ((activePlayerInventory.SpecialPowers & SpecialPower.EnlightenedPath) == SpecialPower.EnlightenedPath ? 1 : 0))
+                if ((activePlayerInventory.Deck.Count > 0 || state.AvailableWildflowers.Any(c => c != null)) && activePlayerInventory.Hand.Count < Inventory.StartingHandCount + ((activePlayerInventory.SpecialPowers & SpecialPowers.EnlightenedPath) == SpecialPowers.EnlightenedPath ? 1 : 0))
                 {
                     // Continue drawing.
                 }

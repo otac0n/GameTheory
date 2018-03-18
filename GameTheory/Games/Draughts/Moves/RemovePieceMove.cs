@@ -38,7 +38,7 @@ namespace GameTheory.Games.Draughts.Moves
         {
             var board = state.Board;
             state = state.With(
-                board: board.SetItem(this.RemoveIndex, Piece.None));
+                board: board.SetItem(this.RemoveIndex, Pieces.None));
 
             return base.Apply(state);
         }

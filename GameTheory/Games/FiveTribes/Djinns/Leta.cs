@@ -23,6 +23,9 @@ namespace GameTheory.Games.FiveTribes.Djinns
         }
 
         /// <inheritdoc />
+        protected override InterstitialState InterstitialState => new ChoosingSquare();
+
+        /// <inheritdoc />
         protected override bool CanGetMoves(GameState state)
         {
             if (state == null)
@@ -32,9 +35,6 @@ namespace GameTheory.Games.FiveTribes.Djinns
 
             return base.CanGetMoves(state) && state.IsPlayerUnderCamelLimit(state.ActivePlayer);
         }
-
-        /// <inheritdoc />
-        protected override InterstitialState GetInterstitialState() => new ChoosingSquare();
 
         private class ChoosingSquare : InterstitialState
         {

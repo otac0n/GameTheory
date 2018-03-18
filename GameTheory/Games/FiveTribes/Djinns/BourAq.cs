@@ -23,7 +23,7 @@ namespace GameTheory.Games.FiveTribes.Djinns
         }
 
         /// <inheritdoc />
-        protected override InterstitialState GetInterstitialState() => new ChoosingSquare();
+        protected override InterstitialState InterstitialState => new ChoosingSquare();
 
         private class ChoosingSquare : InterstitialState
         {

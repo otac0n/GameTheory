@@ -26,7 +26,7 @@ namespace GameTheory.Games.FiveTribes.Djinns
         public override string Name => "Anun-Nak";
 
         /// <inheritdoc />
-        protected override InterstitialState GetInterstitialState() => new ChoosingSquare();
+        protected override InterstitialState InterstitialState => new ChoosingSquare();
 
         private class ChoosingSquare : InterstitialState
         {

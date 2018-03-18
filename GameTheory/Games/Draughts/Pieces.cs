@@ -8,7 +8,7 @@ namespace GameTheory.Games.Draughts
     /// Represents the state of a piece at a certain square.
     /// </summary>
     [Flags]
-    public enum Piece : byte
+    public enum Pieces : byte
     {
         /// <summary>
         /// No piece is present.

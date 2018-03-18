@@ -25,7 +25,7 @@ namespace GameTheory.Games.Lotus
         /// </summary>
         /// <param name="deck">The player's deck of cards.</param>
         public Inventory(ImmutableList<PetalCard> deck)
-            : this(StartingGuardians, ImmutableList<PetalCard>.Empty, deck, ImmutableList<PetalCard>.Empty, 0, SpecialPower.None)
+            : this(StartingGuardians, ImmutableList<PetalCard>.Empty, deck, ImmutableList<PetalCard>.Empty, 0, SpecialPowers.None)
         {
             this.Deck = this.Deck.Deal(StartingHandCount, out var dealt);
             this.Hand = dealt;
@@ -37,7 +37,7 @@ namespace GameTheory.Games.Lotus
             ImmutableList<PetalCard> deck,
             ImmutableList<PetalCard> scoringPile,
             int scoringTokens,
-            SpecialPower specialPowers)
+            SpecialPowers specialPowers)
         {
             this.Guardians = guardians;
             this.Hand = hand;
@@ -75,7 +75,7 @@ namespace GameTheory.Games.Lotus
         /// <summary>
         /// Gets the special powers the player has activated.
         /// </summary>
-        public SpecialPower SpecialPowers { get; }
+        public SpecialPowers SpecialPowers { get; }
 
         /// <inheritdoc/>
         public int CompareTo(Inventory other)
@@ -93,7 +93,7 @@ namespace GameTheory.Games.Lotus
 
             if ((comp = this.Guardians.CompareTo(other.Guardians)) != 0 ||
                 (comp = this.ScoringTokens.CompareTo(other.ScoringTokens)) != 0 ||
-                (comp = EnumComparer<SpecialPower>.Default.Compare(this.SpecialPowers, other.SpecialPowers)) != 0 ||
+                (comp = EnumComparer<SpecialPowers>.Default.Compare(this.SpecialPowers, other.SpecialPowers)) != 0 ||
                 (comp = CompareUtilities.CompareLists(this.Hand, other.Hand)) != 0 ||
                 (comp = CompareUtilities.CompareLists(this.Deck, other.Deck)) != 0 ||
                 (comp = CompareUtilities.CompareLists(this.ScoringPile, other.ScoringPile)) != 0)
@@ -110,7 +110,7 @@ namespace GameTheory.Games.Lotus
             ImmutableList<PetalCard> deck = null,
             ImmutableList<PetalCard> scoringPile = null,
             int? scoringTokens = null,
-            SpecialPower? specialPowers = null)
+            SpecialPowers? specialPowers = null)
         {
             return new Inventory(
                 guardians ?? this.Guardians,

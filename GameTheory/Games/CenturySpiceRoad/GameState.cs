@@ -381,7 +381,7 @@ namespace GameTheory.Games.CenturySpiceRoad
 
             if (this.CompareTo(move.GameState) != 0)
             {
-                throw new InvalidOperationException();
+                throw new ArgumentOutOfRangeException(nameof(move));
             }
 
             return move.Apply(this);

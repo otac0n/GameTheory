@@ -12,7 +12,7 @@ namespace GameTheory
     /// </summary>
     /// <typeparam name="TKey">The type of keys associated with items in the tree.</typeparam>
     /// <typeparam name="TValue">The type of values stored in the tree.</typeparam>
-    public class SplayTree<TKey, TValue> : IDictionary<TKey, TValue>
+    public class SplayTreeDictionary<TKey, TValue> : IDictionary<TKey, TValue>
         where TKey : IComparable<TKey>
     {
         private int count;
@@ -411,10 +411,10 @@ namespace GameTheory
         private sealed class TiedList<T> : IList<T>
         {
             private readonly IList<T> backingList;
-            private readonly SplayTree<TKey, TValue> tree;
+            private readonly SplayTreeDictionary<TKey, TValue> tree;
             private readonly int version;
 
-            public TiedList(SplayTree<TKey, TValue> tree, int version, IList<T> backingList)
+            public TiedList(SplayTreeDictionary<TKey, TValue> tree, int version, IList<T> backingList)
             {
                 this.tree = tree ?? throw new ArgumentNullException("tree");
                 this.version = version;

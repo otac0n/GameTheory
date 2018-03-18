@@ -8,7 +8,7 @@ namespace GameTheory.Games.Lotus
     /// Represents the special powers available to players.
     /// </summary>
     [Flags]
-    public enum SpecialPower : byte
+    public enum SpecialPowers : byte
     {
         /// <summary>
         /// No special powers.
