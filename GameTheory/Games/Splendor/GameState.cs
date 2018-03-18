@@ -409,19 +409,13 @@ namespace GameTheory.Games.Splendor
                 foreach (var level in levelsInHands)
                 {
                     var levelIndex = (int)level;
-                    var deck = this.DevelopmentDecks[levelIndex];
-                    for (var i = 0; i < deck.Count; i++)
-                    {
-                        var index = i;
-                        var item = deck[index];
-                        shuffler.Add(
-                            item.Level.ToString(),
-                            item,
-                            (state, value) => state.With(
-                                developmentDecks: state.DevelopmentDecks.SetItem(
-                                    levelIndex,
-                                    state.DevelopmentDecks[levelIndex].SetItem(index, value))));
-                    }
+                    shuffler.AddCollection(
+                        level.ToString(),
+                        this.DevelopmentDecks[levelIndex],
+                        (state, value) => state.With(
+                            developmentDecks: state.DevelopmentDecks.SetItem(
+                                levelIndex,
+                                value.ToImmutableList())));
                 }
 
                 return shuffler.Take(maxStates);

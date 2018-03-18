@@ -53,18 +53,37 @@ namespace GameTheory
         /// <param name="setValue">A function that will overwrite the item with another item in the same group.</param>
         public void Add<TItem>(string group, TItem item, Func<TState, TItem, TState> setValue)
         {
-            Grouping<TItem> grouping;
-            var key = Tuple.Create(group, typeof(TItem));
-            if (this.storage.TryGetValue(key, out var value))
-            {
-                grouping = (Grouping<TItem>)value;
-            }
-            else
-            {
-                value = this.storage[key] = grouping = new Grouping<TItem>();
-            }
+            var grouping = this.GetOrAddGrouping<TItem>(group);
 
-            grouping.Add(Tuple.Create(item, setValue));
+            grouping.Add(new Accessor<TItem>(item, setValue));
+        }
+
+        /// <summary>
+        /// Adds a shuffleable item to the collection in a default group.
+        /// </summary>
+        /// <remarks>
+        /// Each type is a distinct group, so you may wish to explicitly specify a less specific type.
+        /// </remarks>
+        /// <typeparam name="TItem">The type of the item being added.</typeparam>
+        /// <param name="items">The collection of items that can be shuffled.</param>
+        /// <param name="setItems">A function that will overwrite the collection with another collection of items in the same group of the same size.</param>
+        public void AddCollection<TItem>(IReadOnlyCollection<TItem> items, Func<TState, IReadOnlyCollection<TItem>, TState> setItems) => this.Add(null, items, setItems);
+
+        /// <summary>
+        /// Adds a shuffleable item to the collection in the specified group.
+        /// </summary>
+        /// <remarks>
+        /// Each type is a distinct group, so you may wish to explicitly specify a less specific type.
+        /// </remarks>
+        /// <typeparam name="TItem">The type of the item being added.</typeparam>
+        /// <param name="group">The group of items that may be shuffled.</param>
+        /// <param name="items">The collection of items that can be shuffled.</param>
+        /// <param name="setItems">A function that will overwrite the collection with another collection of items in the same group of the same size.</param>
+        public void AddCollection<TItem>(string group, IReadOnlyCollection<TItem> items, Func<TState, IReadOnlyCollection<TItem>, TState> setItems)
+        {
+            var grouping = this.GetOrAddGrouping<TItem>(group);
+
+            grouping.Add(new Accessor<TItem>(items, setItems));
         }
 
         /// <inheritdoc/>
@@ -86,15 +105,52 @@ namespace GameTheory
 
         IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
-        private class Grouping<TItem> : List<Tuple<TItem, Func<TState, TItem, TState>>>, IGrouping
+        private Grouping<TItem> GetOrAddGrouping<TItem>(string group)
+        {
+            Grouping<TItem> grouping;
+            var key = Tuple.Create(group, typeof(TItem));
+            if (this.storage.TryGetValue(key, out var value))
+            {
+                grouping = (Grouping<TItem>)value;
+            }
+            else
+            {
+                value = this.storage[key] = grouping = new Grouping<TItem>();
+            }
+
+            return grouping;
+        }
+
+        private struct Accessor<TItem>
+        {
+            public Accessor(TItem item, Func<TState, TItem, TState> setValue)
+            {
+                this.Items = new[] { item };
+                this.SetItems = (state, items) => setValue(state, items.Single());
+            }
+
+            public Accessor(IReadOnlyCollection<TItem> items, Func<TState, IReadOnlyCollection<TItem>, TState> setItems)
+            {
+                this.Items = items;
+                this.SetItems = setItems;
+            }
+
+            public IReadOnlyCollection<TItem> Items { get; }
+
+            public Func<TState, IReadOnlyCollection<TItem>, TState> SetItems { get; }
+        }
+
+        private class Grouping<TItem> : List<Accessor<TItem>>, IGrouping
         {
             public TState Shuffle(TState state)
             {
-                var indexes = Enumerable.Range(0, this.Count).Shuffle();
-                for (var sourceIndex = 0; sourceIndex < this.Count; sourceIndex++)
+                var items = this.SelectMany(a => a.Items).Shuffle();
+                var sourceIndex = 0;
+                foreach (var accessor in this)
                 {
-                    var destIndex = indexes[sourceIndex];
-                    state = this[destIndex].Item2(state, this[sourceIndex].Item1);
+                    var range = items.GetRange(sourceIndex, accessor.Items.Count);
+                    state = accessor.SetItems(state, range);
+                    sourceIndex += accessor.Items.Count;
                 }
 
                 return state;

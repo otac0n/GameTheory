@@ -262,15 +262,11 @@ namespace GameTheory.Games.Lotus
         {
             var shuffler = new GameShuffler<GameState>(this);
 
-            for (var i = 0; i < this.WildflowerDeck.Count; i++)
-            {
-                var index = i;
-                shuffler.Add(
-                    "Wildflowers",
-                    this.WildflowerDeck[index],
-                    (state, value) => state.With(
-                        wildflowerDeck: state.WildflowerDeck.SetItem(index, value)));
-            }
+            shuffler.AddCollection(
+                "Wildflower",
+                this.WildflowerDeck,
+                (state, value) => state.With(
+                    wildflowerDeck: value.ToImmutableList()));
 
             foreach (var p in this.Players)
             {

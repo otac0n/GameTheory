@@ -253,15 +253,11 @@ namespace GameTheory.Games.Ergo
         {
             var shuffler = new GameShuffler<GameState>(this);
 
-            for (var i = 0; i < this.Deck.Count; i++)
-            {
-                var index = i;
-                shuffler.Add(
-                    "Cards",
-                    this.Deck[index],
-                    (state, value) => state.With(
-                        deck: state.Deck.SetItem(index, value)));
-            }
+            shuffler.AddCollection(
+                "Cards",
+                this.Deck,
+                (state, value) => state.With(
+                    deck: value.ToImmutableList()));
 
             foreach (var p in this.Players)
             {
@@ -271,15 +267,11 @@ namespace GameTheory.Games.Ergo
                     continue;
                 }
 
-                for (var i = 0; i < this.Hands[player].Count; i++)
-                {
-                    var index = i;
-                    shuffler.Add(
-                        "Cards",
-                        this.Hands[player][index],
-                        (state, value) => state.With(
-                            hands: state.Hands.SetItem(player, state.Hands[player].SetItem(index, value))));
-                }
+                shuffler.AddCollection(
+                    "Cards",
+                    this.Hands[player],
+                    (state, value) => state.With(
+                        hands: state.Hands.SetItem(player, value.ToImmutableList())));
             }
 
             return shuffler.Take(maxStates);

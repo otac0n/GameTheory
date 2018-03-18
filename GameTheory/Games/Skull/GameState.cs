@@ -171,7 +171,29 @@ namespace GameTheory.Games.Skull
                     continue;
                 }
 
-                // TODO: Add shuffles.
+                shuffler.AddCollection(
+                    group,
+                    this.Inventory[player].Hand,
+                    (state, value) => state.With(
+                        inventory: state.Inventory.SetItem(
+                            player,
+                            state.Inventory[player].With(hand: new EnumCollection<Card>(value)))));
+
+                shuffler.AddCollection(
+                    group,
+                    this.Inventory[player].Stack,
+                    (state, value) => state.With(
+                        inventory: state.Inventory.SetItem(
+                            player,
+                            state.Inventory[player].With(stack: value.ToImmutableList()))));
+
+                shuffler.AddCollection(
+                    group,
+                    this.Inventory[player].Discards,
+                    (state, value) => state.With(
+                        inventory: state.Inventory.SetItem(
+                            player,
+                            state.Inventory[player].With(discards: new EnumCollection<Card>(value)))));
             }
 
             return shuffler.Take(maxStates);
