@@ -257,10 +257,6 @@
     <Compile Include="Games\PositivelyPerfectParfaitGame\Move.cs" />
     <Compile Include="Games\PositivelyPerfectParfaitGame\Parfait.cs" />
     <Compile Include="Games\PositivelyPerfectParfaitGame\Phase.cs" />
-    <Compile Include="Games\Skull\Card.cs" />
-    <Compile Include="Games\Skull\GameState.cs" />
-    <Compile Include="Games\Skull\Inventory.cs" />
-    <Compile Include="Games\Skull\Move.cs" />
     <Compile Include="Games\Skull\Moves\AddCardMove.cs" />
     <Compile Include="Games\Skull\Moves\ArrangeCardsMove.cs" />
     <Compile Include="Games\Skull\Moves\BidMove.cs" />
@@ -269,6 +265,10 @@
     <Compile Include="Games\Skull\Moves\PassMove.cs" />
     <Compile Include="Games\Skull\Moves\RemoveCardMove.cs" />
     <Compile Include="Games\Skull\Moves\RevealCardsMove.cs" />
+    <Compile Include="Games\Skull\Card.cs" />
+    <Compile Include="Games\Skull\GameState.cs" />
+    <Compile Include="Games\Skull\Inventory.cs" />
+    <Compile Include="Games\Skull\Move.cs" />
     <Compile Include="Games\Skull\Phase.cs" />
     <Compile Include="Games\Splendor\Moves\ChooseNobleMove.cs" />
     <Compile Include="Games\Splendor\Moves\DiscardTokensMove.cs" />
@@ -303,6 +303,7 @@
     <Compile Include="Players\NormalFormGameMaximizingPlayer.cs" />
     <Compile Include="Players\PositivelyPerfectParfaitGameMaximizingPlayer.cs" />
     <Compile Include="Players\RandomPlayer.cs" />
+    <Compile Include="Players\SkullMaximizingPlayer.cs" />
     <Compile Include="Players\SplendorMaximizingPlayer.cs" />
     <Compile Include="Players\StrategyPlayer.cs" />
     <Compile Include="Players\TicTacToeMaximizingPlayer.cs" />
