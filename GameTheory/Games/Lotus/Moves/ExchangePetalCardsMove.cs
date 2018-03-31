@@ -29,16 +29,8 @@ namespace GameTheory.Games.Lotus.Moves
         public ImmutableList<int> CardIndexes { get; }
 
         /// <inheritdoc />
-        public override IList<object> FormatTokens
-        {
-            get
-            {
-                var hand = this.GameState.Inventory[this.PlayerToken].Hand;
-                return this.CardIndexes.Count == 1
-                    ? new object[] { "Exchange ", hand[this.CardIndexes[0]] }
-                    : new object[] { "Exchange ", hand[this.CardIndexes[0]], " and ", hand[this.CardIndexes[1]] };
-            }
-        }
+        public override IList<object> FormatTokens =>
+            FormatUtilities.ParseStringFormat(Resources.ExchangePetalCardsFormat, FormatUtilities.FormatList(this.GameState.Inventory[this.PlayerToken].Hand));
 
         /// <inheritdoc />
         public override int CompareTo(Move other)

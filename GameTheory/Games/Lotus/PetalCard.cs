@@ -54,7 +54,8 @@ namespace GameTheory.Games.Lotus
         public FlowerType FlowerType { get; }
 
         /// <inheritdoc/>
-        public IList<object> FormatTokens => new object[] { this.FlowerType, " +", this.Guardians };
+        public IList<object> FormatTokens =>
+            FormatUtilities.ParseStringFormat(Resources.PetalCardFormat, this.FlowerType, string.Format(Resources.GuardianBonusFormat, this.Guardians));
 
         /// <summary>
         /// Gets the number of guardians on this card.

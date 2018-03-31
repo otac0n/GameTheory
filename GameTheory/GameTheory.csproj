@@ -236,6 +236,15 @@
     <Compile Include="Games\Lotus\Move.cs" />
     <Compile Include="Games\Lotus\PetalCard.cs" />
     <Compile Include="Games\Lotus\Phase.cs" />
+    <Compile Include="Games\Lotus\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="Games\Lotus\Resources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <Compile Include="Games\Lotus\SpecialPowers.cs" />
     <Compile Include="Games\Mancala\GameState.cs" />
     <Compile Include="Games\Mancala\Move.cs" />

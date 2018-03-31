@@ -21,7 +21,8 @@ namespace GameTheory.Games.Lotus.Moves
         }
 
         /// <inheritdoc />
-        public override IList<object> FormatTokens => new object[] { "Take ", this.GameState.AvailableWildflowers[this.WildflowerIndex] };
+        public override IList<object> FormatTokens =>
+            FormatUtilities.ParseStringFormat(Resources.TakeWildflowerFormat, this.GameState.AvailableWildflowers[this.WildflowerIndex]);
 
         /// <summary>
         /// Gets the index of the wildflower to take.

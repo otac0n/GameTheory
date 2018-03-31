@@ -27,7 +27,8 @@ namespace GameTheory.Games.Lotus.Moves
         public FlowerType FlowerType { get; }
 
         /// <inheritdoc />
-        public override IList<object> FormatTokens => new object[] { "Move a guardian to the ", this.FlowerType };
+        public override IList<object> FormatTokens =>
+            FormatUtilities.ParseStringFormat(Resources.MoveGuardianFormat, this.FlowerType);
 
         /// <inheritdoc />
         public override int CompareTo(Move other)

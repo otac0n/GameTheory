@@ -24,7 +24,8 @@ namespace GameTheory.Games.Lotus.Moves
         }
 
         /// <inheritdoc />
-        public override IList<object> FormatTokens => new object[] { "Claim the ", this.SpecialPower, " power" };
+        public override IList<object> FormatTokens =>
+            FormatUtilities.ParseStringFormat(Resources.ClaimSpecialPowerFormat, this.SpecialPower);
 
         /// <summary>
         /// Gets the <see cref="Lotus.SpecialPowers"/> to be clamed.

@@ -35,28 +35,8 @@ namespace GameTheory.Games.Lotus.Moves
         {
             get
             {
-                var tokens = new List<object>();
-
                 var hand = this.GameState.Inventory[this.PlayerToken].Hand;
-                for (var i = 0; i < this.CardIndexes.Count; i++)
-                {
-                    if (i == 0)
-                    {
-                        tokens.Add("Play ");
-                    }
-                    else if (i == this.CardIndexes.Count - 1)
-                    {
-                        tokens.Add(this.CardIndexes.Count > 2 ? ", and " : " and ");
-                    }
-                    else
-                    {
-                        tokens.Add(", ");
-                    }
-
-                    tokens.Add(hand[this.CardIndexes[i]]);
-                }
-
-                return tokens;
+                return FormatUtilities.ParseStringFormat(Resources.PlayPetalCardsFormat, FormatUtilities.FormatList(this.CardIndexes.Select(i => hand[i])));
             }
         }
 

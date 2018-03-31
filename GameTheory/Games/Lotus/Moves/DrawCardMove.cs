@@ -19,7 +19,7 @@ namespace GameTheory.Games.Lotus.Moves
         }
 
         /// <inheritdoc />
-        public override IList<object> FormatTokens => new object[] { "Draw a card" };
+        public override IList<object> FormatTokens => new object[] { Resources.DrawCard };
 
         /// <inheritdoc />
         public override int CompareTo(Move other)

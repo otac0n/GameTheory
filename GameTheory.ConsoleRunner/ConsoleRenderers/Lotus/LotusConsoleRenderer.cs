@@ -19,33 +19,65 @@ namespace GameTheory.ConsoleRunner.ConsoleRenderers.Lotus
             if (token is FlowerType)
             {
                 var color = ConsoleColor.Green;
+                var display = token.ToString();
+
                 switch ((FlowerType)token)
                 {
                     case FlowerType.Iris:
                         color = ConsoleColor.DarkMagenta;
+                        display = Resources.FlowerType_Iris;
                         break;
 
                     case FlowerType.Primrose:
                         color = ConsoleColor.Yellow;
+                        display = Resources.FlowerType_Primrose;
                         break;
 
                     case FlowerType.CherryBlossom:
                         color = ConsoleColor.Red;
+                        display = Resources.FlowerType_CherryBlossom;
                         break;
 
                     case FlowerType.Lily:
                         color = ConsoleColor.White;
+                        display = Resources.FlowerType_Lily;
                         break;
 
                     case FlowerType.Lotus:
                         color = ConsoleColor.Magenta;
+                        display = Resources.FlowerType_Lotus;
                         break;
                 }
 
                 ConsoleInteraction.WithColor(color, () =>
                 {
-                    Console.Write(token);
+                    Console.Write(display);
                 });
+            }
+            else if (token is SpecialPowers)
+            {
+                var display = token.ToString();
+
+                switch ((SpecialPowers)token)
+                {
+                    case SpecialPowers.ElderGuardian:
+                        display = Resources.SpecialPowers_ElderGuardian;
+                        break;
+
+                    case SpecialPowers.EnlightenedPath:
+                        display = Resources.SpecialPowers_EnlightenedPath;
+                        break;
+
+                    case SpecialPowers.InfiniteGrowth:
+                        display = Resources.SpecialPowers_InfiniteGrowth;
+                        break;
+
+                    case SpecialPowers.None:
+                        display = Resources.SpecialPowers_None;
+                        break;
+                }
+
+                Console.Write(display);
             }
             else
             {

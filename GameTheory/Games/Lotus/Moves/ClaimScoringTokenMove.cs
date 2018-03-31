@@ -21,7 +21,7 @@ namespace GameTheory.Games.Lotus.Moves
         }
 
         /// <inheritdoc />
-        public override IList<object> FormatTokens => new[] { "Claim a scoring token" };
+        public override IList<object> FormatTokens => new[] { Resources.ClaimScoringToken };
 
         /// <inheritdoc />
         public override int CompareTo(Move other)

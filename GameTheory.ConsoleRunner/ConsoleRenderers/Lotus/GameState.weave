@@ -3,7 +3,7 @@
 @namespace GameTheory.ConsoleRunner.ConsoleRenderers.Lotus
 @static false
 @model GameState
-Field:
+{{= Resources.Field}}:
     {{each flowerType in Enum.GetValues(typeof(FlowerType)).Cast<FlowerType>()}}
         {{= flowerType}} ({{= (int)flowerType}}):
             {{
@@ -13,14 +13,14 @@ Field:
                 {{= petal}}{{if petal.Owner != null}} ({{= petal.Owner}}){{/if}}
             {{/each}}
             {{each guardian in flower.Guardians}}
-                +1 {{= guardian}}
+                {{= string.Format(Resources.GuardianBonusFormat, 1)}} {{= guardian}}
             {{/each}}
     {{/each}}
 
-Wildflowers:
+{{= Resources.Wildflowers}}:
     {{each wildflower in model.AvailableWildflowers}}
         {{if wildflower == null}}
-            (taken)
+            {{= Resources.Taken}}
         {{else}}
             {{= wildflower}}
         {{/if}}
@@ -30,23 +30,23 @@ Wildflowers:
         var inventory = model.Inventory[this.playerToken];
     }}
 
-    Inventory:
-        Hand:
+    {{= Resources.Inventory}}:
+        {{= Resources.Hand}}:
             {{each card in inventory.Hand}}
                 {{= card}}
             {{/each}}
-        Special Powers: {{= inventory.SpecialPowers}}
-        Scoring Pile: {{= inventory.ScoringPile.Count}}
-        Scoring Tokens: {{= inventory.ScoringTokens}}
+        {{= Resources.SpecialPowers}}: {{= inventory.SpecialPowers}}
+        {{= Resources.ScoringPile}}: {{= inventory.ScoringPile.Count}}
+        {{= Resources.ScoringTokens}}: {{= inventory.ScoringTokens}}
 {{else}}
     {{each player in model.Players}}
         {{
             var inventory = model.Inventory[player];
         }}
 
-        {{= player}} State:
-            Special Powers: {{= inventory.SpecialPowers}}
-            Scoring Pile: {{= inventory.ScoringPile.Count}}
-            Scoring Tokens: {{= inventory.ScoringTokens}}
+        {{= player}}:
+            {{= Resources.SpecialPowers}}: {{= inventory.SpecialPowers}}
+            {{= Resources.ScoringPile}}: {{= inventory.ScoringPile.Count}}
+            {{= Resources.ScoringTokens}}: {{= inventory.ScoringTokens}}
     {{/each}}
 {{/if}}
