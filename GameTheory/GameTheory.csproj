@@ -286,6 +286,15 @@
     <Compile Include="Games\Splendor\Token.cs" />
     <Compile Include="Games\TicTacToe\GameState.cs" />
     <Compile Include="Games\TicTacToe\Move.cs" />
+    <Compile Include="Games\TicTacToe\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="Games\TicTacToe\Resources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <Compile Include="Games\TwentyFortyEight\Moves\ComputerMove.cs" />
     <Compile Include="Games\TwentyFortyEight\Moves\PlayerMove.cs" />
     <Compile Include="Games\TwentyFortyEight\GameState.cs" />

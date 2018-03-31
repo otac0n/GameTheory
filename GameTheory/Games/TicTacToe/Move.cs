@@ -26,7 +26,8 @@ namespace GameTheory.Games.TicTacToe
         }
 
         /// <inheritdoc />
-        public IList<object> FormatTokens => new object[] { "(", this.X, ", ", this.Y, ")" };
+        public IList<object> FormatTokens =>
+            FormatUtilities.ParseStringFormat(Resources.MoveFormat, this.X, this.Y);
 
         /// <inheritdoc />
         public bool IsDeterministic => true;

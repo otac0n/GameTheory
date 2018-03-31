@@ -248,7 +248,7 @@ namespace GameTheory.Games.TicTacToe
         /// <inheritdoc />
         public override string ToString()
         {
-            var c = new Func<int, int, string>((x, y) => this[x, y] == null ? " " : this[x, y] == this.players[0] ? "X" : "O");
+            var c = new Func<int, int, string>((x, y) => this[x, y] == null ? " " : this[x, y] == this.players[0] ? Resources.Player1 : Resources.Player2);
             return $"{c(0, 0)}|{c(1, 0)}|{c(2, 0)}\n-----\n{c(0, 1)}|{c(1, 1)}|{c(2, 1)}\n-----\n{c(0, 2)}|{c(1, 2)}|{c(2, 2)}";
         }
     }

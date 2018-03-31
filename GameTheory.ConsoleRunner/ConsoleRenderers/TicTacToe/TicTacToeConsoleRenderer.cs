@@ -20,7 +20,7 @@ namespace GameTheory.ConsoleRunner.ConsoleRenderers.TicTacToe
             {
                 ConsoleInteraction.WithColor(ConsoleInteraction.GetPlayerColor(state, playerToken), () =>
                 {
-                    Console.Write(playerToken == state.Players[0] ? "X" : "O");
+                    Console.Write(playerToken == state.Players[0] ? Resources.Player1 : Resources.Player2);
                 });
             }
             else
