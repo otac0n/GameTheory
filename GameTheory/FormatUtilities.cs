@@ -45,6 +45,55 @@ namespace GameTheory
         }
 
         /// <summary>
+        /// Returns the list of format tokens representing a list.
+        /// </summary>
+        /// <param name="items">The items in the list that will be separated.</param>
+        /// <returns>The format tokens representing the list.</returns>
+        public static IList<object> FormatList(params object[] items) => FormatList((IList<object>)items);
+
+        /// <summary>
+        /// Returns the list of format tokens representing a list.
+        /// </summary>
+        /// <param name="items">The items in the list that will be separated.</param>
+        /// <returns>The format tokens representing the list.</returns>
+        public static IList<object> FormatList(IList<object> items)
+        {
+            string sep;
+            switch (items.Count)
+            {
+                case 0:
+                    return new object[0];
+
+                case 1:
+                    return new[] { items[0] };
+
+                case 2:
+                    sep = SharedResources.ListItemSeparatorPair;
+                    break;
+
+                default:
+                    sep = SharedResources.ListItemSeparatorLastElement;
+                    break;
+            }
+
+            var result = new object[items.Count * 2 - 1];
+            var i = items.Count - 1;
+            var ix = result.Length - 1;
+            result[ix--] = result[i--];
+            result[ix--] = sep;
+
+            for (; i >= 1; i--)
+            {
+                result[ix--] = items[i];
+                result[ix--] = SharedResources.ListItemSeparator;
+            }
+
+            result[ix--] = items[i];
+
+            return result;
+        }
+
+        /// <summary>
         /// Gets a player name for display.
         /// </summary>
         /// <typeparam name="TMove">The type of object that represents a move in the game state.</typeparam>
@@ -52,10 +101,8 @@ namespace GameTheory
         /// <param name="playerToken">The player to search for.</param>
         /// <returns>A name representing the specified player token.</returns>
         public static string GetPlayerName<TMove>(this IGameState<TMove> state, PlayerToken playerToken)
-            where TMove : IMove
-        {
-            return $"Player {state.GetPlayerNumber(playerToken)}";
-        }
+            where TMove : IMove =>
+            string.Format(SharedResources.PlayerName, state.GetPlayerNumber(playerToken));
 
         /// <summary>
         /// Parses a composite format string to a collection of format tokens.

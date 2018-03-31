@@ -38,6 +38,6 @@ namespace GameTheory
         }
 
         /// <inheritdoc/>
-        public override string ToString() => $"<Player #{this.id.ToString().Split('-')[0]}>";
+        public override string ToString() => string.Format(SharedResources.PlayerTokenFormat, this.id.ToString().Split('-')[0]);
     }
 }

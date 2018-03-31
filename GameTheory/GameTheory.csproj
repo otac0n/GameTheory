@@ -346,6 +346,15 @@
     <Compile Include="PlayerToken.cs" />
     <Compile Include="Random.cs" />
     <Compile Include="ScoringMetric.cs" />
+    <Compile Include="SharedResources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>SharedResources.resx</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="SharedResources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>SharedResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <Compile Include="SplayTreeDictionary.cs" />
     <Compile Include="StrategyExtensions.cs" />
     <AdditionalFiles Include="..\stylecop.json">
