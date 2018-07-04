@@ -32,7 +32,7 @@ namespace GameTheory.Games.FiveTribes.Djinns
                 throw new ArgumentNullException(nameof(newState));
             }
 
-            if (oldState.Phase == Phase.MoveMeeples && oldState.LastPoint != newState.LastPoint && newState.Sultanate[newState.LastPoint].Owner == owner)
+            if (oldState.Phase == Phase.MoveMeeples && oldState.LastPoint != newState.LastPoint && newState.Sultanate[Sultanate.Size.IndexOf(newState.LastPoint)].Owner == owner)
             {
                 var inventory = newState.Inventory[owner];
                 newState = newState.With(

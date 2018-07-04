@@ -52,12 +52,13 @@ namespace GameTheory.Games.FiveTribes.Moves
 
         internal override GameState Apply(GameState state)
         {
-            var square = state.Sultanate[this.Point];
+            var point = Sultanate.Size.IndexOf(this.Point);
+            var square = state.Sultanate[point];
             state = state.With(
                 inHand: state.InHand.Remove(this.Meeple),
                 lastPoint: this.Point,
                 previousPoint: state.LastPoint,
-                sultanate: state.Sultanate.SetItem(this.Point, square.With(meeples: square.Meeples.Add(this.Meeple))));
+                sultanate: state.Sultanate.SetItem(point, square.With(meeples: square.Meeples.Add(this.Meeple))));
 
             return state.InHand.Count >= 1 ? state : state.WithInterstitialState(new DroppedLastMeeple(this.Meeple));
         }

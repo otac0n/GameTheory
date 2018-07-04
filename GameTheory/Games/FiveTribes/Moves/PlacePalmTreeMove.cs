@@ -40,9 +40,10 @@ namespace GameTheory.Games.FiveTribes.Moves
 
         internal override GameState Apply(GameState state)
         {
-            var square = state.Sultanate[this.Point];
+            var point = Sultanate.Size.IndexOf(this.Point);
+            var square = state.Sultanate[point];
             state = state.With(
-                sultanate: state.Sultanate.SetItem(this.Point, square.With(palmTrees: square.PalmTrees + 1)));
+                sultanate: state.Sultanate.SetItem(point, square.With(palmTrees: square.PalmTrees + 1)));
 
             if (this.Phase != null)
             {

@@ -215,7 +215,6 @@
     <Compile Include="Games\FiveTribes\Meeple.cs" />
     <Compile Include="Games\FiveTribes\Move.cs" />
     <Compile Include="Games\FiveTribes\Phase.cs" />
-    <Compile Include="Games\FiveTribes\Point.cs" />
     <Compile Include="Games\FiveTribes\Resource.cs" />
     <Compile Include="Games\FiveTribes\ScoreTable.cs" />
     <Compile Include="Games\FiveTribes\Square.cs" />
@@ -362,6 +361,7 @@
     </None>
     <Compile Include="PlayerState.cs" />
     <Compile Include="PlayerToken.cs" />
+    <Compile Include="Point.cs" />
     <Compile Include="Random.cs" />
     <Compile Include="ScoringMetric.cs" />
     <Compile Include="SharedResources.Designer.cs">
@@ -373,6 +373,7 @@
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>SharedResources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <Compile Include="Size.cs" />
     <Compile Include="SplayTreeDictionary.cs" />
     <Compile Include="StrategyExtensions.cs" />
     <AdditionalFiles Include="..\stylecop.json">

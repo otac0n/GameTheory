@@ -1,7 +1,7 @@
 ﻿@model ImmutableList<Square>
 {{
-    var columns = Enumerable.Range(0, Sultanate.Width);
-    var rows = Enumerable.Range(0, Sultanate.Height);
+    var columns = Enumerable.Range(0, Sultanate.Size.Width);
+    var rows = Enumerable.Range(0, Sultanate.Size.Height);
 
     var allSquares = model.Select(square =>
     {
@@ -11,12 +11,12 @@
     }).ToList();
     string text(int column, int row, int index)
     {
-        var lines = allSquares[new Point(column, row)];
+        var lines = allSquares[Sultanate.Size.IndexOf(column, row)];
         return lines.Length > index ? lines[index] : null;
     }
 
-    var cw = columns.Select(c => rows.Max(r => allSquares[new Point(c, r)].Max(l => l.Length))).ToList();
-    var rh = rows.Select(r => columns.Max(c => allSquares[new Point(c, r)].Length)).ToList();
+    var cw = columns.Select(c => rows.Max(r => allSquares[Sultanate.Size.IndexOf(c, r)].Max(l => l.Length))).ToList();
+    var rh = rows.Select(r => columns.Max(c => allSquares[Sultanate.Size.IndexOf(c, r)].Length)).ToList();
     string pad(int column, char padding, string value = null)
     {
         return (value ?? "").PadRight(cw[column], padding);

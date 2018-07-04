@@ -53,10 +53,11 @@ namespace GameTheory.Games.FiveTribes.Moves
 
         internal override GameState Apply(GameState state)
         {
+            var point = Sultanate.Size.IndexOf(this.Point);
             var owner = state.ActivePlayer;
 
             return this.after(state.With(
-                sultanate: state.Sultanate.SetItem(this.Point, state.Sultanate[this.Point].With(owner: owner))));
+                sultanate: state.Sultanate.SetItem(point, state.Sultanate[point].With(owner: owner))));
         }
     }
 }

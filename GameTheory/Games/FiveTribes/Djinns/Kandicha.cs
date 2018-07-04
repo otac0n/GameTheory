@@ -58,7 +58,7 @@ namespace GameTheory.Games.FiveTribes.Djinns
 
                     case Meeple.Builder:
                         {
-                            var blueTiles = Sultanate.GetSquarePoints(point).Count(p => s1.Sultanate[p].Tile.Color == TileColor.Blue);
+                            var blueTiles = Sultanate.GetSquarePoints(point).Count(p => s1.Sultanate[Sultanate.Size.IndexOf(p)].Tile.Color == TileColor.Blue);
                             var score = kill[meeple] * blueTiles * s1.ScoreTables[owner].BuilderMultiplier;
 
                             s1 = s1.With(

@@ -33,7 +33,7 @@ namespace GameTheory.Games.FiveTribes.Moves
 
         internal override GameState Apply(GameState state)
         {
-            var point = state.LastPoint;
+            var point = Sultanate.Size.IndexOf(state.LastPoint);
             var square = state.Sultanate[point];
             var newSquare = square.With(meeples: square.Meeples.RemoveAll(this.Tribe));
             var canAddCamel = newSquare.Owner == null && newSquare.Meeples.Count == 0 && state.IsPlayerUnderCamelLimit(state.ActivePlayer);

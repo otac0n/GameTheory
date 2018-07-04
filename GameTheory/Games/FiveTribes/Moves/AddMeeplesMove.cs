@@ -35,11 +35,12 @@ namespace GameTheory.Games.FiveTribes.Moves
 
         internal override GameState Apply(GameState state)
         {
+            var point = Sultanate.Size.IndexOf(this.Point);
             var newBag = state.Bag.Deal(3, out ImmutableList<Meeple> dealt);
 
             return state.With(
                 bag: newBag,
-                sultanate: state.Sultanate.SetItem(this.Point, state.Sultanate[this.Point].With(meeples: new EnumCollection<Meeple>(dealt))));
+                sultanate: state.Sultanate.SetItem(point, state.Sultanate[point].With(meeples: new EnumCollection<Meeple>(dealt))));
         }
 
         internal override IEnumerable<IWeighted<GameState>> GetOutcomes(GameState state)

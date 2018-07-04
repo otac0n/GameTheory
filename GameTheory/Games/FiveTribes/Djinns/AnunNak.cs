@@ -38,10 +38,10 @@ namespace GameTheory.Games.FiveTribes.Djinns
                     return Enumerable.Empty<Move>();
                 }
 
-                return from i in Enumerable.Range(0, Sultanate.Width * Sultanate.Height)
+                return from i in Enumerable.Range(0, Sultanate.Size.Count)
                        let sq = state.Sultanate[i]
                        where sq.Owner == null && sq.Meeples.Count == 0 && sq.Palaces == 0 && sq.PalmTrees == 0
-                       select new AddMeeplesMove(state, i);
+                       select new AddMeeplesMove(state, Sultanate.Size[i]);
             }
         }
     }

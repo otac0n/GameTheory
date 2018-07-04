@@ -40,10 +40,10 @@ namespace GameTheory.Games.FiveTribes.Djinns
         {
             public override IEnumerable<Move> GenerateMoves(GameState state)
             {
-                return from i in Enumerable.Range(0, Sultanate.Width * Sultanate.Height)
+                return from i in Enumerable.Range(0, Sultanate.Size.Count)
                        let sq = state.Sultanate[i]
                        where sq.Owner == null && sq.Meeples.Count >= 1 && sq.Palaces == 0 && sq.PalmTrees == 0
-                       select new PlaceCamelMove(state, i);
+                       select new PlaceCamelMove(state, Sultanate.Size[i]);
             }
         }
     }

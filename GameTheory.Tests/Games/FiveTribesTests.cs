@@ -25,9 +25,9 @@ namespace GameTheory.Tests.Games
             var playerA = template.Players[0];
             var playerB = template.Players[1];
 
-            var src = new Point(2, 2);
-            var dst = new Point(3, 2);
-            var kil = new Point(3, 1);
+            var src = Sultanate.Size.IndexOf(2, 2);
+            var dst = Sultanate.Size.IndexOf(3, 2);
+            var kil = Sultanate.Size.IndexOf(3, 1);
 
             var sultanate = template.Sultanate
                 .ConvertAll(sq => sq.With(meeples: EnumCollection<Meeple>.Empty))
@@ -77,8 +77,8 @@ namespace GameTheory.Tests.Games
             var playerB = template.Players[1];
             var playerC = template.Players[2];
 
-            var src = new Point(2, 2);
-            var dst = new Point(3, 2);
+            var src = Sultanate.Size.IndexOf(2, 2);
+            var dst = Sultanate.Size.IndexOf(3, 2);
 
             var sultanate = template.Sultanate
                 .ConvertAll(sq => sq.With(meeples: EnumCollection<Meeple>.Empty))
@@ -182,8 +182,8 @@ namespace GameTheory.Tests.Games
 
             var tiles = state.Sultanate.Select(s => s.Tile).ToLookup(t => t.GetType());
 
-            Assert.That(Sultanate.Width, Is.EqualTo(6));
-            Assert.That(Sultanate.Height, Is.EqualTo(5));
+            Assert.That(Sultanate.Size.Width, Is.EqualTo(6));
+            Assert.That(Sultanate.Size.Height, Is.EqualTo(5));
             Assert.That(tiles[typeof(BigMarket)].Count(), Is.EqualTo(4));
             Assert.That(tiles[typeof(SmallMarket)].Count(), Is.EqualTo(8));
             Assert.That(tiles[typeof(Oasis)].Count(), Is.EqualTo(6));

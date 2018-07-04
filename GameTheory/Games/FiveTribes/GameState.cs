@@ -830,7 +830,7 @@ namespace GameTheory.Games.FiveTribes
 
             foreach (var point in FiveTribes.Sultanate.GetPointsWithin(state.LastPoint, state.InHand.Count + slaves))
             {
-                foreach (var kill in combos(state.Sultanate[point].Meeples))
+                foreach (var kill in combos(state.Sultanate[FiveTribes.Sultanate.Size.IndexOf(point)].Meeples))
                 {
                     yield return new AssassinateMove(state, point, kill);
                 }

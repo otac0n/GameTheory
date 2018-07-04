@@ -48,14 +48,15 @@ namespace GameTheory.Games.FiveTribes.Moves
 
         internal override GameState Apply(GameState state)
         {
-            var square = state.Sultanate[this.Point];
+            var point = Sultanate.Size.IndexOf(this.Point);
+            var square = state.Sultanate[point];
 
             return state.With(
                 inHand: square.Meeples,
                 lastPoint: this.Point,
                 phase: Phase.MoveMeeples,
                 previousPoint: this.Point,
-                sultanate: state.Sultanate.SetItem(this.Point, square.With(meeples: EnumCollection<Meeple>.Empty)));
+                sultanate: state.Sultanate.SetItem(point, square.With(meeples: EnumCollection<Meeple>.Empty)));
         }
     }
 }

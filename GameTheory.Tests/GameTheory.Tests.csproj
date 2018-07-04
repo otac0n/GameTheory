@@ -70,6 +70,7 @@
     <None Include="packages.config" />
     <Compile Include="PlayerTokenTests.cs" />
     <Compile Include="RandomTests.cs" />
+    <Compile Include="SizeTests.cs" />
     <Compile Include="StubGameState.cs" />
     <AdditionalFiles Include="..\stylecop.json">
       <Link>stylecop.json</Link>

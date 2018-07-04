@@ -29,9 +29,9 @@ namespace GameTheory.Games.FiveTribes.Djinns
         {
             public override IEnumerable<Move> GenerateMoves(GameState state)
             {
-                return from i in Enumerable.Range(0, Sultanate.Width * Sultanate.Height)
+                return from i in Enumerable.Range(0, Sultanate.Size.Count)
                        where state.Sultanate[i].Tile is Oasis
-                       select new PlacePalmTreeMove(state, i);
+                       select new PlacePalmTreeMove(state, Sultanate.Size[i]);
             }
         }
     }

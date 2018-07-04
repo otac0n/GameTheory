@@ -68,7 +68,7 @@ namespace GameTheory.Games.FiveTribes
 
         internal static IEnumerable<Move> GenerateMoves(GameState state)
         {
-            return state.Sultanate[state.LastPoint].Tile.GetTileActionMoves(state);
+            return state.Sultanate[Sultanate.Size.IndexOf(state.LastPoint)].Tile.GetTileActionMoves(state);
         }
     }
 }

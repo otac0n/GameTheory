@@ -13,42 +13,34 @@ namespace GameTheory.Games.FiveTribes
     public static class Sultanate
     {
         /// <summary>
-        /// The height of the Sultanate.
-        /// </summary>
-        public const int Height = 5;
-
-        /// <summary>
         /// The minimum number of Meeples such that you can make a loop with them.
         /// </summary>
         public const int RequiredForLoop = 5;
 
         /// <summary>
-        /// The width of the Sultanate.
+        /// The size of the Sultanate.
         /// </summary>
-        public const int Width = 6;
+        public static readonly Size Size = new Size(6, 5);
 
         private static readonly ImmutableList<ImmutableList<Point>> SquarePoints;
         private static readonly Dictionary<Tuple<Point, Point, int>, ImmutableHashSet<Point>> Storage = new Dictionary<Tuple<Point, Point, int>, ImmutableHashSet<Point>>();
 
         static Sultanate()
         {
-            SquarePoints = Enumerable.Range(0, Width * Height).Select(i =>
+            SquarePoints = Size.Select(p =>
             {
                 var points = ImmutableList.CreateBuilder<Point>();
 
-                var px = i % Width;
-                var py = i / Width;
                 for (var y = -1; y <= 1; y++)
                 {
                     for (var x = -1; x <= 1; x++)
                     {
-                        var dpx = px + x;
-                        var dpy = py + y;
+                        var dp = new Point(p.X + x, p.Y + y);
+                        var dpIx = Size.IndexOf(dp);
 
-                        if (dpx >= 0 && dpx < Width &&
-                            dpy >= 0 && dpy < Height)
+                        if (dpIx != -1)
                         {
-                            points.Add(new Point(dpx, dpy));
+                            points.Add(dp);
                         }
                     }
                 }
@@ -68,14 +60,14 @@ namespace GameTheory.Games.FiveTribes
         public static IEnumerable<Tuple<Meeple, Point>> GetMoves(this IList<Square> sultanate, Point lastPoint, Point previousPoint, EnumCollection<Meeple> inHand)
         {
             var count = inHand.Count;
-            var potentialDrops = Sultanate.FindDestinations(lastPoint, previousPoint, 1);
+            var potentialDrops = FindDestinations(lastPoint, previousPoint, 1);
 
             if (count == 1)
             {
                 var only = inHand.First();
                 foreach (var drop in potentialDrops)
                 {
-                    if (sultanate[drop].Meeples.Contains(only))
+                    if (sultanate[Size.IndexOf(drop)].Meeples.Contains(only))
                     {
                         yield return Tuple.Create(only, drop);
                     }
@@ -99,7 +91,7 @@ namespace GameTheory.Games.FiveTribes
                 }
                 else
                 {
-                    var destinationSquares = Sultanate.FindDestinations(drop, lastPoint, count - 1);
+                    var destinationSquares = FindDestinations(drop, lastPoint, count - 1);
 
                     var includeAllDupes = destinationSquares.Contains(drop);
 
@@ -110,7 +102,7 @@ namespace GameTheory.Games.FiveTribes
                     else
                     {
                         var availableDestinationColors = destinationSquares
-                            .SelectMany(p => sultanate[p].Meeples)
+                            .SelectMany(p => sultanate[Size.IndexOf(p)].Meeples)
                             .Intersect(inHand.Keys)
                             .Take(2)
                             .ToList();
@@ -159,7 +151,7 @@ namespace GameTheory.Games.FiveTribes
         /// <returns>All of the legal pick ups.</returns>
         public static IEnumerable<Point> GetPickUps(this ImmutableList<Square> sultanate)
         {
-            for (var i = 0; i < Width * Height; i++)
+            for (var i = 0; i < Size.Count; i++)
             {
                 var inHand = sultanate[i].Meeples;
                 var count = inHand.Count;
@@ -167,7 +159,7 @@ namespace GameTheory.Games.FiveTribes
                 {
                     var newSultanate = sultanate.SetItem(i, sultanate[i].With(meeples: EnumCollection<Meeple>.Empty));
 
-                    var p = new Point(i);
+                    var p = Size[i];
                     var hasMoves = (count >= RequiredForLoop && count >= GameState.TribesCount + 1)
                                 || newSultanate.GetMoves(p, p, inHand).Any();
                     if (hasMoves)
@@ -186,17 +178,11 @@ namespace GameTheory.Games.FiveTribes
         /// <returns>The points that are within the specified distance.</returns>
         public static IEnumerable<Point> GetPointsWithin(Point point, int distance)
         {
-            var x1 = point.X;
-            var y1 = point.Y;
-
-            for (var i = 0; i < Width * Height; i++)
+            foreach (var p2 in Size)
             {
-                var x2 = i % Width;
-                var y2 = i / Width;
-
-                if (Math.Abs(x1 - x2) + Math.Abs(y1 - y2) <= distance)
+                if (Math.Abs(point.X - p2.X) + Math.Abs(point.Y - p2.Y) <= distance)
                 {
-                    yield return i;
+                    yield return p2;
                 }
             }
         }
@@ -206,7 +192,7 @@ namespace GameTheory.Games.FiveTribes
         /// </summary>
         /// <param name="point">The center point of the requested square.</param>
         /// <returns>All of the points within the requested square.</returns>
-        public static ImmutableList<Point> GetSquarePoints(Point point) => SquarePoints[point];
+        public static ImmutableList<Point> GetSquarePoints(Point point) => SquarePoints[Size.IndexOf(point)];
 
         private static ImmutableHashSet<Point> FindDestinations(Point lastPoint, Point previousPoint, int meeples)
         {
@@ -224,22 +210,22 @@ namespace GameTheory.Games.FiveTribes
             Point p;
             var destinations = ImmutableHashSet.CreateBuilder<Point>();
 
-            if (lastPoint.Y > 0 && (p = lastPoint - Width) != previousPoint)
+            if (lastPoint.Y > 0 && (p = new Point(lastPoint.X, lastPoint.Y - 1)) != previousPoint)
             {
                 destinations.UnionWith(FindDestinations(p, lastPoint, meeples - 1));
             }
 
-            if (lastPoint.X < Width - 1 && (p = lastPoint + 1) != previousPoint)
+            if (lastPoint.X < Size.Width - 1 && (p = new Point(lastPoint.X + 1, lastPoint.Y)) != previousPoint)
             {
                 destinations.UnionWith(FindDestinations(p, lastPoint, meeples - 1));
             }
 
-            if (lastPoint.Y < Height - 1 && (p = lastPoint + Width) != previousPoint)
+            if (lastPoint.Y < Size.Height - 1 && (p = new Point(lastPoint.X, lastPoint.Y + 1)) != previousPoint)
             {
                 destinations.UnionWith(FindDestinations(p, lastPoint, meeples - 1));
             }
 
-            if (lastPoint.X > 0 && (p = lastPoint - 1) != previousPoint)
+            if (lastPoint.X > 0 && (p = new Point(lastPoint.X - 1, lastPoint.Y)) != previousPoint)
             {
                 destinations.UnionWith(FindDestinations(p, lastPoint, meeples - 1));
             }

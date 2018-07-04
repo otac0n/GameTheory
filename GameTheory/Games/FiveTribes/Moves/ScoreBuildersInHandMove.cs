@@ -45,7 +45,7 @@ namespace GameTheory.Games.FiveTribes.Moves
 
         internal override GameState Apply(GameState state)
         {
-            var blueTiles = Sultanate.GetSquarePoints(state.LastPoint).Count(p => state.Sultanate[p].Tile.Color == TileColor.Blue);
+            var blueTiles = Sultanate.GetSquarePoints(state.LastPoint).Count(p => state.Sultanate[Sultanate.Size.IndexOf(p)].Tile.Color == TileColor.Blue);
             var player = state.ActivePlayer;
             var inventory = state.Inventory[player];
             var score = (state.InHand.Count + this.SpentSlaves) * blueTiles * state.ScoreTables[player].BuilderMultiplier;
