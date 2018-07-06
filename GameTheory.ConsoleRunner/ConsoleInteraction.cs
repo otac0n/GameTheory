@@ -140,6 +140,23 @@ namespace GameTheory.ConsoleRunner
             }
         }
 
+        public static void WithColor(ConsoleColor foreground, ConsoleColor background, Action action)
+        {
+            var originalForeground = Console.ForegroundColor;
+            var originalBackground = Console.BackgroundColor;
+            try
+            {
+                Console.ForegroundColor = foreground;
+                Console.BackgroundColor = background;
+                action();
+            }
+            finally
+            {
+                Console.ForegroundColor = originalForeground;
+                Console.BackgroundColor = originalBackground;
+            }
+        }
+
         public static void WithLock(Action action)
         {
             lock (@lock)

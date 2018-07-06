@@ -82,6 +82,44 @@ namespace GameTheory.ConsoleRunner.ConsoleRenderers
             public override Encoding Encoding => Console.Out.Encoding;
 
             /// <inheritdoc />
+            public override void Write(char[] buffer) => this.Write(new string(buffer));
+
+            /// <inheritdoc />
+            public override void Write(char[] buffer, int index, int count)
+            {
+                var sb = new StringBuilder(count);
+                sb.Append(buffer, index, count);
+                base.Write(sb.ToString());
+            }
+
+            /// <inheritdoc />
+            public override void WriteLine(char[] buffer, int index, int count)
+            {
+                var sb = new StringBuilder(count + this.CoreNewLine.Length);
+                sb.Append(buffer, index, count);
+                sb.Append(this.CoreNewLine);
+                base.Write(sb.ToString());
+            }
+
+            /// <inheritdoc />
+            public override void Write(string format, object arg0) => this.Write(format, new[] { arg0 });
+
+            /// <inheritdoc />
+            public override void Write(string format, object arg0, object arg1) => this.Write(format, new[] { arg0, arg1 });
+
+            /// <inheritdoc />
+            public override void Write(string format, object arg0, object arg1, object arg2) => this.Write(format, new[] { arg0, arg1, arg2 });
+
+            /// <inheritdoc />
+            public override void Write(string format, params object[] arg)
+            {
+                foreach (var token in FormatUtilities.ParseStringFormat(format, arg))
+                {
+                    this.Write(token);
+                }
+            }
+
+            /// <inheritdoc />
             public override void Write(string value) => this.consoleRenderer.RenderToken(this.state, value);
 
             /// <inheritdoc />
@@ -113,6 +151,106 @@ namespace GameTheory.ConsoleRunner.ConsoleRenderers
 
             /// <inheritdoc />
             public override void Write(ulong value) => this.consoleRenderer.RenderToken(this.state, value);
+
+            /// <inheritdoc />
+            public override void WriteLine(string format, object arg0) => this.WriteLine(format, new[] { arg0 });
+
+            /// <inheritdoc />
+            public override void WriteLine(string format, object arg0, object arg1) => this.WriteLine(format, new[] { arg0, arg1 });
+
+            /// <inheritdoc />
+            public override void WriteLine(string format, object arg0, object arg1, object arg2) => this.WriteLine(format, new[] { arg0, arg1, arg2 });
+
+            /// <inheritdoc />
+            public override void WriteLine(string format, params object[] arg)
+            {
+                this.Write(format, arg);
+                this.WriteLine();
+            }
+
+            /// <inheritdoc />
+            public override void WriteLine(string value)
+            {
+                this.Write(value);
+                this.WriteLine();
+            }
+
+            /// <inheritdoc />
+            public override void WriteLine(bool value)
+            {
+                this.Write(value);
+                this.WriteLine();
+            }
+
+            /// <inheritdoc />
+            public override void WriteLine(char value)
+            {
+                this.Write(value);
+                this.WriteLine();
+            }
+
+            /// <inheritdoc />
+            public override void WriteLine(decimal value)
+            {
+                this.Write(value);
+                this.WriteLine();
+            }
+
+            /// <inheritdoc />
+            public override void WriteLine(double value)
+            {
+                this.Write(value);
+                this.WriteLine();
+            }
+
+            /// <inheritdoc />
+            public override void WriteLine(float value)
+            {
+                this.Write(value);
+                this.WriteLine();
+            }
+
+            /// <inheritdoc />
+            public override void WriteLine(int value)
+            {
+                this.Write(value);
+                this.WriteLine();
+            }
+
+            /// <inheritdoc />
+            public override void WriteLine(long value)
+            {
+                this.Write(value);
+                this.WriteLine();
+            }
+
+            /// <inheritdoc />
+            public override void WriteLine(object value)
+            {
+                this.Write(value);
+                this.WriteLine();
+            }
+
+            /// <inheritdoc />
+            public override void WriteLine(uint value)
+            {
+                this.Write(value);
+                this.WriteLine();
+            }
+
+            /// <inheritdoc />
+            public override void WriteLine(ulong value)
+            {
+                this.Write(value);
+                this.WriteLine();
+            }
+
+            /// <inheritdoc />
+            public override void WriteLine(char[] buffer)
+            {
+                this.Write(buffer);
+                this.WriteLine();
+            }
         }
     }
 }
