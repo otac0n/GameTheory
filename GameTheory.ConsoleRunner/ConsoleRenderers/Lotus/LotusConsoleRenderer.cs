@@ -16,68 +16,41 @@ namespace GameTheory.ConsoleRunner.ConsoleRenderers.Lotus
         /// <inheritdoc/>
         protected override void RenderToken(IGameState<Move> state, object token)
         {
-            if (token is FlowerType)
+            if (token is FlowerType flowerType)
             {
                 var color = ConsoleColor.Green;
-                var display = token.ToString();
 
-                switch ((FlowerType)token)
+                switch (flowerType)
                 {
                     case FlowerType.Iris:
                         color = ConsoleColor.DarkMagenta;
-                        display = Resources.FlowerType_Iris;
                         break;
 
                     case FlowerType.Primrose:
                         color = ConsoleColor.Yellow;
-                        display = Resources.FlowerType_Primrose;
                         break;
 
                     case FlowerType.CherryBlossom:
                         color = ConsoleColor.Red;
-                        display = Resources.FlowerType_CherryBlossom;
                         break;
 
                     case FlowerType.Lily:
                         color = ConsoleColor.White;
-                        display = Resources.FlowerType_Lily;
                         break;
 
                     case FlowerType.Lotus:
                         color = ConsoleColor.Magenta;
-                        display = Resources.FlowerType_Lotus;
                         break;
                 }
 
                 ConsoleInteraction.WithColor(color, () =>
                 {
-                    Console.Write(display);
+                    Console.Write(Resources.ResourceManager.GetString($"FlowerType_{flowerType}"));
                 });
             }
-            else if (token is SpecialPowers)
+            else if (token is SpecialPowers specialPower)
             {
-                var display = token.ToString();
-
-                switch ((SpecialPowers)token)
-                {
-                    case SpecialPowers.ElderGuardian:
-                        display = Resources.SpecialPowers_ElderGuardian;
-                        break;
-
-                    case SpecialPowers.EnlightenedPath:
-                        display = Resources.SpecialPowers_EnlightenedPath;
-                        break;
-
-                    case SpecialPowers.InfiniteGrowth:
-                        display = Resources.SpecialPowers_InfiniteGrowth;
-                        break;
-
-                    case SpecialPowers.None:
-                        display = Resources.SpecialPowers_None;
-                        break;
-                }
-
-                Console.Write(display);
+                Console.Write(Resources.ResourceManager.GetString($"SpecialPowers_{specialPower}"));
             }
             else
             {

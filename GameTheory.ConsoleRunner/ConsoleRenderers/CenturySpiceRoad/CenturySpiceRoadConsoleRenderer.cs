@@ -40,7 +40,7 @@ namespace GameTheory.ConsoleRunner.ConsoleRenderers.CenturySpiceRoad
 
                 ConsoleInteraction.WithColor(color, () =>
                 {
-                    Console.Write(token);
+                    Console.Write(spice);
                 });
             }
             else
