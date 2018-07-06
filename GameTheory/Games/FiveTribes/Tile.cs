@@ -7,7 +7,7 @@ namespace GameTheory.Games.FiveTribes
     using GameTheory.Games.FiveTribes.Moves;
 
     /// <summary>
-    /// Represents a tile in game of Five Tribes.
+    /// Represents a tile in the game of <see cref="GameState">Five Tribes</see>.
     /// </summary>
     public abstract class Tile : IComparable<Tile>
     {

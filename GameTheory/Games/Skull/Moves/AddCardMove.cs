@@ -36,7 +36,7 @@ namespace GameTheory.Games.Skull.Moves
                 int comp;
 
                 if ((comp = this.PlayerToken.CompareTo(move.PlayerToken)) != 0 ||
-                    (comp = this.Card.CompareTo(move.Card)) != 0 ||
+                    (comp = EnumComparer<Card>.Default.Compare(this.Card, move.Card)) != 0 ||
                     (comp = CompareUtilities.CompareLists(this.GameState.Players, move.GameState.Players)) != 0)
                 {
                     return comp;
