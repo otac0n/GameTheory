@@ -19,12 +19,12 @@
         return (value ?? "").PadRight(cw[column], padding);
     }
 }}
-┌{{each c in columns}}{{= pad(c, '─')}}{{delimit}}┬{{/each}}┐
+{{= BoxDrawing.DownAndRight }}{{each c in columns}}{{= pad(c, BoxDrawing.Horizontal)}}{{delimit}}{{= BoxDrawing.DownAndHorizontal }}{{/each}}{{= BoxDrawing.DownAndLeft }}
 {{each r in rows}}
   {{each i in Enumerable.Range(0, rh[r])}}
-    │{{each c in columns}}{{= pad(c, ' ', text(c, r, i))}}{{delimit}}│{{/each}}│
+    {{= BoxDrawing.Vertical }}{{each c in columns}}{{= pad(c, ' ', text(c, r, i))}}{{delimit}}{{= BoxDrawing.Vertical }}{{/each}}{{= BoxDrawing.Vertical }}
   {{/each}}
 {{delimit}}
-  ├{{each c in columns}}{{= pad(c, '─')}}{{delimit}}┼{{/each}}┤
+  {{= BoxDrawing.VerticalAndRight }}{{each c in columns}}{{= pad(c, BoxDrawing.Horizontal)}}{{delimit}}{{= BoxDrawing.VerticalAndHorizontal }}{{/each}}{{= BoxDrawing.VerticalAndLeft }}
 {{/each}}
-└{{each c in columns}}{{= pad(c, '─')}}{{delimit}}┴{{/each}}┘
+{{= BoxDrawing.UpAndRight }}{{each c in columns}}{{= pad(c, BoxDrawing.Horizontal)}}{{delimit}}{{= BoxDrawing.UpAndHorizontal }}{{/each}}{{= BoxDrawing.UpAndLeft }}

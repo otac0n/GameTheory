@@ -3,10 +3,10 @@
 @namespace GameTheory.ConsoleRunner.ConsoleRenderers.Draughts
 @static false
 @model GameState
-┌{{each x in Enumerable.Range(0, model.Variant.Width)}}─{{delimit}}┬{{/each}}┐
+{{= BoxDrawing.DownAndRight }}{{each x in Enumerable.Range(0, model.Variant.Width)}}{{= BoxDrawing.Horizontal }}{{delimit}}{{= BoxDrawing.DownAndHorizontal }}{{/each}}{{= BoxDrawing.DownAndLeft }}
 {{each y in Enumerable.Range(0, model.Variant.Height)}}
-│{{each x in Enumerable.Range(0, model.Variant.Width)}}{{= model.Variant.GetPieceAt(model.Board, x, y)}}{{delimit}}│{{/each}}│
+  {{= BoxDrawing.Vertical }}{{each x in Enumerable.Range(0, model.Variant.Width)}}{{= model.Variant.GetPieceAt(model.Board, x, y)}}{{delimit}}{{= BoxDrawing.Vertical }}{{/each}}{{= BoxDrawing.Vertical }}
 {{delimit}}
-├{{each x in Enumerable.Range(0, model.Variant.Width)}}─{{delimit}}┼{{/each}}┤
+  {{= BoxDrawing.VerticalAndRight }}{{each x in Enumerable.Range(0, model.Variant.Width)}}{{= BoxDrawing.Horizontal }}{{delimit}}{{= BoxDrawing.VerticalAndHorizontal }}{{/each}}{{= BoxDrawing.VerticalAndLeft }}
 {{/each}}
-└{{each x in Enumerable.Range(0, model.Variant.Width)}}─{{delimit}}┴{{/each}}┘
+{{= BoxDrawing.UpAndRight }}{{each x in Enumerable.Range(0, model.Variant.Width)}}{{= BoxDrawing.Horizontal }}{{delimit}}{{= BoxDrawing.UpAndHorizontal }}{{/each}}{{= BoxDrawing.UpAndLeft }}

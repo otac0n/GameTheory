@@ -4,7 +4,7 @@
 @static false
 @model GameState
 {{each y in Enumerable.Range(0, GameState.Size)}}
-{{each x in Enumerable.Range(0, GameState.Size)}}{{= model[x, y] ?? (object)" "}}{{delimit}}│{{/each}}
+{{each x in Enumerable.Range(0, GameState.Size)}}{{= model[x, y] ?? (object)" "}}{{delimit}}{{= BoxDrawing.Vertical }}{{/each}}
 {{delimit}}
-─┼─┼─
+{{= BoxDrawing.Horizontal }}{{= BoxDrawing.VerticalAndHorizontal }}{{= BoxDrawing.Horizontal }}{{= BoxDrawing.VerticalAndHorizontal }}{{= BoxDrawing.Horizontal }}
 {{/each}}

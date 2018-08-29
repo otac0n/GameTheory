@@ -113,6 +113,7 @@
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
     <None Include="App.config" />
+    <Compile Include="BoxDrawing.cs" />
     <Compile Include="ConsoleInteraction.cs" />
     <Compile Include="ConsolePlayer.cs" />
     <CodeAnalysisDictionary Include="..\CustomDictionary.xml">

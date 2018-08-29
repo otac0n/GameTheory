@@ -33,7 +33,7 @@ namespace GameTheory.ConsoleRunner.ConsoleRenderers.SevenDragons
                             {
                                 ConsoleInteraction.WithColor(GetConsoleColor(card.Colors[DragonCard.Grid.IndexOf(u, v)]), () =>
                                 {
-                                    Console.Write("█");
+                                    Console.Write(BoxDrawing.FullBlock);
                                 });
                             }
                         }
@@ -41,13 +41,13 @@ namespace GameTheory.ConsoleRunner.ConsoleRenderers.SevenDragons
                         {
                             for (var w = 0; w < DragonCard.Grid.Width; w++)
                             {
-                                Console.Write(" ");
+                                Console.Write(BoxDrawing.Space);
                             }
                         }
 
                         if (x < extents.MaxX)
                         {
-                            Console.Write(" ");
+                            Console.Write(BoxDrawing.Space);
                         }
                     }
 
@@ -80,7 +80,7 @@ namespace GameTheory.ConsoleRunner.ConsoleRenderers.SevenDragons
                             {
                                 ConsoleInteraction.WithColor(GetConsoleColor(dragonCard.Colors[DragonCard.Grid.IndexOf(u, v)]), () =>
                                 {
-                                    Console.Write("█");
+                                    Console.Write(BoxDrawing.FullBlock);
                                 });
                             }
                         }
@@ -95,7 +95,7 @@ namespace GameTheory.ConsoleRunner.ConsoleRenderers.SevenDragons
 
                         if (i < inventory.Hand.Count - 1)
                         {
-                            Console.Write(" ");
+                            Console.Write(' ');
                         }
                     }
 
@@ -115,11 +115,11 @@ namespace GameTheory.ConsoleRunner.ConsoleRenderers.SevenDragons
                 var colorD = GetConsoleColor(dragonCard.Colors[3]);
                 ConsoleInteraction.WithColor(colorA, colorC, () =>
                 {
-                    Console.Write("▀");
+                    Console.Write(BoxDrawing.UpperHalfBlock);
                 });
                 ConsoleInteraction.WithColor(colorB, colorD, () =>
                 {
-                    Console.Write("▀");
+                    Console.Write(BoxDrawing.UpperHalfBlock);
                 });
             }
             else if (token is ActionCard actionCard)
