@@ -158,8 +158,23 @@ namespace GameTheory
                         }
                     }
 
-                    var wasCancelled = cts.IsCancellationRequested;
-                    cts.Cancel();
+                    if (tasks.Count > 0)
+                    {
+                        // Drain remaing tasks to avoid concurrency issues.
+                        cts.Cancel();
+
+                        try
+                        {
+                            Task.WaitAll(tasks.ToArray());
+                        }
+                        catch (AggregateException aggEx)
+                        {
+                            aggEx.Handle(ex =>
+                            {
+                                return ex is OperationCanceledException;
+                            });
+                        }
+                    }
 
                     if (!chosenMove.HasValue)
                     {
