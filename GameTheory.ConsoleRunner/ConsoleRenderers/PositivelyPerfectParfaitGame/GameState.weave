@@ -4,14 +4,14 @@
 @static false
 @model GameState
 
-Available Scoops:
+{{= Resources.AvailableScoops }}:
   {{= model.RemainingScoops}}
 
 {{each playerToken in model.Players}}
     {{= playerToken}}
       {{ var parfait = model.Parfaits[playerToken]; }}
       {{if parfait.Cherry}}
-          {{= CherrySentinel}}
+          {{= CherrySentinel }}
       {{/if}}
       {{= parfait.Flavors }}
 

@@ -19,7 +19,6 @@ namespace GameTheory.ConsoleRunner.ConsoleRenderers.Lotus
             if (token is FlowerType flowerType)
             {
                 var color = ConsoleColor.Green;
-
                 switch (flowerType)
                 {
                     case FlowerType.Iris:

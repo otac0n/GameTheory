@@ -265,6 +265,15 @@
     <Compile Include="Games\PositivelyPerfectParfaitGame\Move.cs" />
     <Compile Include="Games\PositivelyPerfectParfaitGame\Parfait.cs" />
     <Compile Include="Games\PositivelyPerfectParfaitGame\Phase.cs" />
+    <Compile Include="Games\PositivelyPerfectParfaitGame\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="Games\PositivelyPerfectParfaitGame\Resources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <Compile Include="Games\SevenDragons\Cards\ActionCard.cs" />
     <Compile Include="Games\SevenDragons\Cards\DragonCard.cs" />
     <Compile Include="Games\SevenDragons\Cards\MoveACardCard.cs" />

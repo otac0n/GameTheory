@@ -27,7 +27,7 @@ namespace GameTheory.Games.PositivelyPerfectParfaitGame.Moves
         }
 
         /// <inheritdoc/>
-        public override IList<object> FormatTokens => new object[] { "Switch your ", this.GivenFlavor, " for a ", this.TakenFlavor, " scoop from ", this.OtherPlayer };
+        public override IList<object> FormatTokens => FormatUtilities.ParseStringFormat(Resources.SwitchAScoop, this.GivenFlavor, this.TakenFlavor, this.OtherPlayer);
 
         /// <summary>
         /// Gets the flavor of scoop given to the other player.

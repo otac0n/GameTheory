@@ -40,14 +40,14 @@ namespace GameTheory.ConsoleRunner.ConsoleRenderers.PositivelyPerfectParfaitGame
 
                 ConsoleInteraction.WithColor(color, () =>
                 {
-                    Console.Write(token);
+                    Console.Write(Resources.ResourceManager.GetString($"Flavor_{flavor}"));
                 });
             }
             else if (token == Templates.CherrySentinel)
             {
                 ConsoleInteraction.WithColor(ConsoleColor.Red, () =>
                 {
-                    Console.Write("Cherry");
+                    Console.Write(Resources.Cherry);
                 });
             }
             else

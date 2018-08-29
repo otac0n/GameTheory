@@ -20,7 +20,7 @@ namespace GameTheory.Games.PositivelyPerfectParfaitGame.Moves
         }
 
         /// <inheritdoc/>
-        public override IList<object> FormatTokens => new object[] { "Take a cherry" };
+        public override IList<object> FormatTokens => new object[] { Resources.TakeACherry };
 
         /// <inheritdoc/>
         public override bool IsDeterministic => true;

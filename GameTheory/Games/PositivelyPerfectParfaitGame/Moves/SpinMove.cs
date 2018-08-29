@@ -2,7 +2,6 @@
 
 namespace GameTheory.Games.PositivelyPerfectParfaitGame.Moves
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
 
@@ -21,7 +20,7 @@ namespace GameTheory.Games.PositivelyPerfectParfaitGame.Moves
         }
 
         /// <inheritdoc/>
-        public override IList<object> FormatTokens => new object[] { "Twirl the spinner" };
+        public override IList<object> FormatTokens => new object[] { Resources.TwirlTheSpinner };
 
         /// <inheritdoc/>
         public override bool IsDeterministic => false;
@@ -73,7 +72,7 @@ namespace GameTheory.Games.PositivelyPerfectParfaitGame.Moves
             }
             else
             {
-                if (state.Players.Any(p => state.Parfaits[p].Flavors.Count > 0))
+                if (state.Players.Any(p => p != activePlayer && state.Parfaits[p].Flavors.Count > 0))
                 {
                     switchState = state.With(phase: Phase.SwitchAScoop);
                 }

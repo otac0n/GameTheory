@@ -27,7 +27,7 @@ namespace GameTheory.Games.PositivelyPerfectParfaitGame.Moves
         public Flavor Flavor { get; }
 
         /// <inheritdoc/>
-        public override IList<object> FormatTokens => new object[] { "Lose a ", this.Flavor, " scoop" };
+        public override IList<object> FormatTokens => FormatUtilities.ParseStringFormat(Resources.LoseAScoop, this.Flavor);
 
         /// <inheritdoc/>
         public override bool IsDeterministic => true;
