@@ -84,6 +84,7 @@
     <WeaveTemplate Include="ConsoleRenderers\PositivelyPerfectParfaitGame\GameState.weave" />
     <Compile Include="ConsoleRenderers\PositivelyPerfectParfaitGame\PositivelyPerfectParfaitGameConsoleRenderer.cs" />
     <Compile Include="ConsoleRenderers\PositivelyPerfectParfaitGame\Templates.cs" />
+    <Compile Include="ConsoleRenderers\SevenDragons\SevenDragonsConsoleRenderer.cs" />
     <WeaveTemplate Include="ConsoleRenderers\Skull\GameState.weave" />
     <Compile Include="ConsoleRenderers\Skull\SkullConsoleRenderer.cs" />
     <Compile Include="ConsoleRenderers\Skull\Templates.cs" />

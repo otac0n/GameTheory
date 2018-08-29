@@ -20,7 +20,7 @@ namespace GameTheory.ConsoleRunner.ConsoleRenderers
         /// <inheritdoc/>
         public void Show(IGameState<TMove> state, IList<object> formatTokens)
         {
-            foreach (var token in FormatUtilities.FlattenFormatTokens(formatTokens))
+            foreach (var token in formatTokens)
             {
                 this.RenderToken(state, token);
             }
