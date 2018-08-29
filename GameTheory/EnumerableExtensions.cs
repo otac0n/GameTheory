@@ -21,6 +21,16 @@ namespace GameTheory
         /// <returns>The collection of elements that match the maximum.</returns>
         public static List<T> AllMax<T>(this IEnumerable<T> source, IComparer<T> comparer)
         {
+            if (source == null)
+            {
+                throw new ArgumentNullException(nameof(source));
+            }
+
+            if (comparer == null)
+            {
+                throw new ArgumentNullException(nameof(comparer));
+            }
+
             var max = default(T);
             var list = new List<T>();
             foreach (var item in source)
@@ -52,6 +62,16 @@ namespace GameTheory
         /// <returns>The collection of elements that match the maximum.</returns>
         public static List<TItem> AllMaxBy<TItem, TElement>(this IEnumerable<TItem> source, Func<TItem, TElement> elementSelector, IComparer<TElement> comparer = null)
         {
+            if (source == null)
+            {
+                throw new ArgumentNullException(nameof(source));
+            }
+
+            if (elementSelector == null)
+            {
+                throw new ArgumentNullException(nameof(elementSelector));
+            }
+
             comparer = comparer ?? Comparer<TElement>.Default;
 
             var max = default(TElement);
@@ -84,6 +104,16 @@ namespace GameTheory
         /// <returns>The collection of elements that match the minimum.</returns>
         public static List<T> AllMin<T>(this IEnumerable<T> source, IComparer<T> comparer)
         {
+            if (source == null)
+            {
+                throw new ArgumentNullException(nameof(source));
+            }
+
+            if (comparer == null)
+            {
+                throw new ArgumentNullException(nameof(comparer));
+            }
+
             var min = default(T);
             var list = new List<T>();
             foreach (var item in source)
@@ -115,6 +145,16 @@ namespace GameTheory
         /// <returns>The collection of elements that match the minimum.</returns>
         public static List<TItem> AllMinBy<TItem, TElement>(this IEnumerable<TItem> source, Func<TItem, TElement> elementSelector, IComparer<TElement> comparer = null)
         {
+            if (source == null)
+            {
+                throw new ArgumentNullException(nameof(source));
+            }
+
+            if (elementSelector == null)
+            {
+                throw new ArgumentNullException(nameof(elementSelector));
+            }
+
             comparer = comparer ?? Comparer<TElement>.Default;
 
             var min = default(TElement);
@@ -228,6 +268,11 @@ namespace GameTheory
         /// <returns>The index of the item, if it is found; <c>-1</c>, otherwise.</returns>
         public static int IndexOf<T>(this IReadOnlyList<T> list, T item)
         {
+            if (list == null)
+            {
+                throw new ArgumentNullException(nameof(list));
+            }
+
             for (var i = 0; i < list.Count; i++)
             {
                 var element = list[i];
@@ -268,6 +313,16 @@ namespace GameTheory
         /// <returns>The maxumum element.</returns>
         public static T Max<T>(this IEnumerable<T> source, IComparer<T> comparer)
         {
+            if (source == null)
+            {
+                throw new ArgumentNullException(nameof(source));
+            }
+
+            if (comparer == null)
+            {
+                throw new ArgumentNullException(nameof(comparer));
+            }
+
             var any = false;
             var max = default(T);
             foreach (var item in source)
@@ -292,6 +347,16 @@ namespace GameTheory
         /// <returns>The maxumum element.</returns>
         public static T Max<T>(this IEnumerable<T> source, Comparison<T> comparison)
         {
+            if (source == null)
+            {
+                throw new ArgumentNullException(nameof(source));
+            }
+
+            if (comparison == null)
+            {
+                throw new ArgumentNullException(nameof(comparison));
+            }
+
             var any = false;
             var max = default(T);
             foreach (var item in source)
@@ -316,6 +381,16 @@ namespace GameTheory
         /// <returns>The minimum element.</returns>
         public static T Min<T>(this IEnumerable<T> source, IComparer<T> comparer)
         {
+            if (source == null)
+            {
+                throw new ArgumentNullException(nameof(source));
+            }
+
+            if (comparer == null)
+            {
+                throw new ArgumentNullException(nameof(comparer));
+            }
+
             var any = false;
             var min = default(T);
             foreach (var item in source)
@@ -340,6 +415,16 @@ namespace GameTheory
         /// <returns>The minimum element.</returns>
         public static T Min<T>(this IEnumerable<T> source, Comparison<T> comparison)
         {
+            if (source == null)
+            {
+                throw new ArgumentNullException(nameof(source));
+            }
+
+            if (comparison == null)
+            {
+                throw new ArgumentNullException(nameof(comparison));
+            }
+
             var any = false;
             var min = default(T);
             foreach (var item in source)

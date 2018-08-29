@@ -170,6 +170,16 @@ namespace GameTheory.Players.MaximizingPlayer
         /// <returns>The player's lead, as a score.</returns>
         protected virtual TScore GetLead(IDictionary<PlayerToken, TScore> score, IGameState<TMove> state, PlayerToken player)
         {
+            if (state == null)
+            {
+                throw new ArgumentNullException(nameof(state));
+            }
+
+            if (score == null)
+            {
+                throw new ArgumentNullException(nameof(score));
+            }
+
             if (state.Players.Count == 1)
             {
                 return score[player];

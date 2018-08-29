@@ -70,7 +70,9 @@ namespace GameTheory
         public override bool Equals(object obj) => obj is Point other && this.Equals(other);
 
         /// <inheritdoc />
-        public bool Equals(Point other) => this.x == other.x && this.y == other.y;
+        public bool Equals(Point other) =>
+            this.x == other.x &&
+            this.y == other.y;
 
         /// <inheritdoc />
         public override int GetHashCode()

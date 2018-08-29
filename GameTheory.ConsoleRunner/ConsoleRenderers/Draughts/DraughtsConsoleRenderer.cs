@@ -16,6 +16,11 @@ namespace GameTheory.ConsoleRunner.ConsoleRenderers.Draughts
         /// <inheritdoc/>
         protected override void RenderToken(IGameState<Move> state, object token)
         {
+            if (state == null)
+            {
+                throw new ArgumentNullException(nameof(state));
+            }
+
             if (token is Pieces piece)
             {
                 PlayerToken player = null;

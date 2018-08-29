@@ -19,7 +19,7 @@ namespace GameTheory.Games.Draughts
         /// <param name="variant">The variant of Draughts being played.</param>
         public GameState(Variant variant)
         {
-            this.Variant = variant;
+            this.Variant = variant ?? throw new ArgumentNullException(nameof(variant));
             this.Players = ImmutableArray.Create(new PlayerToken(), new PlayerToken());
             this.ActivePlayer = this.Players[0];
             this.Phase = Phase.Play;

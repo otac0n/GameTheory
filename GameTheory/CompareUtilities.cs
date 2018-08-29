@@ -26,38 +26,46 @@ namespace GameTheory
             where TKey : IComparable<TKey>
             where TValue : IComparable<TValue>
         {
-            if (left == right)
+            var comp = 0;
+
+            if (!object.ReferenceEquals(left, right))
             {
-                return 0;
-            }
+                if (object.ReferenceEquals(left, null))
+                {
+                    return -1;
+                }
 
-            int comp;
+                if (object.ReferenceEquals(right, null))
+                {
+                    return 1;
+                }
 
-            if ((comp = left.Count.CompareTo(right.Count)) != 0)
-            {
-                return comp;
-            }
-
-            keyComparer = keyComparer ?? Comparer<TKey>.Default;
-            valueComparer = valueComparer ?? Comparer<TValue>.Default;
-
-            var otherKeys = new List<TKey>(right.Count);
-            otherKeys.AddRange(right.Keys);
-            otherKeys.Sort(keyComparer);
-
-            var i = 0;
-            foreach (var a in left.Keys.OrderBy(k => k, keyComparer))
-            {
-                var b = otherKeys[i++];
-
-                if ((comp = keyComparer.Compare(a, b)) != 0 ||
-                    (comp = valueComparer.Compare(left[a], right[b])) != 0)
+                if ((comp = left.Count.CompareTo(right.Count)) != 0)
                 {
                     return comp;
                 }
+
+                keyComparer = keyComparer ?? Comparer<TKey>.Default;
+                valueComparer = valueComparer ?? Comparer<TValue>.Default;
+
+                var otherKeys = new List<TKey>(right.Count);
+                otherKeys.AddRange(right.Keys);
+                otherKeys.Sort(keyComparer);
+
+                var i = 0;
+                foreach (var a in left.Keys.OrderBy(k => k, keyComparer))
+                {
+                    var b = otherKeys[i++];
+
+                    if ((comp = keyComparer.Compare(a, b)) != 0 ||
+                        (comp = valueComparer.Compare(left[a], right[b])) != 0)
+                    {
+                        return comp;
+                    }
+                }
             }
 
-            return 0;
+            return comp;
         }
 
         /// <summary>
@@ -74,6 +82,16 @@ namespace GameTheory
 
             if (!object.ReferenceEquals(left, right))
             {
+                if (object.ReferenceEquals(left, null))
+                {
+                    return -1;
+                }
+
+                if (object.ReferenceEquals(right, null))
+                {
+                    return 1;
+                }
+
                 if ((comp = left.Count.CompareTo(right.Count)) != 0)
                 {
                     return comp;
@@ -135,6 +153,16 @@ namespace GameTheory
 
             if (!object.ReferenceEquals(left, right))
             {
+                if (object.ReferenceEquals(left, null))
+                {
+                    return -1;
+                }
+
+                if (object.ReferenceEquals(right, null))
+                {
+                    return 1;
+                }
+
                 if ((comp = left.Count.CompareTo(right.Count)) != 0)
                 {
                     return comp;
@@ -214,6 +242,16 @@ namespace GameTheory
 
             if (!object.ReferenceEquals(left, right))
             {
+                if (object.ReferenceEquals(left, null))
+                {
+                    return -1;
+                }
+
+                if (object.ReferenceEquals(right, null))
+                {
+                    return 1;
+                }
+
                 if ((comp = left.Count.CompareTo(right.Count)) != 0)
                 {
                     return comp;
@@ -246,6 +284,16 @@ namespace GameTheory
 
             if (!object.ReferenceEquals(left, right))
             {
+                if (object.ReferenceEquals(left, null))
+                {
+                    return -1;
+                }
+
+                if (object.ReferenceEquals(right, null))
+                {
+                    return 1;
+                }
+
                 if ((comp = left.Count.CompareTo(right.Count)) != 0)
                 {
                     return comp;
@@ -287,6 +335,16 @@ namespace GameTheory
 
             if (!object.ReferenceEquals(left, right))
             {
+                if (object.ReferenceEquals(left, null))
+                {
+                    return -1;
+                }
+
+                if (object.ReferenceEquals(right, null))
+                {
+                    return 1;
+                }
+
                 if ((comp = left.Count.CompareTo(right.Count)) != 0)
                 {
                     return comp;
@@ -362,6 +420,16 @@ namespace GameTheory
 
             if (!object.ReferenceEquals(left, right))
             {
+                if (object.ReferenceEquals(left, null))
+                {
+                    return -1;
+                }
+
+                if (object.ReferenceEquals(right, null))
+                {
+                    return 1;
+                }
+
                 if ((comp = left.Count.CompareTo(right.Count)) != 0)
                 {
                     return comp;

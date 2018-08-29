@@ -159,6 +159,16 @@ namespace GameTheory.Games.Draughts
         /// <returns>The maximum score possible.</returns>
         public static T MeasureCaptures<T>(GameState state, PlayerToken player, CaptureMove move, IScoringMetric<CaptureMove, T> scoringMetric)
         {
+            if (state == null)
+            {
+                throw new ArgumentNullException(nameof(state));
+            }
+
+            if (scoringMetric == null)
+            {
+                throw new ArgumentNullException(nameof(scoringMetric));
+            }
+
             var score = scoringMetric.Score(move);
 
             var nextState = (GameState)state.MakeMove(move);

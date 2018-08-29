@@ -2,11 +2,13 @@
 
 namespace GameTheory
 {
+    using System;
+
     /// <summary>
     /// A tuple of a player token and a game state.
     /// </summary>
     /// <typeparam name="TMove">The type of move in the game state.</typeparam>
-    public struct PlayerState<TMove>
+    public struct PlayerState<TMove> : IEquatable<PlayerState<TMove>>
         where TMove : IMove
     {
         /// <summary>
@@ -36,10 +38,7 @@ namespace GameTheory
         /// <param name="left">The first <see cref="PlayerState{TMove}"/> to compare.</param>
         /// <param name="right">The second <see cref="PlayerState{TMove}"/> to compare.</param>
         /// <returns><c>true</c> if <paramref name="left"/> and <paramref name="right"/> differ; otherwise, <c>false</c>.</returns>
-        public static bool operator !=(PlayerState<TMove> left, PlayerState<TMove> right)
-        {
-            return !(left == right);
-        }
+        public static bool operator !=(PlayerState<TMove> left, PlayerState<TMove> right) => !(left == right);
 
         /// <summary>
         /// Compares two <see cref="PlayerState{TMove}"/> objects. The result specifies whether they are equal.
@@ -47,33 +46,23 @@ namespace GameTheory
         /// <param name="left">The first <see cref="PlayerState{TMove}"/> to compare.</param>
         /// <param name="right">The second <see cref="PlayerState{TMove}"/> to compare.</param>
         /// <returns><c>true</c> if <paramref name="left"/> and <paramref name="right"/> are equal; otherwise, <c>false</c>.</returns>
-        public static bool operator ==(PlayerState<TMove> left, PlayerState<TMove> right)
-        {
-            return left.Equals(right);
-        }
+        public static bool operator ==(PlayerState<TMove> left, PlayerState<TMove> right) => left.Equals(right);
 
         /// <inheritdoc/>
-        public override bool Equals(object obj)
-        {
-            if (obj is PlayerState<TMove> other)
-            {
-                return this.Equals(other);
-            }
+        public override bool Equals(object obj) => obj is PlayerState<TMove> other && this.Equals(other);
 
-            return false;
-        }
-
-        /// <summary>
-        /// Indicates whether this instance and a specified object are equal.
-        /// </summary>
-        /// <param name="other">The object to compare with the current instance.</param>
-        /// <returns><c>true</c> if <paramref name="other"/> and this instance represent the same value; otherwise, <c>false</c>.</returns>
+        /// <inheritdoc/>
         public bool Equals(PlayerState<TMove> other) =>
             this.GameState == other.GameState &&
             this.PlayerToken == other.PlayerToken;
 
-        /// <inheritdoc/>
-        public override int GetHashCode() =>
-            this.GameState.GetHashCode() ^ this.PlayerToken.GetHashCode();
+        /// <inheritdoc />
+        public override int GetHashCode()
+        {
+            var hash = HashUtilities.Seed;
+            HashUtilities.Combine(ref hash, this.GameState.GetHashCode());
+            HashUtilities.Combine(ref hash, this.PlayerToken.GetHashCode());
+            return hash;
+        }
     }
 }

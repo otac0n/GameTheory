@@ -2,6 +2,7 @@
 
 namespace GameTheory
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Text.RegularExpressions;
@@ -18,6 +19,11 @@ namespace GameTheory
         /// <returns>An enumerable collection containing atomic format tokens.</returns>
         public static IEnumerable<object> FlattenFormatTokens(this ITokenFormattable @this)
         {
+            if (@this == null)
+            {
+                throw new ArgumentNullException(nameof(@this));
+            }
+
             return FlattenFormatTokens(@this.FormatTokens);
         }
 
@@ -58,6 +64,11 @@ namespace GameTheory
         /// <returns>The format tokens representing the list.</returns>
         public static IList<object> FormatList(IList<object> items)
         {
+            if (items == null)
+            {
+                throw new ArgumentNullException(nameof(items));
+            }
+
             string sep;
             switch (items.Count)
             {

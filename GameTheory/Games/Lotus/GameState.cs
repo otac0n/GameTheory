@@ -137,6 +137,11 @@ namespace GameTheory.Games.Lotus
         /// <returns>The collection of players that control the specified flower.</returns>
         public static ImmutableList<PlayerToken> GetControllingPlayers(Flower flower)
         {
+            if (flower == null)
+            {
+                throw new ArgumentNullException(nameof(flower));
+            }
+
             var points = flower.Petals.Where(p => p.Owner != null).Select(p => new { p.Owner, p.Guardians }).Concat(flower.Guardians.Select(g => new { Owner = g, Guardians = 1 }));
             var playerPoints = from p in points
                                group p.Guardians by p.Owner into g

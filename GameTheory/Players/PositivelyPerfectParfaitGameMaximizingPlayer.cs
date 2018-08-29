@@ -2,6 +2,7 @@
 
 namespace GameTheory.Players.MaximizingPlayers
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using Games.PositivelyPerfectParfaitGame;
@@ -28,6 +29,16 @@ namespace GameTheory.Players.MaximizingPlayers
         /// <inheritdoc/>
         protected override ResultScore<double> GetLead(IDictionary<PlayerToken, ResultScore<double>> score, IGameState<Move> state, PlayerToken player)
         {
+            if (state == null)
+            {
+                throw new ArgumentNullException(nameof(state));
+            }
+
+            if (score == null)
+            {
+                throw new ArgumentNullException(nameof(score));
+            }
+
             if (((GameState)state).PlayOut)
             {
                 return score[player];

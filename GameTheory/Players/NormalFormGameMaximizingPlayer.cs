@@ -29,6 +29,11 @@ namespace GameTheory.Players.MaximizingPlayers
         /// <inheritdoc/>
         protected override double GetLead(IDictionary<PlayerToken, double> score, IGameState<Move<T>> state, PlayerToken player)
         {
+            if (score == null)
+            {
+                throw new ArgumentNullException(nameof(score));
+            }
+
             return score[player];
         }
 

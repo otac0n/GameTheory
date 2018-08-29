@@ -86,7 +86,9 @@ namespace GameTheory
         public override bool Equals(object obj) => obj is Size other && this.Equals(other);
 
         /// <inheritdoc />
-        public bool Equals(Size other) => this.width == other.width && this.height == other.height;
+        public bool Equals(Size other) =>
+            this.width == other.width &&
+            this.height == other.height;
 
         /// <inheritdoc />
         public IEnumerator<Point> GetEnumerator()

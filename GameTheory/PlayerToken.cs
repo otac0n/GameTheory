@@ -32,10 +32,7 @@ namespace GameTheory
         }
 
         /// <inheritdoc />
-        public bool Equals(PlayerToken other)
-        {
-            return this == other;
-        }
+        public bool Equals(PlayerToken other) => object.ReferenceEquals(this, other);
 
         /// <inheritdoc/>
         public override string ToString() => string.Format(SharedResources.PlayerTokenFormat, this.id.ToString().Split('-')[0]);

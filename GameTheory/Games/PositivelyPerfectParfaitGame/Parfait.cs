@@ -35,14 +35,20 @@ namespace GameTheory.Games.PositivelyPerfectParfaitGame
         /// <inheritdoc/>
         public int CompareTo(Parfait other)
         {
-            int comp;
+            if (other == null)
+            {
+                return 1;
+            }
+
+            var comp = 0;
+
             if ((comp = this.Cherry.CompareTo(other.Cherry)) != 0 ||
                 (comp = this.Flavors.CompareTo(other.Flavors)) != 0)
             {
                 return comp;
             }
 
-            return 0;
+            return comp;
         }
 
         internal Parfait With(

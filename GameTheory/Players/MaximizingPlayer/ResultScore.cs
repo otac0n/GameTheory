@@ -52,7 +52,7 @@ namespace GameTheory.Players.MaximizingPlayer
     /// Extends a score to prioritize winning over purely increasing the score.
     /// </summary>
     /// <typeparam name="TScore">The type that represents the rest of the score.</typeparam>
-    public struct ResultScore<TScore> : ITokenFormattable
+    public struct ResultScore<TScore> : ITokenFormattable, IEquatable<ResultScore<TScore>>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="ResultScore{TScore}"/> struct.
@@ -95,6 +95,43 @@ namespace GameTheory.Players.MaximizingPlayer
         /// Gets the result of the game.
         /// </summary>
         public Result Result { get; }
+
+        /// <summary>
+        /// Compares two <see cref="ResultScore{TScore}"/> objects. The result specifies whether they are unequal.
+        /// </summary>
+        /// <param name="left">The first <see cref="ResultScore{TScore}"/> to compare.</param>
+        /// <param name="right">The second <see cref="ResultScore{TScore}"/> to compare.</param>
+        /// <returns><c>true</c> if <paramref name="left"/> and <paramref name="right"/> differ; otherwise, <c>false</c>.</returns>
+        public static bool operator !=(ResultScore<TScore> left, ResultScore<TScore> right) => !(left == right);
+
+        /// <summary>
+        /// Compares two <see cref="ResultScore{TScore}"/> objects. The result specifies whether they are equal.
+        /// </summary>
+        /// <param name="left">The first <see cref="ResultScore{TScore}"/> to compare.</param>
+        /// <param name="right">The second <see cref="ResultScore{TScore}"/> to compare.</param>
+        /// <returns><c>true</c> if <paramref name="left"/> and <paramref name="right"/> are equal; otherwise, <c>false</c>.</returns>
+        public static bool operator ==(ResultScore<TScore> left, ResultScore<TScore> right) => left.Equals(right);
+
+        /// <inheritdoc/>
+        public override bool Equals(object obj) => obj is ResultScore<TScore> other && this.Equals(other);
+
+        /// <inheritdoc/>
+        public bool Equals(ResultScore<TScore> other) =>
+            this.Result == other.Result &&
+            this.InPly == other.InPly &&
+            this.Likelihood == other.Likelihood &&
+            object.Equals(this.Rest, other.Rest);
+
+        /// <inheritdoc />
+        public override int GetHashCode()
+        {
+            var hash = HashUtilities.Seed;
+            HashUtilities.Combine(ref hash, (short)this.Result);
+            HashUtilities.Combine(ref hash, this.InPly.GetHashCode());
+            HashUtilities.Combine(ref hash, this.Likelihood.GetHashCode());
+            HashUtilities.Combine(ref hash, this.Rest.GetHashCode());
+            return hash;
+        }
 
         /// <inheritdoc/>
         public override string ToString() => string.Concat(this.FlattenFormatTokens());

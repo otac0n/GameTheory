@@ -20,6 +20,16 @@ namespace GameTheory.ConsoleRunner.ConsoleRenderers
         /// <inheritdoc/>
         public void Show(IGameState<TMove> state, IList<object> formatTokens)
         {
+            if (state == null)
+            {
+                throw new ArgumentNullException(nameof(state));
+            }
+
+            if (formatTokens == null)
+            {
+                throw new ArgumentNullException(nameof(formatTokens));
+            }
+
             foreach (var token in formatTokens)
             {
                 this.RenderToken(state, token);
@@ -27,7 +37,20 @@ namespace GameTheory.ConsoleRunner.ConsoleRenderers
         }
 
         /// <inheritdoc/>
-        public void Show(IGameState<TMove> state, ITokenFormattable tokenFormattable) => this.Show(state, tokenFormattable.FormatTokens);
+        public void Show(IGameState<TMove> state, ITokenFormattable tokenFormattable)
+        {
+            if (state == null)
+            {
+                throw new ArgumentNullException(nameof(state));
+            }
+
+            if (tokenFormattable == null)
+            {
+                throw new ArgumentNullException(nameof(tokenFormattable));
+            }
+
+            this.Show(state, tokenFormattable.FormatTokens);
+        }
 
         /// <summary>
         /// Creates a <see cref="TextWriter"/> that will invoke <see cref="RenderToken"/> for all interactions.

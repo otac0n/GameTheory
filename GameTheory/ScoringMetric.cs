@@ -18,6 +18,11 @@ namespace GameTheory
         /// <returns>The combined score.</returns>
         public static double Combine(IWeighted<double>[] scores)
         {
+            if (scores == null)
+            {
+                throw new ArgumentNullException(nameof(scores));
+            }
+
             var weight = 0.0;
             var sum = 0.0;
             for (var i = scores.Length - 1; i >= 0; i--)
@@ -107,7 +112,15 @@ namespace GameTheory
 
             TScore IScoringMetric<PlayerState<TMove>, TScore>.Difference(TScore minuend, TScore subtrahend) => this.difference(minuend, subtrahend);
 
-            IDictionary<PlayerToken, TScore> IGameStateScoringMetric<TMove, TScore>.Score(IGameState<TMove> state) => state.Players.ToDictionary(p => p, p => this.score(new PlayerState<TMove>(p, state)));
+            IDictionary<PlayerToken, TScore> IGameStateScoringMetric<TMove, TScore>.Score(IGameState<TMove> state)
+            {
+                if (state == null)
+                {
+                    throw new ArgumentNullException(nameof(state));
+                }
+
+                return state.Players.ToDictionary(p => p, p => this.score(new PlayerState<TMove>(p, state)));
+            }
 
             TScore IScoringMetric<PlayerState<TMove>, TScore>.Score(PlayerState<TMove> subject) => this.score(subject);
         }

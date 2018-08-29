@@ -28,6 +28,11 @@ namespace GameTheory.Players.MaximizingPlayer
         /// <inheritdoc/>
         public ResultScore<TScore> Combine(params IWeighted<ResultScore<TScore>>[] scores)
         {
+            if (scores == null)
+            {
+                throw new ArgumentNullException(nameof(scores));
+            }
+
             var results = EnumUtilities.GetValues<Result>().ToDictionary(result => result, result => new
             {
                 Weight = 0.0,
@@ -101,6 +106,11 @@ namespace GameTheory.Players.MaximizingPlayer
         /// <inheritdoc/>
         public IDictionary<PlayerToken, ResultScore<TScore>> Score(IGameState<TMove> state)
         {
+            if (state == null)
+            {
+                throw new ArgumentNullException(nameof(state));
+            }
+
             var winners = state.GetWinners();
             var sharedResult = winners.Count == 0 ? (state.GetAvailableMoves().Count == 0 ? (state.Players.Count == 1 ? Result.Loss : Result.Impasse) : Result.None) : (Result?)null;
             var winnersSet = winners.ToSet();

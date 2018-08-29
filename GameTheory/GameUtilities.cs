@@ -24,6 +24,11 @@ namespace GameTheory
         public static PlayerToken GetNextPlayer<TMove>(this IGameState<TMove> state, PlayerToken currentPlayer)
                     where TMove : IMove
         {
+            if (state == null)
+            {
+                throw new ArgumentNullException(nameof(state));
+            }
+
             return state.Players.GetNextPlayer(currentPlayer);
         }
 
@@ -35,6 +40,11 @@ namespace GameTheory
         /// <returns>The next player, or the first player if the current player was not found.</returns>
         public static PlayerToken GetNextPlayer(this IReadOnlyList<PlayerToken> players, PlayerToken currentPlayer)
         {
+            if (players == null)
+            {
+                throw new ArgumentNullException(nameof(players));
+            }
+
             return players[(players.IndexOf(currentPlayer) + 1) % players.Count];
         }
 
@@ -46,6 +56,11 @@ namespace GameTheory
         /// <returns>The next player, or the first player if the current player was not found.</returns>
         public static PlayerToken GetNextPlayer(this IList<PlayerToken> players, PlayerToken currentPlayer)
         {
+            if (players == null)
+            {
+                throw new ArgumentNullException(nameof(players));
+            }
+
             return players[(players.IndexOf(currentPlayer) + 1) % players.Count];
         }
 

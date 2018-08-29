@@ -10,7 +10,7 @@ namespace GameTheory
     /// </summary>
     /// <remarks>This is similar to <see cref="Nullable{T}"/>, but supports reference types.</remarks>
     /// <typeparam name="T">The type of the possible value.</typeparam>
-    public struct Maybe<T>
+    public struct Maybe<T> : IEquatable<Maybe<T>>
     {
         private bool hasValue;
         private T value;
@@ -65,10 +65,7 @@ namespace GameTheory
         /// <param name="left">The first <see cref="Maybe{T}"/> to compare.</param>
         /// <param name="right">The second <see cref="Maybe{T}"/> to compare.</param>
         /// <returns><c>true</c> if <paramref name="left"/> and <paramref name="right"/> differ; otherwise, <c>false</c>.</returns>
-        public static bool operator !=(Maybe<T> left, Maybe<T> right)
-        {
-            return !left.Equals(right);
-        }
+        public static bool operator !=(Maybe<T> left, Maybe<T> right) => !(left == right);
 
         /// <summary>
         /// Compares two <see cref="Maybe{T}"/> objects. The result specifies whether they are equal.
@@ -76,24 +73,15 @@ namespace GameTheory
         /// <param name="left">The first <see cref="Maybe{T}"/> to compare.</param>
         /// <param name="right">The second <see cref="Maybe{T}"/> to compare.</param>
         /// <returns><c>true</c> if <paramref name="left"/> and <paramref name="right"/> are equal; otherwise, <c>false</c>.</returns>
-        public static bool operator ==(Maybe<T> left, Maybe<T> right)
-        {
-            return left.Equals(right);
-        }
+        public static bool operator ==(Maybe<T> left, Maybe<T> right) => left.Equals(right);
 
         /// <inheritdoc />
-        public override bool Equals(object obj)
-        {
-            if (obj is Maybe<T> other)
-            {
-                return other.hasValue == this.hasValue &&
-                    (!other.hasValue || Equals(other.value, this.value));
-            }
-            else
-            {
-                return false;
-            }
-        }
+        public override bool Equals(object obj) => obj is Maybe<T> other && this.Equals(other);
+
+        /// <inheritdoc />
+        public bool Equals(Maybe<T> other) =>
+            other.hasValue == this.hasValue &&
+            (!other.hasValue || object.Equals(other.value, this.value));
 
         /// <inheritdoc />
         public override int GetHashCode()
