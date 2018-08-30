@@ -58,7 +58,7 @@ namespace GameTheory.Games.Ergo.Moves
         public int CardIndex2 { get; }
 
         /// <inheritdoc/>
-        public override IList<object> FormatTokens => new object[] { "Move ", this.GameState.Proof[this.PremiseIndex2][this.CardIndex2].Card.Symbols[this.SymbolIndex2], " to ", this.PremiseIndex1, ":", this.CardIndex1, " and ", this.GameState.Proof[this.PremiseIndex1][this.CardIndex1].Card.Symbols[this.SymbolIndex1], " to ", this.PremiseIndex2, ":", this.CardIndex2, " using ", this.Card };
+        public override IList<object> FormatTokens => FormatUtilities.ParseStringFormat(Resources.MoveSymbolsWithRevolution, this.GameState.Proof[this.PremiseIndex2][this.CardIndex2].Card.Symbols[this.SymbolIndex2], this.PremiseIndex1, this.CardIndex1, this.GameState.Proof[this.PremiseIndex1][this.CardIndex1].Card.Symbols[this.SymbolIndex1], this.PremiseIndex2, this.CardIndex2, this.Card);
 
         /// <summary>
         /// Gets the premise containing the first card.

@@ -24,7 +24,7 @@ namespace GameTheory.Games.Ergo.Moves
         public TabulaRasaCard Card { get; }
 
         /// <inheritdoc/>
-        public override IList<object> FormatTokens => new object[] { "Remove at ", this.PremiseIndex, ":", this.RemoveIndex, " using ", this.Card };
+        public override IList<object> FormatTokens => FormatUtilities.ParseStringFormat(Resources.RemoveSymbolWithTabulaRasa, this.PremiseIndex, this.RemoveIndex, this.Card);
 
         /// <summary>
         /// Gets the premise from which a card will be removed.

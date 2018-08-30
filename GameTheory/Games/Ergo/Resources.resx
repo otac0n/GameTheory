@@ -117,22 +117,100 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="ListItemSeparator" xml:space="preserve">
-    <value>, </value>
+  <data name="Deal" xml:space="preserve">
+    <value>Deal</value>
   </data>
-  <data name="ListItemSeparatorLastElement" xml:space="preserve">
-    <value>, and </value>
+  <data name="Discard" xml:space="preserve">
+    <value>Discard {0}</value>
   </data>
-  <data name="ListItemSeparatorPair" xml:space="preserve">
-    <value> and </value>
+  <data name="DrawCards" xml:space="preserve">
+    <value>Draw cards</value>
   </data>
-  <data name="PlayerName" xml:space="preserve">
-    <value>Player {0}</value>
+  <data name="Ergo" xml:space="preserve">
+    <value>Ergo</value>
   </data>
-  <data name="PlayerTokenFormat" xml:space="preserve">
-    <value>&lt;Player #{0}&gt;</value>
+  <data name="Fallacy" xml:space="preserve">
+    <value>Fallacy</value>
   </data>
-  <data name="Space" xml:space="preserve">
-    <value> </value>
+  <data name="Justification" xml:space="preserve">
+    <value>Justification</value>
+  </data>
+  <data name="MoveSymbolsWithRevolution" xml:space="preserve">
+    <value>Move {0} to {1}:{2} and {3} to {4}:{5} using {6}</value>
+  </data>
+  <data name="PlaceCard" xml:space="preserve">
+    <value>Place {0} at {1}:{2}</value>
+  </data>
+  <data name="PlaceCardAs" xml:space="preserve">
+    <value>Place {0} as {1} at {2}:{3}</value>
+  </data>
+  <data name="PlayCard" xml:space="preserve">
+    <value>Play {0}</value>
+  </data>
+  <data name="PlayCardAs" xml:space="preserve">
+    <value>Play {0} as {1}</value>
+  </data>
+  <data name="PlayFallacy" xml:space="preserve">
+    <value>Play {0} on {1}</value>
+  </data>
+  <data name="RemoveFallacy" xml:space="preserve">
+    <value>Remove fallacy with {0}</value>
+  </data>
+  <data name="RemoveSymbolWithTabulaRasa" xml:space="preserve">
+    <value>Remove at {0}:{1} using {2}</value>
+  </data>
+  <data name="Revolution" xml:space="preserve">
+    <value>Revolution</value>
+  </data>
+  <data name="Symbol" xml:space="preserve">
+    <value>Symbol</value>
+  </data>
+  <data name="Symbols" xml:space="preserve">
+    <value>Symbols</value>
+  </data>
+  <data name="Symbol_And" xml:space="preserve">
+    <value>&amp;</value>
+  </data>
+  <data name="Symbol_BlayerD" xml:space="preserve">
+    <value>D</value>
+  </data>
+  <data name="Symbol_LeftParenthesis" xml:space="preserve">
+    <value>(</value>
+  </data>
+  <data name="Symbol_Not" xml:space="preserve">
+    <value>~</value>
+  </data>
+  <data name="Symbol_Or" xml:space="preserve">
+    <value>|</value>
+  </data>
+  <data name="Symbol_PlayerA" xml:space="preserve">
+    <value>A</value>
+  </data>
+  <data name="Symbol_PlayerB" xml:space="preserve">
+    <value>B</value>
+  </data>
+  <data name="Symbol_PlayerC" xml:space="preserve">
+    <value>C</value>
+  </data>
+  <data name="Symbol_RightParenthesis" xml:space="preserve">
+    <value>)</value>
+  </data>
+  <data name="Symbol_Then" xml:space="preserve">
+    <value>=&gt;</value>
+  </data>
+  <data name="TabulaRasa" xml:space="preserve">
+    <value>Tabula Rasa</value>
+  </data>
+  <data name="Hand" xml:space="preserve">
+    <value>Hand</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Ergo</value>
+  </data>
+  <data name="Proof" xml:space="preserve">
+    <value>Proof</value>
+  </data>
+  <data name="Scores" xml:space="preserve">
+    <value>Scores</value>
   </data>
 </root>

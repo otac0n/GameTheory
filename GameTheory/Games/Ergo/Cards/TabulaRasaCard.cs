@@ -19,7 +19,7 @@ namespace GameTheory.Games.Ergo.Cards
         }
 
         /// <inheritdoc/>
-        public override IList<object> FormatTokens => new object[] { "Tabula Rasa" };
+        public override IList<object> FormatTokens => new object[] { Resources.TabulaRasa };
 
         /// <inheritdoc/>
         public override int CompareTo(Card other)

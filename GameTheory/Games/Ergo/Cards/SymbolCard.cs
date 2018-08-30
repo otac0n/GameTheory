@@ -133,12 +133,12 @@ namespace GameTheory.Games.Ergo.Cards
             {
                 var tokens = new List<object>
                 {
-                    this.Symbols.Count == 1 ? "Symbol" : "Symbols",
+                    this.Symbols.Count == 1 ? Resources.Symbol : Resources.Symbols,
                 };
 
                 foreach (var s in this.Symbols)
                 {
-                    tokens.Add(" ");
+                    tokens.Add(SharedResources.Space);
                     tokens.Add(s);
                 }
 

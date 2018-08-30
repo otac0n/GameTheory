@@ -16,7 +16,7 @@ namespace GameTheory.Games.Ergo.Moves
         }
 
         /// <inheritdoc/>
-        public override IList<object> FormatTokens => new object[] { "Draw cards" };
+        public override IList<object> FormatTokens => new object[] { Resources.DrawCards };
 
         /// <inheritdoc />
         public override int CompareTo(Move other)

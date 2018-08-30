@@ -21,40 +21,14 @@ namespace GameTheory.ConsoleRunner.ConsoleRenderers.Ergo
             {
                 ConsoleInteraction.WithColor(ConsoleInteraction.GetPlayerColor(state, playerToken), () =>
                 {
-                    Console.Write("Player " + (Symbol)state.Players.IndexOf(playerToken));
+                    Console.Write(string.Format(SharedResources.PlayerName, Resources.ResourceManager.GetString($"Symbol_{(Symbol)state.Players.IndexOf(playerToken)}")));
                 });
             }
             else if (token is Symbol symbol)
             {
                 ConsoleColor? color = null;
-                string display = null;
-
                 switch (symbol)
                 {
-                    case Symbol.And:
-                        display = "&";
-                        break;
-
-                    case Symbol.Or:
-                        display = "|";
-                        break;
-
-                    case Symbol.Then:
-                        display = "=>";
-                        break;
-
-                    case Symbol.Not:
-                        display = "~";
-                        break;
-
-                    case Symbol.LeftParenthesis:
-                        display = "(";
-                        break;
-
-                    case Symbol.RightParenthesis:
-                        display = ")";
-                        break;
-
                     case Symbol.PlayerA:
                     case Symbol.PlayerB:
                     case Symbol.PlayerC:
@@ -65,11 +39,10 @@ namespace GameTheory.ConsoleRunner.ConsoleRenderers.Ergo
                             color = ConsoleInteraction.GetPlayerColor(state, state.Players[index]);
                         }
 
-                        display = symbol.ToString();
-                        display = display.Substring(display.Length - 1);
                         break;
                 }
 
+                var display = Resources.ResourceManager.GetString($"Symbol_{symbol}");
                 if (color != null)
                 {
                     ConsoleInteraction.WithColor(color.Value, () =>

@@ -22,7 +22,7 @@ namespace GameTheory.Games.Ergo.Moves
         public Card Card { get; }
 
         /// <inheritdoc/>
-        public override IList<object> FormatTokens => new object[] { "Discard ", this.Card };
+        public override IList<object> FormatTokens => FormatUtilities.ParseStringFormat(Resources.Discard, this.Card);
 
         /// <inheritdoc />
         public override int CompareTo(Move other)

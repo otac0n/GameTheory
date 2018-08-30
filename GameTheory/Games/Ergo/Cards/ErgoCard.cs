@@ -19,7 +19,7 @@ namespace GameTheory.Games.Ergo.Cards
         }
 
         /// <inheritdoc/>
-        public override IList<object> FormatTokens => new object[] { "Ergo" };
+        public override IList<object> FormatTokens => new object[] { Resources.Ergo };
 
         /// <inheritdoc/>
         public override int CompareTo(Card other)

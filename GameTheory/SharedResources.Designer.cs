@@ -105,5 +105,14 @@ namespace GameTheory {
                 return ResourceManager.GetString("PlayerTokenFormat", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to  .
+        /// </summary>
+        public static string Space {
+            get {
+                return ResourceManager.GetString("Space", resourceCulture);
+            }
+        }
     }
 }

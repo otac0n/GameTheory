@@ -147,6 +147,15 @@
     <Compile Include="Games\Ergo\Move.cs" />
     <Compile Include="Games\Ergo\Phase.cs" />
     <Compile Include="Games\Ergo\PlacedCard.cs" />
+    <Compile Include="Games\Ergo\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="Games\Ergo\Resources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <Compile Include="Games\FiveTribes\Djinns\AlAmin.cs" />
     <Compile Include="Games\FiveTribes\Djinns\AnunNak.cs" />
     <Compile Include="Games\FiveTribes\Djinns\Baal.cs" />

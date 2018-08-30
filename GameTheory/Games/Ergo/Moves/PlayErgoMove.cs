@@ -30,8 +30,8 @@ namespace GameTheory.Games.Ergo.Moves
 
         /// <inheritdoc/>
         public override IList<object> FormatTokens => this.Card == ErgoCard.Instance
-            ? new object[] { "Play ", this.Card }
-            : new object[] { "Play ", this.Card, " as ", ErgoCard.Instance };
+            ? FormatUtilities.ParseStringFormat(Resources.PlayCard, this.Card)
+            : FormatUtilities.ParseStringFormat(Resources.PlayCardAs, this.Card, ErgoCard.Instance);
 
         private static ImmutableArray<Card> ErgoCards { get; }
 

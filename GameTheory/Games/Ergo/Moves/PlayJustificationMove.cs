@@ -28,7 +28,7 @@ namespace GameTheory.Games.Ergo.Moves
         public Card Card { get; }
 
         /// <inheritdoc/>
-        public override IList<object> FormatTokens => new object[] { "Remove fallacy with ", this.Card };
+        public override IList<object> FormatTokens => FormatUtilities.ParseStringFormat(Resources.RemoveFallacy, this.Card);
 
         private static ImmutableArray<Card> JustificationCards { get; }
 

@@ -19,7 +19,7 @@ namespace GameTheory.Games.Ergo.Moves
         }
 
         /// <inheritdoc/>
-        public override IList<object> FormatTokens => new object[] { "Deal" };
+        public override IList<object> FormatTokens => new object[] { Resources.Deal };
 
         /// <inheritdoc/>
         public override bool IsDeterministic => false;

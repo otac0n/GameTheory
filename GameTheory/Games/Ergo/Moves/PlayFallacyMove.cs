@@ -23,7 +23,7 @@ namespace GameTheory.Games.Ergo.Moves
         public FallacyCard Card { get; }
 
         /// <inheritdoc/>
-        public override IList<object> FormatTokens => new object[] { "Play ", this.Card, " on ", this.Victim };
+        public override IList<object> FormatTokens => FormatUtilities.ParseStringFormat(Resources.PlayFallacy, this.Card, this.Victim);
 
         /// <summary>
         /// Gets the player who will be the victim of the fallacy.

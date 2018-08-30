@@ -3,19 +3,19 @@
 @namespace GameTheory.ConsoleRunner.ConsoleRenderers.Ergo
 @static false
 @model GameState
-Proof:
+{{= Resources.Proof }}:
     {{each line in model.Proof}}
         [ {{each placement in line}}{{= placement.Symbol }}{{delimit}} {{/each}} ]
     {{/each}}
 
 {{if this.playerToken != null}}
-    Hand:
+    {{= Resources.Hand }}:
         {{each card in model.Hands[this.playerToken]}}
             {{= card}}
         {{/each}}
 {{/if}}
 
-Scores:
+{{= Resources.Scores }}:
     {{each player in model.Players}}
         {{= player}}: {{= model.Scores[player]}}
     {{/each}}

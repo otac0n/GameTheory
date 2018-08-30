@@ -27,8 +27,8 @@ namespace GameTheory.Games.Ergo.Moves
 
         /// <inheritdoc/>
         public override IList<object> FormatTokens => this.Card.Symbols.Count == 1
-                ? new object[] { "Place ", this.Card.Symbols[this.SymbolIndex], " at ", this.PremiseIndex, ":", this.InsertIndex }
-                : new object[] { "Place ", this.Card, " as ", this.Card.Symbols[this.SymbolIndex], " at ", this.PremiseIndex, ":", this.InsertIndex };
+                ? FormatUtilities.ParseStringFormat(Resources.PlaceCard, this.Card.Symbols[this.SymbolIndex], this.PremiseIndex, this.InsertIndex)
+                : FormatUtilities.ParseStringFormat(Resources.PlaceCardAs, this.Card, this.Card.Symbols[this.SymbolIndex], this.PremiseIndex, this.InsertIndex);
 
         /// <summary>
         /// Gets the index at which the card will be inserted.
