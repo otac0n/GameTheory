@@ -5,6 +5,7 @@ namespace GameTheory.Catalogs
     using System;
     using System.Linq;
     using System.Reflection;
+    using System.Resources;
 
     /// <summary>
     /// A convenience class for dealing with types implementing <see cref="IGameState{TMove}"/>.
@@ -74,15 +75,20 @@ namespace GameTheory.Catalogs
 
         private static string GetGameName(Type gameType)
         {
-            var typeName = gameType.FullName;
+            var @namespace = gameType.Namespace;
 
-            const string gameStateSuffix = "GameState";
-            if (typeName.EndsWith(gameStateSuffix, StringComparison.OrdinalIgnoreCase))
+            try
             {
-                typeName = typeName.Substring(0, typeName.Length - gameStateSuffix.Length);
+                return new ResourceManager(@namespace + ".Resources", gameType.GetTypeInfo().Assembly).GetString("Name");
+            }
+            catch (MissingManifestResourceException)
+            {
+            }
+            catch (InvalidOperationException)
+            {
             }
 
-            return typeName.Split(new[] { '.' }, StringSplitOptions.RemoveEmptyEntries).LastOrDefault() ?? gameType.FullName;
+            return @namespace.Split(new[] { '.' }, StringSplitOptions.RemoveEmptyEntries).LastOrDefault();
         }
     }
 }
