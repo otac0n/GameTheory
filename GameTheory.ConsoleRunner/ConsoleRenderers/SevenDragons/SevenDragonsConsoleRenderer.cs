@@ -133,7 +133,7 @@ namespace GameTheory.ConsoleRunner.ConsoleRenderers.SevenDragons
             {
                 ConsoleInteraction.WithColor(GetConsoleColor(color), () =>
                 {
-                    Console.Write(Resources.ResourceManager.GetString($"Color_{color}"));
+                    Console.Write(Resources.ResourceManager.GetEnumString(color));
                 });
             }
             else

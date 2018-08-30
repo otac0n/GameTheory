@@ -21,7 +21,7 @@ namespace GameTheory.ConsoleRunner.ConsoleRenderers.Ergo
             {
                 ConsoleInteraction.WithColor(ConsoleInteraction.GetPlayerColor(state, playerToken), () =>
                 {
-                    Console.Write(string.Format(SharedResources.PlayerName, Resources.ResourceManager.GetString($"Symbol_{(Symbol)state.Players.IndexOf(playerToken)}")));
+                    Console.Write(string.Format(SharedResources.PlayerName, Resources.ResourceManager.GetEnumString((Symbol)state.Players.IndexOf(playerToken))));
                 });
             }
             else if (token is Symbol symbol)
@@ -42,17 +42,16 @@ namespace GameTheory.ConsoleRunner.ConsoleRenderers.Ergo
                         break;
                 }
 
-                var display = Resources.ResourceManager.GetString($"Symbol_{symbol}");
                 if (color != null)
                 {
                     ConsoleInteraction.WithColor(color.Value, () =>
                     {
-                        Console.Write(display);
+                        Console.Write(Resources.ResourceManager.GetEnumString(symbol));
                     });
                 }
                 else
                 {
-                    Console.Write(display);
+                    Console.Write(Resources.ResourceManager.GetEnumString(symbol));
                 }
             }
             else

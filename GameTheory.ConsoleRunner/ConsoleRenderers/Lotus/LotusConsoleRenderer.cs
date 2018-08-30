@@ -44,12 +44,12 @@ namespace GameTheory.ConsoleRunner.ConsoleRenderers.Lotus
 
                 ConsoleInteraction.WithColor(color, () =>
                 {
-                    Console.Write(Resources.ResourceManager.GetString($"FlowerType_{flowerType}"));
+                    Console.Write(Resources.ResourceManager.GetEnumString(flowerType));
                 });
             }
             else if (token is SpecialPowers specialPower)
             {
-                Console.Write(Resources.ResourceManager.GetString($"SpecialPowers_{specialPower}"));
+                Console.Write(Resources.ResourceManager.GetEnumString(specialPower));
             }
             else
             {

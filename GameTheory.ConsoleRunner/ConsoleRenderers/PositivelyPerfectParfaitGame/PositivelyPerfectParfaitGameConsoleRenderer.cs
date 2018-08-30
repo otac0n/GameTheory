@@ -40,7 +40,7 @@ namespace GameTheory.ConsoleRunner.ConsoleRenderers.PositivelyPerfectParfaitGame
 
                 ConsoleInteraction.WithColor(color, () =>
                 {
-                    Console.Write(Resources.ResourceManager.GetString($"Flavor_{flavor}"));
+                    Console.Write(Resources.ResourceManager.GetEnumString(flavor));
                 });
             }
             else if (token == Templates.CherrySentinel)
