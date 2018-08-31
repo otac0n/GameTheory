@@ -24,7 +24,7 @@ namespace GameTheory.Games.Skull.Moves
         }
 
         /// <inheritdoc />
-        public override IList<object> FormatTokens => new object[] { $"Remove card #{this.RemoveIndex + 1}" };
+        public override IList<object> FormatTokens => FormatUtilities.ParseStringFormat(Resources.RemoveCard, this.RemoveIndex + 1);
 
         /// <summary>
         /// Gets the index of the presented card to remove.

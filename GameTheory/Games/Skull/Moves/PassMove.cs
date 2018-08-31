@@ -19,7 +19,7 @@ namespace GameTheory.Games.Skull.Moves
         }
 
         /// <inheritdoc />
-        public override IList<object> FormatTokens => new object[] { "Pass" };
+        public override IList<object> FormatTokens => new object[] { Resources.Pass };
 
         /// <inheritdoc />
         public override int CompareTo(Move other)

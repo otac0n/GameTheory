@@ -8,13 +8,18 @@ namespace GameTheory.Games.Skull
     public enum Card
     {
         /// <summary>
+        /// An unknown card.
+        /// </summary>
+        Unknown = 0,
+
+        /// <summary>
         /// A flower card.
         /// </summary>
-        Flower = 0,
+        Flower,
 
         /// <summary>
         /// A skull card.
         /// </summary>
-        Skull = 1,
+        Skull,
     }
 }

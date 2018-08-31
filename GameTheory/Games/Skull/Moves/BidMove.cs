@@ -22,7 +22,7 @@ namespace GameTheory.Games.Skull.Moves
         }
 
         /// <inheritdoc />
-        public override IList<object> FormatTokens => new object[] { "Bid ", this.Bid };
+        public override IList<object> FormatTokens => FormatUtilities.ParseStringFormat(Resources.Bid, this.Bid);
 
         /// <summary>
         /// Gets the player's bid.

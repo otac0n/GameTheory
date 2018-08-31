@@ -23,7 +23,7 @@ namespace GameTheory.Games.Skull.Moves
         }
 
         /// <inheritdoc />
-        public override IList<object> FormatTokens => new object[] { "Discard ", this.Card };
+        public override IList<object> FormatTokens => FormatUtilities.ParseStringFormat(Resources.DiscardCard, this.Card);
 
         /// <summary>
         /// Gets the index of the presented card to remove.

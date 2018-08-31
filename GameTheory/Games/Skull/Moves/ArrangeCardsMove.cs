@@ -23,33 +23,7 @@ namespace GameTheory.Games.Skull.Moves
         }
 
         /// <inheritdoc />
-        public override IList<object> FormatTokens
-        {
-            get
-            {
-                var tokens = new List<object>();
-
-                for (var i = 0; i < this.Arrangement.Count; i++)
-                {
-                    if (i == 0)
-                    {
-                        tokens.Add("Present cards as ");
-                    }
-                    else if (i == this.Arrangement.Count - 1)
-                    {
-                        tokens.Add(this.Arrangement.Count > 2 ? ", and " : " and ");
-                    }
-                    else
-                    {
-                        tokens.Add(", ");
-                    }
-
-                    tokens.Add(this.Arrangement[i]);
-                }
-
-                return tokens;
-            }
-        }
+        public override IList<object> FormatTokens => FormatUtilities.ParseStringFormat(Resources.PresentCards, FormatUtilities.FormatList(this.Arrangement));
 
         /// <summary>
         /// Gets the arrangement the player will present.
@@ -90,7 +64,7 @@ namespace GameTheory.Games.Skull.Moves
                 var cards = activePlayerInventory.Hand.AddRange(activePlayerInventory.Revealed);
                 if (cards[Card.Skull] > 0)
                 {
-                    var arrangement = ImmutableList.Create(new Card[cards[Card.Flower]]);
+                    var arrangement = ImmutableList.CreateRange(cards.RemoveAll(Card.Skull));
 
                     for (var i = 0; i <= arrangement.Count; i++)
                     {

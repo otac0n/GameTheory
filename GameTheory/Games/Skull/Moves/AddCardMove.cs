@@ -21,7 +21,7 @@ namespace GameTheory.Games.Skull.Moves
         }
 
         /// <inheritdoc />
-        public override IList<object> FormatTokens => new object[] { "Add a ", this.Card };
+        public override IList<object> FormatTokens => FormatUtilities.ParseStringFormat(Resources.AddACard, this.Card);
 
         /// <summary>
         /// Gets the card to add.

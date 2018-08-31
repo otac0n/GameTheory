@@ -347,6 +347,11 @@
     <Compile Include="Games\Skull\Inventory.cs" />
     <Compile Include="Games\Skull\Move.cs" />
     <Compile Include="Games\Skull\Phase.cs" />
+    <Compile Include="Games\Skull\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="Games\Splendor\Moves\ChooseNobleMove.cs" />
     <Compile Include="Games\Splendor\Moves\DiscardTokensMove.cs" />
     <Compile Include="Games\Splendor\Moves\PurchaseFromBoardMove.cs" />
@@ -368,6 +373,10 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="Games\Skull\Resources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="Games\TicTacToe\Resources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>

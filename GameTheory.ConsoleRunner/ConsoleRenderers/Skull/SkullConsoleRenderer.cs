@@ -16,10 +16,10 @@ namespace GameTheory.ConsoleRunner.ConsoleRenderers.Skull
         /// <inheritdoc/>
         protected override void RenderToken(IGameState<Move> state, object token)
         {
-            if (token is Card)
+            if (token is Card card)
             {
                 var color = ConsoleColor.White;
-                switch ((Card)token)
+                switch (card)
                 {
                     case Card.Flower:
                         color = ConsoleColor.Magenta;
@@ -32,7 +32,7 @@ namespace GameTheory.ConsoleRunner.ConsoleRenderers.Skull
 
                 ConsoleInteraction.WithColor(color, () =>
                 {
-                    Console.Write(token);
+                    Console.Write(Resources.ResourceManager.GetEnumString(card));
                 });
             }
             else

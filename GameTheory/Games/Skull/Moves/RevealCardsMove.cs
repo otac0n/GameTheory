@@ -25,8 +25,8 @@ namespace GameTheory.Games.Skull.Moves
         /// <inheritdoc />
         public override IList<object> FormatTokens =>
             this.GameState.ActivePlayer == this.RevealedPlayer
-            ? new object[] { "Reveal all of your cards" }
-            : new object[] { "Reveal a card from ", this.RevealedPlayer };
+            ? new object[] { Resources.RevealAllCards }
+            : FormatUtilities.ParseStringFormat(Resources.RevealPlayerCard, this.RevealedPlayer);
 
         /// <summary>
         /// Gets the player's bid.

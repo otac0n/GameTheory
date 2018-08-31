@@ -22,7 +22,7 @@ namespace GameTheory.Games.Skull.Moves
         }
 
         /// <inheritdoc />
-        public override IList<object> FormatTokens => new object[] { "Choose ", this.StartingPlayer, " to start next" };
+        public override IList<object> FormatTokens => FormatUtilities.ParseStringFormat(Resources.ChooseStartingPlayer, this.StartingPlayer);
 
         /// <summary>
         /// Gets the player who will start the next round.
