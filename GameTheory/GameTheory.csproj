@@ -257,6 +257,15 @@
     <Compile Include="Games\Mancala\GameState.cs" />
     <Compile Include="Games\Mancala\Move.cs" />
     <Compile Include="Games\Mancala\Phase.cs" />
+    <Compile Include="Games\Mancala\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="Games\Mancala\Resources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <Compile Include="Games\NormalFormGame\Chicken\GameState.cs" />
     <Compile Include="Games\NormalFormGame\MatchingPennies\GameState.cs" />
     <Compile Include="Games\NormalFormGame\PrisonersDilemma\GameState.cs" />
@@ -380,7 +389,6 @@
     <Compile Include="..\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="ResourceExtensions.cs" />
     <Compile Include="Strategies\CompositeStrategy.cs" />
     <Compile Include="Strategies\ImmediateWinStrategy.cs" />
     <Compile Include="Strategies\NullStrategy.cs" />
@@ -415,6 +423,7 @@
     <Compile Include="PlayerToken.cs" />
     <Compile Include="Point.cs" />
     <Compile Include="Random.cs" />
+    <Compile Include="ResourceExtensions.cs" />
     <Compile Include="ScoringMetric.cs" />
     <Compile Include="SharedResources.Designer.cs">
       <AutoGen>True</AutoGen>

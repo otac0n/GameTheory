@@ -81,6 +81,8 @@
     <WeaveTemplate Include="ConsoleRenderers\Lotus\GameState.weave" />
     <Compile Include="ConsoleRenderers\Lotus\LotusConsoleRenderer.cs" />
     <Compile Include="ConsoleRenderers\Lotus\Templates.cs" />
+    <WeaveTemplate Include="ConsoleRenderers\Mancala\GameState.weave" />
+    <Compile Include="ConsoleRenderers\Mancala\MancalaConsoleRenderer.cs" />
     <WeaveTemplate Include="ConsoleRenderers\PositivelyPerfectParfaitGame\GameState.weave" />
     <Compile Include="ConsoleRenderers\PositivelyPerfectParfaitGame\PositivelyPerfectParfaitGameConsoleRenderer.cs" />
     <Compile Include="ConsoleRenderers\PositivelyPerfectParfaitGame\Templates.cs" />

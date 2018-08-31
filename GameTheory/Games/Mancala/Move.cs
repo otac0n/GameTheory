@@ -29,7 +29,7 @@ namespace GameTheory.Games.Mancala
         public int Bin { get; }
 
         /// <inheritdoc />
-        public IList<object> FormatTokens => new object[] { "Pick up ", this.GameState.Board[this.Bin], " stones from (", this.Bin, ")" };
+        public IList<object> FormatTokens => FormatUtilities.ParseStringFormat(Resources.PickUpStones, this.GameState.Board[this.Bin], this.Bin);
 
         /// <inheritdoc />
         public bool IsDeterministic => true;
