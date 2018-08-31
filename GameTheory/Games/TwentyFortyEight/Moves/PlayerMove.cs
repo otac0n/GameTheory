@@ -5,32 +5,6 @@ namespace GameTheory.Games.TwentyFortyEight.Moves
     using System.Collections.Generic;
 
     /// <summary>
-    /// Represents the possible move directions.
-    /// </summary>
-    public enum MoveDirection : byte
-    {
-        /// <summary>
-        /// Shift tiles upwards.
-        /// </summary>
-        Up,
-
-        /// <summary>
-        /// Shift tiles to the right.
-        /// </summary>
-        Right,
-
-        /// <summary>
-        /// Shift tiles downwards.
-        /// </summary>
-        Down,
-
-        /// <summary>
-        /// Shift tiles to the left.
-        /// </summary>
-        Left,
-    }
-
-    /// <summary>
     /// Represents a player move.
     /// </summary>
     public sealed class PlayerMove : Move

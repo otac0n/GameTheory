@@ -28,7 +28,7 @@ namespace GameTheory.Games.TwentyFortyEight.Moves
         }
 
         /// <inheritdoc />
-        public override IList<object> FormatTokens => new object[] { "Place ", 1 << this.Value, " at (", this.X, ", ", this.Y, ")" };
+        public override IList<object> FormatTokens => FormatUtilities.ParseStringFormat(Resources.PlaceValue, 1 << this.Value, this.X, this.Y);
 
         /// <inheritdoc/>
         public override bool IsDeterministic => true;

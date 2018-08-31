@@ -381,10 +381,16 @@
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <Compile Include="Games\TwentyFortyEight\MoveDirection.cs" />
     <Compile Include="Games\TwentyFortyEight\Moves\ComputerMove.cs" />
     <Compile Include="Games\TwentyFortyEight\Moves\PlayerMove.cs" />
     <Compile Include="Games\TwentyFortyEight\GameState.cs" />
     <Compile Include="Games\TwentyFortyEight\Move.cs" />
+    <Compile Include="Games\TwentyFortyEight\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="Players\MaximizingPlayer\IScorePlyExtender.cs" />
     <Compile Include="Players\MaximizingPlayer\MaximizingPlayer.cs" />
     <Compile Include="Players\MaximizingPlayer\ResultScore.cs" />
@@ -448,6 +454,10 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>SharedResources.resx</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="Games\TwentyFortyEight\Resources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="SharedResources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>SharedResources.Designer.cs</LastGenOutput>
