@@ -114,5 +114,14 @@ namespace GameTheory {
                 return ResourceManager.GetString("Space", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ×.
+        /// </summary>
+        public static string Times {
+            get {
+                return ResourceManager.GetString("Times", resourceCulture);
+            }
+        }
     }
 }

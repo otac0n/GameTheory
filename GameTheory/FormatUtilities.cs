@@ -55,14 +55,15 @@ namespace GameTheory
         /// </summary>
         /// <param name="items">The items in the list that will be separated.</param>
         /// <returns>The format tokens representing the list.</returns>
-        public static IList<object> FormatList(params object[] items) => FormatList((IList<object>)items);
+        public static IList<object> FormatList(IEnumerable<object> items) => FormatList(items.ToList());
 
         /// <summary>
         /// Returns the list of format tokens representing a list.
         /// </summary>
+        /// <typeparam name="T">The type of elements in the list.</typeparam>
         /// <param name="items">The items in the list that will be separated.</param>
         /// <returns>The format tokens representing the list.</returns>
-        public static IList<object> FormatList(IList<object> items)
+        public static IList<object> FormatList<T>(IList<T> items)
         {
             if (items == null)
             {
@@ -76,7 +77,7 @@ namespace GameTheory
                     return new object[0];
 
                 case 1:
-                    return new[] { items[0] };
+                    return new object[] { items[0] };
 
                 case 2:
                     sep = SharedResources.ListItemSeparatorPair;

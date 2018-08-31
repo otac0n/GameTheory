@@ -111,7 +111,7 @@ namespace GameTheory
                         if (count > 1)
                         {
                             tokens.Add(count);
-                            tokens.Add('\u00D7');
+                            tokens.Add(SharedResources.Times);
                         }
 
                         tokens.Add(AllKeys[i]);
