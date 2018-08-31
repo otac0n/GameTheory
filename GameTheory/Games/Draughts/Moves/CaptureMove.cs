@@ -22,7 +22,7 @@ namespace GameTheory.Games.Draughts.Moves
         public int CaptureIndex { get; }
 
         /// <inheritdoc/>
-        public override IList<object> FormatTokens => new object[] { (this.FromIndex + 1), "x", (this.ToIndex + 1) };
+        public override IList<object> FormatTokens => FormatUtilities.ParseStringFormat(Resources.CaptureMove, this.FromIndex + 1, this.ToIndex + 1);
 
         internal static bool CapturesRemaining(GameState state)
         {

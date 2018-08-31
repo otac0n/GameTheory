@@ -125,6 +125,11 @@
     <Compile Include="Games\Draughts\MovePriorities.cs" />
     <Compile Include="Games\Draughts\Phase.cs" />
     <Compile Include="Games\Draughts\Pieces.cs" />
+    <Compile Include="Games\Draughts\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="Games\Draughts\Variant.cs" />
     <Compile Include="Games\Ergo\Cards\ErgoCard.cs" />
     <Compile Include="Games\Ergo\Cards\FallacyCard.cs" />
@@ -152,6 +157,10 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="Games\Draughts\Resources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="Games\Ergo\Resources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>

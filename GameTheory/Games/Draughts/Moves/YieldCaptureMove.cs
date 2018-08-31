@@ -15,7 +15,7 @@ namespace GameTheory.Games.Draughts.Moves
         }
 
         /// <inheritdoc/>
-        public override IList<object> FormatTokens => new object[] { "Stop capturing" };
+        public override IList<object> FormatTokens => new object[] { Resources.StopCapturing };
 
         internal static IEnumerable<YieldCaptureMove> GenerateMoves(GameState state)
         {

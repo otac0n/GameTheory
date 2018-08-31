@@ -16,7 +16,7 @@ namespace GameTheory.Games.Draughts.Moves
         }
 
         /// <inheritdoc/>
-        public override IList<object> FormatTokens => new object[] { "Remove ", (this.RemoveIndex + 1) };
+        public override IList<object> FormatTokens => FormatUtilities.ParseStringFormat(Resources.RemovePiece, this.RemoveIndex + 1);
 
         /// <summary>
         /// Gets the index of the square of the peice that will be removed.

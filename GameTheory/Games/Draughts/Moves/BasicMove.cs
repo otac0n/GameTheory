@@ -17,7 +17,7 @@ namespace GameTheory.Games.Draughts.Moves
         }
 
         /// <inheritdoc/>
-        public override IList<object> FormatTokens => new object[] { (this.FromIndex + 1), "-", (this.ToIndex + 1) };
+        public override IList<object> FormatTokens => FormatUtilities.ParseStringFormat(Resources.BasicMove, this.FromIndex + 1, this.ToIndex + 1);
 
         /// <summary>
         /// Gets the index of the square that the piece is moving from.
