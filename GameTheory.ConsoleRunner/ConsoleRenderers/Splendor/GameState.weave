@@ -4,7 +4,7 @@
 @static false
 @model GameState
 {{if model.Nobles.Count > 0}}
-  Nobles:
+  {{= Resources.Nobles }}:
     {{each noble in model.Nobles}}
       {{= noble}}
     {{/each}}
@@ -12,39 +12,39 @@
 {{/if}}
 {{each tr in Enumerable.Range(1, model.DevelopmentTracks.Length).Reverse()}}
   {{ var track = model.DevelopmentTracks[tr - 1]; }}
-  Track {{= tr}}: [remaining: {{= model.DevelopmentDecks[tr - 1].Count}}]
+  Track {{= tr }}: [{{= Resources.Remaining }}: {{= model.DevelopmentDecks[tr - 1].Count }}]
     {{each card in track}}
       {{if card == null}}
-        [empty]
+        [{{= Resources.Empty }}]
       {{else}}
-        {{= card}} [cost: {{= card.Cost}}]
+        {{= card }} [{{= Resources.Cost }}: {{= card.Cost }}]
       {{/if}}
     {{/each}}
 {{/each}}
 
-Available Tokens:
-  {{= model.Tokens}}
+{{= Resources.AvailableTokens }}:
+  {{= model.Tokens }}
 
 {{if this.playerToken != null}}
   {{ var inventory = model.Inventory[playerToken]; }}
-  {{= model.GetPlayerName(playerToken)}} Inventory:
-    Prestige: {{= model.GetScore(playerToken)}}
+  {{= playerToken }}:
+    {{= Resources.Prestige }}: {{= model.GetScore(playerToken) }}
     {{if inventory.Nobles.Count > 0}}
-       Nobles: {{= inventory.Nobles.Count}} [bonus: {{= inventory.Nobles.Count * Noble.PrestigeBonus}}]
+       {{= Resources.Nobles }}: {{= inventory.Nobles.Count }} [bonus: {{= inventory.Nobles.Count * Noble.PrestigeBonus }}]
     {{/if}}
     {{if inventory.Tokens.Count > 0}}
-      Tokens: {{= inventory.Tokens}}
+      {{= Resources.Tokens }}: {{= inventory.Tokens }}
     {{/if}}
     {{if inventory.Hand.Count > 0}}
-      Hand:
+      {{= Resources.Hand }}:
         {{each card in inventory.Hand}}
-          {{= card}} [cost: {{= card.Cost}}]
+          {{= card }} [{{= Resources.Cost }}: {{= card.Cost}}]
         {{/each}}
     {{/if}}
     {{if inventory.DevelopmentCards.Count > 0}}
-      Development Cards:
+      {{= Resources.DevelopmentCards }}:
         {{each card in inventory.DevelopmentCards.OrderBy(c => c.Bonus).ThenByDescending(c => c.Prestige)}}
-          {{= card}}
+          {{= card }}
         {{/each}}
     {{/if}}
 

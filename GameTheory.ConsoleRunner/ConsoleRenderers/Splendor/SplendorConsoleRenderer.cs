@@ -48,7 +48,7 @@ namespace GameTheory.ConsoleRunner.ConsoleRenderers.Splendor
 
                 ConsoleInteraction.WithColor(color, () =>
                 {
-                    Console.Write(token);
+                    Console.Write(Resources.ResourceManager.GetEnumString(splendorToken));
                 });
             }
             else

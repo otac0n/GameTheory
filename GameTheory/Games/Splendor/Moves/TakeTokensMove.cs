@@ -22,7 +22,7 @@ namespace GameTheory.Games.Splendor.Moves
         }
 
         /// <inheritdoc />
-        public override IList<object> FormatTokens => new object[] { "Take ", this.Tokens };
+        public override IList<object> FormatTokens => FormatUtilities.ParseStringFormat(Resources.TakeTokens, this.Tokens);
 
         /// <inheritdoc />
         public override bool IsDeterministic => true;

@@ -29,8 +29,8 @@ namespace GameTheory.Games.Splendor.Moves
 
         /// <inheritdoc />
         public override IList<object> FormatTokens => this.GameState.Tokens[Token.GoldJoker] > 0
-            ? new object[] { "Reserve ", this.Card, " (cost: ", this.Card.Cost, ")", " and take ", Token.GoldJoker }
-            : new object[] { "Reserve ", this.Card, " (cost: ", this.Card.Cost, ")" };
+            ? FormatUtilities.ParseStringFormat(Resources.ReserveCardAndTakeJoker, this.Card, this.Card.Cost, Token.GoldJoker)
+            : FormatUtilities.ParseStringFormat(Resources.ReserveCard, this.Card, this.Card.Cost);
 
         /// <summary>
         /// Gets the index in the development track of the card to reserve.

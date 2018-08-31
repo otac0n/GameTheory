@@ -79,7 +79,7 @@ namespace GameTheory.Games.Splendor
 
         /// <inheritdoc />
         public IList<object> FormatTokens => this.Prestige > 0
-            ? new object[] { this.Bonus, " +", this.Prestige }
+            ? FormatUtilities.ParseStringFormat(Resources.DevelopmentCard, this.Bonus, this.Prestige)
             : new object[] { this.Bonus };
 
         /// <summary>

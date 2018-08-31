@@ -130,6 +130,10 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="Games\Draughts\Resources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <Compile Include="Games\Draughts\Variant.cs" />
     <Compile Include="Games\Ergo\Cards\ErgoCard.cs" />
     <Compile Include="Games\Ergo\Cards\FallacyCard.cs" />
@@ -157,10 +161,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="Games\Draughts\Resources.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
     <EmbeddedResource Include="Games\Ergo\Resources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -352,6 +352,10 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="Games\Skull\Resources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <Compile Include="Games\Splendor\Moves\ChooseNobleMove.cs" />
     <Compile Include="Games\Splendor\Moves\DiscardTokensMove.cs" />
     <Compile Include="Games\Splendor\Moves\PurchaseFromBoardMove.cs" />
@@ -365,6 +369,15 @@
     <Compile Include="Games\Splendor\Move.cs" />
     <Compile Include="Games\Splendor\Noble.cs" />
     <Compile Include="Games\Splendor\Phase.cs" />
+    <Compile Include="Games\Splendor\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="Games\Splendor\Resources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <Compile Include="Games\Splendor\Token.cs" />
     <Compile Include="Games\TicTacToe\GameState.cs" />
     <Compile Include="Games\TicTacToe\Move.cs" />
@@ -373,24 +386,24 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="Games\Skull\Resources.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
     <EmbeddedResource Include="Games\TicTacToe\Resources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <Compile Include="Games\TwentyFortyEight\MoveDirection.cs" />
     <Compile Include="Games\TwentyFortyEight\Moves\ComputerMove.cs" />
     <Compile Include="Games\TwentyFortyEight\Moves\PlayerMove.cs" />
     <Compile Include="Games\TwentyFortyEight\GameState.cs" />
     <Compile Include="Games\TwentyFortyEight\Move.cs" />
+    <Compile Include="Games\TwentyFortyEight\MoveDirection.cs" />
     <Compile Include="Games\TwentyFortyEight\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="Games\TwentyFortyEight\Resources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <Compile Include="Players\MaximizingPlayer\IScorePlyExtender.cs" />
     <Compile Include="Players\MaximizingPlayer\MaximizingPlayer.cs" />
     <Compile Include="Players\MaximizingPlayer\ResultScore.cs" />
@@ -454,10 +467,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>SharedResources.resx</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="Games\TwentyFortyEight\Resources.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
     <EmbeddedResource Include="SharedResources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>SharedResources.Designer.cs</LastGenOutput>

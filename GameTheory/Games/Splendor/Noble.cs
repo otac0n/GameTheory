@@ -43,7 +43,7 @@ namespace GameTheory.Games.Splendor
         }
 
         /// <inheritdoc />
-        public IList<object> FormatTokens => new object[] { "Noble +", PrestigeBonus, " ", this.RequiredBonuses };
+        public IList<object> FormatTokens => FormatUtilities.ParseStringFormat(Resources.Noble, PrestigeBonus, this.RequiredBonuses);
 
         /// <summary>
         /// Gets the bonuses required for this Noble to visit.

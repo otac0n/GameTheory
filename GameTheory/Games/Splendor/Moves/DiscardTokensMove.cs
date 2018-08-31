@@ -21,7 +21,7 @@ namespace GameTheory.Games.Splendor.Moves
         }
 
         /// <inheritdoc />
-        public override IList<object> FormatTokens => new object[] { "Discard ", this.Tokens };
+        public override IList<object> FormatTokens => FormatUtilities.ParseStringFormat(Resources.DiscardTokens, this.Tokens);
 
         /// <inheritdoc />
         public override bool IsDeterministic => true;

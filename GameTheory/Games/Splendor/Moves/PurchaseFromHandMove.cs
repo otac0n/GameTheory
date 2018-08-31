@@ -33,7 +33,9 @@ namespace GameTheory.Games.Splendor.Moves
         public EnumCollection<Token> Cost { get; }
 
         /// <inheritdoc />
-        public override IList<object> FormatTokens => new object[] { "Purchase ", this.Card, " for ", this.Cost.Count > 0 ? (object)this.Cost : "free" };
+        public override IList<object> FormatTokens => this.Cost.Count > 0
+            ? FormatUtilities.ParseStringFormat(Resources.PurchaseCardForTokens, this.Card, this.Cost)
+            : FormatUtilities.ParseStringFormat(Resources.PurchaseCardForFree, this.Card);
 
         /// <summary>
         /// Gets the index in the development track of the card to purchase.

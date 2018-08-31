@@ -22,7 +22,7 @@ namespace GameTheory.Games.Splendor.Moves
         }
 
         /// <inheritdoc />
-        public override IList<object> FormatTokens => new object[] { "Invite ", this.Noble, " to visit" };
+        public override IList<object> FormatTokens => FormatUtilities.ParseStringFormat(Resources.ChooseNoble, this.Noble);
 
         /// <summary>
         /// Gets the index of the noble in the nobles list.

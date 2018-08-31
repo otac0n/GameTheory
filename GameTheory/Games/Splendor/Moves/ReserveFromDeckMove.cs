@@ -22,8 +22,8 @@ namespace GameTheory.Games.Splendor.Moves
 
         /// <inheritdoc />
         public override IList<object> FormatTokens => this.GameState.Tokens[Token.GoldJoker] > 0
-            ? new object[] { "Reserve from deck ", this.Track + 1, " and take ", Token.GoldJoker }
-            : new object[] { "Reserve from deck ", this.Track + 1 };
+            ? FormatUtilities.ParseStringFormat(Resources.ReserveFromDeckAndTakeJoker, this.Track + 1, Token.GoldJoker)
+            : FormatUtilities.ParseStringFormat(Resources.ReserveFromDeck, this.Track + 1);
 
         /// <inheritdoc />
         public override bool IsDeterministic => false;
