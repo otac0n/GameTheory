@@ -113,6 +113,15 @@
     <Compile Include="Games\CenturySpiceRoad\Move.cs" />
     <Compile Include="Games\CenturySpiceRoad\Phase.cs" />
     <Compile Include="Games\CenturySpiceRoad\PointCard.cs" />
+    <Compile Include="Games\CenturySpiceRoad\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="Games\CenturySpiceRoad\Resources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <Compile Include="Games\CenturySpiceRoad\Spice.cs" />
     <Compile Include="Games\CenturySpiceRoad\Token.cs" />
     <Compile Include="Games\Draughts\Moves\BasicMove.cs" />

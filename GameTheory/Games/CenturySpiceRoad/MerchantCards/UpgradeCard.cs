@@ -19,7 +19,7 @@ namespace GameTheory.Games.CenturySpiceRoad.MerchantCards
         }
 
         /// <inheritdoc/>
-        public override IList<object> FormatTokens => new object[] { "Upgrade (", this.UpgradeLevel, ")" };
+        public override IList<object> FormatTokens => FormatUtilities.ParseStringFormat(Resources.UpgradeCard, this.UpgradeLevel);
 
         /// <summary>
         /// Gets the upgrade amount of the card.

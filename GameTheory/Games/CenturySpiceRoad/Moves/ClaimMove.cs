@@ -23,7 +23,7 @@ namespace GameTheory.Games.CenturySpiceRoad.Moves
         }
 
         /// <inheritdoc />
-        public override IList<object> FormatTokens => new object[] { "Claim ", this.GameState.PointCardTrack[this.Index] };
+        public override IList<object> FormatTokens => FormatUtilities.ParseStringFormat(Resources.ClaimPointCard, this.GameState.PointCardTrack[this.Index]);
 
         /// <summary>
         /// Gets the index of the card to claim.

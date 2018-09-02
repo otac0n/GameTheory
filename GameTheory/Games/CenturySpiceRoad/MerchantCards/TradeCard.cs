@@ -44,7 +44,7 @@ namespace GameTheory.Games.CenturySpiceRoad.MerchantCards
         public EnumCollection<Spice> Cost { get; }
 
         /// <inheritdoc/>
-        public override IList<object> FormatTokens => new object[] { "Trade ", this.Cost, " for ", this.Reward };
+        public override IList<object> FormatTokens => FormatUtilities.ParseStringFormat(Resources.TradeCard, this.Cost, this.Reward);
 
         /// <summary>
         /// Gets the spices awarded by this card.

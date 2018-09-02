@@ -4,31 +4,31 @@
 @static false
 @model GameState
 {{if model.PointCardTrack.Count > 0}}
-  Point Cards:
+  {{= Resources.PointCards }}:
     {{if model.Tokens.Count > 0}}
-      Available Tokens: {{= model.Tokens}}
+      {{= Resources.AvailableTokens }}: {{= model.Tokens }}
     {{/if}}
     {{each pointCard in model.PointCardTrack}}
-      {{= pointCard}} [cost: {{= pointCard.Cost}}]
+      {{= pointCard }} [{{= Resources.Cost }}: {{= pointCard.Cost }}]
     {{/each}}
 
 {{/if}}
-  Merchant Cards:
+  {{= Resources.MerchantCards }}:
     {{each i in Enumerable.Range(0, model.MerchantCardTrack.Count)}}
       {{ var stall = model.MerchantCardTrack[i]; }}
-      {{if i == model.MerchantCardIndexAfforded}}*{{else}} {{/if}}{{= stall.MerchantCard}}{{if stall.Spices.Count > 0}} [bonus: {{= stall.Spices}}]{{/if}}
+      {{if i == model.MerchantCardIndexAfforded}}*{{else}} {{/if}}{{= stall.MerchantCard }}{{if stall.Spices.Count > 0}} [{{= Resources.Bonus }}: {{= stall.Spices }}]{{/if}}
     {{/each}}
 
 {{if this.playerToken != null}}
   {{ var inventory = model.Inventory[playerToken]; }}
-  {{= model.GetPlayerName(playerToken)}} Inventory:
+  {{= playerToken }}:
     {{if inventory.Caravan.Count > 0}}
-      Caravan: {{= inventory.Caravan}}
+      {{= Resources.Caravan }}: {{= inventory.Caravan }}
     {{/if}}
     {{if inventory.Hand.Count > 0}}
-      Hand:
+      {{= Resources.Hand }}:
         {{each card in inventory.Hand}}
-          {{= card}}
+          {{= card }}
         {{/each}}
     {{/if}}
 

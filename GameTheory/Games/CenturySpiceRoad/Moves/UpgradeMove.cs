@@ -21,7 +21,7 @@ namespace GameTheory.Games.CenturySpiceRoad.Moves
         }
 
         /// <inheritdoc />
-        public override IList<object> FormatTokens => new object[] { "Upgrade ", this.StartingSpice, " to ", this.UpgradedSpice };
+        public override IList<object> FormatTokens => FormatUtilities.ParseStringFormat(Resources.UpgradeSpice, this.StartingSpice, this.UpgradedSpice);
 
         /// <inheritdoc />
         public override bool IsDeterministic => true;

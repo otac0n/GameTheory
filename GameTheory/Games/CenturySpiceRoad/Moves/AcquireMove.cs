@@ -27,8 +27,8 @@ namespace GameTheory.Games.CenturySpiceRoad.Moves
             {
                 var merchantStall = this.GameState.MerchantCardTrack[this.GameState.MerchantCardIndexAfforded];
                 return merchantStall.Spices.Count > 0
-                    ? new object[] { "Acquire ", merchantStall.MerchantCard, " and gain ", merchantStall.Spices }
-                    : new object[] { "Acquire ", merchantStall.MerchantCard };
+                    ? FormatUtilities.ParseStringFormat(Resources.AcquireMerchantCardAndBonus, merchantStall.MerchantCard, merchantStall.Spices)
+                    : FormatUtilities.ParseStringFormat(Resources.AcquireMerchantCard, merchantStall.MerchantCard);
             }
         }
 

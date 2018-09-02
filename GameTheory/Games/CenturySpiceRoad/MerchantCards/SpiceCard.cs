@@ -35,7 +35,7 @@ namespace GameTheory.Games.CenturySpiceRoad.MerchantCards
         }
 
         /// <inheritdoc/>
-        public override IList<object> FormatTokens => new object[] { "Gain ", this.Spices };
+        public override IList<object> FormatTokens => FormatUtilities.ParseStringFormat(Resources.GainSpices, this.Spices);
 
         /// <summary>
         /// Gets the spices produced by this card.

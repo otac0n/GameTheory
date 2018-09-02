@@ -19,7 +19,7 @@ namespace GameTheory.Games.CenturySpiceRoad.Moves
         }
 
         /// <inheritdoc />
-        public override IList<object> FormatTokens => new object[] { "Yield Upgrade" };
+        public override IList<object> FormatTokens => new object[] { Resources.YieldUpgrade };
 
         /// <inheritdoc />
         public override bool IsDeterministic => true;

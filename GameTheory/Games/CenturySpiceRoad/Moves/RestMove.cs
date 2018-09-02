@@ -20,7 +20,7 @@ namespace GameTheory.Games.CenturySpiceRoad.Moves
         }
 
         /// <inheritdoc />
-        public override IList<object> FormatTokens => new object[] { "Rest" };
+        public override IList<object> FormatTokens => new object[] { Resources.Rest };
 
         /// <inheritdoc />
         public override bool IsDeterministic => true;

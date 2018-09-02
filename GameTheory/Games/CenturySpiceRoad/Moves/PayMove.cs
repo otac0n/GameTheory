@@ -21,7 +21,7 @@ namespace GameTheory.Games.CenturySpiceRoad.Moves
         }
 
         /// <inheritdoc />
-        public override IList<object> FormatTokens => new object[] { "Pay ", this.Spice };
+        public override IList<object> FormatTokens => FormatUtilities.ParseStringFormat(Resources.PaySpices, this.Spice);
 
         /// <inheritdoc />
         public override bool IsDeterministic => true;

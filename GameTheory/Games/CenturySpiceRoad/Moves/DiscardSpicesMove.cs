@@ -21,7 +21,7 @@ namespace GameTheory.Games.CenturySpiceRoad.Moves
         }
 
         /// <inheritdoc />
-        public override IList<object> FormatTokens => new object[] { "Discard ", this.Spices };
+        public override IList<object> FormatTokens => FormatUtilities.ParseStringFormat(Resources.DiscardSpices, this.Spices);
 
         /// <inheritdoc />
         public override bool IsDeterministic => true;
