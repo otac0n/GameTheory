@@ -23,6 +23,9 @@ namespace GameTheory.Games.FiveTribes.Djinns
         }
 
         /// <inheritdoc />
+        public override string Name => Resources.Bouraq;
+
+        /// <inheritdoc />
         protected override InterstitialState InterstitialState => new ChoosingSquare();
 
         private class ChoosingSquare : InterstitialState

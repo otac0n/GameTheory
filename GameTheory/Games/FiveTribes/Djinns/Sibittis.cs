@@ -22,6 +22,9 @@ namespace GameTheory.Games.FiveTribes.Djinns
         }
 
         /// <inheritdoc />
+        public override string Name => Resources.Sibittis;
+
+        /// <inheritdoc />
         protected override InterstitialState InterstitialState => new Paid();
 
         /// <inheritdoc />

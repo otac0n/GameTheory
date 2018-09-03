@@ -21,6 +21,9 @@ namespace GameTheory.Games.FiveTribes.Djinns
         }
 
         /// <inheritdoc />
+        public override string Name => Resources.Sloar;
+
+        /// <inheritdoc />
         protected override InterstitialState InterstitialState => new Paid();
 
         private class Paid : InterstitialState

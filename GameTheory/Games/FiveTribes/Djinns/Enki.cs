@@ -23,6 +23,9 @@ namespace GameTheory.Games.FiveTribes.Djinns
         }
 
         /// <inheritdoc />
+        public override string Name => Resources.Enki;
+
+        /// <inheritdoc />
         protected override InterstitialState InterstitialState => new ChoosingSquare();
 
         private class ChoosingSquare : InterstitialState

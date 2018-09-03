@@ -21,7 +21,7 @@ namespace GameTheory.Games.FiveTribes.Moves
         }
 
         /// <inheritdoc />
-        public override IList<object> FormatTokens => new object[] { "Pick up meeples at ", this.Point };
+        public override IList<object> FormatTokens => FormatUtilities.ParseStringFormat(FiveTribes.Resources.PickUpMeeples, this.Point);
 
         /// <inheritdoc />
         public override bool IsDeterministic => true;
@@ -42,7 +42,7 @@ namespace GameTheory.Games.FiveTribes.Moves
 
             if (!any)
             {
-                yield return new ChangePhaseMove(state, "Skip move", Phase.MerchandiseSale);
+                yield return new ChangePhaseMove(state, Resources.SkipMove, Phase.MerchandiseSale);
             }
         }
 

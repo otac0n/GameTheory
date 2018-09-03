@@ -26,6 +26,9 @@ namespace GameTheory.Games.FiveTribes.Djinns
         }
 
         /// <inheritdoc />
+        public override string Name => Resources.Kumarbi;
+
+        /// <inheritdoc />
         public sealed override IEnumerable<Move> GetMoves(GameState state)
         {
             if (this.CanGetMoves(state))

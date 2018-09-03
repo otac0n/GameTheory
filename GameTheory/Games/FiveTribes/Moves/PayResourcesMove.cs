@@ -37,7 +37,7 @@ namespace GameTheory.Games.FiveTribes.Moves
         }
 
         /// <inheritdoc />
-        public override IList<object> FormatTokens => new object[] { "Pay ", this.Resources };
+        public override IList<object> FormatTokens => FormatUtilities.ParseStringFormat(FiveTribes.Resources.PayCost, this.Resources);
 
         /// <inheritdoc />
         public override bool IsDeterministic => true;

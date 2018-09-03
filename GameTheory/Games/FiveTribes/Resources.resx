@@ -1,0 +1,315 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AddMeeples" xml:space="preserve">
+    <value>Draw {0} meeples and place them at {1}</value>
+  </data>
+  <data name="AlAmin" xml:space="preserve">
+    <value>Al-Amin</value>
+  </data>
+  <data name="AnunNak" xml:space="preserve">
+    <value>Anun-Nak</value>
+  </data>
+  <data name="Assasinate" xml:space="preserve">
+    <value>Assassinate {0} at {1}</value>
+  </data>
+  <data name="AssassinatePlayer" xml:space="preserve">
+    <value>Assassinate {0} in front of {1}</value>
+  </data>
+  <data name="Baal" xml:space="preserve">
+    <value>Ba'al</value>
+  </data>
+  <data name="Bid" xml:space="preserve">
+    <value>Bid {0} GC</value>
+  </data>
+  <data name="BidOrderTrack" xml:space="preserve">
+    <value>Bid Order Track</value>
+  </data>
+  <data name="Boaz" xml:space="preserve">
+    <value>Boaz</value>
+  </data>
+  <data name="Bouraq" xml:space="preserve">
+    <value>Bouraq</value>
+  </data>
+  <data name="Dhenim" xml:space="preserve">
+    <value>Dhenim</value>
+  </data>
+  <data name="Djinn" xml:space="preserve">
+    <value>{0} +{1}</value>
+  </data>
+  <data name="Djinns" xml:space="preserve">
+    <value>Djinns</value>
+  </data>
+  <data name="DoubleAssassinationCount" xml:space="preserve">
+    <value>Double the number of meeples your Assassins kill this turn</value>
+  </data>
+  <data name="DoubleBuilderGC" xml:space="preserve">
+    <value>Double the amout of GCs your Builders get this turn</value>
+  </data>
+  <data name="DrawDjinns" xml:space="preserve">
+    <value>Draw {0} djinns</value>
+  </data>
+  <data name="DrawTopResource" xml:space="preserve">
+    <value>Draw the top card from the resource pile</value>
+  </data>
+  <data name="DropMeeple" xml:space="preserve">
+    <value>Drop {0} at {1}</value>
+  </data>
+  <data name="Echidna" xml:space="preserve">
+    <value>Echidna</value>
+  </data>
+  <data name="EndTurn" xml:space="preserve">
+    <value>End turn</value>
+  </data>
+  <data name="Enki" xml:space="preserve">
+    <value>Enki</value>
+  </data>
+  <data name="Hagis" xml:space="preserve">
+    <value>Hagis</value>
+  </data>
+  <data name="Haurvatat" xml:space="preserve">
+    <value>Haurvatat</value>
+  </data>
+  <data name="Ibus" xml:space="preserve">
+    <value>Ibus</value>
+  </data>
+  <data name="Jafaar" xml:space="preserve">
+    <value>Jafaar</value>
+  </data>
+  <data name="Kandicha" xml:space="preserve">
+    <value>Kandicha</value>
+  </data>
+  <data name="Kumarbi" xml:space="preserve">
+    <value>Kumarbi</value>
+  </data>
+  <data name="Lamia" xml:space="preserve">
+    <value>Lamia</value>
+  </data>
+  <data name="Leta" xml:space="preserve">
+    <value>Leta</value>
+  </data>
+  <data name="Marid" xml:space="preserve">
+    <value>Marid</value>
+  </data>
+  <data name="Meeple_Assassin" xml:space="preserve">
+    <value>Assassin</value>
+  </data>
+  <data name="Meeple_Builder" xml:space="preserve">
+    <value>Builder</value>
+  </data>
+  <data name="Meeple_Elder" xml:space="preserve">
+    <value>Elder</value>
+  </data>
+  <data name="Meeple_Merchant" xml:space="preserve">
+    <value>Merchant</value>
+  </data>
+  <data name="Meeple_Vizier" xml:space="preserve">
+    <value>Vizier</value>
+  </data>
+  <data name="Monkir" xml:space="preserve">
+    <value>Monkir</value>
+  </data>
+  <data name="MoveTurnMarker" xml:space="preserve">
+    <value>Move turn marker</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Five Tribes</value>
+  </data>
+  <data name="Nekir" xml:space="preserve">
+    <value>Nekir</value>
+  </data>
+  <data name="Palace" xml:space="preserve">
+    <value>Palace</value>
+  </data>
+  <data name="PalmTree" xml:space="preserve">
+    <value>Palm Tree</value>
+  </data>
+  <data name="PayCost" xml:space="preserve">
+    <value>Pay {0}</value>
+  </data>
+  <data name="PayGold" xml:space="preserve">
+    <value>Pay {0} GC</value>
+  </data>
+  <data name="PickUpMeeples" xml:space="preserve">
+    <value>Pick up meeples at {0}</value>
+  </data>
+  <data name="PickUpTribe" xml:space="preserve">
+    <value>Pick up all {0} at {1}</value>
+  </data>
+  <data name="PlaceCamel" xml:space="preserve">
+    <value>Place camel at {0}</value>
+  </data>
+  <data name="PlacePalace" xml:space="preserve">
+    <value>Place palace at {0}</value>
+  </data>
+  <data name="PlacePalmTree" xml:space="preserve">
+    <value>Place palm tree at {0}</value>
+  </data>
+  <data name="Remaining" xml:space="preserve">
+    <value>remaining</value>
+  </data>
+  <data name="ResourcesTrack" xml:space="preserve">
+    <value>Resources</value>
+  </data>
+  <data name="ScoreBuilders" xml:space="preserve">
+    <value>Score {0}</value>
+  </data>
+  <data name="SellMerchandise" xml:space="preserve">
+    <value>Trade {0} for {1} GC</value>
+  </data>
+  <data name="SellSlaves" xml:space="preserve">
+    <value>Trade {0} for {1}</value>
+  </data>
+  <data name="Shamhat" xml:space="preserve">
+    <value>Shamhat</value>
+  </data>
+  <data name="Sibittis" xml:space="preserve">
+    <value>Sibittis</value>
+  </data>
+  <data name="SkipMove" xml:space="preserve">
+    <value>Skip move</value>
+  </data>
+  <data name="SkipRemainingResources" xml:space="preserve">
+    <value>Skip remaining resources</value>
+  </data>
+  <data name="SkipTileAction" xml:space="preserve">
+    <value>Skip tile sction</value>
+  </data>
+  <data name="SkipTribesAction" xml:space="preserve">
+    <value>Skip tribes action</value>
+  </data>
+  <data name="Sloar" xml:space="preserve">
+    <value>Sloar</value>
+  </data>
+  <data name="Sultanate" xml:space="preserve">
+    <value>Sultanate</value>
+  </data>
+  <data name="TakeFirstResources" xml:space="preserve">
+    <value>Take {0} resources</value>
+  </data>
+  <data name="TakeItem" xml:space="preserve">
+    <value>Take {0}</value>
+  </data>
+  <data name="TurnOrderTrack" xml:space="preserve">
+    <value>Turn Order Track</value>
+  </data>
+  <data name="Utug" xml:space="preserve">
+    <value>Utug</value>
+  </data>
+</root>

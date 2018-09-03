@@ -97,7 +97,7 @@ namespace GameTheory.Games.FiveTribes.Tiles
 
                 if (this.remaining < Resources)
                 {
-                    yield return new ChangePhaseMove(state, "Skip remaining resources", Phase.MerchandiseSale);
+                    yield return new ChangePhaseMove(state, FiveTribes.Resources.SkipRemainingResources, Phase.MerchandiseSale);
                 }
             }
         }

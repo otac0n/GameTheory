@@ -23,7 +23,7 @@ namespace GameTheory.Games.FiveTribes.Moves
         }
 
         /// <inheritdoc />
-        public override IList<object> FormatTokens => new object[] { "Assassinate ", this.Meeples, " in front of ", this.Victim };
+        public override IList<object> FormatTokens => FormatUtilities.ParseStringFormat(Resources.AssassinatePlayer, this.Meeples, this.Victim);
 
         /// <inheritdoc />
         public override bool IsDeterministic => true;

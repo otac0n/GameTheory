@@ -28,7 +28,7 @@ namespace GameTheory.Games.FiveTribes.Moves
         public int Cost { get; }
 
         /// <inheritdoc />
-        public override IList<object> FormatTokens => new object[] { "Bid ", this.Cost };
+        public override IList<object> FormatTokens => FormatUtilities.ParseStringFormat(Resources.Bid, this.Cost);
 
         /// <summary>
         /// Gets the position on the <see cref="GameState.TurnOrderTrack"/> being bid on.

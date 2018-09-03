@@ -21,7 +21,7 @@ namespace GameTheory.Games.FiveTribes.Moves
         }
 
         /// <inheritdoc />
-        public override IList<object> FormatTokens => new object[] { "Pick up all ", this.Tribe, " at ", this.GameState.LastPoint };
+        public override IList<object> FormatTokens => FormatUtilities.ParseStringFormat(Resources.PickUpTribe, this.Tribe, this.GameState.LastPoint);
 
         /// <inheritdoc />
         public override bool IsDeterministic => true;

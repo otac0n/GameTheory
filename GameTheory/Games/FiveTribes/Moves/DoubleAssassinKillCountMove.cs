@@ -19,7 +19,7 @@ namespace GameTheory.Games.FiveTribes.Moves
         }
 
         /// <inheritdoc />
-        public override IList<object> FormatTokens => new object[] { "Double the number of meeples your Assassins kill this turn" };
+        public override IList<object> FormatTokens => new object[] { Resources.DoubleAssassinationCount };
 
         /// <inheritdoc />
         public override bool IsDeterministic => true;

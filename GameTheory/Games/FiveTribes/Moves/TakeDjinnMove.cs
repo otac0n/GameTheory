@@ -41,7 +41,7 @@ namespace GameTheory.Games.FiveTribes.Moves
         public Djinn Djinn => this.GameState.VisibleDjinns[this.Index];
 
         /// <inheritdoc />
-        public override IList<object> FormatTokens => new object[] { "Take ", this.Djinn };
+        public override IList<object> FormatTokens => FormatUtilities.ParseStringFormat(Resources.TakeItem, this.Djinn);
 
         /// <summary>
         /// Gets the index of the <see cref="Djinn"/> that will be taken.

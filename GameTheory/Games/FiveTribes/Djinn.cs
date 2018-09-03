@@ -21,12 +21,12 @@ namespace GameTheory.Games.FiveTribes
         }
 
         /// <inheritdoc />
-        public IList<object> FormatTokens => new object[] { this.Name, " +", this.Value };
+        public IList<object> FormatTokens => FormatUtilities.ParseStringFormat(Resources.Djinn, this.Name, this.Value);
 
         /// <summary>
         /// Gets the name of the Djinn.
         /// </summary>
-        public virtual string Name => this.GetType().Name;
+        public abstract string Name { get; }
 
         /// <summary>
         /// Gets the value of the Djinn, in victory points (VP).

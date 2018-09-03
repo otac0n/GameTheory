@@ -19,7 +19,7 @@ namespace GameTheory.Games.FiveTribes.Moves
         }
 
         /// <inheritdoc />
-        public override IList<object> FormatTokens => new object[] { "Double the amout of GCs your Builders get this turn" };
+        public override IList<object> FormatTokens => new object[] { Resources.DoubleBuilderGC };
 
         /// <inheritdoc />
         public override bool IsDeterministic => true;

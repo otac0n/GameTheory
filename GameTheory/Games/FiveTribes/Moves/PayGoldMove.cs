@@ -26,7 +26,7 @@ namespace GameTheory.Games.FiveTribes.Moves
         }
 
         /// <inheritdoc />
-        public override IList<object> FormatTokens => new object[] { "Pay ", this.Gold, " Gold" };
+        public override IList<object> FormatTokens => FormatUtilities.ParseStringFormat(Resources.PayGold, this.Gold);
 
         /// <summary>
         /// Gets the amount of Gold Coins (GC) that will be paid.

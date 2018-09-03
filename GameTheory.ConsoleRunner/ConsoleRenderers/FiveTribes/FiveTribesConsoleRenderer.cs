@@ -44,7 +44,7 @@ namespace GameTheory.ConsoleRunner.ConsoleRenderers.FiveTribes
 
                 ConsoleInteraction.WithColor(color, () =>
                 {
-                    Console.Write(token);
+                    Console.Write(Resources.ResourceManager.GetEnumString(meeple));
                 });
             }
             else

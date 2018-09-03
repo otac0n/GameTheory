@@ -20,6 +20,9 @@ namespace GameTheory.Games.FiveTribes.Djinns
         }
 
         /// <inheritdoc />
+        public override string Name => Resources.Nekir;
+
+        /// <inheritdoc />
         public override GameState HandleAssassination(PlayerToken owner, GameState state, Point point, EnumCollection<Meeple> kill)
         {
             return this.HandleAssassination(owner, state, owner, kill);

@@ -36,7 +36,7 @@ namespace GameTheory.Games.FiveTribes.Moves
         }
 
         /// <inheritdoc />
-        public override IList<object> FormatTokens => new object[] { "Place a Camel at ", this.Point };
+        public override IList<object> FormatTokens => FormatUtilities.ParseStringFormat(Resources.PlaceCamel, this.Point);
 
         /// <inheritdoc />
         public override bool IsDeterministic => true;

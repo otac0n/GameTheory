@@ -23,7 +23,7 @@ namespace GameTheory.Games.FiveTribes.Moves
         }
 
         /// <inheritdoc />
-        public override IList<object> FormatTokens => new object[] { "Place a Palace at ", this.Point };
+        public override IList<object> FormatTokens => FormatUtilities.ParseStringFormat(Resources.PlacePalace, this.Point);
 
         /// <inheritdoc />
         public override bool IsDeterministic => true;

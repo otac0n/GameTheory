@@ -21,7 +21,7 @@ namespace GameTheory.Games.FiveTribes.Moves
         }
 
         /// <inheritdoc />
-        public override IList<object> FormatTokens => new object[] { "End turn" };
+        public override IList<object> FormatTokens => new object[] { Resources.EndTurn };
 
         /// <inheritdoc />
         public override bool IsDeterministic => this.GameState.FindHighestBidIndex() != -1;

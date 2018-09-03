@@ -36,7 +36,7 @@ namespace GameTheory.Games.FiveTribes.Moves
         }
 
         /// <inheritdoc />
-        public override IList<object> FormatTokens => new object[] { "Take ", this.Resource };
+        public override IList<object> FormatTokens => FormatUtilities.ParseStringFormat(Resources.TakeItem, this.Resource);
 
         /// <summary>
         /// Gets the index of the <see cref="Resource"/> that will be taken.

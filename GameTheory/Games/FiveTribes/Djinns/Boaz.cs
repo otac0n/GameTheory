@@ -20,6 +20,9 @@ namespace GameTheory.Games.FiveTribes.Djinns
         }
 
         /// <inheritdoc />
+        public override string Name => Resources.Boaz;
+
+        /// <inheritdoc />
         protected override GameState OnAcquire(PlayerToken owner, GameState state)
         {
             if (state == null)

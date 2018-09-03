@@ -22,7 +22,7 @@ namespace GameTheory.Games.FiveTribes.Moves
         }
 
         /// <inheritdoc />
-        public override IList<object> FormatTokens => new object[] { "Score ", this.GameState.InHand };
+        public override IList<object> FormatTokens => FormatUtilities.ParseStringFormat(Resources.ScoreBuilders, this.GameState.InHand);
 
         /// <inheritdoc />
         public override bool IsDeterministic => true;

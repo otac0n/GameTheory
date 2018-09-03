@@ -927,7 +927,7 @@ namespace GameTheory.Games.FiveTribes
 
                     if (!any)
                     {
-                        yield return new ChangePhaseMove(this, "Skip Tribes Action", Phase.TileAction);
+                        yield return new ChangePhaseMove(this, FiveTribes.Resources.SkipTribesAction, Phase.TileAction);
                     }
 
                     var costMoves = Cost.OneOrMoreSlaves(this, (s1, paid) => s1.WithInterstitialState(new ChoosingVictim(paid)));

@@ -19,7 +19,7 @@ namespace GameTheory.Games.FiveTribes.Moves
         }
 
         /// <inheritdoc />
-        public override IList<object> FormatTokens => new object[] { "Move turn marker" };
+        public override IList<object> FormatTokens => new object[] { Resources.MoveTurnMarker };
 
         /// <inheritdoc />
         public override bool IsDeterministic => true;

@@ -243,6 +243,15 @@
     <Compile Include="Games\FiveTribes\Move.cs" />
     <Compile Include="Games\FiveTribes\Phase.cs" />
     <Compile Include="Games\FiveTribes\Resource.cs" />
+    <Compile Include="Games\FiveTribes\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="Games\FiveTribes\Resources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <Compile Include="Games\FiveTribes\ScoreTable.cs" />
     <Compile Include="Games\FiveTribes\Square.cs" />
     <Compile Include="Games\FiveTribes\Sultanate.cs" />

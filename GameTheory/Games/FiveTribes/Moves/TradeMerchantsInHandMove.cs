@@ -21,7 +21,7 @@ namespace GameTheory.Games.FiveTribes.Moves
         }
 
         /// <inheritdoc />
-        public override IList<object> FormatTokens => new object[] { "Take ", Math.Min(this.GameState.VisibleResources.Count, this.GameState.InHand.Count), " resources" };
+        public override IList<object> FormatTokens => FormatUtilities.ParseStringFormat(Resources.TakeFirstResources, Math.Min(this.GameState.VisibleResources.Count, this.GameState.InHand.Count));
 
         /// <inheritdoc />
         public override bool IsDeterministic => true;

@@ -24,7 +24,7 @@ namespace GameTheory.Games.FiveTribes.Moves
         }
 
         /// <inheritdoc />
-        public override IList<object> FormatTokens => new object[] { "Trade ", Cost, " for ", this.Resource };
+        public override IList<object> FormatTokens => FormatUtilities.ParseStringFormat(Resources.SellSlaves, Cost, this.Resource);
 
         /// <inheritdoc />
         public override bool IsDeterministic => true;

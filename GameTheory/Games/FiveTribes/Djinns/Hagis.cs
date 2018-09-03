@@ -26,6 +26,9 @@ namespace GameTheory.Games.FiveTribes.Djinns
         }
 
         /// <inheritdoc />
+        public override string Name => Resources.Hagis;
+
+        /// <inheritdoc />
         public override IEnumerable<Move> GetAdditionalMoves(GameState state, IList<Move> moves)
         {
             if (state.Phase != Phase.End && state[this.stateKey] == null && state.Inventory[state.ActivePlayer].Djinns.Contains(this))
