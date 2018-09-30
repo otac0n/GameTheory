@@ -1,4 +1,4 @@
-﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Tests.Games
 {
@@ -45,7 +45,7 @@ namespace GameTheory.Tests.Games
                 .PlayMove(playerA, m => m.ToString() == "Drop Assassin at (3, 2)")
                 .PlayMove(playerA, m => m.ToString() == "Pick up all Assassin at (3, 2)")
                 .PlayMove(playerA, m => m.ToString() == "Place a Camel at (3, 2)")
-                .PlayMove(playerA, m => m.ToString() == "Assissinate Elder at (3, 1)")
+                .PlayMove(playerA, m => m.ToString() == "Assassinate Elder at (3, 1)")
                 .PlayMove(playerA, m => m.ToString() == "Place a Camel at (3, 1)");
 
             Assert.That(state.Sultanate[kil].Owner, Is.EqualTo(playerA));
@@ -143,8 +143,8 @@ namespace GameTheory.Tests.Games
 
             state = (GameState)state
                 .PlayMove(playerA, m => state.MakeMove(m).GetAvailableMoves(playerA).Any(x => x is AddMeeplesMove))
-                .PlayMove(playerA, m => m.ToString() == "Draw 2 Meeples and place at (3, 1)")
-                .PlayMove(playerA, m => m.ToString() == "Assissinate 2×Elder at (3, 1)")
+                .PlayMove(playerA, m => m.ToString() == "Draw 2 meeples and place them at (3, 1)")
+                .PlayMove(playerA, m => m.ToString() == "Assassinate 2×Elder at (3, 1)")
                 .PlayMove(playerA, m => m.ToString() == "Place a Camel at (3, 1)");
             ShowInventory(state);
             Assert.That(state.GetAvailableMoves(), Has.None.InstanceOf<AddMeeplesMove>());

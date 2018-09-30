@@ -253,13 +253,13 @@
     <value>Pick up all {0} at {1}</value>
   </data>
   <data name="PlaceCamel" xml:space="preserve">
-    <value>Place camel at {0}</value>
+    <value>Place a Camel at {0}</value>
   </data>
   <data name="PlacePalace" xml:space="preserve">
-    <value>Place palace at {0}</value>
+    <value>Place a Palace at {0}</value>
   </data>
   <data name="PlacePalmTree" xml:space="preserve">
-    <value>Place palm tree at {0}</value>
+    <value>Place a Palm Tree at {0}</value>
   </data>
   <data name="Remaining" xml:space="preserve">
     <value>remaining</value>

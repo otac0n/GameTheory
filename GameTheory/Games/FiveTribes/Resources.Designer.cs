@@ -20,7 +20,7 @@ namespace GameTheory.Games.FiveTribes {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class Resources {
@@ -467,7 +467,7 @@ namespace GameTheory.Games.FiveTribes {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Place camel at {0}.
+        ///   Looks up a localized string similar to Place a Camel at {0}.
         /// </summary>
         public static string PlaceCamel {
             get {
@@ -476,7 +476,7 @@ namespace GameTheory.Games.FiveTribes {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Place palace at {0}.
+        ///   Looks up a localized string similar to Place a Palace at {0}.
         /// </summary>
         public static string PlacePalace {
             get {
@@ -485,7 +485,7 @@ namespace GameTheory.Games.FiveTribes {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Place palm tree at {0}.
+        ///   Looks up a localized string similar to Place a Palm Tree at {0}.
         /// </summary>
         public static string PlacePalmTree {
             get {
