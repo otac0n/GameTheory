@@ -124,6 +124,15 @@
     </EmbeddedResource>
     <Compile Include="Games\CenturySpiceRoad\Spice.cs" />
     <Compile Include="Games\CenturySpiceRoad\Token.cs" />
+    <Compile Include="Games\Chess\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="Games\Chess\Resources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <Compile Include="Games\Draughts\Moves\BasicMove.cs" />
     <Compile Include="Games\Draughts\Moves\CaptureMove.cs" />
     <Compile Include="Games\Draughts\Moves\RemovePieceMove.cs" />
