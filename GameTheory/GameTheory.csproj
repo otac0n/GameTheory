@@ -124,6 +124,8 @@
     </EmbeddedResource>
     <Compile Include="Games\CenturySpiceRoad\Spice.cs" />
     <Compile Include="Games\CenturySpiceRoad\Token.cs" />
+    <Compile Include="Games\Chess\Parser.cs" />
+    <Compile Include="Games\Chess\Pieces.cs" />
     <Compile Include="Games\Chess\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
