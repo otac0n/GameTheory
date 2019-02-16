@@ -16,6 +16,10 @@ namespace GameTheory
         /// <param name="resources">The collection of resources that contains the enum value.</param>
         /// <param name="value">The value to retrieve.</param>
         /// <returns>The string vale for the specified enum.</returns>
-        public static string GetEnumString<T>(this ResourceManager resources, T value) => resources.GetString($"{typeof(T).Name}_{value.ToString()}");
+        public static string GetEnumString<T>(this ResourceManager resources, T value)
+        {
+            var enumString = value.ToString();
+            return resources.GetString($"{typeof(T).Name}_{enumString}") ?? enumString;
+        }
     }
 }
