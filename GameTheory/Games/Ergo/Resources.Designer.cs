@@ -314,6 +314,15 @@ namespace GameTheory.Games.Ergo {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to D.
+        /// </summary>
+        public static string Symbol_PlayerD {
+            get {
+                return ResourceManager.GetString("Symbol_PlayerD", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to ).
         /// </summary>
         public static string Symbol_RightParenthesis {

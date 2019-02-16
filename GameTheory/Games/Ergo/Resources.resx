@@ -213,4 +213,7 @@
   <data name="Scores" xml:space="preserve">
     <value>Scores</value>
   </data>
+  <data name="Symbol_PlayerD" xml:space="preserve">
+    <value>D</value>
+  </data>
 </root>
