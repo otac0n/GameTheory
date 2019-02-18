@@ -8,6 +8,8 @@ namespace GameTheory.Games.Chess
 
     internal static class Parser
     {
+        private const int DimensionX = 1;
+        private const int DimensionY = 0;
         private const char FenEmptyFieldValue = '-';
         private const char FenRankSeparator = '/';
         private const char FenRecordSeparator = ' ';
@@ -80,8 +82,8 @@ namespace GameTheory.Games.Chess
                 !Parser.TryParseFenCastlingField(subject, ref index, out castling) ||
                 !Parser.TryParseFenRecordSeparator(subject, ref index) ||
                 !Parser.TryParseCoordinateField(subject, ref index, out epCoordinate) ||
-                epCoordinate?.X >= board.GetLength(0) ||
-                epCoordinate?.Y >= board.GetLength(1) ||
+                epCoordinate?.X >= board.GetLength(DimensionX) ||
+                epCoordinate?.Y >= board.GetLength(DimensionY) ||
                 !Parser.TryParseFenRecordSeparator(subject, ref index) ||
                 !Parser.TryParseInt32(subject, ref index, out plyCountClock) ||
                 !Parser.TryParseFenRecordSeparator(subject, ref index) ||
@@ -136,13 +138,13 @@ namespace GameTheory.Games.Chess
                 }
             }
 
-            var result = new Pieces[ranks[0].Count, ranks.Count];
+            var result = new Pieces[ranks.Count, ranks[0].Count];
             for (var r = 0; r < ranks.Count; r++)
             {
                 var rank = ranks[ranks.Count - r - 1];
                 for (var f = 0; f < rank.Count; f++)
                 {
-                    result[f, r] = rank[f];
+                    result[r, f] = rank[f];
                 }
             }
 
@@ -304,7 +306,7 @@ namespace GameTheory.Games.Chess
             var startIndex = index;
             int boardWidth;
             if (!Parser.TryParseFenBoard(subject, ref index, out board) ||
-                (boardWidth = board.GetLength(0)) > MaxShredderFenBoardWidth ||
+                (boardWidth = board.GetLength(DimensionX)) > MaxShredderFenBoardWidth ||
                 !Parser.TryParseFenRecordSeparator(subject, ref index) ||
                 !Parser.TryParseFenColor(subject, ref index, out activePlayer) ||
                 !Parser.TryParseFenRecordSeparator(subject, ref index) ||
@@ -313,7 +315,7 @@ namespace GameTheory.Games.Chess
                 !Parser.TryParseFenRecordSeparator(subject, ref index) ||
                 !Parser.TryParseCoordinateField(subject, ref index, out epCoordinate) ||
                 epCoordinate?.X >= boardWidth ||
-                epCoordinate?.Y >= board.GetLength(1) ||
+                epCoordinate?.Y >= board.GetLength(DimensionY) ||
                 !Parser.TryParseFenRecordSeparator(subject, ref index) ||
                 !Parser.TryParseInt32(subject, ref index, out plyCountClock) ||
                 !Parser.TryParseFenRecordSeparator(subject, ref index) ||
@@ -372,7 +374,7 @@ namespace GameTheory.Games.Chess
             var startIndex = index;
             int boardWidth;
             if (!Parser.TryParseFenBoard(subject, ref index, out board) ||
-                (boardWidth = board.GetLength(0)) > MaxXFenBoardWidth ||
+                (boardWidth = board.GetLength(DimensionX)) > MaxXFenBoardWidth ||
                 !Parser.TryParseFenRecordSeparator(subject, ref index) ||
                 !Parser.TryParseFenColor(subject, ref index, out activePlayer) ||
                 !Parser.TryParseFenRecordSeparator(subject, ref index) ||
@@ -381,7 +383,7 @@ namespace GameTheory.Games.Chess
                 !Parser.TryParseFenRecordSeparator(subject, ref index) ||
                 !Parser.TryParseCoordinateField(subject, ref index, out epCoordinate) ||
                 epCoordinate?.X >= boardWidth ||
-                epCoordinate?.Y >= board.GetLength(1) ||
+                epCoordinate?.Y >= board.GetLength(DimensionY) ||
                 !Parser.TryParseFenRecordSeparator(subject, ref index) ||
                 !Parser.TryParseInt32(subject, ref index, out plyCountClock) ||
                 !Parser.TryParseFenRecordSeparator(subject, ref index) ||
@@ -407,12 +409,12 @@ namespace GameTheory.Games.Chess
             {
                 throw new ArgumentOutOfRangeException(nameof(board));
             }
-            else if ((boardWidth = board.GetLength(0)) == 0 || boardWidth > MaxXFenBoardWidth)
+            else if ((boardWidth = board.GetLength(DimensionX)) == 0 || boardWidth > MaxXFenBoardWidth)
             {
                 throw new ArgumentOutOfRangeException(nameof(board));
             }
 
-            var blackRank = board.GetLength(1) - 1;
+            var blackRank = board.GetLength(DimensionY) - 1;
             int? blackKingRook = null;
             int? blackQueenRook = null;
             int? whiteKingRook = null;
@@ -442,7 +444,7 @@ namespace GameTheory.Games.Chess
                         var stop = blackQueenRook ?? -1;
                         for (var i = boardWidth - 1; i > stop; i--)
                         {
-                            if (board[i, blackRank] == (Pieces.Black | Pieces.Rook))
+                            if (board[blackRank, i] == (Pieces.Black | Pieces.Rook))
                             {
                                 blackKingRook = i;
                                 break;
@@ -467,7 +469,7 @@ namespace GameTheory.Games.Chess
                         var stop = whiteQueenRook ?? -1;
                         for (var i = boardWidth - 1; i > stop; i--)
                         {
-                            if (board[i, 0] == (Pieces.White | Pieces.Rook))
+                            if (board[0, i] == (Pieces.White | Pieces.Rook))
                             {
                                 whiteKingRook = i;
                                 break;
@@ -492,7 +494,7 @@ namespace GameTheory.Games.Chess
                         var stop = blackKingRook ?? boardWidth;
                         for (var i = 0; i < stop; i++)
                         {
-                            if (board[i, blackRank] == (Pieces.Black | Pieces.Rook))
+                            if (board[blackRank, i] == (Pieces.Black | Pieces.Rook))
                             {
                                 blackQueenRook = i;
                                 break;
@@ -517,7 +519,7 @@ namespace GameTheory.Games.Chess
                         var stop = whiteKingRook ?? boardWidth;
                         for (var i = 0; i < stop; i++)
                         {
-                            if (board[i, 0] == (Pieces.White | Pieces.Rook))
+                            if (board[0, i] == (Pieces.White | Pieces.Rook))
                             {
                                 whiteQueenRook = i;
                                 break;

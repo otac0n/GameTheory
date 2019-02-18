@@ -531,7 +531,7 @@ namespace GameTheory.Tests.Games.Chess
         public void TryParseXFenCastling_WhenGivenInvalidInput_ReturnsFalse(string subject, int index, int boardWidth)
         {
             var startIndex = index;
-            var result = Parser.TryParseXFenCastling(subject, ref index, new Pieces[boardWidth, 2], out var actual);
+            var result = Parser.TryParseXFenCastling(subject, ref index, new Pieces[2, boardWidth], out var actual);
             Assert.That(result, Is.False);
             Assert.That(index, Is.EqualTo(startIndex));
             Assert.That(actual, Is.EqualTo(default(HashSet<Tuple<Pieces, int>>)));
@@ -580,11 +580,11 @@ namespace GameTheory.Tests.Games.Chess
                 return Tuple.Create((Pieces)Enum.Parse(typeof(Pieces), parts[0]), int.Parse(parts[1]));
             }).ToList();
 
-            var board = new Pieces[boardWidth, 2];
-            board[fileQ, 0] = Pieces.White | Pieces.Rook;
-            board[fileK, 0] = Pieces.White | Pieces.Rook;
-            board[fileQ, 1] = Pieces.Black | Pieces.Rook;
-            board[fileK, 1] = Pieces.Black | Pieces.Rook;
+            var board = new Pieces[2, boardWidth];
+            board[0, fileQ] = Pieces.White | Pieces.Rook;
+            board[0, fileK] = Pieces.White | Pieces.Rook;
+            board[1, fileQ] = Pieces.Black | Pieces.Rook;
+            board[1, fileK] = Pieces.Black | Pieces.Rook;
 
             var index = 0;
             var result = Parser.TryParseXFenCastling(subject, ref index, board, out var actual);
