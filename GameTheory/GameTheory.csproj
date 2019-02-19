@@ -124,7 +124,16 @@
     </EmbeddedResource>
     <Compile Include="Games\CenturySpiceRoad\Spice.cs" />
     <Compile Include="Games\CenturySpiceRoad\Token.cs" />
+    <Compile Include="Games\Chess\Moves\BasicMove.cs" />
+    <Compile Include="Games\Chess\Moves\EnPassantCaptureMove.cs" />
+    <Compile Include="Games\Chess\Moves\PromotionMove.cs" />
+    <Compile Include="Games\Chess\Moves\TwoSquareMove.cs" />
+    <Compile Include="Games\Chess\NotationSystems\LongAlgebraicNotation.cs" />
+    <Compile Include="Games\Chess\GameState.cs" />
+    <Compile Include="Games\Chess\Move.cs" />
+    <Compile Include="Games\Chess\NotationSystem.cs" />
     <Compile Include="Games\Chess\Parser.cs" />
+    <Compile Include="Games\Chess\PieceMasks.cs" />
     <Compile Include="Games\Chess\Pieces.cs" />
     <Compile Include="Games\Chess\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -135,6 +144,7 @@
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <Compile Include="Games\Chess\Variant.cs" />
     <Compile Include="Games\Draughts\Moves\BasicMove.cs" />
     <Compile Include="Games\Draughts\Moves\CaptureMove.cs" />
     <Compile Include="Games\Draughts\Moves\RemovePieceMove.cs" />

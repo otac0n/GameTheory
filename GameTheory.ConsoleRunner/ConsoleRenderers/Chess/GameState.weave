@@ -1,0 +1,13 @@
+@using System.Linq
+@using GameTheory.Games.Chess
+@namespace GameTheory.ConsoleRunner.ConsoleRenderers.Chess
+@static false
+@model GameState
+{{= BoxDrawing.DownAndRight }}{{each x in Enumerable.Range(0, model.Variant.Width)}}{{= BoxDrawing.Horizontal }}{{delimit}}{{= BoxDrawing.DownAndHorizontal }}{{/each}}{{= BoxDrawing.DownAndLeft }}
+{{each y in Enumerable.Range(0, model.Variant.Height).Reverse()}}
+  {{= BoxDrawing.Vertical }}{{each x in Enumerable.Range(0, model.Variant.Width)}}{{= model.GetPieceAt(x, y)}}{{delimit}}{{= BoxDrawing.Vertical }}{{/each}}{{= BoxDrawing.Vertical }}{{= y + 1}}
+{{delimit}}
+  {{= BoxDrawing.VerticalAndRight }}{{each x in Enumerable.Range(0, model.Variant.Width)}}{{= BoxDrawing.Horizontal }}{{delimit}}{{= BoxDrawing.VerticalAndHorizontal }}{{/each}}{{= BoxDrawing.VerticalAndLeft }}
+{{/each}}
+{{= BoxDrawing.UpAndRight }}{{each x in Enumerable.Range(0, model.Variant.Width)}}{{= BoxDrawing.Horizontal }}{{delimit}}{{= BoxDrawing.UpAndHorizontal }}{{/each}}{{= BoxDrawing.UpAndLeft }}
+ {{each x in Enumerable.Range(0, model.Variant.Width)}}{{= (char)('a' + x)}}{{delimit}} {{/each}}
