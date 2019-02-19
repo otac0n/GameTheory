@@ -1,4 +1,4 @@
-﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory
 {
@@ -12,6 +12,33 @@ namespace GameTheory
     /// </summary>
     public static class FormatUtilities
     {
+        /// <summary>
+        /// Builds a list of format tokens from the specified arguments.
+        /// </summary>
+        /// <param name="items">A list of format tokens. Entries that are <c>null</c> will be excluded.</param>
+        /// <returns>The list of format tokens.</returns>
+        public static IList<object> Build(params object[] items)
+        {
+            var result = new List<object>(items.Length);
+
+            foreach (var item in items)
+            {
+                if (item is IEnumerable<object> enumerable)
+                {
+                    foreach (var subItem in enumerable)
+                    {
+                        result.Add(subItem);
+                    }
+                }
+                else
+                {
+                    result.Add(item);
+                }
+            }
+
+            return result;
+        }
+
         /// <summary>
         /// Recursively retrieves the flattened collection of format tokens.
         /// </summary>
@@ -115,6 +142,14 @@ namespace GameTheory
         public static string GetPlayerName<TMove>(this IGameState<TMove> state, PlayerToken playerToken)
             where TMove : IMove =>
             string.Format(SharedResources.PlayerName, state.GetPlayerNumber(playerToken));
+
+        /// <summary>
+        /// Provides a replacement for conditional expressions that avoids explicit casting.
+        /// </summary>
+        /// <param name="predicate">A value indicating whether or not to return the result of <paramref name="getFormat"/>.</param>
+        /// <param name="getFormat">The function that will be invoked conditionally.</param>
+        /// <returns>The result of the <paramref name="getFormat"/> function, if <paramref name="predicate"/> is true; <c>null</c>, otherwise.</returns>
+        public static object If(bool predicate, Func<object> getFormat) => predicate ? getFormat() : null;
 
         /// <summary>
         /// Parses a composite format string to a collection of format tokens.
