@@ -1,4 +1,4 @@
-﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Games.Draughts
 {
@@ -242,21 +242,6 @@ namespace GameTheory.Games.Draughts
             }
 
             return y * (this.Width / 2) + (x / 2);
-        }
-
-        /// <summary>
-        /// Get the index of the specified coordinate.
-        /// </summary>
-        /// <param name="board">The board to access.</param>
-        /// <param name="x">The horizontal component of the vector.</param>
-        /// <param name="y">The vertical component of the vector.</param>
-        /// <returns>The index of the specified piece or <see cref="Pieces.None"/> if the coordinates don't refer to a piece.</returns>
-        [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "x", Justification = "X is meaningful in the context of coordinates.")]
-        [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "y", Justification = "Y is meaningful in the context of coordinates.")]
-        public Pieces GetPieceAt(ImmutableArray<Pieces> board, int x, int y)
-        {
-            var index = this.GetIndexOf(x, y);
-            return index < 0 ? Pieces.None : board[index];
         }
     }
 }

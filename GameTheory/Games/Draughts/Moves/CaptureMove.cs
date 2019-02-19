@@ -1,4 +1,4 @@
-﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Games.Draughts.Moves
 {
@@ -57,7 +57,7 @@ namespace GameTheory.Games.Draughts.Moves
                 if ((square & playerColor) == playerColor)
                 {
                     var crowned = (square & Pieces.Crowned) == Pieces.Crowned;
-                    variant.GetCoordinates(i, out int x, out int y);
+                    variant.GetCoordinates(i, out var x, out var y);
 
                     for (var f = 1; f >= -1; f -= 2)
                     {

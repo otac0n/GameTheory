@@ -1,10 +1,11 @@
-﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Games.Draughts
 {
     using System;
     using System.Collections.Generic;
     using System.Collections.Immutable;
+    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using GameTheory.Games.Draughts.Moves;
 
@@ -142,6 +143,20 @@ namespace GameTheory.Games.Draughts
         public IEnumerable<IWeighted<IGameState<Move>>> GetOutcomes(Move move)
         {
             yield return Weighted.Create(this.MakeMove(move), 1);
+        }
+
+        /// <summary>
+        /// Get the piece at the specified coordinate.
+        /// </summary>
+        /// <param name="x">The horizontal component of the vector.</param>
+        /// <param name="y">The vertical component of the vector.</param>
+        /// <returns>The index of the specified piece or <see cref="Pieces.None"/> if the coordinates don't refer to a piece.</returns>
+        [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "x", Justification = "X is meaningful in the context of coordinates.")]
+        [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "y", Justification = "Y is meaningful in the context of coordinates.")]
+        public Pieces GetPieceAt(int x, int y)
+        {
+            var index = this.Variant.GetIndexOf(x, y);
+            return index < 0 ? Pieces.None : this.Board[index];
         }
 
         /// <inheritdoc/>

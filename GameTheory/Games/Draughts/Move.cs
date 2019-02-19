@@ -1,4 +1,4 @@
-﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Games.Draughts
 {
@@ -27,6 +27,9 @@ namespace GameTheory.Games.Draughts
         public PlayerToken PlayerToken { get; }
 
         internal GameState GameState { get; }
+
+        /// <inheritdoc />
+        public sealed override string ToString() => string.Concat(this.FlattenFormatTokens());
 
         internal virtual GameState Apply(GameState state)
         {
