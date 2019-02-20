@@ -301,7 +301,7 @@ namespace GameTheory.Games.Chess
             }
         }
 
-        public static bool TryParseShredderFen(string subject, ref int index, out Pieces[,] board, out Pieces activePlayer, out HashSet<Tuple<Pieces, int>> castling, out Point? epCoordinate, out int plyCountClock, out int turnNumber)
+        public static bool TryParseShredderFen(string subject, ref int index, out Pieces[,] board, out Pieces activePlayer, out Dictionary<Pieces, int> castling, out Point? epCoordinate, out int plyCountClock, out int turnNumber)
         {
             var startIndex = index;
             int boardWidth;
@@ -310,8 +310,7 @@ namespace GameTheory.Games.Chess
                 !Parser.TryParseFenRecordSeparator(subject, ref index) ||
                 !Parser.TryParseFenColor(subject, ref index, out activePlayer) ||
                 !Parser.TryParseFenRecordSeparator(subject, ref index) ||
-                !Parser.TryParseShredderFenCastlingField(subject, ref index, out castling) ||
-                (castling != null && castling.Any(c => c.Item2 >= boardWidth)) ||
+                !Parser.TryParseShredderFenCastlingField(subject, ref index, board, out castling) ||
                 !Parser.TryParseFenRecordSeparator(subject, ref index) ||
                 !Parser.TryParseCoordinateField(subject, ref index, out epCoordinate) ||
                 epCoordinate?.X >= boardWidth ||
@@ -324,7 +323,7 @@ namespace GameTheory.Games.Chess
                 index = startIndex;
                 board = default(Pieces[,]);
                 activePlayer = default(Pieces);
-                castling = default(HashSet<Tuple<Pieces, int>>);
+                castling = default(Dictionary<Pieces, int>);
                 epCoordinate = default(Point?);
                 plyCountClock = default(int);
                 turnNumber = default(int);
@@ -334,22 +333,120 @@ namespace GameTheory.Games.Chess
             return true;
         }
 
-        public static bool TryParseShredderFenCastling(string subject, ref int index, out HashSet<Tuple<Pieces, int>> castling)
+        public static bool TryParseShredderFenCastling(string subject, ref int index, Pieces[,] board, out Dictionary<Pieces, int> castling)
         {
+            int boardWidth;
+            if (board == null)
+            {
+                throw new ArgumentOutOfRangeException(nameof(board));
+            }
+            else if ((boardWidth = board.GetLength(DimensionX)) == 0 || boardWidth > MaxShredderFenBoardWidth)
+            {
+                throw new ArgumentOutOfRangeException(nameof(board));
+            }
+
+            var blackRank = board.GetLength(DimensionY) - 1;
+            int? blackKing = null;
+            int? whiteKing = null;
+
             var startIndex = index;
-            var result = new HashSet<Tuple<Pieces, int>>();
+            var result = new Dictionary<Pieces, int>();
             while (index < subject.Length)
             {
                 char c;
                 if ((c = subject[index]) >= 'a' && c <= 'z')
                 {
+                    var value = c - 'a';
+                    if (value >= boardWidth || board[blackRank, value] != (Pieces.Black | Pieces.Rook))
+                    {
+                        index = startIndex;
+                        result.Clear();
+                        break;
+                    }
+
+                    if (blackKing == null)
+                    {
+                        for (var i = boardWidth - 1; i > -1; i--)
+                        {
+                            if (board[blackRank, i] == (Pieces.Black | Pieces.King))
+                            {
+                                blackKing = i;
+                                break;
+                            }
+                        }
+
+                        if (blackKing == null)
+                        {
+                            index = startIndex;
+                            result.Clear();
+                            break;
+                        }
+                    }
+
                     index++;
-                    result.Add(Tuple.Create(Pieces.Black, c - 'a'));
+                    if (value > blackKing)
+                    {
+                        result.Add(Pieces.Black | Pieces.King, value);
+                    }
+                    else if (value < blackKing)
+                    {
+                        result.Add(Pieces.Black | Pieces.Queen, value);
+                    }
+                    else
+                    {
+                        index = startIndex;
+                        result.Clear();
+                        break;
+                    }
+
+                    continue;
                 }
                 else if (c >= 'A' && c <= 'Z')
                 {
+                    var value = c - 'A';
+                    if (value >= boardWidth || board[blackRank, value] != (Pieces.Black | Pieces.Rook))
+                    {
+                        index = startIndex;
+                        result.Clear();
+                        break;
+                    }
+
+                    if (whiteKing == null)
+                    {
+                        for (var i = boardWidth - 1; i > -1; i--)
+                        {
+                            if (board[0, i] == (Pieces.White | Pieces.King))
+                            {
+                                whiteKing = i;
+                                break;
+                            }
+                        }
+
+                        if (whiteKing == null)
+                        {
+                            index = startIndex;
+                            result.Clear();
+                            break;
+                        }
+                    }
+
                     index++;
-                    result.Add(Tuple.Create(Pieces.White, c - 'A'));
+                    if (value > whiteKing)
+                    {
+                        result.Add(Pieces.White | Pieces.King, value);
+                    }
+                    else if (value < whiteKing)
+                    {
+                        result.Add(Pieces.White | Pieces.Queen, value);
+                    }
+                    else
+                    {
+                        index = startIndex;
+                        result.Clear();
+                        break;
+                    }
+
+                    continue;
                 }
                 else
                 {
@@ -359,7 +456,7 @@ namespace GameTheory.Games.Chess
 
             if (result.Count == 0)
             {
-                castling = default(HashSet<Tuple<Pieces, int>>);
+                castling = default(Dictionary<Pieces, int>);
                 return false;
             }
             else
@@ -369,7 +466,7 @@ namespace GameTheory.Games.Chess
             }
         }
 
-        public static bool TryParseXFen(string subject, ref int index, out Pieces[,] board, out Pieces activePlayer, out HashSet<Tuple<Pieces, int>> castling, out Point? epCoordinate, out int plyCountClock, out int turnNumber)
+        public static bool TryParseXFen(string subject, ref int index, out Pieces[,] board, out Pieces activePlayer, out Dictionary<Pieces, int> castling, out Point? epCoordinate, out int plyCountClock, out int turnNumber)
         {
             var startIndex = index;
             int boardWidth;
@@ -379,7 +476,6 @@ namespace GameTheory.Games.Chess
                 !Parser.TryParseFenColor(subject, ref index, out activePlayer) ||
                 !Parser.TryParseFenRecordSeparator(subject, ref index) ||
                 !Parser.TryParseXFenCastlingField(subject, ref index, board, out castling) ||
-                (castling != null && castling.Any(c => c.Item2 >= boardWidth)) ||
                 !Parser.TryParseFenRecordSeparator(subject, ref index) ||
                 !Parser.TryParseCoordinateField(subject, ref index, out epCoordinate) ||
                 epCoordinate?.X >= boardWidth ||
@@ -392,7 +488,7 @@ namespace GameTheory.Games.Chess
                 index = startIndex;
                 board = default(Pieces[,]);
                 activePlayer = default(Pieces);
-                castling = default(HashSet<Tuple<Pieces, int>>);
+                castling = default(Dictionary<Pieces, int>);
                 epCoordinate = default(Point?);
                 plyCountClock = default(int);
                 turnNumber = default(int);
@@ -402,7 +498,7 @@ namespace GameTheory.Games.Chess
             return true;
         }
 
-        public static bool TryParseXFenCastling(string subject, ref int index, Pieces[,] board, out HashSet<Tuple<Pieces, int>> castling)
+        public static bool TryParseXFenCastling(string subject, ref int index, Pieces[,] board, out Dictionary<Pieces, int> castling)
         {
             int boardWidth;
             if (board == null)
@@ -415,36 +511,132 @@ namespace GameTheory.Games.Chess
             }
 
             var blackRank = board.GetLength(DimensionY) - 1;
+            int? blackKing = null;
             int? blackKingRook = null;
             int? blackQueenRook = null;
+            int? whiteKing = null;
             int? whiteKingRook = null;
             int? whiteQueenRook = null;
 
             var startIndex = index;
-            var result = new HashSet<Tuple<Pieces, int>>();
+            var result = new Dictionary<Pieces, int>();
             while (index < subject.Length)
             {
                 char c;
                 if ((c = subject[index]) >= 'a' && c < 'a' + boardWidth)
                 {
+                    var value = c - 'a';
+                    if (value >= boardWidth || board[blackRank, value] != (Pieces.Black | Pieces.Rook))
+                    {
+                        index = startIndex;
+                        result.Clear();
+                        break;
+                    }
+
+                    if (blackKing == null)
+                    {
+                        var stop = blackQueenRook ?? -1;
+                        for (var i = boardWidth - 1; i > stop; i--)
+                        {
+                            if (board[blackRank, i] == (Pieces.Black | Pieces.King))
+                            {
+                                blackKing = i;
+                                break;
+                            }
+                        }
+
+                        if (blackKing == null)
+                        {
+                            index = startIndex;
+                            result.Clear();
+                            break;
+                        }
+                    }
+
                     index++;
-                    result.Add(Tuple.Create(Pieces.Black, c - 'a'));
+                    if (value > blackKing && blackKingRook == null)
+                    {
+                        blackKingRook = value;
+                        result.Add(Pieces.Black | Pieces.King, value);
+                    }
+                    else if (value < blackKing && blackQueenRook == null)
+                    {
+                        blackQueenRook = value;
+                        result.Add(Pieces.Black | Pieces.Queen, value);
+                    }
+                    else
+                    {
+                        index = startIndex;
+                        result.Clear();
+                        break;
+                    }
+
                     continue;
                 }
                 else if (c >= 'A' && c < 'A' + boardWidth)
                 {
+                    var value = c - 'A';
+                    if (value >= boardWidth || board[blackRank, value] != (Pieces.Black | Pieces.Rook))
+                    {
+                        index = startIndex;
+                        result.Clear();
+                        break;
+                    }
+
+                    if (whiteKing == null)
+                    {
+                        var stop = whiteQueenRook ?? -1;
+                        for (var i = boardWidth - 1; i > stop; i--)
+                        {
+                            if (board[0, i] == (Pieces.White | Pieces.King))
+                            {
+                                whiteKing = i;
+                                break;
+                            }
+                        }
+
+                        if (whiteKing == null)
+                        {
+                            index = startIndex;
+                            result.Clear();
+                            break;
+                        }
+                    }
+
                     index++;
-                    result.Add(Tuple.Create(Pieces.White, c - 'A'));
+                    if (value > whiteKing && whiteKingRook == null)
+                    {
+                        whiteKingRook = value;
+                        result.Add(Pieces.White | Pieces.King, value);
+                    }
+                    else if (value < whiteKing && whiteQueenRook == null)
+                    {
+                        whiteQueenRook = value;
+                        result.Add(Pieces.White | Pieces.Queen, value);
+                    }
+                    else
+                    {
+                        index = startIndex;
+                        result.Clear();
+                        break;
+                    }
+
                     continue;
                 }
                 else if (c == 'k')
                 {
                     if (blackKingRook == null)
                     {
-                        var stop = blackQueenRook ?? -1;
+                        var stop = Math.Max(blackQueenRook ?? -1, blackKing ?? -1);
                         for (var i = boardWidth - 1; i > stop; i--)
                         {
-                            if (board[blackRank, i] == (Pieces.Black | Pieces.Rook))
+                            var piece = board[blackRank, i];
+                            if (piece == (Pieces.Black | Pieces.King))
+                            {
+                                blackKing = i;
+                                break;
+                            }
+                            else if (piece == (Pieces.Black | Pieces.Rook))
                             {
                                 blackKingRook = i;
                                 break;
@@ -458,18 +650,30 @@ namespace GameTheory.Games.Chess
                             break;
                         }
                     }
+                    else
+                    {
+                        index = startIndex;
+                        result.Clear();
+                        break;
+                    }
 
                     index++;
-                    result.Add(Tuple.Create(Pieces.Black, blackKingRook.Value));
+                    result.Add(Pieces.Black | Pieces.King, blackKingRook.Value);
                 }
                 else if (c == 'K')
                 {
                     if (whiteKingRook == null)
                     {
-                        var stop = whiteQueenRook ?? -1;
+                        var stop = Math.Max(whiteQueenRook ?? -1, whiteKing ?? -1);
                         for (var i = boardWidth - 1; i > stop; i--)
                         {
-                            if (board[0, i] == (Pieces.White | Pieces.Rook))
+                            var piece = board[0, i];
+                            if (piece == (Pieces.White | Pieces.King))
+                            {
+                                whiteKing = i;
+                                break;
+                            }
+                            else if (piece == (Pieces.White | Pieces.Rook))
                             {
                                 whiteKingRook = i;
                                 break;
@@ -483,18 +687,30 @@ namespace GameTheory.Games.Chess
                             break;
                         }
                     }
+                    else
+                    {
+                        index = startIndex;
+                        result.Clear();
+                        break;
+                    }
 
                     index++;
-                    result.Add(Tuple.Create(Pieces.White, whiteKingRook.Value));
+                    result.Add(Pieces.White | Pieces.King, whiteKingRook.Value);
                 }
                 else if (c == 'q')
                 {
                     if (blackQueenRook == null)
                     {
-                        var stop = blackKingRook ?? boardWidth;
+                        var stop = Math.Min(blackKingRook ?? boardWidth, blackKing ?? boardWidth);
                         for (var i = 0; i < stop; i++)
                         {
-                            if (board[blackRank, i] == (Pieces.Black | Pieces.Rook))
+                            var piece = board[blackRank, i];
+                            if (piece == (Pieces.Black | Pieces.King))
+                            {
+                                blackKing = i;
+                                break;
+                            }
+                            else if (piece == (Pieces.Black | Pieces.Rook))
                             {
                                 blackQueenRook = i;
                                 break;
@@ -508,18 +724,30 @@ namespace GameTheory.Games.Chess
                             break;
                         }
                     }
+                    else
+                    {
+                        index = startIndex;
+                        result.Clear();
+                        break;
+                    }
 
                     index++;
-                    result.Add(Tuple.Create(Pieces.Black, blackQueenRook.Value));
+                    result.Add(Pieces.Black | Pieces.Queen, blackQueenRook.Value);
                 }
                 else if (c == 'Q')
                 {
                     if (whiteQueenRook == null)
                     {
-                        var stop = whiteKingRook ?? boardWidth;
+                        var stop = Math.Min(whiteKingRook ?? boardWidth, whiteKing ?? boardWidth);
                         for (var i = 0; i < stop; i++)
                         {
-                            if (board[0, i] == (Pieces.White | Pieces.Rook))
+                            var piece = board[0, i];
+                            if (piece == (Pieces.White | Pieces.King))
+                            {
+                                whiteKing = i;
+                                break;
+                            }
+                            else if (piece == (Pieces.White | Pieces.Rook))
                             {
                                 whiteQueenRook = i;
                                 break;
@@ -533,9 +761,15 @@ namespace GameTheory.Games.Chess
                             break;
                         }
                     }
+                    else
+                    {
+                        index = startIndex;
+                        result.Clear();
+                        break;
+                    }
 
                     index++;
-                    result.Add(Tuple.Create(Pieces.White, whiteQueenRook.Value));
+                    result.Add(Pieces.White | Pieces.Queen, whiteQueenRook.Value);
                 }
                 else
                 {
@@ -545,7 +779,7 @@ namespace GameTheory.Games.Chess
 
             if (result.Count == 0)
             {
-                castling = default(HashSet<Tuple<Pieces, int>>);
+                castling = default(Dictionary<Pieces, int>);
                 return false;
             }
             else
@@ -591,33 +825,33 @@ namespace GameTheory.Games.Chess
             return TryParseFenCastling(subject, ref index, out castling);
         }
 
-        private static bool TryParseShredderFenCastlingField(string subject, ref int index, out HashSet<Tuple<Pieces, int>> castling)
+        private static bool TryParseShredderFenCastlingField(string subject, ref int index, Pieces[,] board, out Dictionary<Pieces, int> castling)
         {
             if (index >= subject.Length)
             {
-                castling = default(HashSet<Tuple<Pieces, int>>);
+                castling = default(Dictionary<Pieces, int>);
                 return false;
             }
             else if (subject[index] == Parser.FenEmptyFieldValue)
             {
-                castling = default(HashSet<Tuple<Pieces, int>>);
+                castling = default(Dictionary<Pieces, int>);
                 index++;
                 return true;
             }
 
-            return TryParseShredderFenCastling(subject, ref index, out castling);
+            return TryParseShredderFenCastling(subject, ref index, board, out castling);
         }
 
-        private static bool TryParseXFenCastlingField(string subject, ref int index, Pieces[,] board, out HashSet<Tuple<Pieces, int>> castling)
+        private static bool TryParseXFenCastlingField(string subject, ref int index, Pieces[,] board, out Dictionary<Pieces, int> castling)
         {
             if (index >= subject.Length)
             {
-                castling = default(HashSet<Tuple<Pieces, int>>);
+                castling = default(Dictionary<Pieces, int>);
                 return false;
             }
             else if (subject[index] == Parser.FenEmptyFieldValue)
             {
-                castling = default(HashSet<Tuple<Pieces, int>>);
+                castling = default(Dictionary<Pieces, int>);
                 index++;
                 return true;
             }

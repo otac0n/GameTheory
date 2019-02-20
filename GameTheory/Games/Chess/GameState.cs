@@ -55,8 +55,8 @@ namespace GameTheory.Games.Chess
                 ? default(int?)
                 : this.Variant.GetIndexOf(epCoordinate.Value.X, epCoordinate.Value.Y);
             this.Castling = castling == null
-                ? ImmutableHashSet<Tuple<Pieces, int>>.Empty
-                : castling.ToImmutableHashSet();
+                ? ImmutableDictionary<Pieces, int>.Empty
+                : castling.ToImmutableDictionary();
         }
 
         private GameState(
@@ -67,7 +67,7 @@ namespace GameTheory.Games.Chess
             int plyCountClock,
             int moveNumber,
             int? enPassantIndex,
-            ImmutableHashSet<Tuple<Pieces, int>> castling)
+            ImmutableDictionary<Pieces, int> castling)
         {
             this.Players = players;
             this.Variant = variant;
@@ -100,7 +100,7 @@ namespace GameTheory.Games.Chess
         /// <summary>
         /// Gets the castling rights.
         /// </summary>
-        public ImmutableHashSet<Tuple<Pieces, int>> Castling { get; }
+        public ImmutableDictionary<Pieces, int> Castling { get; }
 
         /// <summary>
         /// Gets the index of the current en passant capture square.
@@ -230,7 +230,7 @@ namespace GameTheory.Games.Chess
             int? plyCountClock = null,
             int? moveNumber = null,
             int? enPassantIndex = null,
-            ImmutableHashSet<Tuple<Pieces, int>> castling = null)
+            ImmutableDictionary<Pieces, int> castling = null)
         {
             return new GameState(
                 players: this.Players,

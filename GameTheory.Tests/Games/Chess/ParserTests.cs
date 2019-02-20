@@ -349,10 +349,10 @@ namespace GameTheory.Tests.Games.Chess
         }
 
         [TestCase("26 w - - 0 1", Pieces.White, null, null, null, 0, 1)]
-        [TestCase("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w AHah - 0 1", Pieces.White, "White:0;White:7;Black:0;Black:7", null, null, 0, 1)]
-        [TestCase("rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b AHah e3 0 1", Pieces.Black, "White:0;White:7;Black:0;Black:7", 4, 2, 0, 1)]
-        [TestCase("rnbqkbnr/pp1ppppp/8/2p5/4P3/8/PPPP1PPP/RNBQKBNR w AHah c6 0 2", Pieces.White, "White:0;White:7;Black:0;Black:7", 2, 5, 0, 2)]
-        [TestCase("rnbqkbnr/pp1ppppp/8/2p5/4P3/5N2/PPPP1PPP/RNBQKB1R b AHah - 1 2", Pieces.Black, "White:0;White:7;Black:0;Black:7", null, null, 1, 2)]
+        [TestCase("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w AHah - 0 1", Pieces.White, "White,Queen:0;White,King:7;Black,Queen:0;Black,King:7", null, null, 0, 1)]
+        [TestCase("rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b AHah e3 0 1", Pieces.Black, "White,Queen:0;White,King:7;Black,Queen:0;Black,King:7", 4, 2, 0, 1)]
+        [TestCase("rnbqkbnr/pp1ppppp/8/2p5/4P3/8/PPPP1PPP/RNBQKBNR w AHah c6 0 2", Pieces.White, "White,Queen:0;White,King:7;Black,Queen:0;Black,King:7", 2, 5, 0, 2)]
+        [TestCase("rnbqkbnr/pp1ppppp/8/2p5/4P3/5N2/PPPP1PPP/RNBQKB1R b AHah - 1 2", Pieces.Black, "White,Queen:0;White,King:7;Black,Queen:0;Black,King:7", null, null, 1, 2)]
         [TestCase("8/8/8/8/8/8/8/8 w - - 0 1", Pieces.White, null, null, null, 0, 1)]
         public void TryParseShredderFen_WhenGivenValidInput_ReturnsTheExpectedValue(string subject, Pieces expectedActivePlayer, string expectedCastlingStr, int? expectedEpX, int? expectedEpY, int expectedPlyCountClock, int expectedMoveNumber)
         {
@@ -361,8 +361,8 @@ namespace GameTheory.Tests.Games.Chess
                 : expectedCastlingStr.Split(';').Select(s =>
                 {
                     var parts = s.Split(':');
-                    return Tuple.Create((Pieces)Enum.Parse(typeof(Pieces), parts[0]), int.Parse(parts[1]));
-                }).ToList();
+                    return new KeyValuePair<Pieces, int>((Pieces)Enum.Parse(typeof(Pieces), parts[0]), int.Parse(parts[1]));
+                }).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
             var expectedEpCoordinate = expectedEpX == null || expectedEpY == null
                 ? default(Point?)
                 : new Point(expectedEpX.Value, expectedEpY.Value);
@@ -387,48 +387,66 @@ namespace GameTheory.Tests.Games.Chess
             Assert.That(moveNumber, Is.EqualTo(expectedMoveNumber));
         }
 
-        [TestCase("", 0)]
-        [TestCase("//", 1)]
-        public void TryParseShredderFenCastling_WhenGivenInvalidInput_ReturnsFalse(string subject, int index)
+        [TestCase("", 0, 8, 0, 7)]
+        [TestCase("//", 1, 8, 0, 7)]
+        public void TryParseShredderFenCastling_WhenGivenInvalidInput_ReturnsFalse(string subject, int index, int boardWidth, int fileQ, int fileK)
         {
+            var board = new Pieces[2, boardWidth];
+            board[0, fileQ] = Pieces.White | Pieces.Rook;
+            board[0, fileQ + 1] = Pieces.White | Pieces.King;
+            board[0, fileK] = Pieces.White | Pieces.Rook;
+            board[1, fileQ] = Pieces.Black | Pieces.Rook;
+            board[1, fileQ + 1] = Pieces.Black | Pieces.King;
+            board[1, fileK] = Pieces.Black | Pieces.Rook;
+
             var startIndex = index;
-            var result = Parser.TryParseShredderFenCastling(subject, ref index, out var actual);
+            var result = Parser.TryParseShredderFenCastling(subject, ref index, board, out var actual);
             Assert.That(result, Is.False);
             Assert.That(index, Is.EqualTo(startIndex));
             Assert.That(actual, Is.EqualTo(default(HashSet<Tuple<Pieces, int>>)));
         }
 
-        [TestCase("A", "White:0")]
-        [TestCase("B", "White:1")]
-        [TestCase("C", "White:2")]
-        [TestCase("D", "White:3")]
-        [TestCase("E", "White:4")]
-        [TestCase("F", "White:5")]
-        [TestCase("G", "White:6")]
-        [TestCase("H", "White:7")]
-        [TestCase("J", "White:9")]
-        [TestCase("Z", "White:25")]
-        [TestCase("a", "Black:0")]
-        [TestCase("b", "Black:1")]
-        [TestCase("c", "Black:2")]
-        [TestCase("d", "Black:3")]
-        [TestCase("e", "Black:4")]
-        [TestCase("f", "Black:5")]
-        [TestCase("g", "Black:6")]
-        [TestCase("h", "Black:7")]
-        [TestCase("j", "Black:9")]
-        [TestCase("z", "Black:25")]
-        [TestCase("AHah", "White:0;White:7;Black:0;Black:7")]
-        public void TryParseShredderFenCastling_WhenGivenValidInput_ReturnsTheExpectedValue(string subject, string expectedStr)
+        [TestCase("A", 8, 0, 7, "White,Queen:0")]
+        [TestCase("B", 8, 1, 7, "White,Queen:1")]
+        [TestCase("C", 8, 0, 2, "White,King:2")]
+        [TestCase("D", 8, 0, 3, "White,King:3")]
+        [TestCase("E", 8, 0, 4, "White,King:4")]
+        [TestCase("F", 8, 0, 5, "White,King:5")]
+        [TestCase("G", 8, 0, 6, "White,King:6")]
+        [TestCase("H", 8, 0, 7, "White,King:7")]
+        [TestCase("I", 10, 0, 8, "White,King:8")]
+        [TestCase("J", 10, 0, 9, "White,King:9")]
+        [TestCase("Z", 26, 0, 25, "White,King:25")]
+        [TestCase("a", 8, 0, 7, "Black,Queen:0")]
+        [TestCase("b", 8, 1, 7, "Black,Queen:1")]
+        [TestCase("c", 8, 0, 2, "Black,King:2")]
+        [TestCase("d", 8, 0, 3, "Black,King:3")]
+        [TestCase("e", 8, 0, 4, "Black,King:4")]
+        [TestCase("f", 8, 0, 5, "Black,King:5")]
+        [TestCase("g", 8, 0, 6, "Black,King:6")]
+        [TestCase("h", 8, 0, 7, "Black,King:7")]
+        [TestCase("i", 10, 0, 8, "Black,King:8")]
+        [TestCase("j", 10, 0, 9, "Black,King:9")]
+        [TestCase("z", 26, 0, 25, "Black,King:25")]
+        [TestCase("AHah", 8, 0, 7, "White,Queen:0;White,King:7;Black,Queen:0;Black,King:7")]
+        public void TryParseShredderFenCastling_WhenGivenValidInput_ReturnsTheExpectedValue(string subject, int boardWidth, int fileQ, int fileK, string expectedStr)
         {
             var expected = expectedStr.Split(';').Select(s =>
             {
                 var parts = s.Split(':');
-                return Tuple.Create((Pieces)Enum.Parse(typeof(Pieces), parts[0]), int.Parse(parts[1]));
-            }).ToList();
+                return new KeyValuePair<Pieces, int>((Pieces)Enum.Parse(typeof(Pieces), parts[0]), int.Parse(parts[1]));
+            }).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+
+            var board = new Pieces[2, boardWidth];
+            board[0, fileQ] = Pieces.White | Pieces.Rook;
+            board[0, fileQ + 1] = Pieces.White | Pieces.King;
+            board[0, fileK] = Pieces.White | Pieces.Rook;
+            board[1, fileQ] = Pieces.Black | Pieces.Rook;
+            board[1, fileQ + 1] = Pieces.Black | Pieces.King;
+            board[1, fileK] = Pieces.Black | Pieces.Rook;
 
             var index = 0;
-            var result = Parser.TryParseShredderFenCastling(subject, ref index, out var actual);
+            var result = Parser.TryParseShredderFenCastling(subject, ref index, board, out var actual);
             Assert.That(result, Is.True);
             Assert.That(index, Is.EqualTo(subject.Length));
             Assert.That(actual, Is.EquivalentTo(expected));
@@ -469,17 +487,17 @@ namespace GameTheory.Tests.Games.Chess
         }
 
         [TestCase("10 w - - 0 1", Pieces.White, null, null, null, 0, 1)]
-        [TestCase("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", Pieces.White, "White:0;White:7;Black:0;Black:7", null, null, 0, 1)]
-        [TestCase("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w AHah - 0 1", Pieces.White, "White:0;White:7;Black:0;Black:7", null, null, 0, 1)]
-        [TestCase("rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1", Pieces.Black, "White:0;White:7;Black:0;Black:7", 4, 2, 0, 1)]
-        [TestCase("rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b AHah e3 0 1", Pieces.Black, "White:0;White:7;Black:0;Black:7", 4, 2, 0, 1)]
-        [TestCase("rnbqkbnr/pp1ppppp/8/2p5/4P3/8/PPPP1PPP/RNBQKBNR w KQkq c6 0 2", Pieces.White, "White:0;White:7;Black:0;Black:7", 2, 5, 0, 2)]
-        [TestCase("rnbqkbnr/pp1ppppp/8/2p5/4P3/8/PPPP1PPP/RNBQKBNR w AHah c6 0 2", Pieces.White, "White:0;White:7;Black:0;Black:7", 2, 5, 0, 2)]
-        [TestCase("rnbqkbnr/pp1ppppp/8/2p5/4P3/5N2/PPPP1PPP/RNBQKB1R b KQkq - 1 2", Pieces.Black, "White:0;White:7;Black:0;Black:7", null, null, 1, 2)]
-        [TestCase("rnbqkbnr/pp1ppppp/8/2p5/4P3/5N2/PPPP1PPP/RNBQKB1R b AHah - 1 2", Pieces.Black, "White:0;White:7;Black:0;Black:7", null, null, 1, 2)]
+        [TestCase("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", Pieces.White, "White,Queen:0;White,King:7;Black,Queen:0;Black,King:7", null, null, 0, 1)]
+        [TestCase("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w AHah - 0 1", Pieces.White, "White,Queen:0;White,King:7;Black,Queen:0;Black,King:7", null, null, 0, 1)]
+        [TestCase("rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1", Pieces.Black, "White,Queen:0;White,King:7;Black,Queen:0;Black,King:7", 4, 2, 0, 1)]
+        [TestCase("rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b AHah e3 0 1", Pieces.Black, "White,Queen:0;White,King:7;Black,Queen:0;Black,King:7", 4, 2, 0, 1)]
+        [TestCase("rnbqkbnr/pp1ppppp/8/2p5/4P3/8/PPPP1PPP/RNBQKBNR w KQkq c6 0 2", Pieces.White, "White,Queen:0;White,King:7;Black,Queen:0;Black,King:7", 2, 5, 0, 2)]
+        [TestCase("rnbqkbnr/pp1ppppp/8/2p5/4P3/8/PPPP1PPP/RNBQKBNR w AHah c6 0 2", Pieces.White, "White,Queen:0;White,King:7;Black,Queen:0;Black,King:7", 2, 5, 0, 2)]
+        [TestCase("rnbqkbnr/pp1ppppp/8/2p5/4P3/5N2/PPPP1PPP/RNBQKB1R b KQkq - 1 2", Pieces.Black, "White,Queen:0;White,King:7;Black,Queen:0;Black,King:7", null, null, 1, 2)]
+        [TestCase("rnbqkbnr/pp1ppppp/8/2p5/4P3/5N2/PPPP1PPP/RNBQKB1R b AHah - 1 2", Pieces.Black, "White,Queen:0;White,King:7;Black,Queen:0;Black,King:7", null, null, 1, 2)]
         [TestCase("8/8/8/8/8/8/8/8 w - - 0 1", Pieces.White, null, null, null, 0, 1)]
-        [TestCase("rnbnkqrb/pppppppp/8/8/8/8/PPPPPPPP/RNBNKQRB w KQkq - 0 1", Pieces.White, "White:0;White:6;Black:0;Black:6", null, null, 0, 1, Description = "Wikipedia X-FEN")]
-        [TestCase("rn2k1r1/ppp1pp1p/3p2p1/5bn1/P7/2N2B2/1PPPPP2/2BNK1RR w Gkq - 4 11", Pieces.White, "White:6;Black:0;Black:6", null, null, 4, 11, Description = "Wikipedia X-FEN")]
+        [TestCase("rnbnkqrb/pppppppp/8/8/8/8/PPPPPPPP/RNBNKQRB w KQkq - 0 1", Pieces.White, "White,Queen:0;White,King:6;Black,Queen:0;Black,King:6", null, null, 0, 1, Description = "Wikipedia X-FEN")]
+        [TestCase("rn2k1r1/ppp1pp1p/3p2p1/5bn1/P7/2N2B2/1PPPPP2/2BNK1RR w Gkq - 4 11", Pieces.White, "White,King:6;Black,Queen:0;Black,King:6", null, null, 4, 11, Description = "Wikipedia X-FEN")]
         public void TryParseXFen_WhenGivenValidInput_ReturnsTheExpectedValue(string subject, Pieces expectedActivePlayer, string expectedCastlingStr, int? expectedEpX, int? expectedEpY, int expectedPlyCountClock, int expectedMoveNumber)
         {
             var expectedCastling = expectedCastlingStr == null
@@ -487,8 +505,8 @@ namespace GameTheory.Tests.Games.Chess
                 : expectedCastlingStr.Split(';').Select(s =>
                 {
                     var parts = s.Split(':');
-                    return Tuple.Create((Pieces)Enum.Parse(typeof(Pieces), parts[0]), int.Parse(parts[1]));
-                }).ToList();
+                    return new KeyValuePair<Pieces, int>((Pieces)Enum.Parse(typeof(Pieces), parts[0]), int.Parse(parts[1]));
+                }).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
             var expectedEpCoordinate = expectedEpX == null || expectedEpY == null
                 ? default(Point?)
                 : new Point(expectedEpX.Value, expectedEpY.Value);
@@ -513,77 +531,97 @@ namespace GameTheory.Tests.Games.Chess
             Assert.That(moveNumber, Is.EqualTo(expectedMoveNumber));
         }
 
-        [TestCase("", 0, 8)]
-        [TestCase("//", 1, 8)]
-        [TestCase("L", 0, 10)]
-        [TestCase("Z", 0, 10)]
-        [TestCase("l", 0, 10)]
-        [TestCase("z", 0, 10)]
-        [TestCase("B", 0, 1)]
-        [TestCase("C", 0, 2)]
-        [TestCase("D", 0, 3)]
-        [TestCase("E", 0, 4)]
-        [TestCase("F", 0, 5)]
-        [TestCase("G", 0, 6)]
-        [TestCase("H", 0, 7)]
-        [TestCase("I", 0, 8)]
-        [TestCase("J", 0, 9)]
-        public void TryParseXFenCastling_WhenGivenInvalidInput_ReturnsFalse(string subject, int index, int boardWidth)
+        [TestCase("", 0, 8, 0, 7)]
+        [TestCase("//", 1, 8, 0, 7)]
+        [TestCase("L", 0, 10, 0, 9)]
+        [TestCase("Z", 0, 10, 0, 9)]
+        [TestCase("l", 0, 10, 0, 9)]
+        [TestCase("z", 0, 10, 0, 9)]
+        [TestCase("D", 0, 3, 0, 2)]
+        [TestCase("J", 0, 9, 0, 8)]
+        [TestCase("kk", 0, 8, 0, 7)]
+        [TestCase("KH", 0, 8, 0, 7)]
+        [TestCase("qa", 0, 8, 0, 7)]
+        [TestCase("B", 0, 8, 0, 7)]
+        [TestCase("C", 0, 8, 0, 7)]
+        [TestCase("b", 0, 8, 0, 7)]
+        [TestCase("c", 0, 8, 0, 7)]
+        [TestCase("BK", 0, 8, 0, 7)]
+        [TestCase("kc", 0, 8, 0, 7)]
+        public void TryParseXFenCastling_WhenGivenInvalidInput_ReturnsFalse(string subject, int index, int boardWidth, int fileQ, int fileK)
         {
+            var board = new Pieces[2, boardWidth];
+            board[0, fileQ] = Pieces.White | Pieces.Rook;
+            board[0, fileQ + 1] = Pieces.White | Pieces.King;
+            board[0, fileK] = Pieces.White | Pieces.Rook;
+            board[1, fileQ] = Pieces.Black | Pieces.Rook;
+            board[1, fileQ + 1] = Pieces.Black | Pieces.King;
+            board[1, fileK] = Pieces.Black | Pieces.Rook;
+
             var startIndex = index;
-            var result = Parser.TryParseXFenCastling(subject, ref index, new Pieces[2, boardWidth], out var actual);
+            var result = Parser.TryParseXFenCastling(subject, ref index, board, out var actual);
             Assert.That(result, Is.False);
             Assert.That(index, Is.EqualTo(startIndex));
             Assert.That(actual, Is.EqualTo(default(HashSet<Tuple<Pieces, int>>)));
         }
 
-        [TestCase("A", 8, 0, 7, "White:0")]
-        [TestCase("B", 8, 0, 7, "White:1")]
-        [TestCase("C", 8, 0, 7, "White:2")]
-        [TestCase("D", 8, 0, 7, "White:3")]
-        [TestCase("E", 8, 0, 7, "White:4")]
-        [TestCase("F", 8, 0, 7, "White:5")]
-        [TestCase("G", 8, 0, 7, "White:6")]
-        [TestCase("H", 8, 0, 7, "White:7")]
-        [TestCase("J", 10, 0, 7, "White:9")]
-        [TestCase("K", 8, 0, 7, "White:7")]
-        [TestCase("Q", 8, 0, 7, "White:0")]
-        [TestCase("K", 8, 1, 6, "White:6")]
-        [TestCase("Q", 8, 1, 6, "White:1")]
-        [TestCase("a", 8, 0, 7, "Black:0")]
-        [TestCase("b", 8, 0, 7, "Black:1")]
-        [TestCase("c", 8, 0, 7, "Black:2")]
-        [TestCase("d", 8, 0, 7, "Black:3")]
-        [TestCase("e", 8, 0, 7, "Black:4")]
-        [TestCase("f", 8, 0, 7, "Black:5")]
-        [TestCase("g", 8, 0, 7, "Black:6")]
-        [TestCase("h", 8, 0, 7, "Black:7")]
-        [TestCase("j", 10, 0, 7, "Black:9")]
-        [TestCase("k", 8, 0, 7, "Black:7")]
-        [TestCase("q", 8, 0, 7, "Black:0")]
-        [TestCase("k", 8, 1, 6, "Black:6")]
-        [TestCase("q", 8, 1, 6, "Black:1")]
-        [TestCase("AHah", 8, 0, 7, "White:0;White:7;Black:0;Black:7")]
-        [TestCase("KQkq", 8, 0, 7, "White:0;White:7;Black:0;Black:7")]
-        [TestCase("KQkq", 8, 1, 6, "White:1;White:6;Black:1;Black:6")]
-        [TestCase("KQkq", 4, 0, 3, "White:0;White:3;Black:0;Black:3")]
-        [TestCase("KQkq", 4, 1, 2, "White:1;White:2;Black:1;Black:2")]
-        [TestCase("qkQK", 8, 0, 7, "White:0;White:7;Black:0;Black:7")]
-        [TestCase("qkQK", 8, 1, 6, "White:1;White:6;Black:1;Black:6")]
-        [TestCase("qkQK", 4, 0, 3, "White:0;White:3;Black:0;Black:3")]
-        [TestCase("qkQK", 4, 1, 2, "White:1;White:2;Black:1;Black:2")]
+        [TestCase("A", 8, 0, 7, "White,Queen:0")]
+        [TestCase("B", 8, 1, 7, "White,Queen:1")]
+        [TestCase("C", 8, 0, 2, "White,King:2")]
+        [TestCase("D", 8, 0, 3, "White,King:3")]
+        [TestCase("E", 8, 0, 4, "White,King:4")]
+        [TestCase("F", 8, 0, 5, "White,King:5")]
+        [TestCase("G", 8, 0, 6, "White,King:6")]
+        [TestCase("H", 8, 0, 7, "White,King:7")]
+        [TestCase("I", 10, 0, 8, "White,King:8")]
+        [TestCase("J", 10, 0, 9, "White,King:9")]
+        [TestCase("K", 8, 0, 7, "White,King:7")]
+        [TestCase("K", 8, 0, 6, "White,King:6")]
+        [TestCase("K", 8, 1, 6, "White,King:6")]
+        [TestCase("Q", 8, 0, 7, "White,Queen:0")]
+        [TestCase("Q", 8, 1, 7, "White,Queen:1")]
+        [TestCase("Q", 8, 1, 6, "White,Queen:1")]
+        [TestCase("a", 8, 0, 7, "Black,Queen:0")]
+        [TestCase("b", 8, 1, 7, "Black,Queen:1")]
+        [TestCase("c", 8, 0, 2, "Black,King:2")]
+        [TestCase("d", 8, 0, 3, "Black,King:3")]
+        [TestCase("e", 8, 0, 4, "Black,King:4")]
+        [TestCase("f", 8, 0, 5, "Black,King:5")]
+        [TestCase("g", 8, 0, 6, "Black,King:6")]
+        [TestCase("h", 8, 0, 7, "Black,King:7")]
+        [TestCase("i", 10, 0, 8, "Black,King:8")]
+        [TestCase("j", 10, 0, 9, "Black,King:9")]
+        [TestCase("k", 8, 0, 7, "Black,King:7")]
+        [TestCase("k", 8, 0, 6, "Black,King:6")]
+        [TestCase("k", 8, 1, 6, "Black,King:6")]
+        [TestCase("q", 8, 0, 7, "Black,Queen:0")]
+        [TestCase("q", 8, 1, 7, "Black,Queen:1")]
+        [TestCase("q", 8, 1, 6, "Black,Queen:1")]
+        [TestCase("AHah", 8, 0, 7, "White,Queen:0;White,King:7;Black,Queen:0;Black,King:7")]
+        [TestCase("KQkq", 8, 0, 7, "White,Queen:0;White,King:7;Black,Queen:0;Black,King:7")]
+        [TestCase("KQkq", 8, 1, 6, "White,Queen:1;White,King:6;Black,Queen:1;Black,King:6")]
+        [TestCase("KQkq", 4, 0, 3, "White,Queen:0;White,King:3;Black,Queen:0;Black,King:3")]
+        [TestCase("KQkq", 4, 1, 2, "White,Queen:1;White,King:2;Black,Queen:1;Black,King:2")]
+        [TestCase("qkQK", 8, 0, 7, "White,Queen:0;White,King:7;Black,Queen:0;Black,King:7")]
+        [TestCase("qkQK", 8, 1, 6, "White,Queen:1;White,King:6;Black,Queen:1;Black,King:6")]
+        [TestCase("qkQK", 4, 0, 3, "White,Queen:0;White,King:3;Black,Queen:0;Black,King:3")]
+        [TestCase("qkQK", 4, 1, 2, "White,Queen:1;White,King:2;Black,Queen:1;Black,King:2")]
+        [TestCase("akQH", 8, 0, 7, "White,Queen:0;White,King:7;Black,Queen:0;Black,King:7")]
+        [TestCase("bkQG", 8, 1, 6, "White,Queen:1;White,King:6;Black,Queen:1;Black,King:6")]
         public void TryParseXFenCastling_WhenGivenValidInput_ReturnsTheExpectedValue(string subject, int boardWidth, int fileQ, int fileK, string expectedStr)
         {
             var expected = expectedStr.Split(';').Select(s =>
             {
                 var parts = s.Split(':');
-                return Tuple.Create((Pieces)Enum.Parse(typeof(Pieces), parts[0]), int.Parse(parts[1]));
-            }).ToList();
+                return new KeyValuePair<Pieces, int>((Pieces)Enum.Parse(typeof(Pieces), parts[0]), int.Parse(parts[1]));
+            }).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
 
             var board = new Pieces[2, boardWidth];
             board[0, fileQ] = Pieces.White | Pieces.Rook;
+            board[0, fileQ + 1] = Pieces.White | Pieces.King;
             board[0, fileK] = Pieces.White | Pieces.Rook;
             board[1, fileQ] = Pieces.Black | Pieces.Rook;
+            board[1, fileQ + 1] = Pieces.Black | Pieces.King;
             board[1, fileK] = Pieces.Black | Pieces.Rook;
 
             var index = 0;
