@@ -22,6 +22,10 @@ namespace GameTheory.Games.Chess
             {
                 return this.FormatBasicMove(basicMove);
             }
+            else if (move is CastleMove castle)
+            {
+                return this.FormatCastle(castle);
+            }
             else
             {
                 throw new NotImplementedException();
@@ -44,7 +48,7 @@ namespace GameTheory.Games.Chess
 
         public abstract IList<object> FormatCapture(BasicMove capture);
 
-        public abstract IList<object> FormatCastle(GameState state, int fromIndex, int toIndex);
+        public abstract IList<object> FormatCastle(CastleMove castle);
 
         public virtual IList<object> FormatEnPassantCapture(EnPassantCaptureMove enPassantCapture) => this.FormatCapture(enPassantCapture);
 

@@ -37,8 +37,13 @@ namespace GameTheory.Games.Chess
             new Point(0, 1),
             new Point(0, -1));
 
+        private static readonly ImmutableList<Pieces> Sides = ImmutableList.Create(
+            Pieces.Queen,
+            Pieces.King);
+
         private static ImmutableDictionary<Point, Variant> variants = ImmutableDictionary<Point, Variant>.Empty;
 
+        private readonly ImmutableDictionary<Pieces, int> castlingTargets;
         private readonly ImmutableDictionary<int, ImmutableList<int>> knightMoves;
 
         public Variant(int width, int height, bool? pawnsMayMoveTwoSquares = null, bool? enPassant = null)
@@ -65,6 +70,13 @@ namespace GameTheory.Games.Chess
                 Pieces.Queen);
 
             this.NotationSystem = new LongAlgebraicNotation();
+            this.castlingTargets = ImmutableDictionary.CreateRange(new Dictionary<Pieces, int>
+            {
+                [Pieces.White | Pieces.Queen] = this.GetIndexOf(2, 0),
+                [Pieces.White | Pieces.King] = this.GetIndexOf(this.Width - 2, 0),
+                [Pieces.Black | Pieces.Queen] = this.GetIndexOf(2, this.Height - 1),
+                [Pieces.Black | Pieces.King] = this.GetIndexOf(this.Width - 2, this.Height - 1),
+            });
             this.knightMoves = (from index in Enumerable.Range(0, this.Size)
                                 let coord = this.GetCoordinates(index)
                                 select new KeyValuePair<int, ImmutableList<int>>(
@@ -175,7 +187,7 @@ namespace GameTheory.Games.Chess
         /// <returns>The corresponding index.</returns>
         public int GetIndexOf(int x, int y) => y * this.Width + x;
 
-        protected internal IEnumerable<Move> GenerateAllMoves(GameState state)
+        protected internal IEnumerable<Move> GenerateAllMoves(GameState state, bool onlyCaptures = false)
         {
             var board = state.Board;
             var activeColor = state.ActiveColor;
@@ -197,7 +209,7 @@ namespace GameTheory.Games.Chess
                         // Move
                         targetY = y + pawnDirection;
                         var moveTarget = this.GetIndexOf(x, targetY);
-                        if (board[moveTarget] == Pieces.None)
+                        if (!onlyCaptures && board[moveTarget] == Pieces.None)
                         {
                             // Move and promote
                             if (targetY == promotionY)
@@ -263,9 +275,13 @@ namespace GameTheory.Games.Chess
                     case Pieces.Knight:
                         foreach (var target in this.knightMoves[i])
                         {
-                            if ((board[target] & activeColor) == Pieces.None)
+                            var targetValue = board[target];
+                            if ((targetValue & activeColor) == Pieces.None)
                             {
-                                yield return new BasicMove(state, i, target);
+                                if (!onlyCaptures || targetValue != Pieces.None)
+                                {
+                                    yield return new BasicMove(state, i, target);
+                                }
                             }
                         }
 
@@ -281,6 +297,60 @@ namespace GameTheory.Games.Chess
 
                     case Pieces.King:
                         isKing = true;
+
+                        if (!onlyCaptures && state.Castling.Count > 0)
+                        {
+                            foreach (var side in Variant.Sides)
+                            {
+                                var castle = side | activeColor;
+                                if (!state.Castling.TryGetValue(castle, out var rookX))
+                                {
+                                    continue;
+                                }
+
+                                var target = this.castlingTargets[castle];
+                                var rookIndex = this.GetIndexOf(rookX, y);
+                                var rookTarget = target + (side == Pieces.Queen ? 1 : -1);
+
+                                var minCheck = Math.Min(i, target);
+                                var maxCheck = Math.Max(i, target);
+                                var minClear = Math.Min(minCheck, Math.Min(rookIndex, rookTarget));
+                                var maxClear = Math.Max(maxCheck, Math.Max(rookIndex, rookTarget));
+
+                                var clear = true;
+                                for (var t = minClear; t <= maxClear; t++)
+                                {
+                                    if (t != i && t != rookIndex && state.Board[t] != Pieces.None)
+                                    {
+                                        clear = false;
+                                        break;
+                                    }
+                                    else if (t >= minCheck && t <= maxCheck)
+                                    {
+                                        var check = this.GenerateAllMoves(
+                                            state.With(
+                                                activePlayer: state.Players.GetNextPlayer(state.ActivePlayer),
+                                                board: board
+                                                    .SetItem(t, piece)
+                                                    .SetItem(i, Pieces.None)),
+                                            onlyCaptures: true)
+                                            .OfType<BasicMove>()
+                                            .Where(basicMove => basicMove.ToIndex == t);
+                                        if (check.Any())
+                                        {
+                                            clear = false;
+                                            break;
+                                        }
+                                    }
+                                }
+
+                                if (clear)
+                                {
+                                    yield return new CastleMove(state, side, i, target, rookIndex, rookTarget);
+                                }
+                            }
+                        }
+
                         goto case Pieces.Queen;
 
                     case Pieces.Queen:
@@ -307,7 +377,10 @@ namespace GameTheory.Games.Chess
                         var targetValue = board[moveTarget];
                         if ((targetValue & activeColor) == Pieces.None)
                         {
-                            yield return new BasicMove(state, i, moveTarget);
+                            if (!onlyCaptures || targetValue != Pieces.None)
+                            {
+                                yield return new BasicMove(state, i, moveTarget);
+                            }
                         }
 
                         if (isKing || targetValue != Pieces.None)

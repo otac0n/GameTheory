@@ -67,7 +67,8 @@ namespace GameTheory.Games.Chess.Notation
                 this.FormatSquare(capture.GameState, capture.ToIndex));
 
         /// <inheritdoc />
-        public override IList<object> FormatCastle(GameState state, int fromIndex, int toIndex) => throw new System.NotImplementedException();
+        public override IList<object> FormatCastle(CastleMove castle) =>
+            new[] { (castle.CastlingSide & PieceMasks.Piece) == Pieces.King ? "O-O" : "O-O-O" };
 
         /// <inheritdoc />
         public override IList<object> FormatEnPassantCapture(EnPassantCaptureMove enPassantCapture) =>

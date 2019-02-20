@@ -125,6 +125,7 @@
     <Compile Include="Games\CenturySpiceRoad\Spice.cs" />
     <Compile Include="Games\CenturySpiceRoad\Token.cs" />
     <Compile Include="Games\Chess\Moves\BasicMove.cs" />
+    <Compile Include="Games\Chess\Moves\CastleMove.cs" />
     <Compile Include="Games\Chess\Moves\EnPassantCaptureMove.cs" />
     <Compile Include="Games\Chess\Moves\PromotionMove.cs" />
     <Compile Include="Games\Chess\Moves\TwoSquareMove.cs" />
