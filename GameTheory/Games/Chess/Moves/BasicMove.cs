@@ -23,6 +23,7 @@ namespace GameTheory.Games.Chess.Moves
                 fromIndex,
                 toIndex,
                 Move.Advance(state.With(
+                    plyCountClock: (state.Board[fromIndex] & PieceMasks.Piece) == Pieces.Pawn ? 0 : state.PlyCountClock + 1,
                     board: state.Board
                         .SetItem(toIndex, state.Board[fromIndex])
                         .SetItem(fromIndex, Pieces.None))))

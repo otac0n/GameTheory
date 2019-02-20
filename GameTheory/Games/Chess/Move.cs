@@ -38,6 +38,9 @@ namespace GameTheory.Games.Chess
                 activePlayer: state.Players.GetNextPlayer(state.ActivePlayer));
         }
 
+        /// <inheritdoc />
+        public sealed override string ToString() => string.Concat(this.FlattenFormatTokens());
+
         internal abstract GameState Apply(GameState state);
     }
 }

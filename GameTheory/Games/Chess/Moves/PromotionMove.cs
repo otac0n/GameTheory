@@ -22,6 +22,7 @@ namespace GameTheory.Games.Chess.Moves
                 fromIndex,
                 toIndex,
                 Move.Advance(state.With(
+                    plyCountClock: 0,
                     board: state.Board
                         .SetItem(toIndex, promotionPiece)
                         .SetItem(fromIndex, Pieces.None))))

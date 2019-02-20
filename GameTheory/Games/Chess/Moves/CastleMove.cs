@@ -24,6 +24,7 @@ namespace GameTheory.Games.Chess.Moves
             this.CastlingSide = castlingSide;
             this.resultingState = Move.Advance(
                 state.With(
+                    plyCountClock: state.PlyCountClock + 1,
                     board: state.Board
                         .SetItem(toIndex, state.Board[fromIndex])
                         .SetItem(fromIndex, Pieces.None)
