@@ -1,0 +1,33 @@
+// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+
+namespace GameTheory.Tests.Games.Chess
+{
+    using System.Linq;
+    using GameTheory.Games.Chess;
+    using GameTheory.Games.Chess.Moves;
+    using NUnit.Framework;
+
+    public class GameStateTests
+    {
+        [TestCase("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", Description = "Starting Position in FEN and X-FEN")]
+        [TestCase("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w HAha - 0 1", Description = "Starting Position in Shredder-FEN and X-FEN")]
+        [TestCase("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w AHah - 0 1", Description = "Starting Position in Shredder-FEN and X-FEN (castling reversed)")]
+        [TestCase("rnbnkqrb/pppppppp/8/8/8/8/PPPPPPPP/RNBNKQRB w KQkq - 0 1", Description = "Wikipedia X-Fen Example 1")]
+        [TestCase("rn2k1r1/ppp1pp1p/3p2p1/5bn1/P7/2N2B2/1PPPPP2/2BNK1RR w Gkq - 4 11", Description = "Wikipedia X-Fen Example 2")]
+        [TestCase("rqkr/pppp/4/PPPP/RQKR w KQkq - 0 1", Description = "Silverman 4x5 X-FEN")]
+        [TestCase("rqkr/pppp/4/PPPP/RQKR w ADad - 0 1", Description = "Silverman 4x5 Shredder-FEN and X-FEN")]
+        [TestCase("rnbqk/ppppp/5/PPPPP/RNBQK w - - 0 1", Description = "Gardner 5x5")]
+        [TestCase("r6nbqkbn6r/pppppppppppppppppppp/20/20/20/20/PPPPPPPPPPPPPPPPPPPP/R6NBQKBN6R w ATat - 0 1", Description = "Large Board Shredder-FEN")]
+        public void ctor_WhenGivenAValidFENPosition_ResultsInAValidPosition(string position)
+        {
+            var state = new GameState(position);
+        }
+
+        [TestCase("r3k2r/8/8/8/8/8/4p3/R3K2R w KQkq - 0 1")]
+        public void GetAvailableMoves_WhenCastlingWouldResultInCheck_DoesNotAllowCastling(string position)
+        {
+            var state = new GameState(position);
+            Assert.That(state.GetAvailableMoves().OfType<CastleMove>(), Is.Empty);
+        }
+    }
+}
