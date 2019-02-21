@@ -153,13 +153,13 @@ namespace GameTheory.Games.Chess
 
             int comp;
 
-            // TODO: Compare castling rights.
             if ((comp = this.ActiveColor.CompareTo(state.ActiveColor)) != 0 ||
                 (comp = this.MoveNumber.CompareTo(state.MoveNumber)) != 0 ||
                 (comp = this.PlyCountClock.CompareTo(state.PlyCountClock)) != 0 ||
                 (comp = this.EnPassantIndex.CompareTo(state.EnPassantIndex)) != 0 ||
                 (comp = CompareUtilities.CompareEnumLists(this.Board, state.Board)) != 0 ||
-                (comp = CompareUtilities.CompareLists(this.Players, state.Players)) != 0)
+                (comp = CompareUtilities.CompareLists(this.Players, state.Players)) != 0 ||
+                (comp = CompareUtilities.CompareEnumKeyDictionaries(this.Castling, state.Castling)) != 0)
             {
                 return comp;
             }

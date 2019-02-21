@@ -1,4 +1,4 @@
-﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory
 {
@@ -46,6 +46,61 @@ namespace GameTheory
                 }
 
                 keyComparer = keyComparer ?? Comparer<TKey>.Default;
+                valueComparer = valueComparer ?? Comparer<TValue>.Default;
+
+                var otherKeys = new List<TKey>(right.Count);
+                otherKeys.AddRange(right.Keys);
+                otherKeys.Sort(keyComparer);
+
+                var i = 0;
+                foreach (var a in left.Keys.OrderBy(k => k, keyComparer))
+                {
+                    var b = otherKeys[i++];
+
+                    if ((comp = keyComparer.Compare(a, b)) != 0 ||
+                        (comp = valueComparer.Compare(left[a], right[b])) != 0)
+                    {
+                        return comp;
+                    }
+                }
+            }
+
+            return comp;
+        }
+
+        /// <summary>
+        /// Compares two dictionaries of comparable keys and elements.
+        /// </summary>
+        /// <typeparam name="TKey">The type of keys in each dictionary.</typeparam>
+        /// <typeparam name="TValue">The type of values in each dictionary.</typeparam>
+        /// <param name="left">The first dictionary.</param>
+        /// <param name="right">The second dictionary.</param>
+        /// <param name="valueComparer">An optional comparer to use when evaluating values.</param>
+        /// <returns>A value indicating whether the dictionaries are the same size and contain the same keys and elements.</returns>
+        public static int CompareEnumKeyDictionaries<TKey, TValue>(ImmutableDictionary<TKey, TValue> left, ImmutableDictionary<TKey, TValue> right, IComparer<TValue> valueComparer = null)
+            where TKey : IComparable
+            where TValue : IComparable<TValue>
+        {
+            var comp = 0;
+
+            if (!object.ReferenceEquals(left, right))
+            {
+                if (object.ReferenceEquals(left, null))
+                {
+                    return -1;
+                }
+
+                if (object.ReferenceEquals(right, null))
+                {
+                    return 1;
+                }
+
+                if ((comp = left.Count.CompareTo(right.Count)) != 0)
+                {
+                    return comp;
+                }
+
+                var keyComparer = EnumComparer<TKey>.Default;
                 valueComparer = valueComparer ?? Comparer<TValue>.Default;
 
                 var otherKeys = new List<TKey>(right.Count);
