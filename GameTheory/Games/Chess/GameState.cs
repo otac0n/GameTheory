@@ -7,7 +7,7 @@ namespace GameTheory.Games.Chess
     using System.Collections.Immutable;
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
-    using System.Threading;
+    using GameTheory.Games.Chess.Moves;
 
     /// <summary>
     /// Represents the current state in a game of Chess.
@@ -201,7 +201,26 @@ namespace GameTheory.Games.Chess
         }
 
         /// <inheritdoc/>
-        public IReadOnlyCollection<PlayerToken> GetWinners() => ImmutableList<PlayerToken>.Empty;
+        public IReadOnlyCollection<PlayerToken> GetWinners()
+        {
+            if (!this.GetAvailableMoves().Any())
+            {
+                var king = this.ActiveColor | Pieces.King;
+                var kingIndex = Enumerable.Range(0, this.Board.Length).First(i => this.Board[i] == king);
+                var check = this.Variant.GenerateAllMoves(
+                    this.With(
+                        activeColor: this.ActiveColor == Pieces.White ? Pieces.Black : Pieces.White),
+                    onlyCaptures: true)
+                    .OfType<BasicMove>()
+                    .Where(basicMove => basicMove.ToIndex == kingIndex);
+                if (check.Any())
+                {
+                    return ImmutableList.Create(this.ActiveColor == Pieces.White ? this.Players[1] : this.Players[0]);
+                }
+            }
+
+            return ImmutableList<PlayerToken>.Empty;
+        }
 
         /// <inheritdoc/>
         public IGameState<Move> MakeMove(Move move)
