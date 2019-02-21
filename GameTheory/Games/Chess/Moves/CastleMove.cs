@@ -2,6 +2,8 @@
 
 namespace GameTheory.Games.Chess.Moves
 {
+    using System.Linq;
+
     /// <summary>
     /// Represents a move to castle the king.
     /// </summary>
@@ -25,6 +27,7 @@ namespace GameTheory.Games.Chess.Moves
             this.resultingState = Move.Advance(
                 state.With(
                     plyCountClock: state.PlyCountClock + 1,
+                    castling: state.Castling.RemoveRange(state.Castling.Keys.Where(k => (k & PieceMasks.Colors) == state.ActiveColor)),
                     board: state.Board
                         .SetItem(toIndex, state.Board[fromIndex])
                         .SetItem(fromIndex, Pieces.None)

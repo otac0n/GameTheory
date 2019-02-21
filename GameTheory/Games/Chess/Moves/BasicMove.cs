@@ -2,7 +2,7 @@
 
 namespace GameTheory.Games.Chess.Moves
 {
-    using System.Collections.Generic;
+    using System.Linq;
 
     /// <summary>
     /// Represents a move where a <see cref="Pieces">chessman</see> moves to an open square or a square occupied by an opposing pice.
@@ -24,6 +24,9 @@ namespace GameTheory.Games.Chess.Moves
                 toIndex,
                 Move.Advance(state.With(
                     plyCountClock: (state.Board[fromIndex] & PieceMasks.Piece) == Pieces.Pawn ? 0 : state.PlyCountClock + 1,
+                    castling: (state.Board[fromIndex] & PieceMasks.Piece) == Pieces.King
+                        ? state.Castling.RemoveRange(state.Castling.Keys.Where(k => (k & PieceMasks.Colors) == state.ActiveColor))
+                        : state.Castling.RemoveRange(state.Castling.Where(c => c.Value == toIndex || c.Value == fromIndex).Select(c => c.Key)),
                     board: state.Board
                         .SetItem(toIndex, state.Board[fromIndex])
                         .SetItem(fromIndex, Pieces.None))))

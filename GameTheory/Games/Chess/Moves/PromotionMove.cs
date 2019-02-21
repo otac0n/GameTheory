@@ -1,9 +1,9 @@
 // Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
-using System.Collections.Generic;
-
 namespace GameTheory.Games.Chess.Moves
 {
+    using System.Linq;
+
     /// <summary>
     /// Represents a move where a <see cref="Pieces.Pawn">pawn</see> is promoted.
     /// </summary>
@@ -23,6 +23,7 @@ namespace GameTheory.Games.Chess.Moves
                 toIndex,
                 Move.Advance(state.With(
                     plyCountClock: 0,
+                    castling: state.Castling.RemoveRange(state.Castling.Keys.Where(k => state.Castling[k] == toIndex)),
                     board: state.Board
                         .SetItem(toIndex, promotionPiece)
                         .SetItem(fromIndex, Pieces.None))))
