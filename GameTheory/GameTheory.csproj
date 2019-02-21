@@ -470,6 +470,7 @@
     <Compile Include="Strategies\CompositeStrategy.cs" />
     <Compile Include="Strategies\ImmediateWinStrategy.cs" />
     <Compile Include="Strategies\NullStrategy.cs" />
+    <Compile Include="CachingUtils.cs" />
     <Compile Include="Combinatorics.cs" />
     <Compile Include="CompareUtilities.cs" />
     <CodeAnalysisDictionary Include="..\CustomDictionary.xml">

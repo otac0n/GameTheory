@@ -14,6 +14,9 @@ namespace GameTheory.Games.Chess
     /// </summary>
     public sealed class GameState : IGameState<Move>
     {
+        private WeakReference<ImmutableList<Move>> allMovesCache;
+        private WeakReference<ImmutableList<Move>> availableMovesCache;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="GameState"/> class.
         /// </summary>
@@ -168,9 +171,7 @@ namespace GameTheory.Games.Chess
         /// <inheritdoc/>
         public IReadOnlyList<Move> GetAvailableMoves()
         {
-            var moves = this.Variant.GenerateMoves(this);
-
-            return moves.ToImmutableList();
+            return CachingUtils.WeakRefernceCache(ref this.availableMovesCache, () => this.Variant.GenerateMoves(this).ToImmutableList());
         }
 
         /// <inheritdoc/>
@@ -238,7 +239,7 @@ namespace GameTheory.Games.Chess
 
         internal ImmutableList<Move> GenerateAllMoves()
         {
-            return this.Variant.GenerateAllMoves(this).ToImmutableList();
+            return CachingUtils.WeakRefernceCache(ref this.allMovesCache, () => this.Variant.GenerateAllMoves(this).ToImmutableList());
         }
 
         internal GameState With(
