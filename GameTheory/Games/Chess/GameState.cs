@@ -14,8 +14,6 @@ namespace GameTheory.Games.Chess
     /// </summary>
     public sealed class GameState : IGameState<Move>
     {
-        private ImmutableList<Move> allMovesCache;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="GameState"/> class.
         /// </summary>
@@ -240,7 +238,7 @@ namespace GameTheory.Games.Chess
 
         internal ImmutableList<Move> GenerateAllMoves()
         {
-            return this.allMovesCache ?? (this.allMovesCache = this.Variant.GenerateAllMoves(this).ToImmutableList());
+            return this.Variant.GenerateAllMoves(this).ToImmutableList();
         }
 
         internal GameState With(

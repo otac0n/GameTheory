@@ -449,6 +449,7 @@
     <Compile Include="Players\MaximizingPlayer\ResultScore.cs" />
     <Compile Include="Players\MaximizingPlayer\ResultScoringMetric.cs" />
     <Compile Include="Players\CenturySpiceRoadMaximizingPlayer.cs" />
+    <Compile Include="Players\ChessMaximizingPlayer.cs" />
     <Compile Include="Players\DraughtsMaximizingPlayer.cs" />
     <Compile Include="Players\ErgoMaximizingPlayer.cs" />
     <Compile Include="Players\FiveTribesMaximizingPlayer.cs" />
