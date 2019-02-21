@@ -19,12 +19,13 @@ namespace GameTheory.Games.Chess.Moves
                 state,
                 fromIndex,
                 toIndex,
-                Move.Advance(state.With(
+                state.With(
+                    activeColor: state.ActiveColor == Pieces.White ? Pieces.Black : Pieces.White,
                     plyCountClock: 0,
                     board: state.Board
                         .SetItem(toIndex, state.Board[fromIndex])
                         .SetItem(fromIndex, Pieces.None),
-                    enPassantIndex: enPassantIndex)))
+                    enPassantIndex: enPassantIndex))
         {
         }
     }

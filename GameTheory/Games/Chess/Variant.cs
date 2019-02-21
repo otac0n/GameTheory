@@ -298,18 +298,18 @@ namespace GameTheory.Games.Chess
                     case Pieces.King:
                         isKing = true;
 
-                        if (!onlyCaptures && state.Castling.Count > 0)
+                        if (!onlyCaptures)
                         {
                             foreach (var side in Variant.Sides)
                             {
                                 var castle = side | activeColor;
-                                if (!state.Castling.TryGetValue(castle, out var rookX))
+                                var rookIndex = state.Castling[GameState.GetCastlingIndex(castle)];
+                                if (rookIndex < 0)
                                 {
                                     continue;
                                 }
 
                                 var target = this.castlingTargets[castle];
-                                var rookIndex = this.GetIndexOf(rookX, y);
                                 var rookTarget = target + (side == Pieces.Queen ? 1 : -1);
 
                                 var minCheck = Math.Min(i, target);

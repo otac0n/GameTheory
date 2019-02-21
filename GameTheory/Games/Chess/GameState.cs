@@ -14,6 +14,8 @@ namespace GameTheory.Games.Chess
     /// </summary>
     public sealed class GameState : IGameState<Move>
     {
+        private static readonly ImmutableArray<int> EmptyCastling = ImmutableArray.Create(-1, -1, -1, -1);
+
         private WeakReference<ImmutableList<Move>> allMovesCache;
         private WeakReference<ImmutableList<Move>> availableMovesCache;
 
@@ -56,8 +58,8 @@ namespace GameTheory.Games.Chess
                 ? default(int?)
                 : this.Variant.GetIndexOf(epCoordinate.Value.X, epCoordinate.Value.Y);
             this.Castling = castling == null
-                ? ImmutableDictionary<Pieces, int>.Empty
-                : castling.ToImmutableDictionary();
+                ? EmptyCastling
+                : castling.Aggregate(EmptyCastling, (c, n) => c.SetItem(GetCastlingIndex(n.Key), this.Variant.GetIndexOf(n.Value, (n.Key & PieceMasks.Colors) == Pieces.White ? 0 : this.Variant.Height - 1)));
         }
 
         private GameState(
@@ -68,7 +70,7 @@ namespace GameTheory.Games.Chess
             int plyCountClock,
             int moveNumber,
             int? enPassantIndex,
-            ImmutableDictionary<Pieces, int> castling)
+            ImmutableArray<int> castling)
         {
             this.Players = players;
             this.Variant = variant;
@@ -101,7 +103,7 @@ namespace GameTheory.Games.Chess
         /// <summary>
         /// Gets the castling rights.
         /// </summary>
-        public ImmutableDictionary<Pieces, int> Castling { get; }
+        public ImmutableArray<int> Castling { get; }
 
         /// <summary>
         /// Gets the index of the current en passant capture square.
@@ -133,6 +135,78 @@ namespace GameTheory.Games.Chess
         /// </summary>
         public Variant Variant { get; }
 
+        /// <summary>
+        /// Gets the index in the <see cref="Castling"/> collection corresponding to a specific color's specific side.
+        /// </summary>
+        /// <param name="pieces">The color and side of the board.</param>
+        /// <returns>The index in the <see cref="Castling"/> collection.</returns>
+        public static int GetCastlingIndex(Pieces pieces)
+        {
+            switch (pieces)
+            {
+                case Pieces.White | Pieces.Queen:
+                    return 0;
+
+                case Pieces.White | Pieces.King:
+                    return 1;
+
+                case Pieces.Black | Pieces.Queen:
+                    return 2;
+
+                case Pieces.Black | Pieces.King:
+                    return 3;
+
+                default:
+                    return -1;
+            }
+        }
+
+        public static ImmutableArray<int> RemoveCastling(ImmutableArray<int> castling, Pieces color)
+        {
+            var ix = GameState.GetCastlingIndex(color | Pieces.Queen);
+
+            if (castling[ix] > 0)
+            {
+                castling = castling.SetItem(ix, -1);
+            }
+
+            ix++;
+
+            if (castling[ix] > 0)
+            {
+                castling = castling.SetItem(ix, -1);
+            }
+
+            return castling;
+        }
+
+        public static ImmutableArray<int> RemoveCastling(ImmutableArray<int> castling, int index)
+        {
+            for (var i = 0; i < 4; i++)
+            {
+                if (castling[i] == index)
+                {
+                    return castling.SetItem(i, -1);
+                }
+            }
+
+            return castling;
+        }
+
+        public static ImmutableArray<int> RemoveCastling(ImmutableArray<int> castling, int index1, int index2)
+        {
+            for (var i = 0; i < 4; i++)
+            {
+                var value = castling[i];
+                if (value == index1 || value == index2)
+                {
+                    castling = castling.SetItem(i, -1);
+                }
+            }
+
+            return castling;
+        }
+
         /// <inheritdoc/>
         public int CompareTo(IGameState<Move> other)
         {
@@ -160,7 +234,7 @@ namespace GameTheory.Games.Chess
                 (comp = this.EnPassantIndex.CompareTo(state.EnPassantIndex)) != 0 ||
                 (comp = CompareUtilities.CompareEnumLists(this.Board, state.Board)) != 0 ||
                 (comp = CompareUtilities.CompareLists(this.Players, state.Players)) != 0 ||
-                (comp = CompareUtilities.CompareEnumKeyDictionaries(this.Castling, state.Castling)) != 0)
+                (comp = CompareUtilities.CompareValueLists(this.Castling, state.Castling)) != 0)
             {
                 return comp;
             }
@@ -248,7 +322,7 @@ namespace GameTheory.Games.Chess
             int? plyCountClock = null,
             int? moveNumber = null,
             int? enPassantIndex = null,
-            ImmutableDictionary<Pieces, int> castling = null)
+            ImmutableArray<int>? castling = null)
         {
             return new GameState(
                 players: this.Players,

@@ -2,8 +2,6 @@
 
 namespace GameTheory.Games.Chess.Moves
 {
-    using System.Linq;
-
     /// <summary>
     /// Represents a move where a <see cref="Pieces.Pawn">pawn</see> is promoted.
     /// </summary>
@@ -21,12 +19,13 @@ namespace GameTheory.Games.Chess.Moves
                 state,
                 fromIndex,
                 toIndex,
-                Move.Advance(state.With(
+                state.With(
+                    activeColor: state.ActiveColor == Pieces.White ? Pieces.Black : Pieces.White,
                     plyCountClock: 0,
-                    castling: state.Castling.RemoveRange(state.Castling.Keys.Where(k => state.Castling[k] == toIndex)),
+                    castling: GameState.RemoveCastling(state.Castling, toIndex),
                     board: state.Board
                         .SetItem(toIndex, promotionPiece)
-                        .SetItem(fromIndex, Pieces.None))))
+                        .SetItem(fromIndex, Pieces.None)))
         {
             this.PromotionPiece = promotionPiece;
         }

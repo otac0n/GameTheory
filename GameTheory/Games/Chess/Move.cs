@@ -26,18 +26,6 @@ namespace GameTheory.Games.Chess
 
         internal GameState GameState { get; }
 
-        /// <summary>
-        /// Advances the game to the next player and the next phase if necessary.
-        /// </summary>
-        /// <param name="state">The <see cref="GameState"/> to advance.</param>
-        /// <returns>The updated state with the next player active.</returns>
-        public static GameState Advance(GameState state)
-        {
-            return state.With(
-                enPassantIndex: state.EnPassantIndex, // maintain en passant
-                activeColor: state.ActiveColor == Pieces.White ? Pieces.Black : Pieces.White);
-        }
-
         /// <inheritdoc />
         public sealed override string ToString() => string.Concat(this.FlattenFormatTokens());
 
