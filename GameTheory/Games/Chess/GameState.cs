@@ -47,7 +47,7 @@ namespace GameTheory.Games.Chess
             this.Variant = Variant.Create(
                 width: board.GetLength(0),
                 height: board.GetLength(1));
-            this.ActivePlayer = this.Players[activePlayer == Pieces.White ? 0 : 1];
+            this.ActiveColor = Pieces.White;
             this.Board = ImmutableArray.CreateRange(board.Cast<Pieces>());
             this.PlyCountClock = plyCountClock;
             this.MoveNumber = moveNumber;
@@ -62,7 +62,7 @@ namespace GameTheory.Games.Chess
         private GameState(
             ImmutableArray<PlayerToken> players,
             Variant variant,
-            PlayerToken activePlayer,
+            Pieces activeColor,
             ImmutableArray<Pieces> board,
             int plyCountClock,
             int moveNumber,
@@ -71,7 +71,7 @@ namespace GameTheory.Games.Chess
         {
             this.Players = players;
             this.Variant = variant;
-            this.ActivePlayer = activePlayer;
+            this.ActiveColor = activeColor;
             this.Board = board;
             this.PlyCountClock = plyCountClock;
             this.MoveNumber = moveNumber;
@@ -85,12 +85,12 @@ namespace GameTheory.Games.Chess
         /// <value>
         /// One of <see cref="Pieces.White"/> or <see cref="Pieces.Black"/>.
         /// </value>
-        public Pieces ActiveColor => this.ActivePlayer == this.Players[0] ? Pieces.White : Pieces.Black;
+        public Pieces ActiveColor { get; }
 
         /// <summary>
         /// Gets the active player.
         /// </summary>
-        public PlayerToken ActivePlayer { get; }
+        public PlayerToken ActivePlayer => this.Players[this.ActiveColor == Pieces.White ? 0 : 1];
 
         /// <summary>
         /// Gets the board.
@@ -154,7 +154,7 @@ namespace GameTheory.Games.Chess
             int comp;
 
             // TODO: Compare castling rights.
-            if ((comp = this.ActivePlayer.CompareTo(state.ActivePlayer)) != 0 ||
+            if ((comp = this.ActiveColor.CompareTo(state.ActiveColor)) != 0 ||
                 (comp = this.MoveNumber.CompareTo(state.MoveNumber)) != 0 ||
                 (comp = this.PlyCountClock.CompareTo(state.PlyCountClock)) != 0 ||
                 (comp = this.EnPassantIndex.CompareTo(state.EnPassantIndex)) != 0 ||
@@ -225,7 +225,7 @@ namespace GameTheory.Games.Chess
         }
 
         internal GameState With(
-            PlayerToken activePlayer = null,
+            Pieces? activeColor = null,
             ImmutableArray<Pieces>? board = null,
             int? plyCountClock = null,
             int? moveNumber = null,
@@ -235,7 +235,7 @@ namespace GameTheory.Games.Chess
             return new GameState(
                 players: this.Players,
                 variant: this.Variant,
-                activePlayer: activePlayer ?? this.ActivePlayer,
+                activeColor: activeColor ?? this.ActiveColor,
                 board: board ?? this.Board,
                 plyCountClock: plyCountClock ?? this.PlyCountClock,
                 moveNumber: moveNumber ?? this.MoveNumber,

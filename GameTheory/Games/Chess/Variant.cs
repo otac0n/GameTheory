@@ -329,7 +329,7 @@ namespace GameTheory.Games.Chess
                                     {
                                         var check = this.GenerateAllMoves(
                                             state.With(
-                                                activePlayer: state.Players.GetNextPlayer(state.ActivePlayer),
+                                                activeColor: activeColor == Pieces.White ? Pieces.Black : Pieces.White,
                                                 board: board
                                                     .SetItem(t, piece)
                                                     .SetItem(i, Pieces.None)),

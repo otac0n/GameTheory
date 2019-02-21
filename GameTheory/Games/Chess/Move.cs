@@ -35,7 +35,7 @@ namespace GameTheory.Games.Chess
         {
             return state.With(
                 enPassantIndex: state.EnPassantIndex, // maintain en passant
-                activePlayer: state.Players.GetNextPlayer(state.ActivePlayer));
+                activeColor: state.ActiveColor == Pieces.White ? Pieces.Black : Pieces.White);
         }
 
         /// <inheritdoc />
