@@ -313,7 +313,7 @@ namespace GameTheory.Games.Chess
 
         internal ImmutableList<Move> GenerateAllMoves()
         {
-            return CachingUtils.WeakRefernceCache(ref this.allMovesCache, () => this.Variant.GenerateAllMoves(this).ToImmutableList());
+            return CachingUtils.WeakRefernceCache(ref this.allMovesCache, () => this.Variant.GenerateAllMoves(this));
         }
 
         internal GameState With(

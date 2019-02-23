@@ -187,8 +187,9 @@ namespace GameTheory.Games.Chess
         /// <returns>The corresponding index.</returns>
         public int GetIndexOf(int x, int y) => y * this.Width + x;
 
-        protected internal IEnumerable<Move> GenerateAllMoves(GameState state, bool onlyCaptures = false)
+        protected internal ImmutableList<Move> GenerateAllMoves(GameState state, bool onlyCaptures = false)
         {
+            var builder = ImmutableList.CreateBuilder<Move>();
             var board = state.Board;
             var activeColor = state.ActiveColor;
             var pawnDirection = activeColor == Pieces.White ? 1 : -1;
@@ -216,12 +217,12 @@ namespace GameTheory.Games.Chess
                             {
                                 foreach (var promotable in this.PromotablePieces)
                                 {
-                                    yield return new PromotionMove(state, i, moveTarget, promotable | activeColor);
+                                    builder.Add(new PromotionMove(state, i, moveTarget, promotable | activeColor));
                                 }
                             }
                             else
                             {
-                                yield return new BasicMove(state, i, moveTarget);
+                                builder.Add(new BasicMove(state, i, moveTarget));
 
                                 // Move 2 sqaures
                                 if (y == pawnStartingY && this.PawnsMayMoveTwoSquares)
@@ -229,9 +230,9 @@ namespace GameTheory.Games.Chess
                                     var moveTwoTarget = this.GetIndexOf(x, targetY + pawnDirection);
                                     if (board[moveTwoTarget] == Pieces.None)
                                     {
-                                        yield return this.EnPassant
+                                        builder.Add(this.EnPassant
                                             ? new TwoSquareMove(state, i, moveTwoTarget, moveTarget)
-                                            : new BasicMove(state, i, moveTwoTarget);
+                                            : new BasicMove(state, i, moveTwoTarget));
                                     }
                                 }
                             }
@@ -251,7 +252,7 @@ namespace GameTheory.Games.Chess
                             {
                                 if (state.EnPassantIndex == captureTarget)
                                 {
-                                    yield return new EnPassantCaptureMove(state, i, captureTarget, this.GetIndexOf(targetX, y));
+                                    builder.Add(new EnPassantCaptureMove(state, i, captureTarget, this.GetIndexOf(targetX, y)));
                                 }
                             }
                             else if ((targetValue & activeColor) == Pieces.None)
@@ -260,12 +261,12 @@ namespace GameTheory.Games.Chess
                                 {
                                     foreach (var promotable in this.PromotablePieces)
                                     {
-                                        yield return new PromotionMove(state, i, captureTarget, promotable | activeColor);
+                                        builder.Add(new PromotionMove(state, i, captureTarget, promotable | activeColor));
                                     }
                                 }
                                 else
                                 {
-                                    yield return new BasicMove(state, i, captureTarget);
+                                    builder.Add(new BasicMove(state, i, captureTarget));
                                 }
                             }
                         }
@@ -280,7 +281,7 @@ namespace GameTheory.Games.Chess
                             {
                                 if (!onlyCaptures || targetValue != Pieces.None)
                                 {
-                                    yield return new BasicMove(state, i, target);
+                                    builder.Add(new BasicMove(state, i, target));
                                 }
                             }
                         }
@@ -346,7 +347,7 @@ namespace GameTheory.Games.Chess
 
                                 if (clear)
                                 {
-                                    yield return new CastleMove(state, side, i, target, rookIndex, rookTarget);
+                                    builder.Add(new CastleMove(state, side, i, target, rookIndex, rookTarget));
                                 }
                             }
                         }
@@ -379,7 +380,7 @@ namespace GameTheory.Games.Chess
                         {
                             if (!onlyCaptures || targetValue != Pieces.None)
                             {
-                                yield return new BasicMove(state, i, moveTarget);
+                                builder.Add(new BasicMove(state, i, moveTarget));
                             }
                         }
 
@@ -390,6 +391,8 @@ namespace GameTheory.Games.Chess
                     }
                 }
             }
+
+            return builder.ToImmutable();
         }
 
         protected internal IEnumerable<Move> GenerateMoves(GameState state)
@@ -401,8 +404,20 @@ namespace GameTheory.Games.Chess
             foreach (var move in allMoves)
             {
                 var result = move.Apply(state);
-                var kingChops = result.GenerateAllMoves().OfType<BasicMove>().Where(basicMove => result.Board[basicMove.ToIndex] == activeKing);
-                if (!kingChops.Any())
+                var kingChop = false;
+                foreach (var response in result.GenerateAllMoves())
+                {
+                    if (response is BasicMove basicMove)
+                    {
+                        if (result.Board[basicMove.ToIndex] == activeKing)
+                        {
+                            kingChop = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (!kingChop)
                 {
                     yield return move;
                 }

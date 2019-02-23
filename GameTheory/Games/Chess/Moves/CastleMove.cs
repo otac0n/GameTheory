@@ -22,15 +22,16 @@ namespace GameTheory.Games.Chess.Moves
             : base(state)
         {
             this.CastlingSide = castlingSide;
+            var newBoard = state.Board.ToBuilder();
+            newBoard[toIndex] = state.Board[fromIndex];
+            newBoard[fromIndex] = Pieces.None;
+            newBoard[rookToIndex] = state.Board[rookFromIndex];
+            newBoard[rookFromIndex] = Pieces.None;
             this.resultingState = state.With(
                 activeColor: state.ActiveColor == Pieces.White ? Pieces.Black : Pieces.White,
                 plyCountClock: state.PlyCountClock + 1,
                 castling: GameState.RemoveCastling(state.Castling, state.ActiveColor),
-                board: state.Board
-                    .SetItem(toIndex, state.Board[fromIndex])
-                    .SetItem(fromIndex, Pieces.None)
-                    .SetItem(rookToIndex, state.Board[rookFromIndex])
-                    .SetItem(rookFromIndex, Pieces.None));
+                board: newBoard.ToImmutable());
         }
 
         /// <summary>
