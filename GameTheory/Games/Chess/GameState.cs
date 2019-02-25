@@ -51,7 +51,7 @@ namespace GameTheory.Games.Chess
                 width: board.GetLength(0),
                 height: board.GetLength(1));
             this.ActiveColor = Pieces.White;
-            this.Board = ImmutableArray.CreateRange(board.Cast<Pieces>());
+            this.Board = ImmutableList.CreateRange(board.Cast<Pieces>());
             this.PlyCountClock = plyCountClock;
             this.MoveNumber = moveNumber;
             this.EnPassantIndex = epCoordinate == null
@@ -66,7 +66,7 @@ namespace GameTheory.Games.Chess
             ImmutableArray<PlayerToken> players,
             Variant variant,
             Pieces activeColor,
-            ImmutableArray<Pieces> board,
+            ImmutableList<Pieces> board,
             int plyCountClock,
             int moveNumber,
             int? enPassantIndex,
@@ -98,7 +98,7 @@ namespace GameTheory.Games.Chess
         /// <summary>
         /// Gets the board.
         /// </summary>
-        public ImmutableArray<Pieces> Board { get; }
+        public ImmutableList<Pieces> Board { get; }
 
         /// <summary>
         /// Gets the castling rights.
@@ -279,7 +279,7 @@ namespace GameTheory.Games.Chess
             if (!this.GetAvailableMoves().Any())
             {
                 var king = this.ActiveColor | Pieces.King;
-                var kingIndex = Enumerable.Range(0, this.Board.Length).First(i => this.Board[i] == king);
+                var kingIndex = Enumerable.Range(0, this.Board.Count).First(i => this.Board[i] == king);
                 var check = this.Variant.GenerateAllMoves(
                     this.With(
                         activeColor: this.ActiveColor == Pieces.White ? Pieces.Black : Pieces.White),
@@ -318,7 +318,7 @@ namespace GameTheory.Games.Chess
 
         internal GameState With(
             Pieces? activeColor = null,
-            ImmutableArray<Pieces>? board = null,
+            ImmutableList<Pieces> board = null,
             int? plyCountClock = null,
             int? moveNumber = null,
             int? enPassantIndex = null,

@@ -33,7 +33,7 @@ namespace GameTheory.Players.MaximizingPlayers
 
             var score = 0;
 
-            for (var i = board.Length - 1; i >= 0; i--)
+            for (var i = board.Count - 1; i >= 0; i--)
             {
                 var piece = board[i];
                 if (piece != Pieces.None)

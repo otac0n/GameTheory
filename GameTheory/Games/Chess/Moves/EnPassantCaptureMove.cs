@@ -23,9 +23,9 @@ namespace GameTheory.Games.Chess.Moves
                     activeColor: state.ActiveColor == Pieces.White ? Pieces.Black : Pieces.White,
                     plyCountClock: 0,
                     board: state.Board
+                        .SetItem(capturedIndex, Pieces.None)
                         .SetItem(toIndex, state.Board[fromIndex])
-                        .SetItem(fromIndex, Pieces.None)
-                        .SetItem(capturedIndex, Pieces.None)))
+                        .SetItem(fromIndex, Pieces.None)))
         {
             this.CapturedIndex = capturedIndex;
         }
