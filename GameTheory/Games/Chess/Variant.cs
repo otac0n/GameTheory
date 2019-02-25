@@ -8,7 +8,7 @@ namespace GameTheory.Games.Chess
     using System.Linq;
     using System.Threading;
     using GameTheory.Games.Chess.Moves;
-    using GameTheory.Games.Chess.Notation;
+    using GameTheory.Games.Chess.NotationSystems;
 
     /// <summary>
     /// Defines a chess variant.
@@ -69,7 +69,7 @@ namespace GameTheory.Games.Chess
                 Pieces.Rook,
                 Pieces.Queen);
 
-            this.NotationSystem = new LongAlgebraicNotation();
+            this.NotationSystem = new AlgebraicNotation();
             this.castlingTargets = ImmutableDictionary.CreateRange(new Dictionary<Pieces, int>
             {
                 [Pieces.White | Pieces.Queen] = this.GetIndexOf(2, 0),

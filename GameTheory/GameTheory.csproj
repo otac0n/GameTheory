@@ -129,6 +129,8 @@
     <Compile Include="Games\Chess\Moves\EnPassantCaptureMove.cs" />
     <Compile Include="Games\Chess\Moves\PromotionMove.cs" />
     <Compile Include="Games\Chess\Moves\TwoSquareMove.cs" />
+    <Compile Include="Games\Chess\NotationSystems\AlgebraicNotation.cs" />
+    <Compile Include="Games\Chess\NotationSystems\FigurineAlgebraicNotation.cs" />
     <Compile Include="Games\Chess\NotationSystems\LongAlgebraicNotation.cs" />
     <Compile Include="Games\Chess\GameState.cs" />
     <Compile Include="Games\Chess\Move.cs" />
