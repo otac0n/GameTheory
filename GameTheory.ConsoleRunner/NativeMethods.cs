@@ -1,4 +1,4 @@
-﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.ConsoleRunner
 {
@@ -19,16 +19,13 @@ namespace GameTheory.ConsoleRunner
             ShowWindow(Process.GetCurrentProcess().MainWindowHandle, SW_MAXIMIZE);
         }
 
-        public static void SetConsoleFont(string fontName = "Lucida Console")
+        public static void SetConsoleFont(string fontName = "Lucida Console", short xSize = 0, short ySize = 0)
         {
             unsafe
             {
                 var hnd = GetStdHandle(STD_OUTPUT_HANDLE);
                 if (hnd != INVALID_HANDLE_VALUE)
                 {
-                    var info = default(CONSOLE_FONT_INFO_EX);
-                    info.cbSize = (uint)Marshal.SizeOf(info);
-
                     var newInfo = default(CONSOLE_FONT_INFO_EX);
                     newInfo.cbSize = (uint)Marshal.SizeOf(newInfo);
                     newInfo.FontFamily = TMPF_TRUETYPE;
@@ -36,8 +33,8 @@ namespace GameTheory.ConsoleRunner
                     Marshal.Copy(fontName.ToCharArray(), 0, ptr, fontName.Length);
 
                     // Get some settings from current font.
-                    newInfo.dwFontSize = new COORD(info.dwFontSize.X, info.dwFontSize.Y);
-                    newInfo.FontWeight = info.FontWeight;
+                    newInfo.dwFontSize = new COORD(xSize, ySize);
+                    newInfo.FontWeight = 0;
                     SetCurrentConsoleFontEx(hnd, false, ref newInfo);
                 }
             }

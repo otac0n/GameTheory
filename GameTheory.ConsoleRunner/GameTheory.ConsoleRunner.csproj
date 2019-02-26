@@ -98,6 +98,7 @@
     <WeaveTemplate Include="ConsoleRenderers\TwentyFortyEight\GameState.weave" />
     <Compile Include="ConsoleRenderers\TwentyFortyEight\TwentyFortyEightConsoleRenderer.cs" />
     <Compile Include="ConsoleRenderers\BaseConsoleRenderer.cs" />
+    <Compile Include="ConsoleRenderers\ConsoleFontAttribute.cs" />
     <Compile Include="ConsoleRenderers\ConsoleRenderer.cs" />
     <Compile Include="ConsoleRenderers\IConsoleRenderer.cs" />
     <Compile Include="ConsoleRenderers\ToStringConsoleRenderer.cs" />
