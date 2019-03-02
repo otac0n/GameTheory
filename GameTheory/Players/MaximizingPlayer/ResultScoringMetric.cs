@@ -1,4 +1,4 @@
-﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Players.MaximizingPlayer
 {
@@ -98,7 +98,7 @@ namespace GameTheory.Players.MaximizingPlayer
         {
             var winners = playerState.GameState.GetWinners();
             var sharedResult = winners.Count == 0 ? (playerState.GameState.GetAvailableMoves().Count == 0 ? (playerState.GameState.Players.Count == 1 ? Result.Loss : Result.Impasse) : Result.None) : (Result?)null;
-            var winnersSet = winners.ToSet();
+            var winnersSet = sharedResult == null ? winners.ToSet() : null;
             var result = sharedResult ?? (winnersSet.Contains(playerState.PlayerToken) ? (winnersSet.Count == 1 ? Result.Win : Result.SharedWin) : Result.Loss);
             return new ResultScore<TScore>(result, 0, 1, this.scoringMetric.Score(playerState));
         }
@@ -113,7 +113,7 @@ namespace GameTheory.Players.MaximizingPlayer
 
             var winners = state.GetWinners();
             var sharedResult = winners.Count == 0 ? (state.GetAvailableMoves().Count == 0 ? (state.Players.Count == 1 ? Result.Loss : Result.Impasse) : Result.None) : (Result?)null;
-            var winnersSet = winners.ToSet();
+            var winnersSet = sharedResult == null ? winners.ToSet() : null;
             return state.Players.ToDictionary(p => p, p =>
             {
                 var result = sharedResult ?? (winnersSet.Contains(p) ? (winnersSet.Count == 1 ? Result.Win : Result.SharedWin) : Result.Loss);
