@@ -1,4 +1,4 @@
-﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.ConsoleRunner
 {
@@ -6,6 +6,7 @@ namespace GameTheory.ConsoleRunner
     using System.Diagnostics;
     using System.Linq;
     using System.Reflection;
+    using System.Text;
     using GameTheory.Catalogs;
     using GameTheory.ConsoleRunner.ConsoleRenderers;
     using GameTheory.ConsoleRunner.Properties;
@@ -125,6 +126,7 @@ namespace GameTheory.ConsoleRunner
 
         private static void Main()
         {
+            Console.OutputEncoding = Encoding.UTF8;
             NativeMethods.SetConsoleFont();
             NativeMethods.Maximize();
 
@@ -148,6 +150,11 @@ namespace GameTheory.ConsoleRunner
             var catalog = new PlayerCatalog(Assembly.GetExecutingAssembly(), typeof(IGameState<>).Assembly);
             var players = catalog.FindPlayers(typeof(TMove));
             var consoleRenderer = ConsoleRenderer.Default<TMove>();
+            var font = consoleRenderer.GetType().GetCustomAttributes(inherit: true).OfType<ConsoleFontAttribute>().FirstOrDefault();
+            if (font != null)
+            {
+                NativeMethods.SetConsoleFont(font.Name, font.XSize, font.YSize);
+            }
 
             IPlayer<TMove> choosePlayer(PlayerToken playerToken)
             {

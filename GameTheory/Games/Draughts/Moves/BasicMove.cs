@@ -1,4 +1,4 @@
-﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Games.Draughts.Moves
 {
@@ -20,12 +20,12 @@ namespace GameTheory.Games.Draughts.Moves
         public override IList<object> FormatTokens => FormatUtilities.ParseStringFormat(Resources.BasicMove, this.FromIndex + 1, this.ToIndex + 1);
 
         /// <summary>
-        /// Gets the index of the square that the piece is moving from.
+        /// Gets the index of the square from which the piece is moving.
         /// </summary>
         public int FromIndex { get; }
 
         /// <summary>
-        /// Gets the index of the square that the piece is moving to.
+        /// Gets the index of the square to which the piece is moving.
         /// </summary>
         public int ToIndex { get; }
 
@@ -49,7 +49,7 @@ namespace GameTheory.Games.Draughts.Moves
                 if ((square & playerColor) == playerColor)
                 {
                     var crowned = (square & Pieces.Crowned) == Pieces.Crowned;
-                    variant.GetCoordinates(i, out int x, out int y);
+                    variant.GetCoordinates(i, out var x, out var y);
 
                     for (var f = 1; f >= -1; f -= 2)
                     {
@@ -104,7 +104,7 @@ namespace GameTheory.Games.Draughts.Moves
             {
                 var playerIndex = state.Players.IndexOf(state.ActivePlayer);
                 var promoteRank = (variant.Height - 1) * playerIndex;
-                variant.GetCoordinates(this.ToIndex, out int x, out int y);
+                variant.GetCoordinates(this.ToIndex, out var x, out var y);
                 if (y == promoteRank)
                 {
                     board = board

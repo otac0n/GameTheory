@@ -1,4 +1,4 @@
-﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Players.MaximizingPlayer
 {
@@ -186,9 +186,24 @@ namespace GameTheory.Players.MaximizingPlayer
             }
             else
             {
+                var any = false;
+                var max = default(TScore);
+                foreach (var other in state.Players)
+                {
+                    if (other != player)
+                    {
+                        var value = score[other];
+                        if (!any || this.scoringMetric.Compare(value, max) > 0)
+                        {
+                            max = value;
+                            any = true;
+                        }
+                    }
+                }
+
                 return this.scoringMetric.Difference(
                     score[player],
-                    score.Where(s => s.Key != player).OrderByDescending(s => s.Value, this.scoringMetric).First().Value);
+                    max);
             }
         }
 

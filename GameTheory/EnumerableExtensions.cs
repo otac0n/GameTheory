@@ -1,4 +1,4 @@
-﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory
 {
@@ -330,9 +330,8 @@ namespace GameTheory
                 if (!any || comparer.Compare(item, max) > 0)
                 {
                     max = item;
+                    any = true;
                 }
-
-                any = true;
             }
 
             return max;
@@ -364,9 +363,80 @@ namespace GameTheory
                 if (!any || comparison(item, max) > 0)
                 {
                     max = item;
+                    any = true;
                 }
+            }
 
-                any = true;
+            return max;
+        }
+
+        /// <summary>
+        /// Gets the maximum element in a collection according to the specified comparer.
+        /// </summary>
+        /// <typeparam name="TSource">The type of elements in the collection.</typeparam>
+        /// <typeparam name="TResult">The type of the value returned by <paramref name="selector"/>.</typeparam>
+        /// <param name="source">The list of elements to compare.</param>
+        /// <param name="selector">A transform function to apply to each element.</param>
+        /// <param name="comparer">The comparer to use.</param>
+        /// <returns>The maxumum element.</returns>
+        public static TResult Max<TSource, TResult>(this IEnumerable<TSource> source, Func<TSource, TResult> selector, IComparer<TResult> comparer)
+        {
+            if (source == null)
+            {
+                throw new ArgumentNullException(nameof(source));
+            }
+
+            if (comparer == null)
+            {
+                throw new ArgumentNullException(nameof(comparer));
+            }
+
+            var any = false;
+            var max = default(TResult);
+            foreach (var item in source)
+            {
+                var selected = selector(item);
+                if (!any || comparer.Compare(selected, max) > 0)
+                {
+                    max = selected;
+                    any = true;
+                }
+            }
+
+            return max;
+        }
+
+        /// <summary>
+        /// Gets the maximum element in a collection according to the specified comparison.
+        /// </summary>
+        /// <typeparam name="TSource">The type of elements in the collection.</typeparam>
+        /// <typeparam name="TResult">The type of the value returned by <paramref name="selector"/>.</typeparam>
+        /// <param name="source">The list of elements to compare.</param>
+        /// <param name="selector">A transform function to apply to each element.</param>
+        /// <param name="comparison">The comparison to use.</param>
+        /// <returns>The maxumum element.</returns>
+        public static TResult Max<TSource, TResult>(this IEnumerable<TSource> source, Func<TSource, TResult> selector, Comparison<TResult> comparison)
+        {
+            if (source == null)
+            {
+                throw new ArgumentNullException(nameof(source));
+            }
+
+            if (comparison == null)
+            {
+                throw new ArgumentNullException(nameof(comparison));
+            }
+
+            var any = false;
+            var max = default(TResult);
+            foreach (var item in source)
+            {
+                var selected = selector(item);
+                if (!any || comparison(selected, max) > 0)
+                {
+                    max = selected;
+                    any = true;
+                }
             }
 
             return max;
@@ -398,9 +468,8 @@ namespace GameTheory
                 if (!any || comparer.Compare(item, min) < 0)
                 {
                     min = item;
+                    any = true;
                 }
-
-                any = true;
             }
 
             return min;
@@ -432,9 +501,80 @@ namespace GameTheory
                 if (!any || comparison(item, min) < 0)
                 {
                     min = item;
+                    any = true;
                 }
+            }
 
-                any = true;
+            return min;
+        }
+
+        /// <summary>
+        /// Gets the minimum element in a collection according to the specified comparer.
+        /// </summary>
+        /// <typeparam name="TSource">The type of elements in the collection.</typeparam>
+        /// <typeparam name="TResult">The type of the value returned by <paramref name="selector"/>.</typeparam>
+        /// <param name="source">The list of elements to compare.</param>
+        /// <param name="selector">A transform function to apply to each element.</param>
+        /// <param name="comparer">The comparer to use.</param>
+        /// <returns>The minimum element.</returns>
+        public static TResult Min<TSource, TResult>(this IEnumerable<TSource> source, Func<TSource, TResult> selector, IComparer<TResult> comparer)
+        {
+            if (source == null)
+            {
+                throw new ArgumentNullException(nameof(source));
+            }
+
+            if (comparer == null)
+            {
+                throw new ArgumentNullException(nameof(comparer));
+            }
+
+            var any = false;
+            var min = default(TResult);
+            foreach (var item in source)
+            {
+                var selected = selector(item);
+                if (!any || comparer.Compare(selected, min) < 0)
+                {
+                    min = selected;
+                    any = true;
+                }
+            }
+
+            return min;
+        }
+
+        /// <summary>
+        /// Gets the minimum element in a collection according to the specified comparison.
+        /// </summary>
+        /// <typeparam name="TSource">The type of elements in the collection.</typeparam>
+        /// <typeparam name="TResult">The type of the value returned by <paramref name="selector"/>.</typeparam>
+        /// <param name="source">The list of elements to compare.</param>
+        /// <param name="selector">A transform function to apply to each element.</param>
+        /// <param name="comparison">The comparison to use.</param>
+        /// <returns>The minimum element.</returns>
+        public static TResult Min<TSource, TResult>(this IEnumerable<TSource> source, Func<TSource, TResult> selector, Comparison<TResult> comparison)
+        {
+            if (source == null)
+            {
+                throw new ArgumentNullException(nameof(source));
+            }
+
+            if (comparison == null)
+            {
+                throw new ArgumentNullException(nameof(comparison));
+            }
+
+            var any = false;
+            var min = default(TResult);
+            foreach (var item in source)
+            {
+                var selected = selector(item);
+                if (!any || comparison(selected, min) < 0)
+                {
+                    min = selected;
+                    any = true;
+                }
             }
 
             return min;
