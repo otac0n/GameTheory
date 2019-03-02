@@ -15,17 +15,7 @@ namespace GameTheory.Games.Chess.Moves
         /// <param name="toIndex">The index of the square to which the <see cref="Pieces.Pawn">pawn</see> is moving.</param>
         /// <param name="capturedIndex">The index of the <see cref="Pieces.Pawn">pawn</see> captured en passant.</param>
         public EnPassantCaptureMove(GameState state, int fromIndex, int toIndex, int capturedIndex)
-            : base(
-                state,
-                fromIndex,
-                toIndex,
-                state.With(
-                    activeColor: state.ActiveColor == Pieces.White ? Pieces.Black : Pieces.White,
-                    plyCountClock: 0,
-                    board: state.Board
-                        .SetItem(capturedIndex, Pieces.None)
-                        .SetItem(toIndex, state.Board[fromIndex])
-                        .SetItem(fromIndex, Pieces.None)))
+            : base(state, fromIndex, toIndex)
         {
             this.CapturedIndex = capturedIndex;
         }
@@ -34,5 +24,15 @@ namespace GameTheory.Games.Chess.Moves
         /// Gets the index of the <see cref="Pieces.Pawn">pawn</see> captured en passant.
         /// </summary>
         public int CapturedIndex { get; }
+
+        /// <inheritdoc />
+        protected override GameState ApplyImpl(GameState state) =>
+            state.With(
+                activeColor: state.ActiveColor == Pieces.White ? Pieces.Black : Pieces.White,
+                plyCountClock: 0,
+                board: state.Board
+                    .SetItem(this.CapturedIndex, Pieces.None)
+                    .SetItem(this.ToIndex, state.Board[this.FromIndex])
+                    .SetItem(this.FromIndex, Pieces.None));
     }
 }

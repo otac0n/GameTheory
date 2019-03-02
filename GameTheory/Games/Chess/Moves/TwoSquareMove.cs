@@ -15,18 +15,24 @@ namespace GameTheory.Games.Chess.Moves
         /// <param name="toIndex">The index of the square to which the <see cref="Pieces.Pawn">pawn</see> is moving.</param>
         /// <param name="enPassantIndex">The index of the square made available for en passant capture.</param>
         public TwoSquareMove(GameState state, int fromIndex, int toIndex, int enPassantIndex)
-            : base(
-                state,
-                fromIndex,
-                toIndex,
-                state.With(
-                    activeColor: state.ActiveColor == Pieces.White ? Pieces.Black : Pieces.White,
-                    plyCountClock: 0,
-                    board: state.Board
-                        .SetItem(toIndex, state.Board[fromIndex])
-                        .SetItem(fromIndex, Pieces.None),
-                    enPassantIndex: enPassantIndex))
+            : base(state, fromIndex, toIndex)
         {
+            this.EnPassantIndex = enPassantIndex;
         }
+
+        /// <summary>
+        /// Gets the index of the square made available for en passant capture.
+        /// </summary>
+        public int EnPassantIndex { get; }
+
+        /// <inheritdoc />
+        protected override GameState ApplyImpl(GameState state) =>
+            state.With(
+                activeColor: state.ActiveColor == Pieces.White ? Pieces.Black : Pieces.White,
+                plyCountClock: 0,
+                board: state.Board
+                    .SetItem(this.ToIndex, state.Board[this.FromIndex])
+                    .SetItem(this.FromIndex, Pieces.None),
+                enPassantIndex: this.EnPassantIndex);
     }
 }
