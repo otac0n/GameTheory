@@ -159,13 +159,29 @@ namespace GameTheory
         /// <returns>An enumerable collection containing format tokens.</returns>
         public static IList<object> ParseStringFormat(string format, params object[] args)
         {
-            return Regex.Matches(format, @"(^|\G)([^{]+|{(?<index>\d+)})").Cast<Match>().Select(m =>
+            var result = new List<object>();
+
+            foreach (Match match in Regex.Matches(format, @"(^|\G)([^{]+|{(?<index>\d+)})"))
             {
-                var index = m.Groups["index"];
-                return index.Success
+                var index = match.Groups["index"];
+                var item = index.Success
                     ? args[int.Parse(index.Value)]
-                    : m.Value;
-            }).ToList();
+                    : match.Value;
+
+                if (item is IEnumerable<object> enumerable)
+                {
+                    foreach (var subItem in enumerable)
+                    {
+                        result.Add(subItem);
+                    }
+                }
+                else
+                {
+                    result.Add(item);
+                }
+            }
+
+            return result;
         }
     }
 }
