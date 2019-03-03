@@ -23,6 +23,37 @@ namespace GameTheory.Tests.Games.Chess
             var state = new GameState(position);
         }
 
+        [Test]
+        public void GetAvailableMoves_After50MoveRule_YieldsNone()
+        {
+            var state = new GameState();
+
+            for (var i = 0; i < 100; i++)
+            {
+                state = (GameState)state.PlayAnyMove(state.ActivePlayer, move =>
+                {
+                    if (move is BasicMove basicMove)
+                    {
+                        var piece = state.Board[basicMove.FromIndex] & PieceMasks.Piece;
+                        if (piece == Pieces.Knight || piece == Pieces.Rook)
+                        {
+                            if (state.Board[basicMove.ToIndex] == Pieces.None)
+                            {
+                                return !move.IsCheck;
+                            }
+                        }
+                    }
+
+                    return false;
+                });
+            }
+
+            Assert.That(state.GetWinners(), Is.Empty);
+            Assert.That(state.GetAvailableMoves(), Is.Empty);
+            Assert.That(state.PlyCountClock, Is.EqualTo(100));
+            Assert.That(state.MoveNumber, Is.EqualTo(51));
+        }
+
         [TestCase("r3k2r/8/8/8/8/8/4p3/R3K2R w KQkq - 0 1")]
         public void GetAvailableMoves_WhenCastlingWouldResultInCheck_DoesNotAllowCastling(string position)
         {

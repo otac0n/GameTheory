@@ -46,13 +46,15 @@ namespace GameTheory.Games.Chess
         private readonly ImmutableDictionary<Pieces, int> castlingTargets;
         private readonly ImmutableDictionary<int, ImmutableList<int>> knightMoves;
 
-        public Variant(int width, int height, bool? pawnsMayMoveTwoSquares = null, bool? enPassant = null)
+        public Variant(int width, int height, bool? pawnsMayMoveTwoSquares = null, bool? enPassant = null, int drawingPlyCount = 100)
         {
             this.Width = width;
             this.Height = height;
             this.Size = width * height;
             this.PawnsMayMoveTwoSquares = this.Height >= 4 && (pawnsMayMoveTwoSquares ?? this.Height >= 6);
             this.EnPassant = this.PawnsMayMoveTwoSquares && (enPassant ?? this.PawnsMayMoveTwoSquares);
+            this.DrawingPlyCount = drawingPlyCount;
+
             this.PromotionRank = ImmutableDictionary.CreateRange(new[]
             {
                 new KeyValuePair<Pieces, int>(Pieces.White, this.Height - 1),
@@ -88,6 +90,11 @@ namespace GameTheory.Games.Chess
                                      where y >= 0 && y < this.Height
                                      select this.GetIndexOf(x, y)).ToImmutableList())).ToImmutableDictionary();
         }
+
+        /// <summary>
+        /// Gets the number of ply without a capture or pawn move before the game results in a draw.
+        /// </summary>
+        public int DrawingPlyCount { get; }
 
         /// <summary>
         /// Gets a value indicating whether paws may capture en passant.
@@ -397,6 +404,11 @@ namespace GameTheory.Games.Chess
 
         protected internal IEnumerable<Move> GenerateMoves(GameState state)
         {
+            if (state.PlyCountClock >= this.DrawingPlyCount)
+            {
+                yield break;
+            }
+
             var allMoves = state.GenerateAllMoves();
 
             var activeColor = state.ActiveColor;

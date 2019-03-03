@@ -111,6 +111,35 @@ namespace GameTheory.Games.Chess
         public int? EnPassantIndex { get; }
 
         /// <summary>
+        /// Gets a value indicating whether or not the active player is in check.
+        /// </summary>
+        public bool IsCheck
+        {
+            get
+            {
+                var king = this.ActiveColor | Pieces.King;
+                var kingIndex = Enumerable.Range(0, this.Board.Count).First(i => this.Board[i] == king);
+                var check = this.Variant.GenerateAllMoves(
+                    this.With(
+                        activeColor: this.ActiveColor == Pieces.White ? Pieces.Black : Pieces.White),
+                    onlyCaptures: true)
+                    .OfType<BasicMove>()
+                    .Where(basicMove => basicMove.ToIndex == kingIndex);
+                return check.Any();
+            }
+        }
+
+        /// <summary>
+        /// Gets a value indicating whether or not the active player is in checkmate.
+        /// </summary>
+        public bool IsCheckmate => this.GetAvailableMoves().Count == 0 && this.IsCheck;
+
+        /// <summary>
+        /// Gets a value indicating whether or not the active player is in stalemate.
+        /// </summary>
+        public bool IsStalemate => this.GetAvailableMoves().Count == 0 && !this.IsCheck;
+
+        /// <summary>
         /// Gets the current move number.
         /// </summary>
         public int MoveNumber { get; }
@@ -276,20 +305,9 @@ namespace GameTheory.Games.Chess
         /// <inheritdoc/>
         public IReadOnlyCollection<PlayerToken> GetWinners()
         {
-            if (!this.GetAvailableMoves().Any())
+            if (this.IsCheckmate)
             {
-                var king = this.ActiveColor | Pieces.King;
-                var kingIndex = Enumerable.Range(0, this.Board.Count).First(i => this.Board[i] == king);
-                var check = this.Variant.GenerateAllMoves(
-                    this.With(
-                        activeColor: this.ActiveColor == Pieces.White ? Pieces.Black : Pieces.White),
-                    onlyCaptures: true)
-                    .OfType<BasicMove>()
-                    .Where(basicMove => basicMove.ToIndex == kingIndex);
-                if (check.Any())
-                {
-                    return ImmutableList.Create(this.ActiveColor == Pieces.White ? this.Players[1] : this.Players[0]);
-                }
+                return ImmutableList.Create(this.ActiveColor == Pieces.White ? this.Players[1] : this.Players[0]);
             }
 
             return ImmutableList<PlayerToken>.Empty;
@@ -320,7 +338,6 @@ namespace GameTheory.Games.Chess
             Pieces? activeColor = null,
             ImmutableList<Pieces> board = null,
             int? plyCountClock = null,
-            int? moveNumber = null,
             int? enPassantIndex = null,
             ImmutableArray<int>? castling = null)
         {
@@ -330,7 +347,7 @@ namespace GameTheory.Games.Chess
                 activeColor: activeColor ?? this.ActiveColor,
                 board: board ?? this.Board,
                 plyCountClock: plyCountClock ?? this.PlyCountClock,
-                moveNumber: moveNumber ?? this.MoveNumber,
+                moveNumber: activeColor != this.ActiveColor && activeColor == Pieces.White ? this.MoveNumber + 1 : this.MoveNumber,
                 enPassantIndex: enPassantIndex, // The en passant square is automatically reset.
                 castling: castling ?? this.Castling);
         }

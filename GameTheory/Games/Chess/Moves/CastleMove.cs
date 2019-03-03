@@ -2,12 +2,14 @@
 
 namespace GameTheory.Games.Chess.Moves
 {
+    using System.Threading;
+
     /// <summary>
     /// Represents a move to castle the king.
     /// </summary>
     public class CastleMove : Move
     {
-        private readonly GameState resultingState;
+        private GameState resultingState;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CastleMove"/> class.
@@ -22,16 +24,10 @@ namespace GameTheory.Games.Chess.Moves
             : base(state)
         {
             this.CastlingSide = castlingSide;
-            var newBoard = state.Board.ToBuilder();
-            newBoard[toIndex] = state.Board[fromIndex];
-            newBoard[fromIndex] = Pieces.None;
-            newBoard[rookToIndex] = state.Board[rookFromIndex];
-            newBoard[rookFromIndex] = Pieces.None;
-            this.resultingState = state.With(
-                activeColor: state.ActiveColor == Pieces.White ? Pieces.Black : Pieces.White,
-                plyCountClock: state.PlyCountClock + 1,
-                castling: GameState.RemoveCastling(state.Castling, state.ActiveColor),
-                board: newBoard.ToImmutable());
+            this.FromIndex = fromIndex;
+            this.ToIndex = toIndex;
+            this.RookFromIndex = rookFromIndex;
+            this.RookToIndex = rookToIndex;
         }
 
         /// <summary>
@@ -39,6 +35,45 @@ namespace GameTheory.Games.Chess.Moves
         /// </summary>
         public Pieces CastlingSide { get; }
 
-        internal override GameState Apply(GameState state) => this.resultingState;
+        /// <summary>
+        /// Gets the index of the square from which the <see cref="Pieces.King"/> is moving.
+        /// </summary>
+        public int FromIndex { get; }
+
+        /// <summary>
+        /// Gets the index of the square from which the <see cref="Pieces.Rook"/> is moving.
+        /// </summary>
+        public int RookFromIndex { get; }
+
+        /// <summary>
+        /// Gets the index of the square to which the <see cref="Pieces.Rook"/> is moving.
+        /// </summary>
+        public int RookToIndex { get; }
+
+        /// <summary>
+        /// Gets the index of the square to which the <see cref="Pieces.King"/> is moving.
+        /// </summary>
+        public int ToIndex { get; }
+
+        internal override GameState Apply(GameState state)
+        {
+            if (this.resultingState == null)
+            {
+                var newBoard = state.Board.ToBuilder();
+                newBoard[this.ToIndex] = state.Board[this.FromIndex];
+                newBoard[this.FromIndex] = Pieces.None;
+                newBoard[this.RookToIndex] = state.Board[this.RookFromIndex];
+                newBoard[this.RookFromIndex] = Pieces.None;
+                state = state.With(
+                    activeColor: state.ActiveColor == Pieces.White ? Pieces.Black : Pieces.White,
+                    plyCountClock: state.PlyCountClock + 1,
+                    castling: GameState.RemoveCastling(state.Castling, state.ActiveColor),
+                    board: newBoard.ToImmutable());
+
+                Interlocked.CompareExchange(ref this.resultingState, state, null);
+            }
+
+            return this.resultingState;
+        }
     }
 }

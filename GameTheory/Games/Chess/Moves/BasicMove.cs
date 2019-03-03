@@ -46,6 +46,11 @@ namespace GameTheory.Games.Chess.Moves
             return this.resultingState;
         }
 
+        /// <summary>
+        /// Implementations may override this method to provide custom application logic.
+        /// </summary>
+        /// <param name="state">The source game state.</param>
+        /// <returns>The resuting game state.</returns>
         protected virtual GameState ApplyImpl(GameState state)
         {
             var castling = (state.Board[this.FromIndex] & PieceMasks.Piece) == Pieces.King

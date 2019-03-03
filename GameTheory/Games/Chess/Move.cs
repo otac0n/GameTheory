@@ -3,6 +3,7 @@
 namespace GameTheory.Games.Chess
 {
     using System.Collections.Generic;
+    using System.Linq;
 
     /// <summary>
     /// Represents a move in <see cref="Chess.GameState">Chess</see>.
@@ -18,6 +19,16 @@ namespace GameTheory.Games.Chess
         /// <inheritdoc/>
         public virtual IList<object> FormatTokens => this.GameState.Variant.NotationSystem.Format(this);
 
+        /// <summary>
+        /// Gets a value indicating whether or not move results in check.
+        /// </summary>
+        public bool IsCheck => this.Apply(this.GameState).IsCheck;
+
+        /// <summary>
+        /// Gets a value indicating whether or not move results in checkmate.
+        /// </summary>
+        public bool IsCheckmate => this.Apply(this.GameState).IsCheckmate;
+
         /// <inheritdoc/>
         public bool IsDeterministic => true;
 
@@ -27,7 +38,7 @@ namespace GameTheory.Games.Chess
         internal GameState GameState { get; }
 
         /// <inheritdoc />
-        public sealed override string ToString() => string.Concat(this.FlattenFormatTokens());
+        public sealed override string ToString() => $"{this.GameState.MoveNumber}.{(this.GameState.ActiveColor == Pieces.Black ? ".." : string.Empty)} {string.Concat(this.FlattenFormatTokens().Select(t => t is Pieces piece ? this.GameState.Variant.NotationSystem.Format(piece) : t))}{(this.IsCheckmate ? "#" : this.IsCheck ? "+" : string.Empty)}";
 
         internal abstract GameState Apply(GameState state);
     }
