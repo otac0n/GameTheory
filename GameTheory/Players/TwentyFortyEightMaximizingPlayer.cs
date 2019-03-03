@@ -1,4 +1,4 @@
-﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Players.MaximizingPlayers
 {
@@ -26,6 +26,9 @@ namespace GameTheory.Players.MaximizingPlayers
             : base(playerToken, Metric, minPly)
         {
         }
+
+        /// <inheritdoc />
+        protected override ICache MakeCache() => new Caches.DictionaryCache();
 
         private static double Score(PlayerState<Move> playerState)
         {

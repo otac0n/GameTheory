@@ -1,4 +1,4 @@
-﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Games.TwentyFortyEight
 {
@@ -161,7 +161,6 @@ namespace GameTheory.Games.TwentyFortyEight
         public override int GetHashCode()
         {
             var hash = HashUtilities.Seed;
-            HashUtilities.Combine(ref hash, (int)this.turn);
             HashUtilities.Combine(ref hash, (int)this.turn);
 
             for (var y = 0; y < Size; y++)

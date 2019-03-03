@@ -20,12 +20,11 @@ namespace GameTheory.Players.MaximizingPlayer
     public abstract class MaximizingPlayer<TMove, TScore> : IPlayer<TMove>
         where TMove : IMove
     {
-        private readonly int minPly;
+        private readonly ICache cache;
 
         private readonly IScorePlyExtender<TScore> scoreExtender;
-        private readonly IGameStateScoringMetric<TMove, TScore> scoringMetric;
 
-        private ICache cache = new Caches.SplayTreeCache();
+        private readonly IGameStateScoringMetric<TMove, TScore> scoringMetric;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MaximizingPlayer{TMove, TScore}"/> class.
@@ -38,7 +37,8 @@ namespace GameTheory.Players.MaximizingPlayer
             this.PlayerToken = playerToken;
             this.scoringMetric = scoringMetric ?? throw new ArgumentNullException(nameof(scoringMetric));
             this.scoreExtender = this.scoringMetric as IScorePlyExtender<TScore>;
-            this.minPly = minPly > -1 ? minPly : throw new ArgumentOutOfRangeException(nameof(minPly));
+            this.MinPly = minPly > -1 ? minPly : throw new ArgumentOutOfRangeException(nameof(minPly));
+            this.cache = this.MakeCache();
         }
 
         /// <summary>
@@ -55,7 +55,7 @@ namespace GameTheory.Players.MaximizingPlayer
         /// <summary>
         /// Represents a cache, primarily for use as a transposition table.
         /// </summary>
-        private interface ICache
+        protected interface ICache
         {
             /// <summary>
             /// Overwrites an item or adds an item into the cache.
@@ -87,6 +87,11 @@ namespace GameTheory.Players.MaximizingPlayer
         protected virtual int InitialSamples => 30;
 
         /// <summary>
+        /// Gets the minimum number of ply to think ahead.
+        /// </summary>
+        protected int MinPly { get; }
+
+        /// <summary>
         /// Gets a value indicating whether or not the player will calculate during an opponent's turn.
         /// </summary>
         protected virtual bool Ponder => true;
@@ -98,7 +103,7 @@ namespace GameTheory.Players.MaximizingPlayer
 
             var moves = state.GetAvailableMoves();
 
-            var ply = this.minPly;
+            var ply = this.MinPly;
 
             var players = moves.Select(m => m.PlayerToken).ToImmutableHashSet();
             if (!players.Contains(this.PlayerToken))
@@ -207,6 +212,12 @@ namespace GameTheory.Players.MaximizingPlayer
             }
         }
 
+        /// <summary>
+        /// Create the transposition table cache.
+        /// </summary>
+        /// <returns>The cache object to use as a transposition table.</returns>
+        protected virtual ICache MakeCache() => new Caches.SplayTreeCache();
+
         private Mainline CombineOutcomes(IList<IWeighted<Mainline>> mainlines)
         {
             if (mainlines.Count == 1)
@@ -240,7 +251,7 @@ namespace GameTheory.Players.MaximizingPlayer
 
                 fullyDetermined &= mainline.FullyDetermined;
 
-                foreach (var player in score.Keys)
+                foreach (var player in mainline.GameState.Players)
                 {
                     if (!playerScores.TryGetValue(player, out var playerScore))
                     {
@@ -367,9 +378,18 @@ namespace GameTheory.Players.MaximizingPlayer
                         mainlines[m] = this.CombineOutcomes(outcomes.Select(o =>
                         {
                             var mainline = this.GetMove(o.Value, ply - 1, cancel);
-                            var newScores = this.scoreExtender != null
-                                ? ImmutableDictionary.CreateRange(mainline.Scores.Select(kvp => new KeyValuePair<PlayerToken, TScore>(kvp.Key, this.scoreExtender.Extend(kvp.Value))))
-                                : mainline.Scores;
+
+                            var newScores = mainline.Scores;
+                            if (this.scoreExtender != null)
+                            {
+                                var scoresBuilder = ImmutableDictionary.CreateBuilder<PlayerToken, TScore>();
+                                foreach (var player in mainline.GameState.Players)
+                                {
+                                    scoresBuilder.Add(player, this.scoreExtender.Extend(mainline.Scores[player]));
+                                }
+                                newScores = scoresBuilder.ToImmutable();
+                            }
+
                             var newMainline = new Mainline(newScores, mainline.GameState, move.PlayerToken, mainline.Strategies.Push(ImmutableArray.Create(Weighted.Create(move, 1))), mainline.Depth + 1, mainline.FullyDetermined);
                             return Weighted.Create(newMainline, o.Weight);
                         }).ToList());
@@ -451,6 +471,71 @@ namespace GameTheory.Players.MaximizingPlayer
             this.cache.SetValue(state, result);
 
             return result;
+        }
+
+        /// <summary>
+        /// Contians implementations of caches suitable for use as a transposition table.
+        /// </summary>
+        protected static class Caches
+        {
+            /// <summary>
+            /// A cache for types that overrides <see cref="object.GetHashCode"/> and <see cref="object.Equals(object)"/>.
+            /// </summary>
+            public class DictionaryCache : ICache
+            {
+                private readonly Dictionary<IGameState<TMove>, Mainline> storage = new Dictionary<IGameState<TMove>, Mainline>();
+
+                /// <inheritdoc/>
+                public void SetValue(IGameState<TMove> state, Mainline result) => this.storage[state] = result;
+
+                /// <inheritdoc/>
+                public void Trim() => this.storage.Clear();
+
+                /// <inheritdoc/>
+                public bool TryGetValue(IGameState<TMove> state, out Mainline cached) => this.storage.TryGetValue(state, out cached);
+            }
+
+            /// <summary>
+            /// A null-object cache, meaning a cache that does not store any items and implements the interface by returning default values.
+            /// </summary>
+            public class NullCache : ICache
+            {
+                /// <inheritdoc/>
+                public void SetValue(IGameState<TMove> state, Mainline result)
+                {
+                }
+
+                /// <inheritdoc/>
+                public void Trim()
+                {
+                }
+
+                /// <inheritdoc/>
+                public bool TryGetValue(IGameState<TMove> state, out Mainline cached)
+                {
+                    cached = default(Mainline);
+                    return false;
+                }
+            }
+
+            /// <summary>
+            /// A cache for types that implements <see cref="IComparable{T}"/>.
+            /// </summary>
+            public class SplayTreeCache : ICache
+            {
+                private const int TrimDepth = 32;
+
+                private readonly SplayTreeDictionary<IGameState<TMove>, Mainline> storage = new SplayTreeDictionary<IGameState<TMove>, Mainline>();
+
+                /// <inheritdoc/>
+                public void SetValue(IGameState<TMove> state, Mainline result) => this.storage[state] = result;
+
+                /// <inheritdoc/>
+                public void Trim() => this.storage.Trim(TrimDepth);
+
+                /// <inheritdoc/>
+                public bool TryGetValue(IGameState<TMove> state, out Mainline cached) => this.storage.TryGetValue(state, out cached);
+            }
         }
 
         /// <summary>
@@ -589,71 +674,6 @@ namespace GameTheory.Players.MaximizingPlayer
 
             /// <inheritdoc/>
             public override string ToString() => string.Concat(this.FlattenFormatTokens());
-        }
-
-        /// <summary>
-        /// Contians implementations of caches suitable for use as a transposition table.
-        /// </summary>
-        private static class Caches
-        {
-            /// <summary>
-            /// A cache for types that overrides <see cref="object.GetHashCode"/> and <see cref="object.Equals(object)"/>.
-            /// </summary>
-            public class DictionaryCache : ICache
-            {
-                private readonly Dictionary<IGameState<TMove>, Mainline> storage = new Dictionary<IGameState<TMove>, Mainline>();
-
-                /// <inheritdoc/>
-                public void SetValue(IGameState<TMove> state, Mainline result) => this.storage[state] = result;
-
-                /// <inheritdoc/>
-                public void Trim() => this.storage.Clear();
-
-                /// <inheritdoc/>
-                public bool TryGetValue(IGameState<TMove> state, out Mainline cached) => this.storage.TryGetValue(state, out cached);
-            }
-
-            /// <summary>
-            /// A null-object cache, meaning a cache that does not store any items and implements the interface by returning default values.
-            /// </summary>
-            public class NullCache : ICache
-            {
-                /// <inheritdoc/>
-                public void SetValue(IGameState<TMove> state, Mainline result)
-                {
-                }
-
-                /// <inheritdoc/>
-                public void Trim()
-                {
-                }
-
-                /// <inheritdoc/>
-                public bool TryGetValue(IGameState<TMove> state, out Mainline cached)
-                {
-                    cached = default(Mainline);
-                    return false;
-                }
-            }
-
-            /// <summary>
-            /// A cache for types that implements <see cref="IComparable{T}"/>.
-            /// </summary>
-            public class SplayTreeCache : ICache
-            {
-                private const int TrimDepth = 32;
-
-                private readonly SplayTreeDictionary<IGameState<TMove>, Mainline> storage = new SplayTreeDictionary<IGameState<TMove>, Mainline>();
-
-                /// <inheritdoc/>
-                public void SetValue(IGameState<TMove> state, Mainline result) => this.storage[state] = result;
-
-                /// <inheritdoc/>
-                public void Trim() => this.storage.Trim(TrimDepth);
-
-                /// <inheritdoc/>
-                public bool TryGetValue(IGameState<TMove> state, out Mainline cached) => this.storage.TryGetValue(state, out cached);
-            }
         }
 
         private class ComparableEqualityComparer<T> : IEqualityComparer<T>
