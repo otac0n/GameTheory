@@ -220,17 +220,16 @@ namespace GameTheory.Players.MaximizingPlayer
 
         private Mainline CombineOutcomes(IList<IWeighted<Mainline>> mainlines)
         {
+            var firstMainline = mainlines[0].Value;
             if (mainlines.Count == 1)
             {
-                return mainlines[0].Value;
+                return firstMainline;
             }
 
             var maxWeight = double.NegativeInfinity;
             var maxPlayerToken = (PlayerToken)null;
             Mainline maxMainline = null;
             var fullyDetermined = true;
-
-            var playerScores = new Dictionary<PlayerToken, IWeighted<TScore>[]>();
 
             for (var i = 0; i < mainlines.Count; i++)
             {
@@ -250,19 +249,20 @@ namespace GameTheory.Players.MaximizingPlayer
                 }
 
                 fullyDetermined &= mainline.FullyDetermined;
-
-                foreach (var player in mainline.GameState.Players)
-                {
-                    if (!playerScores.TryGetValue(player, out var playerScore))
-                    {
-                        playerScores[player] = playerScore = new IWeighted<TScore>[mainlines.Count];
-                    }
-
-                    playerScore[i] = Weighted.Create(score[player], weight);
-                }
             }
 
-            var combinedScore = playerScores.ToDictionary(ps => ps.Key, ps => this.scoringMetric.Combine(ps.Value));
+            var combinedScore = new Dictionary<PlayerToken, TScore>();
+            var playerScore = new IWeighted<TScore>[mainlines.Count];
+            foreach (var player in firstMainline.GameState.Players)
+            {
+                for (var i = 0; i < mainlines.Count; i++)
+                {
+                    playerScore[i] = Weighted.Create(mainlines[i].Value.Scores[player], mainlines[i].Weight);
+                }
+
+                combinedScore[player] = this.scoringMetric.Combine(playerScore);
+            }
+
             var depth = fullyDetermined ? mainlines.Max(m => m.Value.Depth) : mainlines.Where(m => !m.Value.FullyDetermined).Min(m => m.Value.Depth);
             return new Mainline(combinedScore, maxMainline.GameState, maxMainline.PlayerToken, maxMainline.Strategies, depth, fullyDetermined);
         }

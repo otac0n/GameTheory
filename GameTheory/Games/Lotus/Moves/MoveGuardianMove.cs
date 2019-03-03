@@ -1,4 +1,4 @@
-﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Games.Lotus.Moves
 {
@@ -55,7 +55,7 @@ namespace GameTheory.Games.Lotus.Moves
         {
             if (state.Inventory[state.ActivePlayer].Guardians > 0)
             {
-                foreach (var flowerType in EnumUtilities.GetValues<FlowerType>())
+                foreach (var flowerType in EnumUtilities<FlowerType>.GetValues())
                 {
                     if (state.Field[flowerType].Petals.Count > 0)
                     {

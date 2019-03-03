@@ -1,4 +1,4 @@
-﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Games.Lotus
 {
@@ -70,7 +70,7 @@ namespace GameTheory.Games.Lotus
 
             if (state.Phase == Phase.Play)
             {
-                foreach (var flowerType in EnumUtilities.GetValues<FlowerType>())
+                foreach (var flowerType in EnumUtilities<FlowerType>.GetValues())
                 {
                     var flower = state.Field[flowerType];
                     if (flower.Petals.Count == (int)flowerType)
@@ -119,7 +119,7 @@ namespace GameTheory.Games.Lotus
                 {
                     if (activePlayerInventory.Deck.Count == 0)
                     {
-                        foreach (var flowerType in EnumUtilities.GetValues<FlowerType>())
+                        foreach (var flowerType in EnumUtilities<FlowerType>.GetValues())
                         {
                             var inventory = state.Inventory;
                             var flower = state.Field[flowerType];

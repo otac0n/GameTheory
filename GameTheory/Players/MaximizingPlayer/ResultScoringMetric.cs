@@ -33,12 +33,12 @@ namespace GameTheory.Players.MaximizingPlayer
                 throw new ArgumentNullException(nameof(scores));
             }
 
-            var results = EnumUtilities.GetValues<Result>().ToDictionary(result => result, result => new
-            {
-                Weight = 0.0,
-                Liklihood = 0.0,
-                InPly = double.NaN,
-            });
+            const int Weight = 0;
+            const int Likelihood = 1;
+            const int InPly = 2;
+            const int Count = 3;
+
+            var results = EnumUtilities<Result>.GetValues().ToDictionary(result => result, result => new double[Count] { 0.0, 0.0, double.NaN });
 
             var totalWeight = 0.0;
             var weightedRest = new IWeighted<TScore>[scores.Length];
@@ -49,18 +49,15 @@ namespace GameTheory.Players.MaximizingPlayer
                 weightedRest[i] = Weighted.Create(resultScore.Rest, score.Weight);
                 totalWeight += score.Weight;
                 var c = results[resultScore.Result];
-                results[resultScore.Result] = new
-                {
-                    Weight = c.Weight + score.Weight,
-                    Liklihood = c.Liklihood + score.Value.Likelihood * score.Weight,
-                    InPly = double.IsNaN(c.InPly) || c.InPly.CompareTo(resultScore.InPly) > 0 ? resultScore.InPly : c.InPly, // TODO: Should use PlyCountSortDirection?
-                };
+                c[Weight] += score.Weight;
+                c[Likelihood] += score.Value.Likelihood * score.Weight;
+                c[InPly] = double.IsNaN(c[InPly]) || c[InPly].CompareTo(resultScore.InPly) > 0 ? resultScore.InPly : c[InPly]; // TODO: Should use PlyCountSortDirection?
             }
 
-            var pessimisticResult = results.Where(r => r.Value.Weight > 0).OrderBy(r => r.Key).First();
+            var pessimisticResult = results.Where(r => r.Value[Weight] > 0).OrderBy(r => r.Key).First();
             var rest = this.scoringMetric.Combine(weightedRest);
 
-            return new ResultScore<TScore>(pessimisticResult.Key, pessimisticResult.Value.InPly, pessimisticResult.Value.Liklihood / totalWeight, rest);
+            return new ResultScore<TScore>(pessimisticResult.Key, pessimisticResult.Value[InPly], pessimisticResult.Value[Likelihood] / totalWeight, rest);
         }
 
         /// <inheritdoc/>

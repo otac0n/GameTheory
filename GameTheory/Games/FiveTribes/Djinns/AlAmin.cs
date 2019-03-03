@@ -1,4 +1,4 @@
-﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Games.FiveTribes.Djinns
 {
@@ -33,7 +33,7 @@ namespace GameTheory.Games.FiveTribes.Djinns
             {
                 if (state.Inventory[owner].Resources[Resource.Slave] >= 2)
                 {
-                    foreach (var wild in EnumUtilities.GetValues<Resource>().Except(Resource.Slave))
+                    foreach (var wild in EnumUtilities<Resource>.GetValues().Except(Resource.Slave))
                     {
                         yield return new TradeSlavesForResourceMove(state, owner, wild);
                     }

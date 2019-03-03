@@ -1,4 +1,4 @@
-﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Games.Lotus.Moves
 {
@@ -57,7 +57,7 @@ namespace GameTheory.Games.Lotus.Moves
         {
             foreach (var player in state.ChoosingPlayers.Take(1))
             {
-                foreach (var specialPower in EnumUtilities.GetValues<SpecialPowers>())
+                foreach (var specialPower in EnumUtilities<SpecialPowers>.GetValues())
                 {
                     if (specialPower != SpecialPowers.None && (state.Inventory[player].SpecialPowers & specialPower) != specialPower)
                     {

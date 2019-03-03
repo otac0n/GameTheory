@@ -1,4 +1,4 @@
-﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory
 {
@@ -24,7 +24,7 @@ namespace GameTheory
 
         static EnumCollection()
         {
-            Capacity = EnumUtilities.GetValues<TEnum>().Select(x => Convert.ToInt32(x, CultureInfo.InvariantCulture)).Max() + 1;
+            Capacity = EnumUtilities<TEnum>.GetValues().Select(x => Convert.ToInt32(x, CultureInfo.InvariantCulture)).Max() + 1;
             AllKeys = Enumerable.Range(0, Capacity).Select(i => (TEnum)Enum.ToObject(typeof(TEnum), i)).ToArray();
             Empty = new EnumCollection<TEnum>(new TEnum[0]);
         }

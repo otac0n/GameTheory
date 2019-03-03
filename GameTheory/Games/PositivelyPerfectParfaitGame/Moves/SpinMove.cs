@@ -1,4 +1,4 @@
-﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Games.PositivelyPerfectParfaitGame.Moves
 {
@@ -39,7 +39,7 @@ namespace GameTheory.Games.PositivelyPerfectParfaitGame.Moves
         {
             var activePlayer = this.PlayerToken;
 
-            foreach (var flavor in EnumUtilities.GetValues<Flavor>())
+            foreach (var flavor in EnumUtilities<Flavor>.GetValues())
             {
                 var flavorState = state;
                 if (state.RemainingScoops[flavor] > 0 && state.Parfaits[activePlayer].Flavors[flavor] == 0)

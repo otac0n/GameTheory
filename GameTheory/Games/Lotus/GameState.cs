@@ -1,4 +1,4 @@
-﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Games.Lotus
 {
@@ -55,7 +55,7 @@ namespace GameTheory.Games.Lotus
             this.Phase = Phase.Play;
             this.Inventory = Enumerable.Range(0, players).ToImmutableDictionary(i => this.Players[i], i => new Inventory(MakeDeck(this.Players[i], players)));
             this.RemainingActions = ActionsPerTurn;
-            this.Field = ImmutableDictionary.CreateRange(EnumUtilities.GetValues<FlowerType>().Select(f => new KeyValuePair<FlowerType, Flower>(f, new Flower())));
+            this.Field = ImmutableDictionary.CreateRange(EnumUtilities<FlowerType>.GetValues().Select(f => new KeyValuePair<FlowerType, Flower>(f, new Flower())));
             this.ChoosingPlayers = ImmutableList<PlayerToken>.Empty;
             this.WildflowerDeck = InitialWildflowers.Deal(4, out ImmutableList<PetalCard> availableWildflowers).Shuffle().ToImmutableList();
             this.AvailableWildflowers = availableWildflowers;
@@ -197,7 +197,7 @@ namespace GameTheory.Games.Lotus
 
             if (this.Field != state.Field)
             {
-                foreach (var flowerType in EnumUtilities.GetValues<FlowerType>())
+                foreach (var flowerType in EnumUtilities<FlowerType>.GetValues())
                 {
                     if ((comp = this.Field[flowerType].CompareTo(state.Field[flowerType])) != 0)
                     {

@@ -1,4 +1,4 @@
-﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Games.Mancala
 {
@@ -122,8 +122,7 @@ namespace GameTheory.Games.Mancala
         public override int GetHashCode()
         {
             var hash = HashUtilities.Seed;
-            HashUtilities.Combine(ref hash, this.Players[0].GetHashCode());
-            HashUtilities.Combine(ref hash, this.Players[1].GetHashCode());
+            HashUtilities.Combine(ref hash, this.ActivePlayer.GetHashCode());
 
             for (var i = 0; i < this.Board.Length; i++)
             {
