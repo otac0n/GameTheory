@@ -118,12 +118,12 @@ namespace GameTheory
             var result = new object[items.Count * 2 - 1];
             var i = items.Count - 1;
             var ix = result.Length - 1;
-            result[ix--] = result[i--];
+            result[ix--] = items[i--];
             result[ix--] = sep;
 
-            for (; i >= 1; i--)
+            for (; i >= 1;)
             {
-                result[ix--] = items[i];
+                result[ix--] = items[i--];
                 result[ix--] = SharedResources.ListItemSeparator;
             }
 
