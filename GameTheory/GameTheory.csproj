@@ -522,6 +522,7 @@
       <Link>stylecop.json</Link>
     </AdditionalFiles>
     <Compile Include="Weighted.cs" />
+    <Compile Include="Weighted{T}.cs" />
   </ItemGroup>
   <ItemGroup>
     <Analyzer Include="..\packages\StyleCop.Analyzers.1.0.2\analyzers\dotnet\cs\StyleCop.Analyzers.CodeFixes.dll" />

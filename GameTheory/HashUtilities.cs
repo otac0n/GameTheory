@@ -22,7 +22,7 @@ namespace GameTheory
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Combine(ref int hash, int other)
         {
-            hash = (hash * 37) + other;
+            hash = (hash * 33) + other;
         }
     }
 }

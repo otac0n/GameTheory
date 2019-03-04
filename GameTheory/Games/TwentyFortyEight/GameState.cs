@@ -114,7 +114,7 @@ namespace GameTheory.Games.TwentyFortyEight
             }
 
             var state = other as GameState;
-            if (object.ReferenceEquals(state, null))
+            if (state is null)
             {
                 return 1;
             }
@@ -127,9 +127,9 @@ namespace GameTheory.Games.TwentyFortyEight
                 return comp;
             }
 
-            for (var y = 0; y < Size; y++)
+            for (var x = 0; x < Size; x++)
             {
-                for (var x = 0; x < Size; x++)
+                for (var y = 0; y < Size; y++)
                 {
                     if ((comp = this.field[x, y].CompareTo(state.field[x, y])) != 0)
                     {
@@ -163,11 +163,11 @@ namespace GameTheory.Games.TwentyFortyEight
             var hash = HashUtilities.Seed;
             HashUtilities.Combine(ref hash, (int)this.turn);
 
-            for (var y = 0; y < Size; y++)
+            for (var x = 0; x < Size; x++)
             {
-                for (var x = 0; x < Size; x++)
+                for (var y = 0; y < Size; y += 2)
                 {
-                    HashUtilities.Combine(ref hash, (int)this.field[x, y]);
+                    HashUtilities.Combine(ref hash, this.field[x, y] << 4 | this.field[x, y + 1]);
                 }
             }
 
@@ -184,9 +184,9 @@ namespace GameTheory.Games.TwentyFortyEight
             }
 
             var state = move.Apply(this);
-            for (var y = 0; y < Size; y++)
+            for (var x = 0; x < Size; x++)
             {
-                for (var x = 0; x < Size; x++)
+                for (var y = 0; y < Size; y++)
                 {
                     if (state.field[x, y] == 0)
                     {
@@ -213,9 +213,9 @@ namespace GameTheory.Games.TwentyFortyEight
         /// <inheritdoc/>
         public IReadOnlyCollection<PlayerToken> GetWinners()
         {
-            for (var y = 0; y < Size; y++)
+            for (var x = 0; x < Size; x++)
             {
-                for (var x = 0; x < Size; x++)
+                for (var y = 0; y < Size; y++)
                 {
                     if (this.field[x, y] >= WinThreshold)
                     {
@@ -274,9 +274,9 @@ namespace GameTheory.Games.TwentyFortyEight
         private static void RandomComputerMove(byte[,] field)
         {
             var found = 0;
-            for (var y = 0; y < Size; y++)
+            for (var x = 0; x < Size; x++)
             {
-                for (var x = 0; x < Size; x++)
+                for (var y = 0; y < Size; y++)
                 {
                     if (field[x, y] == 0)
                     {
@@ -287,9 +287,9 @@ namespace GameTheory.Games.TwentyFortyEight
 
             var picked = Random.Instance.Next(found);
 
-            for (var y = 0; y < Size; y++)
+            for (var x = 0; x < Size; x++)
             {
-                for (var x = 0; x < Size; x++)
+                for (var y = 0; y < Size; y++)
                 {
                     if (field[x, y] == 0)
                     {

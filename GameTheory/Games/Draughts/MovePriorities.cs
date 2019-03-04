@@ -1,4 +1,4 @@
-﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Games.Draughts
 {
@@ -112,7 +112,7 @@ namespace GameTheory.Games.Draughts
         /// <param name="combineScores">Adds two scores together.</param>
         /// <param name="scoreComparison">Compares two scores.</param>
         /// <returns>A comparer that evaluates moves based on their maximum potential score.</returns>
-        public static IComparer<Move> MakeMaximizingComparer<T>(Func<CaptureMove, T> scoreCapture, Func<IWeighted<T>[], T> combineScores, Comparison<T> scoreComparison)
+        public static IComparer<Move> MakeMaximizingComparer<T>(Func<CaptureMove, T> scoreCapture, Func<Weighted<T>[], T> combineScores, Comparison<T> scoreComparison)
         {
             var scoringMetric = ScoringMetric.Create(scoreCapture, combineScores, scoreComparison, (a, b) => throw new NotImplementedException());
             return Comparer<Move>.Create((a, b) =>

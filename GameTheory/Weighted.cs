@@ -1,4 +1,4 @@
-﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory
 {
@@ -14,22 +14,9 @@ namespace GameTheory
         /// <param name="value">The value being weighted.</param>
         /// <param name="weight">The weight assigned.</param>
         /// <returns>The new instance.</returns>
-        public static IWeighted<T> Create<T>(T value, double weight)
+        public static Weighted<T> Create<T>(T value, double weight)
         {
-            return new WeightedImpl<T>(value, weight);
-        }
-
-        private class WeightedImpl<T> : IWeighted<T>
-        {
-            public WeightedImpl(T value, double weight)
-            {
-                this.Value = value;
-                this.Weight = weight;
-            }
-
-            public T Value { get; }
-
-            public double Weight { get; }
+            return new Weighted<T>(value, weight);
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory
 {
@@ -16,7 +16,7 @@ namespace GameTheory
         /// </summary>
         /// <param name="scores">The weighted scores to combine.</param>
         /// <returns>The combined score.</returns>
-        public static double Combine(IWeighted<double>[] scores)
+        public static double Combine(Weighted<double>[] scores)
         {
             if (scores == null)
             {
@@ -46,7 +46,7 @@ namespace GameTheory
         /// <param name="comparison">Compares two scores and returns a value indicating whether one is less than, equal to, or greater than the other.</param>
         /// <param name="difference">Gets the difference between two scores.</param>
         /// <returns>The scoring metric.</returns>
-        public static IScoringMetric<TSubject, TScore> Create<TSubject, TScore>(Func<TSubject, TScore> score, Func<IWeighted<TScore>[], TScore> combine, Comparison<TScore> comparison, Func<TScore, TScore, TScore> difference) =>
+        public static IScoringMetric<TSubject, TScore> Create<TSubject, TScore>(Func<TSubject, TScore> score, Func<Weighted<TScore>[], TScore> combine, Comparison<TScore> comparison, Func<TScore, TScore, TScore> difference) =>
             new FuncScoringMetric<TSubject, TScore>(score, combine, comparison, difference);
 
         /// <summary>
@@ -59,7 +59,7 @@ namespace GameTheory
         /// <param name="comparison">Compares two scores and returns a value indicating whether one is less than, equal to, or greater than the other.</param>
         /// <param name="difference">Gets the difference between two scores.</param>
         /// <returns>The scoring metric.</returns>
-        public static IGameStateScoringMetric<TMove, TScore> Create<TMove, TScore>(Func<PlayerState<TMove>, TScore> score, Func<IWeighted<TScore>[], TScore> combine, Comparison<TScore> comparison, Func<TScore, TScore, TScore> difference)
+        public static IGameStateScoringMetric<TMove, TScore> Create<TMove, TScore>(Func<PlayerState<TMove>, TScore> score, Func<Weighted<TScore>[], TScore> combine, Comparison<TScore> comparison, Func<TScore, TScore, TScore> difference)
             where TMove : IMove =>
             new FuncGameStateScoringMetric<TMove, TScore>(score, combine, comparison, difference);
 
@@ -93,12 +93,12 @@ namespace GameTheory
         private class FuncGameStateScoringMetric<TMove, TScore> : IGameStateScoringMetric<TMove, TScore>
             where TMove : IMove
         {
-            private readonly Func<IWeighted<TScore>[], TScore> combine;
+            private readonly Func<Weighted<TScore>[], TScore> combine;
             private readonly Comparison<TScore> comparison;
             private readonly Func<TScore, TScore, TScore> difference;
             private readonly Func<PlayerState<TMove>, TScore> score;
 
-            public FuncGameStateScoringMetric(Func<PlayerState<TMove>, TScore> score, Func<IWeighted<TScore>[], TScore> combine, Comparison<TScore> comparison, Func<TScore, TScore, TScore> difference)
+            public FuncGameStateScoringMetric(Func<PlayerState<TMove>, TScore> score, Func<Weighted<TScore>[], TScore> combine, Comparison<TScore> comparison, Func<TScore, TScore, TScore> difference)
             {
                 this.score = score;
                 this.combine = combine;
@@ -106,7 +106,7 @@ namespace GameTheory
                 this.difference = difference;
             }
 
-            TScore IScoringMetric<PlayerState<TMove>, TScore>.Combine(params IWeighted<TScore>[] scores) => this.combine(scores);
+            TScore IScoringMetric<PlayerState<TMove>, TScore>.Combine(params Weighted<TScore>[] scores) => this.combine(scores);
 
             int IComparer<TScore>.Compare(TScore x, TScore y) => this.comparison(x, y);
 
@@ -127,12 +127,12 @@ namespace GameTheory
 
         private class FuncScoringMetric<TSubject, TScore> : IScoringMetric<TSubject, TScore>
         {
-            private readonly Func<IWeighted<TScore>[], TScore> combine;
+            private readonly Func<Weighted<TScore>[], TScore> combine;
             private readonly Comparison<TScore> comparison;
             private readonly Func<TScore, TScore, TScore> difference;
             private readonly Func<TSubject, TScore> score;
 
-            public FuncScoringMetric(Func<TSubject, TScore> score, Func<IWeighted<TScore>[], TScore> combine, Comparison<TScore> comparison, Func<TScore, TScore, TScore> difference)
+            public FuncScoringMetric(Func<TSubject, TScore> score, Func<Weighted<TScore>[], TScore> combine, Comparison<TScore> comparison, Func<TScore, TScore, TScore> difference)
             {
                 this.score = score;
                 this.combine = combine;
@@ -140,7 +140,7 @@ namespace GameTheory
                 this.difference = difference;
             }
 
-            TScore IScoringMetric<TSubject, TScore>.Combine(params IWeighted<TScore>[] scores) => this.combine(scores);
+            TScore IScoringMetric<TSubject, TScore>.Combine(params Weighted<TScore>[] scores) => this.combine(scores);
 
             int IComparer<TScore>.Compare(TScore x, TScore y) => this.comparison(x, y);
 

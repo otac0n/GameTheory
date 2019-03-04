@@ -1,4 +1,4 @@
-﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory
 {
@@ -9,7 +9,7 @@ namespace GameTheory
     public interface IWeighted<out T>
     {
         /// <summary>
-        /// Gets value being weighted.
+        /// Gets the value being weighted.
         /// </summary>
         T Value { get; }
 

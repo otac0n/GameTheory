@@ -26,7 +26,7 @@ namespace GameTheory.Players.MaximizingPlayer
         }
 
         /// <inheritdoc/>
-        public ResultScore<TScore> Combine(params IWeighted<ResultScore<TScore>>[] scores)
+        public ResultScore<TScore> Combine(params Weighted<ResultScore<TScore>>[] scores)
         {
             if (scores == null)
             {
@@ -36,28 +36,43 @@ namespace GameTheory.Players.MaximizingPlayer
             const int Weight = 0;
             const int Likelihood = 1;
             const int InPly = 2;
-            const int Count = 3;
+            const int FieldCount = 3;
 
-            var results = EnumUtilities<Result>.GetValues().ToDictionary(result => result, result => new double[Count] { 0.0, 0.0, double.NaN });
+            const int Offset = -(int)Result.Loss;
+            const int ResultCount = Offset + (int)Result.Win + 1;
+            var results = new double[ResultCount, FieldCount];
+            for (var r = ResultCount - 1; r >= 0; r--)
+            {
+                results[r, InPly] = double.NaN;
+            }
 
             var totalWeight = 0.0;
-            var weightedRest = new IWeighted<TScore>[scores.Length];
+            var weightedRest = new Weighted<TScore>[scores.Length];
             for (var i = scores.Length - 1; i >= 0; i--)
             {
                 var score = scores[i];
+                var weight = score.Weight;
                 var resultScore = score.Value;
-                weightedRest[i] = Weighted.Create(resultScore.Rest, score.Weight);
-                totalWeight += score.Weight;
-                var c = results[resultScore.Result];
-                c[Weight] += score.Weight;
-                c[Likelihood] += score.Value.Likelihood * score.Weight;
-                c[InPly] = double.IsNaN(c[InPly]) || c[InPly].CompareTo(resultScore.InPly) > 0 ? resultScore.InPly : c[InPly]; // TODO: Should use PlyCountSortDirection?
+                weightedRest[i] = Weighted.Create(resultScore.Rest, weight);
+                totalWeight += weight;
+                var r = (int)resultScore.Result + Offset;
+                results[r, Weight] += weight;
+                results[r, Likelihood] += resultScore.Likelihood * weight;
+                results[r, InPly] = double.IsNaN(results[r, InPly]) || results[r, InPly].CompareTo(resultScore.InPly) > 0 ? resultScore.InPly : results[r, InPly]; // TODO: Should use PlyCountSortDirection?
             }
 
-            var pessimisticResult = results.Where(r => r.Value[Weight] > 0).OrderBy(r => r.Key).First();
+            var pessimisticResult = 0;
+            for (; pessimisticResult < ResultCount; pessimisticResult++)
+            {
+                if (results[pessimisticResult, Weight] > 0)
+                {
+                    break;
+                }
+            }
+
             var rest = this.scoringMetric.Combine(weightedRest);
 
-            return new ResultScore<TScore>(pessimisticResult.Key, pessimisticResult.Value[InPly], pessimisticResult.Value[Likelihood] / totalWeight, rest);
+            return new ResultScore<TScore>((Result)(pessimisticResult - Offset), results[pessimisticResult, InPly], results[pessimisticResult, Likelihood] / totalWeight, rest);
         }
 
         /// <inheritdoc/>

@@ -1,4 +1,4 @@
-﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory
 {
@@ -20,7 +20,7 @@ namespace GameTheory
         /// <para>If given a single score, that score should be returned without change.
         /// If given multiple scores, the function should return a expected score based on the specified weights.</para>
         /// </remarks>
-        TScore Combine(params IWeighted<TScore>[] scores);
+        TScore Combine(params Weighted<TScore>[] scores);
 
         /// <summary>
         /// Gets the difference between two scores.

@@ -218,7 +218,7 @@ namespace GameTheory.Players.MaximizingPlayer
         /// <returns>The cache object to use as a transposition table.</returns>
         protected virtual ICache MakeCache() => new Caches.SplayTreeCache();
 
-        private Mainline CombineOutcomes(IList<IWeighted<Mainline>> mainlines)
+        private Mainline CombineOutcomes(IList<Weighted<Mainline>> mainlines)
         {
             var firstMainline = mainlines[0].Value;
             if (mainlines.Count == 1)
@@ -252,7 +252,7 @@ namespace GameTheory.Players.MaximizingPlayer
             }
 
             var combinedScore = new Dictionary<PlayerToken, TScore>();
-            var playerScore = new IWeighted<TScore>[mainlines.Count];
+            var playerScore = new Weighted<TScore>[mainlines.Count];
             foreach (var player in firstMainline.GameState.Players)
             {
                 for (var i = 0; i < mainlines.Count; i++)
@@ -336,7 +336,7 @@ namespace GameTheory.Players.MaximizingPlayer
             }
 
             var sourceMainline = mainlines.Pick();
-            var maxMoves = moveWeights.Select(m => Weighted.Create(m.Key, m.Value.Weight)).ToImmutableArray();
+            var maxMoves = moveWeights.Select(m => (IWeighted<TMove>)Weighted.Create(m.Key, m.Value.Weight)).ToImmutableArray();
             var depth = fullyDetermined ? mainlines.Max(m => m.Depth) : mainlines.Where(m => !m.FullyDetermined).Min(m => m.Depth);
             return new Mainline(sourceMainline.Scores, sourceMainline.GameState, sourceMainline.PlayerToken, sourceMainline.Strategies.Pop().Push(maxMoves), depth, fullyDetermined);
         }
@@ -382,15 +382,17 @@ namespace GameTheory.Players.MaximizingPlayer
                             var newScores = mainline.Scores;
                             if (this.scoreExtender != null)
                             {
-                                var scoresBuilder = ImmutableDictionary.CreateBuilder<PlayerToken, TScore>();
+                                var scores = new Dictionary<PlayerToken, TScore>();
+
                                 foreach (var player in mainline.GameState.Players)
                                 {
-                                    scoresBuilder.Add(player, this.scoreExtender.Extend(mainline.Scores[player]));
+                                    scores.Add(player, this.scoreExtender.Extend(mainline.Scores[player]));
                                 }
-                                newScores = scoresBuilder.ToImmutable();
+
+                                newScores = scores;
                             }
 
-                            var newMainline = new Mainline(newScores, mainline.GameState, move.PlayerToken, mainline.Strategies.Push(ImmutableArray.Create(Weighted.Create(move, 1))), mainline.Depth + 1, mainline.FullyDetermined);
+                            var newMainline = new Mainline(newScores, mainline.GameState, move.PlayerToken, mainline.Strategies.Push(ImmutableArray.Create<IWeighted<TMove>>(Weighted.Create(move, 1))), mainline.Depth + 1, mainline.FullyDetermined);
                             return Weighted.Create(newMainline, o.Weight);
                         }).ToList());
                     }
