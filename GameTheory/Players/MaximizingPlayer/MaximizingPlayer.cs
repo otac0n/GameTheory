@@ -5,6 +5,7 @@ namespace GameTheory.Players.MaximizingPlayer
     using System;
     using System.Collections.Generic;
     using System.Collections.Immutable;
+    using System.Diagnostics;
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
@@ -25,6 +26,9 @@ namespace GameTheory.Players.MaximizingPlayer
         private readonly IScorePlyExtender<TScore> scoreExtender;
 
         private readonly IGameStateScoringMetric<TMove, TScore> scoringMetric;
+        private int cacheHits;
+        private int cacheMisses;
+        private int nodesSearched;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MaximizingPlayer{TMove, TScore}"/> class.
@@ -101,6 +105,7 @@ namespace GameTheory.Players.MaximizingPlayer
         {
             await Task.Yield();
 
+            var sw = Stopwatch.StartNew();
             var moves = state.GetAvailableMoves();
 
             var ply = this.MinPly;
@@ -128,6 +133,10 @@ namespace GameTheory.Players.MaximizingPlayer
 
             var states = state.GetView(this.PlayerToken, this.InitialSamples).ToList();
 
+            this.nodesSearched = 0;
+            this.cacheHits = 0;
+            this.cacheMisses = 0;
+
             Mainline mainline;
             if (states.Count == 1)
             {
@@ -145,8 +154,11 @@ namespace GameTheory.Players.MaximizingPlayer
             else
             {
                 this.MessageSent?.Invoke(this, new MessageSentEventArgs(mainline));
+                var chosen = mainline.Strategies.Peek().Pick();
+                sw.Stop();
+                this.MessageSent?.Invoke(this, new MessageSentEventArgs("Time taken (ms): ", sw.ElapsedMilliseconds, ", Nodes searched: ", this.nodesSearched, " (", (this.nodesSearched / sw.Elapsed.TotalMilliseconds).ToString("F2"), " kn/s), Cache hits: ", ((double)this.cacheHits / this.nodesSearched).ToString("P"), ", Cache misses: ", ((double)this.cacheMisses / this.nodesSearched).ToString("P")));
                 this.cache.Trim();
-                return mainline.Strategies.Peek().Pick();
+                return chosen;
             }
         }
 
@@ -343,12 +355,18 @@ namespace GameTheory.Players.MaximizingPlayer
 
         private Mainline GetMove(IGameState<TMove> state, int ply, CancellationToken cancel)
         {
+            Interlocked.Increment(ref this.nodesSearched);
             if (this.cache.TryGetValue(state, out var cached))
             {
                 if (cached.Depth >= ply || cached.FullyDetermined)
                 {
+                    Interlocked.Increment(ref this.cacheHits);
                     return cached;
                 }
+            }
+            else
+            {
+                Interlocked.Increment(ref this.cacheMisses);
             }
 
             Mainline result;
