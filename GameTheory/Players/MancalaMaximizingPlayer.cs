@@ -1,4 +1,4 @@
-﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Players.MaximizingPlayers
 {
@@ -18,15 +18,18 @@ namespace GameTheory.Players.MaximizingPlayers
         /// </summary>
         /// <param name="playerToken">The token that represents the player.</param>
         /// <param name="minPly">The minimum number of ply to think ahead.</param>
-        public MancalaMaximizingPlayer(PlayerToken playerToken, int minPly = 8)
+        public MancalaMaximizingPlayer(PlayerToken playerToken, int minPly = 9)
             : base(playerToken, Metric, minPly)
         {
         }
 
+        /// <inheritdoc />
+        protected override ICache MakeCache() => new Caches.NullCache();
+
         private static double Score(PlayerState<Move> playerState)
         {
             var state = (GameState)playerState.GameState;
-            return state.Board[state.GetPlayerIndexOffset(playerState.PlayerToken) + state.BinsPerSide];
+            return state.Board[state.GetPlayerIndexOffset(state.Players.IndexOf(playerState.PlayerToken)) + state.BinsPerSide];
         }
     }
 }

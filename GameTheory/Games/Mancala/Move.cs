@@ -19,7 +19,6 @@ namespace GameTheory.Games.Mancala
         internal Move(GameState state, int bin)
         {
             this.GameState = state ?? throw new ArgumentNullException(nameof(state));
-            this.PlayerToken = state.ActivePlayer;
             this.Bin = bin;
         }
 
@@ -37,7 +36,7 @@ namespace GameTheory.Games.Mancala
         /// <summary>
         /// Gets the player who may perform this move.
         /// </summary>
-        public PlayerToken PlayerToken { get; }
+        public PlayerToken PlayerToken => this.GameState.ActivePlayer;
 
         internal GameState GameState { get; }
 
@@ -46,56 +45,52 @@ namespace GameTheory.Games.Mancala
 
         internal GameState Apply(GameState state)
         {
+            var activePlayerIndex = state.ActivePlayerIndex;
             var binsPerSide = state.BinsPerSide;
-            var captureMin = state.GetPlayerIndexOffset(this.PlayerToken);
+            var phase = state.Phase;
+
+            var captureMin = state.GetPlayerIndexOffset(activePlayerIndex);
             var mancala = captureMin + binsPerSide;
 
-            var otherPlayer = state.Players.Except(this.PlayerToken).Single();
-            var othersBinsMin = state.GetPlayerIndexOffset(otherPlayer);
+            var otherPlayerIndex = 1 - activePlayerIndex;
+            var othersBinsMin = state.GetPlayerIndexOffset(otherPlayerIndex);
             var otherMancala = othersBinsMin + binsPerSide;
 
             var bin = this.Bin;
-            var board = state.Board;
+            var board = state.Board.ToBuilder();
 
             var count = board[bin];
-            board = board.SetItem(bin, 0);
+            var lastValue = board[bin] = 0;
 
             while (count > 0)
             {
                 do
                 {
                     bin += 1;
-                    bin %= board.Length;
+                    bin %= board.Count;
                 }
                 while (bin == otherMancala);
 
-                board = board.SetItem(bin, board[bin] + 1);
+                board[bin] = lastValue = board[bin] + 1;
                 count -= 1;
             }
 
-            PlayerToken activePlayer;
-            if (bin == mancala)
+            if (bin != mancala)
             {
-                activePlayer = this.PlayerToken;
-            }
-            else
-            {
-                if (board[bin] == 1 && bin >= captureMin && bin < mancala)
+                if (lastValue == 1 && bin >= captureMin && bin < mancala)
                 {
                     var captureIndex = binsPerSide - (bin - binsPerSide);
                     if (board[captureIndex] > 0)
                     {
-                        board = board
-                            .SetItem(mancala, board[mancala] + board[bin] + board[captureIndex])
-                            .SetItem(bin, 0)
-                            .SetItem(captureIndex, 0);
+                        board[mancala] += lastValue + board[captureIndex];
+                        board[bin] = 0;
+                        board[captureIndex] = 0;
                     }
                 }
 
-                activePlayer = otherPlayer;
+                activePlayerIndex = otherPlayerIndex;
             }
 
-            var phase = state.Phase;
             var playerBins = Enumerable.Range(captureMin, binsPerSide);
             var othersBins = Enumerable.Range(othersBinsMin, binsPerSide);
             if (playerBins.All(i => board[i] == 0))
@@ -103,9 +98,8 @@ namespace GameTheory.Games.Mancala
                 phase = Phase.End;
                 foreach (var i in othersBins)
                 {
-                    board = board
-                        .SetItem(otherMancala, board[otherMancala] + board[i])
-                        .SetItem(i, 0);
+                    board[otherMancala] += board[i];
+                    board[i] = 0;
                 }
             }
             else if (othersBins.All(i => board[i] == 0))
@@ -113,16 +107,15 @@ namespace GameTheory.Games.Mancala
                 phase = Phase.End;
                 foreach (var i in playerBins)
                 {
-                    board = board
-                        .SetItem(mancala, board[mancala] + board[i])
-                        .SetItem(i, 0);
+                    board[mancala] += board[i];
+                    board[i] = 0;
                 }
             }
 
             return state.With(
-                activePlayer: activePlayer,
+                activePlayerIndex: activePlayerIndex,
                 phase: phase,
-                board: board);
+                board: board.MoveToImmutable());
         }
     }
 }

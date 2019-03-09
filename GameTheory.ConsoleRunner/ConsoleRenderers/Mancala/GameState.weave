@@ -1,11 +1,11 @@
-﻿@using System.Linq
+@using System.Linq
 @using GameTheory.Games.Mancala
 @namespace GameTheory.ConsoleRunner.ConsoleRenderers.Mancala
 @static false
 @model GameState
 {{
-    var player1Indices = model.GetPlayerIndexes(model.Players[0]);
-    var player2Indices = model.GetPlayerIndexes(model.Players[1]).Reverse();
+    var player1Indices = model.GetPlayerIndexes(0);
+    var player2Indices = model.GetPlayerIndexes(1).Reverse();
     var maxWidth = player1Indices.Concat(player2Indices)
         .Concat(player1Indices.Select(i => model.Board[i]))
         .Concat(player2Indices.Select(i => model.Board[i]))

@@ -20,7 +20,7 @@ namespace GameTheory.Games.Mancala
         public GameState(int binsPerSide = 6, int initialStonesPerBin = 4)
         {
             this.Players = ImmutableArray.Create(new PlayerToken(), new PlayerToken());
-            this.ActivePlayer = this.Players[0];
+            this.ActivePlayerIndex = 0;
             this.Phase = Phase.Play;
             this.BinsPerSide = binsPerSide;
             var bins = Enumerable.Repeat(initialStonesPerBin, binsPerSide);
@@ -30,12 +30,12 @@ namespace GameTheory.Games.Mancala
 
         private GameState(
             ImmutableArray<PlayerToken> players,
-            PlayerToken activePlayer,
+            int activePlayerIndex,
             Phase phase,
             ImmutableArray<int> board)
         {
             this.Players = players;
-            this.ActivePlayer = activePlayer;
+            this.ActivePlayerIndex = activePlayerIndex;
             this.Phase = phase;
             this.BinsPerSide = board.Length / 2 - 1;
             this.Board = board;
@@ -44,7 +44,12 @@ namespace GameTheory.Games.Mancala
         /// <summary>
         /// Gets the active player.
         /// </summary>
-        public PlayerToken ActivePlayer { get; }
+        public PlayerToken ActivePlayer => this.Players[this.ActivePlayerIndex];
+
+        /// <summary>
+        /// Gets the index of the active player.
+        /// </summary>
+        public int ActivePlayerIndex { get; }
 
         /// <summary>
         /// Gets the number of bins per side.
@@ -103,7 +108,7 @@ namespace GameTheory.Games.Mancala
             var bins = this.BinsPerSide;
             var moves = new Move[bins];
 
-            var playerOffset = this.GetPlayerIndexOffset(this.ActivePlayer);
+            var playerOffset = this.GetPlayerIndexOffset(this.ActivePlayerIndex);
             var b = 0;
             for (var i = 0; i < bins; i++)
             {
@@ -122,7 +127,7 @@ namespace GameTheory.Games.Mancala
         public override int GetHashCode()
         {
             var hash = HashUtilities.Seed;
-            HashUtilities.Combine(ref hash, this.ActivePlayer.GetHashCode());
+            HashUtilities.Combine(ref hash, this.ActivePlayerIndex);
 
             for (var i = 0; i < this.Board.Length; i++)
             {
@@ -141,20 +146,17 @@ namespace GameTheory.Games.Mancala
         /// <summary>
         /// Enumerates the indexes for the specified player.
         /// </summary>
-        /// <param name="playerToken">The player whose bin indexes should be returned.</param>
+        /// <param name="playerIndex">The player whose bin indexes should be returned.</param>
         /// <returns>An enumerable collection of indexes.</returns>
-        public IEnumerable<int> GetPlayerIndexes(PlayerToken playerToken) =>
-            Enumerable.Range(this.GetPlayerIndexOffset(playerToken), this.BinsPerSide + 1);
+        public IEnumerable<int> GetPlayerIndexes(int playerIndex) =>
+            Enumerable.Range(this.GetPlayerIndexOffset(playerIndex), this.BinsPerSide + 1);
 
         /// <summary>
         /// Gets the starting index for the specified player.
         /// </summary>
-        /// <param name="playerToken">The player whose starting index should be returned.</param>
+        /// <param name="playerIndex">The player whose starting index should be returned.</param>
         /// <returns>The lowest index representing a bin owned by this player.</returns>
-        public int GetPlayerIndexOffset(PlayerToken playerToken) =>
-            playerToken == this.Players[0] ? 0 :
-            playerToken == this.Players[1] ? this.BinsPerSide + 1 :
-            throw new ArgumentOutOfRangeException(nameof(playerToken));
+        public int GetPlayerIndexOffset(int playerIndex) => playerIndex * (this.BinsPerSide + 1);
 
         /// <summary>
         /// Gets the score of the specified player.
@@ -163,7 +165,7 @@ namespace GameTheory.Games.Mancala
         /// <returns>The specified player's score.</returns>
         public int GetScore(PlayerToken playerToken)
         {
-            return this.GetPlayerIndexes(playerToken).Sum(i => this.Board[i]);
+            return this.GetPlayerIndexes(this.Players.IndexOf(playerToken)).Sum(i => this.Board[i]);
         }
 
         /// <inheritdoc />
@@ -213,17 +215,17 @@ namespace GameTheory.Games.Mancala
         public override string ToString()
         {
             var r = new Func<IEnumerable<int>, string>(bins => string.Join(" ", bins.Select(b => $"[{this.Board[b],2}]")));
-            return $"{r(this.GetPlayerIndexes(this.Players[1]).Reverse())} [  ]\n[  ] {r(this.GetPlayerIndexes(this.Players[0]))}";
+            return $"{r(this.GetPlayerIndexes(1).Reverse())} [  ]\n[  ] {r(this.GetPlayerIndexes(0))}";
         }
 
         internal GameState With(
-            PlayerToken activePlayer = null,
+            int? activePlayerIndex = null,
             Phase? phase = null,
             ImmutableArray<int>? board = null)
         {
             return new GameState(
                 this.Players,
-                activePlayer ?? this.ActivePlayer,
+                activePlayerIndex ?? this.ActivePlayerIndex,
                 phase ?? this.Phase,
                 board ?? this.Board);
         }

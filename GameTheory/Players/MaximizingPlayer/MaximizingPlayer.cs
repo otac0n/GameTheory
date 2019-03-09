@@ -156,7 +156,7 @@ namespace GameTheory.Players.MaximizingPlayer
                 this.MessageSent?.Invoke(this, new MessageSentEventArgs(mainline));
                 var chosen = mainline.Strategies.Peek().Pick();
                 sw.Stop();
-                this.MessageSent?.Invoke(this, new MessageSentEventArgs("Time taken (ms): ", sw.ElapsedMilliseconds, ", Nodes searched: ", this.nodesSearched, " (", (this.nodesSearched / sw.Elapsed.TotalMilliseconds).ToString("F2"), " kn/s), Cache hits: ", ((double)this.cacheHits / this.nodesSearched).ToString("P"), ", Cache misses: ", ((double)this.cacheMisses / this.nodesSearched).ToString("P")));
+                this.MessageSent?.Invoke(this, new MessageSentEventArgs("Time taken: ", sw.ElapsedMilliseconds, " ms, Nodes searched: ", this.nodesSearched, " (", (this.nodesSearched / sw.Elapsed.TotalMilliseconds).ToString("F2"), " kn/s), Cache hits: ", ((double)this.cacheHits / this.nodesSearched).ToString("P"), ", Cache misses: ", ((double)this.cacheMisses / this.nodesSearched).ToString("P")));
                 this.cache.Trim();
                 return chosen;
             }
@@ -393,9 +393,11 @@ namespace GameTheory.Players.MaximizingPlayer
                     {
                         var move = allMoves[m];
                         var outcomes = state.GetOutcomes(move);
-                        mainlines[m] = this.CombineOutcomes(outcomes.Select(o =>
+
+                        var weightedOutcomes = new List<Weighted<Mainline>>();
+                        foreach (var outcome in outcomes)
                         {
-                            var mainline = this.GetMove(o.Value, ply - 1, cancel);
+                            var mainline = this.GetMove(outcome.Value, ply - 1, cancel);
 
                             var newScores = mainline.Scores;
                             if (this.scoreExtender != null)
@@ -411,8 +413,10 @@ namespace GameTheory.Players.MaximizingPlayer
                             }
 
                             var newMainline = new Mainline(newScores, mainline.GameState, move.PlayerToken, mainline.Strategies.Push(ImmutableArray.Create<IWeighted<TMove>>(Weighted.Create(move, 1))), mainline.Depth + 1, mainline.FullyDetermined);
-                            return Weighted.Create(newMainline, o.Weight);
-                        }).ToList());
+                            weightedOutcomes.Add(Weighted.Create(newMainline, outcome.Weight));
+                        }
+
+                        mainlines[m] = this.CombineOutcomes(weightedOutcomes);
                     }
 
                     cancel.ThrowIfCancellationRequested();
