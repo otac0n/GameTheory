@@ -64,7 +64,7 @@ namespace GameTheory.Games.Chess.NotationSystems
 
         /// <inheritdoc />
         public override IList<object> FormatCapture(BasicMove capture) =>
-            (capture.GameState.Board[capture.FromIndex] & PieceMasks.Piece) == Pieces.Pawn
+            (capture.GameState[capture.FromIndex] & PieceMasks.Piece) == Pieces.Pawn
             ? FormatUtilities.Build(
                 ((char)('a' + capture.GameState.Variant.GetCoordinates(capture.FromIndex).X)).ToString(),
                 "x",
@@ -87,7 +87,7 @@ namespace GameTheory.Games.Chess.NotationSystems
 
         /// <inheritdoc />
         public override IList<object> FormatMove(BasicMove move) =>
-            (move.GameState.Board[move.FromIndex] & PieceMasks.Piece) == Pieces.Pawn
+            (move.GameState[move.FromIndex] & PieceMasks.Piece) == Pieces.Pawn
                 ? new[] { this.FormatSquare(move.GameState, move.ToIndex) }
                 : FormatUtilities.Build(
                     FormatMovingPiece(move),
@@ -113,14 +113,14 @@ namespace GameTheory.Games.Chess.NotationSystems
             return $"{(char)('a' + x)}{y + 1}";
         }
 
-        private static object FormatMovingPiece(BasicMove move) => move.GameState.Board[move.FromIndex] & PieceMasks.Piece;
+        private static object FormatMovingPiece(BasicMove move) => move.GameState[move.FromIndex] & PieceMasks.Piece;
 
         private object DisambuiguateSource(GameState gameState, int fromIndex, int toIndex)
         {
             var ambiguousSources = gameState
                 .GetAvailableMoves()
                 .OfType<BasicMove>()
-                .Where(m => m.FromIndex != fromIndex && m.ToIndex == toIndex && gameState.Board[m.FromIndex] == gameState.Board[fromIndex])
+                .Where(m => m.FromIndex != fromIndex && m.ToIndex == toIndex && gameState[m.FromIndex] == gameState[fromIndex])
                 .Select(m => gameState.Variant.GetCoordinates(m.FromIndex))
                 .ToList();
             if (ambiguousSources.Count == 0)

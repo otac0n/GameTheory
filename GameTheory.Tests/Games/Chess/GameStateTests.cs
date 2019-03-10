@@ -34,10 +34,10 @@ namespace GameTheory.Tests.Games.Chess
                 {
                     if (move is BasicMove basicMove)
                     {
-                        var piece = state.Board[basicMove.FromIndex] & PieceMasks.Piece;
+                        var piece = state[basicMove.FromIndex] & PieceMasks.Piece;
                         if (piece == Pieces.Knight || piece == Pieces.Rook)
                         {
-                            if (state.Board[basicMove.ToIndex] == Pieces.None)
+                            if (state[basicMove.ToIndex] == Pieces.None)
                             {
                                 return !move.IsCheck;
                             }

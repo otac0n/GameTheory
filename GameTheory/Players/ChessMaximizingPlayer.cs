@@ -18,7 +18,7 @@ namespace GameTheory.Players.MaximizingPlayers
         /// </summary>
         /// <param name="playerToken">The token that represents the player.</param>
         /// <param name="minPly">The minimum number of ply to think ahead.</param>
-        public ChessMaximizingPlayer(PlayerToken playerToken, int minPly = 2)
+        public ChessMaximizingPlayer(PlayerToken playerToken, int minPly = 4)
             : base(playerToken, Metric, minPly)
         {
         }
@@ -26,16 +26,15 @@ namespace GameTheory.Players.MaximizingPlayers
         private static double Score(PlayerState<Move> playerState)
         {
             var state = (GameState)playerState.GameState;
-            var board = state.Board;
             var playerColor = state.Players.IndexOf(playerState.PlayerToken) == 0
                 ? Pieces.White
                 : Pieces.Black;
 
             var score = 0;
 
-            for (var i = board.Count - 1; i >= 0; i--)
+            for (var i = state.Variant.Size - 1; i >= 0; i--)
             {
-                var piece = board[i];
+                var piece = state[i];
                 if (piece != Pieces.None)
                 {
                     var mul = (piece & PieceMasks.Colors) == playerColor ? 1 : -1;

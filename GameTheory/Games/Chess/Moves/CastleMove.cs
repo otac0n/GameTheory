@@ -59,16 +59,16 @@ namespace GameTheory.Games.Chess.Moves
         {
             if (this.resultingState == null)
             {
-                var newBoard = state.Board.ToBuilder();
-                newBoard[this.ToIndex] = state.Board[this.FromIndex];
-                newBoard[this.FromIndex] = Pieces.None;
-                newBoard[this.RookToIndex] = state.Board[this.RookFromIndex];
-                newBoard[this.RookFromIndex] = Pieces.None;
+                var board = state.Board;
+                board[this.ToIndex] = state[this.FromIndex];
+                board[this.FromIndex] = Pieces.None;
+                board[this.RookToIndex] = state[this.RookFromIndex];
+                board[this.RookFromIndex] = Pieces.None;
                 state = state.With(
                     activeColor: state.ActiveColor == Pieces.White ? Pieces.Black : Pieces.White,
                     plyCountClock: state.PlyCountClock + 1,
                     castling: GameState.RemoveCastling(state.Castling, state.ActiveColor),
-                    board: newBoard.ToImmutable());
+                    board: board);
 
                 Interlocked.CompareExchange(ref this.resultingState, state, null);
             }

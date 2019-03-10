@@ -36,7 +36,7 @@ namespace GameTheory.Games.Chess
 
         public virtual IList<object> FormatBasicMove(BasicMove basicMove)
         {
-            if (basicMove.GameState.Board[basicMove.ToIndex] != Pieces.None)
+            if (basicMove.GameState[basicMove.ToIndex] != Pieces.None)
             {
                 return this.FormatCapture(basicMove);
             }

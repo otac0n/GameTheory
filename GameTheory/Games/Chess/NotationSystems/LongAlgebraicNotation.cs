@@ -28,7 +28,7 @@ namespace GameTheory.Games.Chess.NotationSystems
 
         private static object FormatMovingPiece(BasicMove move) =>
             FormatUtilities.If(
-                (move.GameState.Board[move.FromIndex] & PieceMasks.Piece) != Pieces.Pawn,
-                () => move.GameState.Board[move.FromIndex] & PieceMasks.Piece);
+                (move.GameState[move.FromIndex] & PieceMasks.Piece) != Pieces.Pawn,
+                () => move.GameState[move.FromIndex] & PieceMasks.Piece);
     }
 }

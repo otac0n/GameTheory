@@ -53,16 +53,17 @@ namespace GameTheory.Games.Chess.Moves
         /// <returns>The resuting game state.</returns>
         protected virtual GameState ApplyImpl(GameState state)
         {
-            var castling = (state.Board[this.FromIndex] & PieceMasks.Piece) == Pieces.King
+            var castling = (state[this.FromIndex] & PieceMasks.Piece) == Pieces.King
                 ? GameState.RemoveCastling(state.Castling, state.ActiveColor)
                 : GameState.RemoveCastling(state.Castling, this.FromIndex, this.ToIndex);
+            var board = state.Board;
+            board[this.ToIndex] = state[this.FromIndex];
+            board[this.FromIndex] = Pieces.None;
             return state.With(
                     activeColor: state.ActiveColor == Pieces.White ? Pieces.Black : Pieces.White,
-                    plyCountClock: (state.Board[this.FromIndex] & PieceMasks.Piece) == Pieces.Pawn ? 0 : state.PlyCountClock + 1,
+                    plyCountClock: (state[this.FromIndex] & PieceMasks.Piece) == Pieces.Pawn ? 0 : state.PlyCountClock + 1,
                     castling: castling,
-                    board: state.Board
-                        .SetItem(this.ToIndex, state.Board[this.FromIndex])
-                        .SetItem(this.FromIndex, Pieces.None));
+                    board: board);
         }
     }
 }

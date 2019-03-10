@@ -26,13 +26,16 @@ namespace GameTheory.Games.Chess.Moves
         public int EnPassantIndex { get; }
 
         /// <inheritdoc />
-        protected override GameState ApplyImpl(GameState state) =>
-            state.With(
+        protected override GameState ApplyImpl(GameState state)
+        {
+            var board = state.Board;
+            board[this.ToIndex] = state[this.FromIndex];
+            board[this.FromIndex] = Pieces.None;
+            return state.With(
                 activeColor: state.ActiveColor == Pieces.White ? Pieces.Black : Pieces.White,
                 plyCountClock: 0,
-                board: state.Board
-                    .SetItem(this.ToIndex, state.Board[this.FromIndex])
-                    .SetItem(this.FromIndex, Pieces.None),
+                board: board,
                 enPassantIndex: this.EnPassantIndex);
+        }
     }
 }

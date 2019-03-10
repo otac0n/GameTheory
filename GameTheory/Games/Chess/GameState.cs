@@ -16,6 +16,7 @@ namespace GameTheory.Games.Chess
     {
         private static readonly ImmutableArray<int> EmptyCastling = ImmutableArray.Create(-1, -1, -1, -1);
 
+        private readonly Pieces[] board;
         private WeakReference<IReadOnlyList<Move>> allMovesCache;
         private WeakReference<IReadOnlyList<Move>> availableMovesCache;
 
@@ -51,7 +52,7 @@ namespace GameTheory.Games.Chess
                 width: board.GetLength(0),
                 height: board.GetLength(1));
             this.ActiveColor = Pieces.White;
-            this.Board = ImmutableList.CreateRange(board.Cast<Pieces>());
+            this.board = board.Cast<Pieces>().ToArray();
             this.PlyCountClock = plyCountClock;
             this.MoveNumber = moveNumber;
             this.EnPassantIndex = epCoordinate == null
@@ -66,7 +67,7 @@ namespace GameTheory.Games.Chess
             ImmutableArray<PlayerToken> players,
             Variant variant,
             Pieces activeColor,
-            ImmutableList<Pieces> board,
+            Pieces[] board,
             int plyCountClock,
             int moveNumber,
             int? enPassantIndex,
@@ -75,7 +76,7 @@ namespace GameTheory.Games.Chess
             this.Players = players;
             this.Variant = variant;
             this.ActiveColor = activeColor;
-            this.Board = board;
+            this.board = board;
             this.PlyCountClock = plyCountClock;
             this.MoveNumber = moveNumber;
             this.EnPassantIndex = enPassantIndex;
@@ -96,9 +97,18 @@ namespace GameTheory.Games.Chess
         public PlayerToken ActivePlayer => this.Players[this.ActiveColor == Pieces.White ? 0 : 1];
 
         /// <summary>
-        /// Gets the board.
+        /// Gets a copy of the internal board.
         /// </summary>
-        public ImmutableList<Pieces> Board { get; }
+        public Pieces[] Board
+        {
+            get
+            {
+                var length = this.board.Length;
+                var board = new Pieces[length];
+                Array.Copy(this.board, board, length);
+                return board;
+            }
+        }
 
         /// <summary>
         /// Gets the castling rights.
@@ -118,7 +128,7 @@ namespace GameTheory.Games.Chess
             get
             {
                 var king = this.ActiveColor | Pieces.King;
-                var kingIndex = Enumerable.Range(0, this.Board.Count).First(i => this.Board[i] == king);
+                var kingIndex = Enumerable.Range(0, this.Variant.Size).First(i => this.board[i] == king);
                 var check = this.Variant.GenerateAllMoves(
                     this.With(
                         activeColor: this.ActiveColor == Pieces.White ? Pieces.Black : Pieces.White),
@@ -163,6 +173,13 @@ namespace GameTheory.Games.Chess
         /// Gets the variant.
         /// </summary>
         public Variant Variant { get; }
+
+        /// <summary>
+        /// Gets the value of the specified square.
+        /// </summary>
+        /// <param name="index">The index of the sqaure.</param>
+        /// <returns>The value of the specified sqaure.</returns>
+        public Pieces this[int index] => this.board[index];
 
         /// <summary>
         /// Gets the index in the <see cref="Castling"/> collection corresponding to a specific color's specific side.
@@ -261,7 +278,7 @@ namespace GameTheory.Games.Chess
                 (comp = this.MoveNumber.CompareTo(state.MoveNumber)) != 0 ||
                 (comp = this.PlyCountClock.CompareTo(state.PlyCountClock)) != 0 ||
                 (comp = this.EnPassantIndex.CompareTo(state.EnPassantIndex)) != 0 ||
-                (comp = CompareUtilities.CompareEnumLists(this.Board, state.Board)) != 0 ||
+                (comp = CompareUtilities.CompareEnumLists(this.board, state.board)) != 0 ||
                 (comp = CompareUtilities.CompareLists(this.Players, state.Players)) != 0 ||
                 (comp = CompareUtilities.CompareValueLists(this.Castling, state.Castling)) != 0)
             {
@@ -293,7 +310,7 @@ namespace GameTheory.Games.Chess
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "y", Justification = "Y is meaningful in the context of coordinates.")]
         public Pieces GetPieceAt(int x, int y)
         {
-            return this.Board[this.Variant.GetIndexOf(x, y)];
+            return this.board[this.Variant.GetIndexOf(x, y)];
         }
 
         /// <inheritdoc/>
@@ -336,7 +353,7 @@ namespace GameTheory.Games.Chess
 
         internal GameState With(
             Pieces? activeColor = null,
-            ImmutableList<Pieces> board = null,
+            Pieces[] board = null,
             int? plyCountClock = null,
             int? enPassantIndex = null,
             ImmutableArray<int>? castling = null)
@@ -345,7 +362,7 @@ namespace GameTheory.Games.Chess
                 players: this.Players,
                 variant: this.Variant,
                 activeColor: activeColor ?? this.ActiveColor,
-                board: board ?? this.Board,
+                board: board ?? this.board,
                 plyCountClock: plyCountClock ?? this.PlyCountClock,
                 moveNumber: activeColor != this.ActiveColor && activeColor == Pieces.White ? this.MoveNumber + 1 : this.MoveNumber,
                 enPassantIndex: enPassantIndex, // The en passant square is automatically reset.
