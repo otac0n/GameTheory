@@ -29,7 +29,7 @@ namespace GameTheory.Players.MaximizingPlayers
         private static double Score(PlayerState<Move> playerState)
         {
             var state = (GameState)playerState.GameState;
-            return state.Board[state.GetPlayerIndexOffset(state.Players.IndexOf(playerState.PlayerToken)) + state.BinsPerSide];
+            return state[state.GetPlayerIndexOffset(state.Players.IndexOf(playerState.PlayerToken)) + state.BinsPerSide];
         }
     }
 }

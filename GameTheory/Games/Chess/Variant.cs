@@ -194,9 +194,9 @@ namespace GameTheory.Games.Chess
         /// <returns>The corresponding index.</returns>
         public int GetIndexOf(int x, int y) => y * this.Width + x;
 
-        protected internal ImmutableList<Move> GenerateAllMoves(GameState state, bool onlyCaptures = false)
+        protected internal IReadOnlyList<Move> GenerateAllMoves(GameState state, bool onlyCaptures = false)
         {
-            var builder = ImmutableList.CreateBuilder<Move>();
+            var builder = new List<Move>();
             var board = state.Board;
             var activeColor = state.ActiveColor;
             var pawnDirection = activeColor == Pieces.White ? 1 : -1;
@@ -399,17 +399,18 @@ namespace GameTheory.Games.Chess
                 }
             }
 
-            return builder.ToImmutable();
+            return builder;
         }
 
-        protected internal IEnumerable<Move> GenerateMoves(GameState state)
+        protected internal IReadOnlyList<Move> GenerateMoves(GameState state)
         {
             if (state.PlyCountClock >= this.DrawingPlyCount)
             {
-                yield break;
+                return new Move[0];
             }
 
             var allMoves = state.GenerateAllMoves();
+            var moves = new List<Move>(allMoves.Count);
 
             var activeColor = state.ActiveColor;
             var activeKing = Pieces.King | activeColor;
@@ -431,9 +432,11 @@ namespace GameTheory.Games.Chess
 
                 if (!kingChop)
                 {
-                    yield return move;
+                    moves.Add(move);
                 }
             }
+
+            return moves;
         }
     }
 }

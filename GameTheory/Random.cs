@@ -1,4 +1,4 @@
-﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory
 {
@@ -312,6 +312,38 @@ namespace GameTheory
         /// <param name="instance">An instance of <see cref="System.Random"/> to use.</param>
         /// <returns>The selected element.</returns>
         public static T Pick<T>(this IList<IWeighted<T>> weightedItems, System.Random instance = null)
+        {
+            if (weightedItems == null)
+            {
+                throw new ArgumentNullException(nameof(weightedItems));
+            }
+
+            instance = instance ?? Instance;
+
+            var totalWeight = weightedItems.Sum(i => i.Weight);
+            var threshold = totalWeight * instance.NextDouble();
+
+            var value = 0.0;
+            foreach (var item in weightedItems)
+            {
+                value += item.Weight;
+                if (value >= threshold)
+                {
+                    return item.Value;
+                }
+            }
+
+            throw new InvalidOperationException();
+        }
+
+        /// <summary>
+        /// Selects a random element from a list of weighted items.
+        /// </summary>
+        /// <typeparam name="T">The type of items in the list.</typeparam>
+        /// <param name="weightedItems">The weighted items to choose from.</param>
+        /// <param name="instance">An instance of <see cref="System.Random"/> to use.</param>
+        /// <returns>The selected element.</returns>
+        public static T Pick<T>(this IReadOnlyList<IWeighted<T>> weightedItems, System.Random instance = null)
         {
             if (weightedItems == null)
             {

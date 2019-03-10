@@ -1,4 +1,4 @@
-﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Games.Mancala
 {
@@ -28,7 +28,7 @@ namespace GameTheory.Games.Mancala
         public int Bin { get; }
 
         /// <inheritdoc />
-        public IList<object> FormatTokens => FormatUtilities.ParseStringFormat(Resources.PickUpStones, this.GameState.Board[this.Bin], this.Bin);
+        public IList<object> FormatTokens => FormatUtilities.ParseStringFormat(Resources.PickUpStones, this.GameState[this.Bin], this.Bin);
 
         /// <inheritdoc />
         public bool IsDeterministic => true;
@@ -57,7 +57,7 @@ namespace GameTheory.Games.Mancala
             var otherMancala = othersBinsMin + binsPerSide;
 
             var bin = this.Bin;
-            var board = state.Board.ToBuilder();
+            var board = state.Board;
 
             var count = board[bin];
             var lastValue = board[bin] = 0;
@@ -67,7 +67,7 @@ namespace GameTheory.Games.Mancala
                 do
                 {
                     bin += 1;
-                    bin %= board.Count;
+                    bin %= board.Length;
                 }
                 while (bin == otherMancala);
 
@@ -115,7 +115,7 @@ namespace GameTheory.Games.Mancala
             return state.With(
                 activePlayerIndex: activePlayerIndex,
                 phase: phase,
-                board: board.MoveToImmutable());
+                board: board);
         }
     }
 }

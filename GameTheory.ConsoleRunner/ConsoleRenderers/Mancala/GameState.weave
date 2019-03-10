@@ -7,8 +7,8 @@
     var player1Indices = model.GetPlayerIndexes(0);
     var player2Indices = model.GetPlayerIndexes(1).Reverse();
     var maxWidth = player1Indices.Concat(player2Indices)
-        .Concat(player1Indices.Select(i => model.Board[i]))
-        .Concat(player2Indices.Select(i => model.Board[i]))
+        .Concat(player1Indices.Select(i => model[i]))
+        .Concat(player2Indices.Select(i => model[i]))
         .Select(i => i.ToString().Length).Max();
 
     string pad(object value, char padding)
@@ -18,8 +18,8 @@
 }}
 {{= BoxDrawing.Space }}{{each i in player2Indices}}{{= pad(i, BoxDrawing.Space) }}{{delimit}}{{= BoxDrawing.Space }}{{/each}}
 {{= BoxDrawing.DownAndRight }}{{each x in player2Indices}}{{= pad("", BoxDrawing.Horizontal) }}{{delimit}}{{= BoxDrawing.DownAndHorizontal }}{{/each}}{{= BoxDrawing.DownAndHorizontal }}{{= pad("", BoxDrawing.Horizontal) }}{{= BoxDrawing.DownAndLeft }}
-{{= BoxDrawing.Vertical }}{{each x in player2Indices}}{{= pad(model.Board[x], BoxDrawing.Space) }}{{delimit}}{{= BoxDrawing.Vertical }}{{/each}}{{= BoxDrawing.Vertical }}{{= pad("", BoxDrawing.Space) }}{{= BoxDrawing.Vertical }}
+{{= BoxDrawing.Vertical }}{{each x in player2Indices}}{{= pad(model[x], BoxDrawing.Space) }}{{delimit}}{{= BoxDrawing.Vertical }}{{/each}}{{= BoxDrawing.Vertical }}{{= pad("", BoxDrawing.Space) }}{{= BoxDrawing.Vertical }}
 {{= BoxDrawing.Vertical }}{{= pad("", BoxDrawing.Space) }}{{= BoxDrawing.VerticalAndRight }}{{each x in player2Indices.Skip(1)}}{{= pad("", BoxDrawing.Horizontal) }}{{delimit}}{{= BoxDrawing.VerticalAndHorizontal }}{{/each}}{{= BoxDrawing.VerticalAndLeft }}{{= pad("", BoxDrawing.Space) }}{{= BoxDrawing.Vertical }}
-{{= BoxDrawing.Vertical }}{{= pad("", BoxDrawing.Space) }}{{= BoxDrawing.Vertical }}{{each x in player1Indices}}{{= pad(model.Board[x], BoxDrawing.Space) }}{{delimit}}{{= BoxDrawing.Vertical }}{{/each}}{{= BoxDrawing.Vertical }}
+{{= BoxDrawing.Vertical }}{{= pad("", BoxDrawing.Space) }}{{= BoxDrawing.Vertical }}{{each x in player1Indices}}{{= pad(model[x], BoxDrawing.Space) }}{{delimit}}{{= BoxDrawing.Vertical }}{{/each}}{{= BoxDrawing.Vertical }}
 {{= BoxDrawing.UpAndRight }}{{= pad("", BoxDrawing.Horizontal) }}{{= BoxDrawing.UpAndHorizontal }}{{each x in player1Indices}}{{= pad("", BoxDrawing.Horizontal) }}{{delimit}}{{= BoxDrawing.UpAndHorizontal }}{{/each}}{{= BoxDrawing.UpAndLeft }}
 {{= BoxDrawing.Space }}{{= pad("", BoxDrawing.Space) }}{{= BoxDrawing.Space }}{{each i in player1Indices}}{{= pad(i, BoxDrawing.Space) }}{{delimit}}{{= BoxDrawing.Space }}{{/each}}

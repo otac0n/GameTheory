@@ -12,6 +12,8 @@ namespace GameTheory.Games.Mancala
     /// </summary>
     public sealed class GameState : IGameState<Move>
     {
+        private readonly int[] board;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="GameState"/> class.
         /// </summary>
@@ -25,20 +27,20 @@ namespace GameTheory.Games.Mancala
             this.BinsPerSide = binsPerSide;
             var bins = Enumerable.Repeat(initialStonesPerBin, binsPerSide);
             var side = Enumerable.Concat(bins, Enumerable.Repeat(0, 1));
-            this.Board = ImmutableArray.CreateRange(Enumerable.Concat(side, side));
+            this.board = Enumerable.Concat(side, side).ToArray();
         }
 
         private GameState(
             ImmutableArray<PlayerToken> players,
             int activePlayerIndex,
             Phase phase,
-            ImmutableArray<int> board)
+            int[] board)
         {
             this.Players = players;
             this.ActivePlayerIndex = activePlayerIndex;
             this.Phase = phase;
             this.BinsPerSide = board.Length / 2 - 1;
-            this.Board = board;
+            this.board = board;
         }
 
         /// <summary>
@@ -57,9 +59,18 @@ namespace GameTheory.Games.Mancala
         public int BinsPerSide { get; }
 
         /// <summary>
-        /// Gets the board.
+        /// Gets a copy of the internal board.
         /// </summary>
-        public ImmutableArray<int> Board { get; }
+        public int[] Board
+        {
+            get
+            {
+                var length = this.board.Length;
+                var board = new int[length];
+                Array.Copy(this.board, board, length);
+                return board;
+            }
+        }
 
         /// <summary>
         /// Gets the current phase of the game.
@@ -73,6 +84,13 @@ namespace GameTheory.Games.Mancala
         /// Gets the list of players.
         /// </summary>
         public ImmutableArray<PlayerToken> Players { get; }
+
+        /// <summary>
+        /// Gets the value of the specified bin.
+        /// </summary>
+        /// <param name="bin">The index of the bin.</param>
+        /// <returns>The value of the specified bin.</returns>
+        public int this[int bin] => this.board[bin];
 
         /// <inheritdoc/>
         public int CompareTo(IGameState<Move> other)
@@ -91,7 +109,7 @@ namespace GameTheory.Games.Mancala
             int comp;
 
             if ((comp = CompareUtilities.CompareLists(this.Players, state.Players)) != 0 ||
-                (comp = CompareUtilities.CompareValueLists(this.Board, state.Board)) != 0)
+                (comp = CompareUtilities.CompareValueLists(this.board, state.board)) != 0)
             {
                 return comp;
             }
@@ -113,7 +131,7 @@ namespace GameTheory.Games.Mancala
             for (var i = 0; i < bins; i++)
             {
                 var index = i + playerOffset;
-                if (this.Board[index] > 0)
+                if (this.board[index] > 0)
                 {
                     moves[b++] = new Move(this, index);
                 }
@@ -129,19 +147,17 @@ namespace GameTheory.Games.Mancala
             var hash = HashUtilities.Seed;
             HashUtilities.Combine(ref hash, this.ActivePlayerIndex);
 
-            for (var i = 0; i < this.Board.Length; i++)
+            for (var i = 0; i < this.board.Length; i++)
             {
-                HashUtilities.Combine(ref hash, this.Board[i]);
+                HashUtilities.Combine(ref hash, this.board[i]);
             }
 
             return hash;
         }
 
         /// <inheritdoc />
-        public IEnumerable<IWeighted<IGameState<Move>>> GetOutcomes(Move move)
-        {
-            yield return Weighted.Create(this.MakeMove(move), 1);
-        }
+        public IEnumerable<IWeighted<IGameState<Move>>> GetOutcomes(Move move) =>
+            new IWeighted<IGameState<Move>>[] { Weighted.Create(this.MakeMove(move), 1) };
 
         /// <summary>
         /// Enumerates the indexes for the specified player.
@@ -165,7 +181,7 @@ namespace GameTheory.Games.Mancala
         /// <returns>The specified player's score.</returns>
         public int GetScore(PlayerToken playerToken)
         {
-            return this.GetPlayerIndexes(this.Players.IndexOf(playerToken)).Sum(i => this.Board[i]);
+            return this.GetPlayerIndexes(this.Players.IndexOf(playerToken)).Sum(i => this.board[i]);
         }
 
         /// <inheritdoc />
@@ -214,20 +230,20 @@ namespace GameTheory.Games.Mancala
         /// <inheritdoc />
         public override string ToString()
         {
-            var r = new Func<IEnumerable<int>, string>(bins => string.Join(" ", bins.Select(b => $"[{this.Board[b],2}]")));
+            var r = new Func<IEnumerable<int>, string>(bins => string.Join(" ", bins.Select(b => $"[{this.board[b],2}]")));
             return $"{r(this.GetPlayerIndexes(1).Reverse())} [  ]\n[  ] {r(this.GetPlayerIndexes(0))}";
         }
 
         internal GameState With(
             int? activePlayerIndex = null,
             Phase? phase = null,
-            ImmutableArray<int>? board = null)
+            int[] board = null)
         {
             return new GameState(
                 this.Players,
                 activePlayerIndex ?? this.ActivePlayerIndex,
                 phase ?? this.Phase,
-                board ?? this.Board);
+                board ?? this.board);
         }
     }
 }

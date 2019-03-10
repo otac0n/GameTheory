@@ -16,8 +16,8 @@ namespace GameTheory.Games.Chess
     {
         private static readonly ImmutableArray<int> EmptyCastling = ImmutableArray.Create(-1, -1, -1, -1);
 
-        private WeakReference<ImmutableList<Move>> allMovesCache;
-        private WeakReference<ImmutableList<Move>> availableMovesCache;
+        private WeakReference<IReadOnlyList<Move>> allMovesCache;
+        private WeakReference<IReadOnlyList<Move>> availableMovesCache;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GameState"/> class.
@@ -274,7 +274,7 @@ namespace GameTheory.Games.Chess
         /// <inheritdoc/>
         public IReadOnlyList<Move> GetAvailableMoves()
         {
-            return CachingUtils.WeakRefernceCache(ref this.availableMovesCache, () => this.Variant.GenerateMoves(this).ToImmutableList());
+            return CachingUtils.WeakRefernceCache(ref this.availableMovesCache, () => this.Variant.GenerateMoves(this));
         }
 
         /// <inheritdoc/>
@@ -329,7 +329,7 @@ namespace GameTheory.Games.Chess
             return move.Apply(this);
         }
 
-        internal ImmutableList<Move> GenerateAllMoves()
+        internal IReadOnlyList<Move> GenerateAllMoves()
         {
             return CachingUtils.WeakRefernceCache(ref this.allMovesCache, () => this.Variant.GenerateAllMoves(this));
         }

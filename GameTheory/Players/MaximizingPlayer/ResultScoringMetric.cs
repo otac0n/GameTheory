@@ -84,10 +84,13 @@ namespace GameTheory.Players.MaximizingPlayer
                 return comp;
             }
 
-            if ((comp = y.Likelihood.CompareTo(x.Likelihood)) != 0 ||
-                (comp = x.InPly.CompareTo(y.InPly)) != 0)
+            if (x.Result != Result.None)
             {
-                return PlyCountSortDirection(x.Result, comp);
+                if ((comp = y.Likelihood.CompareTo(x.Likelihood)) != 0 ||
+                    (comp = x.InPly.CompareTo(y.InPly)) != 0)
+                {
+                    return PlyCountSortDirection(x.Result, comp);
+                }
             }
 
             return this.scoringMetric.Compare(x.Rest, y.Rest);
