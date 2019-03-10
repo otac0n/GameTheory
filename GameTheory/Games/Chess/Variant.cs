@@ -358,8 +358,8 @@ namespace GameTheory.Games.Chess
                                     else if (t >= minCheck && t <= maxCheck)
                                     {
                                         var board = state.Board;
-                                        board[t] = piece;
                                         board[i] = Pieces.None;
+                                        board[t] = piece;
                                         var check = this.GenerateAllMoves(
                                             state.With(
                                                 activeColor: activeColor == Pieces.White ? Pieces.Black : Pieces.White,

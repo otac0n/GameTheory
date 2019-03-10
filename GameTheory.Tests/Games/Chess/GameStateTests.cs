@@ -60,5 +60,17 @@ namespace GameTheory.Tests.Games.Chess
             var state = new GameState(position);
             Assert.That(state.GetAvailableMoves().OfType<CastleMove>(), Is.Empty);
         }
+
+        [TestCase("1. e4; 1... d5; 2. exd5; 2... Qxd5; 3. Nf3; 3... Nc6; 4. Bd3; 4... Qe4+")]
+        public void GetAvailableMoves_WhenInCheck_DoesNotAllowCastling(string moves)
+        {
+            var state = new GameState();
+            foreach (var m in moves.Split(';').Select(m => m.Trim()))
+            {
+                state = (GameState)state.PlayMove(state.ActivePlayer, move => move.ToString() == m);
+            }
+
+            Assert.That(state.GetAvailableMoves().OfType<CastleMove>(), Is.Empty);
+        }
     }
 }
