@@ -22,7 +22,7 @@ namespace GameTheory.Players.MaximizingPlayers
         /// </summary>
         /// <param name="playerToken">The token that represents the player.</param>
         /// <param name="minPly">The minimum number of ply to think ahead.</param>
-        public TwentyFortyEightMaximizingPlayer(PlayerToken playerToken, int minPly)
+        public TwentyFortyEightMaximizingPlayer(PlayerToken playerToken, int minPly = 4)
             : base(playerToken, Metric, minPly)
         {
         }

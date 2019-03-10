@@ -1,15 +1,19 @@
-﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Games.TwentyFortyEight.Moves
 {
     using System.Collections.Generic;
+    using System.Collections.Immutable;
     using System.Diagnostics.CodeAnalysis;
+    using System.Threading;
 
     /// <summary>
     /// Represents a player move.
     /// </summary>
     public sealed class ComputerMove : Move
     {
+        private GameState resultingState;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="ComputerMove"/> class.
         /// </summary>
@@ -67,23 +71,20 @@ namespace GameTheory.Games.TwentyFortyEight.Moves
 
         internal override GameState Apply(GameState state)
         {
-            var anyFound = false;
-            var field = new byte[GameState.Size, GameState.Size];
-            for (var y = 0; y < GameState.Size; y++)
+            if (this.resultingState == null)
             {
-                for (var x = 0; x < GameState.Size; x++)
-                {
-                    var value = field[x, y] = state[x, y];
-                    if (value != 0)
-                    {
-                        anyFound = true;
-                    }
-                }
+                state = this.ApplyImpl(state);
+                Interlocked.CompareExchange(ref this.resultingState, state, null);
             }
 
-            field[this.X, this.Y] = this.Value;
+            return this.resultingState;
+        }
 
-            return state.With(turn: anyFound ? Turn.Player : Turn.Computer, field: field);
+        private GameState ApplyImpl(GameState state)
+        {
+            var field = state.Field;
+            field[this.X, this.Y] = this.Value;
+            return state.With(turn: Turn.Player, field: field);
         }
     }
 }

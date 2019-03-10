@@ -56,7 +56,11 @@ namespace GameTheory.Games.TwentyFortyEight
         /// </summary>
         public const byte SmallValue = 1;
 
-        private const double SmallValueWeight = 0.9;
+        /// <summary>
+        /// The weight of the small value being chosen.
+        /// </summary>
+        public const double SmallValueWeight = 0.9;
+
         private const int WinThreshold = 11;
         private readonly byte[,] field;
         private readonly IReadOnlyList<PlayerToken> players;
@@ -94,6 +98,11 @@ namespace GameTheory.Games.TwentyFortyEight
 
         /// <inheritdoc/>
         public IReadOnlyList<PlayerToken> Players => this.players;
+
+        /// <summary>
+        /// Gets a copy of the internal field.
+        /// </summary>
+        internal byte[,] Field => (byte[,])this.field.Clone();
 
         /// <summary>
         /// Gets the value of the specified spot on the playing area.
@@ -175,34 +184,7 @@ namespace GameTheory.Games.TwentyFortyEight
         }
 
         /// <inheritdoc/>
-        public IEnumerable<IWeighted<IGameState<Move>>> GetOutcomes(Move move)
-        {
-            if (move.IsDeterministic)
-            {
-                yield return Weighted.Create(this.MakeMove(move), 1);
-                yield break;
-            }
-
-            var state = move.Apply(this);
-            for (var x = 0; x < Size; x++)
-            {
-                for (var y = 0; y < Size; y++)
-                {
-                    if (state.field[x, y] == 0)
-                    {
-                        var field = new byte[Size, Size];
-                        Array.Copy(state.field, field, field.Length);
-                        field[x, y] = SmallValue;
-                        yield return Weighted.Create(state.With(turn: Turn.Player, field: field), SmallValueWeight);
-
-                        field = new byte[Size, Size];
-                        Array.Copy(state.field, field, field.Length);
-                        field[x, y] = LargeValue;
-                        yield return Weighted.Create(state.With(turn: Turn.Player, field: field), 1 - SmallValueWeight);
-                    }
-                }
-            }
-        }
+        public IEnumerable<IWeighted<IGameState<Move>>> GetOutcomes(Move move) => move.GetOutcomes(this);
 
         /// <inheritdoc/>
         public IEnumerable<IGameState<Move>> GetView(PlayerToken playerToken, int maxStates)
@@ -248,30 +230,10 @@ namespace GameTheory.Games.TwentyFortyEight
                 throw new ArgumentOutOfRangeException(nameof(move));
             }
 
-            var state = move.Apply(this);
-
-            if (this.players.Count == 1 && state.turn == Turn.Computer)
-            {
-                var field = new byte[Size, Size];
-                Array.Copy(state.field, field, field.Length);
-                RandomComputerMove(field);
-                state = state.With(turn: Turn.Player, field: field);
-            }
-
-            return state;
+            return move.Apply(this);
         }
 
-        internal GameState With(
-            Turn? turn = null,
-            byte[,] field = null)
-        {
-            return new GameState(
-                this.Players,
-                turn ?? this.turn,
-                field ?? this.field);
-        }
-
-        private static void RandomComputerMove(byte[,] field)
+        internal static void RandomComputerMove(byte[,] field)
         {
             var found = 0;
             for (var x = 0; x < Size; x++)
@@ -303,6 +265,16 @@ namespace GameTheory.Games.TwentyFortyEight
                     }
                 }
             }
+        }
+
+        internal GameState With(
+                    Turn? turn = null,
+            byte[,] field = null)
+        {
+            return new GameState(
+                this.Players,
+                turn ?? this.turn,
+                field ?? this.field);
         }
     }
 }

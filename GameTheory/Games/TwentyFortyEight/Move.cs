@@ -1,8 +1,10 @@
-﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Games.TwentyFortyEight
 {
+    using System;
     using System.Collections.Generic;
+    using System.Collections.Immutable;
 
     /// <summary>
     /// Represents a move in 2048.
@@ -35,5 +37,8 @@ namespace GameTheory.Games.TwentyFortyEight
         public sealed override string ToString() => string.Concat(this.FlattenFormatTokens());
 
         internal abstract GameState Apply(GameState state);
+
+        internal virtual IEnumerable<IWeighted<GameState>> GetOutcomes(GameState state) =>
+            new IWeighted<GameState>[] { Weighted.Create(this.Apply(state), 1) };
     }
 }

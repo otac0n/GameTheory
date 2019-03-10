@@ -1,4 +1,4 @@
-﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Games.TwentyFortyEight.Moves
 {
@@ -98,6 +98,50 @@ namespace GameTheory.Games.TwentyFortyEight.Moves
 
         internal override GameState Apply(GameState state)
         {
+            var field = this.ApplyShift(state);
+
+            if (state.Players.Count > 1)
+            {
+                return state.With(turn: Turn.Computer, field: field);
+            }
+            else
+            {
+                GameState.RandomComputerMove(field);
+                return state.With(field: field);
+            }
+        }
+
+        internal override IEnumerable<IWeighted<GameState>> GetOutcomes(GameState state)
+        {
+            var field = this.ApplyShift(state);
+
+            if (state.Players.Count > 1)
+            {
+                yield return Weighted.Create(state.With(turn: Turn.Computer, field: field), 1);
+            }
+            else
+            {
+                for (var x = 0; x < GameState.Size; x++)
+                {
+                    for (var y = 0; y < GameState.Size; y++)
+                    {
+                        if (field[x, y] == 0)
+                        {
+                            var field2 = (byte[,])field.Clone();
+                            field2[x, y] = GameState.SmallValue;
+                            yield return Weighted.Create(state.With(field: field2), GameState.SmallValueWeight);
+
+                            field2 = (byte[,])field.Clone();
+                            field2[x, y] = GameState.LargeValue;
+                            yield return Weighted.Create(state.With(field: field2), 1 - GameState.SmallValueWeight);
+                        }
+                    }
+                }
+            }
+        }
+
+        private byte[,] ApplyShift(GameState state)
+        {
             var field = new byte[GameState.Size, GameState.Size];
 
             int ix = 0, iy = 0, jx = 0, jy = 0, ox = 0, oy = 0;
@@ -165,7 +209,7 @@ namespace GameTheory.Games.TwentyFortyEight.Moves
                 }
             }
 
-            return state.With(turn: Turn.Computer, field: field);
+            return field;
         }
     }
 }
