@@ -153,7 +153,9 @@ namespace GameTheory.ConsoleRunner
             var font = consoleRenderer.GetType().GetCustomAttributes(inherit: true).OfType<ConsoleFontAttribute>().FirstOrDefault();
             if (font != null)
             {
+                NativeMethods.Restore();
                 NativeMethods.SetConsoleFont(font.Name, font.XSize, font.YSize);
+                NativeMethods.Maximize();
             }
 
             IPlayer<TMove> choosePlayer(PlayerToken playerToken)

@@ -3,15 +3,52 @@
 namespace GameTheory.ConsoleRunner.ConsoleRenderers.Chess
 {
     using System;
+    using System.Linq;
     using Games.Chess;
 
     /// <summary>
     /// Provides a console renderer for the game of <see cref="GameState">Chess</see>.
     /// </summary>
+    [ConsoleFont("Consolas", 8, 18)]
     public class ChessConsoleRenderer : BaseConsoleRenderer<Move>
     {
         /// <inheritdoc/>
-        public override void Show(IGameState<Move> state, PlayerToken playerToken = null) => this.Show((GameState)state);
+        public override void Show(IGameState<Move> state, PlayerToken playerToken = null)
+        {
+            var gameState = (GameState)state;
+            var ranks = Enumerable.Range(0, gameState.Variant.Height);
+            var files = Enumerable.Range(0, gameState.Variant.Width);
+            if (playerToken == null || state.Players.IndexOf(playerToken) == 0)
+            {
+                ranks = ranks.Reverse();
+            }
+            else
+            {
+                files = files.Reverse();
+            }
+
+            foreach (var y in ranks)
+            {
+                foreach (var x in files)
+                {
+                    ConsoleInteraction.WithColor(Console.ForegroundColor, (x + y) % 2 == 0 ? ConsoleColor.Black : ConsoleColor.Gray, () =>
+                    {
+                        Console.Write(' ');
+                        this.RenderToken(state, gameState.GetPieceAt(x, y));
+                        Console.Write(' ');
+                    });
+                }
+
+                Console.WriteLine($" {y + 1}");
+            }
+
+            foreach (var x in files)
+            {
+                Console.Write($" {(char)('a' + x)} ");
+            }
+
+            Console.WriteLine();
+        }
 
         /// <inheritdoc/>
         protected override void RenderToken(IGameState<Move> state, object token)
@@ -58,7 +95,5 @@ namespace GameTheory.ConsoleRunner.ConsoleRenderers.Chess
                 base.RenderToken(state, token);
             }
         }
-
-        private void Show(GameState state) => new Templates().RenderGameState(state, this.MakeRenderTokenWriter(state));
     }
 }

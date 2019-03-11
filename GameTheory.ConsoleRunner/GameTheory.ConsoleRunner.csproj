@@ -68,7 +68,6 @@
     <WeaveTemplate Include="ConsoleRenderers\CenturySpiceRoad\GameState.weave" />
     <Compile Include="ConsoleRenderers\CenturySpiceRoad\Templates.cs" />
     <Compile Include="ConsoleRenderers\Chess\ChessConsoleRenderer.cs" />
-    <WeaveTemplate Include="ConsoleRenderers\Chess\GameState.weave" />
     <Compile Include="ConsoleRenderers\Draughts\DraughtsConsoleRenderer.cs" />
     <WeaveTemplate Include="ConsoleRenderers\Draughts\GameState.weave" />
     <Compile Include="ConsoleRenderers\Ergo\ErgoConsoleRenderer.cs" />
