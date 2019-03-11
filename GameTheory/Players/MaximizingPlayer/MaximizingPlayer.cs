@@ -140,7 +140,7 @@ namespace GameTheory.Players.MaximizingPlayer
             Mainline mainline;
             if (states.Count == 1)
             {
-                mainline = this.GetMove(states.Single(), ply, cancel);
+                mainline = this.GetMove(states.Single(), ply, ImmutableDictionary<PlayerToken, IDictionary<PlayerToken, TScore>>.Empty, cancel);
             }
             else
             {
@@ -281,53 +281,16 @@ namespace GameTheory.Players.MaximizingPlayer
 
         private TScore GetLead(Mainline mainline, PlayerToken player) => this.GetLead(mainline.Scores, mainline.GameState, player);
 
-        private Mainline GetMaximizingMoves(PlayerToken player, IList<Mainline> moveScores)
-        {
-            var maxLead = default(Maybe<TScore>);
-            var fullyDetermined = true;
-            var maxMainlines = new List<Mainline>();
-            for (var m = 0; m < moveScores.Count; m++)
-            {
-                var mainline = moveScores[m];
-                fullyDetermined &= mainline.FullyDetermined;
-
-                if (!maxLead.HasValue)
-                {
-                    maxLead = this.GetLead(mainline, player);
-                    maxMainlines.Add(mainline);
-                }
-                else
-                {
-                    var lead = this.GetLead(mainline, player);
-                    var comp = this.scoringMetric.Compare(lead, maxLead.Value);
-                    if (comp >= 0)
-                    {
-                        if (comp > 0)
-                        {
-                            maxLead = lead;
-                            maxMainlines.Clear();
-                        }
-
-                        maxMainlines.Add(mainline);
-                    }
-                }
-            }
-
-            var sourceMainline = maxMainlines.Pick();
-            var maxMoves = maxMainlines.SelectMany(m => m.Strategies.Peek()).ToArray();
-            var depth = fullyDetermined ? moveScores.Max(m => m.Depth) : moveScores.Where(m => !m.FullyDetermined).Min(m => m.Depth);
-            return new Mainline(sourceMainline.Scores, sourceMainline.GameState, sourceMainline.PlayerToken, sourceMainline.Strategies.Pop().Push(maxMoves), depth, fullyDetermined);
-        }
-
         private Mainline GetMove(IList<IGameState<TMove>> states, int ply, CancellationToken cancel)
         {
             var mainlines = new List<Mainline>(states.Count);
             var moveWeights = new Dictionary<TMove, IWeighted<Mainline>>(new ComparableEqualityComparer<TMove>());
             var fullyDetermined = true;
 
+            // Monte-Carlo
             foreach (var state in states)
             {
-                var mainline = this.GetMove(state, ply - 1, cancel);
+                var mainline = this.GetMove(state, ply - 1, ImmutableDictionary<PlayerToken, IDictionary<PlayerToken, TScore>>.Empty, cancel);
                 mainlines.Add(mainline);
                 fullyDetermined &= mainline.FullyDetermined;
 
@@ -353,7 +316,7 @@ namespace GameTheory.Players.MaximizingPlayer
             return new Mainline(sourceMainline.Scores, sourceMainline.GameState, sourceMainline.PlayerToken, sourceMainline.Strategies.Pop().Push(maxMoves), depth, fullyDetermined);
         }
 
-        private Mainline GetMove(IGameState<TMove> state, int ply, CancellationToken cancel)
+        private Mainline GetMove(IGameState<TMove> state, int ply, ImmutableDictionary<PlayerToken, IDictionary<PlayerToken, TScore>> alphaBetaScore, CancellationToken cancel)
         {
             Interlocked.Increment(ref this.nodesSearched);
             if (this.cache.TryGetValue(state, out var cached))
@@ -369,132 +332,242 @@ namespace GameTheory.Players.MaximizingPlayer
                 Interlocked.Increment(ref this.cacheMisses);
             }
 
-            Mainline result;
-            if (ply == 0)
-            {
-                result = new Mainline(this.scoringMetric.Score(state), state, null, ImmutableStack<IReadOnlyList<IWeighted<TMove>>>.Empty, depth: 0, fullyDetermined: false);
-            }
-            else
-            {
-                var allMoves = state.GetAvailableMoves();
-                var players = allMoves.Select(m => m.PlayerToken).ToImmutableHashSet();
-
-                // If only one player can move, they must choose a move.
-                // If more than one player can move, then we assume that players will play moves that improve their position as well as moves that would result in a smaller loss than the best move of an opponent.
-                // If this is a stalemate (or there are no moves), we return no move and score the current position (recurse with ply 0)
-                if (players.Count == 0)
-                {
-                    result = new Mainline(this.scoringMetric.Score(state), state, null, ImmutableStack<IReadOnlyList<IWeighted<TMove>>>.Empty, depth: 0, fullyDetermined: true);
-                }
-                else
-                {
-                    var mainlines = new Mainline[allMoves.Count];
-                    for (var m = 0; m < allMoves.Count; m++)
-                    {
-                        var move = allMoves[m];
-                        var outcomes = state.GetOutcomes(move);
-
-                        var weightedOutcomes = new List<Weighted<Mainline>>();
-                        foreach (var outcome in outcomes)
-                        {
-                            var mainline = this.GetMove(outcome.Value, ply - 1, cancel);
-
-                            var newScores = mainline.Scores;
-                            if (this.scoreExtender != null)
-                            {
-                                var scores = new Dictionary<PlayerToken, TScore>();
-
-                                foreach (var player in mainline.GameState.Players)
-                                {
-                                    scores.Add(player, this.scoreExtender.Extend(mainline.Scores[player]));
-                                }
-
-                                newScores = scores;
-                            }
-
-                            var newMainline = new Mainline(newScores, mainline.GameState, move.PlayerToken, mainline.Strategies.Push(ImmutableArray.Create<IWeighted<TMove>>(Weighted.Create(move, 1))), mainline.Depth + 1, mainline.FullyDetermined);
-                            weightedOutcomes.Add(Weighted.Create(newMainline, outcome.Weight));
-                        }
-
-                        mainlines[m] = this.CombineOutcomes(weightedOutcomes);
-                    }
-
-                    cancel.ThrowIfCancellationRequested();
-
-                    if (players.Count == 1)
-                    {
-                        result = this.GetMaximizingMoves(players.Single(), mainlines);
-                    }
-                    else
-                    {
-                        var currentScore = this.scoringMetric.Score(state);
-                        var playerLeads = (from pm in allMoves.Select((m, i) => new { Move = m, Mainline = mainlines[i] })
-                                           group pm.Mainline by pm.Move.PlayerToken into g
-                                           let mainline = this.GetMaximizingMoves(g.Key, g.ToList())
-                                           select new
-                                           {
-                                               Mainline = mainline,
-                                               PlayerToken = g.Key,
-                                               Lead = this.GetLead(mainline, g.Key),
-                                           }).ToList();
-                        var improvingMoves = (from pm in playerLeads
-                                              let currentLead = this.GetLead(currentScore, state, pm.PlayerToken)
-                                              let comp = this.scoringMetric.Compare(pm.Lead, currentLead)
-                                              where comp > 0
-                                              select pm).ToSet();
-
-                        if (improvingMoves.Count == 0)
-                        {
-                            // TODO: Perhaps only the winning player would prefer to avoid a stalemate and would be the only player willing to play to avoid a stalemate.
-                            improvingMoves = (from pm in playerLeads
-                                              let currentLead = this.GetLead(currentScore, state, pm.PlayerToken)
-                                              let comp = this.scoringMetric.Compare(pm.Lead, currentLead)
-                                              where comp >= 0
-                                              select pm).ToSet();
-                        }
-
-                        if (improvingMoves.Count == 0)
-                        {
-                            // This is a stalemate? Without time controls, there is no incentive for any player to move.
-                            var fullyDetermined = mainlines.All(m => m.FullyDetermined);
-                            var depth = fullyDetermined ? mainlines.Max(m => m.Depth) : mainlines.Where(m => !m.FullyDetermined).Min(m => m.Depth);
-                            result = new Mainline(this.scoringMetric.Score(state), state, null, ImmutableStack<IReadOnlyList<IWeighted<TMove>>>.Empty, depth, fullyDetermined);
-                        }
-                        else
-                        {
-                            var added = true;
-                            var remainingLeads = playerLeads.ToSet();
-                            remainingLeads.ExceptWith(improvingMoves);
-
-                            while (added && playerLeads.Count > 0)
-                            {
-                                added = false;
-
-                                var preemptiveMoves = (from pm in remainingLeads
-                                                       where (from m in improvingMoves
-                                                              let alternativeLead = this.GetLead(m.Mainline.Scores, state, pm.PlayerToken)
-                                                              let comp = this.scoringMetric.Compare(pm.Lead, alternativeLead)
-                                                              where comp > 0
-                                                              select m).Any()
-                                                       select pm).ToList();
-
-                                if (preemptiveMoves.Count > 0)
-                                {
-                                    remainingLeads.ExceptWith(preemptiveMoves);
-                                    improvingMoves.UnionWith(preemptiveMoves);
-                                    added = true;
-                                }
-                            }
-
-                            result = this.CombineOutcomes(improvingMoves.Select(m => Weighted.Create(m.Mainline, 1)).ToList());
-                        }
-                    }
-                }
-            }
-
+            var result = this.GetMoveImpl(state, ply, alphaBetaScore, cancel);
             this.cache.SetValue(state, result);
 
             return result;
+        }
+
+        private Mainline GetMoveImpl(IGameState<TMove> state, int ply, ImmutableDictionary<PlayerToken, IDictionary<PlayerToken, TScore>> alphaBetaScore, CancellationToken cancel)
+        {
+            if (ply == 0)
+            {
+                return new Mainline(this.scoringMetric.Score(state), state, null, ImmutableStack<IReadOnlyList<IWeighted<TMove>>>.Empty, depth: 0, fullyDetermined: false);
+            }
+
+            var allMoves = state.GetAvailableMoves();
+            var players = allMoves.Select(m => m.PlayerToken).ToImmutableHashSet();
+            PlayerToken singlePlayer, otherPlayer;
+
+            // If only one player can move, they must choose a move.
+            // If more than one player can move, then we assume that players will play moves that improve their position as well as moves that would result in a smaller loss than the best move of an opponent.
+            // If this is a stalemate (or there are no moves), we return no move and score the current position (recurse with ply 0)
+            switch (players.Count)
+            {
+                case 0:
+                    return new Mainline(this.scoringMetric.Score(state), state, null, ImmutableStack<IReadOnlyList<IWeighted<TMove>>>.Empty, depth: 0, fullyDetermined: true);
+
+                case 1:
+                    singlePlayer = players.Single();
+                    otherPlayer = state.Players.Count == 2 ? state.GetNextPlayer(singlePlayer) : null;
+                    break;
+
+                default:
+                    singlePlayer = null;
+                    otherPlayer = null;
+                    break;
+            }
+
+            var mainlines = new List<Mainline>(allMoves.Count);
+            for (var m = 0; m < allMoves.Count; m++)
+            {
+                var move = allMoves[m];
+
+                // Expectimax.
+                var outcomes = state.GetOutcomes(move);
+                var weightedOutcomes = new List<Weighted<Mainline>>();
+                foreach (var outcome in outcomes)
+                {
+                    var mainline = this.GetMove(outcome.Value, ply - 1, alphaBetaScore, cancel);
+
+                    var newScores = mainline.Scores;
+                    if (this.scoreExtender != null)
+                    {
+                        var scores = new Dictionary<PlayerToken, TScore>();
+
+                        foreach (var player in mainline.GameState.Players)
+                        {
+                            scores.Add(player, this.scoreExtender.Extend(mainline.Scores[player]));
+                        }
+
+                        newScores = scores;
+                    }
+
+                    var newMainline = new Mainline(newScores, mainline.GameState, move.PlayerToken, mainline.Strategies.Push(ImmutableArray.Create<IWeighted<TMove>>(Weighted.Create(move, 1))), mainline.Depth + 1, mainline.FullyDetermined);
+                    weightedOutcomes.Add(Weighted.Create(newMainline, outcome.Weight));
+                }
+
+                mainlines.Add(this.CombineOutcomes(weightedOutcomes));
+
+                if (singlePlayer != null && mainlines.Count > 1)
+                {
+                    mainlines[0] = this.Maximize(singlePlayer, mainlines[0], mainlines[1]);
+                    mainlines.RemoveAt(1);
+
+                    // Alpha-beta pruning.
+                    if (otherPlayer != null)
+                    {
+                        var scoresA = mainlines[0].Scores;
+                        var leadA = this.GetLead(scoresA, mainlines[0].GameState, singlePlayer);
+
+                        int comp;
+                        if (alphaBetaScore.TryGetValue(singlePlayer, out var scoresB))
+                        {
+                            var leadB = this.GetLead(scoresB, state, singlePlayer);
+                            comp = this.scoringMetric.Compare(leadA, leadB);
+                        }
+                        else
+                        {
+                            comp = 1;
+                        }
+
+                        if (comp > 0)
+                        {
+                            alphaBetaScore = alphaBetaScore.SetItem(singlePlayer, scoresA);
+                            if (alphaBetaScore.TryGetValue(otherPlayer, out var scoresC))
+                            {
+                                var otherA = this.GetLead(scoresA, mainlines[0].GameState, otherPlayer);
+                                var leadC = this.GetLead(scoresC, state, otherPlayer);
+                                comp = this.scoringMetric.Compare(leadC, leadA);
+
+                                if (comp < 0)
+                                {
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            cancel.ThrowIfCancellationRequested();
+
+            if (singlePlayer != null)
+            {
+                return mainlines.Single();
+            }
+            else
+            {
+                var currentScore = this.scoringMetric.Score(state);
+                var playerLeads = (from pm in allMoves.Select((m, i) => new { Move = m, Mainline = mainlines[i] })
+                                   group pm.Mainline by pm.Move.PlayerToken into g
+                                   let mainline = g.Aggregate((a, b) => this.Maximize(g.Key, a, b))
+                                   select new
+                                   {
+                                       Mainline = mainline,
+                                       PlayerToken = g.Key,
+                                       Lead = this.GetLead(mainline, g.Key),
+                                   }).ToList();
+                var improvingMoves = (from pm in playerLeads
+                                      let currentLead = this.GetLead(currentScore, state, pm.PlayerToken)
+                                      let comp = this.scoringMetric.Compare(pm.Lead, currentLead)
+                                      where comp > 0
+                                      select pm).ToSet();
+
+                if (improvingMoves.Count == 0)
+                {
+                    // TODO: Perhaps only the winning player would prefer to avoid a stalemate and would be the only player willing to play to avoid a stalemate.
+                    improvingMoves = (from pm in playerLeads
+                                      let currentLead = this.GetLead(currentScore, state, pm.PlayerToken)
+                                      let comp = this.scoringMetric.Compare(pm.Lead, currentLead)
+                                      where comp >= 0
+                                      select pm).ToSet();
+                }
+
+                if (improvingMoves.Count == 0)
+                {
+                    // This is a stalemate? Without time controls, there is no incentive for any player to move.
+                    var fullyDetermined = mainlines.All(m => m.FullyDetermined);
+                    var depth = fullyDetermined ? mainlines.Max(m => m.Depth) : mainlines.Where(m => !m.FullyDetermined).Min(m => m.Depth);
+                    return new Mainline(this.scoringMetric.Score(state), state, null, ImmutableStack<IReadOnlyList<IWeighted<TMove>>>.Empty, depth, fullyDetermined);
+                }
+                else
+                {
+                    var added = true;
+                    var remainingLeads = playerLeads.ToSet();
+                    remainingLeads.ExceptWith(improvingMoves);
+
+                    while (added && playerLeads.Count > 0)
+                    {
+                        added = false;
+
+                        var preemptiveMoves = (from pm in remainingLeads
+                                               where (from m in improvingMoves
+                                                      let alternativeLead = this.GetLead(m.Mainline.Scores, state, pm.PlayerToken)
+                                                      let comp = this.scoringMetric.Compare(pm.Lead, alternativeLead)
+                                                      where comp > 0
+                                                      select m).Any()
+                                               select pm).ToList();
+
+                        if (preemptiveMoves.Count > 0)
+                        {
+                            remainingLeads.ExceptWith(preemptiveMoves);
+                            improvingMoves.UnionWith(preemptiveMoves);
+                            added = true;
+                        }
+                    }
+
+                    return this.CombineOutcomes(improvingMoves.Select(m => Weighted.Create(m.Mainline, 1)).ToList());
+                }
+            }
+        }
+
+        private Mainline Maximize(PlayerToken player, Mainline a, Mainline b)
+        {
+            var leadA = this.GetLead(a, player);
+            var leadB = this.GetLead(b, player);
+
+            bool fullyDetermined;
+            int depth;
+
+            if (a.FullyDetermined)
+            {
+                if (b.FullyDetermined)
+                {
+                    fullyDetermined = true;
+                    depth = Math.Max(a.Depth, b.Depth);
+                }
+                else
+                {
+                    fullyDetermined = false;
+                    depth = b.Depth;
+                }
+            }
+            else if (b.FullyDetermined)
+            {
+                fullyDetermined = false;
+                depth = a.Depth;
+            }
+            else
+            {
+                fullyDetermined = false;
+                depth = Math.Min(a.Depth, b.Depth);
+            }
+
+            var comp = this.scoringMetric.Compare(leadA, leadB);
+            if (comp == 0)
+            {
+                var strategies = a.Strategies.Pop().Push(a.Strategies.Peek().Concat(b.Strategies.Peek()).ToList());
+                return new Mainline(a.Scores, a.GameState, a.PlayerToken, strategies, depth, fullyDetermined);
+            }
+            else if (comp > 0)
+            {
+                if (a.FullyDetermined == fullyDetermined && a.Depth == depth)
+                {
+                    return a;
+                }
+
+                return new Mainline(a.Scores, a.GameState, a.PlayerToken, a.Strategies, depth, fullyDetermined);
+            }
+            else
+            {
+                if (b.FullyDetermined == fullyDetermined && b.Depth == depth)
+                {
+                    return b;
+                }
+
+                return new Mainline(b.Scores, b.GameState, b.PlayerToken, b.Strategies, depth, fullyDetermined);
+            }
         }
 
         /// <summary>
