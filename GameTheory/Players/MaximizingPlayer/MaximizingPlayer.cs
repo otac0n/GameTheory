@@ -347,6 +347,8 @@ namespace GameTheory.Players.MaximizingPlayer
 
             var allMoves = state.GetAvailableMoves();
             var players = allMoves.Select(m => m.PlayerToken).ToImmutableHashSet();
+
+            // For Alpha-beta pruning.
             PlayerToken singlePlayer, otherPlayer;
 
             // If only one player can move, they must choose a move.
@@ -401,14 +403,14 @@ namespace GameTheory.Players.MaximizingPlayer
 
                 if (singlePlayer != null && mainlines.Count > 1)
                 {
-                    mainlines[0] = this.Maximize(singlePlayer, mainlines[0], mainlines[1]);
+                    var mainline = mainlines[0] = this.Maximize(singlePlayer, mainlines[0], mainlines[1]);
                     mainlines.RemoveAt(1);
 
                     // Alpha-beta pruning.
                     if (otherPlayer != null)
                     {
-                        var scoresA = mainlines[0].Scores;
-                        var leadA = this.GetLead(scoresA, mainlines[0].GameState, singlePlayer);
+                        var scoresA = mainline.Scores;
+                        var leadA = this.GetLead(scoresA, mainline.GameState, singlePlayer);
 
                         int comp;
                         if (alphaBetaScore.TryGetValue(singlePlayer, out var scoresB))
@@ -426,11 +428,11 @@ namespace GameTheory.Players.MaximizingPlayer
                             alphaBetaScore = alphaBetaScore.SetItem(singlePlayer, scoresA);
                             if (alphaBetaScore.TryGetValue(otherPlayer, out var scoresC))
                             {
-                                var otherA = this.GetLead(scoresA, mainlines[0].GameState, otherPlayer);
+                                var otherA = this.GetLead(scoresA, state, otherPlayer);
                                 var leadC = this.GetLead(scoresC, state, otherPlayer);
-                                comp = this.scoringMetric.Compare(leadC, leadA);
+                                comp = this.scoringMetric.Compare(leadC, otherA);
 
-                                if (comp < 0)
+                                if (comp > 0)
                                 {
                                     break;
                                 }
@@ -444,7 +446,7 @@ namespace GameTheory.Players.MaximizingPlayer
 
             if (singlePlayer != null)
             {
-                return mainlines.Single();
+                return mainlines[0];
             }
             else
             {
