@@ -128,12 +128,12 @@ namespace GameTheory.Games.TwentyFortyEight.Moves
                         if (field[x, y] == 0)
                         {
                             var field2 = (byte[,])field.Clone();
-                            field2[x, y] = GameState.SmallValue;
-                            yield return Weighted.Create(state.With(field: field2), GameState.SmallValueWeight);
-
-                            field2 = (byte[,])field.Clone();
                             field2[x, y] = GameState.LargeValue;
                             yield return Weighted.Create(state.With(field: field2), 1 - GameState.SmallValueWeight);
+
+                            field2 = (byte[,])field.Clone();
+                            field2[x, y] = GameState.SmallValue;
+                            yield return Weighted.Create(state.With(field: field2), GameState.SmallValueWeight);
                         }
                     }
                 }
