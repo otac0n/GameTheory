@@ -177,6 +177,9 @@
   <data name="SingularPlayer" xml:space="preserve">
     <value>{0} player</value>
   </data>
+  <data name="StartingState" xml:space="preserve">
+    <value>Starting state:</value>
+  </data>
   <data name="Winners" xml:space="preserve">
     <value>Winners:</value>
   </data>

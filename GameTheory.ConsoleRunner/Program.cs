@@ -158,6 +158,9 @@ namespace GameTheory.ConsoleRunner
                 NativeMethods.Maximize();
             }
 
+            Console.WriteLine(Resources.StartingState);
+            consoleRenderer.Show(state);
+
             IPlayer<TMove> choosePlayer(PlayerToken playerToken)
             {
                 consoleRenderer.Show(state, FormatUtilities.ParseStringFormat(Resources.ChoosePlayer, playerToken));
