@@ -30,35 +30,32 @@ namespace GameTheory.Players.MaximizingPlayers
                 ? Pieces.White
                 : Pieces.Black;
 
-            var score = 0;
+            var score = 0.0;
 
             for (var i = state.Variant.Size - 1; i >= 0; i--)
             {
-                var piece = state[i];
-                if (piece != Pieces.None)
+                switch (state[i] ^ playerColor)
                 {
-                    var mul = (piece & PieceMasks.Colors) == playerColor ? 1 : -1;
-                    switch (piece & PieceMasks.Piece)
-                    {
-                        case Pieces.Pawn:
-                            score += mul;
-                            break;
+                    case Pieces.Pawn:
+                        score += 1;
+                        break;
 
-                        case Pieces.Knight:
-                        case Pieces.Bishop:
-                            score += mul * 3;
-                            break;
+                    case Pieces.Knight:
+                    case Pieces.Bishop:
+                        score += 3;
+                        break;
 
-                        case Pieces.Rook:
-                            score += mul * 5;
-                            break;
+                    case Pieces.Rook:
+                        score += 5;
+                        break;
 
-                        case Pieces.Queen:
-                            score += mul * 9;
-                            break;
-                    }
+                    case Pieces.Queen:
+                        score += 9;
+                        break;
                 }
             }
+
+            score += 0.1 * (state.ActiveColor == playerColor ? state : state.With(playerColor == Pieces.White ? Pieces.Black : Pieces.White)).GetAvailableMoves().Count;
 
             return score;
         }
