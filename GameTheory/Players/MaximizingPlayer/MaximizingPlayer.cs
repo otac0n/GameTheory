@@ -284,7 +284,7 @@ namespace GameTheory.Players.MaximizingPlayer
         private Mainline GetMove(IList<IGameState<TMove>> states, int ply, CancellationToken cancel)
         {
             var mainlines = new List<Mainline>(states.Count);
-            var moveWeights = new Dictionary<TMove, IWeighted<Mainline>>(new ComparableEqualityComparer<TMove>());
+            var moveWeights = new Dictionary<TMove, Weighted<Mainline>>(new ComparableEqualityComparer<TMove>());
             var fullyDetermined = true;
 
             // Monte-Carlo
@@ -313,7 +313,15 @@ namespace GameTheory.Players.MaximizingPlayer
             var sourceMainline = mainlines.Pick();
             var maxMoves = moveWeights.Select(m => (IWeighted<TMove>)Weighted.Create(m.Key, m.Value.Weight)).ToImmutableArray();
             var depth = fullyDetermined ? mainlines.Max(m => m.Depth) : mainlines.Where(m => !m.FullyDetermined).Min(m => m.Depth);
-            return new Mainline(sourceMainline.Scores, sourceMainline.GameState, sourceMainline.PlayerToken, sourceMainline.Strategies.Pop().Push(maxMoves), depth, fullyDetermined);
+            var scores = (from m in mainlines
+                          from s in m.Scores
+                          group s.Value by s.Key into g
+                          select new
+                          {
+                              PlayerToken = g.Key,
+                              Score = this.scoringMetric.Combine(g.Select(s => Weighted.Create(s, 1)).ToArray()),
+                          }).ToDictionary(m => m.PlayerToken, m => m.Score);
+            return new Mainline(scores, sourceMainline.GameState, sourceMainline.PlayerToken, sourceMainline.Strategies.Pop().Push(maxMoves), depth, fullyDetermined);
         }
 
         private Mainline GetMove(IGameState<TMove> state, int ply, ImmutableDictionary<PlayerToken, IDictionary<PlayerToken, TScore>> alphaBetaScore, CancellationToken cancel)
