@@ -6,6 +6,7 @@ namespace GameTheory.Players.MaximizingPlayers
     using System.Linq;
     using Games.TwentyFortyEight;
     using GameTheory.Players.MaximizingPlayer;
+    using GameTheory.Players.MaximizingPlayer.Caches;
 
     /// <summary>
     /// Provides a maximizing player for the game of <see cref="GameState">2048</see>.
@@ -28,7 +29,7 @@ namespace GameTheory.Players.MaximizingPlayers
         }
 
         /// <inheritdoc />
-        protected override ICache MakeCache() => new Caches.DictionaryCache();
+        protected override ICache<Move, ResultScore<double>> MakeCache() => new DictionaryCache<Move, ResultScore<double>>();
 
         private static double Score(PlayerState<Move> playerState)
         {

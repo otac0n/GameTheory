@@ -9,6 +9,7 @@ namespace GameTheory.Players.MaximizingPlayer
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
+    using GameTheory.Players.MaximizingPlayer.Caches;
 
     /// <summary>
     /// Implements a player that maximizes a scoring function to some move depth (ply).
@@ -21,7 +22,7 @@ namespace GameTheory.Players.MaximizingPlayer
     public abstract class MaximizingPlayer<TMove, TScore> : IPlayer<TMove>
         where TMove : IMove
     {
-        private readonly ICache cache;
+        private readonly GameTree<TMove, TScore> gameTree;
 
         private readonly IScorePlyExtender<TScore> scoreExtender;
 
@@ -42,7 +43,7 @@ namespace GameTheory.Players.MaximizingPlayer
             this.scoringMetric = scoringMetric ?? throw new ArgumentNullException(nameof(scoringMetric));
             this.scoreExtender = this.scoringMetric as IScorePlyExtender<TScore>;
             this.MinPly = minPly > -1 ? minPly : throw new ArgumentOutOfRangeException(nameof(minPly));
-            this.cache = this.MakeCache();
+            this.gameTree = new GameTree<TMove, TScore>(this.MakeCache());
         }
 
         /// <summary>
@@ -55,32 +56,6 @@ namespace GameTheory.Players.MaximizingPlayer
 
         /// <inheritdoc />
         public event EventHandler<MessageSentEventArgs> MessageSent;
-
-        /// <summary>
-        /// Represents a cache, primarily for use as a transposition table.
-        /// </summary>
-        protected interface ICache
-        {
-            /// <summary>
-            /// Overwrites an item or adds an item into the cache.
-            /// </summary>
-            /// <param name="state">The game state used as the key.</param>
-            /// <param name="result">The mainline used as the value.</param>
-            void SetValue(IGameState<TMove> state, Mainline result);
-
-            /// <summary>
-            /// Instructs the cache to free available memory.
-            /// </summary>
-            void Trim();
-
-            /// <summary>
-            /// Searches the cache for the specified item and returns the value if found.
-            /// </summary>
-            /// <param name="state">The game state used as the key.</param>
-            /// <param name="cached">The mainline value stored in the cache.</param>
-            /// <returns><c>true</c>, if the item was found in the cache; <c>false</c>, otherwise.</returns>
-            bool TryGetValue(IGameState<TMove> state, out Mainline cached);
-        }
 
         /// <inheritdoc />
         public PlayerToken PlayerToken { get; }
@@ -137,10 +112,10 @@ namespace GameTheory.Players.MaximizingPlayer
             this.cacheHits = 0;
             this.cacheMisses = 0;
 
-            Mainline mainline;
+            Mainline<TMove, TScore> mainline;
             if (states.Count == 1)
             {
-                mainline = this.GetMove(states.Single(), ply, ImmutableDictionary<PlayerToken, IDictionary<PlayerToken, TScore>>.Empty, cancel);
+                mainline = this.GetMove(this.gameTree.GetOrAdd(states.Single()), ply, ImmutableDictionary<PlayerToken, IDictionary<PlayerToken, TScore>>.Empty, cancel);
             }
             else
             {
@@ -157,7 +132,7 @@ namespace GameTheory.Players.MaximizingPlayer
                 var chosen = mainline.Strategies.Peek().Pick();
                 sw.Stop();
                 this.MessageSent?.Invoke(this, new MessageSentEventArgs("Time taken: ", sw.ElapsedMilliseconds, " ms, Nodes searched: ", this.nodesSearched, " (", (this.nodesSearched / sw.Elapsed.TotalMilliseconds).ToString("F2"), " kn/s), Cache hits: ", ((double)this.cacheHits / this.nodesSearched).ToString("P"), ", Cache misses: ", ((double)this.cacheMisses / this.nodesSearched).ToString("P")));
-                this.cache.Trim();
+                this.gameTree.Trim();
                 return chosen;
             }
         }
@@ -228,9 +203,9 @@ namespace GameTheory.Players.MaximizingPlayer
         /// Create the transposition table cache.
         /// </summary>
         /// <returns>The cache object to use as a transposition table.</returns>
-        protected virtual ICache MakeCache() => new Caches.SplayTreeCache();
+        protected virtual ICache<TMove, TScore> MakeCache() => new SplayTreeCache<TMove, TScore>();
 
-        private Mainline CombineOutcomes(IList<Weighted<Mainline>> mainlines)
+        private Mainline<TMove, TScore> CombineOutcomes(IList<Weighted<Mainline<TMove, TScore>>> mainlines)
         {
             var firstMainline = mainlines[0].Value;
             if (mainlines.Count == 1)
@@ -240,7 +215,7 @@ namespace GameTheory.Players.MaximizingPlayer
 
             var maxWeight = double.NegativeInfinity;
             var maxPlayerToken = (PlayerToken)null;
-            Mainline maxMainline = null;
+            Mainline<TMove, TScore> maxMainline = null;
             var fullyDetermined = true;
 
             for (var i = 0; i < mainlines.Count; i++)
@@ -276,21 +251,21 @@ namespace GameTheory.Players.MaximizingPlayer
             }
 
             var depth = fullyDetermined ? mainlines.Max(m => m.Value.Depth) : mainlines.Where(m => !m.Value.FullyDetermined).Min(m => m.Value.Depth);
-            return new Mainline(combinedScore, maxMainline.GameState, maxMainline.PlayerToken, maxMainline.Strategies, depth, fullyDetermined);
+            return new Mainline<TMove, TScore>(combinedScore, maxMainline.GameState, maxMainline.PlayerToken, maxMainline.Strategies, depth, fullyDetermined);
         }
 
-        private TScore GetLead(Mainline mainline, PlayerToken player) => this.GetLead(mainline.Scores, mainline.GameState, player);
+        private TScore GetLead(Mainline<TMove, TScore> mainline, PlayerToken player) => this.GetLead(mainline.Scores, mainline.GameState, player);
 
-        private Mainline GetMove(IList<IGameState<TMove>> states, int ply, CancellationToken cancel)
+        private Mainline<TMove, TScore> GetMove(IList<IGameState<TMove>> states, int ply, CancellationToken cancel)
         {
-            var mainlines = new List<Mainline>(states.Count);
-            var moveWeights = new Dictionary<TMove, Weighted<Mainline>>(new ComparableEqualityComparer<TMove>());
+            var mainlines = new List<Mainline<TMove, TScore>>(states.Count);
+            var moveWeights = new Dictionary<TMove, Weighted<Mainline<TMove, TScore>>>(new ComparableEqualityComparer<TMove>());
             var fullyDetermined = true;
 
             // Monte-Carlo
             foreach (var state in states)
             {
-                var mainline = this.GetMove(state, ply - 1, ImmutableDictionary<PlayerToken, IDictionary<PlayerToken, TScore>>.Empty, cancel);
+                var mainline = this.GetMove(this.gameTree.GetOrAdd(state), ply - 1, ImmutableDictionary<PlayerToken, IDictionary<PlayerToken, TScore>>.Empty, cancel);
                 mainlines.Add(mainline);
                 fullyDetermined &= mainline.FullyDetermined;
 
@@ -321,13 +296,14 @@ namespace GameTheory.Players.MaximizingPlayer
                               PlayerToken = g.Key,
                               Score = this.scoringMetric.Combine(g.Select(s => Weighted.Create(s, 1)).ToArray()),
                           }).ToDictionary(m => m.PlayerToken, m => m.Score);
-            return new Mainline(scores, sourceMainline.GameState, sourceMainline.PlayerToken, sourceMainline.Strategies.Pop().Push(maxMoves), depth, fullyDetermined);
+            return new Mainline<TMove, TScore>(scores, sourceMainline.GameState, sourceMainline.PlayerToken, sourceMainline.Strategies.Pop().Push(maxMoves), depth, fullyDetermined);
         }
 
-        private Mainline GetMove(IGameState<TMove> state, int ply, ImmutableDictionary<PlayerToken, IDictionary<PlayerToken, TScore>> alphaBetaScore, CancellationToken cancel)
+        private Mainline<TMove, TScore> GetMove(StateNode<TMove, TScore> node, int ply, ImmutableDictionary<PlayerToken, IDictionary<PlayerToken, TScore>> alphaBetaScore, CancellationToken cancel)
         {
             Interlocked.Increment(ref this.nodesSearched);
-            if (this.cache.TryGetValue(state, out var cached))
+            var cached = node.Mainline;
+            if (cached != null)
             {
                 if (cached.Depth >= ply || cached.FullyDetermined)
                 {
@@ -340,20 +316,19 @@ namespace GameTheory.Players.MaximizingPlayer
                 Interlocked.Increment(ref this.cacheMisses);
             }
 
-            var result = this.GetMoveImpl(state, ply, alphaBetaScore, cancel);
-            this.cache.SetValue(state, result);
-
-            return result;
+            return node.Mainline = this.GetMoveImpl(node, ply, alphaBetaScore, cancel);
         }
 
-        private Mainline GetMoveImpl(IGameState<TMove> state, int ply, ImmutableDictionary<PlayerToken, IDictionary<PlayerToken, TScore>> alphaBetaScore, CancellationToken cancel)
+        private Mainline<TMove, TScore> GetMoveImpl(StateNode<TMove, TScore> node, int ply, ImmutableDictionary<PlayerToken, IDictionary<PlayerToken, TScore>> alphaBetaScore, CancellationToken cancel)
         {
+            var state = node.State;
+
             if (ply == 0)
             {
-                return new Mainline(this.scoringMetric.Score(state), state, null, ImmutableStack<IReadOnlyList<IWeighted<TMove>>>.Empty, depth: 0, fullyDetermined: false);
+                return new Mainline<TMove, TScore>(this.scoringMetric.Score(state), state, null, ImmutableStack<IReadOnlyList<IWeighted<TMove>>>.Empty, depth: 0, fullyDetermined: false);
             }
 
-            var allMoves = state.GetAvailableMoves();
+            var allMoves = node.Moves;
             var players = allMoves.Select(m => m.PlayerToken).ToImmutableHashSet();
 
             // For Alpha-beta pruning.
@@ -365,7 +340,7 @@ namespace GameTheory.Players.MaximizingPlayer
             switch (players.Count)
             {
                 case 0:
-                    return new Mainline(this.scoringMetric.Score(state), state, null, ImmutableStack<IReadOnlyList<IWeighted<TMove>>>.Empty, depth: 0, fullyDetermined: true);
+                    return new Mainline<TMove, TScore>(this.scoringMetric.Score(state), state, null, ImmutableStack<IReadOnlyList<IWeighted<TMove>>>.Empty, depth: 0, fullyDetermined: true);
 
                 case 1:
                     singlePlayer = players.Single();
@@ -378,14 +353,15 @@ namespace GameTheory.Players.MaximizingPlayer
                     break;
             }
 
-            var mainlines = new List<Mainline>(allMoves.Count);
-            for (var m = 0; m < allMoves.Count; m++)
+            var mainlines = new List<Mainline<TMove, TScore>>(allMoves.Length);
+            for (var m = 0; m < allMoves.Length; m++)
             {
                 var move = allMoves[m];
+                var moveNode = node[move];
 
                 // Expectimax.
-                var outcomes = state.GetOutcomes(move);
-                var weightedOutcomes = new List<Weighted<Mainline>>();
+                var outcomes = moveNode.Outcomes;
+                var weightedOutcomes = new List<Weighted<Mainline<TMove, TScore>>>();
                 foreach (var outcome in outcomes)
                 {
                     var mainline = this.GetMove(outcome.Value, ply - 1, alphaBetaScore, cancel);
@@ -403,11 +379,13 @@ namespace GameTheory.Players.MaximizingPlayer
                         newScores = scores;
                     }
 
-                    var newMainline = new Mainline(newScores, mainline.GameState, move.PlayerToken, mainline.Strategies.Push(ImmutableArray.Create<IWeighted<TMove>>(Weighted.Create(move, 1))), mainline.Depth + 1, mainline.FullyDetermined);
+                    var newMainline = new Mainline<TMove, TScore>(newScores, mainline.GameState, move.PlayerToken, mainline.Strategies.Push(ImmutableArray.Create<IWeighted<TMove>>(Weighted.Create(move, 1))), mainline.Depth + 1, mainline.FullyDetermined);
                     weightedOutcomes.Add(Weighted.Create(newMainline, outcome.Weight));
                 }
 
-                mainlines.Add(this.CombineOutcomes(weightedOutcomes));
+                var combined = this.CombineOutcomes(weightedOutcomes);
+                mainlines.Add(combined);
+                moveNode.Lead = this.GetLead(combined.Scores, combined.GameState, move.PlayerToken);
 
                 if (singlePlayer != null && mainlines.Count > 1)
                 {
@@ -458,7 +436,7 @@ namespace GameTheory.Players.MaximizingPlayer
             }
             else
             {
-                var currentScore = this.scoringMetric.Score(state);
+                var currentScore = this.scoringMetric.Score(node.State);
                 var playerLeads = (from pm in allMoves.Select((m, i) => new { Move = m, Mainline = mainlines[i] })
                                    group pm.Mainline by pm.Move.PlayerToken into g
                                    let mainline = g.Aggregate((a, b) => this.Maximize(g.Key, a, b))
@@ -489,7 +467,7 @@ namespace GameTheory.Players.MaximizingPlayer
                     // This is a stalemate? Without time controls, there is no incentive for any player to move.
                     var fullyDetermined = mainlines.All(m => m.FullyDetermined);
                     var depth = fullyDetermined ? mainlines.Max(m => m.Depth) : mainlines.Where(m => !m.FullyDetermined).Min(m => m.Depth);
-                    return new Mainline(this.scoringMetric.Score(state), state, null, ImmutableStack<IReadOnlyList<IWeighted<TMove>>>.Empty, depth, fullyDetermined);
+                    return new Mainline<TMove, TScore>(this.scoringMetric.Score(state), state, null, ImmutableStack<IReadOnlyList<IWeighted<TMove>>>.Empty, depth, fullyDetermined);
                 }
                 else
                 {
@@ -522,7 +500,7 @@ namespace GameTheory.Players.MaximizingPlayer
             }
         }
 
-        private Mainline Maximize(PlayerToken player, Mainline a, Mainline b)
+        private Mainline<TMove, TScore> Maximize(PlayerToken player, Mainline<TMove, TScore> a, Mainline<TMove, TScore> b)
         {
             var leadA = this.GetLead(a, player);
             var leadB = this.GetLead(b, player);
@@ -558,7 +536,7 @@ namespace GameTheory.Players.MaximizingPlayer
             if (comp == 0)
             {
                 var strategies = a.Strategies.Pop().Push(a.Strategies.Peek().Concat(b.Strategies.Peek()).ToList());
-                return new Mainline(a.Scores, a.GameState, a.PlayerToken, strategies, depth, fullyDetermined);
+                return new Mainline<TMove, TScore>(a.Scores, a.GameState, a.PlayerToken, strategies, depth, fullyDetermined);
             }
             else if (comp > 0)
             {
@@ -567,7 +545,7 @@ namespace GameTheory.Players.MaximizingPlayer
                     return a;
                 }
 
-                return new Mainline(a.Scores, a.GameState, a.PlayerToken, a.Strategies, depth, fullyDetermined);
+                return new Mainline<TMove, TScore>(a.Scores, a.GameState, a.PlayerToken, a.Strategies, depth, fullyDetermined);
             }
             else
             {
@@ -576,211 +554,8 @@ namespace GameTheory.Players.MaximizingPlayer
                     return b;
                 }
 
-                return new Mainline(b.Scores, b.GameState, b.PlayerToken, b.Strategies, depth, fullyDetermined);
+                return new Mainline<TMove, TScore>(b.Scores, b.GameState, b.PlayerToken, b.Strategies, depth, fullyDetermined);
             }
-        }
-
-        /// <summary>
-        /// Contians implementations of caches suitable for use as a transposition table.
-        /// </summary>
-        protected static class Caches
-        {
-            /// <summary>
-            /// A cache for types that overrides <see cref="object.GetHashCode"/> and <see cref="object.Equals(object)"/>.
-            /// </summary>
-            public class DictionaryCache : ICache
-            {
-                private readonly Dictionary<IGameState<TMove>, Mainline> storage = new Dictionary<IGameState<TMove>, Mainline>();
-
-                /// <inheritdoc/>
-                public void SetValue(IGameState<TMove> state, Mainline result) => this.storage[state] = result;
-
-                /// <inheritdoc/>
-                public void Trim() => this.storage.Clear();
-
-                /// <inheritdoc/>
-                public bool TryGetValue(IGameState<TMove> state, out Mainline cached) => this.storage.TryGetValue(state, out cached);
-            }
-
-            /// <summary>
-            /// A null-object cache, meaning a cache that does not store any items and implements the interface by returning default values.
-            /// </summary>
-            public class NullCache : ICache
-            {
-                /// <inheritdoc/>
-                public void SetValue(IGameState<TMove> state, Mainline result)
-                {
-                }
-
-                /// <inheritdoc/>
-                public void Trim()
-                {
-                }
-
-                /// <inheritdoc/>
-                public bool TryGetValue(IGameState<TMove> state, out Mainline cached)
-                {
-                    cached = default(Mainline);
-                    return false;
-                }
-            }
-
-            /// <summary>
-            /// A cache for types that implements <see cref="IComparable{T}"/>.
-            /// </summary>
-            public class SplayTreeCache : ICache
-            {
-                private const int TrimDepth = 32;
-
-                private readonly SplayTreeDictionary<IGameState<TMove>, Mainline> storage = new SplayTreeDictionary<IGameState<TMove>, Mainline>();
-
-                /// <inheritdoc/>
-                public void SetValue(IGameState<TMove> state, Mainline result) => this.storage[state] = result;
-
-                /// <inheritdoc/>
-                public void Trim() => this.storage.Trim(TrimDepth);
-
-                /// <inheritdoc/>
-                public bool TryGetValue(IGameState<TMove> state, out Mainline cached) => this.storage.TryGetValue(state, out cached);
-            }
-        }
-
-        /// <summary>
-        /// Records a possible line of gameplay and it's computed scores.
-        /// </summary>
-        protected class Mainline : ITokenFormattable
-        {
-            /// <summary>
-            /// Initializes a new instance of the <see cref="Mainline"/> class.
-            /// </summary>
-            /// <param name="scores">The computed scores for all players in the resulting state.</param>
-            /// <param name="state">The resulting game state.</param>
-            /// <param name="strategies">The sequence of moves necessary to arrive at the resulting game state.</param>
-            /// <param name="playerToken">The player who moves next in the sequence or <c>null</c> if there are no moves.</param>
-            /// <param name="depth">The depth to which the score was computed.</param>
-            /// <param name="fullyDetermined">A flag indicating whether or not the game tree has been exhaustively searched at this node.</param>
-            public Mainline(IDictionary<PlayerToken, TScore> scores, IGameState<TMove> state, PlayerToken playerToken, ImmutableStack<IReadOnlyList<IWeighted<TMove>>> strategies, int depth, bool fullyDetermined)
-            {
-                this.Scores = scores;
-                this.GameState = state;
-                this.PlayerToken = playerToken;
-                this.Strategies = strategies;
-                this.Depth = depth;
-                this.FullyDetermined = fullyDetermined;
-            }
-
-            /// <summary>
-            /// Gets the depth to which the score was computed.
-            /// </summary>
-            public int Depth { get; }
-
-            /// <inheritdoc/>
-            public IList<object> FormatTokens
-            {
-                get
-                {
-                    var tokens = new List<object>();
-
-                    var first = true;
-                    foreach (var strategy in this.Strategies)
-                    {
-                        if (!first)
-                        {
-                            tokens.Add("; ");
-                        }
-
-                        first = false;
-
-                        var totalWeight = 0.0;
-                        if (strategy.Count > 1)
-                        {
-                            tokens.Add("{");
-                            totalWeight = strategy.Sum(m => m.Weight);
-                        }
-
-                        var firstMove = true;
-                        foreach (var move in strategy)
-                        {
-                            if (!firstMove)
-                            {
-                                tokens.Add(", ");
-                            }
-
-                            firstMove = false;
-
-                            tokens.Add(move.Value);
-
-                            if (strategy.Count > 1)
-                            {
-                                tokens.Add(" @");
-                                tokens.Add((move.Weight / totalWeight).ToString("P0"));
-                            }
-                        }
-
-                        if (strategy.Count > 1)
-                        {
-                            tokens.Add("}");
-                        }
-                    }
-
-                    tokens.Add(" [");
-
-                    first = true;
-                    foreach (var score in this.Scores)
-                    {
-                        if (!first)
-                        {
-                            tokens.Add(", ");
-                        }
-
-                        tokens.Add(score.Key);
-                        tokens.Add(": ");
-                        tokens.Add(score.Value);
-
-                        first = false;
-                    }
-
-                    tokens.Add("] (depth ");
-
-                    if (!this.FullyDetermined)
-                    {
-                        tokens.Add(">=");
-                    }
-
-                    tokens.Add(this.Depth);
-                    tokens.Add(")");
-
-                    return tokens;
-                }
-            }
-
-            /// <summary>
-            /// Gets a value indicating whether or not the entire game tree has been searched at this level.
-            /// </summary>
-            public bool FullyDetermined { get; }
-
-            /// <summary>
-            /// Gets the resulting game state.
-            /// </summary>
-            public IGameState<TMove> GameState { get; }
-
-            /// <summary>
-            /// Gets the player who moves next in the sequence or <c>null</c> if there are no moves.
-            /// </summary>
-            public PlayerToken PlayerToken { get; }
-
-            /// <summary>
-            /// Gets the computed scores for all players in the resulting state.
-            /// </summary>
-            public IDictionary<PlayerToken, TScore> Scores { get; }
-
-            /// <summary>
-            /// Gets the sequence of moves/strategies necessary to arrive at the resulting game state.
-            /// </summary>
-            public ImmutableStack<IReadOnlyList<IWeighted<TMove>>> Strategies { get; }
-
-            /// <inheritdoc/>
-            public override string ToString() => string.Concat(this.FlattenFormatTokens());
         }
 
         private class ComparableEqualityComparer<T> : IEqualityComparer<T>
