@@ -115,7 +115,7 @@ namespace GameTheory.Players.MaximizingPlayer
             Mainline<TMove, TScore> mainline;
             if (states.Count == 1)
             {
-                mainline = this.GetMove(this.gameTree.GetOrAdd(states.Single()), ply, ImmutableDictionary<PlayerToken, IDictionary<PlayerToken, TScore>>.Empty, cancel);
+                mainline = this.GetMove(states.Single(), ply, cancel);
             }
             else
             {
@@ -265,7 +265,7 @@ namespace GameTheory.Players.MaximizingPlayer
             // Monte-Carlo
             foreach (var state in states)
             {
-                var mainline = this.GetMove(this.gameTree.GetOrAdd(state), ply - 1, ImmutableDictionary<PlayerToken, IDictionary<PlayerToken, TScore>>.Empty, cancel);
+                var mainline = this.GetMove(state, ply - 1, cancel);
                 mainlines.Add(mainline);
                 fullyDetermined &= mainline.FullyDetermined;
 
@@ -297,6 +297,19 @@ namespace GameTheory.Players.MaximizingPlayer
                               Score = this.scoringMetric.Combine(g.Select(s => Weighted.Create(s, 1)).ToArray()),
                           }).ToDictionary(m => m.PlayerToken, m => m.Score);
             return new Mainline<TMove, TScore>(scores, sourceMainline.GameState, sourceMainline.PlayerToken, sourceMainline.Strategies.Pop().Push(maxMoves), depth, fullyDetermined);
+        }
+
+        private Mainline<TMove, TScore> GetMove(IGameState<TMove> state, int ply, CancellationToken cancel)
+        {
+            // Iterative deepening
+            var node = this.gameTree.GetOrAdd(state);
+            var mainline = node.Mainline;
+            for (var i = 1; i <= ply && !(mainline != null && (mainline.FullyDetermined || mainline.Depth >= ply)); i++)
+            {
+                mainline = this.GetMove(node, i, ImmutableDictionary<PlayerToken, IDictionary<PlayerToken, TScore>>.Empty, cancel);
+            }
+
+            return mainline;
         }
 
         private Mainline<TMove, TScore> GetMove(StateNode<TMove, TScore> node, int ply, ImmutableDictionary<PlayerToken, IDictionary<PlayerToken, TScore>> alphaBetaScore, CancellationToken cancel)
@@ -353,6 +366,11 @@ namespace GameTheory.Players.MaximizingPlayer
                     break;
             }
 
+            if (otherPlayer != null)
+            {
+                Array.Sort(allMoves, (m1, m2) => this.scoringMetric.Compare(node[m1].Lead, node[m2].Lead));
+            }
+
             var mainlines = new List<Mainline<TMove, TScore>>(allMoves.Length);
             for (var m = 0; m < allMoves.Length; m++)
             {
@@ -385,7 +403,11 @@ namespace GameTheory.Players.MaximizingPlayer
 
                 var combined = this.CombineOutcomes(weightedOutcomes);
                 mainlines.Add(combined);
-                moveNode.Lead = this.GetLead(combined.Scores, combined.GameState, move.PlayerToken);
+
+                if (otherPlayer != null)
+                {
+                    moveNode.Lead = this.GetLead(combined.Scores, combined.GameState, move.PlayerToken);
+                }
 
                 if (singlePlayer != null && mainlines.Count > 1)
                 {
