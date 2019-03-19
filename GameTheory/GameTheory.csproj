@@ -455,6 +455,7 @@
     <Compile Include="Players\MaximizingPlayer\IScorePlyExtender.cs" />
     <Compile Include="Players\MaximizingPlayer\Mainline.cs" />
     <Compile Include="Players\MaximizingPlayer\MaximizingPlayer.cs" />
+    <Compile Include="Players\MaximizingPlayer\MaximizingPlayerBase.cs" />
     <Compile Include="Players\MaximizingPlayer\MonteCarloTreeSearchPlayer.cs" />
     <Compile Include="Players\MaximizingPlayer\MoveNode.cs" />
     <Compile Include="Players\MaximizingPlayer\ResultScore.cs" />
