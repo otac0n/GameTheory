@@ -211,14 +211,14 @@ namespace GameTheory.Games.Chess
         {
             var ix = GameState.GetCastlingIndex(color | Pieces.Queen);
 
-            if (castling[ix] > 0)
+            if (castling[ix] >= 0)
             {
                 castling = castling.SetItem(ix, -1);
             }
 
             ix++;
 
-            if (castling[ix] > 0)
+            if (castling[ix] >= 0)
             {
                 castling = castling.SetItem(ix, -1);
             }
