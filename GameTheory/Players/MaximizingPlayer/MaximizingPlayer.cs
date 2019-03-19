@@ -579,27 +579,5 @@ namespace GameTheory.Players.MaximizingPlayer
                 return new Mainline<TMove, TScore>(b.Scores, b.GameState, b.PlayerToken, b.Strategies, depth, fullyDetermined);
             }
         }
-
-        private class ComparableEqualityComparer<T> : IEqualityComparer<T>
-        {
-            public bool Equals(T x, T y)
-            {
-                IComparable<T> comparable;
-                if (object.ReferenceEquals(null, x))
-                {
-                    return object.ReferenceEquals(null, y);
-                }
-                else if ((comparable = x as IComparable<T>) != null)
-                {
-                    return comparable.CompareTo(y) == 0;
-                }
-                else
-                {
-                    return x.Equals(y);
-                }
-            }
-
-            public int GetHashCode(T obj) => 0;
-        }
     }
 }

@@ -58,7 +58,7 @@ namespace GameTheory.Players.MaximizingPlayer
                 var r = (int)resultScore.Result + Offset;
                 results[r, Weight] += weight;
                 results[r, Likelihood] += resultScore.Likelihood * weight;
-                results[r, InPly] = double.IsNaN(results[r, InPly]) || results[r, InPly].CompareTo(resultScore.InPly) > 0 ? resultScore.InPly : results[r, InPly]; // TODO: Should use PlyCountSortDirection?
+                results[r, InPly] = double.IsNaN(results[r, InPly]) || results[r, InPly].CompareTo(resultScore.InPly) < 0 ? resultScore.InPly : results[r, InPly]; // TODO: Should use PlyCountSortDirection?
             }
 
             var pessimisticResult = 0;

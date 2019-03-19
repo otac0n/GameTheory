@@ -90,6 +90,14 @@ namespace GameTheory
                 (x, y) => x.CompareTo(y),
                 (a, b) => a - b);
 
+        /// <summary>
+        /// Creates a new scoring metric given the specified scoring function that returns a double.
+        /// </summary>
+        /// <typeparam name="TSubject">The type of subject to be scored.</typeparam>
+        /// <param name="score">Computes the score for the specified subject.</param>
+        /// <returns>The scoring metric.</returns>
+        public static IScoringMetric<TSubject, byte> Null<TSubject>() => new NullScoringMetric<TSubject>();
+
         private class FuncGameStateScoringMetric<TMove, TScore> : IGameStateScoringMetric<TMove, TScore>
             where TMove : IMove
         {
@@ -147,6 +155,17 @@ namespace GameTheory
             TScore IScoringMetric<TSubject, TScore>.Difference(TScore minuend, TScore subtrahend) => this.difference(minuend, subtrahend);
 
             TScore IScoringMetric<TSubject, TScore>.Score(TSubject subject) => this.score(subject);
+        }
+
+        private class NullScoringMetric<TSubject> : IScoringMetric<TSubject, byte>
+        {
+            public byte Combine(params Weighted<byte>[] scores) => 0;
+
+            public int Compare(byte x, byte y) => 0;
+
+            public byte Difference(byte minuend, byte subtrahend) => 0;
+
+            public byte Score(TSubject subject) => 0;
         }
     }
 }
