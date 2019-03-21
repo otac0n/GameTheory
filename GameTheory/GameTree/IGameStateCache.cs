@@ -1,13 +1,13 @@
 // Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
-namespace GameTheory.Players.MaximizingPlayer
+namespace GameTheory.GameTree
 {
     /// <summary>
     /// Represents a cache, primarily for use as a transposition table.
     /// </summary>
     /// <typeparam name="TMove">The type of moves supported by the game states in the cache.</typeparam>
     /// <typeparam name="TScore">The type used to keep track of score.</typeparam>
-    public interface ICache<TMove, TScore>
+    public interface IGameStateCache<TMove, TScore>
         where TMove : IMove
     {
         /// <summary>

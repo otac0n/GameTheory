@@ -1,6 +1,6 @@
-﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
-namespace GameTheory.Players.MaximizingPlayer
+namespace GameTheory.GameTree
 {
     /// <summary>
     /// Provides the ability to extend a score by one ply.

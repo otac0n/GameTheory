@@ -9,7 +9,8 @@ namespace GameTheory.Players.MaximizingPlayer
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-    using GameTheory.Players.MaximizingPlayer.Caches;
+    using GameTheory.GameTree;
+    using GameTheory.GameTree.Caches;
 
     /// <summary>
     /// Implements a player that maximizes a scoring function to some move depth (ply).
@@ -86,7 +87,7 @@ namespace GameTheory.Players.MaximizingPlayer
         }
 
         /// <inheritdoc />
-        protected override ICache<TMove, TScore> MakeCache() => new SplayTreeCache<TMove, TScore>();
+        protected override IGameStateCache<TMove, TScore> MakeCache() => new SplayTreeCache<TMove, TScore>();
 
         private Mainline<TMove, TScore> GetMove(IList<IGameState<TMove>> states, int ply, CancellationToken cancel)
         {
@@ -169,7 +170,7 @@ namespace GameTheory.Players.MaximizingPlayer
 
             if (otherPlayer != null)
             {
-                Array.Sort(allMoves, (m1, m2) => this.scoringMetric.Compare(node[m1].Lead, node[m2].Lead));
+                Array.Sort(allMoves, (m1, m2) => this.scoringMetric.Compare(node[m1].Score, node[m2].Score));
             }
 
             var mainlines = new List<Mainline<TMove, TScore>>(allMoves.Length);
@@ -184,21 +185,8 @@ namespace GameTheory.Players.MaximizingPlayer
                 foreach (var outcome in outcomes)
                 {
                     var mainline = this.GetMove(outcome.Value, ply - 1, alphaBetaScore, cancel);
-
-                    var newScores = mainline.Scores;
-                    if (this.scoreExtender != null)
-                    {
-                        var scores = new Dictionary<PlayerToken, TScore>();
-
-                        foreach (var player in mainline.GameState.Players)
-                        {
-                            scores.Add(player, this.scoreExtender.Extend(mainline.Scores[player]));
-                        }
-
-                        newScores = scores;
-                    }
-
-                    var newMainline = new Mainline<TMove, TScore>(newScores, mainline.GameState, move.PlayerToken, mainline.Strategies.Push(ImmutableArray.Create<IWeighted<TMove>>(Weighted.Create(move, 1))), mainline.Depth + 1, mainline.FullyDetermined);
+                    var strategy = ImmutableArray.Create<IWeighted<TMove>>(Weighted.Create(move, 1));
+                    var newMainline = mainline.Extend(move.PlayerToken, strategy, this.scoreExtender);
                     weightedOutcomes.Add(Weighted.Create(newMainline, outcome.Weight));
                 }
 
@@ -207,7 +195,7 @@ namespace GameTheory.Players.MaximizingPlayer
 
                 if (otherPlayer != null)
                 {
-                    moveNode.Lead = this.GetLead(combined.Scores, combined.GameState, move.PlayerToken);
+                    moveNode.Score = this.GetLead(combined.Scores, combined.GameState, move.PlayerToken);
                 }
 
                 if (singlePlayer != null && mainlines.Count > 1)

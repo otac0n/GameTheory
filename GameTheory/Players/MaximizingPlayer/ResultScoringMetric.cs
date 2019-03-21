@@ -5,6 +5,7 @@ namespace GameTheory.Players.MaximizingPlayer
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using GameTheory.GameTree;
 
     /// <summary>
     /// Provides shared logic for maximizing players to prioritize winning over a higher score.

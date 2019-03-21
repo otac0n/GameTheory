@@ -1,6 +1,6 @@
 // Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
-namespace GameTheory.Players.MaximizingPlayer.Caches
+namespace GameTheory.GameTree.Caches
 {
     using System;
 
@@ -9,7 +9,7 @@ namespace GameTheory.Players.MaximizingPlayer.Caches
     /// </summary>
     /// <typeparam name="TMove">The type of moves supported by the game states in the cache.</typeparam>
     /// <typeparam name="TScore">The type used to keep track of score.</typeparam>
-    public class SplayTreeCache<TMove, TScore> : ICache<TMove, TScore>
+    public class SplayTreeCache<TMove, TScore> : IGameStateCache<TMove, TScore>
         where TMove : IMove
     {
         private const int TrimDepth = 32;

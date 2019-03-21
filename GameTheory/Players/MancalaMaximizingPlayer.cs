@@ -3,8 +3,9 @@
 namespace GameTheory.Players.MaximizingPlayers
 {
     using GameTheory.Games.Mancala;
+    using GameTheory.GameTree;
+    using GameTheory.GameTree.Caches;
     using GameTheory.Players.MaximizingPlayer;
-    using GameTheory.Players.MaximizingPlayer.Caches;
 
     /// <summary>
     /// Provides a maximizing player for the game of <see cref="GameState">Mancala</see>.
@@ -25,7 +26,7 @@ namespace GameTheory.Players.MaximizingPlayers
         }
 
         /// <inheritdoc />
-        protected override ICache<Move, ResultScore<double>> MakeCache() => new NullCache<Move, ResultScore<double>>();
+        protected override IGameStateCache<Move, ResultScore<double>> MakeCache() => new NullCache<Move, ResultScore<double>>();
 
         private static double Score(PlayerState<Move> playerState)
         {

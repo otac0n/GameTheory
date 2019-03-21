@@ -446,21 +446,21 @@
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <Compile Include="Players\MaximizingPlayer\Caches\DictionaryCache.cs" />
-    <Compile Include="Players\MaximizingPlayer\Caches\NullCache.cs" />
-    <Compile Include="Players\MaximizingPlayer\Caches\SplayTreeCache.cs" />
+    <Compile Include="GameTree\Caches\DictionaryCache.cs" />
+    <Compile Include="GameTree\Caches\NullCache.cs" />
+    <Compile Include="GameTree\Caches\SplayTreeCache.cs" />
+    <Compile Include="GameTree\GameTree.cs" />
+    <Compile Include="GameTree\IGameStateCache.cs" />
+    <Compile Include="GameTree\IScorePlyExtender.cs" />
+    <Compile Include="GameTree\Mainline.cs" />
+    <Compile Include="GameTree\MoveNode.cs" />
+    <Compile Include="GameTree\StateNode.cs" />
     <Compile Include="Players\MaximizingPlayer\ComparableEqualityComparer.cs" />
-    <Compile Include="Players\MaximizingPlayer\GameTree.cs" />
-    <Compile Include="Players\MaximizingPlayer\ICache.cs" />
-    <Compile Include="Players\MaximizingPlayer\IScorePlyExtender.cs" />
-    <Compile Include="Players\MaximizingPlayer\Mainline.cs" />
     <Compile Include="Players\MaximizingPlayer\MaximizingPlayer.cs" />
     <Compile Include="Players\MaximizingPlayer\MaximizingPlayerBase.cs" />
     <Compile Include="Players\MaximizingPlayer\MonteCarloTreeSearchPlayer.cs" />
-    <Compile Include="Players\MaximizingPlayer\MoveNode.cs" />
     <Compile Include="Players\MaximizingPlayer\ResultScore.cs" />
     <Compile Include="Players\MaximizingPlayer\ResultScoringMetric.cs" />
-    <Compile Include="Players\MaximizingPlayer\StateNode.cs" />
     <Compile Include="Players\CenturySpiceRoadMaximizingPlayer.cs" />
     <Compile Include="Players\ChessMaximizingPlayer.cs" />
     <Compile Include="Players\DraughtsMaximizingPlayer.cs" />

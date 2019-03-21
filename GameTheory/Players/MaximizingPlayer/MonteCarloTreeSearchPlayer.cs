@@ -8,6 +8,8 @@ namespace GameTheory.Players.MaximizingPlayer
     using System.Diagnostics;
     using System.Linq;
     using System.Threading;
+    using GameTheory.GameTree;
+    using GameTheory.GameTree.Caches;
 
     public class MonteCarloTreeSearchPlayer<TMove> : MaximizingPlayerBase<TMove, ResultScore<byte>>
         where TMove : IMove
@@ -49,7 +51,7 @@ namespace GameTheory.Players.MaximizingPlayer
         }
 
         /// <inheritdoc />
-        protected override ICache<TMove, ResultScore<byte>> MakeCache() => new Caches.DictionaryCache<TMove, ResultScore<byte>>();
+        protected override IGameStateCache<TMove, ResultScore<byte>> MakeCache() => new DictionaryCache<TMove, ResultScore<byte>>();
 
         private Mainline<TMove, ResultScore<byte>> GetMaximizingMoves(PlayerToken player, IList<Mainline<TMove, ResultScore<byte>>> moveScores)
         {
@@ -139,20 +141,9 @@ namespace GameTheory.Players.MaximizingPlayer
                     var mainline = outcome.Value.Mainline;
                     if (mainline != null)
                     {
-                        var newScores = mainline.Scores;
-                        if (this.scoreExtender != null)
-                        {
-                            var scores = new Dictionary<PlayerToken, ResultScore<byte>>();
+                        var strategy = ImmutableArray.Create<IWeighted<TMove>>(Weighted.Create(move, 1));
 
-                            foreach (var player in mainline.GameState.Players)
-                            {
-                                scores.Add(player, this.scoreExtender.Extend(mainline.Scores[player]));
-                            }
-
-                            newScores = scores;
-                        }
-
-                        mainline = new Mainline<TMove, ResultScore<byte>>(newScores, mainline.GameState, move.PlayerToken, mainline.Strategies.Push(ImmutableArray.Create<IWeighted<TMove>>(Weighted.Create(move, 1))), mainline.Depth + 1, mainline.FullyDetermined);
+                        mainline = mainline.Extend(move.PlayerToken, strategy, this.scoreExtender);
                     }
 
                     weightedOutcomes.Add(Weighted.Create(mainline, outcome.Weight));

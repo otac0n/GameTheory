@@ -1,6 +1,6 @@
 // Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
-namespace GameTheory.Players.MaximizingPlayer.Caches
+namespace GameTheory.GameTree.Caches
 {
     using System.Collections.Generic;
 
@@ -9,7 +9,7 @@ namespace GameTheory.Players.MaximizingPlayer.Caches
     /// </summary>
     /// <typeparam name="TMove">The type of moves supported by the game states in the cache.</typeparam>
     /// <typeparam name="TScore">The type used to keep track of score.</typeparam>
-    public class DictionaryCache<TMove, TScore> : ICache<TMove, TScore>
+    public class DictionaryCache<TMove, TScore> : IGameStateCache<TMove, TScore>
         where TMove : IMove
     {
         private readonly Dictionary<IGameState<TMove>, StateNode<TMove, TScore>> storage = new Dictionary<IGameState<TMove>, StateNode<TMove, TScore>>();

@@ -9,6 +9,7 @@ namespace GameTheory.Players.MaximizingPlayer
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
+    using GameTheory.GameTree;
 
     public abstract class MaximizingPlayerBase<TMove, TScore> : IPlayer<TMove>
         where TMove : IMove
@@ -267,7 +268,7 @@ namespace GameTheory.Players.MaximizingPlayer
         /// Create the transposition table cache.
         /// </summary>
         /// <returns>The cache object to use as a transposition table.</returns>
-        protected abstract ICache<TMove, TScore> MakeCache();
+        protected abstract IGameStateCache<TMove, TScore> MakeCache();
 
         /// <summary>
         /// Send a message.

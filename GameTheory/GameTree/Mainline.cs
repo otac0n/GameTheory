@@ -1,6 +1,6 @@
 // Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
-namespace GameTheory.Players.MaximizingPlayer
+namespace GameTheory.GameTree
 {
     using System.Collections.Generic;
     using System.Collections.Immutable;
@@ -142,6 +142,32 @@ namespace GameTheory.Players.MaximizingPlayer
         /// Gets the sequence of moves/strategies necessary to arrive at the resulting game state.
         /// </summary>
         public ImmutableStack<IReadOnlyList<IWeighted<TMove>>> Strategies { get; }
+
+        /// <summary>
+        /// Extends the mainline by one ply specifying the strategy to play, optionally extending the score by one ply as well.
+        /// </summary>
+        /// <param name="player">The player executing the <paramref name="strategy"/>.</param>
+        /// <param name="strategy">The strategy to execute at this stage in the game tree.</param>
+        /// <param name="scoreExtender">The optional <see cref="IScorePlyExtender{TScore}"/> to use to extend the score.</param>
+        /// <returns>The extended mainline.</returns>
+        public Mainline<TMove, TScore> Extend(PlayerToken player, ImmutableArray<IWeighted<TMove>> strategy, IScorePlyExtender<TScore> scoreExtender = null)
+        {
+            var scores = this.Scores;
+
+            if (scoreExtender != null)
+            {
+                var newScores = new Dictionary<PlayerToken, TScore>(scores.Count);
+
+                foreach (var p in this.GameState.Players)
+                {
+                    newScores.Add(p, scoreExtender.Extend(scores[p]));
+                }
+
+                scores = newScores;
+            }
+
+            return new Mainline<TMove, TScore>(scores, this.GameState, player, this.Strategies.Push(strategy), this.Depth + 1, this.FullyDetermined);
+        }
 
         /// <inheritdoc/>
         public override string ToString() => string.Concat(this.FlattenFormatTokens());
