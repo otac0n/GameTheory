@@ -2,6 +2,7 @@
 
 namespace GameTheory.Players.MaximizingPlayers
 {
+    using System;
     using GameTheory.Games.Chess;
     using GameTheory.Players.MaximizingPlayer;
 
@@ -13,15 +14,21 @@ namespace GameTheory.Players.MaximizingPlayers
         private static readonly ResultScoringMetric<Move, double> Metric =
             new ResultScoringMetric<Move, double>(ScoringMetric.Create<Move>(Score));
 
+        private TimeSpan minThinkTime;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="ChessMaximizingPlayer"/> class.
         /// </summary>
         /// <param name="playerToken">The token that represents the player.</param>
         /// <param name="minPly">The minimum number of ply to think ahead.</param>
-        public ChessMaximizingPlayer(PlayerToken playerToken, int minPly = 4)
+        /// <param name="thinkSeconds">The minimum number of seconds to think.</param>
+        public ChessMaximizingPlayer(PlayerToken playerToken, int minPly = 2, int thinkSeconds = 5)
             : base(playerToken, Metric, minPly)
         {
+            this.minThinkTime = TimeSpan.FromSeconds(Math.Max(1, thinkSeconds) - 0.1);
         }
+
+        protected override TimeSpan? MinThinkTime => this.minThinkTime;
 
         private static double Score(PlayerState<Move> playerState)
         {

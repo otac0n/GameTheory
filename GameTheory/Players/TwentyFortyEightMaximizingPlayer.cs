@@ -19,15 +19,22 @@ namespace GameTheory.Players.MaximizingPlayers
 
         private static readonly double[] Pow = Enumerable.Range(0, GameState.Size * GameState.Size).Select(value => Math.Pow(10, value)).ToArray();
 
+        private TimeSpan minThinkTime;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="TwentyFortyEightMaximizingPlayer"/> class.
         /// </summary>
         /// <param name="playerToken">The token that represents the player.</param>
         /// <param name="minPly">The minimum number of ply to think ahead.</param>
-        public TwentyFortyEightMaximizingPlayer(PlayerToken playerToken, int minPly = 4)
+        /// <param name="thinkSeconds">The minimum number of seconds to think.</param>
+        public TwentyFortyEightMaximizingPlayer(PlayerToken playerToken, int minPly = 4, int thinkSeconds = 2)
             : base(playerToken, Metric, minPly)
         {
+            this.minThinkTime = TimeSpan.FromSeconds(Math.Max(1, thinkSeconds) - 0.1);
         }
+
+        /// <inheritdoc />
+        protected override TimeSpan? MinThinkTime => this.minThinkTime;
 
         /// <inheritdoc />
         protected override IGameStateCache<Move, ResultScore<double>> MakeCache() => new DictionaryCache<Move, ResultScore<double>>();
