@@ -16,7 +16,9 @@ namespace GameTheory.GameTree
         internal MoveNode(GameTree<TMove, TScore> tree, IGameState<TMove> state, TMove move)
         {
             this.Move = move;
-            this.Outcomes = state.GetOutcomes(move).Select(o => new Weighted<StateNode<TMove, TScore>>(tree.GetOrAdd(o.Value), o.Weight)).ToArray();
+            this.Outcomes = move.IsDeterministic
+                ? new[] { new Weighted<StateNode<TMove, TScore>>(tree.GetOrAdd(state.MakeMove(move)), 1) }
+                : state.GetOutcomes(move).Select(o => new Weighted<StateNode<TMove, TScore>>(tree.GetOrAdd(o.Value), o.Weight)).ToArray();
         }
 
         /// <summary>
