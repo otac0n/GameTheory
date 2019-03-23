@@ -48,6 +48,11 @@ namespace GameTheory.Players.MaximizingPlayer
         }
 
         /// <summary>
+        /// Gets a value indicating whether or not the player will use iterative deepening.
+        /// </summary>
+        protected virtual bool IterativeDeepening => true;
+
+        /// <summary>
         /// Gets the minimum number of ply to think ahead.
         /// </summary>
         protected int MinPly { get; }
@@ -106,7 +111,7 @@ namespace GameTheory.Players.MaximizingPlayer
             // Iterative deepening
             var node = this.gameTree.GetOrAdd(state);
             var mainline = node.Mainline;
-            for (var i = 1; i <= ply && !(mainline != null && (mainline.FullyDetermined || mainline.Depth >= ply)); i++)
+            for (var i = this.IterativeDeepening ? 1 : ply; i <= ply && !(mainline != null && (mainline.FullyDetermined || mainline.Depth >= ply)); i++)
             {
                 mainline = this.GetMove(node, i, ImmutableDictionary<PlayerToken, IDictionary<PlayerToken, TScore>>.Empty, cancel);
             }
@@ -168,7 +173,7 @@ namespace GameTheory.Players.MaximizingPlayer
                     break;
             }
 
-            if (otherPlayer != null)
+            if (otherPlayer != null && this.IterativeDeepening && ply > 2)
             {
                 Array.Sort(allMoves, (m1, m2) => this.scoringMetric.Compare(node[m1].Score, node[m2].Score));
             }
