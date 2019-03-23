@@ -48,19 +48,26 @@ namespace GameTheory.Players.MaximizingPlayer
         }
 
         /// <summary>
-        /// Gets a value indicating whether or not the player will use iterative deepening.
-        /// </summary>
-        protected virtual bool IterativeDeepening => true;
-
-        /// <summary>
         /// Gets the minimum number of ply to think ahead.
         /// </summary>
         protected int MinPly { get; }
+
+        /// <summary>
+        /// Gets a value indicating the minimum amount of time to think in the case that the min ply is reached quickly.
+        /// </summary>
+        protected virtual TimeSpan? MinThinkTime => null;
 
         /// <inheritdoc />
         protected override Mainline<TMove, TScore> GetMove(List<IGameState<TMove>> states, bool ponder, CancellationToken cancel)
         {
             var sw = Stopwatch.StartNew();
+
+            var runUntilCancel = false;
+            var minTime = this.MinThinkTime;
+            if (minTime != null)
+            {
+                runUntilCancel = true;
+            }
 
             var ply = this.MinPly;
             if (ponder)
@@ -72,15 +79,47 @@ namespace GameTheory.Players.MaximizingPlayer
             this.cacheHits = 0;
             this.cacheMisses = 0;
 
-            Mainline<TMove, TScore> mainline;
-            if (states.Count == 1)
+            var mainlines = new Mainline<TMove, TScore>[states.Count];
+            var roots = states.Select(this.gameTree.GetOrAdd).ToList();
+
+            if (states.Count > 1)
             {
-                mainline = this.GetMove(states.Single(), ply, cancel);
+                ply = Math.Max(1, ply - 1);
             }
-            else
+
+            // Iterative deepening
+            var fullyDetermined = false;
+            for (var p = ply; (p <= ply || (runUntilCancel && !cancel.IsCancellationRequested)) && !fullyDetermined; p++)
             {
-                mainline = this.GetMove(states, ply, cancel);
+                fullyDetermined = true;
+                for (var i = 0; i < states.Count; i++)
+                {
+                    var m = mainlines[i];
+
+                    if (m == null || (!m.FullyDetermined && m.Depth < p))
+                    {
+                        m = mainlines[i] = this.GetMove(roots[i], p, ImmutableDictionary<PlayerToken, IDictionary<PlayerToken, TScore>>.Empty, cancel);
+                    }
+
+                    fullyDetermined &= m.FullyDetermined;
+                }
+
+                if (runUntilCancel && p == ply)
+                {
+                    var cancelAfter = minTime.Value - sw.Elapsed;
+                    if (cancelAfter <= TimeSpan.Zero)
+                    {
+                        break;
+                    }
+
+                    var cts = new CancellationTokenSource();
+                    cancel.Register(cts.Cancel);
+                    cts.CancelAfter(cancelAfter);
+                    cancel = cts.Token;
+                }
             }
+
+            var mainline = this.CombineMainlines(mainlines);
 
             if (!ponder)
             {
@@ -93,31 +132,6 @@ namespace GameTheory.Players.MaximizingPlayer
 
         /// <inheritdoc />
         protected override IGameStateCache<TMove, TScore> MakeCache() => new SplayTreeCache<TMove, TScore>();
-
-        private Mainline<TMove, TScore> GetMove(IList<IGameState<TMove>> states, int ply, CancellationToken cancel)
-        {
-            var mainlines = new List<Mainline<TMove, TScore>>(states.Count);
-            foreach (var state in states)
-            {
-                var mainline = this.GetMove(state, ply - 1, cancel);
-                mainlines.Add(mainline);
-            }
-
-            return this.CombineMainlines(mainlines);
-        }
-
-        private Mainline<TMove, TScore> GetMove(IGameState<TMove> state, int ply, CancellationToken cancel)
-        {
-            // Iterative deepening
-            var node = this.gameTree.GetOrAdd(state);
-            var mainline = node.Mainline;
-            for (var i = this.IterativeDeepening ? 1 : ply; i <= ply && !(mainline != null && (mainline.FullyDetermined || mainline.Depth >= ply)); i++)
-            {
-                mainline = this.GetMove(node, i, ImmutableDictionary<PlayerToken, IDictionary<PlayerToken, TScore>>.Empty, cancel);
-            }
-
-            return mainline;
-        }
 
         private Mainline<TMove, TScore> GetMove(StateNode<TMove, TScore> node, int ply, ImmutableDictionary<PlayerToken, IDictionary<PlayerToken, TScore>> alphaBetaScore, CancellationToken cancel)
         {
@@ -143,7 +157,11 @@ namespace GameTheory.Players.MaximizingPlayer
         {
             var state = node.State;
 
-            if (ply == 0)
+            if (cancel.IsCancellationRequested && node.Mainline != null)
+            {
+                return node.Mainline;
+            }
+            else if (cancel.IsCancellationRequested || ply == 0)
             {
                 return new Mainline<TMove, TScore>(this.scoringMetric.Score(state), state, null, ImmutableStack<IReadOnlyList<IWeighted<TMove>>>.Empty, depth: 0, fullyDetermined: false);
             }
@@ -173,7 +191,7 @@ namespace GameTheory.Players.MaximizingPlayer
                     break;
             }
 
-            if (otherPlayer != null && this.IterativeDeepening && ply > 2)
+            if (otherPlayer != null)
             {
                 // TODO: Allow move sorting by specific player classes.
                 ////Array.Sort(allMoves, (m1, m2) => this.scoringMetric.Compare(node[m1].Score, node[m2].Score));
@@ -240,8 +258,6 @@ namespace GameTheory.Players.MaximizingPlayer
                     }
                 }
             }
-
-            cancel.ThrowIfCancellationRequested();
 
             if (singlePlayer != null)
             {

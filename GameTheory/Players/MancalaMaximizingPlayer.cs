@@ -26,9 +26,6 @@ namespace GameTheory.Players.MaximizingPlayers
         }
 
         /// <inheritdoc />
-        protected override bool IterativeDeepening => false;
-
-        /// <inheritdoc />
         protected override IGameStateCache<Move, ResultScore<double>> MakeCache() => new NullCache<Move, ResultScore<double>>();
 
         private static double Score(PlayerState<Move> playerState)
