@@ -103,10 +103,15 @@ namespace GameTheory.Players.MaximizingPlayer
 
         protected Mainline<TMove, TScore> CombineMainlines(IList<Mainline<TMove, TScore>> mainlines)
         {
+            if (mainlines.Count == 1)
+            {
+                return mainlines[0];
+            }
+
             var moveWeights = new Dictionary<TMove, Weighted<Mainline<TMove, TScore>>>(new ComparableEqualityComparer<TMove>());
             var fullyDetermined = true;
 
-            // Monte-Carlo
+            // Single Monte-Carlo
             foreach (var mainline in mainlines)
             {
                 fullyDetermined &= mainline.FullyDetermined;

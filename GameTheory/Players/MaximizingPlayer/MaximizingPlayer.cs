@@ -175,7 +175,8 @@ namespace GameTheory.Players.MaximizingPlayer
 
             if (otherPlayer != null && this.IterativeDeepening && ply > 2)
             {
-                Array.Sort(allMoves, (m1, m2) => this.scoringMetric.Compare(node[m1].Score, node[m2].Score));
+                // TODO: Allow move sorting by specific player classes.
+                ////Array.Sort(allMoves, (m1, m2) => this.scoringMetric.Compare(node[m1].Score, node[m2].Score));
             }
 
             var mainlines = new Mainline<TMove, TScore>[allMoves.Length];

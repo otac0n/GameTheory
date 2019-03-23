@@ -19,7 +19,7 @@ namespace GameTheory.Players.MaximizingPlayer
         public MonteCarloTreeSearchPlayer(PlayerToken playerToken, int thinkSeconds = 5)
             : base(playerToken, new ResultScoringMetric<TMove, byte>(ScoringMetric.Null<PlayerState<TMove>>()))
         {
-            this.thinkTime = TimeSpan.FromSeconds(thinkSeconds);
+            this.thinkTime = TimeSpan.FromSeconds(Math.Max(1, thinkSeconds));
         }
 
         protected override Mainline<TMove, ResultScore<byte>> GetMove(List<IGameState<TMove>> states, bool ponder, CancellationToken cancel)
