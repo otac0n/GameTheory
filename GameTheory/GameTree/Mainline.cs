@@ -160,7 +160,7 @@ namespace GameTheory.GameTree
 
                 foreach (var p in this.GameState.Players)
                 {
-                    newScores.Add(p, scoreExtender.Extend(scores[p]));
+                    newScores[p] = scoreExtender.Extend(scores[p]);
                 }
 
                 scores = newScores;

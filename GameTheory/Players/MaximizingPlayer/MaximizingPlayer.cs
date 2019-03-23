@@ -173,7 +173,8 @@ namespace GameTheory.Players.MaximizingPlayer
                 Array.Sort(allMoves, (m1, m2) => this.scoringMetric.Compare(node[m1].Score, node[m2].Score));
             }
 
-            var mainlines = new List<Mainline<TMove, TScore>>(allMoves.Length);
+            var mainlines = new Mainline<TMove, TScore>[allMoves.Length];
+            var leads = new TScore[allMoves.Length];
             for (var m = 0; m < allMoves.Length; m++)
             {
                 var move = allMoves[m];
@@ -191,23 +192,18 @@ namespace GameTheory.Players.MaximizingPlayer
                 }
 
                 var combined = this.CombineOutcomes(state, weightedOutcomes);
-                mainlines.Add(combined);
+                mainlines[m] = combined;
+                moveNode.Score = leads[m] = this.GetLead(combined.Scores, combined.GameState, move.PlayerToken);
 
-                if (otherPlayer != null)
+                if (singlePlayer != null && m > 0)
                 {
-                    moveNode.Score = this.GetLead(combined.Scores, combined.GameState, move.PlayerToken);
-                }
-
-                if (singlePlayer != null && mainlines.Count > 1)
-                {
-                    var mainline = mainlines[0] = this.Maximize(singlePlayer, mainlines[0], mainlines[1]);
-                    mainlines.RemoveAt(1);
+                    var mainline = mainlines[0] = this.Maximize(singlePlayer, mainlines[0], leads[0], mainlines[m], leads[m]);
+                    var leadA = leads[0] = this.GetLead(mainline.Scores, mainline.GameState, singlePlayer);
 
                     // Alpha-beta pruning.
                     if (otherPlayer != null)
                     {
                         var scoresA = mainline.Scores;
-                        var leadA = this.GetLead(scoresA, mainline.GameState, singlePlayer);
 
                         int comp;
                         if (alphaBetaScore.TryGetValue(singlePlayer, out var scoresB))
@@ -248,14 +244,21 @@ namespace GameTheory.Players.MaximizingPlayer
             else
             {
                 var currentScore = this.scoringMetric.Score(node.State);
-                var playerLeads = (from pm in allMoves.Select((m, i) => new { Move = m, Mainline = mainlines[i] })
-                                   group pm.Mainline by pm.Move.PlayerToken into g
-                                   let mainline = g.Aggregate((a, b) => this.Maximize(g.Key, a, b))
+                var playerLeads = (from pm in allMoves.Select((m, i) => new { Move = m, Index = i })
+                                   let mainline = mainlines[pm.Index]
+                                   let lead = leads[pm.Index]
+                                   let player = pm.Move.PlayerToken
+                                   group new { Mainline = mainline, Lead = lead } by player into g
+                                   let max = g.Aggregate((a, b) =>
+                                   {
+                                       var m = this.Maximize(g.Key, a.Mainline, a.Lead, b.Mainline, b.Lead);
+                                       return new { Mainline = m, Lead = this.GetLead(m.Scores, m.GameState, g.Key) };
+                                   })
                                    select new
                                    {
-                                       Mainline = mainline,
+                                       max.Mainline,
                                        PlayerToken = g.Key,
-                                       Lead = this.GetLead(mainline, g.Key),
+                                       Lead = this.GetLead(max.Mainline, g.Key),
                                    }).ToList();
                 var improvingMoves = (from pm in playerLeads
                                       let currentLead = this.GetLead(currentScore, state, pm.PlayerToken)
@@ -311,11 +314,8 @@ namespace GameTheory.Players.MaximizingPlayer
             }
         }
 
-        private Mainline<TMove, TScore> Maximize(PlayerToken player, Mainline<TMove, TScore> a, Mainline<TMove, TScore> b)
+        private Mainline<TMove, TScore> Maximize(PlayerToken player, Mainline<TMove, TScore> a, TScore leadA, Mainline<TMove, TScore> b, TScore leadB)
         {
-            var leadA = this.GetLead(a, player);
-            var leadB = this.GetLead(b, player);
-
             bool fullyDetermined;
             int depth;
 

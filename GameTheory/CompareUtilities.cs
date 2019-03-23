@@ -257,7 +257,7 @@ namespace GameTheory
         /// <param name="left">The first list.</param>
         /// <param name="right">The second list.</param>
         /// <returns>A value indicating whether the lists are the same length and contain the same elements.</returns>
-        public static int CompareLists<T>(IList<T> left, IList<T> right)
+        public static int CompareLists<T>(IReadOnlyList<T> left, IReadOnlyList<T> right)
             where T : class, IComparable<T>
         {
             var comp = 0;

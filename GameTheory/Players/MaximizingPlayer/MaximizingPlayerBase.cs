@@ -243,8 +243,11 @@ namespace GameTheory.Players.MaximizingPlayer
             {
                 var any = false;
                 var max = default(TScore);
-                foreach (var other in state.Players)
+                var players = state.Players;
+                var count = players.Count;
+                for (var i = 0; i < count; i++)
                 {
+                    var other = players[i];
                     if (other != player)
                     {
                         var value = score[other];

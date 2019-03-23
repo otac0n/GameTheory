@@ -31,7 +31,7 @@ namespace GameTheory.Games.Mancala
         }
 
         private GameState(
-            ImmutableArray<PlayerToken> players,
+            IReadOnlyList<PlayerToken> players,
             int activePlayerIndex,
             Phase phase,
             int[] board)
@@ -78,12 +78,7 @@ namespace GameTheory.Games.Mancala
         public Phase Phase { get; }
 
         /// <inheritdoc />
-        IReadOnlyList<PlayerToken> IGameState<Move>.Players => this.Players;
-
-        /// <summary>
-        /// Gets the list of players.
-        /// </summary>
-        public ImmutableArray<PlayerToken> Players { get; }
+        public IReadOnlyList<PlayerToken> Players { get; }
 
         /// <summary>
         /// Gets the value of the specified bin.
