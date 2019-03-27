@@ -1,4 +1,4 @@
-﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Catalogs
 {
@@ -16,7 +16,7 @@ namespace GameTheory.Catalogs
         /// <summary>
         /// Gets the default game catalog.
         /// </summary>
-        public static readonly GameCatalog Default = new GameCatalog(typeof(IGameState<>).GetTypeInfo().Assembly);
+        public static readonly GameCatalog Default = new GameCatalog(typeof(IGameState<>).Assembly);
 
         private readonly ImmutableList<Assembly> assemblies;
         private readonly Lazy<ImmutableList<Game>> availableGames;

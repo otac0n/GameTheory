@@ -1,0 +1,68 @@
+Player 1: Take Emerald, Sapphire, Onyx
+Player 2: Take Onyx
+Player 1: Reserve Diamond +4 (cost: 7×Onyx) and take GoldJoker
+Player 2: Take Emerald, Diamond, Ruby
+Player 1: Purchase Ruby for Emerald, Sapphire, GoldJoker
+Player 2: Take Emerald
+Player 1: Reserve Emerald +3 (cost: 6×Emerald) and take GoldJoker
+Player 2: Reserve Diamond +1 (cost: 2×Diamond, 3×Sapphire, 3×Ruby) and take GoldJoker
+Player 1: Take Emerald, Diamond, Ruby
+Player 2: Reserve Sapphire +5 (cost: 7×Diamond, 3×Sapphire) and take GoldJoker
+Player 1: Reserve Ruby +1 (cost: 3×Sapphire, 3×Onyx, 2×Ruby) and take GoldJoker
+Player 2: Take Diamond, Sapphire
+Player 1: Take Emerald, Diamond
+Player 2: Purchase Sapphire for Diamond, 2×GoldJoker
+Player 1: Take Sapphire, Ruby
+Player 2: Reserve Ruby +4 (cost: 7×Emerald) and take GoldJoker
+Player 1: Take Ruby
+Player 1: Discard GoldJoker
+Player 2: Take Diamond, Onyx
+Player 1: Take Sapphire, Onyx
+Player 1: Discard Diamond, Onyx
+Player 2: Purchase Diamond for Onyx, Ruby, GoldJoker
+Player 1: Take Sapphire, Onyx
+Player 1: Discard Emerald, Sapphire
+Player 2: Take Emerald, Ruby
+Player 1: Take Diamond, Sapphire, Onyx
+Player 1: Discard Diamond, Onyx, GoldJoker
+Player 2: Purchase Sapphire for 3×Emerald, Ruby
+Player 1: Take Ruby
+Player 1: Discard Emerald
+Player 2: Take Diamond
+Player 1: Take 2×Emerald
+Player 1: Discard Onyx, Ruby
+Player 2: Purchase Sapphire +2 for 3×Diamond, Sapphire, GoldJoker
+Player 1: Take Emerald, Diamond
+Player 1: Discard 2×Sapphire
+Player 2: Take Emerald
+Player 1: Take Ruby
+Player 1: Discard Diamond
+Player 2: Take Sapphire, Onyx
+Player 1: Take Sapphire, Onyx
+Player 1: Discard 2×Ruby
+Player 2: Take Sapphire, Onyx, Ruby
+Player 1: Take Diamond, Ruby
+Player 1: Discard 2×Diamond
+Player 2: Purchase Diamond for 2×Onyx
+Player 1: Take Diamond
+Player 1: Discard Ruby
+Player 2: Take Ruby
+Player 1: Take Diamond
+Player 1: Discard Diamond
+Player 2: Take Onyx
+Player 1: Take Onyx
+Player 1: Discard Onyx
+Player 2: Take Diamond
+Player 1: Take Diamond
+Player 1: Discard Diamond
+Player 2: Take Onyx
+Player 1: Take Diamond
+Player 1: Discard Diamond
+Player 2: Take Diamond
+Player 1: Take Diamond
+Player 1: Discard Sapphire
+Player 2: Take Sapphire
+  Expected string length 8 but was 0. Strings differ at index 0.
+  Expected: "Player 2"
+  But was:  <string.Empty>
+  -----------^

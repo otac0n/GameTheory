@@ -1,4 +1,4 @@
-﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Catalogs
 {
@@ -79,7 +79,7 @@ namespace GameTheory.Catalogs
 
             try
             {
-                return new ResourceManager(@namespace + ".Resources", gameType.GetTypeInfo().Assembly).GetString("Name");
+                return new ResourceManager(@namespace + ".Resources", gameType.Assembly).GetString("Name");
             }
             catch (MissingManifestResourceException)
             {
