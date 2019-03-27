@@ -15,7 +15,7 @@ namespace GameTheory.Catalogs
         /// <summary>
         /// Gets the default game catalog.
         /// </summary>
-        public static readonly GameCatalog Default = new AssemblyGameCatalog(typeof(IGameState<>).GetTypeInfo().Assembly);
+        public static readonly GameCatalog Default = new AssemblyGameCatalog(typeof(IGameState<>).Assembly);
 
         private readonly Lazy<ImmutableList<IGame>> availableGames;
 
