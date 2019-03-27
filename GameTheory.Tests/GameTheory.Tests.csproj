@@ -55,6 +55,8 @@
     <Compile Include="Games\MatchingPenniesTests.cs" />
     <Compile Include="Games\SplendorTests.cs" />
     <Compile Include="Games\TicTacToeTests.cs" />
+    <Compile Include="Gdl\GameCompilerTests.cs" />
+    <EmbeddedResource Include="Gdl\TicTacToe.gdl" />
     <Compile Include="Players\DuhPlayerTests.cs" />
     <Compile Include="Players\MaximizingPlayerTests.cs" />
     <Compile Include="Players\RandomPlayerTests.cs" />
