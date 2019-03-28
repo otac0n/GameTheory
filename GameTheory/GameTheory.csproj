@@ -6,7 +6,7 @@
     <DebugType>Full</DebugType>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <TargetFrameworks>net45;netcoreapp2.0</TargetFrameworks>
+    <TargetFrameworks>net462;netcoreapp2.0</TargetFrameworks>
     <Description />
     <PackageLicenseUrl>https://raw.github.com/otac0n/GameTheory/master/license.md</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/otac0n/GameTheory</PackageProjectUrl>
@@ -145,6 +145,7 @@
   <ItemGroup>
     <PackageReference Include="FixMe" Version="1.0.0" PrivateAssets="All" />
     <PackageReference Include="GitVersionTask" Version="4.0.0" PrivateAssets="All" />
+    <PackageReference Include="KnowledgeInterchangeFormat" Version="0.1.0" />
     <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.6.3" PrivateAssets="All" />
     <PackageReference Include="Pegasus" Version="4.1.0-alpha0152" />
     <PackageReference Include="StyleCop.Analyzers" Version="1.1.1-rc.114" PrivateAssets="All" />
