@@ -15,10 +15,15 @@ namespace GameTheory.Tests.Gdl
     [TestFixture]
     public class GameCompilerTests
     {
-        [Test]
-        public void Compile_WhenGivenTicTacToe_ReturnsAGameOfTicTacToe()
+        public static IEnumerable<string> Games =>
+            from r in Assembly.GetExecutingAssembly().GetManifestResourceNames()
+            where r.EndsWith(".gdl", StringComparison.InvariantCultureIgnoreCase) || r.EndsWith(".kif", StringComparison.InvariantCultureIgnoreCase)
+            select r;
+
+        [TestCaseSource(nameof(Games))]
+        public void Compile_WhenGivenAGameDefinition_ReturnsAFullyConstructedType(string game)
         {
-            var gdl = LoadAssemblyResource("GameTheory.Tests.Gdl.TicTacToe.gdl");
+            var gdl = LoadAssemblyResource(game);
             var compiler = new GameCompiler();
             var result = compiler.Compile(gdl);
             Assert.NotNull(result.Type);

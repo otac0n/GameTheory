@@ -14,6 +14,42 @@ namespace GameTheory.Gdl
         public CompileResult(KnowledgeBase knowledgeBase)
         {
             this.KnowledgeBase = knowledgeBase;
+            this.ConstantTypes = new Dictionary<string, ConstantType>
+            {
+                { "ROLE", ConstantType.Relation },
+                { "INIT", ConstantType.Relation },
+                { "TRUE", ConstantType.Relation },
+                { "DOES", ConstantType.Relation },
+                { "NEXT", ConstantType.Relation },
+                { "LEGAL", ConstantType.Relation },
+                { "GOAL", ConstantType.Relation },
+                { "TERMINAL", ConstantType.Logical },
+                { "DISTINCT", ConstantType.Relation },
+            };
+
+            for (var i = 0; i <= 100; i++)
+            {
+                this.ConstantTypes[i.ToString()] = ConstantType.Object;
+            }
+
+            this.ConstantArities = new Dictionary<string, int>
+            {
+                { "ROLE", 1 },
+                { "INIT", 1 },
+                { "TRUE", 1 },
+                { "DOES", 2 },
+                { "NEXT", 1 },
+                { "LEGAL", 2 },
+                { "GOAL", 2 },
+                { "DISTINCT", 2 },
+            };
+
+            this.AtomicSentences = new Dictionary<Sentence, bool>();
+            this.DatalogTerms = new Dictionary<Term, bool>();
+            this.DatalogRules = new Dictionary<Implication, bool>();
+            this.DatalogLiterals = new Dictionary<Sentence, bool>();
+            this.GroundExpressions = new Dictionary<Expression, bool>();
+
             this.Errors = new List<CompilerError>();
         }
 
@@ -23,6 +59,20 @@ namespace GameTheory.Gdl
         public Type Type { get; set; }
 
         public KnowledgeBase KnowledgeBase { get; }
+
+        public Dictionary<string, ConstantType> ConstantTypes { get; }
+
+        public Dictionary<string, int> ConstantArities { get; }
+
+        public Dictionary<Sentence, bool> AtomicSentences { get; }
+
+        public Dictionary<Term, bool> DatalogTerms { get; }
+
+        public Dictionary<Implication, bool> DatalogRules { get; }
+
+        public Dictionary<Sentence, bool> DatalogLiterals { get; }
+
+        public Dictionary<Expression, bool> GroundExpressions { get; }
 
         /// <summary>
         /// Gets the collection of errors that occurred during compilation.

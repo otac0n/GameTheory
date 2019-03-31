@@ -1,4 +1,4 @@
-﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Tests.Players
 {
@@ -16,6 +16,7 @@ namespace GameTheory.Tests.Players
         private const int Samples = 1000;
 
         [Test]
+        [Ignore("Long")]
         public async Task WhenGoingFirst_Never_LosesToDuhPlayer()
         {
             var wins = new int[2];
@@ -39,6 +40,7 @@ namespace GameTheory.Tests.Players
         }
 
         [Test]
+        [Ignore("Long")]
         public async Task WhenGoingSecond_Never_LosesToDuhPlayer()
         {
             var wins = new int[2];

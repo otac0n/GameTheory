@@ -17,8 +17,6 @@ namespace GameTheory.Gdl
             .ToList()
             .AsReadOnly();
 
-        private KifParser parser;
-
         public CompileResult Compile(string game, string fileName = null)
         {
             KnowledgeBase knowledgeBase;
