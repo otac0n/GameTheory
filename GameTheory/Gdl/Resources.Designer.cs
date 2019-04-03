@@ -95,5 +95,41 @@ namespace GameTheory.Gdl {
                 return ResourceManager.GetString("GDL004_ERROR_SequenceVariablesUnsupported", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The head of a rule must be an atomic sentence..
+        /// </summary>
+        internal static string GDL005_ERROR_RuleHeadMustBeAtomic {
+            get {
+                return ResourceManager.GetString("GDL005_ERROR_RuleHeadMustBeAtomic", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A rule body must only contain atomic sentences or negations of atomic sentences..
+        /// </summary>
+        internal static string GDL006_ERROR_RuleBodyMustBeAtomic {
+            get {
+                return ResourceManager.GetString("GDL006_ERROR_RuleBodyMustBeAtomic", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An unexpected error was encountered while generating the game code. {0}.
+        /// </summary>
+        internal static string GDL101_ERROR_ErrorGeneratingCode {
+            get {
+                return ResourceManager.GetString("GDL101_ERROR_ErrorGeneratingCode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An unexpected error was encountered whle compiling the generated type. {0}.
+        /// </summary>
+        internal static string GDL102_ERROR_ErrorComilingType {
+            get {
+                return ResourceManager.GetString("GDL102_ERROR_ErrorComilingType", resourceCulture);
+            }
+        }
     }
 }

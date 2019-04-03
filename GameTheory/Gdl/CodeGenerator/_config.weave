@@ -1,0 +1,7 @@
+@namespace GameTheory.Gdl
+@classname CodeGenerator
+@static true
+@using System.Collections.Generic
+@using System.Linq
+@using System.Reflection
+@using KnowledgeInterchangeFormat.Expressions

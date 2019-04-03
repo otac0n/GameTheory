@@ -21,6 +21,17 @@ namespace GameTheory.Gdl
         {
             KnowledgeBase knowledgeBase;
             CompileResult result;
+            var options = new KifParser.Options
+            {
+                DefinitionOperators = false,
+                EqualityOperators = false,
+                ExplicitOperators = false,
+                ListOperator = false,
+                LogicalOperators = false,
+                QuantifiedOperators = false,
+                QuoteOperator = false,
+            };
+
             try
             {
                 knowledgeBase = new KifParser().Parse(game ?? string.Empty, fileName);

@@ -46,7 +46,6 @@ namespace GameTheory.Gdl
 
             this.AtomicSentences = new Dictionary<Sentence, bool>();
             this.DatalogTerms = new Dictionary<Term, bool>();
-            this.DatalogRules = new Dictionary<Implication, bool>();
             this.DatalogLiterals = new Dictionary<Sentence, bool>();
             this.GroundExpressions = new Dictionary<Expression, bool>();
 
@@ -68,8 +67,6 @@ namespace GameTheory.Gdl
 
         public Dictionary<Term, bool> DatalogTerms { get; }
 
-        public Dictionary<Implication, bool> DatalogRules { get; }
-
         public Dictionary<Sentence, bool> DatalogLiterals { get; }
 
         public Dictionary<Expression, bool> GroundExpressions { get; }
@@ -78,6 +75,8 @@ namespace GameTheory.Gdl
         /// Gets the collection of errors that occurred during compilation.
         /// </summary>
         public IList<CompilerError> Errors { get; }
+
+        public string Code { get; set; }
 
         internal void AddCompilerError(Cursor cursor, System.Linq.Expressions.Expression<Func<string>> error, params object[] args)
         {

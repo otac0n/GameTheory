@@ -26,6 +26,7 @@ namespace GameTheory.Tests.Gdl
             var gdl = LoadAssemblyResource(game);
             var compiler = new GameCompiler();
             var result = compiler.Compile(gdl);
+            Assert.IsEmpty(result.Errors.Where(e => !e.IsWarning));
             Assert.NotNull(result.Type);
         }
 

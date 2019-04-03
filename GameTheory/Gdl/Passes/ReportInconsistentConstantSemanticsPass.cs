@@ -57,18 +57,6 @@ namespace GameTheory.Gdl.Passes
                 base.Walk(constantSentence);
             }
 
-            public override void Walk(CompleteFunctionDefinition completeFunctionDefinition)
-            {
-                this.AddResult(ConstantType.Function, completeFunctionDefinition.Constant.Id, completeFunctionDefinition);
-                base.Walk(completeFunctionDefinition);
-            }
-
-            public override void Walk(CompleteRelationDefinition completeRelationDefinition)
-            {
-                this.AddResult(ConstantType.Relation, completeRelationDefinition.Constant.Id, completeRelationDefinition);
-                base.Walk(completeRelationDefinition);
-            }
-
             public override void Walk(ImplicitRelationalSentence implicitRelationalSentence)
             {
                 this.AddResult(ConstantType.Relation, implicitRelationalSentence.Relation.Id, implicitRelationalSentence);

@@ -1,0 +1,37 @@
+@model CompileResult
+{{
+    var relations = model.KnowledgeBase.Forms.OfType<ImplicitRelationalSentence>().ToLookup(r => r.Relation.Id);
+    var players = relations["ROLE"].Select(r => r.Arguments.Single()).ToList();
+    var inits = relations["INIT"].Select(r => r.Arguments.Single()).ToList();
+}}
+internal enum Role
+{
+    {{each p in players}}
+        {{= p}},
+    {{/each}}
+}
+
+public class GameState : IGameState<TMove>
+{
+    private HashSet<string> state;
+
+    public GameState()
+    {
+        this.Players = new PlayerToken[{{= players.Count}}]
+        {
+            {{each p in players}}
+                new PlayerToken(), // {{= p}}
+            {{/each}}
+        };
+
+        this.state = new HashSet<string>
+        {
+            {{each i in inits}}
+                {{= ToLiteral(i)}},
+            {{/each}}
+        };
+    }
+
+    /// <inheritdoc />
+    public IReadOnlyList<PlayerToken> Players { get; }
+}

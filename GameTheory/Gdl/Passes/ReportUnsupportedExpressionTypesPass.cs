@@ -36,11 +36,7 @@ namespace GameTheory.Gdl.Passes
             {
                 switch (expression)
                 {
-                    case ExistentiallyQuantifiedSentence existentiallyQuantifiedSentence:
-                    case ExplicitFunctionalTerm explicitFunctionalTerm:
-                    case ExplicitRelationalSentence explicitRelationalSentence:
-                    case UnrestrictedDefinition unrestrictedDefinition:
-                    case PartialDefinition partialDefinition:
+                    case Quotation quotation:
                         this.result.AddCompilerError(expression.StartCursor, () => Resources.GDL001_ERROR_UnsupportedExpressionType, expression.GetType().Name);
                         break;
                 }

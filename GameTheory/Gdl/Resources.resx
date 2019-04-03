@@ -129,4 +129,16 @@
   <data name="GDL004_ERROR_SequenceVariablesUnsupported" xml:space="preserve">
     <value>Sequence variables are not supported.</value>
   </data>
+  <data name="GDL005_ERROR_RuleHeadMustBeAtomic" xml:space="preserve">
+    <value>The head of a rule must be an atomic sentence.</value>
+  </data>
+  <data name="GDL006_ERROR_RuleBodyMustBeAtomic" xml:space="preserve">
+    <value>A rule body must only contain atomic sentences or negations of atomic sentences.</value>
+  </data>
+  <data name="GDL101_ERROR_ErrorGeneratingCode" xml:space="preserve">
+    <value>An unexpected error was encountered while generating the game code. {0}</value>
+  </data>
+  <data name="GDL102_ERROR_ErrorComilingType" xml:space="preserve">
+    <value>An unexpected error was encountered whle compiling the generated type. {0}</value>
+  </data>
 </root>

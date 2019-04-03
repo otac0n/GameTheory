@@ -35,8 +35,8 @@
     <CodeAnalysisRuleSet>..\Tests.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="KnowledgeInterchangeFormat, Version=0.1.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\KnowledgeInterchangeFormat.0.1.0\lib\net45\KnowledgeInterchangeFormat.dll</HintPath>
+    <Reference Include="KnowledgeInterchangeFormat, Version=0.2.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\KnowledgeInterchangeFormat.0.2.0-alpha0005\lib\net45\KnowledgeInterchangeFormat.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CSharp" />

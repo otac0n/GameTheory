@@ -44,24 +44,6 @@ namespace GameTheory.Gdl.Passes
                 this.result.AddCompilerError(sequenceVariable.StartCursor, () => Resources.GDL004_ERROR_SequenceVariablesUnsupported);
             }
 
-            public override void Walk(CompleteFunctionDefinition completeFunctionDefinition)
-            {
-                this.AddResult(
-                    completeFunctionDefinition.Constant.Id,
-                    completeFunctionDefinition.Parameters.Count,
-                    completeFunctionDefinition);
-                base.Walk(completeFunctionDefinition);
-            }
-
-            public override void Walk(CompleteRelationDefinition completeRelationDefinition)
-            {
-                this.AddResult(
-                    completeRelationDefinition.Constant.Id,
-                    completeRelationDefinition.Parameters.Count,
-                    completeRelationDefinition);
-                base.Walk(completeRelationDefinition);
-            }
-
             public override void Walk(ImplicitFunctionalTerm implicitFunctionalTerm)
             {
                 this.AddResult(

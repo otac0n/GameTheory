@@ -150,15 +150,17 @@
     </EmbeddedResource>
     <AdditionalFiles Include="..\stylecop.json" Link="stylecop.json" />
     <AdditionalFiles Include="GameTheory.ruleset" />
+    <WeaveTemplate Include="Gdl\CodeGenerator\GameState.weave" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="FixMe" Version="1.0.0" PrivateAssets="All" />
     <PackageReference Include="GitVersionTask" Version="4.0.0" PrivateAssets="All" />
-    <PackageReference Include="KnowledgeInterchangeFormat" Version="0.1.0" />
+    <PackageReference Include="KnowledgeInterchangeFormat" Version="0.2.0-alpha0005" />
     <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.6.3" PrivateAssets="All" />
-    <PackageReference Include="Pegasus" Version="4.1.0-alpha0152" />
+    <PackageReference Include="Pegasus" Version="4.1.0" />
     <PackageReference Include="StyleCop.Analyzers" Version="1.1.1-rc.114" PrivateAssets="All" />
     <PackageReference Include="System.Collections.Immutable" Version="1.5.0" />
+    <PackageReference Include="Weave" Version="2.0.1-ci0008" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp2.0'">
     <PackageReference Include="System.CodeDom">
