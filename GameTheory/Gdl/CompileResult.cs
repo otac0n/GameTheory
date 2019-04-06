@@ -12,17 +12,18 @@ namespace GameTheory.Gdl
 
     public class CompileResult
     {
+        private readonly Lazy<Dictionary<Expression, HashSet<Variable>>> containedVariables;
         private readonly Lazy<Dictionary<(string, int), ConstantType>> constantTypes;
 
         public CompileResult(KnowledgeBase knowledgeBase)
         {
             this.KnowledgeBase = knowledgeBase;
+            this.containedVariables = new Lazy<Dictionary<Expression, HashSet<Variable>>>(() => ContainedVariablesAnalyzer.Analyze(this.KnowledgeBase));
             this.constantTypes = new Lazy<Dictionary<(string, int), ConstantType>>(() => ConstantArityAnalyzer.Analyze(this.KnowledgeBase));
 
             this.AtomicSentences = new Dictionary<Sentence, bool>();
             this.DatalogTerms = new Dictionary<Term, bool>();
             this.DatalogLiterals = new Dictionary<Sentence, bool>();
-            this.GroundExpressions = new Dictionary<Expression, bool>();
 
             this.Errors = new List<CompilerError>();
         }
@@ -44,7 +45,7 @@ namespace GameTheory.Gdl
 
         public Dictionary<(string, int), ExpressionInfo> ExpressionTypes { get; }
 
-        public Dictionary<Expression, bool> GroundExpressions { get; }
+        public Dictionary<Expression, HashSet<Variable>> ContainedVariables => this.containedVariables.Value;
 
         public KnowledgeBase KnowledgeBase { get; }
 

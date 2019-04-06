@@ -10,14 +10,14 @@ namespace GameTheory.Gdl.Types
 
     public class FunctionInfo : ExpressionInfo
     {
+        private readonly ExpressionType[] argumentTypes;
+
         public FunctionInfo(string id, int arity)
             : base(id, arity)
         {
-            this.ArgumentTypes = new ExpressionType[arity];
+            this.argumentTypes = new ExpressionType[arity];
         }
 
-        public ExpressionType ReturnType { get; set; }
-
-        public ExpressionType[] ArgumentTypes { get; }
+        public override ExpressionType[] ArgumentTypes => this.argumentTypes;
     }
 }

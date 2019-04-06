@@ -8,15 +8,13 @@ namespace GameTheory.Gdl.Types
     using System.Text;
     using System.Threading.Tasks;
 
-    public class ObjectInfo : ExpressionInfo
+    public class BooleanType : ObjectType
     {
-        public ObjectInfo(string id)
-            : base(id, 0)
+        public static readonly BooleanType Instance = new BooleanType();
+
+        private BooleanType()
+            : base("bool")
         {
         }
-
-        public object Value { get; set; }
-
-        public override ExpressionType[] ArgumentTypes => Array.Empty<ExpressionType>();
     }
 }

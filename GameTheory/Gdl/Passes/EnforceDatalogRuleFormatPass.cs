@@ -31,9 +31,8 @@ namespace GameTheory.Gdl.Passes
 
         public override void Run(CompileResult result)
         {
-            var allContainedVariables = new Dictionary<Expression, HashSet<Variable>>();
             var dependencyGraph = new Dictionary<Constant, Node>();
-            new RuleDefinitionWalker(result, allContainedVariables, dependencyGraph).Walk((Expression)result.KnowledgeBase);
+            new RuleDefinitionWalker(result, dependencyGraph).Walk((Expression)result.KnowledgeBase);
         }
 
         private class RuleDefinitionWalker : SupportedExpressionsTreeWalker
@@ -42,21 +41,16 @@ namespace GameTheory.Gdl.Passes
             private readonly Dictionary<Sentence, bool> atomicSentences;
             private readonly Dictionary<Term, bool> datalogTerms;
             private readonly Dictionary<Sentence, bool> datalogLiterals;
-            private readonly Dictionary<Expression, bool> groundExpressions;
-            private readonly Dictionary<Expression, HashSet<Variable>> allContainedVariables;
             private readonly Dictionary<Constant, Node> dependencyGraph;
-            private HashSet<Variable> containedVariables = new HashSet<Variable>();
             private int depth = -1;
             private bool groundExpression;
 
-            public RuleDefinitionWalker(CompileResult result, Dictionary<Expression, HashSet<Variable>> allContainedVariables, Dictionary<Constant, Node> dependencyGraph)
+            public RuleDefinitionWalker(CompileResult result, Dictionary<Constant, Node> dependencyGraph)
             {
                 this.result = result;
                 this.atomicSentences = result.AtomicSentences;
                 this.datalogTerms = result.DatalogTerms;
                 this.datalogLiterals = result.DatalogLiterals;
-                this.groundExpressions = result.GroundExpressions;
-                this.allContainedVariables = allContainedVariables;
                 this.dependencyGraph = dependencyGraph;
             }
 
@@ -65,20 +59,7 @@ namespace GameTheory.Gdl.Passes
                 this.depth++;
                 try
                 {
-                    var originalVariables = this.containedVariables;
-                    var original = this.groundExpression;
-
-                    this.containedVariables = new HashSet<Variable>();
-                    this.groundExpression = true;
-
                     base.Walk(expression);
-
-                    this.allContainedVariables[expression] = this.containedVariables;
-                    this.groundExpressions[expression] = this.groundExpression;
-
-                    originalVariables.UnionWith(this.containedVariables);
-                    this.containedVariables = originalVariables;
-                    this.groundExpression &= original;
                 }
                 finally
                 {
@@ -89,7 +70,6 @@ namespace GameTheory.Gdl.Passes
             public override void Walk(Variable variable)
             {
                 this.groundExpression = false;
-                this.containedVariables.Add(variable);
                 base.Walk(variable);
             }
 

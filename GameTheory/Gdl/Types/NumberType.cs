@@ -8,15 +8,13 @@ namespace GameTheory.Gdl.Types
     using System.Text;
     using System.Threading.Tasks;
 
-    public class ObjectInfo : ExpressionInfo
+    public class NumberType : ObjectType
     {
-        public ObjectInfo(string id)
-            : base(id, 0)
+        public static readonly NumberType Instance = new NumberType();
+
+        private NumberType()
+            : base("int")
         {
         }
-
-        public object Value { get; set; }
-
-        public override ExpressionType[] ArgumentTypes => Array.Empty<ExpressionType>();
     }
 }

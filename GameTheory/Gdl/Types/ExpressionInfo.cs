@@ -19,5 +19,12 @@ namespace GameTheory.Gdl.Types
         public string Id { get; }
 
         public int Arity { get; }
+
+        public virtual ExpressionType ReturnType { get; set; }
+
+        public abstract ExpressionType[] ArgumentTypes { get; }
+
+        /// <inheritdoc/>
+        public override string ToString() => $"{this.Id}{(this.Arity > 0 ? $"@{this.Arity}" : null)}";
     }
 }

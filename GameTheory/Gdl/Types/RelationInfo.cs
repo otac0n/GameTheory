@@ -10,14 +10,20 @@ namespace GameTheory.Gdl.Types
 
     public class RelationInfo : ExpressionInfo
     {
+        private readonly ExpressionType[] argumentTypes;
+
         public RelationInfo(string id, int arity)
             : base(id, arity)
         {
-            this.ArgumentTypes = new ExpressionType[arity];
+            this.argumentTypes = new ExpressionType[arity];
         }
 
-        public ExpressionType ReturnType { get; set; }
+        public override ExpressionType ReturnType
+        {
+            get => BooleanType.Instance;
+            set => throw new InvalidOperationException();
+        }
 
-        public ExpressionType[] ArgumentTypes { get; }
+        public override ExpressionType[] ArgumentTypes => this.argumentTypes;
     }
 }
