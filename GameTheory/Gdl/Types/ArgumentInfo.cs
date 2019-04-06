@@ -11,6 +11,7 @@ namespace GameTheory.Gdl.Types
         public ArgumentInfo(int index)
             : base("#" + index)
         {
+            this.ReturnType = new UnionType();
         }
     }
 }

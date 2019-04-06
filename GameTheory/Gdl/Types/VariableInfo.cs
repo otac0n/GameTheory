@@ -11,6 +11,7 @@ namespace GameTheory.Gdl.Types
         public VariableInfo(string id)
             : base(id)
         {
+            this.ReturnType = new IntersectionType();
         }
     }
 }

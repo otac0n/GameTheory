@@ -146,27 +146,24 @@ namespace GameTheory.Gdl.Passes
                 this.variableDirection = VariableDirection.None;
             }
 
-            private static void AddUsage(ArgumentInfo argumentInfo, ExpressionInfo expressionInfo)
+            private static void AddUsage(VariableInfo variableInfo, ExpressionInfo expressionInfo)
             {
-                switch (argumentInfo.ReturnType)
+                switch (variableInfo.ReturnType)
                 {
-                    case null:
-                        argumentInfo.ReturnType = new UnionType()
-                        {
-                            expressionInfo,
-                        };
+                    case UnionType unionType:
+                        unionType.Expressions.Add(expressionInfo);
                         break;
 
-                    case UnionType unionType:
-                        unionType.Add(expressionInfo);
+                    case IntersectionType intersectionType:
+                        intersectionType.Expressions.Add(expressionInfo);
                         break;
 
                     case StructType structType:
-                        structType.Add(expressionInfo);
+                        structType.Objects.Add(expressionInfo);
                         break;
 
                     default:
-                        if (argumentInfo.ReturnType != expressionInfo.ReturnType)
+                        if (variableInfo.ReturnType != expressionInfo.ReturnType)
                         {
                             throw new InvalidOperationException();
                         }
@@ -194,6 +191,7 @@ namespace GameTheory.Gdl.Passes
                             switch (this.variableDirection)
                             {
                                 case VariableDirection.In:
+                                    AddUsage(variableInfo, relationInfo.Arguments[i]);
                                     break;
 
                                 case VariableDirection.Out:
@@ -201,6 +199,8 @@ namespace GameTheory.Gdl.Passes
                                     break;
 
                                 case VariableDirection.Both:
+                                    AddUsage(variableInfo, relationInfo.Arguments[i]);
+                                    AddUsage(relationInfo.Arguments[i], variableInfo);
                                     break;
                             }
 

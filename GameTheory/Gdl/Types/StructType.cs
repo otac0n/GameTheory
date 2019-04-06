@@ -14,11 +14,6 @@ namespace GameTheory.Gdl.Types
 
         public HashSet<ExpressionInfo> Objects { get; }
 
-        public void Add(ExpressionInfo expressionInfo)
-        {
-            this.Objects.Add(expressionInfo);
-        }
-
         public override string ToString() => $"{this.Id}{{" + string.Join(", ", this.Objects) + "}";
     }
 }
