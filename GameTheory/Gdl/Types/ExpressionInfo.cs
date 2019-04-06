@@ -10,21 +10,15 @@ namespace GameTheory.Gdl.Types
 
     public abstract class ExpressionInfo
     {
-        public ExpressionInfo(string id, int arity)
+        public ExpressionInfo(string id)
         {
             this.Id = id;
-            this.Arity = arity;
         }
 
         public string Id { get; }
 
-        public int Arity { get; }
-
         public virtual ExpressionType ReturnType { get; set; }
 
-        public abstract ExpressionType[] ArgumentTypes { get; }
-
-        /// <inheritdoc/>
-        public override string ToString() => $"{this.Id}{(this.Arity > 0 ? $"@{this.Arity}" : null)}";
+        public override string ToString() => this.Id;
     }
 }

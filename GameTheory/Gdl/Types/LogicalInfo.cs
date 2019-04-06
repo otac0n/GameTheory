@@ -11,7 +11,7 @@ namespace GameTheory.Gdl.Types
     public class LogicalInfo : ExpressionInfo
     {
         public LogicalInfo(string id)
-            : base(id, 0)
+            : base(id)
         {
         }
 
@@ -20,7 +20,5 @@ namespace GameTheory.Gdl.Types
             get => BooleanType.Instance;
             set => throw new InvalidOperationException();
         }
-
-        public override ExpressionType[] ArgumentTypes => Array.Empty<ExpressionType>();
     }
 }

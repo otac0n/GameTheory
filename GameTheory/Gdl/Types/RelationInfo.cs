@@ -8,14 +8,13 @@ namespace GameTheory.Gdl.Types
     using System.Text;
     using System.Threading.Tasks;
 
-    public class RelationInfo : ExpressionInfo
+    public class RelationInfo : ExpressionWithArgumentsInfo
     {
-        private readonly ExpressionType[] argumentTypes;
+        private readonly ArgumentInfo[] argumentTypes;
 
         public RelationInfo(string id, int arity)
             : base(id, arity)
         {
-            this.argumentTypes = new ExpressionType[arity];
         }
 
         public override ExpressionType ReturnType
@@ -23,7 +22,5 @@ namespace GameTheory.Gdl.Types
             get => BooleanType.Instance;
             set => throw new InvalidOperationException();
         }
-
-        public override ExpressionType[] ArgumentTypes => this.argumentTypes;
     }
 }

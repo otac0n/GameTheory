@@ -11,12 +11,10 @@ namespace GameTheory.Gdl.Types
     public class ObjectInfo : ExpressionInfo
     {
         public ObjectInfo(string id)
-            : base(id, 0)
+            : base(id)
         {
         }
 
         public object Value { get; set; }
-
-        public override ExpressionType[] ArgumentTypes => Array.Empty<ExpressionType>();
     }
 }
