@@ -70,29 +70,11 @@ namespace GameTheory.Gdl {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Constant &apos;{0}&apos; is defined as a &apos;{1}&apos; but used as a &apos;{2}&apos;..
+        ///   Looks up a localized string similar to Constant &apos;{0}&apos; with arity &apos;{1}&apos; is used inconsistently.  Used her as &apos;{2}&apos;..
         /// </summary>
         internal static string GDL002_ERROR_InconsistentConstantSemantics {
             get {
                 return ResourceManager.GetString("GDL002_ERROR_InconsistentConstantSemantics", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Constant &apos;{0}&apos; is defined with arity &apos;{1}&apos; but used as with arity &apos;{2}&apos;..
-        /// </summary>
-        internal static string GDL003_ERROR_InconsistentArity {
-            get {
-                return ResourceManager.GetString("GDL003_ERROR_InconsistentArity", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Sequence variables are not supported..
-        /// </summary>
-        internal static string GDL004_ERROR_SequenceVariablesUnsupported {
-            get {
-                return ResourceManager.GetString("GDL004_ERROR_SequenceVariablesUnsupported", resourceCulture);
             }
         }
         
@@ -111,6 +93,78 @@ namespace GameTheory.Gdl {
         internal static string GDL006_ERROR_RuleBodyMustBeAtomic {
             get {
                 return ResourceManager.GetString("GDL006_ERROR_RuleBodyMustBeAtomic", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The relation &apos;{0}&apos; was found in a cycle with &apos;{1}&apos; and the recursion may grow unbounded.  All of the terms in the &apos;{0}&apos; relation must be ground, used directly in the &apos;{1}&apos; relation, or used directly in one other relation in the rule..
+        /// </summary>
+        internal static string GDL007_ERROR_RecursionResriction {
+            get {
+                return ResourceManager.GetString("GDL007_ERROR_RecursionResriction", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The &apos;role&apos; relation may only appear in ground atomic sentences..
+        /// </summary>
+        internal static string GDL008_ERROR_RoleRelationUsedInRule {
+            get {
+                return ResourceManager.GetString("GDL008_ERROR_RoleRelationUsedInRule", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The &apos;init&apos; relation may not appear in rule bodies..
+        /// </summary>
+        internal static string GDL009_ERROR_InitRelationUsedInRuleBody {
+            get {
+                return ResourceManager.GetString("GDL009_ERROR_InitRelationUsedInRuleBody", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The &apos;init&apos; relation may not be used with other game relations..
+        /// </summary>
+        internal static string GDL010_ERROR_InitRelationDependency {
+            get {
+                return ResourceManager.GetString("GDL010_ERROR_InitRelationDependency", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The &apos;true&apos; relation may only appear in rule bodies..
+        /// </summary>
+        internal static string GDL011_ERROR_TrueRelationUsedOutsideRuleBody {
+            get {
+                return ResourceManager.GetString("GDL011_ERROR_TrueRelationUsedOutsideRuleBody", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The &apos;next&apos; relation may only appear as a rule head..
+        /// </summary>
+        internal static string GDL012_ERROR_NextRelationUsedOutsideRuleHead {
+            get {
+                return ResourceManager.GetString("GDL012_ERROR_NextRelationUsedOutsideRuleHead", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The &apos;does&apos; relation may only appear in rule bodies..
+        /// </summary>
+        internal static string GDL013_ERROR_DoesUsedOutsideRuleBody {
+            get {
+                return ResourceManager.GetString("GDL013_ERROR_DoesUsedOutsideRuleBody", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The &apos;does&apos; relation may not be used with the legal, goal, or terminal relations..
+        /// </summary>
+        internal static string GDL014_ERROR_DoesRelationDependency {
+            get {
+                return ResourceManager.GetString("GDL014_ERROR_DoesRelationDependency", resourceCulture);
             }
         }
         

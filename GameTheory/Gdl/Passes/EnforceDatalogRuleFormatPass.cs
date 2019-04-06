@@ -2,7 +2,6 @@
 
 namespace GameTheory.Gdl.Passes
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
     using KnowledgeInterchangeFormat;
@@ -12,6 +11,7 @@ namespace GameTheory.Gdl.Passes
     {
         public const string RuleHeadMustBeAtomicError = "GDL005";
         public const string RuleBodyMustBeAtomicError = "GDL006";
+        public const string RecursionResrictionError = "GDL007";
 
         public EnforceDatalogRuleFormatPass()
         {
@@ -19,13 +19,14 @@ namespace GameTheory.Gdl.Passes
 
         public override IList<string> BlockedByErrors => new[]
         {
-            ReportInconsistentArityPass.InconsistentArityError,
+            ReportInconsistentConstantSemanticsPass.InconsistentConstantSemanticsError,
         };
 
         public override IList<string> ErrorsProduced => new[]
         {
             RuleHeadMustBeAtomicError,
             RuleBodyMustBeAtomicError,
+            RecursionResrictionError,
         };
 
         public override void Run(CompileResult result)
@@ -35,10 +36,9 @@ namespace GameTheory.Gdl.Passes
             new RuleDefinitionWalker(result, allContainedVariables, dependencyGraph).Walk((Expression)result.KnowledgeBase);
         }
 
-        private class RuleDefinitionWalker : ExpressionTreeWalker
+        private class RuleDefinitionWalker : SupportedExpressionsTreeWalker
         {
             private readonly CompileResult result;
-            private readonly Dictionary<string, int> constantArities;
             private readonly Dictionary<Sentence, bool> atomicSentences;
             private readonly Dictionary<Term, bool> datalogTerms;
             private readonly Dictionary<Sentence, bool> datalogLiterals;
@@ -52,7 +52,6 @@ namespace GameTheory.Gdl.Passes
             public RuleDefinitionWalker(CompileResult result, Dictionary<Expression, HashSet<Variable>> allContainedVariables, Dictionary<Constant, Node> dependencyGraph)
             {
                 this.result = result;
-                this.constantArities = result.ConstantArities;
                 this.atomicSentences = result.AtomicSentences;
                 this.datalogTerms = result.DatalogTerms;
                 this.datalogLiterals = result.DatalogLiterals;
@@ -101,9 +100,7 @@ namespace GameTheory.Gdl.Passes
                 this.datalogTerms[term] =
                     term is Constant ||
                     term is IndividualVariable ||
-                    (term is ImplicitFunctionalTerm functionalTerm &&
-                        functionalTerm.Arguments.Count == this.constantArities[functionalTerm.Function.Id] &&
-                        functionalTerm.Arguments.All(a => this.datalogTerms[a]));
+                    (term is ImplicitFunctionalTerm functionalTerm && functionalTerm.Arguments.All(a => this.datalogTerms[a]));
             }
 
             public override void Walk(Implication implication)
@@ -143,9 +140,9 @@ namespace GameTheory.Gdl.Passes
 
                 var atomicSentence =
                     (sentence is ConstantSentence constantSentence &&
-                        this.result.ConstantTypes[constantSentence.Constant.Id] == ConstantType.Logical) ||
+                        this.result.ConstantTypes[(constantSentence.Constant.Id, 0)] == ConstantType.Logical) ||
                     (sentence is Conjunction conjunction && conjunction.Conjuncts.All(c => this.atomicSentences[c])) ||
-                    (sentence is Disjunction disjunction && disjunction.Disjuncts.All(d => this.atomicSentences[d])) ||
+                    ////(sentence is Disjunction disjunction && disjunction.Disjuncts.All(d => this.atomicSentences[d])) || // TODO: Disjunctions can only be used in certain circumstances.
                     (sentence is ImplicitRelationalSentence implicitRelationalSentence &&
                         implicitRelationalSentence.SequenceVariable == null &&
                         implicitRelationalSentence.Arguments.All(a => this.datalogTerms[a]));

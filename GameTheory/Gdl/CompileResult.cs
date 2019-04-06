@@ -6,43 +6,18 @@ namespace GameTheory.Gdl
     using System.CodeDom.Compiler;
     using System.Collections.Generic;
     using System.Globalization;
+    using GameTheory.Gdl.Types;
     using KnowledgeInterchangeFormat.Expressions;
     using Pegasus.Common;
 
     public class CompileResult
     {
+        private readonly Lazy<Dictionary<(string, int), ConstantType>> constantTypes;
+
         public CompileResult(KnowledgeBase knowledgeBase)
         {
             this.KnowledgeBase = knowledgeBase;
-            this.ConstantTypes = new Dictionary<string, ConstantType>
-            {
-                { "ROLE", ConstantType.Relation },
-                { "INIT", ConstantType.Relation },
-                { "TRUE", ConstantType.Relation },
-                { "DOES", ConstantType.Relation },
-                { "NEXT", ConstantType.Relation },
-                { "LEGAL", ConstantType.Relation },
-                { "GOAL", ConstantType.Relation },
-                { "TERMINAL", ConstantType.Logical },
-                { "DISTINCT", ConstantType.Relation },
-            };
-
-            for (var i = 0; i <= 100; i++)
-            {
-                this.ConstantTypes[i.ToString()] = ConstantType.Object;
-            }
-
-            this.ConstantArities = new Dictionary<string, int>
-            {
-                { "ROLE", 1 },
-                { "INIT", 1 },
-                { "TRUE", 1 },
-                { "DOES", 2 },
-                { "NEXT", 1 },
-                { "LEGAL", 2 },
-                { "GOAL", 2 },
-                { "DISTINCT", 2 },
-            };
+            this.constantTypes = new Lazy<Dictionary<(string, int), ConstantType>>(() => ConstantArityAnalyzer.Analyze(this.KnowledgeBase));
 
             this.AtomicSentences = new Dictionary<Sentence, bool>();
             this.DatalogTerms = new Dictionary<Term, bool>();
@@ -52,31 +27,31 @@ namespace GameTheory.Gdl
             this.Errors = new List<CompilerError>();
         }
 
-        /// <summary>
-        /// Gets or sets the type resulting from compilation.
-        /// </summary>
-        public Type Type { get; set; }
-
-        public KnowledgeBase KnowledgeBase { get; }
-
-        public Dictionary<string, ConstantType> ConstantTypes { get; }
-
-        public Dictionary<string, int> ConstantArities { get; }
-
         public Dictionary<Sentence, bool> AtomicSentences { get; }
 
-        public Dictionary<Term, bool> DatalogTerms { get; }
+        public string Code { get; set; }
+
+        public Dictionary<(string, int), ConstantType> ConstantTypes => this.constantTypes.Value;
 
         public Dictionary<Sentence, bool> DatalogLiterals { get; }
 
-        public Dictionary<Expression, bool> GroundExpressions { get; }
+        public Dictionary<Term, bool> DatalogTerms { get; }
 
         /// <summary>
         /// Gets the collection of errors that occurred during compilation.
         /// </summary>
         public IList<CompilerError> Errors { get; }
 
-        public string Code { get; set; }
+        public Dictionary<(string, int), ExpressionInfo> ExpressionTypes { get; }
+
+        public Dictionary<Expression, bool> GroundExpressions { get; }
+
+        public KnowledgeBase KnowledgeBase { get; }
+
+        /// <summary>
+        /// Gets or sets the type resulting from compilation.
+        /// </summary>
+        public Type Type { get; set; }
 
         internal void AddCompilerError(Cursor cursor, System.Linq.Expressions.Expression<Func<string>> error, params object[] args)
         {

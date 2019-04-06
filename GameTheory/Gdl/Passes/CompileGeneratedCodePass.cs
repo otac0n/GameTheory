@@ -31,6 +31,8 @@ namespace GameTheory.Gdl.Passes
                     GenerateExecutable = false,
                     GenerateInMemory = true,
                 };
+                options.ReferencedAssemblies.Add("System.dll");
+                options.ReferencedAssemblies.Add("System.Core.dll");
                 options.ReferencedAssemblies.Add(typeof(IGameState<>).Assembly.Location);
 
                 var results = compiler.CompileAssemblyFromSource(options, result.Code);

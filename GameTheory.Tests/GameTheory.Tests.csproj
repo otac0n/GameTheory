@@ -295,7 +295,6 @@
     <EmbeddedResource Include="Gdl\Games\wallmaze.gdl" />
     <EmbeddedResource Include="Gdl\Games\wargame01.gdl" />
     <EmbeddedResource Include="Gdl\Games\Zhadu.gdl" />
-    <Compile Include="Gdl\Passes\ReportInconsistentArityPassTests.cs" />
     <Compile Include="Gdl\Passes\ReportInconsistentConstantSemanticsPassTests.cs" />
     <Compile Include="Gdl\GameCompilerTests.cs" />
     <Compile Include="Players\DuhPlayerTests.cs" />

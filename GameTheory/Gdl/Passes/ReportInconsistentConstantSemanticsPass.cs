@@ -2,10 +2,7 @@
 
 namespace GameTheory.Gdl.Passes
 {
-    using System;
     using System.Collections.Generic;
-    using System.Linq;
-    using KnowledgeInterchangeFormat;
     using KnowledgeInterchangeFormat.Expressions;
 
     internal class ReportInconsistentConstantSemanticsPass : CompilePass
@@ -25,19 +22,12 @@ namespace GameTheory.Gdl.Passes
         public override void Run(CompileResult result)
         {
             new ConstantSemanticsWalker(result).Walk((Expression)result.KnowledgeBase);
-            foreach (var item in result.ConstantTypes.ToList())
-            {
-                if (item.Value == ConstantType.Unknown)
-                {
-                    result.ConstantTypes[item.Key] = ConstantType.Object;
-                }
-            }
         }
 
-        private class ConstantSemanticsWalker : ExpressionTreeWalker
+        private class ConstantSemanticsWalker : SupportedExpressionsTreeWalker
         {
             private readonly CompileResult result;
-            private readonly Dictionary<string, ConstantType> constantTypes;
+            private readonly Dictionary<(string, int), ConstantType> constantTypes;
 
             public ConstantSemanticsWalker(CompileResult result)
             {
@@ -47,38 +37,32 @@ namespace GameTheory.Gdl.Passes
 
             public override void Walk(Constant constant)
             {
-                this.AddResult(ConstantType.Unknown, constant.Id, constant);
+                this.CheckError((constant.Id, 0), ConstantType.Object, constant);
                 base.Walk(constant);
             }
 
             public override void Walk(ConstantSentence constantSentence)
             {
-                this.AddResult(ConstantType.Logical, constantSentence.Constant.Id, constantSentence);
-                base.Walk(constantSentence);
+                this.CheckError((constantSentence.Constant.Id, 0), ConstantType.Logical, constantSentence);
             }
 
             public override void Walk(ImplicitRelationalSentence implicitRelationalSentence)
             {
-                this.AddResult(ConstantType.Relation, implicitRelationalSentence.Relation.Id, implicitRelationalSentence);
+                this.CheckError((implicitRelationalSentence.Relation.Id, implicitRelationalSentence.Arguments.Count), ConstantType.Relation, implicitRelationalSentence);
                 base.Walk(implicitRelationalSentence);
             }
 
             public override void Walk(ImplicitFunctionalTerm implicitFunctionalTerm)
             {
-                this.AddResult(ConstantType.Function, implicitFunctionalTerm.Function.Id, implicitFunctionalTerm);
+                this.CheckError((implicitFunctionalTerm.Function.Id, implicitFunctionalTerm.Arguments.Count), ConstantType.Function, implicitFunctionalTerm);
                 base.Walk(implicitFunctionalTerm);
             }
 
-            private void AddResult(ConstantType type, string id, Expression expression)
+            private void CheckError((string id, int arity) key, ConstantType type, Expression expression)
             {
-                if (!this.constantTypes.TryGetValue(id, out var value) || value == ConstantType.Unknown)
+                if (this.constantTypes[key] == ConstantType.Invalid)
                 {
-                    this.constantTypes[id] = type;
-                }
-                else if (type != ConstantType.Unknown && value != type && value != ConstantType.Invalid)
-                {
-                    this.constantTypes[id] = ConstantType.Invalid;
-                    this.result.AddCompilerError(expression.StartCursor, () => Resources.GDL002_ERROR_InconsistentConstantSemantics, id, value, type);
+                    this.result.AddCompilerError(expression.StartCursor, () => Resources.GDL002_ERROR_InconsistentConstantSemantics, key.id, key.arity, type);
                 }
             }
         }
