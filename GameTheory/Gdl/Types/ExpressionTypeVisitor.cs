@@ -39,16 +39,23 @@ namespace GameTheory.Gdl.Types
                             AddAll(unionType.Expressions);
                             break;
 
+                        case IntersectionType intersectionType:
+                            AddAll(intersectionType.Expressions);
+                            break;
+
                         case StructType structType:
                             AddAll(structType.Objects);
                             break;
 
                         case ObjectType objectType:
+                        case NoneType noneType:
                             break;
 
                         default:
                             throw new NotImplementedException();
                     }
+
+                    AddType(type.BaseType);
                 }
             }
 

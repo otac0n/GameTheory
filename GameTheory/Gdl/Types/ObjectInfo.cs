@@ -4,9 +4,10 @@ namespace GameTheory.Gdl.Types
 {
     public class ObjectInfo : ExpressionInfo
     {
-        public ObjectInfo(string id)
-            : base(id)
+        public ObjectInfo(string id, ExpressionType returnType, object value = null)
+            : base(id, returnType)
         {
+            this.Value = value;
         }
 
         public object Value { get; set; }

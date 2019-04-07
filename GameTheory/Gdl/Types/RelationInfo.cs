@@ -6,16 +6,14 @@ namespace GameTheory.Gdl.Types
 
     public class RelationInfo : ExpressionWithArgumentsInfo
     {
-        private readonly ArgumentInfo[] argumentTypes;
-
         public RelationInfo(string id, int arity)
-            : base(id, arity)
+            : base(id, arity, BooleanType.Instance)
         {
         }
 
         public override ExpressionType ReturnType
         {
-            get => BooleanType.Instance;
+            get => base.ReturnType;
             set => throw new InvalidOperationException();
         }
     }

@@ -27,19 +27,17 @@ namespace GameTheory.Gdl
 
                     case ConstantType.Object:
                         var id = kvp.Key.Item1;
-                        var objectInfo = new ObjectInfo(id);
-                        expressionTypes[kvp.Key] = objectInfo;
-
+                        ObjectInfo objectInfo;
                         if (int.TryParse(id, out var value) && value.ToString().Equals(id, StringComparison.OrdinalIgnoreCase))
                         {
-                            objectInfo.ReturnType = NumberType.Instance;
-                            objectInfo.Value = value;
+                            objectInfo = new ObjectInfo(id, NumberType.Instance, value);
                         }
                         else
                         {
-                            ////objectInfo.ReturnType = new ObjectType(objectInfo.Id);
+                            objectInfo = new ObjectInfo(id, new ObjectType(id), id);
                         }
 
+                        expressionTypes[kvp.Key] = objectInfo;
                         break;
 
                     case ConstantType.Relation:
@@ -65,15 +63,6 @@ namespace GameTheory.Gdl
             distinct.Arguments[1].ReturnType = distinct.Arguments[0].ReturnType = ObjectType.Instance;
 
             new TypeUsageWalker(expressionTypes, containedVariables).Walk((Expression)knowledgeBase);
-            ExpressionTypeVisitor.Visit(
-                expressionTypes.Values,
-                expression =>
-                {
-                    if (expression.ReturnType is UnionType unionType && unionType.Expressions.Count == 0 && expression is VariableInfo)
-                    {
-                        expression.ReturnType = ObjectType.Instance;
-                    }
-                });
 
             bool changed;
             do
@@ -83,19 +72,22 @@ namespace GameTheory.Gdl
                     expressionTypes.Values,
                     expression =>
                     {
-                        if (expression.ReturnType is UnionType unionType)
+                        switch (expression.ReturnType)
                         {
-                            if (unionType.Expressions.Count == 1)
-                            {
-                                expression.ReturnType = unionType.Expressions.Single().ReturnType;
-                                changed = true;
-                            }
-                            else if (!unionType.Expressions.Any(e => e.ReturnType == null))
-                            {
-                                var types = unionType.Expressions.Select(e => e.ReturnType).Distinct().Take(2).ToList();
-                                if (types.Count == 1)
+                            case UnionType unionType:
+                                if (unionType.Expressions.RemoveWhere(e => e.ReturnType == NoneType.Instance) > 0)
                                 {
-                                    expression.ReturnType = types.Single();
+                                    changed = true;
+                                }
+
+                                if (unionType.Expressions.Count == 0)
+                                {
+                                    expression.ReturnType = ObjectType.Instance;
+                                    changed = true;
+                                }
+                                else if (unionType.Expressions.Count == 1)
+                                {
+                                    expression.ReturnType = unionType.Expressions.Single().ReturnType;
                                     changed = true;
                                 }
                                 else
@@ -103,12 +95,35 @@ namespace GameTheory.Gdl
                                     var nestedUnions = unionType.Expressions.Where(e => e.ReturnType is UnionType).ToList();
                                     if (nestedUnions.Any())
                                     {
-                                        unionType.Expressions.ExceptWith(nestedUnions);
                                         unionType.Expressions.UnionWith(nestedUnions.SelectMany(e => ((UnionType)e.ReturnType).Expressions));
+                                        unionType.Expressions.ExceptWith(nestedUnions);
                                         changed = true;
                                     }
                                 }
-                            }
+
+                                break;
+
+                            case IntersectionType intersectionType:
+                                if (intersectionType.Expressions.RemoveWhere(e => e.ReturnType == ObjectType.Instance) > 0)
+                                {
+                                    changed = true;
+                                }
+
+                                if (intersectionType.Expressions.Count == 0)
+                                {
+                                    expression.ReturnType = NoneType.Instance;
+                                    changed = true;
+                                }
+                                else if (intersectionType.Expressions.Count == 1)
+                                {
+                                    expression.ReturnType = intersectionType.Expressions.Single().ReturnType;
+                                    changed = true;
+                                }
+                                else
+                                {
+                                }
+
+                                break;
                         }
                     },
                     type =>
@@ -210,6 +225,18 @@ namespace GameTheory.Gdl
                 }
             }
 
+            private static void MakeVariableAssignableToArgument(VariableInfo variableInfo, ArgumentInfo argumentInfo)
+            {
+                if (variableInfo.ReturnType is IntersectionType intersectionType)
+                {
+                    intersectionType.Expressions.Add(argumentInfo);
+                }
+                else
+                {
+                    throw new InvalidOperationException();
+                }
+            }
+
             private void AddArgumentUsages(ImmutableList<Term> arguments, ExpressionWithArgumentsInfo relationInfo)
             {
                 var arity = arguments.Count;
@@ -229,7 +256,7 @@ namespace GameTheory.Gdl
                             switch (this.variableDirection)
                             {
                                 case VariableDirection.In:
-                                    AddUsage(variableInfo, relationInfo.Arguments[i]);
+                                    MakeVariableAssignableToArgument(variableInfo, relationInfo.Arguments[i]);
                                     break;
 
                                 case VariableDirection.Out:

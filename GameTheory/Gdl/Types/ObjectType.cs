@@ -2,16 +2,55 @@
 
 namespace GameTheory.Gdl.Types
 {
+    using System;
+
+    /// <summary>
+    /// The root type all other fully-constructed types inherit from.
+    /// </summary>
     public class ObjectType : ExpressionType
     {
-        public static readonly ObjectType Instance = new ObjectType("object");
+        /// <summary>
+        /// The root type in the hierarchy, <c>object</c>.
+        /// </summary>
+        public static readonly ObjectType Instance = new ObjectType("object", null, typeof(object));
 
-        public ObjectType(string name)
+        private readonly ExpressionType baseType;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ObjectType"/> class.
+        /// </summary>
+        /// <param name="builtInType">The built-in type to use for this expression type.</param>
+        public ObjectType(Type builtInType)
         {
-            this.Name = name;
+            this.BuiltInType = builtInType ?? throw new ArgumentNullException(nameof(builtInType));
+            this.Name = builtInType.Name;
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ObjectType"/> class.
+        /// </summary>
+        /// <param name="name">The name of this type.</param>
+        /// <param name="baseType">The base type for this type.</param>
+        /// <param name="builtInType">The built-in type to use for this expression type.</param>
+        public ObjectType(string name, ExpressionType baseType = null, Type builtInType = null)
+        {
+            this.Name = name;
+            this.baseType = baseType;
+            this.BuiltInType = builtInType;
+        }
+
+        /// <summary>
+        /// Gets the name of this type.
+        /// </summary>
         public string Name { get; }
+
+        /// <summary>
+        /// Gets the built-in type to use for this expression type.
+        /// </summary>
+        public Type BuiltInType { get; }
+
+        /// <inheritdoc/>
+        public override ExpressionType BaseType => this.baseType ?? base.BaseType;
 
         /// <inheritdoc/>
         public override string ToString() => this.Name;

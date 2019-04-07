@@ -4,9 +4,9 @@ namespace GameTheory.Gdl.Types
 {
     using System.Collections.Generic;
 
-    public class UnionType : ExpressionType
+    public class IntersectionType : ExpressionType
     {
-        public UnionType()
+        public IntersectionType()
         {
             this.Expressions = new HashSet<ExpressionInfo>();
         }
@@ -14,6 +14,6 @@ namespace GameTheory.Gdl.Types
         public HashSet<ExpressionInfo> Expressions { get; }
 
         /// <inheritdoc/>
-        public override string ToString() => $"(any-of {string.Join(" or ", this.Expressions)})";
+        public override string ToString() => $"(is-all {string.Join(" and ", this.Expressions)})";
     }
 }

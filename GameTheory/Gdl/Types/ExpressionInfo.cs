@@ -4,14 +4,21 @@ namespace GameTheory.Gdl.Types
 {
     public abstract class ExpressionInfo
     {
-        public ExpressionInfo(string id)
+        private ExpressionType returnType;
+
+        public ExpressionInfo(string id, ExpressionType returnType)
         {
             this.Id = id;
+            this.returnType = returnType;
         }
 
         public string Id { get; }
 
-        public virtual ExpressionType ReturnType { get; set; }
+        public virtual ExpressionType ReturnType
+        {
+            get { return this.returnType; }
+            set { this.returnType = value; }
+        }
 
         public override string ToString() => this.Id;
     }

@@ -2,12 +2,21 @@
 
 namespace GameTheory.Gdl.Types
 {
+    /// <summary>
+    /// The type shared by all decimal numbers.
+    /// </summary>
     public class NumberType : ObjectType
     {
-        public static readonly NumberType Instance = new NumberType();
+        /// <summary>
+        /// The type shared by all decimal numbers, <c>number</c>.
+        /// </summary>
+        /// <remarks>
+        /// Underlying type is <see cref="int"/>.
+        /// </remarks>
+        public static new readonly NumberType Instance = new NumberType();
 
         private NumberType()
-            : base("int")
+            : base("number", builtInType: typeof(int))
         {
         }
     }

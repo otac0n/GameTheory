@@ -3,9 +3,8 @@ namespace GameTheory.Gdl.Types
     public class VariableInfo : ExpressionInfo
     {
         public VariableInfo(string id)
-            : base(id)
+            : base(id, new IntersectionType())
         {
-            this.ReturnType = new UnionType();
         }
     }
 }

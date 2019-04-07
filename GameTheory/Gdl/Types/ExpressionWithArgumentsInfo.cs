@@ -2,8 +2,8 @@ namespace GameTheory.Gdl.Types
 {
     public class ExpressionWithArgumentsInfo : ExpressionInfo
     {
-        public ExpressionWithArgumentsInfo(string id, int arity)
-            : base(id)
+        public ExpressionWithArgumentsInfo(string id, int arity, ExpressionType returnType)
+            : base(id, returnType)
         {
             this.Arity = arity;
             this.Arguments = new ArgumentInfo[arity];

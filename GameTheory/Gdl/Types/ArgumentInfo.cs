@@ -7,10 +7,14 @@ namespace GameTheory.Gdl.Types
         {
             this.Index = index;
             this.Expression = expression;
+            this.ReturnType = new UnionType();
         }
 
         public int Index { get; }
 
         public ExpressionWithArgumentsInfo Expression { get; }
+
+        /// <inheritdoc/>
+        public override string ToString() => $"{this.Expression.Id}{this.Id}";
     }
 }
