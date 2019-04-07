@@ -10,6 +10,21 @@ namespace GameTheory.Tests.Gdl.Passes
     [TestFixture]
     public class ReportInconsistentConstantSemanticsPassTests
     {
+        [TestCase("(<= (a 1) (a 1 2))")]
+        [TestCase("(<= (a 1) b (a 1 2))")]
+        [TestCase("(<= (a 1 2) (a 1))")]
+        [TestCase("(<= (a 1) (b 1) (b 1 2))")]
+        [TestCase("(<= (a 1) (a (b 1)) (a (b 1 2)))")]
+
+        [TestCase("(<= (a @etc) (a 1))")]
+        [TestCase("(<= (a 1 @etc) (a 1))")]
+        [TestCase("(<= (a @etc) (a 1 2))")]
+        [TestCase("(<= (a 1 @etc) (a 1 2))")]
+        [TestCase("(<= (a 1) (a @etc))")]
+        [TestCase("(<= (a 1) (a 1 @etc))")]
+        [TestCase("(<= (a 1 2) (a @etc))")]
+        [TestCase("(<= (a 1 2) (a 1 @etc))")]
+
         [TestCase("(<= (a 1) (b (a 1)))")]
         [TestCase("(<= (a 1) (b (a 1 2)))")]
         [TestCase("(<= (a 1 2) (b (a 1)))")]
