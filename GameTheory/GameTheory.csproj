@@ -151,6 +151,7 @@
     <AdditionalFiles Include="..\stylecop.json" Link="stylecop.json" />
     <AdditionalFiles Include="GameTheory.ruleset" />
     <WeaveTemplate Include="Gdl\CodeGenerator\GameState.weave" />
+    <WeaveTemplate Include="Gdl\CodeGenerator\ExpressionInfo.weave" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="FixMe" Version="1.0.0" PrivateAssets="All" />

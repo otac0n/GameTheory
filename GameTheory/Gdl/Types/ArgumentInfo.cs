@@ -1,17 +1,16 @@
 namespace GameTheory.Gdl.Types
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
-
     public class ArgumentInfo : VariableInfo
     {
-        public ArgumentInfo(int index)
-            : base("#" + index)
+        internal ArgumentInfo(ExpressionWithArgumentsInfo expression, int index)
+            : base("_" + index)
         {
-            this.ReturnType = new UnionType();
+            this.Index = index;
+            this.Expression = expression;
         }
+
+        public int Index { get; }
+
+        public ExpressionWithArgumentsInfo Expression { get; }
     }
 }

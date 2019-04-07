@@ -5,7 +5,7 @@ namespace GameTheory.Gdl
     using System.Collections.Generic;
     using KnowledgeInterchangeFormat.Expressions;
 
-    internal class ContainedVariablesAnalyzer
+    public static class ContainedVariablesAnalyzer
     {
         public static Dictionary<Expression, HashSet<Variable>> Analyze(KnowledgeBase knowledgeBase)
         {

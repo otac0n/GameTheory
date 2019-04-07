@@ -3,17 +3,12 @@
     var relations = model.KnowledgeBase.Forms.OfType<ImplicitRelationalSentence>().ToLookup(r => r.Relation.Id);
     var players = relations["ROLE"].Select(r => r.Arguments.Single()).ToList();
     var inits = relations["INIT"].Select(r => r.Arguments.Single()).ToList();
+
+    var types = model.ExpressionTypes.Values;
 }}
 using System;
 using System.Collections.Generic;
 using GameTheory;
-
-internal enum Role
-{
-    {{each p in players}}
-        {{= p}},
-    {{/each}}
-}
 
 public class GameState : IGameState<Move>
 {
@@ -86,6 +81,10 @@ public class GameState : IGameState<Move>
 
         throw new NotImplementedException();
     }
+
+    {{each type in types}}
+        {{@RenderExpressionInfo type}}
+    {{/each}}
 }
 
 public class Move : IMove

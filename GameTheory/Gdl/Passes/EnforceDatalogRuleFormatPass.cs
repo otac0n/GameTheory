@@ -4,7 +4,6 @@ namespace GameTheory.Gdl.Passes
 {
     using System.Collections.Generic;
     using System.Linq;
-    using KnowledgeInterchangeFormat;
     using KnowledgeInterchangeFormat.Expressions;
 
     internal class EnforceDatalogRuleFormatPass : CompilePass

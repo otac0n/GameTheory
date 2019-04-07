@@ -2,17 +2,11 @@
 
 namespace GameTheory.Gdl.Types
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
-
     public class ObjectType : ExpressionType
     {
         public static readonly ObjectType Instance = new ObjectType("object");
 
-        protected ObjectType(string name)
+        public ObjectType(string name)
         {
             this.Name = name;
         }

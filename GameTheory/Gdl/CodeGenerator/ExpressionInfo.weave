@@ -1,0 +1,23 @@
+@model ExpressionInfo
+{{if model is ObjectInfo objectInfo}}
+    {{if objectInfo.ReturnType != NumberType.Instance}}
+        private static readonly object {{= objectInfo.Id}} = new object();
+
+    {{/if}}
+{{elif model is RelationInfo relationInfo}}
+    private bool {{: relationInfo.Id}}({{each arg in relationInfo.Arguments}}{{: arg.ReturnType}} {{: arg}}{{delimit}}, {{/each}})
+    {
+        return false;
+    }
+
+{{elif model is FunctionInfo functionInfo}}
+    private struct {{: functionInfo.Id}}
+    {
+        public {{: functionInfo.Id}}({{each arg in functionInfo.Arguments}}{{: arg.ReturnType}} {{: arg}}{{delimit}}, {{/each}})
+        {
+        }
+    }
+
+{{else}}
+    // {{= model}}
+{{/if}}
