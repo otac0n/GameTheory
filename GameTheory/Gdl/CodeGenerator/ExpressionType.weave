@@ -1,0 +1,13 @@
+@model ExpressionType
+{{if model is EnumType enumType}}
+    public enum {{: enumType.Name}}
+    {
+        {{each value in enumType.Objects}}
+            {{= value.Id}},
+        {{/each}}
+    }
+
+{{elif model != ObjectType.Instance && model != NumberType.Instance && !(model is NumberRangeType)}}
+    // {{= model}}
+
+{{/if}}

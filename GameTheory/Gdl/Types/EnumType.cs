@@ -30,6 +30,6 @@ namespace GameTheory.Gdl.Types
         }
 
         /// <inheritdoc/>
-        public override string ToString() => $"{this.Name}{{{string.Join(", ", this.Objects)}}}";
+        public override string ToString() => this.Name;
     }
 }

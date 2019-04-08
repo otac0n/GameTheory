@@ -4,16 +4,16 @@ namespace GameTheory.Gdl.Types
 
     public class StructType : ExpressionType
     {
-        public StructType(string id)
+        public StructType(string name)
         {
-            this.Id = id;
+            this.Name = name;
             this.Objects = new HashSet<ExpressionInfo>();
         }
 
-        public string Id { get; }
+        public string Name { get; }
 
         public HashSet<ExpressionInfo> Objects { get; }
 
-        public override string ToString() => $"{this.Id}{{" + string.Join(", ", this.Objects) + "}";
+        public override string ToString() => this.Name;
     }
 }

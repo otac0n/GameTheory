@@ -1,23 +1,27 @@
 @model ExpressionInfo
 {{if model is ObjectInfo objectInfo}}
-    {{if objectInfo.ReturnType != NumberType.Instance}}
+    {{if objectInfo.ReturnType == ObjectType.Instance}}
         private static readonly object {{= objectInfo.Id}} = new object();
+
+    {{elif !(objectInfo.Value is int)}}
+        // private static readonly {{= objectInfo.ReturnType}} {{= objectInfo.Id}} = ??;
 
     {{/if}}
 {{elif model is RelationInfo relationInfo}}
-    private bool {{: relationInfo.Id}}({{each arg in relationInfo.Arguments}}{{: arg.ReturnType}} {{: arg}}{{delimit}}, {{/each}})
+    private bool {{= relationInfo.Id}}_{{= relationInfo.Arity}}({{each arg in relationInfo.Arguments}}{{: arg.ReturnType}} {{: arg}}{{delimit}}, {{/each}})
     {
         return false;
     }
 
 {{elif model is FunctionInfo functionInfo}}
-    private struct {{: functionInfo.Id}}
+    private struct {{= functionInfo.Id}}_{{= functionInfo.Arity}}
     {
-        public {{: functionInfo.Id}}({{each arg in functionInfo.Arguments}}{{: arg.ReturnType}} {{: arg}}{{delimit}}, {{/each}})
+        public {{= functionInfo.Id}}_{{= functionInfo.Arity}}({{each arg in functionInfo.Arguments}}{{: arg.ReturnType}} {{: arg}}{{delimit}}, {{/each}})
         {
         }
     }
 
 {{else}}
     // {{= model}}
+
 {{/if}}

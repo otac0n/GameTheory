@@ -1,15 +1,20 @@
 @model CompileResult
 {{
-    var relations = model.KnowledgeBase.Forms.OfType<ImplicitRelationalSentence>().ToLookup(r => r.Relation.Id);
-    var players = relations["ROLE"].Select(r => r.Arguments.Single()).ToList();
-    var inits = relations["INIT"].Select(r => r.Arguments.Single()).ToList();
+    var types = model.ExpressionTypes;
+    var roles = (RelationInfo)types[("ROLE", 1)];
+    var roleEnum = (EnumType)roles.Arguments[0].ReturnType;
 
-    var types = model.ExpressionTypes.Values;
+    var allTypes = new List<ExpressionType>();
+    var allExpressions = new List<ExpressionInfo>();
+    ExpressionTypeVisitor.Visit(types.Values, visitExpression: allExpressions.Add, visitType: allTypes.Add);
 }}
 using System;
 using System.Collections.Generic;
 using GameTheory;
 
+{{each type in allTypes}}
+    {{@RenderExpressionType type}}
+{{/each}}
 public class GameState : IGameState<Move>
 {
     private IReadOnlyList<PlayerToken> players;
@@ -17,21 +22,17 @@ public class GameState : IGameState<Move>
 
     public GameState()
     {
-        this.players = new PlayerToken[{{= players.Count}}]
+        this.players = new PlayerToken[{{= roleEnum.Objects.Count}}]
         {
-            {{each p in players}}
-                new PlayerToken(), // {{= p}}
-            {{/each}}
-        };
-
-        this.state = new HashSet<string>
-        {
-            {{each i in inits}}
-                {{= ToLiteral(i)}},
+            {{each p in roleEnum.Objects}}
+                new PlayerToken(), // {{= p.Id}}
             {{/each}}
         };
     }
 
+    {{each expr in allExpressions}}
+        {{@RenderExpressionInfo expr}}
+    {{/each}}
     /// <inheritdoc />
     public IReadOnlyList<PlayerToken> Players { get { return this.players; } }
 
@@ -81,10 +82,6 @@ public class GameState : IGameState<Move>
 
         throw new NotImplementedException();
     }
-
-    {{each type in types}}
-        {{@RenderExpressionInfo type}}
-    {{/each}}
 }
 
 public class Move : IMove
