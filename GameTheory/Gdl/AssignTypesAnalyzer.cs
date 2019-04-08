@@ -5,6 +5,7 @@ namespace GameTheory.Gdl
     using System.Collections.Immutable;
     using System.Linq;
     using GameTheory.Gdl.Types;
+    using Intervals;
     using KnowledgeInterchangeFormat.Expressions;
 
     public static class AssignTypesAnalyzer
@@ -92,12 +93,30 @@ namespace GameTheory.Gdl
                                 }
                                 else
                                 {
-                                    var nestedUnions = unionType.Expressions.Where(e => e.ReturnType is UnionType).ToList();
-                                    if (nestedUnions.Any())
+                                    if (unionType.Expressions.All(e => e.ReturnType is NumberRangeType || (e.ReturnType == NumberType.Instance && e is ObjectInfo)))
                                     {
-                                        unionType.Expressions.UnionWith(nestedUnions.SelectMany(e => ((UnionType)e.ReturnType).Expressions));
-                                        unionType.Expressions.ExceptWith(nestedUnions);
-                                        changed = true;
+                                        var values = unionType.Expressions.Select(e =>
+                                        {
+                                            return e is ObjectInfo objectInfo
+                                                ? NumberRangeType.GetInstance((int)objectInfo.Value, (int)objectInfo.Value)
+                                                : (NumberRangeType)e.ReturnType;
+                                        }).Simplify();
+
+                                        if (values.Count == 1)
+                                        {
+                                            expression.ReturnType = (NumberRangeType)values.Single();
+                                            changed = true;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        var nestedUnions = unionType.Expressions.Where(e => e.ReturnType is UnionType).ToList();
+                                        if (nestedUnions.Any())
+                                        {
+                                            unionType.Expressions.UnionWith(nestedUnions.SelectMany(e => ((UnionType)e.ReturnType).Expressions));
+                                            unionType.Expressions.ExceptWith(nestedUnions);
+                                            changed = true;
+                                        }
                                     }
                                 }
 

@@ -156,6 +156,7 @@
   <ItemGroup>
     <PackageReference Include="FixMe" Version="1.0.0" PrivateAssets="All" />
     <PackageReference Include="GitVersionTask" Version="4.0.0" PrivateAssets="All" />
+    <PackageReference Include="Intervals" Version="1.2.0-alpha0021" />
     <PackageReference Include="KnowledgeInterchangeFormat" Version="0.2.0-alpha0005" />
     <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.6.3" PrivateAssets="All" />
     <PackageReference Include="Pegasus" Version="4.1.0" />
