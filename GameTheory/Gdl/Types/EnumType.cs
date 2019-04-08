@@ -2,26 +2,34 @@
 
 namespace GameTheory.Gdl.Types
 {
-    using System.Collections;
     using System.Collections.Generic;
 
-    public class EnumType : ObjectType, IEnumerable<ObjectInfo>
+    public class EnumType : ExpressionType
     {
-        public EnumType(string name)
-            : base(name)
+        private EnumType(string name)
         {
+            this.Name = name;
+            this.Objects = new HashSet<ObjectInfo>();
         }
+
+        public string Name { get; }
 
         public HashSet<ObjectInfo> Objects { get; }
 
-        public void Add(ObjectInfo objectInfo)
+        public static EnumType Create(string name, IEnumerable<ObjectInfo> objects)
         {
-            this.Objects.Add(objectInfo);
+            var enumType = new EnumType(name);
+
+            foreach (var obj in objects)
+            {
+                enumType.Objects.Add(obj);
+                obj.ReturnType = enumType;
+            }
+
+            return enumType;
         }
 
         /// <inheritdoc/>
-        public IEnumerator<ObjectInfo> GetEnumerator() => this.Objects.GetEnumerator();
-
-        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
+        public override string ToString() => $"{this.Name}{{{string.Join(", ", this.Objects)}}}";
     }
 }

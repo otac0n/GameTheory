@@ -47,6 +47,10 @@ namespace GameTheory.Gdl.Types
                             AddAll(structType.Objects);
                             break;
 
+                        case EnumType enumType:
+                            AddAll(enumType.Objects);
+                            break;
+
                         case ObjectType objectType:
                         case NoneType noneType:
                             break;

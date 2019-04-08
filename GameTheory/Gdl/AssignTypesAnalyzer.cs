@@ -56,14 +56,17 @@ namespace GameTheory.Gdl
             var does = (RelationInfo)expressionTypes[("DOES", 2)];
             var legal = (RelationInfo)expressionTypes[("LEGAL", 2)];
             var goal = (RelationInfo)expressionTypes[("GOAL", 2)];
-            role.Arguments[0].ReturnType = does.Arguments[0].ReturnType = legal.Arguments[0].ReturnType = goal.Arguments[0].ReturnType = new UnionType();
-            does.Arguments[1].ReturnType = legal.Arguments[1].ReturnType = new UnionType();
+            ////does.Arguments[1].ReturnType = legal.Arguments[1].ReturnType = new UnionType();
             goal.Arguments[1].ReturnType = NumberType.Instance;
 
             var distinct = (RelationInfo)expressionTypes[("DISTINCT", 2)];
             distinct.Arguments[1].ReturnType = distinct.Arguments[0].ReturnType = ObjectType.Instance;
 
             new TypeUsageWalker(expressionTypes, containedVariables).Walk((Expression)knowledgeBase);
+
+            var roleUnion = (UnionType)role.Arguments[0].ReturnType;
+            var roleEnum = EnumType.Create("Role", roleUnion.Expressions.Cast<ObjectInfo>());
+            does.Arguments[0].ReturnType = legal.Arguments[0].ReturnType = goal.Arguments[0].ReturnType = role.Arguments[0].ReturnType = roleEnum;
 
             bool changed;
             do
@@ -102,9 +105,17 @@ namespace GameTheory.Gdl
                                                 : (NumberRangeType)e.ReturnType;
                                         }).Simplify();
 
-                                        if (values.Count == 1)
+                                        expression.ReturnType = values.Count == 1
+                                            ? (ExpressionType)values.Single()
+                                            : NumberType.Instance;
+                                        changed = true;
+                                    }
+                                    else if (unionType.Expressions.All(e => e.ReturnType is EnumType))
+                                    {
+                                        var enums = unionType.Expressions.Select(e => (EnumType)e.ReturnType).Distinct().ToList();
+                                        if (enums.Count == 1)
                                         {
-                                            expression.ReturnType = (NumberRangeType)values.Single();
+                                            expression.ReturnType = enums.Single();
                                             changed = true;
                                         }
                                     }
@@ -138,15 +149,9 @@ namespace GameTheory.Gdl
                                     expression.ReturnType = intersectionType.Expressions.Single().ReturnType;
                                     changed = true;
                                 }
-                                else
-                                {
-                                }
 
                                 break;
                         }
-                    },
-                    type =>
-                    {
                     });
             }
             while (changed);
@@ -154,13 +159,11 @@ namespace GameTheory.Gdl
             return expressionTypes;
         }
 
-        [Flags]
         private enum VariableDirection
         {
             None = 0,
-            In = 0x01,
-            Out = 0x02,
-            Both = 0x03,
+            In,
+            Out,
         }
 
         private class TypeUsageWalker : SupportedExpressionsTreeWalker
@@ -192,25 +195,33 @@ namespace GameTheory.Gdl
 
             public override void Walk(Implication implication)
             {
-                this.variableDirection = VariableDirection.In;
-                if (implication.Antecedents != null)
+                var previousDirection = this.variableDirection;
+                try
                 {
-                    foreach (var sentence in implication.Antecedents)
+                    this.variableDirection = VariableDirection.In;
+                    if (implication.Antecedents != null)
                     {
-                        this.Walk((Expression)sentence);
+                        foreach (var sentence in implication.Antecedents)
+                        {
+                            this.Walk((Expression)sentence);
+                        }
+                    }
+
+                    this.variableDirection = VariableDirection.Out;
+                    if (implication.Consequent != null)
+                    {
+                        this.Walk((Expression)implication.Consequent);
                     }
                 }
-
-                this.variableDirection = VariableDirection.Out;
-                if (implication.Consequent != null)
+                finally
                 {
-                    this.Walk((Expression)implication.Consequent);
+                    this.variableDirection = previousDirection;
                 }
             }
 
             public override void Walk(KnowledgeBase knowledgeBase)
             {
-                this.variableDirection = VariableDirection.Both;
+                this.variableDirection = VariableDirection.Out;
 
                 foreach (var form in knowledgeBase.Forms)
                 {
@@ -230,6 +241,10 @@ namespace GameTheory.Gdl
                         unionType.Expressions.Add(expressionInfo);
                         break;
 
+                    case IntersectionType intersectionType:
+                        intersectionType.Expressions.Add(expressionInfo);
+                        break;
+
                     case StructType structType:
                         structType.Objects.Add(expressionInfo);
                         break;
@@ -244,52 +259,45 @@ namespace GameTheory.Gdl
                 }
             }
 
-            private static void MakeVariableAssignableToArgument(VariableInfo variableInfo, ArgumentInfo argumentInfo)
-            {
-                if (variableInfo.ReturnType is IntersectionType intersectionType)
-                {
-                    intersectionType.Expressions.Add(argumentInfo);
-                }
-                else
-                {
-                    throw new InvalidOperationException();
-                }
-            }
-
             private void AddArgumentUsages(ImmutableList<Term> arguments, ExpressionWithArgumentsInfo relationInfo)
             {
                 var arity = arguments.Count;
                 for (var i = 0; i < arity; i++)
                 {
-                    switch (arguments[i])
+                    var targetType = this.GetExpressionInfo(arguments[i]);
+
+                    switch (this.variableDirection)
                     {
-                        case Constant constant:
-                            AddUsage(relationInfo.Arguments[i], this.expressionTypes[(constant.Id, 0)]);
-                            break;
-                        case ImplicitFunctionalTerm implicitFunctionalTerm:
-                            AddUsage(relationInfo.Arguments[i], this.expressionTypes[(implicitFunctionalTerm.Function.Id, implicitFunctionalTerm.Arguments.Count)]);
-                            break;
-                        case IndividualVariable individualVariable:
-                            var variableInfo = this.variableTypes[individualVariable];
-
-                            switch (this.variableDirection)
+                        case VariableDirection.In:
+                            if (targetType is VariableInfo variableInfo)
                             {
-                                case VariableDirection.In:
-                                    MakeVariableAssignableToArgument(variableInfo, relationInfo.Arguments[i]);
-                                    break;
-
-                                case VariableDirection.Out:
-                                    AddUsage(relationInfo.Arguments[i], variableInfo);
-                                    break;
-
-                                case VariableDirection.Both:
-                                    AddUsage(variableInfo, relationInfo.Arguments[i]);
-                                    AddUsage(relationInfo.Arguments[i], variableInfo);
-                                    break;
+                                AddUsage(variableInfo, relationInfo.Arguments[i]);
                             }
 
                             break;
+
+                        case VariableDirection.Out:
+                            AddUsage(relationInfo.Arguments[i], targetType);
+                            break;
                     }
+                }
+            }
+
+            private ExpressionInfo GetExpressionInfo(Term arg)
+            {
+                switch (arg)
+                {
+                    case Constant constant:
+                        return this.expressionTypes[(constant.Id, 0)];
+
+                    case ImplicitFunctionalTerm implicitFunctionalTerm:
+                        return this.expressionTypes[(implicitFunctionalTerm.Function.Id, implicitFunctionalTerm.Arguments.Count)];
+
+                    case IndividualVariable individualVariable:
+                        return this.variableTypes[individualVariable];
+
+                    default:
+                        throw new NotImplementedException();
                 }
             }
         }

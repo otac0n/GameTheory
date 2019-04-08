@@ -66,10 +66,10 @@ namespace GameTheory.Gdl
                 },
                 type =>
                 {
+                    sb.AppendLine($"{typeId(type)} [label=\"{type}\"];");
                     switch (type)
                     {
                         case UnionType unionType:
-                            sb.AppendLine($"{typeId(type)} [label=\"{type}\"];");
                             foreach (var expr in unionType.Expressions)
                             {
                                 sb.AppendLine($"{typeId(type)} -> {exprId(expr)};");
@@ -78,7 +78,6 @@ namespace GameTheory.Gdl
                             break;
 
                         case IntersectionType intersectionType:
-                            sb.AppendLine($"{typeId(type)} [label=\"{type}\"];");
                             foreach (var expr in intersectionType.Expressions)
                             {
                                 sb.AppendLine($"{typeId(type)} -> {exprId(expr)};");
@@ -87,10 +86,17 @@ namespace GameTheory.Gdl
                             break;
 
                         case StructType structType:
-                            sb.AppendLine($"{typeId(type)} [label=\"{structType.Id}\"];");
                             foreach (var expr in structType.Objects)
                             {
                                 sb.AppendLine($"{typeId(type)} -> {exprId(expr)};");
+                            }
+
+                            break;
+
+                        case EnumType enumType:
+                            foreach (var expr in enumType.Objects)
+                            {
+                                sb.AppendLine($"{typeId(type)} -> {exprId(expr)} [style=dotted weight=0];");
                             }
 
                             break;
