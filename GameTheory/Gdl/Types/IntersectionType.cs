@@ -2,16 +2,16 @@
 
 namespace GameTheory.Gdl.Types
 {
-    using System.Collections.Generic;
+    using System.Collections.Immutable;
 
     public class IntersectionType : ExpressionType
     {
         public IntersectionType()
         {
-            this.Expressions = new HashSet<ExpressionInfo>();
+            this.Expressions = ImmutableHashSet<ExpressionInfo>.Empty;
         }
 
-        public HashSet<ExpressionInfo> Expressions { get; }
+        public ImmutableHashSet<ExpressionInfo> Expressions { get; set; }
 
         /// <inheritdoc/>
         public override string ToString() => $"(is-all {string.Join(" and ", this.Expressions)})";

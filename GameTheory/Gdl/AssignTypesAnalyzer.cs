@@ -56,18 +56,18 @@ namespace GameTheory.Gdl
             var does = (RelationInfo)expressionTypes[("DOES", 2)];
             var legal = (RelationInfo)expressionTypes[("LEGAL", 2)];
             var goal = (RelationInfo)expressionTypes[("GOAL", 2)];
-            ////does.Arguments[1].ReturnType = legal.Arguments[1].ReturnType = new UnionType();
+            var movesType = new IntersectionType();
+            movesType.Expressions = movesType.Expressions.Add(legal.Arguments[1]);
+            does.Arguments[1].ReturnType = movesType;
             ////goal.Arguments[1].ReturnType = NumberType.Instance;
 
             var distinct = (RelationInfo)expressionTypes[("DISTINCT", 2)];
             ////distinct.Arguments[1].ReturnType = distinct.Arguments[0].ReturnType = ObjectType.Instance;
 
             new TypeUsageWalker(expressionTypes, containedVariables).Walk((Expression)knowledgeBase);
-
-            ////var roleUnion = (UnionType)role.Arguments[0].ReturnType;
-            ////var roleEnum = EnumType.Create("Role", roleUnion.Expressions.Cast<ObjectInfo>());
-            ////does.Arguments[0].ReturnType = legal.Arguments[0].ReturnType = goal.Arguments[0].ReturnType = role.Arguments[0].ReturnType = roleEnum;
-
+            var roleUnion = (UnionType)role.Arguments[0].ReturnType;
+            var roleEnum = EnumType.Create("Role", roleUnion.Expressions.Cast<ObjectInfo>());
+            does.Arguments[0].ReturnType = legal.Arguments[0].ReturnType = goal.Arguments[0].ReturnType = role.Arguments[0].ReturnType;
             ReduceTypes(expressionTypes);
 
             return expressionTypes;
@@ -75,10 +75,15 @@ namespace GameTheory.Gdl
 
         private static void ReduceTypes(Dictionary<(string, int), ExpressionInfo> expressionTypes)
         {
+            var unionTypesCache = new Dictionary<ImmutableHashSet<ExpressionInfo>, UnionType>(
+                expressionTypes.Count,
+                new ImmutableHashSetEqualityComparer<ExpressionInfo>());
+
             bool changed;
             do
             {
                 changed = false;
+                unionTypesCache.Clear();
                 ExpressionTypeVisitor.Visit(
                     expressionTypes.Values,
                     expression =>
@@ -86,8 +91,10 @@ namespace GameTheory.Gdl
                         switch (expression.ReturnType)
                         {
                             case UnionType unionType:
-                                if (unionType.Expressions.RemoveWhere(e => e.ReturnType == NoneType.Instance) > 0)
+                                var nones = unionType.Expressions.Where(e => e.ReturnType == NoneType.Instance);
+                                if (nones.Any())
                                 {
+                                    unionType.Expressions = unionType.Expressions.Except(nones);
                                     changed = true;
                                 }
 
@@ -131,8 +138,9 @@ namespace GameTheory.Gdl
                                         var nestedUnions = unionType.Expressions.Where(e => e.ReturnType is UnionType).ToList();
                                         if (nestedUnions.Any())
                                         {
-                                            unionType.Expressions.UnionWith(nestedUnions.SelectMany(e => ((UnionType)e.ReturnType).Expressions));
-                                            unionType.Expressions.ExceptWith(nestedUnions);
+                                            unionType.Expressions = unionType.Expressions
+                                                .Union(nestedUnions.SelectMany(e => ((UnionType)e.ReturnType).Expressions))
+                                                .Except(nestedUnions);
                                             changed = true;
                                         }
                                     }
@@ -141,8 +149,10 @@ namespace GameTheory.Gdl
                                 break;
 
                             case IntersectionType intersectionType:
-                                if (intersectionType.Expressions.RemoveWhere(e => e.ReturnType == ObjectType.Instance) > 0)
+                                var objects = intersectionType.Expressions.Where(e => e.ReturnType == ObjectType.Instance);
+                                if (objects.Any())
                                 {
+                                    intersectionType.Expressions = intersectionType.Expressions.Except(objects);
                                     changed = true;
                                 }
 
@@ -158,6 +168,20 @@ namespace GameTheory.Gdl
                                 }
 
                                 break;
+                        }
+
+                        {
+                            if (expression.ReturnType is UnionType unionType)
+                            {
+                                if (unionTypesCache.TryGetValue(unionType.Expressions, out var found))
+                                {
+                                    expression.ReturnType = found;
+                                }
+                                else
+                                {
+                                    unionTypesCache[unionType.Expressions] = unionType;
+                                }
+                            }
                         }
                     });
             }
@@ -243,15 +267,15 @@ namespace GameTheory.Gdl
                 switch (variableInfo.ReturnType)
                 {
                     case UnionType unionType:
-                        unionType.Expressions.Add(expressionInfo);
+                        unionType.Expressions = unionType.Expressions.Add(expressionInfo);
                         break;
 
                     case IntersectionType intersectionType:
-                        intersectionType.Expressions.Add(expressionInfo);
+                        intersectionType.Expressions = intersectionType.Expressions.Add(expressionInfo);
                         break;
 
                     case StructType structType:
-                        structType.Objects.Add(expressionInfo);
+                        structType.Objects = structType.Objects.Add(expressionInfo);
                         break;
 
                     default:
@@ -269,12 +293,12 @@ namespace GameTheory.Gdl
                 var arity = arguments.Count;
                 for (var i = 0; i < arity; i++)
                 {
-                    var targetType = this.GetExpressionInfo(arguments[i]);
+                    var valueExpression = this.GetExpressionInfo(arguments[i]);
 
                     switch (this.variableDirection)
                     {
                         case VariableDirection.In:
-                            if (targetType is VariableInfo variableInfo)
+                            if (valueExpression is VariableInfo variableInfo)
                             {
                                 AddUsage(variableInfo, relationInfo.Arguments[i]);
                             }
@@ -282,7 +306,7 @@ namespace GameTheory.Gdl
                             break;
 
                         case VariableDirection.Out:
-                            AddUsage(relationInfo.Arguments[i], targetType);
+                            AddUsage(relationInfo.Arguments[i], valueExpression);
                             break;
                     }
                 }
@@ -305,6 +329,14 @@ namespace GameTheory.Gdl
                         throw new NotImplementedException();
                 }
             }
+        }
+        private class ImmutableHashSetEqualityComparer<T> : IEqualityComparer<ImmutableHashSet<ExpressionInfo>>
+        {
+            public bool Equals(ImmutableHashSet<ExpressionInfo> x, ImmutableHashSet<ExpressionInfo> y) =>
+                object.ReferenceEquals(x, y) || (!(x is null) && !(y is null) && x.SetEquals(y));
+
+            public int GetHashCode(ImmutableHashSet<ExpressionInfo> obj) =>
+                obj is null ? 0 : obj.Count;
         }
     }
 }

@@ -2,16 +2,16 @@
 
 namespace GameTheory.Gdl.Types
 {
-    using System.Collections.Generic;
+    using System.Collections.Immutable;
 
     public class UnionType : ExpressionType
     {
         public UnionType()
         {
-            this.Expressions = new HashSet<ExpressionInfo>();
+            this.Expressions = ImmutableHashSet<ExpressionInfo>.Empty;
         }
 
-        public HashSet<ExpressionInfo> Expressions { get; }
+        public ImmutableHashSet<ExpressionInfo> Expressions { get; set; }
 
         /// <inheritdoc/>
         public override string ToString() => $"(any-of {string.Join(" or ", this.Expressions)})";
