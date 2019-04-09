@@ -19,16 +19,6 @@ namespace GameTheory.Gdl.Types
         /// <summary>
         /// Initializes a new instance of the <see cref="ObjectType"/> class.
         /// </summary>
-        /// <param name="builtInType">The built-in type to use for this expression type.</param>
-        public ObjectType(Type builtInType)
-        {
-            this.BuiltInType = builtInType ?? throw new ArgumentNullException(nameof(builtInType));
-            this.Name = builtInType.Name;
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ObjectType"/> class.
-        /// </summary>
         /// <param name="name">The name of this type.</param>
         /// <param name="baseType">The base type for this type.</param>
         /// <param name="builtInType">The built-in type to use for this expression type.</param>
@@ -43,11 +33,6 @@ namespace GameTheory.Gdl.Types
         /// Gets the name of this type.
         /// </summary>
         public string Name { get; }
-
-        /// <summary>
-        /// Gets the built-in type to use for this expression type.
-        /// </summary>
-        public Type BuiltInType { get; }
 
         /// <inheritdoc/>
         public override ExpressionType BaseType => this.baseType ?? base.BaseType;

@@ -2,11 +2,18 @@
 
 namespace GameTheory.Gdl.Types
 {
+    using System;
+
     /// <summary>
     /// Describes types in the expression types hierarchy.
     /// </summary>
     public abstract class ExpressionType
     {
+        /// <summary>
+        /// Gets or sets the built-in type to use for this type.
+        /// </summary>
+        public virtual Type BuiltInType { get; protected set; }
+
         /// <summary>
         /// Gets the base type for this type.
         /// </summary>

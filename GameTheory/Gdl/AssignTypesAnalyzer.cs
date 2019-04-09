@@ -57,17 +57,24 @@ namespace GameTheory.Gdl
             var legal = (RelationInfo)expressionTypes[("LEGAL", 2)];
             var goal = (RelationInfo)expressionTypes[("GOAL", 2)];
             ////does.Arguments[1].ReturnType = legal.Arguments[1].ReturnType = new UnionType();
-            goal.Arguments[1].ReturnType = NumberType.Instance;
+            ////goal.Arguments[1].ReturnType = NumberType.Instance;
 
             var distinct = (RelationInfo)expressionTypes[("DISTINCT", 2)];
-            distinct.Arguments[1].ReturnType = distinct.Arguments[0].ReturnType = ObjectType.Instance;
+            ////distinct.Arguments[1].ReturnType = distinct.Arguments[0].ReturnType = ObjectType.Instance;
 
             new TypeUsageWalker(expressionTypes, containedVariables).Walk((Expression)knowledgeBase);
 
-            var roleUnion = (UnionType)role.Arguments[0].ReturnType;
-            var roleEnum = EnumType.Create("Role", roleUnion.Expressions.Cast<ObjectInfo>());
-            does.Arguments[0].ReturnType = legal.Arguments[0].ReturnType = goal.Arguments[0].ReturnType = role.Arguments[0].ReturnType = roleEnum;
+            ////var roleUnion = (UnionType)role.Arguments[0].ReturnType;
+            ////var roleEnum = EnumType.Create("Role", roleUnion.Expressions.Cast<ObjectInfo>());
+            ////does.Arguments[0].ReturnType = legal.Arguments[0].ReturnType = goal.Arguments[0].ReturnType = role.Arguments[0].ReturnType = roleEnum;
 
+            ReduceTypes(expressionTypes);
+
+            return expressionTypes;
+        }
+
+        private static void ReduceTypes(Dictionary<(string, int), ExpressionInfo> expressionTypes)
+        {
             bool changed;
             do
             {
@@ -155,8 +162,6 @@ namespace GameTheory.Gdl
                     });
             }
             while (changed);
-
-            return expressionTypes;
         }
 
         private enum VariableDirection

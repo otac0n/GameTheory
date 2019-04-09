@@ -7,7 +7,7 @@ namespace GameTheory.Gdl.Types
         public static readonly BooleanType Instance = new BooleanType();
 
         private BooleanType()
-            : base("bool")
+            : base("bool", null, typeof(bool))
         {
         }
     }
