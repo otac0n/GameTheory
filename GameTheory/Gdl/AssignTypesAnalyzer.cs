@@ -59,15 +59,15 @@ namespace GameTheory.Gdl
             var movesType = new IntersectionType();
             movesType.Expressions = movesType.Expressions.Add(legal.Arguments[1]);
             does.Arguments[1].ReturnType = movesType;
-            ////goal.Arguments[1].ReturnType = NumberType.Instance;
 
             var distinct = (RelationInfo)expressionTypes[("DISTINCT", 2)];
-            ////distinct.Arguments[1].ReturnType = distinct.Arguments[0].ReturnType = ObjectType.Instance;
 
             new TypeUsageWalker(expressionTypes, containedVariables).Walk((Expression)knowledgeBase);
             var roleUnion = (UnionType)role.Arguments[0].ReturnType;
             var roleEnum = EnumType.Create("Role", roleUnion.Expressions.Cast<ObjectInfo>());
             does.Arguments[0].ReturnType = legal.Arguments[0].ReturnType = goal.Arguments[0].ReturnType = role.Arguments[0].ReturnType;
+            goal.Arguments[1].ReturnType = NumberType.Instance;
+            distinct.Arguments[1].ReturnType = distinct.Arguments[0].ReturnType = ObjectType.Instance;
             ReduceTypes(expressionTypes);
 
             return expressionTypes;
@@ -84,6 +84,7 @@ namespace GameTheory.Gdl
             {
                 changed = false;
                 unionTypesCache.Clear();
+                var enumCandidates = new List<(RelationInfo, UnionType)>();
                 ExpressionTypeVisitor.Visit(
                     expressionTypes.Values,
                     expression =>
@@ -110,19 +111,28 @@ namespace GameTheory.Gdl
                                 }
                                 else
                                 {
-                                    if (unionType.Expressions.All(e => e.ReturnType is NumberRangeType || (e.ReturnType == NumberType.Instance && e is ObjectInfo)))
+                                    // TODO: Use an Aggregate expression to avoid multiple LINQ loops.
+                                    if (unionType.Expressions.All(e => e.ReturnType is NumberRangeType || e.ReturnType == NumberType.Instance))
                                     {
-                                        var values = unionType.Expressions.Select(e =>
+                                        if (unionType.Expressions.Any(e => e.ReturnType == NumberType.Instance && !(e is ObjectInfo)))
                                         {
-                                            return e is ObjectInfo objectInfo
-                                                ? NumberRangeType.GetInstance((int)objectInfo.Value, (int)objectInfo.Value)
-                                                : (NumberRangeType)e.ReturnType;
-                                        }).Simplify();
+                                            expression.ReturnType = NumberType.Instance;
+                                            changed = true;
+                                        }
+                                        else
+                                        {
+                                            var values = unionType.Expressions.Select(e =>
+                                            {
+                                                return e is ObjectInfo objectInfo
+                                                    ? NumberRangeType.GetInstance((int)objectInfo.Value, (int)objectInfo.Value)
+                                                    : (NumberRangeType)e.ReturnType;
+                                            }).Simplify();
 
-                                        expression.ReturnType = values.Count == 1
-                                            ? (ExpressionType)values.Single()
-                                            : NumberType.Instance;
-                                        changed = true;
+                                            expression.ReturnType = values.Count == 1
+                                                ? (ExpressionType)values.Single()
+                                                : NumberType.Instance;
+                                            changed = true;
+                                        }
                                     }
                                     else if (unionType.Expressions.All(e => e.ReturnType is EnumType))
                                     {
@@ -175,15 +185,55 @@ namespace GameTheory.Gdl
                             {
                                 if (unionTypesCache.TryGetValue(unionType.Expressions, out var found))
                                 {
-                                    expression.ReturnType = found;
+                                    expression.ReturnType = unionType = found;
                                 }
                                 else
                                 {
                                     unionTypesCache[unionType.Expressions] = unionType;
                                 }
+
+                                if (expression is ArgumentInfo argument &&
+                                    argument.Expression is RelationInfo relation &&
+                                    relation.Arity == 1 &&
+                                    unionType.Expressions.Count >= 2 &&
+                                    unionType.Expressions.All(e => e is ObjectInfo && e.ReturnType is ObjectType))
+                                {
+                                    enumCandidates.Add((relation, unionType));
+                                }
                             }
                         }
                     });
+
+                var count = enumCandidates.Count;
+                if (!changed && count > 0)
+                {
+                    // TODO: Keep an array of trueForAll, and only check each pair once.
+                    for (var i = 0; i < count; i++)
+                    {
+                        (var relation, var unionType) = enumCandidates[i];
+                        var trueForAll = true;
+                        for (var j = 0; j < count; j++)
+                        {
+                            if (i == j)
+                            {
+                                continue;
+                            }
+
+                            (_, var otherUnion) = enumCandidates[j];
+                            if (unionType.Expressions.Overlaps(otherUnion.Expressions) && !unionType.Expressions.IsProperSubsetOf(otherUnion.Expressions))
+                            {
+                                trueForAll = false;
+                                break;
+                            }
+                        }
+
+                        if (trueForAll)
+                        {
+                            relation.Arguments[0].ReturnType = EnumType.Create(relation.Id, unionType.Expressions.Cast<ObjectInfo>());
+                            changed = true;
+                        }
+                    }
+                }
             }
             while (changed);
         }

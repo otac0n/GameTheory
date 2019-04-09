@@ -1,14 +1,17 @@
 @model ExpressionInfo
 {{if model is ObjectInfo objectInfo}}
-    {{if objectInfo.ReturnType == ObjectType.Instance}}
+    {{if objectInfo.ReturnType is ObjectType && objectInfo.Value is string}}
+        private static readonly {{= objectInfo.ReturnType}} {{= objectInfo.Id}} = {{= ToLiteral(objectInfo.Value)}};
+
+    {{elif objectInfo.ReturnType == ObjectType.Instance}}
         private static readonly object {{= objectInfo.Id}} = new object();
 
     {{elif !(objectInfo.Value is int)}}
-        // private static readonly {{= objectInfo.ReturnType}} {{= objectInfo.Id}} = ??;
+        // {{: objectInfo.Id}}: {{: objectInfo.ReturnType}}
 
     {{/if}}
 {{elif model is RelationInfo relationInfo}}
-    private bool {{= relationInfo.Id}}({{each arg in relationInfo.Arguments}}{{: arg.ReturnType}} {{: arg}}{{delimit}}, {{/each}})
+    private bool {{: relationInfo.Id}}({{each arg in relationInfo.Arguments}}{{: arg.ReturnType}} {{: arg}}{{delimit}}, {{/each}})
     {
         return false;
     }

@@ -100,10 +100,6 @@ namespace GameTheory.Gdl
                             }
 
                             break;
-
-                        default:
-                            sb.AppendLine($"{typeId(type)} [label=\"{type}\"];");
-                            break;
                     }
 
                     sb.AppendLine($"{typeId(type)} -> {typeId(type.BaseType)} [style=dotted weight=0];");
