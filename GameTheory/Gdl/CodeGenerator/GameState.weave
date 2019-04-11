@@ -12,9 +12,6 @@ using System;
 using System.Collections.Generic;
 using GameTheory;
 
-{{each type in allTypes}}
-    {{@RenderExpressionType type}}
-{{/each}}
 public class GameState : IGameState<Move>
 {
     private IReadOnlyList<PlayerToken> players;
@@ -30,8 +27,13 @@ public class GameState : IGameState<Move>
         };
     }
 
+    {{each type in allTypes}}
+        {{@RenderExpressionType type}}
+
+    {{/each}}
     {{each expr in allExpressions}}
         {{@RenderExpressionInfo expr}}
+
     {{/each}}
     /// <inheritdoc />
     public IReadOnlyList<PlayerToken> Players { get { return this.players; } }

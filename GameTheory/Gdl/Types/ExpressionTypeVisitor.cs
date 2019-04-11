@@ -43,8 +43,8 @@ namespace GameTheory.Gdl.Types
                             AddAll(intersectionType.Expressions);
                             break;
 
-                        case StructType structType:
-                            AddAll(structType.Objects);
+                        case StateType structType:
+                            AddAll(structType.Relations);
                             break;
 
                         case EnumType enumType:

@@ -3,26 +3,26 @@
 namespace GameTheory.Gdl.Types
 {
     using System.Collections.Generic;
+    using System.Collections.Immutable;
 
     public class EnumType : ExpressionType
     {
-        private EnumType(string name)
+        private EnumType(string name, IEnumerable<ObjectInfo> objects)
         {
             this.Name = name;
-            this.Objects = new HashSet<ObjectInfo>();
+            this.Objects = ImmutableHashSet.CreateRange(objects);
         }
 
         public string Name { get; }
 
-        public HashSet<ObjectInfo> Objects { get; }
+        public ImmutableHashSet<ObjectInfo> Objects { get; }
 
         public static EnumType Create(string name, IEnumerable<ObjectInfo> objects)
         {
-            var enumType = new EnumType(name);
+            var enumType = new EnumType(name, objects);
 
-            foreach (var obj in objects)
+            foreach (var obj in enumType.Objects)
             {
-                enumType.Objects.Add(obj);
                 obj.ReturnType = enumType;
             }
 

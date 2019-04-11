@@ -1,30 +1,12 @@
 @model ExpressionType
 {{if model.BuiltInType == null}}
     {{if model is EnumType enumType}}
-        public enum {{: enumType.Name}}
-        {
-            {{each value in enumType.Objects}}
-                {{: value.Id}},
-            {{/each}}
-        }
-
+        {{@RenderEnumType enumType}}
     {{elif model is FunctionType functionType}}
-        private struct {{: functionType.Name}}
-        {
-            public {{: functionType.Name}}({{each arg in functionType.FunctionInfo.Arguments}}{{: arg.ReturnType}} {{: arg}}{{delimit}}, {{/each}})
-            {
-                {{each arg in functionType.FunctionInfo.Arguments}}
-                    this.{{: arg}} = {{: arg}};
-                {{/each}}
-            }
-            {{each arg in functionType.FunctionInfo.Arguments}}
-
-                public {{: arg.ReturnType}} {{: arg}} { get; }
-            {{/each}}
-        }
-
+        {{@RenderFunctionType functionType}}
+    {{elif model is StateType stateType}}
+        {{@RenderStateType stateType}}
     {{elif model != ObjectType.Instance && model != NumberType.Instance && !(model is NumberRangeType)}}
         // {{= model}}: {{= model.GetType()}}
-
     {{/if}}
 {{/if}}

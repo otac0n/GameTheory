@@ -3,7 +3,7 @@ namespace GameTheory.Gdl.Types
     public class ExpressionWithArgumentsInfo : ExpressionInfo
     {
         public ExpressionWithArgumentsInfo(string id, int arity, ExpressionType returnType)
-            : base(id, returnType)
+            : base($"{id}_{arity}", returnType)
         {
             this.Arity = arity;
             this.Arguments = new ArgumentInfo[arity];
@@ -16,8 +16,5 @@ namespace GameTheory.Gdl.Types
         public int Arity { get; }
 
         public virtual ArgumentInfo[] Arguments { get; protected set; }
-
-        /// <inheritdoc/>
-        public override string ToString() => $"{this.Id}{(this.Arity > 0 ? $"@{this.Arity}" : null)}";
     }
 }

@@ -18,7 +18,7 @@ namespace GameTheory.Gdl
             string typeId(ExpressionType type) => ids.TryGetValue(type, out var value) ? value : ids[type] = "t" + ids.Count.ToString();
             string varId(VariableInfo variable) => varIds.TryGetValue(variable, out var value) ? value : varIds[variable] = "v" + varIds.Count.ToString();
             string exprId(ExpressionInfo expression) => expression is ExpressionWithArgumentsInfo expressionWithArgumentsInfo
-                ? $"{expressionWithArgumentsInfo.Id}_{expressionWithArgumentsInfo.Arity}"
+                ? expressionWithArgumentsInfo.Id
                 : expression is ArgumentInfo argumentInfo
                     ? $"{exprId(argumentInfo.Expression)}:{argumentInfo.Id}"
                     : expression is VariableInfo variableInfo
@@ -36,7 +36,7 @@ namespace GameTheory.Gdl
 
                             foreach (var arg in expressionWithArgumentsInfo.Arguments)
                             {
-                                sb.Append($"<td port=\"{arg.Id}\">{arg.Id}</td>");
+                                sb.Append($"<td port=\"{arg.Id}\">_{arg.Index}</td>");
                             }
 
                             sb.AppendLine("</tr></table>>]");
@@ -85,8 +85,8 @@ namespace GameTheory.Gdl
 
                             break;
 
-                        case StructType structType:
-                            foreach (var expr in structType.Objects)
+                        case StateType structType:
+                            foreach (var expr in structType.Relations)
                             {
                                 sb.AppendLine($"{typeId(type)} -> {exprId(expr)};");
                             }

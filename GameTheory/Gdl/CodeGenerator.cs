@@ -5,6 +5,7 @@ namespace GameTheory.Gdl
     using System.Collections.Generic;
     using System.Globalization;
     using System.Text;
+    using GameTheory.Gdl.Types;
 
     internal static partial class CodeGenerator
     {
@@ -34,6 +35,19 @@ namespace GameTheory.Gdl
 
         private static string EscapeName(object name)
         {
+            if (name is ExpressionType type)
+            {
+                if (type.BuiltInType != null)
+                {
+                    return type.BuiltInType.FullName;
+                }
+                else if (type is UnionType || type is IntersectionType || (type is ObjectType && !(type is FunctionType)))
+                {
+                    // Will be handled by run-time type checks.
+                    return "object";
+                }
+            }
+
             var n = name.ToString();
             return keywords.Contains(n) ? "@" + n : n;
         }
