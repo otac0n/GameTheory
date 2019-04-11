@@ -1,12 +1,14 @@
 @model ExpressionType
-{{if model.BuiltInType == null}}
-    {{if model is EnumType enumType}}
-        {{@RenderEnumType enumType}}
-    {{elif model is FunctionType functionType}}
-        {{@RenderFunctionType functionType}}
-    {{elif model is StateType stateType}}
-        {{@RenderStateType stateType}}
-    {{elif model != ObjectType.Instance && model != NumberType.Instance && !(model is NumberRangeType)}}
-        // {{= model}}: {{= model.GetType()}}
-    {{/if}}
+{{if model is EnumType enumType}}
+    {{@RenderEnumType enumType}}
+
+{{elif model is FunctionType functionType}}
+    {{@RenderFunctionType functionType}}
+
+{{elif model is StateType stateType}}
+    {{@RenderStateType stateType}}
+
+{{else}}
+    #error Unsupported expression type {{= model}}: {{= model.GetType()}}
+
 {{/if}}

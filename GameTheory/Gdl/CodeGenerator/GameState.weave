@@ -7,6 +7,17 @@
     var allTypes = new List<ExpressionType>();
     var allExpressions = new List<ExpressionInfo>();
     ExpressionTypeVisitor.Visit(types.Values, visitExpression: allExpressions.Add, visitType: allTypes.Add);
+
+    var renderedTypes = allTypes.Where(t =>
+        t.BuiltInType == null &&
+        (!(t is ObjectType) || t is FunctionType) &&
+        !(t is UnionType)  &&
+        !(t is IntersectionType) &&
+        !(t is NumberRangeType));
+    var renderedExpressions = allExpressions.Where(e =>
+        !(e is VariableInfo) &&
+        !(e is FunctionInfo) &&
+        !(e is ObjectInfo objectInfo && (objectInfo.Value is int || objectInfo.ReturnType is EnumType)));
 }}
 using System;
 using System.Collections.Generic;
@@ -27,13 +38,11 @@ public class GameState : IGameState<Move>
         };
     }
 
-    {{each type in allTypes}}
+    {{each type in renderedTypes}}
         {{@RenderExpressionType type}}
-
     {{/each}}
-    {{each expr in allExpressions}}
+    {{each expr in renderedExpressions}}
         {{@RenderExpressionInfo expr}}
-
     {{/each}}
     /// <inheritdoc />
     public IReadOnlyList<PlayerToken> Players { get { return this.players; } }
