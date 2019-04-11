@@ -47,7 +47,7 @@ namespace GameTheory.Gdl.Passes
                 }
 
                 var assembly = results.CompiledAssembly;
-                result.Type = assembly.GetType("GameState");
+                result.Type = assembly.GetType($"{result.Name}.GameState");
             }
             catch (Exception ex)
             {

@@ -3,6 +3,7 @@ namespace GameTheory.Gdl
     using System;
     using System.CodeDom.Compiler;
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
     using System.Reflection;
     using System.Text.RegularExpressions;
@@ -32,6 +33,8 @@ namespace GameTheory.Gdl
                 QuoteOperator = false,
             };
 
+            var gameName = Path.GetFileNameWithoutExtension(fileName) ?? "Game";
+
             try
             {
                 knowledgeBase = new KifParser().Parse(game ?? string.Empty, fileName);
@@ -42,7 +45,7 @@ namespace GameTheory.Gdl
                 if (cursor != null && Regex.IsMatch(ex.Message, @"^[A-Z]{2,4}\d+:"))
                 {
                     var parts = ex.Message.Split(new[] { ':' }, 2);
-                    result = new CompileResult(null);
+                    result = new CompileResult(gameName, null);
                     result.Errors.Add(new CompilerError(cursor.FileName ?? string.Empty, cursor.Line, cursor.Column, parts[0], parts[1]));
                     return result;
                 }
@@ -50,7 +53,7 @@ namespace GameTheory.Gdl
                 throw;
             }
 
-            result = new CompileResult(knowledgeBase);
+            result = new CompileResult(gameName, knowledgeBase);
 
             var passes = PassTypes.Select(t => (CompilePass)Activator.CreateInstance(t)).ToList();
             while (true)

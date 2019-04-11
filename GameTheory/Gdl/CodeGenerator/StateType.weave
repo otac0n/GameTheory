@@ -1,7 +1,0 @@
-@model StateType
-private class {{: model}}
-{
-    public {{: model}}({{each obj in model.Relations}}IEnumerable<{{: obj.ReturnType}}> {{: obj}}{{delimit}}, {{/each}})
-    {
-    }
-}

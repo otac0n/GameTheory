@@ -1,9 +1,0 @@
-@namespace GameTheory.Gdl
-@classname CodeGenerator
-@encode EscapeName
-@static true
-@using System.Collections.Generic
-@using System.Linq
-@using System.Reflection
-@using GameTheory.Gdl.Types
-@using KnowledgeInterchangeFormat.Expressions

@@ -3,6 +3,7 @@
 namespace GameTheory.Gdl.Passes
 {
     using System;
+    using System.CodeDom.Compiler;
     using System.Collections.Generic;
     using System.Globalization;
     using System.IO;
@@ -41,7 +42,12 @@ namespace GameTheory.Gdl.Passes
             {
                 using (var stringWriter = new StringWriter(CultureInfo.InvariantCulture))
                 {
-                    CodeGenerator.RenderGameState(result, stringWriter);
+                    CodeDomProvider.CreateProvider("CSharp").GenerateCodeFromCompileUnit(result.CodeCompileUnit, stringWriter, new CodeGeneratorOptions
+                    {
+                        BlankLinesBetweenMembers = true,
+                        BracingStyle = "C",
+                        IndentString = "    ",
+                    });
                     result.Code = stringWriter.ToString();
                 }
             }

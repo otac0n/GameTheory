@@ -1,7 +1,0 @@
-@model EnumType
-public enum {{: model}}
-{
-    {{each value in model.Objects}}
-        {{: value.Id}},
-    {{/each}}
-}

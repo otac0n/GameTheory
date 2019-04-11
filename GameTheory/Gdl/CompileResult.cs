@@ -3,6 +3,7 @@
 namespace GameTheory.Gdl
 {
     using System;
+    using System.CodeDom;
     using System.CodeDom.Compiler;
     using System.Collections.Generic;
     using System.Globalization;
@@ -16,8 +17,9 @@ namespace GameTheory.Gdl
         private readonly Lazy<Dictionary<Expression, HashSet<Variable>>> containedVariables;
         private readonly Lazy<Dictionary<(string, int), ExpressionInfo>> expressionTypes;
 
-        public CompileResult(KnowledgeBase knowledgeBase)
+        public CompileResult(string name, KnowledgeBase knowledgeBase)
         {
+            this.Name = name;
             this.KnowledgeBase = knowledgeBase;
             this.containedVariables = new Lazy<Dictionary<Expression, HashSet<Variable>>>(() => ContainedVariablesAnalyzer.Analyze(this.KnowledgeBase));
             this.constantTypes = new Lazy<Dictionary<(string, int), ConstantType>>(() => ConstantArityAnalyzer.Analyze(this.KnowledgeBase));
@@ -31,6 +33,8 @@ namespace GameTheory.Gdl
         }
 
         public Dictionary<Sentence, bool> AtomicSentences { get; }
+
+        public CodeCompileUnit CodeCompileUnit { get; set; }
 
         public string Code { get; set; }
 
@@ -50,6 +54,8 @@ namespace GameTheory.Gdl
         public Dictionary<Expression, HashSet<Variable>> ContainedVariables => this.containedVariables.Value;
 
         public KnowledgeBase KnowledgeBase { get; }
+
+        public string Name { get; }
 
         /// <summary>
         /// Gets or sets the type resulting from compilation.

@@ -23,9 +23,9 @@ namespace GameTheory.Tests.Gdl
         [TestCaseSource(nameof(Games))]
         public void Compile_WhenGivenAGameDefinition_ReturnsAFullyConstructedType(string game)
         {
-            var gdl = LoadAssemblyResource(game);
+            var gdl = LoadAssemblyResource(game, out var friendlyName);
             var compiler = new GameCompiler();
-            var result = compiler.Compile(gdl);
+            var result = compiler.Compile(gdl, friendlyName);
 
             var graph = DebuggingTools.RenderTypeGraph(result.ExpressionTypes.Values.Where(v => !(v is ObjectInfo objectInfo && objectInfo.Value is int))).Replace("\"", "\"\"");
 
@@ -36,9 +36,9 @@ namespace GameTheory.Tests.Gdl
         [TestCaseSource(nameof(Games))]
         public void Compile_WhenGivenAGameDefinition_ReturnsAGameThatCanBePlayedToTheEnd(string game)
         {
-            var gdl = LoadAssemblyResource(game);
+            var gdl = LoadAssemblyResource(game, out var friendlyName);
             var compiler = new GameCompiler();
-            var result = compiler.Compile(gdl);
+            var result = compiler.Compile(gdl, friendlyName);
 
             var graph = DebuggingTools.RenderTypeGraph(result.ExpressionTypes.Values.Where(v => !(v is ObjectInfo objectInfo && objectInfo.Value is int))).Replace("\"", "\"\"");
 
@@ -48,8 +48,11 @@ namespace GameTheory.Tests.Gdl
             var endState = manager.Run();
         }
 
-        private static string LoadAssemblyResource(string name)
+        private static string LoadAssemblyResource(string name, out string friendlyName)
         {
+            var prefix = typeof(GameCompilerTests).Namespace + ".Games.";
+            friendlyName = name.Replace(prefix, prefix.Replace('.', '\\'));
+
             using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(name))
             using (var reader = new StreamReader(stream))
             {
