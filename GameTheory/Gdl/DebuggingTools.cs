@@ -1,12 +1,13 @@
 namespace GameTheory.Gdl
 {
     using System.Collections.Generic;
+    using System.Linq;
     using System.Text;
     using GameTheory.Gdl.Types;
 
     internal static class DebuggingTools
     {
-        public static string RenderTypeGraph(IEnumerable<ExpressionInfo> rootExpressions)
+        public static string RenderTypeGraph(AssignedTypes assignedTypes)
         {
             var sb = new StringBuilder();
             sb.AppendLine("digraph {");
@@ -18,25 +19,25 @@ namespace GameTheory.Gdl
             string typeId(ExpressionType type) => ids.TryGetValue(type, out var value) ? value : ids[type] = "t" + ids.Count.ToString();
             string varId(VariableInfo variable) => varIds.TryGetValue(variable, out var value) ? value : varIds[variable] = "v" + varIds.Count.ToString();
             string exprId(ExpressionInfo expression) => expression is ExpressionWithArgumentsInfo expressionWithArgumentsInfo
-                ? expressionWithArgumentsInfo.Id
+                ? expressionWithArgumentsInfo.ToString()
                 : expression is ArgumentInfo argumentInfo
                     ? $"{exprId(argumentInfo.Expression)}:{argumentInfo.Id}"
                     : expression is VariableInfo variableInfo
                         ? varId(variableInfo)
-                        : expression.Id;
+                        : expression.ToString();
 
             ExpressionTypeVisitor.Visit(
-                rootExpressions,
+                assignedTypes.ExpressionTypes.Values.Where(v => !(v is ObjectInfo objectInfo && objectInfo.Value is int)),
                 expression =>
                 {
                     switch (expression)
                     {
                         case ExpressionWithArgumentsInfo expressionWithArgumentsInfo:
-                            sb.Append($"{exprId(expression)} [shape={(expression is RelationInfo ? "tab" : "box")} label=<<table border=\"0\"><tr><td colspan=\"{expressionWithArgumentsInfo.Arity}\" >{expressionWithArgumentsInfo.Id}</td></tr><tr>");
+                            sb.Append($"{exprId(expression)} [shape={(expression is RelationInfo ? "tab" : "box")} label=<<table border=\"0\"><tr><td colspan=\"{expressionWithArgumentsInfo.Arity}\" >{expressionWithArgumentsInfo}</td></tr><tr>");
 
                             foreach (var arg in expressionWithArgumentsInfo.Arguments)
                             {
-                                sb.Append($"<td port=\"{arg.Id}\">_{arg.Index}</td>");
+                                sb.Append($"<td port=\"{arg.Id}\">{arg}</td>");
                             }
 
                             sb.AppendLine("</tr></table>>]");
@@ -46,11 +47,11 @@ namespace GameTheory.Gdl
                             break;
 
                         case VariableInfo variableInfo:
-                            sb.AppendLine($"{exprId(variableInfo)} [shape=parallelogram label=\"{variableInfo.Id}\"];");
+                            sb.AppendLine($"{exprId(variableInfo)} [shape=parallelogram label=\"{variableInfo}\"];");
                             break;
 
                         case ObjectInfo objectInfo:
-                            sb.AppendLine($"{exprId(objectInfo)} [shape=box label=\"{objectInfo.Id}\"];");
+                            sb.AppendLine($"{exprId(objectInfo)} [shape=box label=\"{objectInfo}\"];");
                             break;
                     }
 

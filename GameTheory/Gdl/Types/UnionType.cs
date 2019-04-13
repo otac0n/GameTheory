@@ -7,6 +7,7 @@ namespace GameTheory.Gdl.Types
     public class UnionType : ExpressionType
     {
         public UnionType()
+            : base(null)
         {
             this.Expressions = ImmutableHashSet<ExpressionInfo>.Empty;
         }

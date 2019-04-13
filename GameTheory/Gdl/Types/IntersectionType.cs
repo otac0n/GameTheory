@@ -7,6 +7,7 @@ namespace GameTheory.Gdl.Types
     public class IntersectionType : ExpressionType
     {
         public IntersectionType()
+            : base(null)
         {
             this.Expressions = ImmutableHashSet<ExpressionInfo>.Empty;
         }

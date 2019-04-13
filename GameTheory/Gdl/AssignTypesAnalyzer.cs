@@ -1,6 +1,7 @@
 namespace GameTheory.Gdl
 {
     using System;
+    using System.Collections;
     using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Linq;
@@ -10,10 +11,9 @@ namespace GameTheory.Gdl
 
     public static class AssignTypesAnalyzer
     {
-        public static Dictionary<(string, int), ExpressionInfo> Analyze(KnowledgeBase knowledgeBase, Dictionary<(string, int), ConstantType> constantTypes, Dictionary<Expression, HashSet<Variable>> containedVariables)
+        public static AssignedTypes Analyze(KnowledgeBase knowledgeBase, Dictionary<(string, int), ConstantType> constantTypes, Dictionary<Expression, HashSet<Variable>> containedVariables)
         {
             var expressionTypes = new Dictionary<(string, int), ExpressionInfo>();
-
             foreach (var kvp in constantTypes)
             {
                 switch (kvp.Value)
@@ -47,6 +47,10 @@ namespace GameTheory.Gdl
                 }
             }
 
+            var variableTypes = (from f in knowledgeBase.Forms
+                                 from v in containedVariables[f]
+                                 select new { f, v }).ToLookup(p => p.f, p => new VariableInfo(p.v.Id));
+
             var init = (RelationInfo)expressionTypes[("INIT", 1)];
             var @true = (RelationInfo)expressionTypes[("TRUE", 1)];
             var next = (RelationInfo)expressionTypes[("NEXT", 1)];
@@ -72,7 +76,7 @@ namespace GameTheory.Gdl
 
             var distinct = (RelationInfo)expressionTypes[("DISTINCT", 2)];
 
-            new TypeUsageWalker(expressionTypes, containedVariables).Walk((Expression)knowledgeBase);
+            new TypeUsageWalker(expressionTypes, variableTypes).Walk((Expression)knowledgeBase);
             var roleUnion = (UnionType)role.Arguments[0].ReturnType;
             var roleEnum = EnumType.Create("Role", roleUnion.Expressions.Cast<ObjectInfo>());
             does.Arguments[0].ReturnType = legal.Arguments[0].ReturnType = goal.Arguments[0].ReturnType = role.Arguments[0].ReturnType;
@@ -83,12 +87,13 @@ namespace GameTheory.Gdl
 
             goal.Arguments[1].ReturnType = NumberType.Instance;
             distinct.Arguments[1].ReturnType = distinct.Arguments[0].ReturnType = ObjectType.Instance;
-            ReduceTypes(expressionTypes);
 
-            return expressionTypes;
+            var assignedTypes = new AssignedTypes(expressionTypes, variableTypes);
+            ReduceTypes(expressionTypes, variableTypes);
+            return assignedTypes;
         }
 
-        private static void ReduceTypes(Dictionary<(string, int), ExpressionInfo> expressionTypes)
+        private static void ReduceTypes(Dictionary<(string, int), ExpressionInfo> expressionTypes, ILookup<Form, VariableInfo> variableTypes)
         {
             var unionTypesCache = new Dictionary<ImmutableHashSet<ExpressionInfo>, UnionType>(
                 expressionTypes.Count,
@@ -105,7 +110,7 @@ namespace GameTheory.Gdl
                 intersectionTypesCache.Clear();
                 var enumCandidates = new List<(RelationInfo relation, UnionType unionType)>();
                 ExpressionTypeVisitor.Visit(
-                    expressionTypes.Values,
+                    expressionTypes.Values.Concat(variableTypes.SelectMany(v => v)),
                     expression =>
                     {
                         switch (expression.ReturnType)
@@ -355,24 +360,24 @@ namespace GameTheory.Gdl
             while (changed);
         }
 
-        private enum VariableDirection
-        {
-            None = 0,
-            In,
-            Out,
-        }
-
         private class TypeUsageWalker : SupportedExpressionsTreeWalker
         {
             private readonly Dictionary<(string, int), ExpressionInfo> expressionTypes;
-            private readonly Dictionary<Expression, HashSet<Variable>> containedVariables;
+            private readonly ILookup<Form, VariableInfo> containedVariables;
             private Dictionary<IndividualVariable, VariableInfo> variableTypes;
             private VariableDirection variableDirection;
 
-            public TypeUsageWalker(Dictionary<(string, int), ExpressionInfo> expressionTypes, Dictionary<Expression, HashSet<Variable>> containedVariables)
+            private enum VariableDirection
+            {
+                None = 0,
+                In,
+                Out,
+            }
+
+            public TypeUsageWalker(Dictionary<(string, int), ExpressionInfo> expressionTypes, ILookup<Form, VariableInfo> variableTypes)
             {
                 this.expressionTypes = expressionTypes;
-                this.containedVariables = containedVariables;
+                this.containedVariables = variableTypes;
             }
 
             public override void Walk(ImplicitRelationalSentence implicitRelationalSentence)
@@ -421,7 +426,7 @@ namespace GameTheory.Gdl
 
                 foreach (var form in knowledgeBase.Forms)
                 {
-                    this.variableTypes = this.containedVariables[form].ToDictionary(r => (IndividualVariable)r, r => new VariableInfo(r.Id));
+                    this.variableTypes = this.containedVariables[form].ToDictionary(r => new IndividualVariable(r.Id));
                     this.Walk((Expression)form);
                     this.variableTypes = null;
                 }

@@ -3,19 +3,18 @@
 namespace GameTheory.Gdl
 {
     using System;
-    using System.CodeDom;
     using System.CodeDom.Compiler;
     using System.Collections.Generic;
     using System.Globalization;
-    using GameTheory.Gdl.Types;
     using KnowledgeInterchangeFormat.Expressions;
+    using Microsoft.CodeAnalysis.CSharp;
     using Pegasus.Common;
 
     public class CompileResult
     {
         private readonly Lazy<Dictionary<(string, int), ConstantType>> constantTypes;
         private readonly Lazy<Dictionary<Expression, HashSet<Variable>>> containedVariables;
-        private readonly Lazy<Dictionary<(string, int), ExpressionInfo>> expressionTypes;
+        private readonly Lazy<AssignedTypes> assignedTypes;
 
         public CompileResult(string name, KnowledgeBase knowledgeBase)
         {
@@ -23,7 +22,7 @@ namespace GameTheory.Gdl
             this.KnowledgeBase = knowledgeBase;
             this.containedVariables = new Lazy<Dictionary<Expression, HashSet<Variable>>>(() => ContainedVariablesAnalyzer.Analyze(this.KnowledgeBase));
             this.constantTypes = new Lazy<Dictionary<(string, int), ConstantType>>(() => ConstantArityAnalyzer.Analyze(this.KnowledgeBase));
-            this.expressionTypes = new Lazy<Dictionary<(string, int), ExpressionInfo>>(() => AssignTypesAnalyzer.Analyze(this.KnowledgeBase, this.ConstantTypes, this.ContainedVariables));
+            this.assignedTypes = new Lazy<AssignedTypes>(() => AssignTypesAnalyzer.Analyze(this.KnowledgeBase, this.ConstantTypes, this.ContainedVariables));
 
             this.AtomicSentences = new Dictionary<Sentence, bool>();
             this.DatalogTerms = new Dictionary<Term, bool>();
@@ -34,7 +33,7 @@ namespace GameTheory.Gdl
 
         public Dictionary<Sentence, bool> AtomicSentences { get; }
 
-        public CodeCompileUnit CodeCompileUnit { get; set; }
+        public CSharpSyntaxNode DeclarationSyntax { get; set; }
 
         public string Code { get; set; }
 
@@ -49,7 +48,7 @@ namespace GameTheory.Gdl
         /// </summary>
         public IList<CompilerError> Errors { get; }
 
-        public Dictionary<(string, int), ExpressionInfo> ExpressionTypes => this.expressionTypes.Value;
+        public AssignedTypes AssignedTypes => this.assignedTypes.Value;
 
         public Dictionary<Expression, HashSet<Variable>> ContainedVariables => this.containedVariables.Value;
 

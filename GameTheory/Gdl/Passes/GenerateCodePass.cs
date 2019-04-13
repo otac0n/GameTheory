@@ -40,16 +40,7 @@ namespace GameTheory.Gdl.Passes
         {
             try
             {
-                using (var stringWriter = new StringWriter(CultureInfo.InvariantCulture))
-                {
-                    CodeDomProvider.CreateProvider("CSharp").GenerateCodeFromCompileUnit(result.CodeCompileUnit, stringWriter, new CodeGeneratorOptions
-                    {
-                        BlankLinesBetweenMembers = true,
-                        BracingStyle = "C",
-                        IndentString = "    ",
-                    });
-                    result.Code = stringWriter.ToString();
-                }
+                result.Code = result.DeclarationSyntax.ToFullString();
             }
             catch (Exception ex)
             {

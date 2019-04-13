@@ -3,7 +3,7 @@ namespace GameTheory.Gdl.Types
     public class ArgumentInfo : VariableInfo
     {
         internal ArgumentInfo(ExpressionWithArgumentsInfo expression, int index)
-            : base($"{expression.Id}_{index}")
+            : base($"_{index}")
         {
             this.Index = index;
             this.Expression = expression;

@@ -23,21 +23,13 @@ namespace GameTheory.Gdl.Types
         /// <param name="baseType">The base type for this type.</param>
         /// <param name="builtInType">The built-in type to use for this expression type.</param>
         public ObjectType(string name, ExpressionType baseType = null, Type builtInType = null)
+            : base(name)
         {
-            this.Name = name;
             this.baseType = baseType;
             this.BuiltInType = builtInType;
         }
 
-        /// <summary>
-        /// Gets the name of this type.
-        /// </summary>
-        public string Name { get; }
-
         /// <inheritdoc/>
         public override ExpressionType BaseType => this.baseType ?? base.BaseType;
-
-        /// <inheritdoc/>
-        public override string ToString() => this.Name;
     }
 }

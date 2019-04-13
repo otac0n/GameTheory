@@ -3,11 +3,13 @@
 namespace GameTheory.Gdl.Passes
 {
     using System;
-    using System.CodeDom;
     using System.Collections.Generic;
     using System.Linq;
     using GameTheory.Gdl.Types;
     using KnowledgeInterchangeFormat.Expressions;
+    using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     internal class ConvertToCodeDomPass : CompilePass
     {
@@ -26,87 +28,83 @@ namespace GameTheory.Gdl.Passes
 
         public override void Run(CompileResult result)
         {
-            var bodies = from f in result.KnowledgeBase.Forms
-                         group f by GetImplicatedConstantWithArity((Sentence)f);
+            var bodies = result.KnowledgeBase.Forms.Cast<Sentence>().ToLookup(f => GetImplicatedConstantWithArity(f));
 
             var allTypes = new List<ExpressionType>();
             var allExpressions = new List<ExpressionInfo>();
-            ExpressionTypeVisitor.Visit(result.ExpressionTypes.Values, visitExpression: allExpressions.Add, visitType: allTypes.Add);
+            ExpressionTypeVisitor.Visit(result.AssignedTypes, visitExpression: allExpressions.Add, visitType: allTypes.Add);
 
             var renderedTypes = allTypes.Where(t =>
                 t.BuiltInType == null &&
                 (!(t is ObjectType) || t is FunctionType) &&
-                !(t is UnionType) &&
-                !(t is IntersectionType) &&
-                !(t is NumberRangeType));
+                !RequiresRuntimeCheck(t));
             var renderedExpressions = allExpressions.Where(e =>
                 !(e is VariableInfo) &&
                 !(e is FunctionInfo) &&
                 !(e is ObjectInfo objectInfo && (objectInfo.Value is int || objectInfo.ReturnType is EnumType)));
 
-            CodeTypeReference reference(ExpressionType type)
+            TypeSyntax reference(ExpressionType type)
             {
-                if (type.BuiltInType != null)
-                {
-                    return new CodeTypeReference(type.BuiltInType);
-                }
-
                 switch (type)
                 {
                     case BooleanType booleanType:
-                        return new CodeTypeReference(typeof(bool));
+                        return SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.BoolKeyword));
 
                     case NumberType numberType:
                     case NumberRangeType numberRangeType:
-                        return new CodeTypeReference(typeof(int));
+                        return SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.IntKeyword));
 
                     case EnumType enumType:
-                        return new CodeTypeReference(enumType.Name);
+                        return SyntaxFactory.ParseTypeName(enumType.Name);
 
                     case StateType stateType:
-                        return new CodeTypeReference(stateType.Name);
+                        return SyntaxFactory.ParseTypeName(stateType.Name);
 
                     case FunctionType functionType:
-                        return new CodeTypeReference(functionType.Name);
+                        return SyntaxFactory.ParseTypeName(functionType.Name);
 
                     case ObjectType objectType:
                     case UnionType unionType:
                     case IntersectionType intersectionType:
-                        return new CodeTypeReference(typeof(object));
+                        return SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.ObjectKeyword));
+
+                    case ExpressionType _ when type.BuiltInType != null:
+                        return SyntaxFactory.ParseTypeName(type.BuiltInType.FullName);
                 }
 
                 throw new NotSupportedException();
             }
 
-            var root = new CodeCompileUnit();
-            var ns = new CodeNamespace
-            {
-                Name = result.Name,
-            };
-            root.Namespaces.Add(ns);
+            var root = SyntaxFactory.CompilationUnit();
 
-            var gameState = new CodeTypeDeclaration
-            {
-                Name = "GameState",
-            };
-            ns.Types.Add(gameState);
+            var ns = SyntaxFactory.NamespaceDeclaration(SyntaxFactory.ParseName(result.Name))
+                .WithUsings(
+                    SyntaxFactory.SingletonList(
+                        SyntaxFactory.UsingDirective(
+                            SyntaxFactory.QualifiedName(
+                                SyntaxFactory.QualifiedName(
+                                    SyntaxFactory.IdentifierName("System"),
+                                    SyntaxFactory.IdentifierName("Collections")),
+                                SyntaxFactory.IdentifierName("Generic")))));
+
+            var gameState = SyntaxFactory.ClassDeclaration("GameState")
+                .WithModifiers(
+                    new SyntaxTokenList(SyntaxFactory.Token(SyntaxKind.PublicKeyword)));
 
             foreach (var type in renderedTypes)
             {
                 switch (type)
                 {
                     case EnumType enumType:
-                        gameState.Members.Add(CreateEnumTypeDeclaration(enumType));
+                        gameState = gameState.AddMembers(CreateEnumTypeDeclaration(enumType));
                         break;
 
                     case FunctionType functionType:
-                        gameState.Members.Add(CreateFunctionTypeDeclaration(functionType, reference));
+                        gameState = gameState.AddMembers(CreateFunctionTypeDeclaration(functionType, reference));
                         break;
 
                     case StateType stateType:
-                        var classElement = CreateStateTypeDeclaration(stateType, reference);
-
-                        gameState.Members.Add(classElement);
+                        gameState = gameState.AddMembers(CreateStateTypeDeclaration(stateType, reference));
                         break;
 
                     default:
@@ -119,15 +117,9 @@ namespace GameTheory.Gdl.Passes
                 switch (expr)
                 {
                     case ObjectInfo objectInfo:
-                        if (objectInfo.ReturnType is ObjectType && objectInfo.Value is string)
+                        if (objectInfo.ReturnType is ObjectType && objectInfo.Value is string value)
                         {
-                            gameState.Members.Add(new CodeMemberField
-                            {
-                                Name = objectInfo.Id,
-                                Type = reference(objectInfo.ReturnType),
-                                InitExpression = new CodePrimitiveExpression(objectInfo.Value),
-                                Attributes = MemberAttributes.Private | MemberAttributes.Static,
-                            });
+                            gameState = gameState.AddMembers(CreateObjectDeclaration(objectInfo, value, reference));
                         }
                         else
                         {
@@ -137,19 +129,11 @@ namespace GameTheory.Gdl.Passes
                         break;
 
                     case RelationInfo relationInfo:
-                        gameState.Members.Add(CreateRelationFunctionDeclaration(relationInfo, reference));
+                        gameState = gameState.AddMembers(CreateRelationFunctionDeclaration(relationInfo, reference, bodies[(relationInfo.Id, relationInfo.Arity)], result.AssignedTypes.VariableTypes));
                         break;
 
                     case LogicalInfo logicalInfo:
-                        gameState.Members.Add(new CodeMemberMethod
-                        {
-                            Name = logicalInfo.Id,
-                            ReturnType = reference(logicalInfo.ReturnType),
-                            Statements =
-                            {
-                                new CodeMethodReturnStatement(new CodePrimitiveExpression(false)),
-                            },
-                        });
+                        gameState = gameState.AddMembers(CreateLogicalDeclaration(logicalInfo, reference, bodies[(logicalInfo.Id, 0)], result.AssignedTypes.VariableTypes));
                         break;
 
                     default:
@@ -157,120 +141,160 @@ namespace GameTheory.Gdl.Passes
                 }
             }
 
-            result.CodeCompileUnit = root;
+            ns = ns.AddMembers(gameState);
+            root = root.AddMembers(ns);
+            result.DeclarationSyntax = root.NormalizeWhitespace();
         }
 
-        private static CodeMemberMethod CreateRelationFunctionDeclaration(RelationInfo relationInfo, Func<ExpressionType, CodeTypeReference> reference)
+        private static FieldDeclarationSyntax CreateObjectDeclaration(ObjectInfo objectInfo, string value, Func<ExpressionType, TypeSyntax> reference)
         {
-            var methodElement = new CodeMemberMethod
-            {
-                Name = relationInfo.Id,
-                ReturnType = reference(relationInfo.ReturnType),
-            };
+            return SyntaxFactory.FieldDeclaration(
+                SyntaxFactory.VariableDeclaration(
+                    reference(objectInfo.ReturnType),
+                    SyntaxFactory.SingletonSeparatedList(
+                        SyntaxFactory.VariableDeclarator(
+                            SyntaxFactory.Identifier(objectInfo.Id))
+                        .WithInitializer(
+                            SyntaxFactory.EqualsValueClause(
+                            SyntaxFactory.LiteralExpression(SyntaxKind.StringLiteralExpression, SyntaxFactory.Literal(value)))))))
+                .WithModifiers(new SyntaxTokenList(
+                    SyntaxFactory.Token(SyntaxKind.PrivateKeyword),
+                    SyntaxFactory.Token(SyntaxKind.StaticKeyword)));
+        }
 
-            foreach (var arg in relationInfo.Arguments)
+        private static MemberDeclarationSyntax CreateLogicalDeclaration(LogicalInfo logicalInfo, Func<ExpressionType, TypeSyntax> reference, IEnumerable<Sentence> sentences, ILookup<Form, VariableInfo> variables) =>
+            CreateLogicalFunctionDeclaration(logicalInfo, Array.Empty<ArgumentInfo>(), reference, sentences, variables);
+
+        private static bool RequiresRuntimeCheck(ExpressionType t)
+        {
+            switch (t)
             {
-                methodElement.Parameters.Add(new CodeParameterDeclarationExpression
-                {
-                    Name = arg.Id,
-                    Type = reference(arg.ReturnType),
-                });
+                case UnionType unionType:
+                case IntersectionType intersectionType:
+                case NumberRangeType numberRangeType:
+                    return true;
+
+                default:
+                    return false;
+            }
+        }
+
+        private static MemberDeclarationSyntax CreateRelationFunctionDeclaration(RelationInfo relationInfo, Func<ExpressionType, TypeSyntax> reference, IEnumerable<Sentence> sentences, ILookup<Form, VariableInfo> variables) =>
+            CreateLogicalFunctionDeclaration(relationInfo, relationInfo.Arguments, reference, sentences, variables);
+
+        private static MemberDeclarationSyntax CreateLogicalFunctionDeclaration(ExpressionInfo expression, ArgumentInfo[] arguments, Func<ExpressionType, TypeSyntax> reference, IEnumerable<Sentence> sentences, ILookup<Form, VariableInfo> variables)
+        {
+            var methodElement = SyntaxFactory.MethodDeclaration(
+                reference(expression.ReturnType),
+                expression.Id)
+                .WithModifiers(new SyntaxTokenList(
+                    SyntaxFactory.Token(SyntaxKind.PrivateKeyword)));
+
+            foreach (var arg in arguments)
+            {
+                methodElement = methodElement.AddParameterListParameters(SyntaxFactory.Parameter(SyntaxFactory.Identifier(arg.Id)).WithType(reference(arg.ReturnType)));
             }
 
-            methodElement.Statements.Add(new CodeMethodReturnStatement(new CodePrimitiveExpression(false)));
+            var trivia = SyntaxFactory.TriviaList();
+            foreach (var sentence in sentences)
+            {
+                trivia = trivia.Add(SyntaxFactory.Comment($"// {sentence}"));
+            }
+
+            methodElement = methodElement.AddBodyStatements(SyntaxFactory.ReturnStatement(SyntaxFactory.LiteralExpression(SyntaxKind.FalseLiteralExpression)).WithLeadingTrivia(trivia));
 
             return methodElement;
         }
 
-        private static CodeTypeDeclaration CreateEnumTypeDeclaration(EnumType enumType)
+        private static EnumDeclarationSyntax CreateEnumTypeDeclaration(EnumType enumType)
         {
-            var enumElement = new CodeTypeDeclaration
-            {
-                Name = enumType.Name,
-                IsEnum = true,
-            };
+            var enumElement = SyntaxFactory.EnumDeclaration(enumType.Name)
+                .WithModifiers(
+                    new SyntaxTokenList(SyntaxFactory.Token(SyntaxKind.PublicKeyword)));
 
             foreach (var obj in enumType.Objects)
             {
-                enumElement.Members.Add(new CodeMemberField
-                {
-                    Name = obj.Id,
-                });
+                enumElement = enumElement.AddMembers(
+                    SyntaxFactory.EnumMemberDeclaration(obj.Id));
             }
 
             return enumElement;
         }
 
-        private static CodeTypeDeclaration CreateFunctionTypeDeclaration(FunctionType functionType, Func<ExpressionType, CodeTypeReference> reference)
+        private static StructDeclarationSyntax CreateFunctionTypeDeclaration(FunctionType functionType, Func<ExpressionType, TypeSyntax> reference)
         {
-            var structElement = new CodeTypeDeclaration
-            {
-                Name = functionType.Name,
-                IsStruct = true,
-            };
+            var structElement = SyntaxFactory.StructDeclaration(functionType.Name)
+                .WithModifiers(
+                    new SyntaxTokenList(SyntaxFactory.Token(SyntaxKind.PublicKeyword)));
 
-            var constructor = new CodeConstructor();
-            structElement.Members.Add(constructor);
+            var constructor = SyntaxFactory.ConstructorDeclaration(structElement.Identifier)
+                .WithModifiers(
+                    new SyntaxTokenList(SyntaxFactory.Token(SyntaxKind.PublicKeyword)));
 
             foreach (var arg in functionType.FunctionInfo.Arguments)
             {
                 var type = reference(arg.ReturnType);
-                var fieldElement = new CodeMemberField
-                {
-                    Name = "_" + arg.Id,
-                    Type = type,
-                    Attributes = MemberAttributes.Private,
-                };
+                var fieldVariable = SyntaxFactory.VariableDeclarator("_" + arg.Id);
+                var fieldElement = SyntaxFactory.FieldDeclaration(
+                    SyntaxFactory.VariableDeclaration(
+                        type,
+                        SyntaxFactory.SingletonSeparatedList(fieldVariable)))
+                    .WithModifiers(
+                        new SyntaxTokenList(SyntaxFactory.Token(SyntaxKind.PrivateKeyword)));
 
-                constructor.Parameters.Add(new CodeParameterDeclarationExpression
-                {
-                    Name = fieldElement.Name,
-                    Type = type,
-                });
-                constructor.Statements.Add(new CodeAssignStatement(
-                    new CodeFieldReferenceExpression(new CodeThisReferenceExpression(), fieldElement.Name),
-                    new CodeArgumentReferenceExpression(fieldElement.Name)));
+                var parameter = SyntaxFactory.Parameter(fieldVariable.Identifier).WithType(type);
+                constructor = constructor.AddParameterListParameters(parameter);
 
-                var propElement = new CodeMemberProperty
-                {
-                    Name = arg.Id,
-                    Type = type,
-                    GetStatements =
-                    {
-                        new CodeMethodReturnStatement(new CodeFieldReferenceExpression(new CodeThisReferenceExpression(), fieldElement.Name)),
-                    },
-                };
+                constructor = constructor.AddBodyStatements(SyntaxFactory.ExpressionStatement(
+                    SyntaxFactory.AssignmentExpression(
+                        SyntaxKind.SimpleAssignmentExpression,
+                        SyntaxFactory.MemberAccessExpression(
+                            SyntaxKind.SimpleMemberAccessExpression,
+                            SyntaxFactory.ThisExpression(),
+                            SyntaxFactory.IdentifierName(fieldVariable.Identifier)),
+                        SyntaxFactory.IdentifierName(parameter.Identifier))));
 
-                structElement.Members.Add(fieldElement);
-                structElement.Members.Add(propElement);
+                var propElement = SyntaxFactory.PropertyDeclaration(type, arg.Id)
+                    .WithModifiers(
+                        new SyntaxTokenList(SyntaxFactory.Token(SyntaxKind.PublicKeyword)))
+                    .AddAccessorListAccessors(
+                        SyntaxFactory.AccessorDeclaration(
+                            SyntaxKind.GetAccessorDeclaration,
+                            SyntaxFactory.Block(
+                                SyntaxFactory.ReturnStatement(SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.ThisExpression(),
+                                    SyntaxFactory.IdentifierName(fieldVariable.Identifier))))));
+
+                structElement = structElement.AddMembers(fieldElement, propElement);
             }
+
+            structElement = structElement.AddMembers(constructor);
 
             return structElement;
         }
 
-        private static CodeTypeDeclaration CreateStateTypeDeclaration(StateType stateType, Func<ExpressionType, CodeTypeReference> reference)
+        private static ClassDeclarationSyntax CreateStateTypeDeclaration(StateType stateType, Func<ExpressionType, TypeSyntax> reference)
         {
-            var classElement = new CodeTypeDeclaration
-            {
-                Name = stateType.Name,
-            };
+            var classElement = SyntaxFactory.ClassDeclaration(stateType.Name);
 
-            var constructor = new CodeConstructor();
+            var constructor = SyntaxFactory.ConstructorDeclaration(classElement.Identifier)
+                .WithBody(SyntaxFactory.Block())
+                .WithModifiers(
+                    new SyntaxTokenList(SyntaxFactory.Token(SyntaxKind.PublicKeyword)));
 
             foreach (var obj in stateType.Relations)
             {
-                constructor.Parameters.Add(new CodeParameterDeclarationExpression
-                {
-                    Name = obj.Id,
-                    Type = new CodeTypeReference(typeof(IEnumerable<>))
-                    {
-                        TypeArguments =
-                        {
-                            reference(obj.ReturnType),
-                        },
-                    },
-                });
+                constructor = constructor.AddParameterListParameters(
+                    SyntaxFactory.Parameter(
+                        SyntaxFactory.Identifier(obj.Id)).WithType(
+                            SyntaxFactory.GenericName(
+                                SyntaxFactory.Identifier("IEnumerable"),
+                                SyntaxFactory.TypeArgumentList(
+                                    SyntaxFactory.SingletonSeparatedList(reference(obj.ReturnType))))));
             }
+
+            classElement = classElement.AddMembers(constructor);
 
             return classElement;
         }

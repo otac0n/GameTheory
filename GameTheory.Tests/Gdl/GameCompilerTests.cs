@@ -8,7 +8,6 @@ namespace GameTheory.Tests.Gdl
     using System.Linq;
     using System.Reflection;
     using GameTheory.Gdl;
-    using GameTheory.Gdl.Types;
     using GameTheory.Players;
     using NUnit.Framework;
 
@@ -27,7 +26,8 @@ namespace GameTheory.Tests.Gdl
             var compiler = new GameCompiler();
             var result = compiler.Compile(gdl, friendlyName);
 
-            var graph = DebuggingTools.RenderTypeGraph(result.ExpressionTypes.Values.Where(v => !(v is ObjectInfo objectInfo && objectInfo.Value is int))).Replace("\"", "\"\"");
+            var code = result.Code;
+            var graph = DebuggingTools.RenderTypeGraph(result.AssignedTypes).Replace("\"", "\"\"");
 
             Assert.IsEmpty(result.Errors.Where(e => !e.IsWarning));
             Assert.NotNull(result.Type);
@@ -40,7 +40,8 @@ namespace GameTheory.Tests.Gdl
             var compiler = new GameCompiler();
             var result = compiler.Compile(gdl, friendlyName);
 
-            var graph = DebuggingTools.RenderTypeGraph(result.ExpressionTypes.Values.Where(v => !(v is ObjectInfo objectInfo && objectInfo.Value is int))).Replace("\"", "\"\"");
+            var code = result.Code;
+            var graph = DebuggingTools.RenderTypeGraph(result.AssignedTypes).Replace("\"", "\"\"");
 
             var stateType = result.Type;
             var moveType = stateType.GetInterfaces().Single(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IGameState<>)).GetGenericArguments().Single();

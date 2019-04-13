@@ -8,12 +8,10 @@ namespace GameTheory.Gdl.Types
     public class EnumType : ExpressionType
     {
         private EnumType(string name, IEnumerable<ObjectInfo> objects)
+            : base(name)
         {
-            this.Name = name;
             this.Objects = ImmutableHashSet.CreateRange(objects);
         }
-
-        public string Name { get; }
 
         public ImmutableHashSet<ObjectInfo> Objects { get; }
 
@@ -28,8 +26,5 @@ namespace GameTheory.Gdl.Types
 
             return enumType;
         }
-
-        /// <inheritdoc/>
-        public override string ToString() => this.Name;
     }
 }
