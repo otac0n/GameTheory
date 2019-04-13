@@ -10,7 +10,7 @@ namespace GameTheory.Gdl
 
     public class AssignedTypes : IEnumerable<ExpressionInfo>
     {
-        public AssignedTypes(Dictionary<(string, int), ExpressionInfo> expressionTypes, ILookup<Form, VariableInfo> variableTypes)
+        public AssignedTypes(Dictionary<(string, int), ExpressionInfo> expressionTypes, ILookup<Form, (IndividualVariable, VariableInfo)> variableTypes)
         {
             this.ExpressionTypes = expressionTypes;
 
@@ -19,9 +19,9 @@ namespace GameTheory.Gdl
 
         public Dictionary<(string, int), ExpressionInfo> ExpressionTypes { get; }
 
-        public ILookup<Form, VariableInfo> VariableTypes { get; }
+        public ILookup<Form, (IndividualVariable, VariableInfo)> VariableTypes { get; }
 
-        public IEnumerator<ExpressionInfo> GetEnumerator() => this.ExpressionTypes.Values.Concat(this.VariableTypes.SelectMany(x => x)).GetEnumerator();
+        public IEnumerator<ExpressionInfo> GetEnumerator() => this.ExpressionTypes.Values.Concat(this.VariableTypes.SelectMany(x => x).Select(x => x.Item2)).GetEnumerator();
 
         IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
     }

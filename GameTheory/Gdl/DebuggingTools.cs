@@ -1,9 +1,12 @@
 namespace GameTheory.Gdl
 {
+    using System;
     using System.Collections.Generic;
+    using System.Collections.Immutable;
     using System.Linq;
     using System.Text;
     using GameTheory.Gdl.Types;
+    using KnowledgeInterchangeFormat.Expressions;
 
     internal static class DebuggingTools
     {
@@ -21,7 +24,7 @@ namespace GameTheory.Gdl
             string exprId(ExpressionInfo expression) => expression is ExpressionWithArgumentsInfo expressionWithArgumentsInfo
                 ? expressionWithArgumentsInfo.ToString()
                 : expression is ArgumentInfo argumentInfo
-                    ? $"{exprId(argumentInfo.Expression)}:{argumentInfo.Id}"
+                    ? $"{exprId(argumentInfo.Expression)}:{varId(argumentInfo)}"
                     : expression is VariableInfo variableInfo
                         ? varId(variableInfo)
                         : expression.ToString();
@@ -37,7 +40,7 @@ namespace GameTheory.Gdl
 
                             foreach (var arg in expressionWithArgumentsInfo.Arguments)
                             {
-                                sb.Append($"<td port=\"{arg.Id}\">{arg}</td>");
+                                sb.Append($"<td port=\"{varId(arg)}\">{arg}</td>");
                             }
 
                             sb.AppendLine("</tr></table>>]");
@@ -108,6 +111,174 @@ namespace GameTheory.Gdl
 
             sb.AppendLine("}");
             return sb.ToString();
+        }
+
+        public static string RenderNameGraph(KnowledgeBase knowledgeBase, AssignedTypes assignedTypes)
+        {
+            var sb = new StringBuilder();
+            sb.AppendLine("digraph {");
+
+            var ids = new Dictionary<ExpressionType, string>();
+            var varIds = new Dictionary<VariableInfo, string>();
+            string varId(VariableInfo variable) => varIds.TryGetValue(variable, out var value) ? value : varIds[variable] = "v" + varIds.Count.ToString();
+            string exprId(ExpressionInfo expression) => expression is ExpressionWithArgumentsInfo expressionWithArgumentsInfo
+                ? expressionWithArgumentsInfo.ToString()
+                : expression is ArgumentInfo argumentInfo
+                    ? $"{exprId(argumentInfo.Expression)}:{varId(argumentInfo)}"
+                    : expression is VariableInfo variableInfo
+                        ? varId(variableInfo)
+                        : expression.ToString();
+
+            ExpressionTypeVisitor.Visit(
+                assignedTypes.Where(v => !(v is ObjectInfo objectInfo && objectInfo.Value is int)),
+                expression =>
+                {
+                    switch (expression)
+                    {
+                        case ExpressionWithArgumentsInfo expressionWithArgumentsInfo:
+                            sb.Append($"{exprId(expression)} [shape={(expression is RelationInfo ? "tab" : "box")} label=<<table border=\"0\"><tr><td colspan=\"{expressionWithArgumentsInfo.Arity}\" >{expressionWithArgumentsInfo}</td></tr><tr>");
+
+                            foreach (var arg in expressionWithArgumentsInfo.Arguments)
+                            {
+                                sb.Append($"<td port=\"{varId(arg)}\">{arg}</td>");
+                            }
+
+                            sb.AppendLine("</tr></table>>]");
+
+                            break;
+
+                        case ArgumentInfo argumentInfo:
+                            break;
+
+                        case VariableInfo variableInfo:
+                            sb.AppendLine($"{exprId(variableInfo)} [shape=parallelogram label=\"{variableInfo}\"];");
+                            break;
+                    }
+                },
+                type =>
+                {
+                });
+
+            new VariableNameWalker(sb, assignedTypes, exprId, varId).Walk((Expression)knowledgeBase);
+
+            sb.AppendLine("}");
+            return sb.ToString();
+        }
+
+        private class VariableNameWalker : SupportedExpressionsTreeWalker
+        {
+            private readonly Dictionary<(string, int), ExpressionInfo> expressionTypes;
+            private readonly Func<ExpressionInfo, string> exprId;
+            private readonly ILookup<Form, (IndividualVariable, VariableInfo)> containedVariables;
+            private readonly Func<VariableInfo, string> varId;
+            private readonly StringBuilder sb;
+            private Dictionary<IndividualVariable, VariableInfo> variableTypes;
+            private VariableDirection variableDirection;
+
+            public VariableNameWalker(StringBuilder sb, AssignedTypes assignedTypes, Func<ExpressionInfo, string> exprId, Func<VariableInfo, string> varId)
+            {
+                this.sb = sb;
+                this.expressionTypes = assignedTypes.ExpressionTypes;
+                this.exprId = exprId;
+                this.containedVariables = assignedTypes.VariableTypes;
+                this.varId = varId;
+            }
+
+            private enum VariableDirection
+            {
+                None = 0,
+                In,
+                Out,
+            }
+
+            public override void Walk(ImplicitRelationalSentence implicitRelationalSentence)
+            {
+                var relationInfo = (RelationInfo)this.expressionTypes[(implicitRelationalSentence.Relation.Id, implicitRelationalSentence.Arguments.Count)];
+                this.AddNameUsages(implicitRelationalSentence.Arguments, relationInfo);
+                base.Walk(implicitRelationalSentence);
+            }
+
+            public override void Walk(ImplicitFunctionalTerm implicitFunctionalTerm)
+            {
+                var functionInfo = (FunctionInfo)this.expressionTypes[(implicitFunctionalTerm.Function.Id, implicitFunctionalTerm.Arguments.Count)];
+                this.AddNameUsages(implicitFunctionalTerm.Arguments, functionInfo);
+                base.Walk(implicitFunctionalTerm);
+            }
+
+            public override void Walk(Implication implication)
+            {
+                var previousDirection = this.variableDirection;
+                try
+                {
+                    this.variableDirection = VariableDirection.In;
+                    if (implication.Antecedents != null)
+                    {
+                        foreach (var sentence in implication.Antecedents)
+                        {
+                            this.Walk((Expression)sentence);
+                        }
+                    }
+
+                    this.variableDirection = VariableDirection.Out;
+                    if (implication.Consequent != null)
+                    {
+                        this.Walk((Expression)implication.Consequent);
+                    }
+                }
+                finally
+                {
+                    this.variableDirection = previousDirection;
+                }
+            }
+
+            public override void Walk(KnowledgeBase knowledgeBase)
+            {
+                this.variableDirection = VariableDirection.Out;
+
+                foreach (var form in knowledgeBase.Forms)
+                {
+                    this.variableTypes = this.containedVariables[form].ToDictionary(r => r.Item1, r => r.Item2);
+                    this.Walk((Expression)form);
+                    this.variableTypes = null;
+                }
+
+                this.variableDirection = VariableDirection.None;
+            }
+
+            private void AddNameUsages(ImmutableList<Term> arguments, ExpressionWithArgumentsInfo relationInfo)
+            {
+                var arity = arguments.Count;
+                for (var i = 0; i < arity; i++)
+                {
+                    var source = relationInfo.Arguments[i];
+                    var target = this.GetExpressionInfo(arguments[i]);
+
+                    if (!(target is VariableInfo))
+                    {
+                        continue;
+                    }
+
+                    this.sb.AppendLine($"{this.exprId(source)} -> {this.exprId(target)};");
+                }
+            }
+
+            private ExpressionInfo GetExpressionInfo(Term arg)
+            {
+                switch (arg)
+                {
+                    case Constant constant:
+                        return this.expressionTypes[(constant.Id, 0)];
+
+                    case ImplicitFunctionalTerm implicitFunctionalTerm:
+                        return this.expressionTypes[(implicitFunctionalTerm.Function.Id, implicitFunctionalTerm.Arguments.Count)];
+
+                    case IndividualVariable individualVariable:
+                        return this.variableTypes[individualVariable];
+
+                    default:
+                        throw new NotImplementedException();
+                }
+            }
         }
     }
 }

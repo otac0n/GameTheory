@@ -169,6 +169,24 @@ namespace GameTheory.Gdl {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to An unexpected error was encountered while assigning types. {0}.
+        /// </summary>
+        internal static string GDL099_ERROR_ErrorAssigningTypes {
+            get {
+                return ResourceManager.GetString("GDL099_ERROR_ErrorAssigningTypes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An unexpected error was encountered while assigning names. {0}.
+        /// </summary>
+        internal static string GDL100_ERROR_ErrorAssigningNames {
+            get {
+                return ResourceManager.GetString("GDL100_ERROR_ErrorAssigningNames", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to An unexpected error was encountered while generating the game code. {0}.
         /// </summary>
         internal static string GDL101_ERROR_ErrorGeneratingCode {

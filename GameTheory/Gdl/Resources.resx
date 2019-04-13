@@ -153,6 +153,12 @@
   <data name="GDL014_ERROR_DoesRelationDependency" xml:space="preserve">
     <value>The 'does' relation may not be used with the legal, goal, or terminal relations.</value>
   </data>
+  <data name="GDL099_ERROR_ErrorAssigningTypes" xml:space="preserve">
+    <value>An unexpected error was encountered while assigning types. {0}</value>
+  </data>
+  <data name="GDL100_ERROR_ErrorAssigningNames" xml:space="preserve">
+    <value>An unexpected error was encountered while assigning names. {0}</value>
+  </data>
   <data name="GDL101_ERROR_ErrorGeneratingCode" xml:space="preserve">
     <value>An unexpected error was encountered while generating the game code. {0}</value>
   </data>

@@ -54,7 +54,7 @@ namespace GameTheory.Gdl
 
         public KnowledgeBase KnowledgeBase { get; }
 
-        public string Name { get; }
+        public string Name { get; set; }
 
         /// <summary>
         /// Gets or sets the type resulting from compilation.

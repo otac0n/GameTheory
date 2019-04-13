@@ -27,6 +27,7 @@ namespace GameTheory.Gdl
             public override void Walk(Expression expression)
             {
                 var originalVariables = this.containedVariables;
+                this.containedVariables = new HashSet<Variable>();
 
                 base.Walk(expression);
 

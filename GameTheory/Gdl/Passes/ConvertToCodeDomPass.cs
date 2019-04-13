@@ -15,21 +15,16 @@ namespace GameTheory.Gdl.Passes
     {
         public override IList<string> BlockedByErrors => new[]
         {
-            EnforceGdlRestrictions.RoleRelationUsedInRuleError,
-            EnforceGdlRestrictions.InitRelationUsedInRuleBodyError,
-            EnforceGdlRestrictions.InitRelationDependencyError,
-            EnforceGdlRestrictions.TrueRelationUsedOutsideRuleBodyError,
-            EnforceGdlRestrictions.NextRelationUsedOutsideRuleHeadError,
-            EnforceGdlRestrictions.DoesUsedOutsideRuleBodyError,
-            EnforceGdlRestrictions.DoesRelationDependencyError,
+            "GDL099", // TODO: Link to AssignNamesPass
         };
 
-        public override IList<string> ErrorsProduced => Array.Empty<string>();
+        public override IList<string> ErrorsProduced => new[]
+        {
+            "GDL100", // TODO: Create constant, etc.
+        };
 
         public override void Run(CompileResult result)
         {
-            var bodies = result.KnowledgeBase.Forms.Cast<Sentence>().ToLookup(f => GetImplicatedConstantWithArity(f));
-
             var allTypes = new List<ExpressionType>();
             var allExpressions = new List<ExpressionInfo>();
             ExpressionTypeVisitor.Visit(result.AssignedTypes, visitExpression: allExpressions.Add, visitType: allTypes.Add);
@@ -129,11 +124,11 @@ namespace GameTheory.Gdl.Passes
                         break;
 
                     case RelationInfo relationInfo:
-                        gameState = gameState.AddMembers(CreateRelationFunctionDeclaration(relationInfo, reference, bodies[(relationInfo.Id, relationInfo.Arity)], result.AssignedTypes.VariableTypes));
+                        gameState = gameState.AddMembers(CreateRelationFunctionDeclaration(relationInfo, reference, result.AssignedTypes.VariableTypes));
                         break;
 
                     case LogicalInfo logicalInfo:
-                        gameState = gameState.AddMembers(CreateLogicalDeclaration(logicalInfo, reference, bodies[(logicalInfo.Id, 0)], result.AssignedTypes.VariableTypes));
+                        gameState = gameState.AddMembers(CreateLogicalDeclaration(logicalInfo, reference, result.AssignedTypes.VariableTypes));
                         break;
 
                     default:
@@ -162,8 +157,8 @@ namespace GameTheory.Gdl.Passes
                     SyntaxFactory.Token(SyntaxKind.StaticKeyword)));
         }
 
-        private static MemberDeclarationSyntax CreateLogicalDeclaration(LogicalInfo logicalInfo, Func<ExpressionType, TypeSyntax> reference, IEnumerable<Sentence> sentences, ILookup<Form, VariableInfo> variables) =>
-            CreateLogicalFunctionDeclaration(logicalInfo, Array.Empty<ArgumentInfo>(), reference, sentences, variables);
+        private static MemberDeclarationSyntax CreateLogicalDeclaration(LogicalInfo logicalInfo, Func<ExpressionType, TypeSyntax> reference, ILookup<Form, (IndividualVariable, VariableInfo)> variables) =>
+            CreateLogicalFunctionDeclaration(logicalInfo, Array.Empty<ArgumentInfo>(), reference, logicalInfo.Body, variables);
 
         private static bool RequiresRuntimeCheck(ExpressionType t)
         {
@@ -179,10 +174,10 @@ namespace GameTheory.Gdl.Passes
             }
         }
 
-        private static MemberDeclarationSyntax CreateRelationFunctionDeclaration(RelationInfo relationInfo, Func<ExpressionType, TypeSyntax> reference, IEnumerable<Sentence> sentences, ILookup<Form, VariableInfo> variables) =>
-            CreateLogicalFunctionDeclaration(relationInfo, relationInfo.Arguments, reference, sentences, variables);
+        private static MemberDeclarationSyntax CreateRelationFunctionDeclaration(RelationInfo relationInfo, Func<ExpressionType, TypeSyntax> reference, ILookup<Form, (IndividualVariable, VariableInfo)> variables) =>
+            CreateLogicalFunctionDeclaration(relationInfo, relationInfo.Arguments, reference, relationInfo.Body, variables);
 
-        private static MemberDeclarationSyntax CreateLogicalFunctionDeclaration(ExpressionInfo expression, ArgumentInfo[] arguments, Func<ExpressionType, TypeSyntax> reference, IEnumerable<Sentence> sentences, ILookup<Form, VariableInfo> variables)
+        private static MemberDeclarationSyntax CreateLogicalFunctionDeclaration(ExpressionInfo expression, ArgumentInfo[] arguments, Func<ExpressionType, TypeSyntax> reference, IEnumerable<Sentence> sentences, ILookup<Form, (IndividualVariable, VariableInfo)> variables)
         {
             var methodElement = SyntaxFactory.MethodDeclaration(
                 reference(expression.ReturnType),
@@ -192,7 +187,10 @@ namespace GameTheory.Gdl.Passes
 
             foreach (var arg in arguments)
             {
-                methodElement = methodElement.AddParameterListParameters(SyntaxFactory.Parameter(SyntaxFactory.Identifier(arg.Id)).WithType(reference(arg.ReturnType)));
+                methodElement = methodElement.AddParameterListParameters(
+                    SyntaxFactory.Parameter(
+                        SyntaxFactory.Identifier(arg.Id.TrimStart('?'))) // TODO: Better name resolution.
+                    .WithType(reference(arg.ReturnType)));
             }
 
             var trivia = SyntaxFactory.TriviaList();
@@ -234,7 +232,7 @@ namespace GameTheory.Gdl.Passes
             foreach (var arg in functionType.FunctionInfo.Arguments)
             {
                 var type = reference(arg.ReturnType);
-                var fieldVariable = SyntaxFactory.VariableDeclarator("_" + arg.Id);
+                var fieldVariable = SyntaxFactory.VariableDeclarator("_" + arg.Id.TrimStart('?')); // TODO: Better name resolution.
                 var fieldElement = SyntaxFactory.FieldDeclaration(
                     SyntaxFactory.VariableDeclaration(
                         type,
@@ -254,7 +252,7 @@ namespace GameTheory.Gdl.Passes
                             SyntaxFactory.IdentifierName(fieldVariable.Identifier)),
                         SyntaxFactory.IdentifierName(parameter.Identifier))));
 
-                var propElement = SyntaxFactory.PropertyDeclaration(type, arg.Id)
+                var propElement = SyntaxFactory.PropertyDeclaration(type, arg.Id.TrimStart('?')) // TODO: Better name resolution.
                     .WithModifiers(
                         new SyntaxTokenList(SyntaxFactory.Token(SyntaxKind.PublicKeyword)))
                     .AddAccessorListAccessors(
@@ -297,21 +295,6 @@ namespace GameTheory.Gdl.Passes
             classElement = classElement.AddMembers(constructor);
 
             return classElement;
-        }
-
-        private static (string id, int arity) GetImplicatedConstantWithArity(Sentence form)
-        {
-            switch (form)
-            {
-                case ConstantSentence constantSentence:
-                    return (constantSentence.Constant.Id, 0);
-                case ImplicitRelationalSentence implicitRelationalSentence:
-                    return (implicitRelationalSentence.Relation.Id, implicitRelationalSentence.Arguments.Count);
-                case Implication implication:
-                    return GetImplicatedConstantWithArity(implication.Consequent);
-                default:
-                    throw new InvalidOperationException();
-            }
         }
     }
 }

@@ -26,8 +26,9 @@ namespace GameTheory.Tests.Gdl
             var compiler = new GameCompiler();
             var result = compiler.Compile(gdl, friendlyName);
 
+            var types = DebuggingTools.RenderTypeGraph(result.AssignedTypes).Replace("\"", "\"\"");
+            var names = DebuggingTools.RenderNameGraph(result.KnowledgeBase, result.AssignedTypes).Replace("\"", "\"\"");
             var code = result.Code;
-            var graph = DebuggingTools.RenderTypeGraph(result.AssignedTypes).Replace("\"", "\"\"");
 
             Assert.IsEmpty(result.Errors.Where(e => !e.IsWarning));
             Assert.NotNull(result.Type);
@@ -40,8 +41,9 @@ namespace GameTheory.Tests.Gdl
             var compiler = new GameCompiler();
             var result = compiler.Compile(gdl, friendlyName);
 
+            var types = DebuggingTools.RenderTypeGraph(result.AssignedTypes).Replace("\"", "\"\"");
+            var names = DebuggingTools.RenderNameGraph(result.KnowledgeBase, result.AssignedTypes).Replace("\"", "\"\"");
             var code = result.Code;
-            var graph = DebuggingTools.RenderTypeGraph(result.AssignedTypes).Replace("\"", "\"\"");
 
             var stateType = result.Type;
             var moveType = stateType.GetInterfaces().Single(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IGameState<>)).GetGenericArguments().Single();
