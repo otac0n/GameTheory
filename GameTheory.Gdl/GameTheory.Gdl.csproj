@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>net462;netcoreapp2.0</TargetFrameworks>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="FixMe" Version="1.0.0" />
+    <PackageReference Include="Intervals" Version="1.2.0-alpha0021" />
+    <PackageReference Include="KnowledgeInterchangeFormat" Version="0.2.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.0.0" />
+    <PackageReference Include="Pegasus" Version="4.1.0" />
+    <PackageReference Include="StyleCop.Analyzers" Version="1.1.1-rc.114" />
+    <PackageReference Include="System.CodeDom" Version="4.5.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\GameTheory\GameTheory.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Update="Resources.Designer.cs">
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Update="Resources.resx">
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <Generator>ResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
+  </ItemGroup>
+</Project>

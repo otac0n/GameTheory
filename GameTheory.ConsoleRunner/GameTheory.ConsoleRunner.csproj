@@ -123,8 +123,8 @@
     </AdditionalFiles>
   </ItemGroup>
   <ItemGroup>
-    <Analyzer Include="..\packages\StyleCop.Analyzers.1.0.2\analyzers\dotnet\cs\StyleCop.Analyzers.CodeFixes.dll" />
-    <Analyzer Include="..\packages\StyleCop.Analyzers.1.0.2\analyzers\dotnet\cs\StyleCop.Analyzers.dll" />
+    <Analyzer Include="..\packages\StyleCop.Analyzers.Unstable.1.1.1.114\analyzers\dotnet\cs\StyleCop.Analyzers.CodeFixes.dll" />
+    <Analyzer Include="..\packages\StyleCop.Analyzers.Unstable.1.1.1.114\analyzers\dotnet\cs\StyleCop.Analyzers.dll" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GameTheory\GameTheory.csproj">
@@ -139,8 +139,8 @@
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\Weave.2.0.0\build\Weave.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Weave.2.0.0\build\Weave.targets'))" />
-    <Error Condition="!Exists('..\packages\FixMe.0.1.1\build\FixMe.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\FixMe.0.1.1\build\FixMe.targets'))" />
+    <Error Condition="!Exists('..\packages\FixMe.1.0.0\build\FixMe.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\FixMe.1.0.0\build\FixMe.targets'))" />
   </Target>
   <Import Project="..\packages\Weave.2.0.0\build\Weave.targets" Condition="Exists('..\packages\Weave.2.0.0\build\Weave.targets')" />
-  <Import Project="..\packages\FixMe.0.1.1\build\FixMe.targets" Condition="Exists('..\packages\FixMe.0.1.1\build\FixMe.targets')" />
+  <Import Project="..\packages\FixMe.1.0.0\build\FixMe.targets" Condition="Exists('..\packages\FixMe.1.0.0\build\FixMe.targets')" />
 </Project>
