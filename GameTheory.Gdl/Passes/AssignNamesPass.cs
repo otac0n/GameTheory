@@ -5,6 +5,7 @@ namespace GameTheory.Gdl.Passes
     using System.Collections.Immutable;
     using System.Linq;
     using GameTheory.Gdl.Types;
+    using KnowledgeInterchangeFormat;
     using KnowledgeInterchangeFormat.Expressions;
 
     internal class AssignNamesPass : CompilePass
@@ -40,6 +41,9 @@ namespace GameTheory.Gdl.Passes
             }
 
             AssignArgumentNames(result.KnowledgeBase, result.AssignedTypes);
+
+            // TODO: Enable renaming variables.
+            ////result.KnowledgeBase = (KnowledgeBase)new VariableReplacer(result).Walk((Expression)result.KnowledgeBase);
         }
 
         private static void AssignArgumentNames(KnowledgeBase knowledgeBase, AssignedTypes assignedTypes)
@@ -126,6 +130,101 @@ namespace GameTheory.Gdl.Passes
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// Replaces variables in an <see cref="Expression"/> tree.
+        /// </summary>
+        internal class VariableReplacer : ExpressionTreeReplacer
+        {
+            private readonly CompileResult result;
+            private Dictionary<IndividualVariable, IndividualVariable> replacements;
+
+            /// <summary>
+            /// Initializes a new instance of the <see cref="VariableReplacer"/> class.
+            /// </summary>
+            /// <param name="replacements">The replacements to perform.</param>
+            public VariableReplacer(CompileResult result)
+            {
+                this.result = result;
+            }
+
+            /// <inheritdoc/>
+            public override Expression Walk(KnowledgeBase knowledgeBase, ImmutableStack<string> path)
+            {
+                var forms = knowledgeBase.Forms;
+
+                for (var f = 0; f < forms.Count; f++)
+                {
+                    var sentence = (Sentence)forms[f];
+                    var implicated = sentence.GetImplicatedSentence();
+                    var args = implicated is ImplicitRelationalSentence implicitRelationalSentence
+                        ? implicitRelationalSentence.Arguments
+                        : ImmutableList<Term>.Empty;
+                    var arity = args.Count;
+                    if (arity == 0)
+                    {
+                        continue;
+                    }
+
+                    var relationInfo = (RelationInfo)this.result.AssignedTypes.ExpressionTypes[sentence.GetImplicatedConstantWithArity()];
+                    var parameters = relationInfo.Arguments;
+
+                    var replacements = new Dictionary<IndividualVariable, IndividualVariable>();
+                    ////var parameterEquality = new List<(ArgumentInfo, Term)>();
+                    for (var i = 0; i < parameters.Length; i++)
+                    {
+                        var arg = args[i];
+                        var param = parameters[i];
+                        if (arg is IndividualVariable argVar)
+                        {
+                            if (param.Id != argVar.Id)
+                            {
+                                if (replacements.TryGetValue(argVar, out var matching))
+                                {
+                                    ////parameterEquality.Add((param, matching));
+                                }
+                                else
+                                {
+                                    replacements[argVar] = new IndividualVariable(param.Id);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            ////parameterEquality.Add((param, arg));
+                        }
+                    }
+
+                    // TODO: Add renames to avoid name collisions.
+                    var collisions = new HashSet<IndividualVariable>(replacements.Values);
+                    collisions.ExceptWith(replacements.Keys);
+
+                    this.replacements = replacements;
+                    var replaced = (Sentence)this.Walk((Expression)sentence);
+                    this.replacements = null;
+
+                    if (replaced != sentence)
+                    {
+                        var sentenceVars = this.result.AssignedTypes.VariableTypes[sentence];
+
+                        // TODO: Update the contained variables.
+                        // TODO: Update the sentence variables.
+                        // TODO: Update expression type bodies.
+                        forms = forms.SetItem(f, replaced);
+                    }
+                }
+
+                return forms != knowledgeBase.Forms
+                    ? new KnowledgeBase(forms)
+                    : knowledgeBase;
+            }
+
+            /// <inheritdoc/>
+            public override Expression Walk(IndividualVariable individualVariable, ImmutableStack<string> path) =>
+                this.replacements.TryGetValue(individualVariable, out var replacement)
+                    ? replacement
+                    : individualVariable;
         }
 
         private class VariableNameWalker : SupportedExpressionsTreeWalker

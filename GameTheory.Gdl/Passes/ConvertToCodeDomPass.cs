@@ -143,7 +143,17 @@ namespace GameTheory.Gdl.Passes
                             break;
 
                         case RelationInfo relationInfo:
-                            gameState = gameState.AddMembers(this.CreateRelationFunctionDeclaration(relationInfo));
+                            switch (relationInfo.Id)
+                            {
+                                case "INIT":
+                                case "NEXT":
+                                    break;
+
+                                default:
+                                    gameState = gameState.AddMembers(this.CreateRelationFunctionDeclaration(relationInfo));
+                                    break;
+                            }
+
                             break;
 
                         case LogicalInfo logicalInfo:
@@ -205,11 +215,12 @@ namespace GameTheory.Gdl.Passes
                     .WithModifiers(new SyntaxTokenList(
                         SyntaxFactory.Token(SyntaxKind.PrivateKeyword)));
 
+                var parameterNames = parameters.ToDictionary(p => p, p => p.Id.TrimStart('?')); // TODO: Better name resolution.
+
                 foreach (var param in parameters)
                 {
                     methodElement = methodElement.AddParameterListParameters(
-                        SyntaxFactory.Parameter(
-                            SyntaxFactory.Identifier(param.Id.TrimStart('?'))) // TODO: Better name resolution.
+                        SyntaxFactory.Parameter(SyntaxFactory.Identifier(parameterNames[param]))
                         .WithType(Reference(param.ReturnType)));
                 }
 
@@ -217,49 +228,58 @@ namespace GameTheory.Gdl.Passes
 
                 foreach (var sentence in sentences)
                 {
+                    var scope = ImmutableDictionary<IndividualVariable, NameSyntax>.Empty;
+
                     var implicated = sentence.GetImplicatedSentence();
                     var args = implicated is ImplicitRelationalSentence implicitRelationalSentence
                         ? implicitRelationalSentence.Arguments
                         : ImmutableList<Term>.Empty;
                     Debug.Assert(args.Count == parameters.Length, "Arguments' arity doesn't match parameters' arity.");
 
-                    var replacements = new Dictionary<IndividualVariable, IndividualVariable>();
-                    var parameterEquality = new List<(ArgumentInfo, Term)>();
+                    var parameterEquality = new List<(NameSyntax, ExpressionSyntax)>();
                     for (var i = 0; i < parameters.Length; i++)
                     {
-                        var arg = args[i];
-                        var param = parameters[i];
-                        if (arg is IndividualVariable argVar)
+                        void X(Term expr, ArgumentInfo param, NameSyntax path)
                         {
-                            if (param.Id != argVar.Id)
+                            if (expr is IndividualVariable argVar)
                             {
-                                if (replacements.TryGetValue(argVar, out var matching))
+                                if (scope.TryGetValue(argVar, out var matching))
                                 {
-                                    parameterEquality.Add((param, matching));
+                                    parameterEquality.Add((path, matching));
                                 }
                                 else
                                 {
-                                    replacements[argVar] = new IndividualVariable(param.Id);
+                                    scope = scope.SetItem(argVar, path);
                                 }
                             }
+                            else
+                            {
+                                var arg = this.result.AssignedTypes.GetExpressionInfo(expr);
+
+                                // TODO: Allow arg to be a larger type than param. There's no iheritance. Will this matter?
+                                if (param.ReturnType != arg.ReturnType)
+                                {
+                                    // TODO: Type check for arg.ReturnType and change `path`
+                                }
+
+                                X();
+
+                                // TODO: Should be recursive to support pulling variables from arguments.
+                                parameterEquality.Add((path, this.ConvertExpression(expr, scope)));
+                            }
                         }
-                        else
-                        {
-                            parameterEquality.Add((param, arg));
-                        }
+
+                        var p = parameters[i];
+                        X(args[i], p, SyntaxFactory.ParseName(parameterNames[p]));
                     }
 
-                    // TODO: Add renames to avoid name collisions.
-
-                    var sentenceVars = this.result.AssignedTypes.VariableTypes[sentence];
-                    var replaced = (Sentence)new VariableReplacer(replacements).Walk((Expression)sentence); // TODO: Update the sentence variables.
-                    var conditions = replaced is Implication implication
+                    var conditions = sentence is Implication implication
                         ? implication.Antecedents
                         : ImmutableList<Sentence>.Empty;
 
                     StatementSyntax root = returnTrue;
 
-                    root = conditions.Aggregate(root, (inner, condition) => this.ConvertSentence(condition, inner));
+                    root = conditions.Aggregate(root, (inner, condition) => this.ConvertSentence(condition, inner, scope));
 
                     if (parameterEquality.Count > 0)
                     {
@@ -275,8 +295,8 @@ namespace GameTheory.Gdl.Passes
                                         SyntaxFactory.SeparatedList<ArgumentSyntax>()
                                             .AddRange(new ArgumentSyntax[]
                                             {
-                                                SyntaxFactory.Argument(SyntaxFactory.ParseName(pair.Item1.Id.TrimStart('?'))), // TODO: Better name resolution.
-                                                SyntaxFactory.Argument(this.ConvertExpression(pair.Item2)),
+                                                SyntaxFactory.Argument(pair.Item1),
+                                                SyntaxFactory.Argument(pair.Item2),
                                             })))),
                             SyntaxFactory.Block(root))
                             .WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.Comment($"// {implicated}")));
@@ -290,39 +310,39 @@ namespace GameTheory.Gdl.Passes
                 return methodElement;
             }
 
-            private StatementSyntax ConvertSentence(Sentence sentence, StatementSyntax inner) =>
+            private StatementSyntax ConvertSentence(Sentence sentence, StatementSyntax inner, ImmutableDictionary<IndividualVariable, NameSyntax> scope) =>
                 SyntaxFactory.IfStatement(
-                    this.ConvertCondition(sentence),
+                    this.ConvertCondition(sentence, scope),
                     SyntaxFactory.Block(inner))
                 .WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.Comment($"// {sentence}")));
 
-            private ExpressionSyntax ConvertCondition(Sentence condition)
+            private ExpressionSyntax ConvertCondition(Sentence condition, ImmutableDictionary<IndividualVariable, NameSyntax> scope)
             {
                 switch (condition)
                 {
                     case ImplicitRelationalSentence implicitRelationalSentence:
-                        return this.ConvertImplicitRelationalCondition(implicitRelationalSentence);
+                        return this.ConvertImplicitRelationalCondition(implicitRelationalSentence, scope);
 
                     case ConstantSentence constantSentence:
                         return this.ConvertLogicalCondition(constantSentence);
 
                     case Negation negation:
-                        return this.ConvertNegationCondition(negation);
+                        return this.ConvertNegationCondition(negation, scope);
 
                     default:
                         throw new NotSupportedException();
                 }
             }
 
-            private ExpressionSyntax ConvertExpression(Term term)
+            private ExpressionSyntax ConvertExpression(Term term, ImmutableDictionary<IndividualVariable, NameSyntax> scope)
             {
                 switch (term)
                 {
                     case ImplicitFunctionalTerm implicitFunctionalTerm:
-                        return this.ConvertFunctionalTermExpression(implicitFunctionalTerm);
+                        return this.ConvertFunctionalTermExpression(implicitFunctionalTerm, scope);
 
                     case IndividualVariable individualVariable:
-                        return this.ConvertVariableExpression(individualVariable);
+                        return this.ConvertVariableExpression(individualVariable, scope);
 
                     case Constant constant:
                         return this.ConvertConstantExpression(constant);
@@ -335,16 +355,16 @@ namespace GameTheory.Gdl.Passes
             private ExpressionSyntax ConvertConstantExpression(Constant constant) =>
                 CreateObjectReference((ObjectInfo)this.result.AssignedTypes.ExpressionTypes[(constant.Id, 0)]);
 
-            private ExpressionSyntax ConvertVariableExpression(IndividualVariable individualVariable) =>
-                SyntaxFactory.ParseName(individualVariable.Id.TrimStart('?')); // TODO: Better name resolution.
+            private ExpressionSyntax ConvertVariableExpression(IndividualVariable individualVariable, ImmutableDictionary<IndividualVariable, NameSyntax> scope) =>
+                scope[individualVariable];
 
-            private ExpressionSyntax ConvertFunctionalTermExpression(ImplicitFunctionalTerm implicitFunctionalTerm) =>
+            private ExpressionSyntax ConvertFunctionalTermExpression(ImplicitFunctionalTerm implicitFunctionalTerm, ImmutableDictionary<IndividualVariable, NameSyntax> scope) =>
                 SyntaxFactory.ObjectCreationExpression( // TODO: Runtime type checks
                     SyntaxFactory.IdentifierName(implicitFunctionalTerm.Function.Id))
                 .WithArgumentList(
                     SyntaxFactory.ArgumentList(
                         SyntaxFactory.SeparatedList<ArgumentSyntax>()
-                            .AddRange(implicitFunctionalTerm.Arguments.Select(arg => SyntaxFactory.Argument(this.ConvertExpression(arg))))));
+                            .AddRange(implicitFunctionalTerm.Arguments.Select(arg => SyntaxFactory.Argument(this.ConvertExpression(arg, scope))))));
 
             private ExpressionSyntax ConvertLogicalCondition(ConstantSentence constantSentence) =>
                 SyntaxFactory.InvocationExpression( // TODO: Runtime type checks
@@ -353,12 +373,12 @@ namespace GameTheory.Gdl.Passes
                         SyntaxFactory.ThisExpression(),
                         SyntaxFactory.IdentifierName(constantSentence.Constant.Id)));
 
-            private ExpressionSyntax ConvertNegationCondition(Negation negation) =>
+            private ExpressionSyntax ConvertNegationCondition(Negation negation, ImmutableDictionary<IndividualVariable, NameSyntax> scope) =>
                 SyntaxFactory.PrefixUnaryExpression(
                     SyntaxKind.LogicalNotExpression,
-                    this.ConvertCondition(negation.Negated));
+                    this.ConvertCondition(negation.Negated, scope));
 
-            private ExpressionSyntax ConvertImplicitRelationalCondition(ImplicitRelationalSentence implicitRelationalSentence) =>
+            private ExpressionSyntax ConvertImplicitRelationalCondition(ImplicitRelationalSentence implicitRelationalSentence, ImmutableDictionary<IndividualVariable, NameSyntax> scope) =>
                 SyntaxFactory.InvocationExpression( // TODO: Runtime type checks
                     SyntaxFactory.MemberAccessExpression(
                         SyntaxKind.SimpleMemberAccessExpression,
@@ -366,7 +386,7 @@ namespace GameTheory.Gdl.Passes
                         SyntaxFactory.IdentifierName(implicitRelationalSentence.Relation.Id)),
                     SyntaxFactory.ArgumentList(
                         SyntaxFactory.SeparatedList<ArgumentSyntax>()
-                            .AddRange(implicitRelationalSentence.Arguments.Select(arg => SyntaxFactory.Argument(this.ConvertExpression(arg))))));
+                            .AddRange(implicitRelationalSentence.Arguments.Select(arg => SyntaxFactory.Argument(this.ConvertExpression(arg, scope))))));
 
             private static EnumDeclarationSyntax CreateEnumTypeDeclaration(EnumType enumType)
             {
