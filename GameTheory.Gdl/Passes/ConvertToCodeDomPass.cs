@@ -223,23 +223,30 @@ namespace GameTheory.Gdl.Passes
                         : ImmutableList<Term>.Empty;
                     Debug.Assert(args.Count == parameters.Length, "Arguments' arity doesn't match parameters' arity.");
 
-                    var parameterPairs = args.Zip(parameters, (argument, parameter) => new { argument, parameter }).ToList();
-
-                    var renameGroups = (from p in parameterPairs
-                                        let argVar = p.argument as IndividualVariable
-                                        where argVar is object
-                                        let param = p.parameter
-                                        where param.Id != argVar.Id
-                                        group param by argVar).ToList();
-
                     var replacements = new Dictionary<IndividualVariable, IndividualVariable>();
-                    var parameterEquality = new List<(ArgumentInfo, ArgumentInfo)>();
-                    foreach (var rename in renameGroups)
+                    var parameterEquality = new List<(ArgumentInfo, Term)>();
+                    for (var i = 0; i < parameters.Length; i++)
                     {
-                        var sentenceVariable = rename.Key;
-                        var fromItems = rename.ToList();
-                        replacements.Add(sentenceVariable, new IndividualVariable(fromItems[0].Id));
-                        parameterEquality.AddRange(fromItems.Skip(1).Select(item => (fromItems[0], item)));
+                        var arg = args[i];
+                        var param = parameters[i];
+                        if (arg is IndividualVariable argVar)
+                        {
+                            if (param.Id != argVar.Id)
+                            {
+                                if (replacements.TryGetValue(argVar, out var matching))
+                                {
+                                    parameterEquality.Add((param, matching));
+                                }
+                                else
+                                {
+                                    replacements[argVar] = new IndividualVariable(param.Id);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            parameterEquality.Add((param, arg));
+                        }
                     }
 
                     // TODO: Add renames to avoid name collisions.
@@ -265,12 +272,11 @@ namespace GameTheory.Gdl.Passes
                                             SyntaxFactory.Token(SyntaxKind.ObjectKeyword)),
                                         SyntaxFactory.IdentifierName("Equals")),
                                     SyntaxFactory.ArgumentList(
-                                        SyntaxFactory.SeparatedList<ArgumentSyntax>(
-                                            new SyntaxNodeOrToken[]
+                                        SyntaxFactory.SeparatedList<ArgumentSyntax>()
+                                            .AddRange(new ArgumentSyntax[]
                                             {
                                                 SyntaxFactory.Argument(SyntaxFactory.ParseName(pair.Item1.Id.TrimStart('?'))), // TODO: Better name resolution.
-                                                SyntaxFactory.Token(SyntaxKind.CommaToken),
-                                                SyntaxFactory.Argument(SyntaxFactory.ParseName(pair.Item2.Id.TrimStart('?'))), // TODO: Better name resolution.
+                                                SyntaxFactory.Argument(this.ConvertExpression(pair.Item2)),
                                             })))),
                             SyntaxFactory.Block(root))
                             .WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.Comment($"// {implicated}")));
