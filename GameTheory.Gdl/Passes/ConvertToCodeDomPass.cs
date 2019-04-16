@@ -112,11 +112,21 @@ namespace GameTheory.Gdl.Passes
                                     })));
 
                     case EnumType enumType:
-                        return SyntaxFactory.ParseTypeName(enumType.Name);
+                        return SyntaxFactory.InvocationExpression(
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.IdentifierName("Enum"),
+                                SyntaxFactory.IdentifierName("GetValues")))
+                            .WithArgumentList(
+                                SyntaxFactory.ArgumentList(
+                                    SyntaxFactory.SingletonSeparatedList(
+                                        SyntaxFactory.Argument(
+                                            SyntaxFactory.TypeOfExpression(
+                                                SyntaxFactory.ParseTypeName(enumType.Name))))));
 
                     case UnionType unionType:
                         return unionType.Expressions
-                            .Select<ExpressionInfo, ExpressionSyntax>(expr =>
+                            .Select(expr =>
                             {
                                 switch (expr)
                                 {
@@ -125,7 +135,7 @@ namespace GameTheory.Gdl.Passes
                                             SyntaxFactory.ArrayType(
                                                 Reference(unionType))
                                             .WithRankSpecifiers(
-                                                SyntaxFactory.SingletonList<ArrayRankSpecifierSyntax>(
+                                                SyntaxFactory.SingletonList(
                                                     SyntaxFactory.ArrayRankSpecifier(
                                                         SyntaxFactory.SingletonSeparatedList<ExpressionSyntax>(
                                                             SyntaxFactory.OmittedArraySizeExpression())))))
@@ -147,7 +157,7 @@ namespace GameTheory.Gdl.Passes
                                         SyntaxFactory.IdentifierName("Concat")))
                                     .WithArgumentList(
                                         SyntaxFactory.ArgumentList(
-                                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                            SyntaxFactory.SingletonSeparatedList(
                                                 SyntaxFactory.Argument(
                                                     b)))));
                 }
@@ -174,6 +184,8 @@ namespace GameTheory.Gdl.Passes
 
                 var ns = SyntaxFactory.NamespaceDeclaration(SyntaxFactory.ParseName(this.result.Name))
                     .AddUsings(
+                        SyntaxFactory.UsingDirective(
+                            SyntaxFactory.IdentifierName("System")),
                         SyntaxFactory.UsingDirective(
                             SyntaxFactory.QualifiedName(
                                 SyntaxFactory.QualifiedName(
@@ -372,6 +384,7 @@ namespace GameTheory.Gdl.Passes
                     methodElement = methodElement.AddBodyStatements(root);
                 }
 
+                // TODO: Runtime type checks
                 methodElement = methodElement.AddBodyStatements(SyntaxFactory.ReturnStatement(SyntaxFactory.LiteralExpression(SyntaxKind.FalseLiteralExpression)));
 
                 return methodElement;
