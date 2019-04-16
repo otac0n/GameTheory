@@ -46,6 +46,7 @@ namespace GameTheory.Gdl.Passes
             {
                 switch (t)
                 {
+                    case StateType stateType:
                     case UnionType unionType:
                     case IntersectionType intersectionType:
                     case NumberRangeType numberRangeType:
@@ -70,12 +71,10 @@ namespace GameTheory.Gdl.Passes
                     case EnumType enumType:
                         return SyntaxFactory.ParseTypeName(enumType.Name);
 
-                    case StateType stateType:
-                        return SyntaxFactory.ParseTypeName(stateType.Name);
-
                     case FunctionType functionType:
                         return SyntaxFactory.ParseTypeName(functionType.Name);
 
+                    case StateType stateType:
                     case ObjectType objectType:
                     case UnionType unionType:
                     case IntersectionType intersectionType:
@@ -165,7 +164,7 @@ namespace GameTheory.Gdl.Passes
                 var renderedTypes = allTypes.Where(t =>
                     t.BuiltInType == null &&
                     (!(t is ObjectType) || t is FunctionType) &&
-                    !RequiresRuntimeCheck(t));
+                    (!RequiresRuntimeCheck(t) || t is StateType));
                 var renderedExpressions = allExpressions.Where(e =>
                     !(e is VariableInfo) &&
                     !(e is FunctionInfo) &&
@@ -199,11 +198,11 @@ namespace GameTheory.Gdl.Passes
                             break;
 
                         case FunctionType functionType:
-                            gameState = gameState.AddMembers(CreateFunctionTypeDeclaration(functionType, Reference));
+                            gameState = gameState.AddMembers(CreateFunctionTypeDeclaration(functionType));
                             break;
 
                         case StateType stateType:
-                            gameState = gameState.AddMembers(CreateStateTypeDeclaration(stateType, Reference));
+                            gameState = gameState.AddMembers(CreateStateTypeDeclaration(stateType));
                             break;
 
                         default:
@@ -483,7 +482,7 @@ namespace GameTheory.Gdl.Passes
                 return enumElement;
             }
 
-            private static StructDeclarationSyntax CreateFunctionTypeDeclaration(FunctionType functionType, Func<ExpressionType, TypeSyntax> reference)
+            private static StructDeclarationSyntax CreateFunctionTypeDeclaration(FunctionType functionType)
             {
                 var structElement = SyntaxFactory.StructDeclaration(functionType.Name)
                     .WithModifiers(
@@ -495,7 +494,7 @@ namespace GameTheory.Gdl.Passes
 
                 foreach (var arg in functionType.FunctionInfo.Arguments)
                 {
-                    var type = reference(arg.ReturnType);
+                    var type = Reference(arg.ReturnType);
                     var fieldVariable = SyntaxFactory.VariableDeclarator("_" + arg.Id.TrimStart('?')); // TODO: Better name resolution.
                     var fieldElement = SyntaxFactory.FieldDeclaration(
                         SyntaxFactory.VariableDeclaration(
@@ -536,7 +535,7 @@ namespace GameTheory.Gdl.Passes
                 return structElement;
             }
 
-            private static ClassDeclarationSyntax CreateStateTypeDeclaration(StateType stateType, Func<ExpressionType, TypeSyntax> reference)
+            private static ClassDeclarationSyntax CreateStateTypeDeclaration(StateType stateType)
             {
                 var classElement = SyntaxFactory.ClassDeclaration(stateType.Name);
 
@@ -553,7 +552,7 @@ namespace GameTheory.Gdl.Passes
                                 SyntaxFactory.GenericName(
                                     SyntaxFactory.Identifier("IEnumerable"),
                                     SyntaxFactory.TypeArgumentList(
-                                        SyntaxFactory.SingletonSeparatedList(reference(obj.ReturnType))))));
+                                        SyntaxFactory.SingletonSeparatedList(Reference(obj.ReturnType))))));
                 }
 
                 classElement = classElement.AddMembers(constructor);
