@@ -33,106 +33,6 @@ namespace GameTheory.Gdl.Passes
             new Runner(result).Run();
         }
 
-        private class ScopeWalker : SupportedExpressionsTreeWalker
-        {
-            private readonly CompileResult result;
-            private readonly ArgumentInfo[] parameters;
-            private readonly Dictionary<ArgumentInfo, string> parameterNames;
-            private readonly Func<Term, ImmutableDictionary<IndividualVariable, ExpressionSyntax>, ExpressionSyntax> convertExpression;
-            private ArgumentInfo param;
-            private ExpressionSyntax path;
-
-            public ScopeWalker(CompileResult result, ArgumentInfo[] parameters, Dictionary<ArgumentInfo, string> parameterNames, ImmutableDictionary<IndividualVariable, ExpressionSyntax> scope, Func<Term, ImmutableDictionary<IndividualVariable, ExpressionSyntax>, ExpressionSyntax> convertExpression)
-            {
-                this.result = result;
-                this.parameters = parameters;
-                this.parameterNames = parameterNames;
-                this.convertExpression = convertExpression;
-                this.ParameterEquality = new List<(ExpressionSyntax, ExpressionSyntax)>();
-                this.Scope = scope;
-            }
-
-            public List<(ExpressionSyntax, ExpressionSyntax)> ParameterEquality { get; }
-
-            public ImmutableDictionary<IndividualVariable, ExpressionSyntax> Scope { get; set; }
-
-            public override void Walk(ConstantSentence constantSentence)
-            {
-                Debug.Assert(this.parameters.Length == 0, "Arguments' arity doesn't match parameters' arity.");
-            }
-
-            public override void Walk(ImplicitRelationalSentence implicitRelationalSentence)
-            {
-                var args = implicitRelationalSentence.Arguments;
-                Debug.Assert(this.parameters.Length == args.Count, "Arguments' arity doesn't match parameters' arity.");
-
-                for (var i = 0; i < args.Count; i++)
-                {
-                    this.param = this.parameters[i];
-                    this.path = SyntaxFactory.ParseName(this.parameterNames[this.param]);
-                    this.Walk((Expression)args[i]);
-                }
-            }
-
-            public override void Walk(Term term)
-            {
-                if (term is IndividualVariable argVar)
-                {
-                    if (this.Scope.TryGetValue(argVar, out var matching))
-                    {
-                        this.ParameterEquality.Add((this.path, matching));
-                    }
-                    else
-                    {
-                        this.Scope = this.Scope.SetItem(argVar, this.path);
-                    }
-                }
-                else
-                {
-                    if (this.result.ContainedVariables[term].Count == 0)
-                    {
-                        this.ParameterEquality.Add((this.path, this.convertExpression(term, this.Scope)));
-                    }
-                    else
-                    {
-                        var arg = this.result.AssignedTypes.GetExpressionInfo(term);
-
-                        // TODO: Allow arg to be a larger type than param. There's no iheritance. Will this matter?
-                        if (this.param.ReturnType != arg.ReturnType)
-                        {
-                            // TODO: Type check for arg.ReturnType and change `path`
-                            ////var name = $"var{Guid.NewGuid().ToString().Replace("-", string.Empty)}"; // TODO: Better name resolution.
-                            ////var typedVar = SyntaxFactory.IdentifierName(name);
-                            ////this.ParameterEquality.Add();
-                            ////this.Scope = this.Scope.SetItem(this.param, this.path);
-                        }
-
-                        base.Walk(term);
-                    }
-                }
-            }
-
-            public override void Walk(ImplicitFunctionalTerm implicitFunctionalTerm)
-            {
-                var args = implicitFunctionalTerm.Arguments;
-                var functionInfo = (FunctionInfo)this.result.AssignedTypes.GetExpressionInfo(implicitFunctionalTerm);
-
-                for (var i = 0; i < args.Count; i++)
-                {
-                    var originalPath = this.path;
-
-                    this.path = SyntaxFactory.MemberAccessExpression(
-                        SyntaxKind.SimpleMemberAccessExpression,
-                        this.path,
-                        SyntaxFactory.IdentifierName(functionInfo.Arguments[i].Id.TrimStart('?'))); // TODO: Lookup.
-
-                    this.Walk((Expression)args[i]);
-
-                    this.path = originalPath;
-                }
-            }
-        }
-
         private class Runner
         {
             private readonly CompileResult result;
@@ -381,8 +281,25 @@ namespace GameTheory.Gdl.Passes
                         SyntaxFactory.Token(SyntaxKind.PrivateKeyword),
                         SyntaxFactory.Token(SyntaxKind.StaticKeyword)));
 
-            private static ExpressionSyntax CreateObjectReference(ObjectInfo objectInfo) =>
-                SyntaxFactory.ParseName(objectInfo.Id); // TODO: Numbers, Enums, etc.
+            private static ExpressionSyntax CreateObjectReference(ObjectInfo objectInfo)
+            {
+                switch (objectInfo.ReturnType)
+                {
+                    case EnumType enumType:
+                        return SyntaxFactory.MemberAccessExpression(
+                            SyntaxKind.SimpleMemberAccessExpression,
+                            SyntaxFactory.IdentifierName(enumType.Name),
+                            SyntaxFactory.IdentifierName(objectInfo.Id));
+
+                    case NumberType numberType when objectInfo.Value is int:
+                        return SyntaxFactory.LiteralExpression(
+                            SyntaxKind.NumericLiteralExpression,
+                            SyntaxFactory.Literal((int)objectInfo.Value));
+
+                    default:
+                        return SyntaxFactory.IdentifierName(objectInfo.Id);
+                }
+            }
 
             private MemberDeclarationSyntax CreateLogicalDeclaration(LogicalInfo logicalInfo) =>
                 this.CreateLogicalFunctionDeclaration(logicalInfo, Array.Empty<ArgumentInfo>(), logicalInfo.Body);
@@ -416,6 +333,7 @@ namespace GameTheory.Gdl.Passes
                     var scope = ImmutableDictionary<IndividualVariable, ExpressionSyntax>.Empty;
                     var walker = new ScopeWalker(this.result, parameters, parameterNames, scope, this.ConvertExpression);
                     walker.Walk((Expression)implicated);
+                    var declarations = walker.Declarations;
                     var parameterEquality = walker.ParameterEquality;
                     scope = walker.Scope;
 
@@ -432,17 +350,14 @@ namespace GameTheory.Gdl.Passes
                     if (parameterEquality.Count > 0)
                     {
                         root = SyntaxFactory.IfStatement(
-                            parameterEquality.Aggregate((ExpressionSyntax)null, (left, pair) =>
-                            {
-                                var right = ObjectEqualsExpression(pair.Item1, pair.Item2);
-
-                                return left == null
-                                    ? right
-                                    : SyntaxFactory.BinaryExpression(SyntaxKind.LogicalAndExpression, left, right);
-                            }),
-                            SyntaxFactory.Block(root))
-                            .WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.Comment($"// {implicated}")));
+                            parameterEquality.Aggregate((left, right) =>
+                                SyntaxFactory.BinaryExpression(SyntaxKind.LogicalAndExpression, left, right)),
+                            SyntaxFactory.Block(root));
                     }
+
+                    root = SyntaxFactory.Block(declarations)
+                        .AddStatements(root)
+                        .WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.Comment($"// {sentence}")));
 
                     methodElement = methodElement.AddBodyStatements(root);
                 }
@@ -641,6 +556,134 @@ namespace GameTheory.Gdl.Passes
                 classElement = classElement.AddMembers(constructor);
 
                 return classElement;
+            }
+
+            private class ScopeWalker : SupportedExpressionsTreeWalker
+            {
+                private readonly CompileResult result;
+                private readonly ArgumentInfo[] parameters;
+                private readonly Dictionary<ArgumentInfo, string> parameterNames;
+                private readonly Func<Term, ImmutableDictionary<IndividualVariable, ExpressionSyntax>, ExpressionSyntax> convertExpression;
+                private ArgumentInfo param;
+                private ExpressionSyntax path;
+
+                public ScopeWalker(CompileResult result, ArgumentInfo[] parameters, Dictionary<ArgumentInfo, string> parameterNames, ImmutableDictionary<IndividualVariable, ExpressionSyntax> scope, Func<Term, ImmutableDictionary<IndividualVariable, ExpressionSyntax>, ExpressionSyntax> convertExpression)
+                {
+                    this.result = result;
+                    this.parameters = parameters;
+                    this.parameterNames = parameterNames;
+                    this.convertExpression = convertExpression;
+                    this.Declarations = new List<StatementSyntax>();
+                    this.ParameterEquality = new List<ExpressionSyntax>();
+                    this.Scope = scope;
+                }
+
+                public List<StatementSyntax> Declarations { get; }
+
+                public List<ExpressionSyntax> ParameterEquality { get; }
+
+                public ImmutableDictionary<IndividualVariable, ExpressionSyntax> Scope { get; set; }
+
+                public override void Walk(ConstantSentence constantSentence)
+                {
+                    Debug.Assert(this.parameters.Length == 0, "Arguments' arity doesn't match parameters' arity.");
+                }
+
+                public override void Walk(ImplicitRelationalSentence implicitRelationalSentence)
+                {
+                    var args = implicitRelationalSentence.Arguments;
+                    Debug.Assert(this.parameters.Length == args.Count, "Arguments' arity doesn't match parameters' arity.");
+
+                    for (var i = 0; i < args.Count; i++)
+                    {
+                        this.param = this.parameters[i];
+                        this.path = SyntaxFactory.ParseName(this.parameterNames[this.param]);
+                        this.Walk((Expression)args[i]);
+                    }
+                }
+
+                public override void Walk(Term term)
+                {
+                    if (term is IndividualVariable argVar)
+                    {
+                        if (this.Scope.TryGetValue(argVar, out var matching))
+                        {
+                            this.ParameterEquality.Add(ObjectEqualsExpression(this.path, matching));
+                        }
+                        else
+                        {
+                            this.Scope = this.Scope.SetItem(argVar, this.path);
+                        }
+                    }
+                    else
+                    {
+                        if (this.result.ContainedVariables[term].Count == 0)
+                        {
+                            this.ParameterEquality.Add(ObjectEqualsExpression(this.path, this.convertExpression(term, this.Scope)));
+                        }
+                        else
+                        {
+                            var arg = this.result.AssignedTypes.GetExpressionInfo(term);
+
+                            // TODO: Allow arg to be a larger type than param. There's no iheritance. Will this matter?
+                            if (this.param.ReturnType != arg.ReturnType)
+                            {
+                                // TODO: Update `path`
+                                var name = $"as{arg.ReturnType}"; // TODO: Better name resolution.
+                                var typedVar = SyntaxFactory.IdentifierName(name);
+                                this.Declarations.Add(
+                                    SyntaxFactory.LocalDeclarationStatement(
+                                        SyntaxFactory.VariableDeclaration(
+                                            Reference(arg.ReturnType))
+                                        .WithVariables(
+                                            SyntaxFactory.SingletonSeparatedList(
+                                                SyntaxFactory.VariableDeclarator(
+                                                    SyntaxFactory.Identifier(name))))));
+                                this.ParameterEquality.Add(
+                                    SyntaxFactory.BinaryExpression(
+                                        SyntaxKind.LogicalAndExpression,
+                                        SyntaxFactory.BinaryExpression(
+                                            SyntaxKind.IsExpression,
+                                            this.path,
+                                            Reference(arg.ReturnType)),
+                                        SyntaxFactory.BinaryExpression(
+                                            SyntaxKind.IsExpression,
+                                            SyntaxFactory.ParenthesizedExpression(
+                                                SyntaxFactory.AssignmentExpression(
+                                                    SyntaxKind.SimpleAssignmentExpression,
+                                                    typedVar,
+                                                    SyntaxFactory.CastExpression(
+                                                        Reference(arg.ReturnType),
+                                                        this.path))),
+                                            SyntaxFactory.PredefinedType(
+                                                SyntaxFactory.Token(SyntaxKind.ObjectKeyword)))));
+                                this.path = typedVar;
+                            }
+
+                            base.Walk(term);
+                        }
+                    }
+                }
+
+                public override void Walk(ImplicitFunctionalTerm implicitFunctionalTerm)
+                {
+                    var args = implicitFunctionalTerm.Arguments;
+                    var functionInfo = (FunctionInfo)this.result.AssignedTypes.GetExpressionInfo(implicitFunctionalTerm);
+
+                    for (var i = 0; i < args.Count; i++)
+                    {
+                        var originalPath = this.path;
+
+                        this.path = SyntaxFactory.MemberAccessExpression(
+                            SyntaxKind.SimpleMemberAccessExpression,
+                            this.path,
+                            SyntaxFactory.IdentifierName(functionInfo.Arguments[i].Id.TrimStart('?'))); // TODO: Lookup.
+
+                        this.Walk((Expression)args[i]);
+
+                        this.path = originalPath;
+                    }
+                }
             }
         }
     }
