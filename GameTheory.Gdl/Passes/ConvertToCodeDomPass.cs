@@ -345,9 +345,17 @@ namespace GameTheory.Gdl.Passes
                         ? implication.Antecedents
                         : ImmutableList<Sentence>.Empty;
 
-                    StatementSyntax root = returnTrue;
+                    StatementSyntax GetStatement(int i, ImmutableDictionary<IndividualVariable, ExpressionSyntax>  s1)
+                    {
+                        if (i >= conditions.Count)
+                        {
+                            return returnTrue;
+                        }
 
-                    root = conditions.Aggregate(root, (inner, condition) => this.ConvertSentence(condition, inner, sentenceVariables, scope));
+                        return this.ConvertSentence(conditions[i], s2 => GetStatement(i + 1, s2), sentenceVariables, s1);
+                    }
+
+                    var root = GetStatement(0, scope);
 
                     if (parameterEquality.Count > 0)
                     {
@@ -369,7 +377,7 @@ namespace GameTheory.Gdl.Passes
                 return methodElement;
             }
 
-            private StatementSyntax ConvertSentence(Sentence sentence, StatementSyntax inner, Dictionary<IndividualVariable, VariableInfo> sentenceVariables, ImmutableDictionary<IndividualVariable, ExpressionSyntax> scope)
+            private StatementSyntax ConvertSentence(Sentence sentence, Func<ImmutableDictionary<IndividualVariable, ExpressionSyntax>, StatementSyntax> inner, Dictionary<IndividualVariable, VariableInfo> sentenceVariables, ImmutableDictionary<IndividualVariable, ExpressionSyntax> scope)
             {
                 var variables = this.result.ContainedVariables[sentence].Except(scope.Keys);
                 if (variables.Count > 0)
@@ -390,7 +398,7 @@ namespace GameTheory.Gdl.Passes
                 {
                     return SyntaxFactory.IfStatement(
                         this.ConvertCondition(sentence, scope),
-                        SyntaxFactory.Block(inner))
+                        SyntaxFactory.Block(inner(scope)))
                     .WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.Comment($"// {sentence}")));
                 }
             }
