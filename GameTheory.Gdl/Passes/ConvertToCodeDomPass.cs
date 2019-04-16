@@ -174,14 +174,17 @@ namespace GameTheory.Gdl.Passes
                 var root = SyntaxFactory.CompilationUnit();
 
                 var ns = SyntaxFactory.NamespaceDeclaration(SyntaxFactory.ParseName(this.result.Name))
-                    .WithUsings(
-                        SyntaxFactory.SingletonList(
-                            SyntaxFactory.UsingDirective(
+                    .AddUsings(
+                        SyntaxFactory.UsingDirective(
+                            SyntaxFactory.QualifiedName(
                                 SyntaxFactory.QualifiedName(
-                                    SyntaxFactory.QualifiedName(
-                                        SyntaxFactory.IdentifierName("System"),
-                                        SyntaxFactory.IdentifierName("Collections")),
-                                    SyntaxFactory.IdentifierName("Generic")))));
+                                    SyntaxFactory.IdentifierName("System"),
+                                    SyntaxFactory.IdentifierName("Collections")),
+                                SyntaxFactory.IdentifierName("Generic"))),
+                        SyntaxFactory.UsingDirective(
+                            SyntaxFactory.QualifiedName(
+                                SyntaxFactory.IdentifierName("System"),
+                                SyntaxFactory.IdentifierName("Linq"))));
 
                 var gameState = SyntaxFactory.ClassDeclaration("GameState")
                     .WithModifiers(
@@ -232,7 +235,7 @@ namespace GameTheory.Gdl.Passes
                                     break;
 
                                 default:
-                                    gameState = gameState.AddMembers(this.CreateRelationFunctionDeclaration(relationInfo));
+                                    gameState = gameState.AddMembers(this.CreateRelationDeclaration(relationInfo));
                                     break;
                             }
 
@@ -304,7 +307,7 @@ namespace GameTheory.Gdl.Passes
             private MemberDeclarationSyntax CreateLogicalDeclaration(LogicalInfo logicalInfo) =>
                 this.CreateLogicalFunctionDeclaration(logicalInfo, Array.Empty<ArgumentInfo>(), logicalInfo.Body);
 
-            private MemberDeclarationSyntax CreateRelationFunctionDeclaration(RelationInfo relationInfo) =>
+            private MemberDeclarationSyntax CreateRelationDeclaration(RelationInfo relationInfo) =>
                 this.CreateLogicalFunctionDeclaration(relationInfo, relationInfo.Arguments, relationInfo.Body);
 
             private MemberDeclarationSyntax CreateLogicalFunctionDeclaration(ExpressionInfo expression, ArgumentInfo[] parameters, IEnumerable<Sentence> sentences)
@@ -628,7 +631,6 @@ namespace GameTheory.Gdl.Passes
                             // TODO: Allow arg to be a larger type than param. There's no iheritance. Will this matter?
                             if (this.param.ReturnType != arg.ReturnType)
                             {
-                                // TODO: Update `path`
                                 var name = $"as{arg.ReturnType}"; // TODO: Better name resolution.
                                 var typedVar = SyntaxFactory.IdentifierName(name);
                                 this.Declarations.Add(
