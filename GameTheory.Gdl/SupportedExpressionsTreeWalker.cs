@@ -92,7 +92,7 @@ namespace GameTheory.Gdl
         {
             foreach (var term in implicitRelationalSentence.Arguments)
             {
-                this.Walk(term);
+                this.Walk((Expression)term);
             }
         }
 
@@ -100,7 +100,7 @@ namespace GameTheory.Gdl
         {
             foreach (var term in implicitFunctionalTerm.Arguments)
             {
-                this.Walk(term);
+                this.Walk((Expression)term);
             }
         }
     }

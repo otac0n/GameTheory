@@ -3,23 +3,24 @@
 namespace GameTheory.Gdl
 {
     using System.Collections.Generic;
+    using System.Collections.Immutable;
     using KnowledgeInterchangeFormat.Expressions;
 
     public static class ContainedVariablesAnalyzer
     {
-        public static Dictionary<Expression, HashSet<Variable>> Analyze(KnowledgeBase knowledgeBase)
+        public static Dictionary<Expression, ImmutableHashSet<Variable>> Analyze(KnowledgeBase knowledgeBase)
         {
-            var results = new Dictionary<Expression, HashSet<Variable>>();
+            var results = new Dictionary<Expression, ImmutableHashSet<Variable>>();
             new ContainedVariablesWalker(results).Walk((Expression)knowledgeBase);
             return results;
         }
 
         private class ContainedVariablesWalker : SupportedExpressionsTreeWalker
         {
-            private readonly Dictionary<Expression, HashSet<Variable>> allContainedVariables;
-            private HashSet<Variable> containedVariables = new HashSet<Variable>();
+            private readonly Dictionary<Expression, ImmutableHashSet<Variable>> allContainedVariables;
+            private ImmutableHashSet<Variable> containedVariables = ImmutableHashSet<Variable>.Empty;
 
-            public ContainedVariablesWalker(Dictionary<Expression, HashSet<Variable>> constantTypes)
+            public ContainedVariablesWalker(Dictionary<Expression, ImmutableHashSet<Variable>> constantTypes)
             {
                 this.allContainedVariables = constantTypes;
             }
@@ -27,18 +28,17 @@ namespace GameTheory.Gdl
             public override void Walk(Expression expression)
             {
                 var originalVariables = this.containedVariables;
-                this.containedVariables = new HashSet<Variable>();
 
+                this.containedVariables = ImmutableHashSet<Variable>.Empty;
                 base.Walk(expression);
-
                 this.allContainedVariables[expression] = this.containedVariables;
-                originalVariables.UnionWith(this.containedVariables);
-                this.containedVariables = originalVariables;
+
+                this.containedVariables = originalVariables.Union(this.containedVariables);
             }
 
             public override void Walk(Variable variable)
             {
-                this.containedVariables.Add(variable);
+                this.containedVariables = this.containedVariables.Add(variable);
             }
         }
     }

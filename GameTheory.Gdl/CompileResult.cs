@@ -5,6 +5,7 @@ namespace GameTheory.Gdl
     using System;
     using System.CodeDom.Compiler;
     using System.Collections.Generic;
+    using System.Collections.Immutable;
     using System.Globalization;
     using KnowledgeInterchangeFormat.Expressions;
     using Microsoft.CodeAnalysis.CSharp;
@@ -13,14 +14,14 @@ namespace GameTheory.Gdl
     public class CompileResult
     {
         private readonly Lazy<Dictionary<(string, int), ConstantType>> constantTypes;
-        private readonly Lazy<Dictionary<Expression, HashSet<Variable>>> containedVariables;
+        private readonly Lazy<Dictionary<Expression, ImmutableHashSet<Variable>>> containedVariables;
         private readonly Lazy<AssignedTypes> assignedTypes;
 
         public CompileResult(string name, KnowledgeBase knowledgeBase)
         {
             this.Name = name;
             this.KnowledgeBase = knowledgeBase;
-            this.containedVariables = new Lazy<Dictionary<Expression, HashSet<Variable>>>(() => ContainedVariablesAnalyzer.Analyze(this.KnowledgeBase));
+            this.containedVariables = new Lazy<Dictionary<Expression, ImmutableHashSet<Variable>>>(() => ContainedVariablesAnalyzer.Analyze(this.KnowledgeBase));
             this.constantTypes = new Lazy<Dictionary<(string, int), ConstantType>>(() => ConstantArityAnalyzer.Analyze(this.KnowledgeBase));
             this.assignedTypes = new Lazy<AssignedTypes>(() => AssignTypesAnalyzer.Analyze(this.KnowledgeBase, this.ConstantTypes, this.ContainedVariables));
 
@@ -50,7 +51,7 @@ namespace GameTheory.Gdl
 
         public AssignedTypes AssignedTypes => this.assignedTypes.Value;
 
-        public Dictionary<Expression, HashSet<Variable>> ContainedVariables => this.containedVariables.Value;
+        public Dictionary<Expression, ImmutableHashSet<Variable>> ContainedVariables => this.containedVariables.Value;
 
         public KnowledgeBase KnowledgeBase { get; }
 

@@ -10,7 +10,7 @@ namespace GameTheory.Gdl
 
     public static class AssignTypesAnalyzer
     {
-        public static AssignedTypes Analyze(KnowledgeBase knowledgeBase, Dictionary<(string, int), ConstantType> constantTypes, Dictionary<Expression, HashSet<Variable>> containedVariables)
+        public static AssignedTypes Analyze(KnowledgeBase knowledgeBase, Dictionary<(string, int), ConstantType> constantTypes, Dictionary<Expression, ImmutableHashSet<Variable>> containedVariables)
         {
             var bodies = knowledgeBase.Forms.Cast<Sentence>().ToLookup(f => f.GetImplicatedConstantWithArity());
             var expressionTypes = new Dictionary<(string, int), ExpressionInfo>();
