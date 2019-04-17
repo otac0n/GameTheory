@@ -152,14 +152,22 @@ namespace GameTheory.Gdl.Passes
                 var allExpressions = new List<ExpressionInfo>();
                 ExpressionTypeVisitor.Visit(this.result.AssignedTypes, visitExpression: allExpressions.Add, visitType: allTypes.Add);
 
+                var init = (RelationInfo)this.result.AssignedTypes.ExpressionTypes[("INIT", 1)];
+                var @true = (RelationInfo)this.result.AssignedTypes.ExpressionTypes[("TRUE", 1)];
+                var next = (RelationInfo)this.result.AssignedTypes.ExpressionTypes[("NEXT", 1)];
+                var role = (RelationInfo)this.result.AssignedTypes.ExpressionTypes[("ROLE", 1)];
+                var does = (RelationInfo)this.result.AssignedTypes.ExpressionTypes[("DOES", 2)];
+                var legal = (RelationInfo)this.result.AssignedTypes.ExpressionTypes[("LEGAL", 2)];
+                var goal = (RelationInfo)this.result.AssignedTypes.ExpressionTypes[("GOAL", 2)];
+                var distinct = (RelationInfo)this.result.AssignedTypes.ExpressionTypes[("DISTINCT", 2)];
+
                 var renderedTypes = allTypes.Where(t =>
                     t.BuiltInType == null &&
                     (!(t is ObjectType) || t is FunctionType) &&
                     (!RequiresRuntimeCheck(t) || t is StateType));
-                var renderedExpressions = allExpressions.Where(e =>
+                var renderedExpressions = allExpressions.Except(init, @true, does, next).Where(e =>
                     !(e is VariableInfo) &&
                     !(e is FunctionInfo) &&
-                    !(e is RelationInfo relationInfo && (relationInfo.Id == "INIT" || relationInfo.Id == "DOES" || relationInfo.Id == "NEXT")) &&
                     !(e is ObjectInfo objectInfo && (objectInfo.Value is int || objectInfo.ReturnType is EnumType)));
 
                 var root = SyntaxFactory.CompilationUnit();
