@@ -184,12 +184,6 @@ namespace GameTheory.Gdl.Passes
                                 SyntaxFactory.IdentifierName("Generic"))),
                         SyntaxFactory.UsingDirective(
                             SyntaxFactory.QualifiedName(
-                                SyntaxFactory.QualifiedName(
-                                    SyntaxFactory.IdentifierName("System"),
-                                    SyntaxFactory.IdentifierName("Collections")),
-                                SyntaxFactory.IdentifierName("Immutable"))),
-                        SyntaxFactory.UsingDirective(
-                            SyntaxFactory.QualifiedName(
                                 SyntaxFactory.IdentifierName("System"),
                                 SyntaxFactory.IdentifierName("Linq"))),
                         SyntaxFactory.UsingDirective(
@@ -695,7 +689,7 @@ namespace GameTheory.Gdl.Passes
                             SyntaxFactory.TypeArgumentList(
                                 SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
                                     SyntaxFactory.IdentifierName("PlayerToken")))),
-                        SyntaxFactory.Identifier("GetWinners"))
+                    SyntaxFactory.Identifier("GetWinners"))
                     .AddModifiers(SyntaxFactory.Token(SyntaxKind.PublicKeyword))
                     .WithBody(
                         SyntaxFactory.Block(
@@ -710,15 +704,15 @@ namespace GameTheory.Gdl.Passes
                                 SyntaxFactory.Block(
                                     SyntaxFactory.SingletonList<StatementSyntax>(
                                         SyntaxFactory.ReturnStatement(
-                                            SyntaxFactory.MemberAccessExpression(
-                                                SyntaxKind.SimpleMemberAccessExpression,
+                                            SyntaxFactory.ObjectCreationExpression(
                                                 SyntaxFactory.GenericName(
-                                                    SyntaxFactory.Identifier("ImmutableList"))
+                                                    SyntaxFactory.Identifier("List"))
                                                     .WithTypeArgumentList(
                                                         SyntaxFactory.TypeArgumentList(
                                                             SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                                                                SyntaxFactory.IdentifierName("PlayerToken")))),
-                                                    SyntaxFactory.IdentifierName("Empty")))))),
+                                                                SyntaxFactory.IdentifierName("PlayerToken")))))
+                                                .WithArgumentList(
+                                                    SyntaxFactory.ArgumentList()))))),
                             SyntaxFactory.ThrowStatement(
                                 SyntaxFactory.ObjectCreationExpression(
                                     SyntaxFactory.IdentifierName("NotImplementedException"))

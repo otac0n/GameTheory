@@ -37,6 +37,7 @@ namespace GameTheory.Gdl.Passes
                 options.ReferencedAssemblies.Add("System.dll");
                 options.ReferencedAssemblies.Add("System.Core.dll");
                 options.ReferencedAssemblies.Add(typeof(IGameState<>).Assembly.Location);
+                options.ReferencedAssemblies.Add(typeof(IReadOnlyCollection<>).Assembly.Location);
 
                 var results = compiler.CompileAssemblyFromSource(options, result.Code);
                 if (results.Errors.HasErrors)
