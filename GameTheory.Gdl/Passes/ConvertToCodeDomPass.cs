@@ -159,6 +159,7 @@ namespace GameTheory.Gdl.Passes
                 var renderedExpressions = allExpressions.Where(e =>
                     !(e is VariableInfo) &&
                     !(e is FunctionInfo) &&
+                    !(e is RelationInfo relationInfo && (relationInfo.Id == "INIT" || relationInfo.Id == "DOES" || relationInfo.Id == "NEXT")) &&
                     !(e is ObjectInfo objectInfo && (objectInfo.Value is int || objectInfo.ReturnType is EnumType)));
 
                 var root = SyntaxFactory.CompilationUnit();
@@ -176,71 +177,61 @@ namespace GameTheory.Gdl.Passes
                         SyntaxFactory.UsingDirective(
                             SyntaxFactory.QualifiedName(
                                 SyntaxFactory.IdentifierName("System"),
-                                SyntaxFactory.IdentifierName("Linq"))));
+                                SyntaxFactory.IdentifierName("Linq"))),
+                        SyntaxFactory.UsingDirective(
+                            SyntaxFactory.IdentifierName("GameTheory")));
 
                 var gameState = SyntaxFactory.ClassDeclaration("GameState")
                     .WithModifiers(
-                        new SyntaxTokenList(SyntaxFactory.Token(SyntaxKind.PublicKeyword)));
-
-                foreach (var type in renderedTypes)
-                {
-                    switch (type)
-                    {
-                        case EnumType enumType:
-                            gameState = gameState.AddMembers(CreateEnumTypeDeclaration(enumType));
-                            break;
-
-                        case FunctionType functionType:
-                            gameState = gameState.AddMembers(CreateFunctionTypeDeclaration(functionType));
-                            break;
-
-                        case StateType stateType:
-                            gameState = gameState.AddMembers(CreateStateTypeDeclaration(stateType));
-                            break;
-
-                        default:
-                            throw new InvalidOperationException();
-                    }
-                }
-
-                foreach (var expr in renderedExpressions)
-                {
-                    switch (expr)
-                    {
-                        case ObjectInfo objectInfo:
-                            if (objectInfo.ReturnType is ObjectType && objectInfo.Value is string value)
+                        new SyntaxTokenList(SyntaxFactory.Token(SyntaxKind.PublicKeyword)))
+                    .WithMembers(
+                        SyntaxFactory.SingletonList<MemberDeclarationSyntax>(
+                            SyntaxFactory.ConstructorDeclaration(
+                                SyntaxFactory.Identifier("GameState"))
+                            .WithModifiers(
+                                SyntaxFactory.TokenList(
+                                    SyntaxFactory.Token(SyntaxKind.StaticKeyword)))
+                            .WithBody(
+                                SyntaxFactory.Block())))
+                    .AddMembers(
+                        renderedTypes.Select(type =>
+                        {
+                            switch (type)
                             {
-                                gameState = gameState.AddMembers(CreateObjectDeclaration(objectInfo, value));
-                            }
-                            else
-                            {
-                                throw new InvalidOperationException();
+                                case EnumType enumType:
+                                    return CreateEnumTypeDeclaration(enumType);
+
+                                case FunctionType functionType:
+                                    return CreateFunctionTypeDeclaration(functionType);
+
+                                case StateType stateType:
+                                    return CreateStateTypeDeclaration(stateType);
                             }
 
-                            break;
-
-                        case RelationInfo relationInfo:
-                            switch (relationInfo.Id)
+                            return (MemberDeclarationSyntax)null ?? throw new InvalidOperationException();
+                        }).ToArray())
+                    .AddMembers(
+                        renderedExpressions.Select(expr =>
+                        {
+                            switch (expr)
                             {
-                                case "INIT":
-                                case "NEXT":
+                                case ObjectInfo objectInfo:
+                                    if (objectInfo.ReturnType is ObjectType && objectInfo.Value is string value)
+                                    {
+                                        return CreateObjectDeclaration(objectInfo, value);
+                                    }
+
                                     break;
 
-                                default:
-                                    gameState = gameState.AddMembers(this.CreateRelationDeclaration(relationInfo));
-                                    break;
+                                case RelationInfo relationInfo:
+                                    return this.CreateLogicalFunctionDeclaration(relationInfo, relationInfo.Arguments, relationInfo.Body);
+
+                                case LogicalInfo logicalInfo:
+                                    return this.CreateLogicalFunctionDeclaration(logicalInfo, Array.Empty<ArgumentInfo>(), logicalInfo.Body);
                             }
 
-                            break;
-
-                        case LogicalInfo logicalInfo:
-                            gameState = gameState.AddMembers(this.CreateLogicalDeclaration(logicalInfo));
-                            break;
-
-                        default:
                             throw new InvalidOperationException();
-                    }
-                }
+                        }).ToArray());
 
                 ns = ns.AddMembers(gameState);
                 root = root.AddMembers(ns);
@@ -323,12 +314,6 @@ namespace GameTheory.Gdl.Passes
                         return SyntaxFactory.IdentifierName(objectInfo.Id);
                 }
             }
-
-            private MemberDeclarationSyntax CreateLogicalDeclaration(LogicalInfo logicalInfo) =>
-                this.CreateLogicalFunctionDeclaration(logicalInfo, Array.Empty<ArgumentInfo>(), logicalInfo.Body);
-
-            private MemberDeclarationSyntax CreateRelationDeclaration(RelationInfo relationInfo) =>
-                this.CreateLogicalFunctionDeclaration(relationInfo, relationInfo.Arguments, relationInfo.Body);
 
             private MemberDeclarationSyntax CreateLogicalFunctionDeclaration(ExpressionInfo expression, ArgumentInfo[] parameters, IEnumerable<Sentence> sentences)
             {
