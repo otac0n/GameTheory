@@ -87,42 +87,30 @@ namespace GameTheory.Gdl.Passes
                 throw new NotSupportedException();
             }
 
-            public static ExpressionSyntax AllMembers(ExpressionType type)
+            public static ExpressionSyntax AllMembers(ExpressionType type, ExpressionType declaredAs)
             {
                 switch (type)
                 {
+                    case NumberType numberType:
+                        return EnumerableRangeExpression(0, 101);
+
                     case NumberRangeType numberRangeType:
-                        return SyntaxFactory.InvocationExpression(
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName("Enumerable"),
-                                SyntaxFactory.IdentifierName("Range")))
-                            .WithArgumentList(
-                                SyntaxFactory.ArgumentList(
-                                    SyntaxFactory.SeparatedList<ArgumentSyntax>().AddRange(new ArgumentSyntax[]
-                                    {
-                                            SyntaxFactory.Argument(
-                                                SyntaxFactory.LiteralExpression(
-                                                    SyntaxKind.NumericLiteralExpression,
-                                                    SyntaxFactory.Literal(numberRangeType.Start))),
-                                            SyntaxFactory.Argument(
-                                                SyntaxFactory.LiteralExpression(
-                                                    SyntaxKind.NumericLiteralExpression,
-                                                    SyntaxFactory.Literal(numberRangeType.End - numberRangeType.Start + 1))),
-                                    })));
+                        return EnumerableRangeExpression(numberRangeType.Start, numberRangeType.End - numberRangeType.Start + 1);
 
                     case EnumType enumType:
-                        return SyntaxFactory.InvocationExpression(
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName("Enum"),
-                                SyntaxFactory.IdentifierName("GetValues")))
-                            .WithArgumentList(
-                                SyntaxFactory.ArgumentList(
-                                    SyntaxFactory.SingletonSeparatedList(
-                                        SyntaxFactory.Argument(
-                                            SyntaxFactory.TypeOfExpression(
-                                                SyntaxFactory.ParseTypeName(enumType.Name))))));
+                        return SyntaxFactory.ParenthesizedExpression(
+                            SyntaxFactory.CastExpression(
+                                ArrayType(Reference(declaredAs)),
+                                SyntaxFactory.InvocationExpression(
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.IdentifierName("Enum"),
+                                        SyntaxFactory.IdentifierName("GetValues")),
+                                    SyntaxFactory.ArgumentList(
+                                        SyntaxFactory.SingletonSeparatedList(
+                                            SyntaxFactory.Argument(
+                                                SyntaxFactory.TypeOfExpression(
+                                                    SyntaxFactory.ParseTypeName(enumType.Name))))))));
 
                     case UnionType unionType:
                         return unionType.Expressions
@@ -132,21 +120,14 @@ namespace GameTheory.Gdl.Passes
                                 {
                                     case ObjectInfo objectInfo:
                                         return SyntaxFactory.ArrayCreationExpression(
-                                            SyntaxFactory.ArrayType(
-                                                Reference(unionType))
-                                            .WithRankSpecifiers(
-                                                SyntaxFactory.SingletonList(
-                                                    SyntaxFactory.ArrayRankSpecifier(
-                                                        SyntaxFactory.SingletonSeparatedList<ExpressionSyntax>(
-                                                            SyntaxFactory.OmittedArraySizeExpression())))))
-                                            .WithInitializer(
-                                                SyntaxFactory.InitializerExpression(
-                                                    SyntaxKind.ArrayInitializerExpression,
-                                                    SyntaxFactory.SingletonSeparatedList(
-                                                        CreateObjectReference(objectInfo))));
+                                            ArrayType(Reference(declaredAs)),
+                                            SyntaxFactory.InitializerExpression(
+                                                SyntaxKind.ArrayInitializerExpression,
+                                                SyntaxFactory.SingletonSeparatedList(
+                                                    CreateObjectReference(objectInfo))));
 
                                     default:
-                                        return AllMembers(expr.ReturnType);
+                                        return AllMembers(expr.ReturnType, declaredAs);
                                 }
                             })
                             .Aggregate((a, b) =>
@@ -281,6 +262,34 @@ namespace GameTheory.Gdl.Passes
                                 SyntaxFactory.Argument(right),
                             })));
 
+            private static ExpressionSyntax EnumerableRangeExpression(int start, int count) =>
+                SyntaxFactory.InvocationExpression(
+                    SyntaxFactory.MemberAccessExpression(
+                        SyntaxKind.SimpleMemberAccessExpression,
+                        SyntaxFactory.IdentifierName("Enumerable"),
+                        SyntaxFactory.IdentifierName("Range")))
+                    .WithArgumentList(
+                        SyntaxFactory.ArgumentList(
+                            SyntaxFactory.SeparatedList<ArgumentSyntax>().AddRange(new ArgumentSyntax[]
+                            {
+                                SyntaxFactory.Argument(
+                                    SyntaxFactory.LiteralExpression(
+                                        SyntaxKind.NumericLiteralExpression,
+                                        SyntaxFactory.Literal(start))),
+                                SyntaxFactory.Argument(
+                                    SyntaxFactory.LiteralExpression(
+                                        SyntaxKind.NumericLiteralExpression,
+                                        SyntaxFactory.Literal(count))),
+                            })));
+
+            private static ArrayTypeSyntax ArrayType(TypeSyntax elementType) =>
+                SyntaxFactory.ArrayType(
+                    elementType,
+                    SyntaxFactory.SingletonList(
+                        SyntaxFactory.ArrayRankSpecifier(
+                            SyntaxFactory.SingletonSeparatedList<ExpressionSyntax>(
+                                SyntaxFactory.OmittedArraySizeExpression()))));
+
             private static FieldDeclarationSyntax CreateObjectDeclaration(ObjectInfo objectInfo, string value) =>
                 SyntaxFactory.FieldDeclaration(
                     SyntaxFactory.VariableDeclaration(
@@ -403,7 +412,7 @@ namespace GameTheory.Gdl.Passes
                     return SyntaxFactory.ForEachStatement(
                         Reference(variableInfo.ReturnType),
                         SyntaxFactory.Identifier(name),
-                        AllMembers(variableInfo.ReturnType),
+                        AllMembers(variableInfo.ReturnType, variableInfo.ReturnType),
                         SyntaxFactory.Block(
                             this.ConvertSentence(sentence, inner, sentenceVariables, scope)));
                 }

@@ -129,8 +129,12 @@ namespace GameTheory.Gdl
                                     var nones = unionType.Expressions.Where(e => e.ReturnType == NoneType.Instance);
                                     if (nones.Any())
                                     {
-                                        unionType.Expressions = unionType.Expressions.Except(nones);
-                                        changed = true;
+                                        var withoutNones = unionType.Expressions.Except(nones);
+                                        if (withoutNones.Count > 0)
+                                        {
+                                            unionType.Expressions = withoutNones;
+                                            changed = true;
+                                        }
                                     }
 
                                     // (X ∪ Y ∪ (X ∩ ...)) ⇔ (X ∪ Y)
@@ -145,6 +149,12 @@ namespace GameTheory.Gdl
                                             unionType.Expressions = withoutDegenerateIntersections;
                                             changed = true;
                                         }
+                                    }
+
+                                    if (unionType.Expressions.Contains(expression))
+                                    {
+                                        unionType.Expressions = unionType.Expressions.Remove(expression);
+                                        changed = true;
                                     }
 
                                     if (unionType.Expressions.Count == 0)
@@ -187,6 +197,7 @@ namespace GameTheory.Gdl
                                     }
                                     else
                                     {
+                                        // ((X) ∪ (Y ∪ Z)) ⇔ (X ∪ Y ∪ Z)
                                         var nestedUnions = unionType.Expressions.Where(e => e.ReturnType is UnionType).ToList();
                                         if (nestedUnions.Any())
                                         {
@@ -214,7 +225,17 @@ namespace GameTheory.Gdl
                                     var objects = intersectionType.Expressions.Where(e => e.ReturnType == ObjectType.Instance);
                                     if (objects.Any())
                                     {
-                                        intersectionType.Expressions = intersectionType.Expressions.Except(objects);
+                                        var withoutObjects = intersectionType.Expressions.Except(objects);
+                                        if (withoutObjects.Count > 0)
+                                        {
+                                            intersectionType.Expressions = withoutObjects;
+                                            changed = true;
+                                        }
+                                    }
+
+                                    if (intersectionType.Expressions.Contains(expression))
+                                    {
+                                        intersectionType.Expressions = intersectionType.Expressions.Remove(expression);
                                         changed = true;
                                     }
 
@@ -225,59 +246,87 @@ namespace GameTheory.Gdl
                                     }
                                     else if (intersectionType.Expressions.Count == 1)
                                     {
-                                        expression.ReturnType = intersectionType.Expressions.Single().ReturnType;
+                                        expression.ReturnType = new UnionType
+                                        {
+                                            Expressions = intersectionType.Expressions,
+                                        };
                                         changed = true;
                                     }
-                                    // TODO: Handle enums.
-                                    ////else if (intersectionType.Expressions.Select(e => e.ReturnType).Distinct().Take(2).Count() == 1)
-                                    ////{
-                                    ////    expression.ReturnType = intersectionType.Expressions.First().ReturnType;
-                                    ////    changed = true;
-                                    ////}
+                                    else if (intersectionType.Expressions.All(e => e.ReturnType is NumberRangeType || e.ReturnType == NumberType.Instance))
+                                    {
+                                        var allNumbers = intersectionType.Expressions.Where(e => e.ReturnType == NumberType.Instance && !(e is ObjectInfo));
+                                        var withoutAllNumbers = intersectionType.Expressions.Except(allNumbers);
+                                        if (intersectionType.Expressions.Count != withoutAllNumbers.Count)
+                                        {
+                                            if (withoutAllNumbers.IsEmpty)
+                                            {
+                                                expression.ReturnType = NumberType.Instance;
+                                            }
+                                            else
+                                            {
+                                                intersectionType.Expressions = withoutAllNumbers;
+                                            }
+
+                                            changed = true;
+                                        }
+                                        else
+                                        {
+                                            var resultingType = intersectionType.Expressions.Select(e =>
+                                            {
+                                                return e is ObjectInfo objectInfo
+                                                    ? NumberRangeType.GetInstance((int)objectInfo.Value, (int)objectInfo.Value)
+                                                    : e.ReturnType;
+                                            }).Aggregate((a, b) => a is NumberRangeType nA && b is NumberRangeType nB
+                                                ? (NumberRangeType)nA.IntersectWith(nB)
+                                                : (ExpressionType)NoneType.Instance);
+
+                                            expression.ReturnType = resultingType;
+                                            changed = true;
+                                        }
+                                    }
                                     else
                                     {
-                                        if (intersectionType.Expressions.All(e => e.ReturnType is NumberRangeType || e.ReturnType == NumberType.Instance))
+                                        if (intersectionType.Expressions.Select(e => e.ReturnType).Distinct().Take(2).Count() == 1)
                                         {
-                                            var allNumbers = intersectionType.Expressions.Where(e => e.ReturnType == NumberType.Instance && !(e is ObjectInfo));
-                                            var withoutAllNumbers = intersectionType.Expressions.Except(allNumbers);
-                                            if (intersectionType.Expressions.Count != withoutAllNumbers.Count)
+                                            var returnType = intersectionType.Expressions.First().ReturnType;
+                                            if (!(returnType is EnumType))
                                             {
-                                                if (withoutAllNumbers.IsEmpty)
-                                                {
-                                                    expression.ReturnType = NumberType.Instance;
-                                                }
-                                                else
-                                                {
-                                                    intersectionType.Expressions = withoutAllNumbers;
-                                                }
-
+                                                expression.ReturnType = returnType;
                                                 changed = true;
                                             }
                                             else
                                             {
-                                                var resultingType = intersectionType.Expressions.Select(e =>
+                                                var enumMembers = intersectionType.Expressions.Where(e => e is ObjectInfo).ToList();
+                                                switch (enumMembers.Count)
                                                 {
-                                                    return e is ObjectInfo objectInfo
-                                                        ? NumberRangeType.GetInstance((int)objectInfo.Value, (int)objectInfo.Value)
-                                                        : e.ReturnType;
-                                                }).Aggregate((a, b) => a is NumberRangeType nA && b is NumberRangeType nB
-                                                    ? (NumberRangeType)nA.IntersectWith(nB)
-                                                    : (ExpressionType)NoneType.Instance);
+                                                    case 0:
+                                                        expression.ReturnType = returnType;
+                                                        changed = true;
+                                                        break;
 
-                                                expression.ReturnType = resultingType;
-                                                changed = true;
+                                                    case 1:
+                                                        intersectionType.Expressions = ImmutableHashSet.Create(enumMembers[0]);
+                                                        changed = true;
+                                                        break;
+
+                                                    default:
+                                                        expression.ReturnType = NoneType.Instance;
+                                                        changed = true;
+                                                        break;
+                                                }
                                             }
                                         }
-                                        else
+
+                                        // TODO: (X ∪ Y ∪ Z) ∩ (X ∪ Z) ⇔ (X ∪ Z)
+
+                                        // ((X) ∩ (Y ∩ Z)) ⇔ (X ∩ Y ∩ Z)
+                                        var nestedIntersections = intersectionType.Expressions.Where(e => e.ReturnType is IntersectionType).ToList();
+                                        if (nestedIntersections.Any())
                                         {
-                                            var nestedIntersections = intersectionType.Expressions.Where(e => e.ReturnType is IntersectionType).ToList();
-                                            if (nestedIntersections.Any())
-                                            {
-                                                intersectionType.Expressions = intersectionType.Expressions
-                                                    .Union(nestedIntersections.SelectMany(e => ((IntersectionType)e.ReturnType).Expressions))
-                                                    .Except(nestedIntersections);
-                                                changed = true;
-                                            }
+                                            intersectionType.Expressions = intersectionType.Expressions
+                                                .Union(nestedIntersections.SelectMany(e => ((IntersectionType)e.ReturnType).Expressions))
+                                                .Except(nestedIntersections);
+                                            changed = true;
                                         }
                                     }
                                 }
@@ -333,6 +382,11 @@ namespace GameTheory.Gdl
                             var jExpr = enumCandidates[j].unionType.Expressions;
                             if (iExpr.Overlaps(jExpr))
                             {
+                                if (jExpr.SetEquals(iExpr))
+                                {
+                                    // TODO: Pick a best one?
+                                }
+
                                 if (!iExpr.IsProperSubsetOf(jExpr))
                                 {
                                     conflicts[i] = true;
