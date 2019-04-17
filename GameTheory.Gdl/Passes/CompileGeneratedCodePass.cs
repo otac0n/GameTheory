@@ -5,7 +5,10 @@ namespace GameTheory.Gdl.Passes
     using System;
     using System.CodeDom.Compiler;
     using System.Collections.Generic;
-    using Microsoft.CSharp;
+    using System.Collections.Immutable;
+    using System.IO;
+    using System.Linq;
+    using Microsoft.CodeDom.Providers.DotNetCompilerPlatform;
 
     internal class CompileGeneratedCodePass : CompilePass
     {
@@ -25,7 +28,7 @@ namespace GameTheory.Gdl.Passes
         {
             try
             {
-                var compiler = new CSharpCodeProvider();
+                var compiler = new CSharpCodeProvider(new CompilerSettings());
                 var options = new CompilerParameters
                 {
                     GenerateExecutable = false,
@@ -53,6 +56,24 @@ namespace GameTheory.Gdl.Passes
             {
                 result.AddCompilerError(result.KnowledgeBase.StartCursor, () => Resources.GDL102_ERROR_ErrorComilingType, ex.ToString());
             }
+        }
+
+        private class CompilerSettings : ICompilerSettings
+        {
+            private static readonly string CompilerPathSuffix = Path.Combine("roslyn", "csc.exe");
+
+            /// <inheritdoc />
+            public string CompilerFullPath => CompilerSearchPaths.Select(p => Path.Combine(p, CompilerPathSuffix)).Where(File.Exists).FirstOrDefault();
+
+            /// <inheritdoc />
+            public int CompilerServerTimeToLive => 5;
+
+            private static string[] CompilerSearchPaths => new[]
+            {
+                Environment.CurrentDirectory,
+                AppContext.BaseDirectory,
+                Path.GetDirectoryName(new Uri(System.Reflection.Assembly.GetExecutingAssembly().CodeBase).LocalPath),
+            };
         }
     }
 }

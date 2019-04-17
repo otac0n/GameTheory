@@ -8,6 +8,7 @@
     <PackageReference Include="Intervals" Version="1.2.0-alpha0021" />
     <PackageReference Include="KnowledgeInterchangeFormat" Version="0.2.0" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.0.0" />
+    <PackageReference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform" Version="2.0.1" />
     <PackageReference Include="Pegasus" Version="4.1.0" />
     <PackageReference Include="StyleCop.Analyzers" Version="1.1.1-rc.114" />
     <PackageReference Include="System.CodeDom" Version="4.5.0" />
