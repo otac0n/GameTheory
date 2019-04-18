@@ -48,10 +48,10 @@ namespace GameTheory.Gdl.Passes
 
         private static void AssignArgumentNames(KnowledgeBase knowledgeBase, AssignedTypes assignedTypes)
         {
-            var variableNames = new Dictionary<ExpressionWithArgumentsInfo, List<VariableInfo[]>>();
-            new VariableNameWalker(assignedTypes, variableNames).Walk((Expression)knowledgeBase);
+            var argumentVariables = assignedTypes.ExpressionTypes.Values.Where(e => e is ExpressionWithArgumentsInfo).ToDictionary(e => (ExpressionWithArgumentsInfo)e, e => new List<VariableInfo[]>());
+            new VariableNameWalker(assignedTypes, argumentVariables).Walk((Expression)knowledgeBase);
             var variableComparer = new StringArrayEqualityComparer(StringComparer.Ordinal);
-            foreach (var kvp in variableNames)
+            foreach (var kvp in argumentVariables)
             {
                 var expressionInfo = kvp.Key;
                 var names = kvp.Value;
@@ -106,7 +106,7 @@ namespace GameTheory.Gdl.Passes
                         if (fixedVariables[b] is null && winner[b] != null)
                         {
                             fixedVariables[b] = winner[b];
-                            conflicting.UnionWith(allCandidates.Where(c => c[b] != null));
+                            conflicting.UnionWith(allCandidates.Where(c => c[b] != null)); // TODO: Conflicts across names.
                         }
                     }
 
@@ -121,14 +121,19 @@ namespace GameTheory.Gdl.Passes
                     }
                 }
 
+                var scope = new Scope<ArgumentInfo>();
                 for (var b = 0; b < expressionInfo.Arity; b++)
                 {
-                    var name = fixedVariables[b];
-                    if (name != null)
-                    {
-                        expressionInfo.Arguments[b].Id = name;
-                    }
+                    var argument = expressionInfo.Arguments[b];
+                    scope = scope.Add(
+                        argument,
+                        ScopeFlags.Private | ScopeFlags.Public,
+                        fixedVariables[b],
+                        argument.ReturnType.Name);
+                    argument.Id = scope.TryGetPrivate(argument);
                 }
+
+                expressionInfo.Scope = scope;
             }
         }
 

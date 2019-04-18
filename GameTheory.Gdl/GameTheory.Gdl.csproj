@@ -1,6 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
+    <CodeAnalysisRuleSet>GameTheory.Gdl.ruleset</CodeAnalysisRuleSet>
     <TargetFrameworks>net462;netcoreapp2.0</TargetFrameworks>
   </PropertyGroup>
   <ItemGroup>
@@ -22,6 +23,8 @@
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
     </Compile>
+    <AdditionalFiles Include="..\stylecop.json" Link="stylecop.json" />
+    <AdditionalFiles Include="GameTheory.Gdl.ruleset" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Update="Resources.resx">

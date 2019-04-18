@@ -794,7 +794,7 @@ namespace GameTheory.Gdl.Passes
 
             private MemberDeclarationSyntax CreateLogicalFunctionDeclaration(ExpressionInfo expression, ArgumentInfo[] parameters, IEnumerable<Sentence> sentences)
             {
-                var parameterNames = parameters.ToDictionary(p => p, p => p.Id.TrimStart('?')); // TODO: Better name resolution.
+                var nameScope = (expression as RelationInfo)?.Scope ?? new Scope<ArgumentInfo>();
 
                 var methodElement = SyntaxFactory.MethodDeclaration(
                     Reference(expression.ReturnType),
@@ -804,7 +804,7 @@ namespace GameTheory.Gdl.Passes
                 foreach (var param in parameters)
                 {
                     methodElement = methodElement.AddParameterListParameters(
-                        SyntaxFactory.Parameter(SyntaxFactory.Identifier(parameterNames[param]))
+                        SyntaxFactory.Parameter(SyntaxFactory.Identifier(nameScope.TryGetPrivate(param)))
                         .WithType(Reference(param.ReturnType)));
                 }
 
@@ -815,7 +815,7 @@ namespace GameTheory.Gdl.Passes
                     var implicated = sentence.GetImplicatedSentence();
 
                     var scope = ImmutableDictionary<IndividualVariable, ExpressionSyntax>.Empty;
-                    var walker = new ScopeWalker(this.result, parameters, parameterNames, scope, this.ConvertExpression);
+                    var walker = new ScopeWalker(this.result, parameters, nameScope, scope, this.ConvertExpression);
                     walker.Walk((Expression)implicated);
                     var declarations = walker.Declarations;
                     var parameterEquality = walker.ParameterEquality;
@@ -827,7 +827,7 @@ namespace GameTheory.Gdl.Passes
                         ? implication.Antecedents
                         : ImmutableList<Sentence>.Empty;
 
-                    StatementSyntax GetStatement(int i, ImmutableDictionary<IndividualVariable, ExpressionSyntax>  s1)
+                    StatementSyntax GetStatement(int i, ImmutableDictionary<IndividualVariable, ExpressionSyntax> s1)
                     {
                         if (i >= conditions.Count)
                         {
@@ -974,16 +974,18 @@ namespace GameTheory.Gdl.Passes
 
             private static StructDeclarationSyntax CreateFunctionTypeDeclaration(FunctionType functionType)
             {
+                var functionInfo = functionType.FunctionInfo;
+
                 var structElement = SyntaxFactory.StructDeclaration(functionType.Name)
                     .AddModifiers(SyntaxFactory.Token(SyntaxKind.PublicKeyword));
 
                 var constructor = SyntaxFactory.ConstructorDeclaration(structElement.Identifier)
                     .AddModifiers(SyntaxFactory.Token(SyntaxKind.PublicKeyword));
 
-                foreach (var arg in functionType.FunctionInfo.Arguments)
+                foreach (var arg in functionInfo.Arguments)
                 {
                     var type = Reference(arg.ReturnType);
-                    var fieldVariable = SyntaxFactory.VariableDeclarator("_" + arg.Id.TrimStart('?')); // TODO: Better name resolution.
+                    var fieldVariable = SyntaxFactory.VariableDeclarator(functionInfo.Scope.TryGetPrivate(arg));
                     var fieldElement = SyntaxFactory.FieldDeclaration(
                         SyntaxFactory.VariableDeclaration(
                             type,
@@ -1002,7 +1004,7 @@ namespace GameTheory.Gdl.Passes
                                 SyntaxFactory.IdentifierName(fieldVariable.Identifier)),
                             SyntaxFactory.IdentifierName(parameter.Identifier))));
 
-                    var propElement = SyntaxFactory.PropertyDeclaration(type, arg.Id.TrimStart('?')) // TODO: Better name resolution.
+                    var propElement = SyntaxFactory.PropertyDeclaration(type, functionInfo.Scope.TryGetPublic(arg))
                         .AddModifiers(SyntaxFactory.Token(SyntaxKind.PublicKeyword))
                         .AddAccessorListAccessors(
                             SyntaxFactory.AccessorDeclaration(
@@ -1049,12 +1051,12 @@ namespace GameTheory.Gdl.Passes
             {
                 private readonly CompileResult result;
                 private readonly ArgumentInfo[] parameters;
-                private readonly Dictionary<ArgumentInfo, string> parameterNames;
+                private readonly Scope<ArgumentInfo> parameterNames;
                 private readonly Func<Term, ImmutableDictionary<IndividualVariable, ExpressionSyntax>, ExpressionSyntax> convertExpression;
                 private ArgumentInfo param;
                 private ExpressionSyntax path;
 
-                public ScopeWalker(CompileResult result, ArgumentInfo[] parameters, Dictionary<ArgumentInfo, string> parameterNames, ImmutableDictionary<IndividualVariable, ExpressionSyntax> scope, Func<Term, ImmutableDictionary<IndividualVariable, ExpressionSyntax>, ExpressionSyntax> convertExpression)
+                public ScopeWalker(CompileResult result, ArgumentInfo[] parameters, Scope<ArgumentInfo> parameterNames, ImmutableDictionary<IndividualVariable, ExpressionSyntax> scope, Func<Term, ImmutableDictionary<IndividualVariable, ExpressionSyntax>, ExpressionSyntax> convertExpression)
                 {
                     this.result = result;
                     this.parameters = parameters;
@@ -1084,7 +1086,7 @@ namespace GameTheory.Gdl.Passes
                     for (var i = 0; i < args.Count; i++)
                     {
                         this.param = this.parameters[i];
-                        this.path = SyntaxFactory.ParseName(this.parameterNames[this.param]);
+                        this.path = SyntaxFactory.ParseName(this.parameterNames.TryGetPrivate(this.param));
                         this.Walk((Expression)args[i]);
                     }
                 }
@@ -1163,7 +1165,7 @@ namespace GameTheory.Gdl.Passes
                         this.path = SyntaxFactory.MemberAccessExpression(
                             SyntaxKind.SimpleMemberAccessExpression,
                             this.path,
-                            SyntaxFactory.IdentifierName(functionInfo.Arguments[i].Id.TrimStart('?'))); // TODO: Lookup.
+                            SyntaxFactory.IdentifierName(functionInfo.Scope.TryGetPublic(functionInfo.Arguments[i])));
 
                         this.Walk((Expression)args[i]);
 
