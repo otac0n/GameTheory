@@ -193,21 +193,19 @@ namespace GameTheory.Gdl.Passes
 
                 var gameState = SyntaxFactory.ClassDeclaration("GameState")
                     .AddModifiers(SyntaxFactory.Token(SyntaxKind.PublicKeyword))
-                    .WithBaseList(
-                        SyntaxFactory.BaseList(
-                            SyntaxFactory.SingletonSeparatedList<BaseTypeSyntax>(
-                                SyntaxFactory.SimpleBaseType(
-                                    SyntaxFactory.GenericName(
-                                        SyntaxFactory.Identifier("IGameState"))
-                                    .WithTypeArgumentList(
-                                        SyntaxFactory.TypeArgumentList(
-                                            SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                                                SyntaxFactory.IdentifierName("Move"))))))))
+                    .AddBaseListTypes(
+                        SyntaxFactory.SimpleBaseType(
+                            SyntaxFactory.GenericName(
+                                SyntaxFactory.Identifier("IGameState"))
+                            .AddTypeArgumentListArguments(
+                                SyntaxFactory.IdentifierName("Move"))))
                     .AddMembers(
                         this.CreateGameStateConstructorDeclaration(init, role),
                         this.CreateMakeMoveDeclaration(next),
                         this.CreateGetWinnersDeclaration(goal),
-                        this.CreateGetAvailableMovesDeclaration(legal))
+                        this.CreateGetAvailableMovesDeclaration(legal),
+                        this.CreateStateDeclaration((StateType)init.Arguments[0].ReturnType),
+                        this.CreateTrueRelationDeclaration(@true))
                     .AddMembers(CreateSharedGameStateDeclarations(distinct))
                     .AddMembers(
                         renderedTypes.Select(type =>
@@ -425,7 +423,7 @@ namespace GameTheory.Gdl.Passes
                                         SyntaxFactory.Argument(
                                             SyntaxFactory.MemberAccessExpression(
                                                 SyntaxKind.SimpleMemberAccessExpression,
-                                                SyntaxFactory.IdentifierName("other"),
+                                                SyntaxFactory.IdentifierName("state"),
                                                 SyntaxFactory.IdentifierName("state"))))))),
                 SyntaxFactory.MethodDeclaration(
                     Reference(distinct.ReturnType),
@@ -655,6 +653,43 @@ namespace GameTheory.Gdl.Passes
                                                 Enumerable.Range(0, ((EnumType)role.Arguments[0].ReturnType).Objects.Count)
                                                     .Select(_ => NewPlayerTokenExpression())
                                                     .ToArray()))))));
+
+            private MemberDeclarationSyntax CreateStateDeclaration(StateType stateType) =>
+                SyntaxFactory.FieldDeclaration(
+                    SyntaxFactory.VariableDeclaration(
+                        SyntaxFactory.ParseTypeName(stateType.Name))
+                        .AddVariables(
+                            SyntaxFactory.VariableDeclarator(
+                                SyntaxFactory.Identifier("state"))))
+                    .AddModifiers(
+                        SyntaxFactory.Token(SyntaxKind.PrivateKeyword),
+                        SyntaxFactory.Token(SyntaxKind.ReadOnlyKeyword));
+
+            private MemberDeclarationSyntax CreateTrueRelationDeclaration(RelationInfo @true) =>
+                SyntaxFactory.MethodDeclaration(
+                    SyntaxFactory.PredefinedType(
+                        SyntaxFactory.Token(SyntaxKind.BoolKeyword)),
+                    SyntaxFactory.Identifier(@true.Id))
+                    .AddModifiers(SyntaxFactory.Token(SyntaxKind.PrivateKeyword))
+                    .AddParameterListParameters(
+                        SyntaxFactory.Parameter(
+                            SyntaxFactory.Identifier("value"))
+                            .WithType(
+                                Reference(@true.Arguments[0].ReturnType)))
+                    .WithBody(
+                        SyntaxFactory.Block(
+                            SyntaxFactory.ReturnStatement(
+                                SyntaxFactory.InvocationExpression(
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.MemberAccessExpression(
+                                            SyntaxKind.SimpleMemberAccessExpression,
+                                            SyntaxFactory.ThisExpression(),
+                                            SyntaxFactory.IdentifierName("state")),
+                                        SyntaxFactory.IdentifierName("Contains")))
+                                    .AddArgumentListArguments(
+                                        SyntaxFactory.Argument(
+                                            SyntaxFactory.IdentifierName("value"))))));
 
             private MethodDeclarationSyntax CreateGetAvailableMovesDeclaration(RelationInfo legal) =>
                 SyntaxFactory.MethodDeclaration(
