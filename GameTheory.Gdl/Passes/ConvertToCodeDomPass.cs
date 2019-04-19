@@ -69,10 +69,10 @@ namespace GameTheory.Gdl.Passes
                         return SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.IntKeyword));
 
                     case EnumType enumType:
-                        return SyntaxFactory.ParseTypeName(enumType.Name);
+                        return SyntaxFactory.ParseTypeName(enumType.Name); // TODO: Name resolution.
 
                     case FunctionType functionType:
-                        return SyntaxFactory.ParseTypeName(functionType.Name);
+                        return SyntaxFactory.ParseTypeName(functionType.Name); // TODO: Name resolution.
 
                     case StateType stateType:
                     case ObjectType objectType:
@@ -208,23 +208,6 @@ namespace GameTheory.Gdl.Passes
                         this.CreateTrueRelationDeclaration(@true))
                     .AddMembers(CreateSharedGameStateDeclarations(distinct))
                     .AddMembers(
-                        renderedTypes.Select(type =>
-                        {
-                            switch (type)
-                            {
-                                case EnumType enumType:
-                                    return CreateEnumTypeDeclaration(enumType);
-
-                                case FunctionType functionType:
-                                    return CreateFunctionTypeDeclaration(functionType);
-
-                                case StateType stateType:
-                                    return CreateStateTypeDeclaration(stateType);
-                            }
-
-                            return (MemberDeclarationSyntax)null ?? throw new InvalidOperationException();
-                        }).ToArray())
-                    .AddMembers(
                         renderedExpressions.Select(expr =>
                         {
                             switch (expr)
@@ -247,7 +230,25 @@ namespace GameTheory.Gdl.Passes
                             throw new InvalidOperationException();
                         }).ToArray());
 
-                ns = ns.AddMembers(gameState, move);
+                ns = ns
+                    .AddMembers(gameState, move)
+                    .AddMembers(
+                        renderedTypes.Select(type =>
+                        {
+                            switch (type)
+                            {
+                                case EnumType enumType:
+                                    return CreateEnumTypeDeclaration(enumType);
+
+                                case FunctionType functionType:
+                                    return CreateFunctionTypeDeclaration(functionType);
+
+                                case StateType stateType:
+                                    return CreateStateTypeDeclaration(stateType);
+                            }
+
+                            return (MemberDeclarationSyntax)null ?? throw new InvalidOperationException();
+                        }).ToArray());
                 root = root.AddMembers(ns);
                 this.result.DeclarationSyntax = root.NormalizeWhitespace();
             }
@@ -703,18 +704,35 @@ namespace GameTheory.Gdl.Passes
                     .AddModifiers(SyntaxFactory.Token(SyntaxKind.PublicKeyword))
                     .WithBody(
                         SyntaxFactory.Block(
-                            SyntaxFactory.SingletonList<StatementSyntax>(
-                                SyntaxFactory.ThrowStatement(
-                                    SyntaxFactory.ObjectCreationExpression(
-                                        SyntaxFactory.IdentifierName("NotImplementedException"))
-                                        .WithArgumentList(
-                                            SyntaxFactory.ArgumentList()))
-                                    .WithThrowKeyword(
-                                        SyntaxFactory.Token(
-                                            SyntaxFactory.TriviaList(
-                                                SyntaxFactory.Comment("// TODO: Enumerate the LEGAL(role, move) relation")),
-                                            SyntaxKind.ThrowKeyword,
-                                            SyntaxFactory.TriviaList())))));
+                            SyntaxFactory.IfStatement(
+                                SyntaxFactory.InvocationExpression(
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.ThisExpression(),
+                                        SyntaxFactory.IdentifierName("TERMINAL"))),
+                                SyntaxFactory.Block(
+                                    SyntaxFactory.SingletonList<StatementSyntax>(
+                                        SyntaxFactory.ReturnStatement(
+                                            SyntaxFactory.ArrayCreationExpression(
+                                                SyntaxFactory.ArrayType(
+                                                    SyntaxFactory.IdentifierName("Move"))
+                                                    .AddRankSpecifiers(
+                                                        SyntaxFactory.ArrayRankSpecifier(
+                                                            SyntaxFactory.SingletonSeparatedList<ExpressionSyntax>(
+                                                                SyntaxFactory.LiteralExpression(
+                                                                    SyntaxKind.NumericLiteralExpression,
+                                                                    SyntaxFactory.Literal(0)))))))))),
+                            SyntaxFactory.ThrowStatement(
+                                SyntaxFactory.ObjectCreationExpression(
+                                    SyntaxFactory.IdentifierName("NotImplementedException"))
+                                    .WithArgumentList(
+                                        SyntaxFactory.ArgumentList()))
+                                .WithThrowKeyword(
+                                    SyntaxFactory.Token(
+                                        SyntaxFactory.TriviaList(
+                                            SyntaxFactory.Comment("// TODO: Enumerate the LEGAL(role, move) relation")),
+                                        SyntaxKind.ThrowKeyword,
+                                        SyntaxFactory.TriviaList()))));
 
             private MethodDeclarationSyntax CreateGetWinnersDeclaration(RelationInfo goal) =>
                 SyntaxFactory.MethodDeclaration(
@@ -798,7 +816,7 @@ namespace GameTheory.Gdl.Passes
 
                 var methodElement = SyntaxFactory.MethodDeclaration(
                     Reference(expression.ReturnType),
-                    expression.Id)
+                    expression.Id) // TODO: Name resolution.
                     .AddModifiers(SyntaxFactory.Token(SyntaxKind.PrivateKeyword));
 
                 foreach (var param in parameters)
@@ -976,8 +994,14 @@ namespace GameTheory.Gdl.Passes
             {
                 var functionInfo = functionType.FunctionInfo;
 
-                var structElement = SyntaxFactory.StructDeclaration(functionType.Name)
-                    .AddModifiers(SyntaxFactory.Token(SyntaxKind.PublicKeyword));
+                var structElement = SyntaxFactory.StructDeclaration(functionType.Name) // TODO: Name resolution.
+                    .AddModifiers(SyntaxFactory.Token(SyntaxKind.PublicKeyword))
+                    .AddBaseListTypes(
+                        SyntaxFactory.SimpleBaseType(
+                            SyntaxFactory.GenericName(
+                                SyntaxFactory.Identifier("IComparable"))
+                            .AddTypeArgumentListArguments(
+                                Reference(functionType))));
 
                 var constructor = SyntaxFactory.ConstructorDeclaration(structElement.Identifier)
                     .AddModifiers(SyntaxFactory.Token(SyntaxKind.PublicKeyword));
@@ -985,14 +1009,16 @@ namespace GameTheory.Gdl.Passes
                 foreach (var arg in functionInfo.Arguments)
                 {
                     var type = Reference(arg.ReturnType);
-                    var fieldVariable = SyntaxFactory.VariableDeclarator(functionInfo.Scope.TryGetPrivate(arg));
+                    var fieldVariable = functionInfo.Scope.TryGetPrivate(arg);
                     var fieldElement = SyntaxFactory.FieldDeclaration(
                         SyntaxFactory.VariableDeclaration(
                             type,
-                            SyntaxFactory.SingletonSeparatedList(fieldVariable)))
+                            SyntaxFactory.SingletonSeparatedList(SyntaxFactory.VariableDeclarator(fieldVariable))))
                         .AddModifiers(SyntaxFactory.Token(SyntaxKind.PrivateKeyword));
 
-                    var parameter = SyntaxFactory.Parameter(fieldVariable.Identifier).WithType(type);
+                    var parameter = SyntaxFactory.Parameter(
+                        SyntaxFactory.Identifier(fieldVariable))
+                        .WithType(type);
                     constructor = constructor.AddParameterListParameters(parameter);
 
                     constructor = constructor.AddBodyStatements(SyntaxFactory.ExpressionStatement(
@@ -1001,7 +1027,7 @@ namespace GameTheory.Gdl.Passes
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.ThisExpression(),
-                                SyntaxFactory.IdentifierName(fieldVariable.Identifier)),
+                                SyntaxFactory.IdentifierName(fieldVariable)),
                             SyntaxFactory.IdentifierName(parameter.Identifier))));
 
                     var propElement = SyntaxFactory.PropertyDeclaration(type, functionInfo.Scope.TryGetPublic(arg))
@@ -1013,19 +1039,78 @@ namespace GameTheory.Gdl.Passes
                                     SyntaxFactory.ReturnStatement(SyntaxFactory.MemberAccessExpression(
                                         SyntaxKind.SimpleMemberAccessExpression,
                                         SyntaxFactory.ThisExpression(),
-                                        SyntaxFactory.IdentifierName(fieldVariable.Identifier))))));
+                                        SyntaxFactory.IdentifierName(fieldVariable))))));
 
                     structElement = structElement.AddMembers(fieldElement, propElement);
                 }
 
-                structElement = structElement.AddMembers(constructor);
+                var compareTo = SyntaxFactory.MethodDeclaration(
+                    SyntaxFactory.PredefinedType(
+                        SyntaxFactory.Token(SyntaxKind.IntKeyword)),
+                    SyntaxFactory.Identifier("CompareTo"))
+                    .WithModifiers(
+                        SyntaxFactory.TokenList(
+                            SyntaxFactory.Token(SyntaxKind.PublicKeyword)))
+                    .WithParameterList(
+                        SyntaxFactory.ParameterList(
+                            SyntaxFactory.SingletonSeparatedList<ParameterSyntax>(
+                                SyntaxFactory.Parameter(
+                                    SyntaxFactory.Identifier("other"))
+                                    .WithType(
+                                        Reference(functionType)))))
+                    .WithBody(
+                        SyntaxFactory.Block(
+                            SyntaxFactory.LocalDeclarationStatement(
+                                SyntaxFactory.VariableDeclaration(
+                                    SyntaxFactory.PredefinedType(
+                                        SyntaxFactory.Token(SyntaxKind.IntKeyword)))
+                                    .AddVariables(
+                                        SyntaxFactory.VariableDeclarator(
+                                            SyntaxFactory.Identifier("comp")))),
+                            SyntaxFactory.IfStatement(
+                                functionInfo.Arguments.Select(arg =>
+                                    SyntaxFactory.BinaryExpression(
+                                        SyntaxKind.NotEqualsExpression,
+                                        SyntaxFactory.ParenthesizedExpression(
+                                            SyntaxFactory.AssignmentExpression(
+                                                SyntaxKind.SimpleAssignmentExpression,
+                                                SyntaxFactory.IdentifierName("comp"),
+                                                SyntaxFactory.InvocationExpression(
+                                                    SyntaxFactory.MemberAccessExpression(
+                                                        SyntaxKind.SimpleMemberAccessExpression,
+                                                        SyntaxFactory.MemberAccessExpression(
+                                                            SyntaxKind.SimpleMemberAccessExpression,
+                                                            SyntaxFactory.ThisExpression(),
+                                                            SyntaxFactory.IdentifierName(functionInfo.Scope.TryGetPrivate(arg))),
+                                                        SyntaxFactory.IdentifierName("CompareTo")))
+                                                    .AddArgumentListArguments(
+                                                        SyntaxFactory.Argument(
+                                                            SyntaxFactory.MemberAccessExpression(
+                                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                                SyntaxFactory.IdentifierName("other"),
+                                                                SyntaxFactory.IdentifierName(functionInfo.Scope.TryGetPrivate(arg))))))),
+                                        SyntaxFactory.LiteralExpression(
+                                            SyntaxKind.NumericLiteralExpression,
+                                            SyntaxFactory.Literal(0))))
+                                    .Aggregate((a, b) => SyntaxFactory.BinaryExpression(SyntaxKind.LogicalOrExpression, a, b)),
+                                SyntaxFactory.Block(
+                                    SyntaxFactory.SingletonList<StatementSyntax>(
+                                        SyntaxFactory.ReturnStatement(
+                                            SyntaxFactory.IdentifierName("comp"))))),
+                            SyntaxFactory.ReturnStatement(
+                                SyntaxFactory.IdentifierName("comp"))));
+
+                structElement = structElement.AddMembers(constructor, compareTo);
 
                 return structElement;
             }
 
             private static ClassDeclarationSyntax CreateStateTypeDeclaration(StateType stateType)
             {
-                var classElement = SyntaxFactory.ClassDeclaration(stateType.Name);
+                var fieldNames = stateType.Relations.Aggregate(new Scope<ExpressionInfo>(), (s, r) => s.AddPrivate(r, r.Id));
+
+                var classElement = SyntaxFactory.ClassDeclaration(stateType.Name) // TODO: Name resolution.
+                    .AddModifiers(SyntaxFactory.Token(SyntaxKind.PublicKeyword));
 
                 var constructor = SyntaxFactory.ConstructorDeclaration(classElement.Identifier)
                     .WithBody(SyntaxFactory.Block())
@@ -1033,16 +1118,150 @@ namespace GameTheory.Gdl.Passes
 
                 foreach (var obj in stateType.Relations)
                 {
-                    constructor = constructor.AddParameterListParameters(
-                        SyntaxFactory.Parameter(
-                            SyntaxFactory.Identifier(obj.Id)).WithType(
+                    var type = Reference(obj.ReturnType);
+                    var fieldVariable = fieldNames.TryGetPrivate(obj);
+
+                    classElement = classElement.AddMembers(
+                        SyntaxFactory.FieldDeclaration(
+                            SyntaxFactory.VariableDeclaration(
                                 SyntaxFactory.GenericName(
-                                    SyntaxFactory.Identifier("IEnumerable"),
+                                    SyntaxFactory.Identifier("HashSet"),
                                     SyntaxFactory.TypeArgumentList(
-                                        SyntaxFactory.SingletonSeparatedList(Reference(obj.ReturnType))))));
+                                        SyntaxFactory.SingletonSeparatedList(type))))
+                                .AddVariables(
+                                    SyntaxFactory.VariableDeclarator(
+                                        SyntaxFactory.Identifier(fieldVariable))))
+                            .AddModifiers(
+                                SyntaxFactory.Token(SyntaxKind.PrivateKeyword),
+                                SyntaxFactory.Token(SyntaxKind.ReadOnlyKeyword)));
+
+                    constructor = constructor
+                        .AddParameterListParameters(
+                            SyntaxFactory.Parameter(
+                                SyntaxFactory.Identifier(fieldVariable)).WithType(
+                                    SyntaxFactory.GenericName(
+                                        SyntaxFactory.Identifier("IEnumerable"),
+                                        SyntaxFactory.TypeArgumentList(
+                                            SyntaxFactory.SingletonSeparatedList(type)))))
+                        .AddBodyStatements(
+                            SyntaxFactory.ExpressionStatement(
+                                SyntaxFactory.AssignmentExpression(
+                                    SyntaxKind.SimpleAssignmentExpression,
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.ThisExpression(),
+                                        SyntaxFactory.IdentifierName(fieldVariable)),
+                                    SyntaxFactory.ObjectCreationExpression(
+                                        SyntaxFactory.GenericName(
+                                            SyntaxFactory.Identifier("HashSet"))
+                                            .AddTypeArgumentListArguments(
+                                                type))
+                                        .AddArgumentListArguments(
+                                            SyntaxFactory.Argument(
+                                                SyntaxFactory.IdentifierName(fieldVariable))))));
                 }
 
-                classElement = classElement.AddMembers(constructor);
+                var contains = SyntaxFactory.MethodDeclaration(
+                    SyntaxFactory.PredefinedType(
+                        SyntaxFactory.Token(SyntaxKind.BoolKeyword)),
+                    SyntaxFactory.Identifier("Contains"))
+                    .AddModifiers(SyntaxFactory.Token(SyntaxKind.PublicKeyword))
+                    .AddParameterListParameters(
+                        SyntaxFactory.Parameter(
+                            SyntaxFactory.Identifier("value"))
+                            .WithType(
+                                Reference(stateType)))
+                    .WithBody(
+                        SyntaxFactory.Block(
+                            SyntaxFactory.SwitchStatement(
+                                SyntaxFactory.IdentifierName("value"))
+                                .WithOpenParenToken(SyntaxFactory.Token(SyntaxKind.OpenParenToken))
+                                .WithCloseParenToken(SyntaxFactory.Token(SyntaxKind.CloseParenToken))
+                                .AddSections(stateType.Relations.Select(obj =>
+                                    SyntaxFactory.SwitchSection()
+                                        .AddLabels(
+                                            SyntaxFactory.CasePatternSwitchLabel(
+                                                SyntaxFactory.DeclarationPattern(
+                                                    Reference(obj.ReturnType),
+                                                    SyntaxFactory.SingleVariableDesignation(
+                                                        SyntaxFactory.Identifier(fieldNames.TryGetPrivate(obj)))),
+                                                SyntaxFactory.Token(SyntaxKind.ColonToken)))
+                                        .AddStatements(
+                                            SyntaxFactory.ReturnStatement(
+                                                SyntaxFactory.InvocationExpression(
+                                                    SyntaxFactory.MemberAccessExpression(
+                                                        SyntaxKind.SimpleMemberAccessExpression,
+                                                        SyntaxFactory.MemberAccessExpression(
+                                                            SyntaxKind.SimpleMemberAccessExpression,
+                                                            SyntaxFactory.ThisExpression(),
+                                                            SyntaxFactory.IdentifierName(fieldNames.TryGetPrivate(obj))),
+                                                        SyntaxFactory.IdentifierName("Contains")))
+                                                    .AddArgumentListArguments(
+                                                        SyntaxFactory.Argument(
+                                                            SyntaxFactory.IdentifierName(fieldNames.TryGetPrivate(obj))))))).ToArray()),
+                            SyntaxFactory.ReturnStatement(
+                                SyntaxFactory.LiteralExpression(
+                                    SyntaxKind.FalseLiteralExpression))));
+
+                var compareTo = SyntaxFactory.MethodDeclaration(
+                    SyntaxFactory.PredefinedType(
+                        SyntaxFactory.Token(SyntaxKind.IntKeyword)),
+                    SyntaxFactory.Identifier("CompareTo"))
+                    .WithModifiers(
+                        SyntaxFactory.TokenList(
+                            SyntaxFactory.Token(SyntaxKind.PublicKeyword)))
+                    .WithParameterList(
+                        SyntaxFactory.ParameterList(
+                            SyntaxFactory.SingletonSeparatedList<ParameterSyntax>(
+                                SyntaxFactory.Parameter(
+                                    SyntaxFactory.Identifier("other"))
+                                    .WithType(
+                                        SyntaxFactory.IdentifierName("State"))))) // TODO: Name resolution.
+                    .WithBody(
+                        SyntaxFactory.Block(
+                            SyntaxFactory.LocalDeclarationStatement(
+                                SyntaxFactory.VariableDeclaration(
+                                    SyntaxFactory.PredefinedType(
+                                        SyntaxFactory.Token(SyntaxKind.IntKeyword)))
+                                    .AddVariables(
+                                        SyntaxFactory.VariableDeclarator(
+                                            SyntaxFactory.Identifier("comp")))),
+                            SyntaxFactory.IfStatement(
+                                stateType.Relations.Select(obj =>
+                                    SyntaxFactory.BinaryExpression(
+                                        SyntaxKind.NotEqualsExpression,
+                                        SyntaxFactory.ParenthesizedExpression(
+                                            SyntaxFactory.AssignmentExpression(
+                                                SyntaxKind.SimpleAssignmentExpression,
+                                                SyntaxFactory.IdentifierName("comp"),
+                                                SyntaxFactory.InvocationExpression(
+                                                    SyntaxFactory.MemberAccessExpression(
+                                                        SyntaxKind.SimpleMemberAccessExpression,
+                                                        SyntaxFactory.IdentifierName("CompareUtilities"),
+                                                        SyntaxFactory.IdentifierName("CompareSets")))
+                                                    .AddArgumentListArguments(
+                                                        SyntaxFactory.Argument(
+                                                            SyntaxFactory.MemberAccessExpression(
+                                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                                SyntaxFactory.ThisExpression(),
+                                                                SyntaxFactory.IdentifierName(fieldNames.TryGetPrivate(obj)))),
+                                                        SyntaxFactory.Argument(
+                                                            SyntaxFactory.MemberAccessExpression(
+                                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                                SyntaxFactory.IdentifierName("other"),
+                                                                SyntaxFactory.IdentifierName(fieldNames.TryGetPrivate(obj))))))),
+                                        SyntaxFactory.LiteralExpression(
+                                            SyntaxKind.NumericLiteralExpression,
+                                            SyntaxFactory.Literal(0))))
+                                    .Aggregate((a, b) => SyntaxFactory.BinaryExpression(SyntaxKind.LogicalOrExpression, a, b)),
+                                SyntaxFactory.Block(
+                                    SyntaxFactory.SingletonList<StatementSyntax>(
+                                        SyntaxFactory.ReturnStatement(
+                                            SyntaxFactory.IdentifierName("comp"))))),
+                            SyntaxFactory.ReturnStatement(
+                                SyntaxFactory.IdentifierName("comp"))));
+
+                classElement = classElement.AddMembers(constructor, compareTo, contains);
 
                 return classElement;
             }

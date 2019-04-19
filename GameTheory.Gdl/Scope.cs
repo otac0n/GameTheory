@@ -35,15 +35,6 @@ namespace GameTheory.Gdl
             this.value = value;
         }
 
-        public string this[TKey key]
-        {
-            get
-            {
-                var value = this.value[key];
-                return value.@public ?? value.@private;
-            }
-        }
-
         public string TryGetPublic(TKey key) => this.value.TryGetValue(key, out var found) ? found.@public : null;
 
         public string TryGetPrivate(TKey key) => this.value.TryGetValue(key, out var found) ? found.@private : null;
@@ -122,7 +113,7 @@ namespace GameTheory.Gdl
             }
             else
             {
-                return (@public, "_" + @public);
+                return ("_" + @public, "__" + @public);
             }
         }
     }
