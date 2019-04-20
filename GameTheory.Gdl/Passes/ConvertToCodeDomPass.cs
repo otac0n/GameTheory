@@ -160,6 +160,7 @@ namespace GameTheory.Gdl.Passes
                 var legal = (RelationInfo)this.result.AssignedTypes.ExpressionTypes[("LEGAL", 2)];
                 var goal = (RelationInfo)this.result.AssignedTypes.ExpressionTypes[("GOAL", 2)];
                 var distinct = (RelationInfo)this.result.AssignedTypes.ExpressionTypes[("DISTINCT", 2)];
+                var state = (StateType)init.Arguments[0].ReturnType;
 
                 var renderedTypes = allTypes.Where(t =>
                     t.BuiltInType == null &&
@@ -199,12 +200,12 @@ namespace GameTheory.Gdl.Passes
                                 SyntaxFactory.Identifier("IGameState"))
                             .AddTypeArgumentListArguments(
                                 SyntaxFactory.IdentifierName("Move"))))
+                    .AddMembers(this.CreateGameStateConstructorDeclarations(init, state, role))
                     .AddMembers(
-                        this.CreateGameStateConstructorDeclaration(init, (StateType)init.Arguments[0].ReturnType, role),
-                        this.CreateMakeMoveDeclaration(next),
+                        this.CreateMakeMoveDeclaration(next, state, role, does),
                         this.CreateGetWinnersDeclaration(goal),
                         this.CreateGetAvailableMovesDeclaration(legal),
-                        this.CreateStateDeclaration((StateType)init.Arguments[0].ReturnType),
+                        this.CreateStateDeclaration(state),
                         this.CreateTrueRelationDeclaration(@true))
                     .AddMembers(CreateSharedGameStateDeclarations(distinct))
                     .AddMembers(
@@ -253,198 +254,202 @@ namespace GameTheory.Gdl.Passes
                 this.result.DeclarationSyntax = root.NormalizeWhitespace();
             }
 
-            private static MemberDeclarationSyntax[] CreateSharedGameStateDeclarations(RelationInfo distinct) => new MemberDeclarationSyntax[]
+            private static MemberDeclarationSyntax[] CreateSharedGameStateDeclarations(RelationInfo distinct)
             {
-                SyntaxFactory.PropertyDeclaration(
-                    SyntaxFactory.GenericName(
-                        SyntaxFactory.Identifier("IReadOnlyList"))
-                        .AddTypeArgumentListArguments(
-                            SyntaxFactory.IdentifierName("PlayerToken")),
-                    SyntaxFactory.Identifier("Players"))
-                    .AddModifiers(SyntaxFactory.Token(SyntaxKind.PublicKeyword))
-                    .AddAccessorListAccessors(
-                        SyntaxFactory.AccessorDeclaration(
-                            SyntaxKind.GetAccessorDeclaration)
-                            .WithSemicolonToken(
-                                SyntaxFactory.Token(SyntaxKind.SemicolonToken)),
-                        SyntaxFactory.AccessorDeclaration(
-                            SyntaxKind.SetAccessorDeclaration)
-                            .AddModifiers(SyntaxFactory.Token(SyntaxKind.PrivateKeyword))
-                            .WithSemicolonToken(
-                                SyntaxFactory.Token(SyntaxKind.SemicolonToken))),
-                SyntaxFactory.MethodDeclaration(
-                    SyntaxFactory.GenericName(
-                        SyntaxFactory.Identifier("IEnumerable"))
-                        .AddTypeArgumentListArguments(
-                            SyntaxFactory.GenericName(
-                                SyntaxFactory.Identifier("IWeighted"))
-                                .AddTypeArgumentListArguments(
-                                    SyntaxFactory.GenericName(
-                                        SyntaxFactory.Identifier("IGameState"))
-                                        .AddTypeArgumentListArguments(
-                                            SyntaxFactory.IdentifierName("Move")))),
-                    SyntaxFactory.Identifier("GetOutcomes"))
-                    .AddModifiers(SyntaxFactory.Token(SyntaxKind.PublicKeyword))
-                    .WithParameterList(
-                        SyntaxFactory.ParameterList(
-                            SyntaxFactory.SingletonSeparatedList<ParameterSyntax>(
-                                SyntaxFactory.Parameter(
-                                    SyntaxFactory.Identifier("move"))
-                                .WithType(
-                                    SyntaxFactory.IdentifierName("Move")))))
-                    .WithBody(
-                        SyntaxFactory.Block(
-                            SyntaxFactory.SingletonList<StatementSyntax>(
-                                SyntaxFactory.YieldStatement(
-                                    SyntaxKind.YieldReturnStatement,
-                                    SyntaxFactory.InvocationExpression(
-                                        SyntaxFactory.MemberAccessExpression(
-                                            SyntaxKind.SimpleMemberAccessExpression,
-                                            SyntaxFactory.IdentifierName("Weighted"),
-                                            SyntaxFactory.IdentifierName("Create")))
-                                        .AddArgumentListArguments(
-                                            SyntaxFactory.Argument(
-                                                SyntaxFactory.InvocationExpression(
-                                                    SyntaxFactory.MemberAccessExpression(
-                                                        SyntaxKind.SimpleMemberAccessExpression,
-                                                        SyntaxFactory.ThisExpression(),
-                                                        SyntaxFactory.IdentifierName("MakeMove")))
-                                                    .WithArgumentList(
-                                                        SyntaxFactory.ArgumentList(
-                                                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                                                SyntaxFactory.Argument(
-                                                                    SyntaxFactory.IdentifierName("move")))))),
-                                            SyntaxFactory.Argument(
-                                                SyntaxFactory.LiteralExpression(
-                                                    SyntaxKind.NumericLiteralExpression,
-                                                    SyntaxFactory.Literal(1)))))))),
-                SyntaxFactory.MethodDeclaration(
-                    SyntaxFactory.GenericName(
-                        SyntaxFactory.Identifier("IEnumerable"))
-                        .AddTypeArgumentListArguments(
-                            SyntaxFactory.GenericName(
-                                SyntaxFactory.Identifier("IGameState"))
-                                .AddTypeArgumentListArguments(
-                                    SyntaxFactory.IdentifierName("Move"))),
-                    SyntaxFactory.Identifier("GetView"))
-                    .AddModifiers(SyntaxFactory.Token(SyntaxKind.PublicKeyword))
-                    .AddParameterListParameters(
-                        SyntaxFactory.Parameter(
-                            SyntaxFactory.Identifier("playerToken"))
-                            .WithType(
+                var moveIdentifier = SyntaxFactory.Identifier("move");
+                var moveIdentifierName = SyntaxFactory.IdentifierName("move");
+
+                return new MemberDeclarationSyntax[]
+                {
+                    SyntaxFactory.PropertyDeclaration(
+                        SyntaxFactory.GenericName(
+                            SyntaxFactory.Identifier("IReadOnlyList"))
+                            .AddTypeArgumentListArguments(
                                 SyntaxFactory.IdentifierName("PlayerToken")),
-                        SyntaxFactory.Parameter(
-                            SyntaxFactory.Identifier("maxStates"))
-                        .WithType(
-                            SyntaxFactory.PredefinedType(
-                                SyntaxFactory.Token(SyntaxKind.IntKeyword))))
-                    .WithBody(
-                        SyntaxFactory.Block(
-                            SyntaxFactory.SingletonList<StatementSyntax>(
-                                SyntaxFactory.YieldStatement(
-                                    SyntaxKind.YieldReturnStatement,
-                                    SyntaxFactory.ThisExpression())))),
-                SyntaxFactory.MethodDeclaration(
-                    SyntaxFactory.PredefinedType(
-                        SyntaxFactory.Token(SyntaxKind.IntKeyword)),
-                    SyntaxFactory.Identifier("CompareTo"))
-                    .AddModifiers(SyntaxFactory.Token(SyntaxKind.PublicKeyword))
-                    .WithParameterList(
-                        SyntaxFactory.ParameterList(
-                            SyntaxFactory.SingletonSeparatedList<ParameterSyntax>(
-                                SyntaxFactory.Parameter(
-                                    SyntaxFactory.Identifier("other"))
-                                    .WithType(
+                        SyntaxFactory.Identifier("Players"))
+                        .AddModifiers(SyntaxFactory.Token(SyntaxKind.PublicKeyword))
+                        .AddAccessorListAccessors(
+                            SyntaxFactory.AccessorDeclaration(
+                                SyntaxKind.GetAccessorDeclaration)
+                                .WithSemicolonToken(
+                                    SyntaxFactory.Token(SyntaxKind.SemicolonToken)),
+                            SyntaxFactory.AccessorDeclaration(
+                                SyntaxKind.SetAccessorDeclaration)
+                                .AddModifiers(SyntaxFactory.Token(SyntaxKind.PrivateKeyword))
+                                .WithSemicolonToken(
+                                    SyntaxFactory.Token(SyntaxKind.SemicolonToken))),
+                    SyntaxFactory.MethodDeclaration(
+                        SyntaxFactory.GenericName(
+                            SyntaxFactory.Identifier("IEnumerable"))
+                            .AddTypeArgumentListArguments(
+                                SyntaxFactory.GenericName(
+                                    SyntaxFactory.Identifier("IWeighted"))
+                                    .AddTypeArgumentListArguments(
                                         SyntaxFactory.GenericName(
                                             SyntaxFactory.Identifier("IGameState"))
                                             .AddTypeArgumentListArguments(
-                                                SyntaxFactory.IdentifierName("Move"))))))
-                    .WithBody(
-                        SyntaxFactory.Block(
-                            SyntaxFactory.IfStatement(
-                                SyntaxFactory.InvocationExpression(
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.PredefinedType(
-                                            SyntaxFactory.Token(SyntaxKind.ObjectKeyword)),
-                                        SyntaxFactory.IdentifierName("ReferenceEquals")))
-                                    .AddArgumentListArguments(
-                                        SyntaxFactory.Argument(
-                                            SyntaxFactory.IdentifierName("other")),
-                                        SyntaxFactory.Argument(
-                                            SyntaxFactory.ThisExpression())),
-                                SyntaxFactory.Block(
-                                    SyntaxFactory.SingletonList<StatementSyntax>(
-                                        SyntaxFactory.ReturnStatement(
-                                            SyntaxFactory.LiteralExpression(
-                                                SyntaxKind.NumericLiteralExpression,
-                                                SyntaxFactory.Literal(0)))))),
-                            SyntaxFactory.LocalDeclarationStatement(
-                                SyntaxFactory.VariableDeclaration(
-                                    SyntaxFactory.IdentifierName("var"))
-                                .AddVariables(
-                                    SyntaxFactory.VariableDeclarator(
-                                        SyntaxFactory.Identifier("state"))
-                                    .WithInitializer(
-                                        SyntaxFactory.EqualsValueClause(
-                                            SyntaxFactory.BinaryExpression(
-                                                SyntaxKind.AsExpression,
-                                                SyntaxFactory.IdentifierName("other"),
-                                                SyntaxFactory.IdentifierName("GameState")))))),
-                            SyntaxFactory.IfStatement(
-                                SyntaxFactory.InvocationExpression(
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.PredefinedType(
-                                            SyntaxFactory.Token(SyntaxKind.ObjectKeyword)),
-                                        SyntaxFactory.IdentifierName("ReferenceEquals")))
-                                    .AddArgumentListArguments(
-                                        SyntaxFactory.Argument(
-                                            SyntaxFactory.IdentifierName("state")),
-                                        SyntaxFactory.Argument(
-                                            SyntaxFactory.LiteralExpression(
-                                                SyntaxKind.NullLiteralExpression))),
-                                SyntaxFactory.Block(
-                                    SyntaxFactory.SingletonList<StatementSyntax>(
-                                        SyntaxFactory.ReturnStatement(
-                                            SyntaxFactory.LiteralExpression(
-                                                SyntaxKind.NumericLiteralExpression,
-                                                SyntaxFactory.Literal(1)))))),
-                            SyntaxFactory.ReturnStatement(
-                                SyntaxFactory.InvocationExpression(
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.MemberAccessExpression(
-                                            SyntaxKind.SimpleMemberAccessExpression,
-                                            SyntaxFactory.ThisExpression(),
-                                            SyntaxFactory.IdentifierName("state")),
-                                        SyntaxFactory.IdentifierName("CompareTo")))
-                                    .AddArgumentListArguments(
-                                        SyntaxFactory.Argument(
+                                                SyntaxFactory.IdentifierName("Move")))),
+                        SyntaxFactory.Identifier("GetOutcomes"))
+                        .AddModifiers(SyntaxFactory.Token(SyntaxKind.PublicKeyword))
+                        .WithParameterList(
+                            SyntaxFactory.ParameterList(
+                                SyntaxFactory.SingletonSeparatedList<ParameterSyntax>(
+                                    SyntaxFactory.Parameter(
+                                        moveIdentifier)
+                                    .WithType(
+                                        SyntaxFactory.IdentifierName("Move")))))
+                        .WithBody(
+                            SyntaxFactory.Block(
+                                SyntaxFactory.SingletonList<StatementSyntax>(
+                                    SyntaxFactory.YieldStatement(
+                                        SyntaxKind.YieldReturnStatement,
+                                        SyntaxFactory.InvocationExpression(
                                             SyntaxFactory.MemberAccessExpression(
                                                 SyntaxKind.SimpleMemberAccessExpression,
-                                                SyntaxFactory.IdentifierName("state"),
-                                                SyntaxFactory.IdentifierName("state"))))))),
-                SyntaxFactory.MethodDeclaration(
-                    Reference(distinct.ReturnType),
-                    distinct.Id)
-                    .AddModifiers(SyntaxFactory.Token(SyntaxKind.PrivateKeyword))
-                    .AddParameterListParameters(
-                        SyntaxFactory.Parameter(SyntaxFactory.Identifier("a"))
-                            .WithType(
-                                SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.ObjectKeyword))),
-                        SyntaxFactory.Parameter(SyntaxFactory.Identifier("b"))
+                                                SyntaxFactory.IdentifierName("Weighted"),
+                                                SyntaxFactory.IdentifierName("Create")))
+                                            .AddArgumentListArguments(
+                                                SyntaxFactory.Argument(
+                                                    SyntaxFactory.InvocationExpression(
+                                                        SyntaxFactory.MemberAccessExpression(
+                                                            SyntaxKind.SimpleMemberAccessExpression,
+                                                            SyntaxFactory.ThisExpression(),
+                                                            SyntaxFactory.IdentifierName("MakeMove")))
+                                                        .AddArgumentListArguments(
+                                                            SyntaxFactory.Argument(
+                                                                moveIdentifierName))),
+                                                SyntaxFactory.Argument(
+                                                    SyntaxFactory.LiteralExpression(
+                                                        SyntaxKind.NumericLiteralExpression,
+                                                        SyntaxFactory.Literal(1)))))))),
+                    SyntaxFactory.MethodDeclaration(
+                        SyntaxFactory.GenericName(
+                            SyntaxFactory.Identifier("IEnumerable"))
+                            .AddTypeArgumentListArguments(
+                                SyntaxFactory.GenericName(
+                                    SyntaxFactory.Identifier("IGameState"))
+                                    .AddTypeArgumentListArguments(
+                                        SyntaxFactory.IdentifierName("Move"))),
+                        SyntaxFactory.Identifier("GetView"))
+                        .AddModifiers(SyntaxFactory.Token(SyntaxKind.PublicKeyword))
+                        .AddParameterListParameters(
+                            SyntaxFactory.Parameter(
+                                SyntaxFactory.Identifier("playerToken"))
+                                .WithType(
+                                    SyntaxFactory.IdentifierName("PlayerToken")),
+                            SyntaxFactory.Parameter(
+                                SyntaxFactory.Identifier("maxStates"))
                             .WithType(
                                 SyntaxFactory.PredefinedType(
-                                    SyntaxFactory.Token(SyntaxKind.ObjectKeyword))))
-                    .WithBody(
-                        SyntaxFactory.Block(
-                            SyntaxFactory.SingletonList<StatementSyntax>(
+                                    SyntaxFactory.Token(SyntaxKind.IntKeyword))))
+                        .WithBody(
+                            SyntaxFactory.Block(
+                                SyntaxFactory.SingletonList<StatementSyntax>(
+                                    SyntaxFactory.YieldStatement(
+                                        SyntaxKind.YieldReturnStatement,
+                                        SyntaxFactory.ThisExpression())))),
+                    SyntaxFactory.MethodDeclaration(
+                        SyntaxFactory.PredefinedType(
+                            SyntaxFactory.Token(SyntaxKind.IntKeyword)),
+                        SyntaxFactory.Identifier("CompareTo"))
+                        .AddModifiers(SyntaxFactory.Token(SyntaxKind.PublicKeyword))
+                        .WithParameterList(
+                            SyntaxFactory.ParameterList(
+                                SyntaxFactory.SingletonSeparatedList<ParameterSyntax>(
+                                    SyntaxFactory.Parameter(
+                                        SyntaxFactory.Identifier("other"))
+                                        .WithType(
+                                            SyntaxFactory.GenericName(
+                                                SyntaxFactory.Identifier("IGameState"))
+                                                .AddTypeArgumentListArguments(
+                                                    SyntaxFactory.IdentifierName("Move"))))))
+                        .WithBody(
+                            SyntaxFactory.Block(
+                                SyntaxFactory.IfStatement(
+                                    SyntaxFactory.InvocationExpression(
+                                        SyntaxFactory.MemberAccessExpression(
+                                            SyntaxKind.SimpleMemberAccessExpression,
+                                            SyntaxFactory.PredefinedType(
+                                                SyntaxFactory.Token(SyntaxKind.ObjectKeyword)),
+                                            SyntaxFactory.IdentifierName("ReferenceEquals")))
+                                        .AddArgumentListArguments(
+                                            SyntaxFactory.Argument(
+                                                SyntaxFactory.IdentifierName("other")),
+                                            SyntaxFactory.Argument(
+                                                SyntaxFactory.ThisExpression())),
+                                    SyntaxFactory.Block(
+                                        SyntaxFactory.SingletonList<StatementSyntax>(
+                                            SyntaxFactory.ReturnStatement(
+                                                SyntaxFactory.LiteralExpression(
+                                                    SyntaxKind.NumericLiteralExpression,
+                                                    SyntaxFactory.Literal(0)))))),
+                                SyntaxFactory.LocalDeclarationStatement(
+                                    SyntaxFactory.VariableDeclaration(
+                                        SyntaxFactory.IdentifierName("var"))
+                                    .AddVariables(
+                                        SyntaxFactory.VariableDeclarator(
+                                            SyntaxFactory.Identifier("state"))
+                                        .WithInitializer(
+                                            SyntaxFactory.EqualsValueClause(
+                                                SyntaxFactory.BinaryExpression(
+                                                    SyntaxKind.AsExpression,
+                                                    SyntaxFactory.IdentifierName("other"),
+                                                    SyntaxFactory.IdentifierName("GameState")))))),
+                                SyntaxFactory.IfStatement(
+                                    SyntaxFactory.InvocationExpression(
+                                        SyntaxFactory.MemberAccessExpression(
+                                            SyntaxKind.SimpleMemberAccessExpression,
+                                            SyntaxFactory.PredefinedType(
+                                                SyntaxFactory.Token(SyntaxKind.ObjectKeyword)),
+                                            SyntaxFactory.IdentifierName("ReferenceEquals")))
+                                        .AddArgumentListArguments(
+                                            SyntaxFactory.Argument(
+                                                SyntaxFactory.IdentifierName("state")),
+                                            SyntaxFactory.Argument(
+                                                SyntaxFactory.LiteralExpression(
+                                                    SyntaxKind.NullLiteralExpression))),
+                                    SyntaxFactory.Block(
+                                        SyntaxFactory.SingletonList<StatementSyntax>(
+                                            SyntaxFactory.ReturnStatement(
+                                                SyntaxFactory.LiteralExpression(
+                                                    SyntaxKind.NumericLiteralExpression,
+                                                    SyntaxFactory.Literal(1)))))),
                                 SyntaxFactory.ReturnStatement(
-                                    SyntaxFactory.PrefixUnaryExpression(
-                                        SyntaxKind.LogicalNotExpression,
-                                        ObjectEqualsExpression(SyntaxFactory.IdentifierName("a"), SyntaxFactory.IdentifierName("b"))))))),
-            };
+                                    SyntaxFactory.InvocationExpression(
+                                        SyntaxFactory.MemberAccessExpression(
+                                            SyntaxKind.SimpleMemberAccessExpression,
+                                            SyntaxFactory.MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                SyntaxFactory.ThisExpression(),
+                                                SyntaxFactory.IdentifierName("state")),
+                                            SyntaxFactory.IdentifierName("CompareTo")))
+                                        .AddArgumentListArguments(
+                                            SyntaxFactory.Argument(
+                                                SyntaxFactory.MemberAccessExpression(
+                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                    SyntaxFactory.IdentifierName("state"),
+                                                    SyntaxFactory.IdentifierName("state"))))))),
+                    SyntaxFactory.MethodDeclaration(
+                        Reference(distinct.ReturnType),
+                        distinct.Id)
+                        .AddModifiers(SyntaxFactory.Token(SyntaxKind.PrivateKeyword))
+                        .AddParameterListParameters(
+                            SyntaxFactory.Parameter(SyntaxFactory.Identifier("a"))
+                                .WithType(
+                                    SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.ObjectKeyword))),
+                            SyntaxFactory.Parameter(SyntaxFactory.Identifier("b"))
+                                .WithType(
+                                    SyntaxFactory.PredefinedType(
+                                        SyntaxFactory.Token(SyntaxKind.ObjectKeyword))))
+                        .WithBody(
+                            SyntaxFactory.Block(
+                                SyntaxFactory.SingletonList<StatementSyntax>(
+                                    SyntaxFactory.ReturnStatement(
+                                        SyntaxFactory.PrefixUnaryExpression(
+                                            SyntaxKind.LogicalNotExpression,
+                                            ObjectEqualsExpression(SyntaxFactory.IdentifierName("a"), SyntaxFactory.IdentifierName("b"))))))),
+                };
+            }
 
             private static ClassDeclarationSyntax CreateMoveTypeDeclaration(ExpressionType moveType) =>
                 SyntaxFactory.ClassDeclaration("Move")
@@ -631,9 +636,11 @@ namespace GameTheory.Gdl.Passes
                 }
             }
 
-            private ConstructorDeclarationSyntax CreateGameStateConstructorDeclaration(RelationInfo init, StateType stateType, RelationInfo role)
+            private ConstructorDeclarationSyntax[] CreateGameStateConstructorDeclarations(RelationInfo init, StateType stateType, RelationInfo role)
             {
-                var constructor = SyntaxFactory.ConstructorDeclaration(
+                var roles = ((EnumType)role.Arguments[0].ReturnType).Objects;
+
+                var constructor1 = SyntaxFactory.ConstructorDeclaration(
                     SyntaxFactory.Identifier("GameState"))
                     .AddModifiers(SyntaxFactory.Token(SyntaxKind.PublicKeyword))
                     .WithBody(
@@ -649,7 +656,7 @@ namespace GameTheory.Gdl.Passes
                                         SyntaxFactory.InitializerExpression(
                                             SyntaxKind.ArrayInitializerExpression))
                                         .AddInitializerExpressions(
-                                            Enumerable.Range(0, ((EnumType)role.Arguments[0].ReturnType).Objects.Count)
+                                            Enumerable.Range(0, roles.Count)
                                                 .Select(_ => NewPlayerTokenExpression())
                                                 .ToArray()))),
                             SyntaxFactory.ExpressionStatement(
@@ -660,7 +667,7 @@ namespace GameTheory.Gdl.Passes
                                         SyntaxFactory.ThisExpression(),
                                         SyntaxFactory.IdentifierName("state")),
                                     SyntaxFactory.ObjectCreationExpression(
-                                        SyntaxFactory.ParseTypeName(stateType.Name))
+                                        SyntaxFactory.ParseTypeName(stateType.Name)) // TODO: Lookup.
                                         .WithArgumentList(
                                             SyntaxFactory.ArgumentList())))));
 
@@ -687,7 +694,7 @@ namespace GameTheory.Gdl.Passes
                     switch (sentence)
                     {
                         case Implication implication:
-                            constructor = constructor
+                            constructor1 = constructor1
                                 .AddBodyStatements(
                                     this.ConvertConjnuction(
                                         implication.Antecedents,
@@ -697,14 +704,65 @@ namespace GameTheory.Gdl.Passes
                             break;
 
                         default:
-                            constructor = constructor
+                            constructor1 = constructor1
                                 .AddBodyStatements(
                                     addState(scope));
                             break;
                     }
                 }
 
-                return constructor;
+                if (roles.Count > 1)
+                {
+                    constructor1 = constructor1.AddBodyStatements(
+                        SyntaxFactory.ExpressionStatement(
+                            SyntaxFactory.AssignmentExpression(
+                                SyntaxKind.SimpleAssignmentExpression,
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.ThisExpression(),
+                                    SyntaxFactory.IdentifierName("moves")),
+                                SyntaxFactory.InvocationExpression(
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.ThisExpression(),
+                                        SyntaxFactory.IdentifierName("FindForcedNoOps"))))));
+                }
+
+                var constructor2 = SyntaxFactory.ConstructorDeclaration(
+                    SyntaxFactory.Identifier("GameState"))
+                    .AddModifiers(SyntaxFactory.Token(SyntaxKind.PrivateKeyword))
+                    .AddParameterListParameters(
+                        SyntaxFactory.Parameter(
+                            SyntaxFactory.Identifier("players"))
+                            .WithType(
+                                SyntaxFactory.GenericName(
+                                    SyntaxFactory.Identifier("IReadOnlyList"))
+                                    .AddTypeArgumentListArguments(
+                                        SyntaxFactory.IdentifierName("PlayerToken"))),
+                        SyntaxFactory.Parameter(
+                            SyntaxFactory.Identifier("state"))
+                            .WithType(
+                                SyntaxFactory.ParseTypeName(stateType.Name))) // TODO: Lookup.
+                    .WithBody(
+                        SyntaxFactory.Block(
+                            SyntaxFactory.ExpressionStatement(
+                                SyntaxFactory.AssignmentExpression(
+                                    SyntaxKind.SimpleAssignmentExpression,
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.ThisExpression(),
+                                        SyntaxFactory.IdentifierName("Players")),
+                                    SyntaxFactory.IdentifierName("players"))),
+                            SyntaxFactory.ExpressionStatement(
+                                SyntaxFactory.AssignmentExpression(
+                                    SyntaxKind.SimpleAssignmentExpression,
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.ThisExpression(),
+                                        SyntaxFactory.IdentifierName("state")),
+                                    SyntaxFactory.IdentifierName("state")))));
+
+                return new[] { constructor1, constructor2 };
             }
 
             private MemberDeclarationSyntax CreateStateDeclaration(StateType stateType) =>
@@ -744,8 +802,62 @@ namespace GameTheory.Gdl.Passes
                                         SyntaxFactory.Argument(
                                             SyntaxFactory.IdentifierName("value"))))));
 
-            private MethodDeclarationSyntax CreateGetAvailableMovesDeclaration(RelationInfo legal) =>
-                SyntaxFactory.MethodDeclaration(
+            private MethodDeclarationSyntax CreateGetAvailableMovesDeclaration(RelationInfo legal)
+            {
+                var statements = SyntaxFactory.Block();
+
+                foreach (var sentence in legal.Body)
+                {
+                    var implicated = (ImplicitRelationalSentence)sentence.GetImplicatedSentence();
+                    var scope = ImmutableDictionary<IndividualVariable, ExpressionSyntax>.Empty;
+
+                    Func<ImmutableDictionary<IndividualVariable, ExpressionSyntax>, StatementSyntax> addMove = s =>
+                        SyntaxFactory.ExpressionStatement(
+                            SyntaxFactory.InvocationExpression(
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.IdentifierName("moves"),
+                                    SyntaxFactory.IdentifierName("Add")))
+                                .AddArgumentListArguments(
+                                    SyntaxFactory.Argument(SyntaxFactory.ObjectCreationExpression(
+                                        SyntaxFactory.IdentifierName("Move"))
+                                        .AddArgumentListArguments(
+                                            SyntaxFactory.Argument(
+                                                SyntaxFactory.ElementAccessExpression(
+                                                    SyntaxFactory.MemberAccessExpression(
+                                                        SyntaxKind.SimpleMemberAccessExpression,
+                                                        SyntaxFactory.ThisExpression(),
+                                                        SyntaxFactory.IdentifierName("Players")))
+                                                .AddArgumentListArguments(
+                                                    SyntaxFactory.Argument(
+                                                        SyntaxFactory.CastExpression(
+                                                            SyntaxFactory.PredefinedType(
+                                                                SyntaxFactory.Token(SyntaxKind.IntKeyword)),
+                                                            this.ConvertExpression(implicated.Arguments[0], s))))),
+                                            SyntaxFactory.Argument(this.ConvertExpression(implicated.Arguments[1], s))))));
+
+                    var sentenceVariables = this.result.AssignedTypes.VariableTypes[sentence].ToDictionary(v => v.Item1, v => v.Item2);
+                    switch (sentence)
+                    {
+                        case Implication implication:
+                            statements = statements
+                                .AddStatements(
+                                    this.ConvertConjnuction(
+                                        implication.Antecedents,
+                                        addMove,
+                                        sentenceVariables,
+                                        scope));
+                            break;
+
+                        default:
+                            statements = statements
+                                .AddStatements(
+                                    addMove(scope));
+                            break;
+                    }
+                }
+
+                return SyntaxFactory.MethodDeclaration(
                     SyntaxFactory.GenericName(
                         SyntaxFactory.Identifier("IReadOnlyList"))
                         .WithTypeArgumentList(
@@ -756,35 +868,33 @@ namespace GameTheory.Gdl.Passes
                     .AddModifiers(SyntaxFactory.Token(SyntaxKind.PublicKeyword))
                     .WithBody(
                         SyntaxFactory.Block(
+                            SyntaxFactory.LocalDeclarationStatement(
+                                SyntaxFactory.VariableDeclaration(
+                                    SyntaxFactory.IdentifierName("var"))
+                                    .AddVariables(
+                                        SyntaxFactory.VariableDeclarator(
+                                            SyntaxFactory.Identifier("moves"))
+                                            .WithInitializer(
+                                                SyntaxFactory.EqualsValueClause(
+                                                    SyntaxFactory.ObjectCreationExpression(
+                                                        SyntaxFactory.GenericName(
+                                                            SyntaxFactory.Identifier("List"))
+                                                            .AddTypeArgumentListArguments(
+                                                                SyntaxFactory.IdentifierName("Move")))
+                                                        .WithArgumentList(
+                                                            SyntaxFactory.ArgumentList()))))),
                             SyntaxFactory.IfStatement(
-                                SyntaxFactory.InvocationExpression(
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.ThisExpression(),
-                                        SyntaxFactory.IdentifierName("TERMINAL"))),
-                                SyntaxFactory.Block(
-                                    SyntaxFactory.SingletonList<StatementSyntax>(
-                                        SyntaxFactory.ReturnStatement(
-                                            SyntaxFactory.ArrayCreationExpression(
-                                                SyntaxFactory.ArrayType(
-                                                    SyntaxFactory.IdentifierName("Move"))
-                                                    .AddRankSpecifiers(
-                                                        SyntaxFactory.ArrayRankSpecifier(
-                                                            SyntaxFactory.SingletonSeparatedList<ExpressionSyntax>(
-                                                                SyntaxFactory.LiteralExpression(
-                                                                    SyntaxKind.NumericLiteralExpression,
-                                                                    SyntaxFactory.Literal(0)))))))))),
-                            SyntaxFactory.ThrowStatement(
-                                SyntaxFactory.ObjectCreationExpression(
-                                    SyntaxFactory.IdentifierName("NotImplementedException"))
-                                    .WithArgumentList(
-                                        SyntaxFactory.ArgumentList()))
-                                .WithThrowKeyword(
-                                    SyntaxFactory.Token(
-                                        SyntaxFactory.TriviaList(
-                                            SyntaxFactory.Comment("// TODO: Enumerate the LEGAL(role, move) relation")),
-                                        SyntaxKind.ThrowKeyword,
-                                        SyntaxFactory.TriviaList()))));
+                                SyntaxFactory.PrefixUnaryExpression(
+                                    SyntaxKind.LogicalNotExpression,
+                                    SyntaxFactory.InvocationExpression(
+                                        SyntaxFactory.MemberAccessExpression(
+                                            SyntaxKind.SimpleMemberAccessExpression,
+                                            SyntaxFactory.ThisExpression(),
+                                            SyntaxFactory.IdentifierName("TERMINAL")))),
+                                statements),
+                            SyntaxFactory.ReturnStatement(
+                            SyntaxFactory.IdentifierName("moves"))));
+            }
 
             private MethodDeclarationSyntax CreateGetWinnersDeclaration(RelationInfo goal) =>
                 SyntaxFactory.MethodDeclaration(
@@ -830,8 +940,14 @@ namespace GameTheory.Gdl.Passes
                                         SyntaxKind.ThrowKeyword,
                                         SyntaxFactory.TriviaList()))));
 
-            private MethodDeclarationSyntax CreateMakeMoveDeclaration(RelationInfo next) =>
-                SyntaxFactory.MethodDeclaration(
+            private MethodDeclarationSyntax CreateMakeMoveDeclaration(RelationInfo next, ExpressionType stateType, RelationInfo role, RelationInfo does)
+            {
+                var roles = ((EnumType)role.Arguments[0].ReturnType).Objects;
+
+                var moveIdentifier = SyntaxFactory.Identifier("move");
+                var moveIdentifierName = SyntaxFactory.IdentifierName("move");
+
+                var makeMove = SyntaxFactory.MethodDeclaration(
                     SyntaxFactory.GenericName(
                         SyntaxFactory.Identifier("IGameState"))
                         .WithTypeArgumentList(
@@ -844,23 +960,263 @@ namespace GameTheory.Gdl.Passes
                         SyntaxFactory.ParameterList(
                             SyntaxFactory.SingletonSeparatedList<ParameterSyntax>(
                                 SyntaxFactory.Parameter(
-                                    SyntaxFactory.Identifier("move"))
+                                    moveIdentifier)
                                     .WithType(
-                                        SyntaxFactory.IdentifierName("Move")))))
-                    .WithBody(
-                        SyntaxFactory.Block(
-                            SyntaxFactory.SingletonList<StatementSyntax>(
-                                SyntaxFactory.ThrowStatement(
-                                    SyntaxFactory.ObjectCreationExpression(
-                                        SyntaxFactory.IdentifierName("NotImplementedException"))
-                                        .WithArgumentList(
-                                            SyntaxFactory.ArgumentList()))
-                                    .WithThrowKeyword(
-                                        SyntaxFactory.Token(
-                                            SyntaxFactory.TriviaList(
-                                                SyntaxFactory.Comment("// TODO: Enumerate the NEXT(state) relation")),
-                                            SyntaxKind.ThrowKeyword,
-                                            SyntaxFactory.TriviaList())))));
+                                        SyntaxFactory.IdentifierName("Move")))));
+
+                if (roles.Count > 1)
+                {
+                    makeMove = makeMove
+                        .AddBodyStatements(
+                            SyntaxFactory.IfStatement(
+                                SyntaxFactory.BinaryExpression(
+                                    SyntaxKind.LogicalOrExpression,
+                                    SyntaxFactory.InvocationExpression(
+                                        SyntaxFactory.MemberAccessExpression(
+                                            SyntaxKind.SimpleMemberAccessExpression,
+                                            SyntaxFactory.MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                SyntaxFactory.ThisExpression(),
+                                                SyntaxFactory.IdentifierName("moves")),
+                                            SyntaxFactory.IdentifierName("ContainsKey")))
+                                        .AddArgumentListArguments(
+                                            SyntaxFactory.Argument(
+                                                SyntaxFactory.MemberAccessExpression(
+                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                    moveIdentifierName,
+                                                    SyntaxFactory.IdentifierName("PlayerToken")))),
+                                    SyntaxFactory.PrefixUnaryExpression(
+                                        SyntaxKind.LogicalNotExpression,
+                                        SyntaxFactory.InvocationExpression(
+                                            SyntaxFactory.MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                SyntaxFactory.InvocationExpression(
+                                                    SyntaxFactory.MemberAccessExpression(
+                                                        SyntaxKind.SimpleMemberAccessExpression,
+                                                        SyntaxFactory.ThisExpression(),
+                                                        SyntaxFactory.IdentifierName("GetAvailableMoves"))),
+                                                SyntaxFactory.IdentifierName("Any")))
+                                            .AddArgumentListArguments(
+                                                SyntaxFactory.Argument(
+                                                    SyntaxFactory.SimpleLambdaExpression(
+                                                        SyntaxFactory.Parameter(
+                                                            SyntaxFactory.Identifier("m")),
+                                                        SyntaxFactory.InvocationExpression(
+                                                            SyntaxFactory.MemberAccessExpression(
+                                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                                SyntaxFactory.PredefinedType(
+                                                                    SyntaxFactory.Token(SyntaxKind.ObjectKeyword)),
+                                                                SyntaxFactory.IdentifierName("Equals")))
+                                                            .AddArgumentListArguments(
+                                                                SyntaxFactory.Argument(
+                                                                    SyntaxFactory.IdentifierName("m")),
+                                                                SyntaxFactory.Argument(
+                                                                    moveIdentifierName))))))),
+                                SyntaxFactory.Block(
+                                    SyntaxFactory.SingletonList<StatementSyntax>(
+                                        SyntaxFactory.ThrowStatement(
+                                            SyntaxFactory.ObjectCreationExpression(
+                                                SyntaxFactory.IdentifierName("ArgumentOutOfRangeException"))
+                                                .AddArgumentListArguments(
+                                                    SyntaxFactory.Argument(
+                                                        SyntaxFactory.InvocationExpression(
+                                                            SyntaxFactory.IdentifierName("nameof"))
+                                                            .AddArgumentListArguments(
+                                                                SyntaxFactory.Argument(
+                                                                    moveIdentifierName)))))))),
+                            SyntaxFactory.LocalDeclarationStatement(
+                                SyntaxFactory.VariableDeclaration(
+                                    SyntaxFactory.IdentifierName("var"))
+                                    .AddVariables(
+                                        SyntaxFactory.VariableDeclarator(
+                                            SyntaxFactory.Identifier("moves"))
+                                            .WithInitializer(
+                                                SyntaxFactory.EqualsValueClause(
+                                                    SyntaxFactory.InvocationExpression(
+                                                        SyntaxFactory.MemberAccessExpression(
+                                                            SyntaxKind.SimpleMemberAccessExpression,
+                                                            SyntaxFactory.MemberAccessExpression(
+                                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                                SyntaxFactory.ThisExpression(),
+                                                                SyntaxFactory.IdentifierName("moves")),
+                                                            SyntaxFactory.IdentifierName("Add")))
+                                                        .AddArgumentListArguments(
+                                                            SyntaxFactory.Argument(
+                                                                SyntaxFactory.MemberAccessExpression(
+                                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                                    moveIdentifierName,
+                                                                    SyntaxFactory.IdentifierName("PlayerToken"))),
+                                                            SyntaxFactory.Argument(
+                                                                moveIdentifierName)))))),
+                            SyntaxFactory.LocalFunctionStatement(
+                                SyntaxFactory.PredefinedType(
+                                    SyntaxFactory.Token(SyntaxKind.BoolKeyword)),
+                                SyntaxFactory.Identifier("DOES"))
+                                .AddParameterListParameters(
+                                    SyntaxFactory.Parameter(
+                                        SyntaxFactory.Identifier("p"))
+                                        .WithType(
+                                            Reference(does.Arguments[0].ReturnType)),
+                                    SyntaxFactory.Parameter(
+                                        SyntaxFactory.Identifier("m"))
+                                        .WithType(
+                                            Reference(does.Arguments[1].ReturnType)))
+                            .WithExpressionBody(
+                                SyntaxFactory.ArrowExpressionClause(
+                                    SyntaxFactory.InvocationExpression(
+                                        SyntaxFactory.MemberAccessExpression(
+                                            SyntaxKind.SimpleMemberAccessExpression,
+                                            SyntaxFactory.PredefinedType(
+                                                SyntaxFactory.Token(SyntaxKind.ObjectKeyword)),
+                                            SyntaxFactory.IdentifierName("Equals")))
+                                        .AddArgumentListArguments(
+                                            SyntaxFactory.Argument(
+                                                SyntaxFactory.ElementAccessExpression(
+                                                    SyntaxFactory.MemberAccessExpression(
+                                                        SyntaxKind.SimpleMemberAccessExpression,
+                                                        SyntaxFactory.ThisExpression(),
+                                                        SyntaxFactory.IdentifierName("moves")))
+                                                .WithArgumentList(
+                                                    SyntaxFactory.BracketedArgumentList(
+                                                        SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                            SyntaxFactory.Argument(
+                                                                SyntaxFactory.IdentifierName("p")))))),
+                                            SyntaxFactory.Argument(
+                                                SyntaxFactory.IdentifierName("m")))))
+                            .WithSemicolonToken(
+                                SyntaxFactory.Token(SyntaxKind.SemicolonToken)));
+                }
+                else
+                {
+                    makeMove = makeMove
+                        .AddBodyStatements(
+                            SyntaxFactory.LocalFunctionStatement(
+                                SyntaxFactory.PredefinedType(
+                                    SyntaxFactory.Token(SyntaxKind.BoolKeyword)),
+                                SyntaxFactory.Identifier(does.Id)) // TODO: Lookup.
+                                .AddParameterListParameters(
+                                    SyntaxFactory.Parameter(
+                                        SyntaxFactory.Identifier("r"))
+                                        .WithType(
+                                            Reference(does.Arguments[0].ReturnType)),
+                                    SyntaxFactory.Parameter(
+                                        SyntaxFactory.Identifier("m"))
+                                        .WithType(
+                                            Reference(does.Arguments[1].ReturnType)))
+                                .WithExpressionBody(
+                                    SyntaxFactory.ArrowExpressionClause(
+                                        ObjectEqualsExpression(
+                                            SyntaxFactory.MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                moveIdentifierName,
+                                                SyntaxFactory.IdentifierName("Value")),
+                                            SyntaxFactory.IdentifierName("m"))))
+                                .WithSemicolonToken(
+                                    SyntaxFactory.Token(SyntaxKind.SemicolonToken)));
+                }
+
+                var nextIdentifier = SyntaxFactory.Identifier("next");
+                var nextIdentifierName = SyntaxFactory.IdentifierName("next");
+
+                makeMove = makeMove
+                    .AddBodyStatements(
+                        SyntaxFactory.LocalDeclarationStatement(
+                            SyntaxFactory.VariableDeclaration(
+                                SyntaxFactory.IdentifierName("var"))
+                                .AddVariables(
+                                    SyntaxFactory.VariableDeclarator(
+                                        nextIdentifier)
+                                        .WithInitializer(
+                                            SyntaxFactory.EqualsValueClause(
+                                                SyntaxFactory.ObjectCreationExpression(
+                                                    SyntaxFactory.ParseTypeName(stateType.Name)) // TODO: Lookup.
+                                                    .WithArgumentList(
+                                                        SyntaxFactory.ArgumentList()))))));
+
+                foreach (var sentence in next.Body)
+                {
+                    var implicated = (ImplicitRelationalSentence)sentence.GetImplicatedSentence();
+                    var scope = ImmutableDictionary<IndividualVariable, ExpressionSyntax>.Empty;
+
+                    Func<ImmutableDictionary<IndividualVariable, ExpressionSyntax>, StatementSyntax> addState = s =>
+                        SyntaxFactory.ExpressionStatement(
+                            SyntaxFactory.InvocationExpression(
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    nextIdentifierName,
+                                    SyntaxFactory.IdentifierName("Add")))
+                                .AddArgumentListArguments(
+                                    SyntaxFactory.Argument(
+                                        this.ConvertExpression(implicated.Arguments[0], s))));
+
+                    var sentenceVariables = this.result.AssignedTypes.VariableTypes[sentence].ToDictionary(v => v.Item1, v => v.Item2);
+                    switch (sentence)
+                    {
+                        case Implication implication:
+                            makeMove = makeMove
+                                .AddBodyStatements(
+                                    this.ConvertConjnuction(
+                                        implication.Antecedents,
+                                        addState,
+                                        sentenceVariables,
+                                        scope));
+                            break;
+
+                        default:
+                            makeMove = makeMove
+                                .AddBodyStatements(
+                                    addState(scope));
+                            break;
+                    }
+                }
+
+                if (roles.Count > 1)
+                {
+                    makeMove = makeMove.AddBodyStatements(
+                        SyntaxFactory.ExpressionStatement(
+                            SyntaxFactory.AssignmentExpression(
+                                SyntaxKind.SimpleAssignmentExpression,
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.ThisExpression(),
+                                    SyntaxFactory.IdentifierName("moves")),
+                                SyntaxFactory.InvocationExpression(
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.ThisExpression(),
+                                        SyntaxFactory.IdentifierName("FindForcedNoOps"))))),
+                        SyntaxFactory.ReturnStatement(
+                            SyntaxFactory.ObjectCreationExpression(
+                                SyntaxFactory.IdentifierName("GameState"))
+                                .AddArgumentListArguments(
+                                    SyntaxFactory.Argument(
+                                        SyntaxFactory.MemberAccessExpression(
+                                            SyntaxKind.SimpleMemberAccessExpression,
+                                            SyntaxFactory.ThisExpression(),
+                                            SyntaxFactory.IdentifierName("Players"))),
+                                    SyntaxFactory.Argument(
+                                        nextIdentifierName),
+                                    SyntaxFactory.Argument(
+                                        SyntaxFactory.IdentifierName("moves")))));
+                }
+                else
+                {
+                    makeMove = makeMove.AddBodyStatements(
+                        SyntaxFactory.ReturnStatement(
+                            SyntaxFactory.ObjectCreationExpression(
+                                SyntaxFactory.IdentifierName("GameState"))
+                                .AddArgumentListArguments(
+                                    SyntaxFactory.Argument(
+                                        SyntaxFactory.MemberAccessExpression(
+                                            SyntaxKind.SimpleMemberAccessExpression,
+                                            SyntaxFactory.ThisExpression(),
+                                            SyntaxFactory.IdentifierName("Players"))),
+                                    SyntaxFactory.Argument(
+                                        nextIdentifierName))));
+                }
+
+                return makeMove;
+            }
 
             private MemberDeclarationSyntax CreateLogicalFunctionDeclaration(ExpressionInfo expression, ArgumentInfo[] parameters, IEnumerable<Sentence> sentences)
             {
@@ -1023,15 +1379,32 @@ namespace GameTheory.Gdl.Passes
                     SyntaxKind.LogicalNotExpression,
                     this.ConvertCondition(negation.Negated, scope));
 
-            private ExpressionSyntax ConvertImplicitRelationalCondition(ImplicitRelationalSentence implicitRelationalSentence, ImmutableDictionary<IndividualVariable, ExpressionSyntax> scope) =>
-                SyntaxFactory.InvocationExpression( // TODO: Runtime type checks
-                    SyntaxFactory.MemberAccessExpression(
-                        SyntaxKind.SimpleMemberAccessExpression,
-                        SyntaxFactory.ThisExpression(),
-                        SyntaxFactory.IdentifierName(implicitRelationalSentence.Relation.Id)),
-                    SyntaxFactory.ArgumentList(
-                        SyntaxFactory.SeparatedList<ArgumentSyntax>()
-                            .AddRange(implicitRelationalSentence.Arguments.Select(arg => SyntaxFactory.Argument(this.ConvertExpression(arg, scope))))));
+            private ExpressionSyntax ConvertImplicitRelationalCondition(ImplicitRelationalSentence implicitRelationalSentence, ImmutableDictionary<IndividualVariable, ExpressionSyntax> scope)
+            {
+                // TODO: Runtime type checks
+                if (implicitRelationalSentence.Relation.Id == "DOES" && implicitRelationalSentence.Arguments.Count == 2)
+                {
+                    return
+                        SyntaxFactory.InvocationExpression(
+                            SyntaxFactory.IdentifierName(implicitRelationalSentence.Relation.Id), // TODO: Lookup.
+                            SyntaxFactory.ArgumentList(
+                                SyntaxFactory.SeparatedList<ArgumentSyntax>()
+                                    .AddRange(implicitRelationalSentence.Arguments.Select(arg => SyntaxFactory.Argument(this.ConvertExpression(arg, scope))))));
+
+                }
+                else
+                {
+                    return
+                        SyntaxFactory.InvocationExpression(
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.ThisExpression(),
+                                SyntaxFactory.IdentifierName(implicitRelationalSentence.Relation.Id)), // TODO: Lookup.
+                            SyntaxFactory.ArgumentList(
+                                SyntaxFactory.SeparatedList<ArgumentSyntax>()
+                                    .AddRange(implicitRelationalSentence.Arguments.Select(arg => SyntaxFactory.Argument(this.ConvertExpression(arg, scope))))));
+                }
+            }
 
             private static EnumDeclarationSyntax CreateEnumTypeDeclaration(EnumType enumType)
             {

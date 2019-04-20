@@ -47,7 +47,8 @@ namespace GameTheory.Tests.Gdl
 
             var stateType = result.Type;
             var moveType = stateType.GetInterfaces().Single(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IGameState<>)).GetGenericArguments().Single();
-            var manager = (IGameManager)Activator.CreateInstance(typeof(GameManager<>).MakeGenericType(moveType), Activator.CreateInstance(stateType));
+            var startingState = Activator.CreateInstance(stateType);
+            var manager = (IGameManager)Activator.CreateInstance(typeof(GameManager<>).MakeGenericType(moveType), startingState);
             var endState = manager.Run();
         }
 
