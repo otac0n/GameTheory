@@ -4,6 +4,7 @@ namespace GameTheory.ConsoleRunner
 {
     using System;
     using System.Diagnostics;
+    using System.IO;
     using System.Linq;
     using System.Reflection;
     using System.Text;
@@ -130,8 +131,9 @@ namespace GameTheory.ConsoleRunner
             NativeMethods.SetConsoleFont();
             NativeMethods.Maximize();
 
-            var catalog = GameCatalog.Default;
-            var game = ConsoleInteraction.Choose(catalog.AvailableGames);
+            var catalog1 = GameCatalog.Default;
+            var catalog2 = new Gdl.GdlGameCatalog(Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, "..", "..", "..")));
+            var game = ConsoleInteraction.Choose(catalog1.AvailableGames.Concat(catalog2.AvailableGames).ToList());
             var gameType = game.GameStateType;
             var state = ConstructType(gameType);
 
