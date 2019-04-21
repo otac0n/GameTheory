@@ -548,6 +548,49 @@ namespace GameTheory.Gdl.Passes
                                     .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken))),
                         SyntaxFactory.MethodDeclaration(
                             SyntaxFactory.PredefinedType(
+                                SyntaxFactory.Token(SyntaxKind.BoolKeyword)),
+                            SyntaxFactory.Identifier("Equals"))
+                            .AddModifiers(
+                                SyntaxFactory.Token(SyntaxKind.PublicKeyword),
+                                SyntaxFactory.Token(SyntaxKind.OverrideKeyword))
+                            .AddParameterListParameters(
+                                SyntaxFactory.Parameter(
+                                    SyntaxFactory.Identifier("obj"))
+                                    .WithType(SyntaxHelper.ObjectType))
+                            .WithExpressionBody(
+                                SyntaxFactory.ArrowExpressionClause(
+                                    SyntaxFactory.BinaryExpression(
+                                        SyntaxKind.LogicalAndExpression,
+                                        SyntaxFactory.BinaryExpression(
+                                            SyntaxKind.LogicalAndExpression,
+                                            SyntaxFactory.IsPatternExpression(
+                                                SyntaxFactory.IdentifierName("obj"),
+                                                SyntaxFactory.DeclarationPattern(
+                                                    SyntaxFactory.IdentifierName("Move"), // TODO: Lookup.
+                                                    SyntaxFactory.SingleVariableDesignation(
+                                                        SyntaxFactory.Identifier("other")))),
+                                            SyntaxHelper.ObjectEqualsExpression(
+                                                SyntaxFactory.MemberAccessExpression(
+                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                    SyntaxFactory.ThisExpression(),
+                                                    SyntaxFactory.IdentifierName("PlayerToken")),
+                                                SyntaxFactory.MemberAccessExpression(
+                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                    SyntaxFactory.IdentifierName("other"),
+                                                    SyntaxFactory.IdentifierName("PlayerToken")))),
+                                        SyntaxHelper.ObjectEqualsExpression(
+                                            SyntaxFactory.MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                SyntaxFactory.ThisExpression(),
+                                                SyntaxFactory.IdentifierName("Value")),
+                                            SyntaxFactory.MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                SyntaxFactory.IdentifierName("other"),
+                                                SyntaxFactory.IdentifierName("Value"))))))
+                            .WithSemicolonToken(
+                                SyntaxFactory.Token(SyntaxKind.SemicolonToken)),
+                        SyntaxFactory.MethodDeclaration(
+                            SyntaxFactory.PredefinedType(
                                 SyntaxFactory.Token(SyntaxKind.StringKeyword)),
                             SyntaxFactory.Identifier("ToString"))
                             .AddModifiers(
@@ -788,28 +831,29 @@ namespace GameTheory.Gdl.Passes
                     {
                         constructor1 = constructor1
                             .AddBodyStatements(
-                                SyntaxFactory.ExpressionStatement(
-                                    SyntaxFactory.AssignmentExpression(
-                                        SyntaxKind.SimpleAssignmentExpression,
-                                        SyntaxFactory.MemberAccessExpression(
-                                            SyntaxKind.SimpleMemberAccessExpression,
-                                            SyntaxFactory.ThisExpression(),
-                                            SyntaxFactory.IdentifierName("moves")),
+                                SyntaxHelper.AssignmentStatement(
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.ThisExpression(),
+                                        SyntaxFactory.IdentifierName("moves")),
+                                    SyntaxFactory.ArrayCreationExpression(
+                                        SyntaxHelper.ArrayType(
+                                            SyntaxFactory.IdentifierName("Move"), // TODO: Lookup.
+                                            SyntaxHelper.LiteralExpression(roles.Count)))));
+
+                        constructor2 = constructor2
+                            .AddBodyStatements(
+                                SyntaxHelper.AssignmentStatement(
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.ThisExpression(),
+                                        SyntaxFactory.IdentifierName("moves")),
+                                    SyntaxHelper.Coalesce(
+                                        SyntaxFactory.IdentifierName("moves"),
                                         SyntaxFactory.ArrayCreationExpression(
                                             SyntaxHelper.ArrayType(
                                                 SyntaxFactory.IdentifierName("Move"), // TODO: Lookup.
                                                 SyntaxHelper.LiteralExpression(roles.Count))))));
-
-                        constructor2 = constructor2
-                            .AddBodyStatements(
-                                SyntaxFactory.ExpressionStatement(
-                                    SyntaxFactory.AssignmentExpression(
-                                        SyntaxKind.SimpleAssignmentExpression,
-                                        SyntaxFactory.MemberAccessExpression(
-                                            SyntaxKind.SimpleMemberAccessExpression,
-                                            SyntaxFactory.ThisExpression(),
-                                            SyntaxFactory.IdentifierName("moves")),
-                                        SyntaxFactory.IdentifierName("moves"))));
                     }
                 }
 
@@ -1219,16 +1263,13 @@ namespace GameTheory.Gdl.Passes
                                         SyntaxFactory.MemberAccessExpression(
                                             SyntaxKind.SimpleMemberAccessExpression,
                                             SyntaxFactory.ElementAccessExpression(
-                                                SyntaxFactory.MemberAccessExpression(
-                                                    SyntaxKind.SimpleMemberAccessExpression,
-                                                    SyntaxFactory.ThisExpression(),
-                                                    SyntaxFactory.IdentifierName("moves")))
-                                                    .AddArgumentListArguments(
-                                                        SyntaxFactory.Argument(
-                                                            SyntaxFactory.CastExpression(
-                                                                SyntaxFactory.PredefinedType(
-                                                                    SyntaxFactory.Token(SyntaxKind.IntKeyword)),
-                                                                SyntaxFactory.IdentifierName("r")))),
+                                                SyntaxFactory.IdentifierName("moves"))
+                                                .AddArgumentListArguments(
+                                                    SyntaxFactory.Argument(
+                                                        SyntaxFactory.CastExpression(
+                                                            SyntaxFactory.PredefinedType(
+                                                                SyntaxFactory.Token(SyntaxKind.IntKeyword)),
+                                                            SyntaxFactory.IdentifierName("r")))),
                                             SyntaxFactory.IdentifierName("Value")),
                                         SyntaxFactory.IdentifierName("m"))))
                             .WithSemicolonToken(
