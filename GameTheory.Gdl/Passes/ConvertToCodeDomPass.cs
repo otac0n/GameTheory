@@ -717,18 +717,22 @@ namespace GameTheory.Gdl.Passes
                     .AddBodyStatements(
                         this.ConvertImplicatedSentences(
                             init.Body,
-                            (i, s) => SyntaxFactory.ExpressionStatement(
-                                SyntaxFactory.InvocationExpression(
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
+                            (i, s) => new[]
+                            {
+                                SyntaxFactory.ExpressionStatement(
+                                    SyntaxFactory.InvocationExpression(
                                         SyntaxFactory.MemberAccessExpression(
                                             SyntaxKind.SimpleMemberAccessExpression,
-                                            SyntaxFactory.ThisExpression(),
-                                            SyntaxFactory.IdentifierName("state")),
-                                        SyntaxFactory.IdentifierName("Add")))
-                                    .AddArgumentListArguments(
-                                        SyntaxFactory.Argument(
-                                            this.ConvertExpression(((ImplicitRelationalSentence)i).Arguments[0], s))))));
+                                            SyntaxFactory.MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                SyntaxFactory.ThisExpression(),
+                                                SyntaxFactory.IdentifierName("state")),
+                                            SyntaxFactory.IdentifierName("Add")))
+                                        .AddArgumentListArguments(
+                                            SyntaxFactory.Argument(
+                                                this.ConvertExpression(((ImplicitRelationalSentence)i).Arguments[0], s)))),
+                            },
+                            ImmutableDictionary<IndividualVariable, ExpressionSyntax>.Empty));
 
                 var constructor2 = SyntaxFactory.ConstructorDeclaration(
                     SyntaxFactory.Identifier("GameState"))
@@ -926,26 +930,30 @@ namespace GameTheory.Gdl.Passes
                                                                     this.ConvertExpression(implicated.Arguments[0], s))))),
                                                     SyntaxFactory.Argument(this.ConvertExpression(implicated.Arguments[1], s))))));
 
-                            return roles.Count > 1
-                                ? SyntaxFactory.IfStatement(
-                                    SyntaxFactory.IsPatternExpression(
-                                        SyntaxFactory.ElementAccessExpression(
-                                            SyntaxFactory.MemberAccessExpression(
-                                                SyntaxKind.SimpleMemberAccessExpression,
-                                                SyntaxFactory.ThisExpression(),
-                                                SyntaxFactory.IdentifierName("moves")))
-                                            .AddArgumentListArguments(
-                                                SyntaxFactory.Argument(
-                                                    SyntaxFactory.CastExpression(
-                                                        SyntaxFactory.PredefinedType(
-                                                            SyntaxFactory.Token(SyntaxKind.IntKeyword)),
-                                                        this.ConvertExpression(implicated.Arguments[0], s)))),
-                                        SyntaxFactory.ConstantPattern(
-                                            SyntaxHelper.Null)),
-                                    SyntaxFactory.Block(
-                                        addStatement))
-                                : addStatement;
-                        }));
+                            return new[]
+                            {
+                                roles.Count > 1
+                                    ? SyntaxFactory.IfStatement(
+                                        SyntaxFactory.IsPatternExpression(
+                                            SyntaxFactory.ElementAccessExpression(
+                                                SyntaxFactory.MemberAccessExpression(
+                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                    SyntaxFactory.ThisExpression(),
+                                                    SyntaxFactory.IdentifierName("moves")))
+                                                .AddArgumentListArguments(
+                                                    SyntaxFactory.Argument(
+                                                        SyntaxFactory.CastExpression(
+                                                            SyntaxFactory.PredefinedType(
+                                                                SyntaxFactory.Token(SyntaxKind.IntKeyword)),
+                                                            this.ConvertExpression(implicated.Arguments[0], s)))),
+                                            SyntaxFactory.ConstantPattern(
+                                                SyntaxHelper.Null)),
+                                        SyntaxFactory.Block(
+                                            addStatement))
+                                    : addStatement,
+                            };
+                        },
+                        ImmutableDictionary<IndividualVariable, ExpressionSyntax>.Empty));
 
                 return SyntaxFactory.MethodDeclaration(
                     SyntaxFactory.GenericName(
@@ -1279,7 +1287,8 @@ namespace GameTheory.Gdl.Passes
                     .AddBodyStatements(
                         this.ConvertImplicatedSentences(
                             next.Body,
-                            (i, s) =>
+                            (i, s) => new[]
+                            {
                                 SyntaxFactory.ExpressionStatement(
                                     SyntaxFactory.InvocationExpression(
                                         SyntaxFactory.MemberAccessExpression(
@@ -1288,7 +1297,9 @@ namespace GameTheory.Gdl.Passes
                                             SyntaxFactory.IdentifierName("Add")))
                                         .AddArgumentListArguments(
                                             SyntaxFactory.Argument(
-                                                this.ConvertExpression(((ImplicitRelationalSentence)i).Arguments[0], s))))));
+                                                this.ConvertExpression(((ImplicitRelationalSentence)i).Arguments[0], s)))),
+                            },
+                            ImmutableDictionary<IndividualVariable, ExpressionSyntax>.Empty));
 
                 if (roles.Count > 1)
                 {
@@ -1362,19 +1373,25 @@ namespace GameTheory.Gdl.Passes
                         ? implication.Antecedents
                         : ImmutableList<Sentence>.Empty;
 
-                    var root = this.ConvertConjnuction(conditions, sentenceVariables, _ => returnTrue, scope);
+                    var root = this.ConvertConjnuction(conditions, sentenceVariables, _ => new[] { returnTrue }, scope);
 
                     if (parameterEquality.Count > 0)
                     {
-                        root = SyntaxFactory.IfStatement(
-                            parameterEquality.Aggregate((left, right) =>
-                                SyntaxFactory.BinaryExpression(SyntaxKind.LogicalAndExpression, left, right)),
-                            SyntaxFactory.Block(root));
+                        root = new[]
+                        {
+                            SyntaxFactory.IfStatement(
+                                parameterEquality.Aggregate((left, right) =>
+                                    SyntaxFactory.BinaryExpression(SyntaxKind.LogicalAndExpression, left, right)),
+                                SyntaxFactory.Block(root)),
+                        };
                     }
 
-                    root = SyntaxFactory.Block(declarations)
-                        .AddStatements(root)
-                        .WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.Comment($"// {sentence}")));
+                    root = new[]
+                    {
+                        SyntaxFactory.Block(declarations)
+                            .AddStatements(root)
+                            .WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.Comment($"// {sentence}"))),
+                    };
 
                     methodElement = methodElement.AddBodyStatements(root);
                 }
@@ -1385,46 +1402,103 @@ namespace GameTheory.Gdl.Passes
                 return methodElement;
             }
 
-            private StatementSyntax[] ConvertImplicatedSentences(IEnumerable<Sentence> sentences, Func<Sentence, ImmutableDictionary<IndividualVariable, ExpressionSyntax>, StatementSyntax> getImplication)
+            private StatementSyntax[] ConvertImplicatedSentences(IEnumerable<Sentence> sentences, Func<Sentence, ImmutableDictionary<IndividualVariable, ExpressionSyntax>, StatementSyntax[]> getImplication, ImmutableDictionary<IndividualVariable, ExpressionSyntax> scope)
             {
-                var statements = new List<StatementSyntax>();
+                var shareableConjuncts = (from sentence in sentences
+                                          let sentenceVariables = this.result.AssignedTypes.VariableTypes[sentence].ToDictionary(v => v.Item1, v => v.Item2)
+                                          let implicated = sentence.GetImplicatedSentence()
+                                          let conjuncts = sentence is Implication
+                                              ? ((Implication)sentence).Antecedents
+                                              : ImmutableList<Sentence>.Empty
+                                          let shareable = (from conjunct in conjuncts
+                                                           where this.result.ContainedVariables[conjunct].IsEmpty // TODO: Allow grouping by variables.
+                                                           select conjunct).ToImmutableList()
+                                          let implication = new { sentenceVariables, conjuncts, implicated }
+                                          select new { implication, shareable }).ToList();
 
-                foreach (var sentence in sentences)
+                // Allows us to declare a recursive lambda with an anonymous type.
+                Func<T, Func<Sentence, ImmutableDictionary<IndividualVariable, ExpressionSyntax>, StatementSyntax[]>, ImmutableDictionary<IndividualVariable, ExpressionSyntax>, StatementSyntax[]> Describe<T>(T template) => (_0, _1, _2) => null;
+                var convertImplicated = Describe(shareableConjuncts);
+                convertImplicated = (sc, inner, s1) =>
                 {
-                    var implicated = sentence.GetImplicatedSentence();
-                    var scope = ImmutableDictionary<IndividualVariable, ExpressionSyntax>.Empty;
+                    var conjunctCounts = (from pair in sc
+                                          from shared in pair.shareable
+                                          group pair.implication by shared).ToDictionary(g => g.Key, g => g.Count());
 
-                    var sentenceVariables = this.result.AssignedTypes.VariableTypes[sentence].ToDictionary(v => v.Item1, v => v.Item2);
-                    var conditions = sentence is Implication implication
-                        ? implication.Antecedents
-                        : ImmutableList<Sentence>.Empty;
-                    statements.Add(
-                        this.ConvertConjnuction(
-                            conditions,
-                            sentenceVariables,
-                            s => getImplication(implicated, s),
-                            scope));
-                }
+                    var sharedGroups = (from pair in sc
+                                        let max = pair.shareable.OrderByDescending(s => conjunctCounts[s]).FirstOrDefault()
+                                        group pair by max into g
+                                        let gList = g.ToList()
+                                        select new
+                                        {
+                                            Key = gList.Count == 1 ? null : g.Key,
+                                            Remaining = g.Key == null || gList.Count == 1
+                                                ? gList
+                                                : g.Select(pair => new
+                                                {
+                                                    implication = new
+                                                    {
+                                                        pair.implication.sentenceVariables,
+                                                        conjuncts = pair.implication.conjuncts.Remove(g.Key),
+                                                        pair.implication.implicated,
+                                                    },
+                                                    shareable = pair.shareable.Remove(g.Key),
+                                                }).ToList(),
+                                        }).ToList();
 
-                return statements.ToArray();
+                    var statements = new List<StatementSyntax>();
+
+                    foreach (var group in sharedGroups)
+                    {
+                        if (group.Key != null)
+                        {
+                            statements.AddRange(
+                                this.ConvertConjnuction(
+                                    ImmutableList.Create(group.Key),
+                                    new Dictionary<IndividualVariable, VariableInfo>(), // TODO: Allow grouping by variables.
+                                    s2 => convertImplicated(group.Remaining, inner, s2),
+                                    s1));
+                        }
+                        else
+                        {
+                            foreach (var pair in group.Remaining)
+                            {
+                                var sentenceVariables = pair.implication.sentenceVariables;
+                                var conjuncts = pair.implication.conjuncts;
+                                var implicated = pair.implication.implicated;
+
+                                statements.AddRange(
+                                    this.ConvertConjnuction(
+                                        conjuncts,
+                                        sentenceVariables,
+                                        s2 => inner(implicated, s2),
+                                        s1));
+                            }
+                        }
+                    }
+
+                    return statements.ToArray();
+                };
+
+                return convertImplicated(shareableConjuncts, getImplication, scope);
             }
 
-            private StatementSyntax ConvertConjnuction(ImmutableList<Sentence> conjuncts, Dictionary<IndividualVariable, VariableInfo> sentenceVariables, Func<ImmutableDictionary<IndividualVariable, ExpressionSyntax>, StatementSyntax> inner, ImmutableDictionary<IndividualVariable, ExpressionSyntax> scope)
+            private StatementSyntax[] ConvertConjnuction(ImmutableList<Sentence> conjuncts, Dictionary<IndividualVariable, VariableInfo> sentenceVariables, Func<ImmutableDictionary<IndividualVariable, ExpressionSyntax>, StatementSyntax[]> inner, ImmutableDictionary<IndividualVariable, ExpressionSyntax> scope)
             {
-                StatementSyntax GetStatement(int i, ImmutableDictionary<IndividualVariable, ExpressionSyntax> s1)
+                StatementSyntax[] GetStatement(int i, ImmutableDictionary<IndividualVariable, ExpressionSyntax> s1)
                 {
                     if (i >= conjuncts.Count)
                     {
                         return inner(s1);
                     }
 
-                    return this.ConvertSentence(conjuncts[i], sentenceVariables, s2 => GetStatement(i + 1, s2), s1);
+                    return new[] { this.ConvertSentence(conjuncts[i], sentenceVariables, s2 => GetStatement(i + 1, s2), s1) };
                 }
 
                 return GetStatement(0, scope);
             }
 
-            private StatementSyntax ConvertSentence(Sentence sentence, Dictionary<IndividualVariable, VariableInfo> sentenceVariables, Func<ImmutableDictionary<IndividualVariable, ExpressionSyntax>, StatementSyntax> inner, ImmutableDictionary<IndividualVariable, ExpressionSyntax> scope)
+            private StatementSyntax ConvertSentence(Sentence sentence, Dictionary<IndividualVariable, VariableInfo> sentenceVariables, Func<ImmutableDictionary<IndividualVariable, ExpressionSyntax>, StatementSyntax[]> inner, ImmutableDictionary<IndividualVariable, ExpressionSyntax> scope)
             {
                 var variables = this.result.ContainedVariables[sentence].Except(scope.Keys);
                 if (variables.Count > 0)
