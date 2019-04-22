@@ -8,6 +8,9 @@ namespace GameTheory.Gdl
     using System.Globalization;
     using System.Linq;
     using System.Text.RegularExpressions;
+    using GameTheory.Gdl.Types;
+    using KnowledgeInterchangeFormat.Expressions;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     [Flags]
     public enum ScopeFlags
@@ -39,7 +42,14 @@ namespace GameTheory.Gdl
 
         public string TryGetPrivate(TKey key) => this.value.TryGetValue(key, out var found) ? found.@private : null;
 
+        public bool ContainsKey(TKey key) => this.value.ContainsKey(key);
+
         public Scope<TKey> AddPrivate(TKey key, params string[] nameHints) => this.Add(key, ScopeFlags.Private, nameHints);
+
+        public Scope<TKey> SetPrivate(TKey key, string path) =>
+            new Scope<TKey>(
+                this.names.Add(path),
+                this.value.Add(key, (null, path)));
 
         public Scope<TKey> Add(TKey key, ScopeFlags flags, params string[] nameHints)
         {

@@ -167,12 +167,12 @@ namespace GameTheory.Gdl
 
         private class VariableNameWalker : SupportedExpressionsTreeWalker
         {
-            private readonly Dictionary<(string, int), ExpressionInfo> expressionTypes;
+            private readonly ImmutableDictionary<(string, int), ExpressionInfo> expressionTypes;
             private readonly Func<ExpressionInfo, string> exprId;
-            private readonly ILookup<Form, (IndividualVariable, VariableInfo)> containedVariables;
+            private readonly ImmutableDictionary<Sentence, ImmutableDictionary<IndividualVariable, VariableInfo>> containedVariables;
             private readonly Func<VariableInfo, string> varId;
             private readonly StringBuilder sb;
-            private Dictionary<IndividualVariable, VariableInfo> variableTypes;
+            private ImmutableDictionary<IndividualVariable, VariableInfo> variableTypes;
             private VariableDirection variableDirection;
 
             public VariableNameWalker(StringBuilder sb, AssignedTypes assignedTypes, Func<ExpressionInfo, string> exprId, Func<VariableInfo, string> varId)
@@ -237,7 +237,7 @@ namespace GameTheory.Gdl
 
                 foreach (var form in knowledgeBase.Forms)
                 {
-                    this.variableTypes = this.containedVariables[form].ToDictionary(r => r.Item1, r => r.Item2);
+                    this.variableTypes = this.containedVariables[(Sentence)form];
                     this.Walk((Expression)form);
                     this.variableTypes = null;
                 }

@@ -27,12 +27,10 @@ namespace GameTheory.Gdl.Passes
         private class ConstantSemanticsWalker : SupportedExpressionsTreeWalker
         {
             private readonly CompileResult result;
-            private readonly Dictionary<(string, int), ConstantType> constantTypes;
 
             public ConstantSemanticsWalker(CompileResult result)
             {
                 this.result = result;
-                this.constantTypes = result.ConstantTypes;
             }
 
             public override void Walk(Constant constant)
@@ -60,7 +58,7 @@ namespace GameTheory.Gdl.Passes
 
             private void CheckError((string id, int arity) key, ConstantType type, Expression expression)
             {
-                if (this.constantTypes[key] == ConstantType.Invalid)
+                if (this.result.ConstantTypes[key] == ConstantType.Invalid)
                 {
                     this.result.AddCompilerError(expression.StartCursor, () => Resources.GDL002_ERROR_InconsistentConstantSemantics, key.id, key.arity, type);
                 }

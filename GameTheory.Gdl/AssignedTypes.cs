@@ -5,22 +5,23 @@ namespace GameTheory.Gdl
     using System;
     using System.Collections;
     using System.Collections.Generic;
+    using System.Collections.Immutable;
     using System.Linq;
     using GameTheory.Gdl.Types;
     using KnowledgeInterchangeFormat.Expressions;
 
     public class AssignedTypes : IEnumerable<ExpressionInfo>
     {
-        public AssignedTypes(Dictionary<(string, int), ExpressionInfo> expressionTypes, ILookup<Form, (IndividualVariable, VariableInfo)> variableTypes)
+        public AssignedTypes(ImmutableDictionary<(string, int), ExpressionInfo> expressionTypes, ImmutableDictionary<Sentence, ImmutableDictionary<IndividualVariable, VariableInfo>> variableTypes)
         {
             this.ExpressionTypes = expressionTypes;
 
             this.VariableTypes = variableTypes;
         }
 
-        public Dictionary<(string, int), ExpressionInfo> ExpressionTypes { get; }
+        public ImmutableDictionary<(string, int), ExpressionInfo> ExpressionTypes { get; }
 
-        public ILookup<Form, (IndividualVariable, VariableInfo)> VariableTypes { get; }
+        public ImmutableDictionary<Sentence, ImmutableDictionary<IndividualVariable, VariableInfo>> VariableTypes { get; }
 
         public ExpressionInfo GetExpressionInfo(Expression expression)
         {
@@ -43,7 +44,7 @@ namespace GameTheory.Gdl
             }
         }
 
-        public IEnumerator<ExpressionInfo> GetEnumerator() => this.ExpressionTypes.Values.Concat(this.VariableTypes.SelectMany(x => x).Select(x => x.Item2)).GetEnumerator();
+        public IEnumerator<ExpressionInfo> GetEnumerator() => this.ExpressionTypes.Values.Concat(this.VariableTypes.Values.SelectMany(v => v.Values)).GetEnumerator();
 
         IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
     }

@@ -121,7 +121,7 @@ namespace GameTheory.Gdl.Passes
                     }
                 }
 
-                var scope = new Scope<ArgumentInfo>();
+                var scope = new Scope<VariableInfo>();
                 for (var b = 0; b < expressionInfo.Arity; b++)
                 {
                     var argument = expressionInfo.Arguments[b];
@@ -234,10 +234,10 @@ namespace GameTheory.Gdl.Passes
 
         private class VariableNameWalker : SupportedExpressionsTreeWalker
         {
-            private readonly Dictionary<(string, int), ExpressionInfo> expressionTypes;
-            private readonly ILookup<Form, (IndividualVariable, VariableInfo)> containedVariables;
+            private readonly ImmutableDictionary<(string, int), ExpressionInfo> expressionTypes;
+            private readonly ImmutableDictionary<Sentence, ImmutableDictionary<IndividualVariable, VariableInfo>> containedVariables;
             private readonly Dictionary<ExpressionWithArgumentsInfo, List<VariableInfo[]>> variableNames;
-            private Dictionary<IndividualVariable, VariableInfo> variableTypes;
+            private ImmutableDictionary<IndividualVariable, VariableInfo> variableTypes;
 
             public VariableNameWalker(AssignedTypes assignedTypes, Dictionary<ExpressionWithArgumentsInfo, List<VariableInfo[]>> variableNames)
             {
@@ -264,7 +264,7 @@ namespace GameTheory.Gdl.Passes
             {
                 foreach (var form in knowledgeBase.Forms)
                 {
-                    this.variableTypes = this.containedVariables[form].ToDictionary(r => r.Item1, r => r.Item2);
+                    this.variableTypes = this.containedVariables[(Sentence)form];
                     this.Walk((Expression)form);
                     this.variableTypes = null;
                 }

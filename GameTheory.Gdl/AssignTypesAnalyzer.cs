@@ -10,21 +10,19 @@ namespace GameTheory.Gdl
 
     public static class AssignTypesAnalyzer
     {
-        public static AssignedTypes Analyze(KnowledgeBase knowledgeBase, Dictionary<(string, int), ConstantType> constantTypes, Dictionary<Expression, ImmutableHashSet<Variable>> containedVariables)
+        public static AssignedTypes Analyze(KnowledgeBase knowledgeBase, ImmutableDictionary<(string, int), ConstantType> constantTypes, ImmutableDictionary<Expression, ImmutableHashSet<IndividualVariable>> containedVariables)
         {
             var bodies = knowledgeBase.Forms.Cast<Sentence>().ToLookup(f => f.GetImplicatedConstantWithArity());
-            var expressionTypes = new Dictionary<(string, int), ExpressionInfo>();
-            foreach (var kvp in constantTypes)
+
+            var expressionTypes = constantTypes.ToDictionary(kvp => kvp.Key, kvp =>
             {
                 switch (kvp.Value)
                 {
                     case ConstantType.Function:
-                        expressionTypes[kvp.Key] = new FunctionInfo(kvp.Key.Item1, kvp.Key.Item2);
-                        break;
+                        return (ExpressionInfo)new FunctionInfo(kvp.Key.Item1, kvp.Key.Item2);
 
                     case ConstantType.Logical:
-                        expressionTypes[kvp.Key] = new LogicalInfo(kvp.Key.Item1, bodies[kvp.Key]);
-                        break;
+                        return (ExpressionInfo)new LogicalInfo(kvp.Key.Item1, bodies[kvp.Key]);
 
                     case ConstantType.Object:
                         var id = kvp.Key.Item1;
@@ -38,18 +36,15 @@ namespace GameTheory.Gdl
                             objectInfo = new ObjectInfo(id, new ObjectType(id), id);
                         }
 
-                        expressionTypes[kvp.Key] = objectInfo;
-                        break;
+                        return (ExpressionInfo)objectInfo;
 
                     case ConstantType.Relation:
-                        expressionTypes[kvp.Key] = new RelationInfo(kvp.Key.Item1, kvp.Key.Item2, bodies[kvp.Key]);
-                        break;
+                        return (ExpressionInfo)new RelationInfo(kvp.Key.Item1, kvp.Key.Item2, bodies[kvp.Key]);
                 }
-            }
 
-            var variableTypes = (from f in knowledgeBase.Forms
-                                 from v in containedVariables[f]
-                                 select new { f, v }).ToLookup(p => p.f, p => ((IndividualVariable)p.v, new VariableInfo(p.v.Id)));
+                throw new InvalidOperationException();
+            }).ToImmutableDictionary();
+            var variableTypes = knowledgeBase.Forms.Cast<Sentence>().ToImmutableDictionary(s => s, s => containedVariables[s].ToImmutableDictionary(p => p, p => new VariableInfo(p.Id)));
             var assignedTypes = new AssignedTypes(expressionTypes, variableTypes);
 
             var init = (RelationInfo)expressionTypes[("INIT", 1)];
@@ -417,9 +412,9 @@ namespace GameTheory.Gdl
 
         private class TypeUsageWalker : SupportedExpressionsTreeWalker
         {
-            private readonly Dictionary<(string, int), ExpressionInfo> expressionTypes;
-            private readonly ILookup<Form, (IndividualVariable, VariableInfo)> containedVariables;
-            private Dictionary<IndividualVariable, VariableInfo> variableTypes;
+            private readonly ImmutableDictionary<(string, int), ExpressionInfo> expressionTypes;
+            private readonly ImmutableDictionary<Sentence, ImmutableDictionary<IndividualVariable, VariableInfo>> containedVariables;
+            private ImmutableDictionary<IndividualVariable, VariableInfo> variableTypes;
             private VariableDirection variableDirection;
 
             public TypeUsageWalker(AssignedTypes assignedTypes)
@@ -481,7 +476,7 @@ namespace GameTheory.Gdl
 
                 foreach (var form in knowledgeBase.Forms)
                 {
-                    this.variableTypes = this.containedVariables[form].ToDictionary(r => r.Item1, r => r.Item2);
+                    this.variableTypes = this.containedVariables[(Sentence)form];
                     this.Walk((Expression)form);
                     this.variableTypes = null;
                 }

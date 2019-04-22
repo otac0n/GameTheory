@@ -13,16 +13,16 @@ namespace GameTheory.Gdl
 
     public class CompileResult
     {
-        private readonly Lazy<Dictionary<(string, int), ConstantType>> constantTypes;
-        private readonly Lazy<Dictionary<Expression, ImmutableHashSet<Variable>>> containedVariables;
+        private readonly Lazy<ImmutableDictionary<(string, int), ConstantType>> constantTypes;
+        private readonly Lazy<ImmutableDictionary<Expression, ImmutableHashSet<IndividualVariable>>> containedVariables;
         private readonly Lazy<AssignedTypes> assignedTypes;
 
         public CompileResult(string name, KnowledgeBase knowledgeBase)
         {
             this.Name = name;
             this.KnowledgeBase = knowledgeBase;
-            this.containedVariables = new Lazy<Dictionary<Expression, ImmutableHashSet<Variable>>>(() => ContainedVariablesAnalyzer.Analyze(this.KnowledgeBase));
-            this.constantTypes = new Lazy<Dictionary<(string, int), ConstantType>>(() => ConstantArityAnalyzer.Analyze(this.KnowledgeBase));
+            this.containedVariables = new Lazy<ImmutableDictionary<Expression, ImmutableHashSet<IndividualVariable>>>(() => ContainedVariablesAnalyzer.Analyze(this.KnowledgeBase));
+            this.constantTypes = new Lazy<ImmutableDictionary<(string, int), ConstantType>>(() => ConstantArityAnalyzer.Analyze(this.KnowledgeBase));
             this.assignedTypes = new Lazy<AssignedTypes>(() => AssignTypesAnalyzer.Analyze(this.KnowledgeBase, this.ConstantTypes, this.ContainedVariables));
 
             this.AtomicSentences = new Dictionary<Sentence, bool>();
@@ -38,7 +38,7 @@ namespace GameTheory.Gdl
 
         public string Code { get; set; }
 
-        public Dictionary<(string, int), ConstantType> ConstantTypes => this.constantTypes.Value;
+        public ImmutableDictionary<(string, int), ConstantType> ConstantTypes => this.constantTypes.Value;
 
         public Dictionary<Sentence, bool> DatalogLiterals { get; }
 
@@ -51,7 +51,7 @@ namespace GameTheory.Gdl
 
         public AssignedTypes AssignedTypes => this.assignedTypes.Value;
 
-        public Dictionary<Expression, ImmutableHashSet<Variable>> ContainedVariables => this.containedVariables.Value;
+        public ImmutableDictionary<Expression, ImmutableHashSet<IndividualVariable>> ContainedVariables => this.containedVariables.Value;
 
         public KnowledgeBase KnowledgeBase { get; }
 

@@ -3,12 +3,13 @@
 namespace GameTheory.Gdl
 {
     using System.Collections.Generic;
+    using System.Collections.Immutable;
     using System.Linq;
     using KnowledgeInterchangeFormat.Expressions;
 
     public static class ConstantArityAnalyzer
     {
-        public static Dictionary<(string, int), ConstantType> Analyze(KnowledgeBase knowledgeBase)
+        public static ImmutableDictionary<(string, int), ConstantType> Analyze(KnowledgeBase knowledgeBase)
         {
             var results = new Dictionary<(string, int), ConstantType>
             {
@@ -38,7 +39,7 @@ namespace GameTheory.Gdl
                 }
             }
 
-            return results;
+            return results.ToImmutableDictionary();
         }
 
         private class ConstantArityWalker : SupportedExpressionsTreeWalker
