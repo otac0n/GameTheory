@@ -312,8 +312,6 @@ namespace GameTheory.Gdl
                                             }
                                         }
 
-                                        // TODO: (X ∪ Y ∪ Z) ∩ (X ∪ Z) ⇔ (X ∪ Z)
-
                                         // ((X) ∩ (Y ∩ Z)) ⇔ (X ∩ Y ∩ Z)
                                         var nestedIntersections = intersectionType.Expressions.Where(e => e.ReturnType is IntersectionType).ToList();
                                         if (nestedIntersections.Any())
@@ -321,6 +319,18 @@ namespace GameTheory.Gdl
                                             intersectionType.Expressions = intersectionType.Expressions
                                                 .Union(nestedIntersections.SelectMany(e => ((IntersectionType)e.ReturnType).Expressions))
                                                 .Except(nestedIntersections);
+                                            changed = true;
+                                        }
+
+                                        // (X ∪ Y ∪ Z) ∩ (X ∪ Z) ⇔ (X ∪ Z)
+                                        if (intersectionType.Expressions.All(e => e.ReturnType is UnionType unionType && unionType.Expressions.All(u => u is ObjectInfo objectInfo && objectInfo.ReturnType is ObjectType)))
+                                        {
+                                            expression.ReturnType = new UnionType
+                                            {
+                                                Expressions = intersectionType.Expressions
+                                                    .Select(e => ((UnionType)e.ReturnType).Expressions)
+                                                    .Aggregate((a, b) => a.Intersect(b)),
+                                            };
                                             changed = true;
                                         }
                                     }
