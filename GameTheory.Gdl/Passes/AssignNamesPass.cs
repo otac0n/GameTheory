@@ -103,17 +103,19 @@ namespace GameTheory.Gdl.Passes
 
                     for (var b = 0; b < expressionInfo.Arity; b++)
                     {
-                        if (fixedVariables[b] is null && winner[b] != null)
+                        if (fixedVariables[b] is null && winner[b] != null && !fixedVariables.Any(v => v == winner[b]))
                         {
                             fixedVariables[b] = winner[b];
-                            conflicting.UnionWith(allCandidates.Where(c => c[b] != null)); // TODO: Conflicts across names.
+                            conflicting.UnionWith(allCandidates.Where(c => c[b] != null));
                         }
                     }
+
+                    conflicting.UnionWith(allCandidates.Where(candidate => candidate.Any(c => c != null && fixedVariables.Any(v => v == c))));
 
                     allCandidates.ExceptWith(conflicting);
                     foreach (var conflict in conflicting)
                     {
-                        var cleaned = Enumerable.Range(0, expressionInfo.Arity).Select(b => fixedVariables[b] != null ? null : conflict[b]).ToArray();
+                        var cleaned = Enumerable.Range(0, expressionInfo.Arity).Select(b => fixedVariables[b] != null || fixedVariables.Any(v => v == conflict[b]) ? null : conflict[b]).ToArray();
                         if (cleaned.Any(c => c != null))
                         {
                             allCandidates.Add(cleaned);
