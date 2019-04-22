@@ -15,22 +15,40 @@ namespace GameTheory.Gdl.Passes
 
     internal class ConvertToCodeDomPass : CompilePass
     {
-        /// <inheritdoc/>
-        public override IList<string> BlockedByErrors => new[]
+        public const string ErrorConvertingToCodeDomError = "GDL101";
+
+        private static readonly Lazy<IList<string>> EarlierErrors = new Lazy<IList<string>>(() =>
         {
-            "GDL099", // TODO: Link to AssignNamesPass
-        };
+            return (from p in typeof(Resources).GetProperties(System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.GetProperty)
+                    let parts = p.Name.Split('_')
+                    where parts.Length == 3
+                    where parts[1] == "ERROR"
+                    where string.Compare(parts[0], ErrorConvertingToCodeDomError, StringComparison.InvariantCulture) < 0
+                    select parts[0])
+                    .ToList()
+                    .AsReadOnly();
+        });
+
+        /// <inheritdoc/>
+        public override IList<string> BlockedByErrors => EarlierErrors.Value;
 
         /// <inheritdoc/>
         public override IList<string> ErrorsProduced => new[]
         {
-            "GDL100", // TODO: Create constant, etc.
+            ErrorConvertingToCodeDomError,
         };
 
         /// <inheritdoc/>
         public override void Run(CompileResult result)
         {
-            new Runner(result).Run();
+            try
+            {
+                new Runner(result).Run();
+            }
+            catch (Exception ex)
+            {
+                result.AddCompilerError(result.KnowledgeBase.StartCursor, () => Resources.GDL101_ERROR_ErrorConvertingToCodeDom, ex.ToString());
+            }
         }
 
         private class Runner

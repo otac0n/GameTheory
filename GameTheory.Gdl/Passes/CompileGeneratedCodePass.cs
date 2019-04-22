@@ -12,7 +12,7 @@ namespace GameTheory.Gdl.Passes
 
     internal class CompileGeneratedCodePass : CompilePass
     {
-        public const string ErrorComilingTypeError = "GDL102";
+        public const string ErrorComilingTypeError = "GDL103";
 
         public override IList<string> BlockedByErrors => new[]
         {
@@ -55,7 +55,7 @@ namespace GameTheory.Gdl.Passes
             }
             catch (Exception ex)
             {
-                result.AddCompilerError(result.KnowledgeBase.StartCursor, () => Resources.GDL102_ERROR_ErrorComilingType, ex.ToString());
+                result.AddCompilerError(result.KnowledgeBase.StartCursor, () => Resources.GDL103_ERROR_ErrorComilingType, ex.ToString());
             }
         }
 

@@ -3,31 +3,17 @@
 namespace GameTheory.Gdl.Passes
 {
     using System;
-    using System.CodeDom.Compiler;
     using System.Collections.Generic;
-    using System.Globalization;
-    using System.IO;
-    using System.Linq;
-    using System.Reflection;
 
     internal class GenerateCodePass : CompilePass
     {
-        public const string ErrorGeneratingCodeError = "GDL101";
-
-        private static readonly Lazy<IList<string>> EarlierErrors = new Lazy<IList<string>>(() =>
-        {
-            return (from p in typeof(Resources).GetProperties(BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetProperty)
-                    let parts = p.Name.Split('_')
-                    where parts.Length == 3
-                    where parts[1] == "ERROR"
-                    where string.Compare(parts[0], ErrorGeneratingCodeError, StringComparison.InvariantCulture) < 0
-                    select parts[0])
-                    .ToList()
-                    .AsReadOnly();
-        });
+        public const string ErrorGeneratingCodeError = "GDL102";
 
         /// <inheritdoc/>
-        public override IList<string> BlockedByErrors => EarlierErrors.Value;
+        public override IList<string> BlockedByErrors => new[]
+        {
+            ConvertToCodeDomPass.ErrorConvertingToCodeDomError,
+        };
 
         /// <inheritdoc/>
         public override IList<string> ErrorsProduced => new[]
@@ -44,7 +30,7 @@ namespace GameTheory.Gdl.Passes
             }
             catch (Exception ex)
             {
-                result.AddCompilerError(result.KnowledgeBase.StartCursor, () => Resources.GDL101_ERROR_ErrorGeneratingCode, ex.ToString());
+                result.AddCompilerError(result.KnowledgeBase.StartCursor, () => Resources.GDL102_ERROR_ErrorGeneratingCode, ex.ToString());
             }
         }
     }

@@ -159,10 +159,13 @@
   <data name="GDL100_ERROR_ErrorAssigningNames" xml:space="preserve">
     <value>An unexpected error was encountered while assigning names. {0}</value>
   </data>
-  <data name="GDL101_ERROR_ErrorGeneratingCode" xml:space="preserve">
+  <data name="GDL101_ERROR_ErrorConvertingToCodeDom" xml:space="preserve">
+    <value>An unexpected error was encountered whle generating the game code DOM. {0}</value>
+  </data>
+  <data name="GDL102_ERROR_ErrorGeneratingCode" xml:space="preserve">
     <value>An unexpected error was encountered while generating the game code. {0}</value>
   </data>
-  <data name="GDL102_ERROR_ErrorComilingType" xml:space="preserve">
+  <data name="GDL103_ERROR_ErrorComilingType" xml:space="preserve">
     <value>An unexpected error was encountered whle compiling the generated type. {0}</value>
   </data>
 </root>
