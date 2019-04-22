@@ -1648,45 +1648,51 @@ namespace GameTheory.Gdl.Passes
                             .AddTypeArgumentListArguments(
                                 Reference(functionType))));
 
-                var constructor = SyntaxFactory.ConstructorDeclaration(structElement.Identifier)
-                    .AddModifiers(SyntaxFactory.Token(SyntaxKind.PublicKeyword));
-
-                foreach (var arg in functionInfo.Arguments)
+                if (functionInfo.Arguments.Length > 0)
                 {
-                    var type = Reference(arg.ReturnType);
-                    var fieldVariable = functionInfo.Scope.TryGetPrivate(arg);
-                    var fieldElement = SyntaxFactory.FieldDeclaration(
-                        SyntaxFactory.VariableDeclaration(
-                            type,
-                            SyntaxFactory.SingletonSeparatedList(SyntaxFactory.VariableDeclarator(fieldVariable))))
-                        .AddModifiers(SyntaxFactory.Token(SyntaxKind.PrivateKeyword));
-
-                    var parameter = SyntaxFactory.Parameter(
-                        SyntaxFactory.Identifier(fieldVariable))
-                        .WithType(type);
-                    constructor = constructor.AddParameterListParameters(parameter);
-
-                    constructor = constructor.AddBodyStatements(SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.AssignmentExpression(
-                            SyntaxKind.SimpleAssignmentExpression,
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.ThisExpression(),
-                                SyntaxFactory.IdentifierName(fieldVariable)),
-                            SyntaxFactory.IdentifierName(parameter.Identifier))));
-
-                    var propElement = SyntaxFactory.PropertyDeclaration(type, functionInfo.Scope.TryGetPublic(arg))
+                    var constructor = SyntaxFactory.ConstructorDeclaration(structElement.Identifier)
                         .AddModifiers(SyntaxFactory.Token(SyntaxKind.PublicKeyword))
-                        .AddAccessorListAccessors(
-                            SyntaxFactory.AccessorDeclaration(
-                                SyntaxKind.GetAccessorDeclaration,
-                                SyntaxFactory.Block(
-                                    SyntaxFactory.ReturnStatement(SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.ThisExpression(),
-                                        SyntaxFactory.IdentifierName(fieldVariable))))));
+                        .WithBody(SyntaxFactory.Block());
 
-                    structElement = structElement.AddMembers(fieldElement, propElement);
+                    foreach (var arg in functionInfo.Arguments)
+                    {
+                        var type = Reference(arg.ReturnType);
+                        var fieldVariable = functionInfo.Scope.TryGetPrivate(arg);
+                        var fieldElement = SyntaxFactory.FieldDeclaration(
+                            SyntaxFactory.VariableDeclaration(
+                                type,
+                                SyntaxFactory.SingletonSeparatedList(SyntaxFactory.VariableDeclarator(fieldVariable))))
+                            .AddModifiers(SyntaxFactory.Token(SyntaxKind.PrivateKeyword));
+
+                        var parameter = SyntaxFactory.Parameter(
+                            SyntaxFactory.Identifier(fieldVariable))
+                            .WithType(type);
+                        constructor = constructor.AddParameterListParameters(parameter);
+
+                        constructor = constructor.AddBodyStatements(SyntaxFactory.ExpressionStatement(
+                            SyntaxFactory.AssignmentExpression(
+                                SyntaxKind.SimpleAssignmentExpression,
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.ThisExpression(),
+                                    SyntaxFactory.IdentifierName(fieldVariable)),
+                                SyntaxFactory.IdentifierName(parameter.Identifier))));
+
+                        var propElement = SyntaxFactory.PropertyDeclaration(type, functionInfo.Scope.TryGetPublic(arg))
+                            .AddModifiers(SyntaxFactory.Token(SyntaxKind.PublicKeyword))
+                            .AddAccessorListAccessors(
+                                SyntaxFactory.AccessorDeclaration(
+                                    SyntaxKind.GetAccessorDeclaration,
+                                    SyntaxFactory.Block(
+                                        SyntaxFactory.ReturnStatement(SyntaxFactory.MemberAccessExpression(
+                                            SyntaxKind.SimpleMemberAccessExpression,
+                                            SyntaxFactory.ThisExpression(),
+                                            SyntaxFactory.IdentifierName(fieldVariable))))));
+
+                        structElement = structElement.AddMembers(fieldElement, propElement);
+                    }
+
+                    structElement = structElement.AddMembers(constructor);
                 }
 
                 var compareTo = SyntaxFactory.MethodDeclaration(
@@ -1709,7 +1715,15 @@ namespace GameTheory.Gdl.Passes
                                         SyntaxFactory.Token(SyntaxKind.IntKeyword)))
                                     .AddVariables(
                                         SyntaxFactory.VariableDeclarator(
-                                            SyntaxFactory.Identifier("comp")))),
+                                            SyntaxFactory.Identifier("comp"))
+                                            .WithInitializer(
+                                                SyntaxFactory.EqualsValueClause(
+                                                    SyntaxHelper.LiteralExpression(0)))))));
+
+                if (functionInfo.Arguments.Length > 0)
+                {
+                    compareTo = compareTo
+                        .AddBodyStatements(
                             SyntaxFactory.IfStatement(
                                 functionInfo.Arguments.Select(arg =>
                                     SyntaxFactory.BinaryExpression(
@@ -1737,9 +1751,13 @@ namespace GameTheory.Gdl.Passes
                                 SyntaxFactory.Block(
                                     SyntaxFactory.SingletonList<StatementSyntax>(
                                         SyntaxFactory.ReturnStatement(
-                                            SyntaxFactory.IdentifierName("comp"))))),
-                            SyntaxFactory.ReturnStatement(
-                                SyntaxFactory.IdentifierName("comp"))));
+                                            SyntaxFactory.IdentifierName("comp"))))));
+                }
+
+                compareTo = compareTo
+                    .AddBodyStatements(
+                        SyntaxFactory.ReturnStatement(
+                            SyntaxFactory.IdentifierName("comp")));
 
                 var formatTokens =
                     SyntaxFactory.PropertyDeclaration(
@@ -1776,7 +1794,7 @@ namespace GameTheory.Gdl.Passes
                         .WithSemicolonToken(
                             SyntaxFactory.Token(SyntaxKind.SemicolonToken));
 
-                structElement = structElement.AddMembers(constructor, formatTokens, compareTo);
+                structElement = structElement.AddMembers(formatTokens, compareTo);
 
                 return structElement;
             }
