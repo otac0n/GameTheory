@@ -1604,7 +1604,6 @@ namespace GameTheory.Gdl.Passes
                             SyntaxFactory.ArgumentList(
                                 SyntaxFactory.SeparatedList<ArgumentSyntax>()
                                     .AddRange(implicitRelationalSentence.Arguments.Select(arg => SyntaxFactory.Argument(this.ConvertExpression(arg, scope))))));
-
                 }
                 else
                 {
@@ -2036,36 +2035,19 @@ namespace GameTheory.Gdl.Passes
                         {
                             var arg = this.result.AssignedTypes.GetExpressionInfo(term);
 
-                            // TODO: Allow arg to be a larger type than param. There's no iheritance. Will this matter?
+                            // TODO: Allow arg to be a larger type than param. There's no iheritance. Will this matter? Perhaps with unions.
                             if (this.param.ReturnType != arg.ReturnType)
                             {
-                                var name = $"as{arg.ReturnType}"; // TODO: Better name resolution.
-                                var typedVar = SyntaxFactory.IdentifierName(name);
-                                this.Declarations.Add(
-                                    SyntaxFactory.LocalDeclarationStatement(
-                                        SyntaxFactory.VariableDeclaration(
-                                            Reference(arg.ReturnType))
-                                        .AddVariables(
-                                            SyntaxFactory.VariableDeclarator(
-                                                SyntaxFactory.Identifier(name)))));
+                                this.Scope = (this.Scope.variables, this.Scope.names.AddPrivate(out var name, $"{this.path} as {arg.ReturnType}"));
+
                                 this.ParameterEquality.Add(
-                                    SyntaxFactory.BinaryExpression(
-                                        SyntaxKind.LogicalAndExpression,
-                                        SyntaxFactory.BinaryExpression(
-                                            SyntaxKind.IsExpression,
-                                            SyntaxFactory.ParseName(this.path),
-                                            Reference(arg.ReturnType)),
-                                        SyntaxFactory.BinaryExpression(
-                                            SyntaxKind.IsExpression,
-                                            SyntaxFactory.ParenthesizedExpression(
-                                                SyntaxFactory.AssignmentExpression(
-                                                    SyntaxKind.SimpleAssignmentExpression,
-                                                    typedVar,
-                                                    SyntaxFactory.CastExpression(
-                                                        Reference(arg.ReturnType),
-                                                        SyntaxFactory.ParseName(this.path)))),
-                                            SyntaxFactory.PredefinedType(
-                                                SyntaxFactory.Token(SyntaxKind.ObjectKeyword)))));
+                                    SyntaxFactory.IsPatternExpression(
+                                        SyntaxFactory.ParseName(this.path),
+                                        SyntaxFactory.DeclarationPattern(
+                                            Reference(arg.ReturnType),
+                                            SyntaxFactory.SingleVariableDesignation(
+                                                SyntaxFactory.Identifier(name)))));
+
                                 this.path = name;
                             }
 

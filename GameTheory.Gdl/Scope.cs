@@ -3,14 +3,10 @@
 namespace GameTheory.Gdl
 {
     using System;
-    using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Globalization;
     using System.Linq;
     using System.Text.RegularExpressions;
-    using GameTheory.Gdl.Types;
-    using KnowledgeInterchangeFormat.Expressions;
-    using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     [Flags]
     public enum ScopeFlags
@@ -46,12 +42,61 @@ namespace GameTheory.Gdl
 
         public Scope<TKey> AddPrivate(TKey key, params string[] nameHints) => this.Add(key, ScopeFlags.Private, nameHints);
 
+        public Scope<TKey> AddPrivate(out string name, params string[] nameHints)
+        {
+            var scope = this.Add(ScopeFlags.Private, out var result, nameHints);
+            name = result.@private;
+            return scope;
+        }
+
         public Scope<TKey> SetPrivate(TKey key, string path) =>
             new Scope<TKey>(
                 this.names.Add(path),
                 this.value.Add(key, (null, path)));
 
         public Scope<TKey> Add(TKey key, ScopeFlags flags, params string[] nameHints)
+        {
+            var value = this.SuggestNames(flags, nameHints);
+
+            var names = this.names;
+
+            if ((flags & ScopeFlags.Public) == 0)
+            {
+                names = names.Add(value.@public);
+            }
+
+            if ((flags & ScopeFlags.Private) == 0)
+            {
+                names = names.Add(value.@private);
+            }
+
+            return new Scope<TKey>(
+                names,
+                this.value.SetItem(key, value));
+        }
+
+        public Scope<TKey> Add(ScopeFlags flags, out (string @public, string @private) result, params string[] nameHints)
+        {
+            result = this.SuggestNames(flags, nameHints);
+
+            var names = this.names;
+
+            if ((flags & ScopeFlags.Public) == 0)
+            {
+                names = names.Add(result.@public);
+            }
+
+            if ((flags & ScopeFlags.Private) == 0)
+            {
+                names = names.Add(result.@private);
+            }
+
+            return new Scope<TKey>(
+                names,
+                this.value);
+        }
+
+        private (string @public, string @private) SuggestNames(ScopeFlags flags, string[] nameHints)
         {
             (string, string)? value = null;
 
@@ -89,21 +134,7 @@ namespace GameTheory.Gdl
                 }
             }
 
-            var names = this.names;
-
-            if ((flags & ScopeFlags.Public) == 0)
-            {
-                names = names.Add(value.Value.Item1);
-            }
-
-            if ((flags & ScopeFlags.Private) == 0)
-            {
-                names = names.Add(value.Value.Item2);
-            }
-
-            return new Scope<TKey>(
-                names,
-                this.value.SetItem(key, value.Value));
+            return value.Value;
         }
 
         private static (string @public, string @private)? NormalizeName(string hint, CultureInfo culture)
