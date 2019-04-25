@@ -119,7 +119,7 @@ namespace GameTheory.Gdl.Passes
 
                 var atomicSentence =
                     (sentence is ConstantSentence constantSentence &&
-                        this.result.ConstantTypes[(constantSentence.Constant.Id, 0)] == ConstantType.Logical) ||
+                        this.result.ConstantTypes[(constantSentence.Constant, 0)] == ConstantType.Logical) ||
                     (sentence is Conjunction conjunction && conjunction.Conjuncts.All(c => this.atomicSentences[c])) ||
                     ////(sentence is Disjunction disjunction && disjunction.Disjuncts.All(d => this.atomicSentences[d])) || // TODO: Disjunctions can only be used in certain circumstances.
                     (sentence is ImplicitRelationalSentence implicitRelationalSentence &&

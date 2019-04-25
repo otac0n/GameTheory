@@ -12,39 +12,39 @@ namespace GameTheory.Gdl
 
     public class AssignedTypes : IEnumerable<ExpressionInfo>
     {
-        public AssignedTypes(ImmutableDictionary<(string, int), ExpressionInfo> expressionTypes, ImmutableDictionary<Sentence, ImmutableDictionary<IndividualVariable, VariableInfo>> variableTypes)
+        public AssignedTypes(ImmutableDictionary<(Constant, int), ConstantInfo> expressionTypes, ImmutableDictionary<Sentence, ImmutableDictionary<IndividualVariable, VariableInfo>> variableTypes)
         {
             this.ExpressionTypes = expressionTypes;
 
             this.VariableTypes = variableTypes;
         }
 
-        public ImmutableDictionary<(string, int), ExpressionInfo> ExpressionTypes { get; }
+        public ImmutableDictionary<(Constant, int), ConstantInfo> ExpressionTypes { get; }
 
         public ImmutableDictionary<Sentence, ImmutableDictionary<IndividualVariable, VariableInfo>> VariableTypes { get; }
 
-        public ExpressionInfo GetExpressionInfo(Expression expression)
+        public ConstantInfo GetExpressionInfo(Expression expression)
         {
             switch (expression)
             {
                 case Constant constant:
-                    return this.ExpressionTypes[(constant.Id, 0)];
+                    return this.ExpressionTypes[(constant, 0)];
 
                 case ConstantSentence constantSentence:
-                    return this.ExpressionTypes[(constantSentence.Constant.Id, 0)];
+                    return this.ExpressionTypes[(constantSentence.Constant, 0)];
 
                 case ImplicitRelationalSentence implicitRelationalSentence:
-                    return this.ExpressionTypes[(implicitRelationalSentence.Relation.Id, implicitRelationalSentence.Arguments.Count)];
+                    return this.ExpressionTypes[(implicitRelationalSentence.Relation, implicitRelationalSentence.Arguments.Count)];
 
                 case ImplicitFunctionalTerm implicitFunctionalTerm:
-                    return this.ExpressionTypes[(implicitFunctionalTerm.Function.Id, implicitFunctionalTerm.Arguments.Count)];
+                    return this.ExpressionTypes[(implicitFunctionalTerm.Function, implicitFunctionalTerm.Arguments.Count)];
 
                 default:
                     throw new NotImplementedException();
             }
         }
 
-        public IEnumerator<ExpressionInfo> GetEnumerator() => this.ExpressionTypes.Values.Concat(this.VariableTypes.Values.SelectMany(v => v.Values)).GetEnumerator();
+        public IEnumerator<ExpressionInfo> GetEnumerator() => this.ExpressionTypes.Values.Cast<ExpressionInfo>().Concat(this.VariableTypes.Values.SelectMany(v => v.Values)).GetEnumerator();
 
         IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
     }

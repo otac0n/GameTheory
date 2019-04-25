@@ -14,7 +14,7 @@ namespace GameTheory.Gdl.Types
         /// <param name="start">The inclusive min value.</param>
         /// <param name="end">The inclusive max value.</param>
         private NumberRangeType(int start, int end)
-            : base($"{start} to {end}", builtInType: typeof(int))
+            : base($"{start} to {end}", typeof(int))
         {
             this.Start = start;
             this.End = end;

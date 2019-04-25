@@ -22,12 +22,14 @@ namespace GameTheory.Gdl
             string typeId(ExpressionType type) => ids.TryGetValue(type, out var value) ? value : ids[type] = "t" + ids.Count.ToString();
             string varId(VariableInfo variable) => varIds.TryGetValue(variable, out var value) ? value : varIds[variable] = "v" + varIds.Count.ToString();
             string exprId(ExpressionInfo expression) => expression is ExpressionWithArgumentsInfo expressionWithArgumentsInfo
-                ? expressionWithArgumentsInfo.ToString()
-                : expression is ArgumentInfo argumentInfo
-                    ? $"{exprId(argumentInfo.Expression)}:{varId(argumentInfo)}"
-                    : expression is VariableInfo variableInfo
-                        ? varId(variableInfo)
-                        : expression.ToString();
+                ? $"{expressionWithArgumentsInfo.Constant.Id}_{expressionWithArgumentsInfo.Arity}"
+                : expression is ConstantInfo constantInfo
+                    ? constantInfo.Constant.Id
+                    : expression is ArgumentInfo argumentInfo
+                        ? $"{exprId(argumentInfo.Expression)}:{varId(argumentInfo)}"
+                        : expression is VariableInfo variableInfo
+                            ? varId(variableInfo)
+                            : expression.ToString();
 
             ExpressionTypeVisitor.Visit(
                 assignedTypes.ExpressionTypes.Values.Where(v => !(v is ObjectInfo objectInfo && objectInfo.Value is int)),
@@ -122,12 +124,14 @@ namespace GameTheory.Gdl
             var varIds = new Dictionary<VariableInfo, string>();
             string varId(VariableInfo variable) => varIds.TryGetValue(variable, out var value) ? value : varIds[variable] = "v" + varIds.Count.ToString();
             string exprId(ExpressionInfo expression) => expression is ExpressionWithArgumentsInfo expressionWithArgumentsInfo
-                ? expressionWithArgumentsInfo.ToString()
-                : expression is ArgumentInfo argumentInfo
-                    ? $"{exprId(argumentInfo.Expression)}:{varId(argumentInfo)}"
-                    : expression is VariableInfo variableInfo
-                        ? varId(variableInfo)
-                        : expression.ToString();
+                ? $"{expressionWithArgumentsInfo.Constant.Id}_{expressionWithArgumentsInfo.Arity}"
+                : expression is ConstantInfo constantInfo
+                    ? constantInfo.Constant.Id
+                    : expression is ArgumentInfo argumentInfo
+                        ? $"{exprId(argumentInfo.Expression)}:{varId(argumentInfo)}"
+                        : expression is VariableInfo variableInfo
+                            ? varId(variableInfo)
+                            : expression.ToString();
 
             ExpressionTypeVisitor.Visit(
                 assignedTypes.Where(v => !(v is ObjectInfo objectInfo && objectInfo.Value is int)),
@@ -167,7 +171,7 @@ namespace GameTheory.Gdl
 
         private class VariableNameWalker : SupportedExpressionsTreeWalker
         {
-            private readonly ImmutableDictionary<(string, int), ExpressionInfo> expressionTypes;
+            private readonly ImmutableDictionary<(Constant, int), ConstantInfo> expressionTypes;
             private readonly Func<ExpressionInfo, string> exprId;
             private readonly ImmutableDictionary<Sentence, ImmutableDictionary<IndividualVariable, VariableInfo>> containedVariables;
             private readonly Func<VariableInfo, string> varId;
@@ -193,14 +197,14 @@ namespace GameTheory.Gdl
 
             public override void Walk(ImplicitRelationalSentence implicitRelationalSentence)
             {
-                var relationInfo = (RelationInfo)this.expressionTypes[(implicitRelationalSentence.Relation.Id, implicitRelationalSentence.Arguments.Count)];
+                var relationInfo = (RelationInfo)this.expressionTypes[(implicitRelationalSentence.Relation, implicitRelationalSentence.Arguments.Count)];
                 this.AddNameUsages(implicitRelationalSentence.Arguments, relationInfo);
                 base.Walk(implicitRelationalSentence);
             }
 
             public override void Walk(ImplicitFunctionalTerm implicitFunctionalTerm)
             {
-                var functionInfo = (FunctionInfo)this.expressionTypes[(implicitFunctionalTerm.Function.Id, implicitFunctionalTerm.Arguments.Count)];
+                var functionInfo = (FunctionInfo)this.expressionTypes[(implicitFunctionalTerm.Function, implicitFunctionalTerm.Arguments.Count)];
                 this.AddNameUsages(implicitFunctionalTerm.Arguments, functionInfo);
                 base.Walk(implicitFunctionalTerm);
             }
@@ -267,10 +271,10 @@ namespace GameTheory.Gdl
                 switch (arg)
                 {
                     case Constant constant:
-                        return this.expressionTypes[(constant.Id, 0)];
+                        return this.expressionTypes[(constant, 0)];
 
                     case ImplicitFunctionalTerm implicitFunctionalTerm:
-                        return this.expressionTypes[(implicitFunctionalTerm.Function.Id, implicitFunctionalTerm.Arguments.Count)];
+                        return this.expressionTypes[(implicitFunctionalTerm.Function, implicitFunctionalTerm.Arguments.Count)];
 
                     case IndividualVariable individualVariable:
                         return this.variableTypes[individualVariable];

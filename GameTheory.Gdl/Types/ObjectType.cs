@@ -12,7 +12,7 @@ namespace GameTheory.Gdl.Types
         /// <summary>
         /// The root type in the hierarchy, <c>object</c>.
         /// </summary>
-        public static readonly ObjectType Instance = new ObjectType("object", null, typeof(object));
+        public static readonly ObjectType Instance = new ObjectType("object", typeof(object));
 
         private readonly ExpressionType baseType;
 
@@ -20,9 +20,9 @@ namespace GameTheory.Gdl.Types
         /// Initializes a new instance of the <see cref="ObjectType"/> class.
         /// </summary>
         /// <param name="name">The name of this type.</param>
-        /// <param name="baseType">The base type for this type.</param>
         /// <param name="builtInType">The built-in type to use for this expression type.</param>
-        public ObjectType(string name, ExpressionType baseType = null, Type builtInType = null)
+        /// <param name="baseType">The base type for this type.</param>
+        public ObjectType(string name, Type builtInType = null, ExpressionType baseType = null)
             : base(name)
         {
             this.baseType = baseType;

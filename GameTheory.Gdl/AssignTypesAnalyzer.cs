@@ -10,7 +10,7 @@ namespace GameTheory.Gdl
 
     public static class AssignTypesAnalyzer
     {
-        public static AssignedTypes Analyze(KnowledgeBase knowledgeBase, ImmutableDictionary<(string, int), ConstantType> constantTypes, ImmutableDictionary<Expression, ImmutableHashSet<IndividualVariable>> containedVariables)
+        public static AssignedTypes Analyze(KnowledgeBase knowledgeBase, ImmutableDictionary<(Constant, int), ConstantType> constantTypes, ImmutableDictionary<Expression, ImmutableHashSet<IndividualVariable>> containedVariables)
         {
             var bodies = knowledgeBase.Forms.Cast<Sentence>().ToLookup(f => f.GetImplicatedConstantWithArity());
 
@@ -19,49 +19,49 @@ namespace GameTheory.Gdl
                 switch (kvp.Value)
                 {
                     case ConstantType.Function:
-                        return (ExpressionInfo)new FunctionInfo(kvp.Key.Item1, kvp.Key.Item2);
+                        return new FunctionInfo(kvp.Key.Item1, kvp.Key.Item2);
 
                     case ConstantType.Logical:
-                        return (ExpressionInfo)new LogicalInfo(kvp.Key.Item1, bodies[kvp.Key]);
+                        return new LogicalInfo(kvp.Key.Item1, bodies[kvp.Key]);
 
                     case ConstantType.Object:
-                        var id = kvp.Key.Item1;
-                        ObjectInfo objectInfo;
+                        var id = kvp.Key.Item1.Id;
+                        ConstantInfo objectInfo;
                         if (int.TryParse(id, out var value) && value.ToString().Equals(id, StringComparison.OrdinalIgnoreCase))
                         {
-                            objectInfo = new ObjectInfo(id, NumberType.Instance, value);
+                            objectInfo = new ObjectInfo(kvp.Key.Item1, NumberType.Instance, value);
                         }
                         else
                         {
-                            objectInfo = new ObjectInfo(id, new ObjectType(id), id);
+                            objectInfo = new ObjectInfo(kvp.Key.Item1, new ObjectType(id, typeof(string)), id);
                         }
 
-                        return (ExpressionInfo)objectInfo;
+                        return objectInfo;
 
                     case ConstantType.Relation:
-                        return (ExpressionInfo)new RelationInfo(kvp.Key.Item1, kvp.Key.Item2, bodies[kvp.Key]);
+                        return new RelationInfo(kvp.Key.Item1, kvp.Key.Item2, bodies[kvp.Key]);
                 }
 
                 throw new InvalidOperationException();
             }).ToImmutableDictionary();
-            var variableTypes = knowledgeBase.Forms.Cast<Sentence>().ToImmutableDictionary(s => s, s => containedVariables[s].ToImmutableDictionary(p => p, p => new VariableInfo(p.Id)));
+            var variableTypes = knowledgeBase.Forms.Cast<Sentence>().ToImmutableDictionary(s => s, s => containedVariables[s].ToImmutableDictionary(p => p, p => new VariableInfo(p.Id))); // TODO: Carry variable around, so that casing is perserved.
             var assignedTypes = new AssignedTypes(expressionTypes, variableTypes);
 
-            var init = (RelationInfo)expressionTypes[("INIT", 1)];
-            var @true = (RelationInfo)expressionTypes[("TRUE", 1)];
-            var next = (RelationInfo)expressionTypes[("NEXT", 1)];
-            var @base = expressionTypes.ContainsKey(("BASE", 1)) ? (RelationInfo)expressionTypes[("BASE", 1)] : null;
+            var init = (RelationInfo)expressionTypes[KnownConstants.Init];
+            var @true = (RelationInfo)expressionTypes[KnownConstants.True];
+            var next = (RelationInfo)expressionTypes[KnownConstants.Next];
+            var @base = expressionTypes.ContainsKey(KnownConstants.Base) ? (RelationInfo)expressionTypes[KnownConstants.Base] : null;
             init.Arguments[0].ReturnType = @true.Arguments[0].ReturnType = next.Arguments[0].ReturnType = new StateType("State");
             if (@base != null)
             {
                 @base.Arguments[0].ReturnType = @true.Arguments[0].ReturnType;
             }
 
-            var role = (RelationInfo)expressionTypes[("ROLE", 1)];
-            var does = (RelationInfo)expressionTypes[("DOES", 2)];
-            var legal = (RelationInfo)expressionTypes[("LEGAL", 2)];
-            var input = expressionTypes.ContainsKey(("INPUT", 2)) ? (RelationInfo)expressionTypes[("INPUT", 2)] : null;
-            var goal = (RelationInfo)expressionTypes[("GOAL", 2)];
+            var role = (RelationInfo)expressionTypes[KnownConstants.Role];
+            var does = (RelationInfo)expressionTypes[KnownConstants.Does];
+            var legal = (RelationInfo)expressionTypes[KnownConstants.Legal];
+            var input = expressionTypes.ContainsKey(KnownConstants.Input) ? (RelationInfo)expressionTypes[KnownConstants.Input] : null;
+            var goal = (RelationInfo)expressionTypes[KnownConstants.Goal];
             var movesType = new IntersectionType();
             movesType.Expressions = movesType.Expressions.Add(legal.Arguments[1]);
             does.Arguments[1].ReturnType = movesType;
@@ -70,7 +70,7 @@ namespace GameTheory.Gdl
                 movesType.Expressions = movesType.Expressions.Add(input.Arguments[1]);
             }
 
-            var distinct = (RelationInfo)expressionTypes[("DISTINCT", 2)];
+            var distinct = (RelationInfo)expressionTypes[KnownConstants.Distinct];
 
             new TypeUsageWalker(assignedTypes).Walk((Expression)knowledgeBase);
             var roleUnion = (UnionType)role.Arguments[0].ReturnType;
@@ -422,7 +422,7 @@ namespace GameTheory.Gdl
 
         private class TypeUsageWalker : SupportedExpressionsTreeWalker
         {
-            private readonly ImmutableDictionary<(string, int), ExpressionInfo> expressionTypes;
+            private readonly ImmutableDictionary<(Constant, int), ConstantInfo> expressionTypes;
             private readonly ImmutableDictionary<Sentence, ImmutableDictionary<IndividualVariable, VariableInfo>> containedVariables;
             private ImmutableDictionary<IndividualVariable, VariableInfo> variableTypes;
             private VariableDirection variableDirection;
@@ -442,14 +442,14 @@ namespace GameTheory.Gdl
 
             public override void Walk(ImplicitRelationalSentence implicitRelationalSentence)
             {
-                var relationInfo = (RelationInfo)this.expressionTypes[(implicitRelationalSentence.Relation.Id, implicitRelationalSentence.Arguments.Count)];
+                var relationInfo = (RelationInfo)this.expressionTypes[(implicitRelationalSentence.Relation, implicitRelationalSentence.Arguments.Count)];
                 this.AddArgumentUsages(implicitRelationalSentence.Arguments, relationInfo);
                 base.Walk(implicitRelationalSentence);
             }
 
             public override void Walk(ImplicitFunctionalTerm implicitFunctionalTerm)
             {
-                var functionInfo = (FunctionInfo)this.expressionTypes[(implicitFunctionalTerm.Function.Id, implicitFunctionalTerm.Arguments.Count)];
+                var functionInfo = (FunctionInfo)this.expressionTypes[(implicitFunctionalTerm.Function, implicitFunctionalTerm.Arguments.Count)];
                 this.AddArgumentUsages(implicitFunctionalTerm.Arguments, functionInfo);
                 base.Walk(implicitFunctionalTerm);
             }
@@ -549,10 +549,10 @@ namespace GameTheory.Gdl
                 switch (arg)
                 {
                     case Constant constant:
-                        return this.expressionTypes[(constant.Id, 0)];
+                        return this.expressionTypes[(constant, 0)];
 
                     case ImplicitFunctionalTerm implicitFunctionalTerm:
-                        return this.expressionTypes[(implicitFunctionalTerm.Function.Id, implicitFunctionalTerm.Arguments.Count)];
+                        return this.expressionTypes[(implicitFunctionalTerm.Function, implicitFunctionalTerm.Arguments.Count)];
 
                     case IndividualVariable individualVariable:
                         return this.variableTypes[individualVariable];

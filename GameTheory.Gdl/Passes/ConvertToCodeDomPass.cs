@@ -105,7 +105,7 @@ namespace GameTheory.Gdl.Passes
                 throw new NotSupportedException();
             }
 
-            public static ExpressionSyntax AllMembers(ExpressionType type, ExpressionType declaredAs)
+            public static ExpressionSyntax AllMembers(ExpressionType type, ExpressionType declaredAs, Scope<ExpressionInfo> rootScope)
             {
                 switch (type)
                 {
@@ -142,10 +142,10 @@ namespace GameTheory.Gdl.Passes
                                             SyntaxFactory.InitializerExpression(
                                                 SyntaxKind.ArrayInitializerExpression,
                                                 SyntaxFactory.SingletonSeparatedList(
-                                                    CreateObjectReference(objectInfo))));
+                                                    CreateObjectReference(objectInfo, rootScope))));
 
                                     default:
-                                        return AllMembers(expr.ReturnType, declaredAs);
+                                        return AllMembers(expr.ReturnType, declaredAs, rootScope);
                                 }
                             })
                             .Aggregate((a, b) =>
@@ -170,15 +170,15 @@ namespace GameTheory.Gdl.Passes
                 var allExpressions = new List<ExpressionInfo>();
                 ExpressionTypeVisitor.Visit(this.result.AssignedTypes, visitExpression: allExpressions.Add, visitType: allTypes.Add);
 
-                var init = (RelationInfo)this.result.AssignedTypes.ExpressionTypes[("INIT", 1)];
-                var @true = (RelationInfo)this.result.AssignedTypes.ExpressionTypes[("TRUE", 1)];
-                var next = (RelationInfo)this.result.AssignedTypes.ExpressionTypes[("NEXT", 1)];
-                var role = (RelationInfo)this.result.AssignedTypes.ExpressionTypes[("ROLE", 1)];
-                var does = (RelationInfo)this.result.AssignedTypes.ExpressionTypes[("DOES", 2)];
-                var legal = (RelationInfo)this.result.AssignedTypes.ExpressionTypes[("LEGAL", 2)];
-                var goal = (RelationInfo)this.result.AssignedTypes.ExpressionTypes[("GOAL", 2)];
-                var distinct = (RelationInfo)this.result.AssignedTypes.ExpressionTypes[("DISTINCT", 2)];
-                var noop = this.result.AssignedTypes.ExpressionTypes.TryGetValue(("NOOP", 0), out var noopExpr) ? (ObjectInfo)noopExpr : null;
+                var init = (RelationInfo)this.result.AssignedTypes.ExpressionTypes[KnownConstants.Init];
+                var @true = (RelationInfo)this.result.AssignedTypes.ExpressionTypes[KnownConstants.True];
+                var next = (RelationInfo)this.result.AssignedTypes.ExpressionTypes[KnownConstants.Next];
+                var role = (RelationInfo)this.result.AssignedTypes.ExpressionTypes[KnownConstants.Role];
+                var does = (RelationInfo)this.result.AssignedTypes.ExpressionTypes[KnownConstants.Does];
+                var legal = (RelationInfo)this.result.AssignedTypes.ExpressionTypes[KnownConstants.Legal];
+                var goal = (RelationInfo)this.result.AssignedTypes.ExpressionTypes[KnownConstants.Goal];
+                var distinct = (RelationInfo)this.result.AssignedTypes.ExpressionTypes[KnownConstants.Distinct];
+                var noop = this.result.AssignedTypes.ExpressionTypes.TryGetValue(KnownConstants.Noop, out var noopExpr) ? (ObjectInfo)noopExpr : null;
                 var stateType = (StateType)init.Arguments[0].ReturnType;
                 var moveType = legal.Arguments[1].ReturnType;
 
@@ -186,12 +186,25 @@ namespace GameTheory.Gdl.Passes
                     t.BuiltInType == null &&
                     (!(t is ObjectType) || t is FunctionType) &&
                     (!RequiresRuntimeCheck(t) || t is StateType));
-                var renderedExpressions = allExpressions.Except(init, @true, does, next, distinct).Where(e =>
+                var renderedExpressions = allExpressions.Except(init, does, next, distinct).Where(e =>
                     !(e is VariableInfo) &&
                     !(e is FunctionInfo) &&
                     !(e is ObjectInfo objectInfo && (objectInfo.Value is int || objectInfo.ReturnType is EnumType)));
 
                 var root = SyntaxFactory.CompilationUnit();
+                var rootScope = new Scope<ExpressionInfo>()
+                    .Add(distinct, ScopeFlags.Public, distinct.Constant.Name);
+                rootScope = renderedExpressions.Concat(allExpressions.OfType<FunctionInfo>()).Aggregate(rootScope, (scope, expr) =>
+                {
+                    switch (expr)
+                    {
+                        case ConstantInfo constantInfo:
+                            return scope.Add(expr, ScopeFlags.Public, constantInfo.Constant.Name);
+
+                        default:
+                            return scope.Add(expr, ScopeFlags.Public, expr.Id, expr.ToString());
+                    }
+                });
 
                 var ns = SyntaxFactory.NamespaceDeclaration(SyntaxFactory.ParseName(this.result.Name))
                     .AddUsings(
@@ -220,13 +233,12 @@ namespace GameTheory.Gdl.Passes
                                 SyntaxFactory.Identifier("IGameState"))
                             .AddTypeArgumentListArguments(
                                 SyntaxFactory.IdentifierName("Move"))))
-                    .AddMembers(this.CreateGameStateConstructorDeclarations(init, stateType, role, moveType, noop))
+                    .AddMembers(this.CreateGameStateConstructorDeclarations(init, stateType, role, moveType, noop, rootScope))
                     .AddMembers(
-                        this.CreateMakeMoveDeclaration(next, stateType, role, does, noop),
-                        this.CreateGetWinnersDeclaration(goal),
-                        this.CreateGetAvailableMovesDeclaration(legal, role),
-                        this.CreateTrueRelationDeclaration(@true))
-                    .AddMembers(CreateSharedGameStateDeclarations(distinct))
+                        this.CreateMakeMoveDeclaration(next, stateType, role, does, noop, rootScope),
+                        this.CreateGetWinnersDeclaration(goal, rootScope),
+                        this.CreateGetAvailableMovesDeclaration(legal, role, rootScope))
+                    .AddMembers(CreateSharedGameStateDeclarations(distinct, rootScope))
                     .AddMembers(
                         renderedExpressions.Select(expr =>
                         {
@@ -235,16 +247,23 @@ namespace GameTheory.Gdl.Passes
                                 case ObjectInfo objectInfo:
                                     if (objectInfo.ReturnType is ObjectType && objectInfo.Value is string value)
                                     {
-                                        return CreateObjectDeclaration(objectInfo, value);
+                                        return CreateObjectDeclaration(objectInfo, value, rootScope);
                                     }
 
                                     break;
 
                                 case RelationInfo relationInfo:
-                                    return this.CreateLogicalFunctionDeclaration(relationInfo, relationInfo.Arguments, relationInfo.Body);
+                                    if (relationInfo == @true)
+                                    {
+                                        return this.CreateTrueRelationDeclaration(@true, rootScope);
+                                    }
+                                    else
+                                    {
+                                        return this.CreateLogicalFunctionDeclaration(relationInfo, relationInfo.Arguments, relationInfo.Body, rootScope);
+                                    }
 
                                 case LogicalInfo logicalInfo:
-                                    return this.CreateLogicalFunctionDeclaration(logicalInfo, Array.Empty<ArgumentInfo>(), logicalInfo.Body);
+                                    return this.CreateLogicalFunctionDeclaration(logicalInfo, Array.Empty<ArgumentInfo>(), logicalInfo.Body, rootScope);
                             }
 
                             throw new InvalidOperationException();
@@ -253,12 +272,12 @@ namespace GameTheory.Gdl.Passes
                 ns = ns
                     .AddMembers(gameState, move)
                     .AddMembers(
-                        CreatePublicTypeDeclarations(renderedTypes));
+                        CreatePublicTypeDeclarations(renderedTypes, rootScope));
                 root = root.AddMembers(ns);
                 this.result.DeclarationSyntax = root.NormalizeWhitespace();
             }
 
-            private static MemberDeclarationSyntax[] CreatePublicTypeDeclarations(IEnumerable<ExpressionType> renderedTypes) => renderedTypes.Select(type =>
+            private static MemberDeclarationSyntax[] CreatePublicTypeDeclarations(IEnumerable<ExpressionType> renderedTypes, Scope<ExpressionInfo> rootScope) => renderedTypes.Select(type =>
             {
                 switch (type)
                 {
@@ -266,7 +285,7 @@ namespace GameTheory.Gdl.Passes
                         return (MemberDeclarationSyntax)CreateEnumTypeDeclaration(enumType);
 
                     case FunctionType functionType:
-                        return (MemberDeclarationSyntax)CreateFunctionTypeDeclaration(functionType);
+                        return (MemberDeclarationSyntax)CreateFunctionTypeDeclaration(functionType, rootScope);
 
                     case StateType stateType:
                         return (MemberDeclarationSyntax)CreateStateTypeDeclaration(stateType);
@@ -275,7 +294,7 @@ namespace GameTheory.Gdl.Passes
                 throw new InvalidOperationException();
             }).ToArray();
 
-            private static MemberDeclarationSyntax[] CreateSharedGameStateDeclarations(RelationInfo distinct)
+            private static MemberDeclarationSyntax[] CreateSharedGameStateDeclarations(RelationInfo distinct, Scope<ExpressionInfo> rootScope)
             {
                 var moveIdentifier = SyntaxFactory.Identifier("move");
                 var moveIdentifierName = SyntaxFactory.IdentifierName("move");
@@ -445,7 +464,7 @@ namespace GameTheory.Gdl.Passes
                                                     SyntaxFactory.IdentifierName("state"))))))),
                     SyntaxFactory.MethodDeclaration(
                         Reference(distinct.ReturnType),
-                        distinct.Id)
+                        rootScope.TryGetPublic(distinct))
                         .AddModifiers(SyntaxFactory.Token(SyntaxKind.PrivateKeyword))
                         .AddParameterListParameters(
                             SyntaxFactory.Parameter(SyntaxFactory.Identifier("a"))
@@ -636,13 +655,13 @@ namespace GameTheory.Gdl.Passes
                 SyntaxFactory.ObjectCreationExpression(SyntaxFactory.IdentifierName("PlayerToken"))
                     .WithArgumentList(SyntaxFactory.ArgumentList());
 
-            private static FieldDeclarationSyntax CreateObjectDeclaration(ObjectInfo objectInfo, string value) =>
+            private static FieldDeclarationSyntax CreateObjectDeclaration(ObjectInfo objectInfo, string value, Scope<ExpressionInfo> rootScope) =>
                 SyntaxFactory.FieldDeclaration(
                     SyntaxFactory.VariableDeclaration(
                         Reference(objectInfo.ReturnType),
                         SyntaxFactory.SingletonSeparatedList(
                             SyntaxFactory.VariableDeclarator(
-                                SyntaxFactory.Identifier(objectInfo.Id))
+                                SyntaxFactory.Identifier(rootScope.TryGetPublic(objectInfo)))
                             .WithInitializer(
                                 SyntaxFactory.EqualsValueClause(
                                 SyntaxHelper.LiteralExpression(value))))))
@@ -650,7 +669,7 @@ namespace GameTheory.Gdl.Passes
                         SyntaxFactory.Token(SyntaxKind.PrivateKeyword),
                         SyntaxFactory.Token(SyntaxKind.StaticKeyword));
 
-            private static ExpressionSyntax CreateObjectReference(ObjectInfo objectInfo)
+            private static ExpressionSyntax CreateObjectReference(ObjectInfo objectInfo, Scope<ExpressionInfo> rootScope)
             {
                 switch (objectInfo.ReturnType)
                 {
@@ -658,17 +677,17 @@ namespace GameTheory.Gdl.Passes
                         return SyntaxFactory.MemberAccessExpression(
                             SyntaxKind.SimpleMemberAccessExpression,
                             SyntaxFactory.IdentifierName(enumType.Name),
-                            SyntaxFactory.IdentifierName(objectInfo.Id));
+                            SyntaxFactory.IdentifierName(objectInfo.Constant.Name));
 
                     case NumberType numberType when objectInfo.Value is int:
                         return SyntaxHelper.LiteralExpression((int)objectInfo.Value);
 
                     default:
-                        return SyntaxFactory.IdentifierName(objectInfo.Id);
+                        return SyntaxFactory.IdentifierName(rootScope.TryGetPublic(objectInfo));
                 }
             }
 
-            private MemberDeclarationSyntax[] CreateGameStateConstructorDeclarations(RelationInfo init, StateType stateType, RelationInfo role, ExpressionType moveType, ObjectInfo noop)
+            private MemberDeclarationSyntax[] CreateGameStateConstructorDeclarations(RelationInfo init, StateType stateType, RelationInfo role, ExpressionType moveType, ObjectInfo noop, Scope<ExpressionInfo> rootScope)
             {
                 var roles = ((EnumType)role.Arguments[0].ReturnType).Objects;
 
@@ -751,7 +770,8 @@ namespace GameTheory.Gdl.Passes
                                             SyntaxFactory.Argument(
                                                 this.ConvertExpression(((ImplicitRelationalSentence)i).Arguments[0], s1)))),
                             },
-                            scope));
+                            scope,
+                            rootScope));
 
                 var constructor2 = SyntaxFactory.ConstructorDeclaration(
                     SyntaxFactory.Identifier("GameState"))
@@ -889,11 +909,11 @@ namespace GameTheory.Gdl.Passes
                 return declarations.ToArray();
             }
 
-            private MemberDeclarationSyntax CreateTrueRelationDeclaration(RelationInfo @true) =>
+            private MemberDeclarationSyntax CreateTrueRelationDeclaration(RelationInfo @true, Scope<ExpressionInfo> rootScope) =>
                 SyntaxFactory.MethodDeclaration(
                     SyntaxFactory.PredefinedType(
                         SyntaxFactory.Token(SyntaxKind.BoolKeyword)),
-                    SyntaxFactory.Identifier(@true.Id))
+                    SyntaxFactory.Identifier(rootScope.TryGetPublic(@true)))
                     .AddModifiers(SyntaxFactory.Token(SyntaxKind.PrivateKeyword))
                     .AddParameterListParameters(
                         SyntaxFactory.Parameter(
@@ -915,7 +935,7 @@ namespace GameTheory.Gdl.Passes
                                         SyntaxFactory.Argument(
                                             SyntaxFactory.IdentifierName("value"))))));
 
-            private MethodDeclarationSyntax CreateGetAvailableMovesDeclaration(RelationInfo legal, RelationInfo role)
+            private MethodDeclarationSyntax CreateGetAvailableMovesDeclaration(RelationInfo legal, RelationInfo role, Scope<ExpressionInfo> rootScope)
             {
                 var roles = ((EnumType)role.Arguments[0].ReturnType).Objects;
                 var scope = new Scope<VariableInfo>();
@@ -973,7 +993,8 @@ namespace GameTheory.Gdl.Passes
                                     : addStatement,
                             };
                         },
-                        scope));
+                        scope,
+                        rootScope));
 
                 return SyntaxFactory.MethodDeclaration(
                     SyntaxFactory.GenericName(
@@ -1014,7 +1035,7 @@ namespace GameTheory.Gdl.Passes
                             SyntaxFactory.IdentifierName("moves"))));
             }
 
-            private MethodDeclarationSyntax CreateGetWinnersDeclaration(RelationInfo goal) =>
+            private MethodDeclarationSyntax CreateGetWinnersDeclaration(RelationInfo goal, Scope<ExpressionInfo> rootScope) =>
                 SyntaxFactory.MethodDeclaration(
                     SyntaxFactory.GenericName(
                         SyntaxFactory.Identifier("IReadOnlyCollection"))
@@ -1058,7 +1079,7 @@ namespace GameTheory.Gdl.Passes
                                         SyntaxKind.ThrowKeyword,
                                         SyntaxFactory.TriviaList()))));
 
-            private MethodDeclarationSyntax CreateMakeMoveDeclaration(RelationInfo next, ExpressionType stateType, RelationInfo role, RelationInfo does, ObjectInfo noop)
+            private MethodDeclarationSyntax CreateMakeMoveDeclaration(RelationInfo next, ExpressionType stateType, RelationInfo role, RelationInfo does, ObjectInfo noop, Scope<ExpressionInfo> rootScope)
             {
                 var roles = ((EnumType)role.Arguments[0].ReturnType).Objects;
 
@@ -1228,7 +1249,7 @@ namespace GameTheory.Gdl.Passes
                             SyntaxFactory.LocalFunctionStatement(
                                 SyntaxFactory.PredefinedType(
                                     SyntaxFactory.Token(SyntaxKind.BoolKeyword)),
-                                SyntaxFactory.Identifier(does.Id)) // TODO: Lookup.
+                                SyntaxFactory.Identifier(does.Constant.Name)) // TODO: Lookup.
                                 .AddParameterListParameters(
                                     SyntaxFactory.Parameter(
                                         SyntaxFactory.Identifier("r"))
@@ -1263,7 +1284,7 @@ namespace GameTheory.Gdl.Passes
                             SyntaxFactory.LocalFunctionStatement(
                                 SyntaxFactory.PredefinedType(
                                     SyntaxFactory.Token(SyntaxKind.BoolKeyword)),
-                                SyntaxFactory.Identifier(does.Id)) // TODO: Lookup.
+                                SyntaxFactory.Identifier(does.Constant.Name)) // TODO: Lookup.
                                 .AddParameterListParameters(
                                     SyntaxFactory.Parameter(
                                         SyntaxFactory.Identifier("r"))
@@ -1320,7 +1341,8 @@ namespace GameTheory.Gdl.Passes
                                             SyntaxFactory.Argument(
                                                 this.ConvertExpression(((ImplicitRelationalSentence)i).Arguments[0], s1)))),
                             },
-                            scope));
+                            scope,
+                            rootScope));
 
                 if (roles.Count > 1)
                 {
@@ -1359,13 +1381,13 @@ namespace GameTheory.Gdl.Passes
                 return makeMove;
             }
 
-            private MemberDeclarationSyntax CreateLogicalFunctionDeclaration(ExpressionInfo expression, ArgumentInfo[] parameters, IEnumerable<Sentence> sentences)
+            private MemberDeclarationSyntax CreateLogicalFunctionDeclaration(ExpressionInfo expression, ArgumentInfo[] parameters, IEnumerable<Sentence> sentences, Scope<ExpressionInfo> rootScope)
             {
                 var nameScope = (expression as RelationInfo)?.Scope ?? new Scope<VariableInfo>();
 
                 var methodElement = SyntaxFactory.MethodDeclaration(
                     Reference(expression.ReturnType),
-                    expression.Id) // TODO: Name resolution.
+                    rootScope.TryGetPublic(expression))
                     .AddModifiers(SyntaxFactory.Token(SyntaxKind.PrivateKeyword));
 
                 foreach (var param in parameters)
@@ -1381,7 +1403,7 @@ namespace GameTheory.Gdl.Passes
                 {
                     var implicated = sentence.GetImplicatedSentence();
 
-                    var walker = new ScopeWalker(this.result, parameters, (this.result.AssignedTypes.VariableTypes[sentence], nameScope), this.ConvertExpression);
+                    var walker = new ScopeWalker(this.result, parameters, (this.result.AssignedTypes.VariableTypes[sentence], nameScope, rootScope), this.ConvertExpression);
                     walker.Walk((Expression)implicated);
                     var declarations = walker.Declarations;
                     var parameterEquality = walker.ParameterEquality;
@@ -1420,10 +1442,10 @@ namespace GameTheory.Gdl.Passes
                 return methodElement;
             }
 
-            private StatementSyntax[] ConvertImplicatedSentences(IEnumerable<Sentence> sentences, Func<Sentence, (ImmutableDictionary<IndividualVariable, VariableInfo>, Scope<VariableInfo>), StatementSyntax[]> getImplication, Scope<VariableInfo> scope)
+            private StatementSyntax[] ConvertImplicatedSentences(IEnumerable<Sentence> sentences, Func<Sentence, (ImmutableDictionary<IndividualVariable, VariableInfo>, Scope<VariableInfo>, Scope<ExpressionInfo>), StatementSyntax[]> getImplication, Scope<VariableInfo> scope, Scope<ExpressionInfo> rootScope)
             {
                 var shareableConjuncts = (from sentence in sentences
-                                          let s1 = (this.result.AssignedTypes.VariableTypes[sentence], scope)
+                                          let s1 = (this.result.AssignedTypes.VariableTypes[sentence], scope, rootScope)
                                           let implicated = sentence.GetImplicatedSentence()
                                           let conjuncts = sentence is Implication
                                               ? ((Implication)sentence).Antecedents
@@ -1435,7 +1457,7 @@ namespace GameTheory.Gdl.Passes
                                           select new { implication, shareable }).ToList();
 
                 // Allows us to declare a recursive lambda with an anonymous type.
-                Func<T, Func<Sentence, (ImmutableDictionary<IndividualVariable, VariableInfo>, Scope<VariableInfo>), StatementSyntax[]>, StatementSyntax[]> Describe<T>(T template) => (ignore0, ignore1) => null;
+                Func<T, Func<Sentence, (ImmutableDictionary<IndividualVariable, VariableInfo>, Scope<VariableInfo>, Scope<ExpressionInfo>), StatementSyntax[]>, StatementSyntax[]> Describe<T>(T template) => (ignore0, ignore1) => null;
                 var convertImplicated = Describe(shareableConjuncts);
                 convertImplicated = (sc, inner) =>
                 {
@@ -1485,7 +1507,7 @@ namespace GameTheory.Gdl.Passes
                                             r.shareable,
                                         }).ToList(),
                                         inner),
-                                    (null, null))); // TODO: Allow grouping by variables.
+                                    (null, null, rootScope))); // TODO: Allow grouping by variables.
                         }
                         else
                         {
@@ -1510,9 +1532,9 @@ namespace GameTheory.Gdl.Passes
                 return convertImplicated(shareableConjuncts, getImplication);
             }
 
-            private StatementSyntax[] ConvertConjnuction(ImmutableList<Sentence> conjuncts, Func<(ImmutableDictionary<IndividualVariable, VariableInfo>, Scope<VariableInfo>), StatementSyntax[]> inner, (ImmutableDictionary<IndividualVariable, VariableInfo>, Scope<VariableInfo>) scope)
+            private StatementSyntax[] ConvertConjnuction(ImmutableList<Sentence> conjuncts, Func<(ImmutableDictionary<IndividualVariable, VariableInfo>, Scope<VariableInfo>, Scope<ExpressionInfo>), StatementSyntax[]> inner, (ImmutableDictionary<IndividualVariable, VariableInfo>, Scope<VariableInfo>, Scope<ExpressionInfo>) scope)
             {
-                StatementSyntax[] GetStatement(int i, (ImmutableDictionary<IndividualVariable, VariableInfo>, Scope<VariableInfo>) s1)
+                StatementSyntax[] GetStatement(int i, (ImmutableDictionary<IndividualVariable, VariableInfo>, Scope<VariableInfo>, Scope<ExpressionInfo>) s1)
                 {
                     if (i >= conjuncts.Count)
                     {
@@ -1525,18 +1547,18 @@ namespace GameTheory.Gdl.Passes
                 return GetStatement(0, scope);
             }
 
-            private StatementSyntax ConvertSentence(Sentence sentence, Func<(ImmutableDictionary<IndividualVariable, VariableInfo>, Scope<VariableInfo>), StatementSyntax[]> inner, (ImmutableDictionary<IndividualVariable, VariableInfo> variables, Scope<VariableInfo> names) scope)
+            private StatementSyntax ConvertSentence(Sentence sentence, Func<(ImmutableDictionary<IndividualVariable, VariableInfo>, Scope<VariableInfo>, Scope<ExpressionInfo>), StatementSyntax[]> inner, (ImmutableDictionary<IndividualVariable, VariableInfo> variables, Scope<VariableInfo> names, Scope<ExpressionInfo> rootScope) scope)
             {
                 var variable = this.result.ContainedVariables[sentence].Where(v => !scope.names.ContainsKey(scope.variables[v])).FirstOrDefault();
                 if (variable is object)
                 {
                     var variableInfo = scope.variables[variable];
-                    scope = (scope.variables, scope.names.AddPrivate(variableInfo, variable.Name));
+                    scope = (scope.variables, scope.names.AddPrivate(variableInfo, variable.Name), scope.rootScope);
 
                     return SyntaxFactory.ForEachStatement(
                         Reference(variableInfo.ReturnType),
                         SyntaxFactory.Identifier(scope.names.TryGetPrivate(variableInfo)),
-                        AllMembers(variableInfo.ReturnType, variableInfo.ReturnType),
+                        AllMembers(variableInfo.ReturnType, variableInfo.ReturnType, scope.rootScope),
                         SyntaxFactory.Block(
                             this.ConvertSentence(sentence, inner, scope)));
                 }
@@ -1549,7 +1571,7 @@ namespace GameTheory.Gdl.Passes
                 }
             }
 
-            private ExpressionSyntax ConvertCondition(Sentence condition, (ImmutableDictionary<IndividualVariable, VariableInfo>, Scope<VariableInfo>) scope)
+            private ExpressionSyntax ConvertCondition(Sentence condition, (ImmutableDictionary<IndividualVariable, VariableInfo>, Scope<VariableInfo>, Scope<ExpressionInfo> rootScope) scope)
             {
                 switch (condition)
                 {
@@ -1557,7 +1579,7 @@ namespace GameTheory.Gdl.Passes
                         return this.ConvertImplicitRelationalCondition(implicitRelationalSentence, scope);
 
                     case ConstantSentence constantSentence:
-                        return this.ConvertLogicalCondition(constantSentence);
+                        return this.ConvertLogicalCondition(constantSentence, scope.rootScope);
 
                     case Negation negation:
                         return this.ConvertNegationCondition(negation, scope);
@@ -1567,7 +1589,7 @@ namespace GameTheory.Gdl.Passes
                 }
             }
 
-            private ExpressionSyntax ConvertExpression(Term term, (ImmutableDictionary<IndividualVariable, VariableInfo>, Scope<VariableInfo>) scope)
+            private ExpressionSyntax ConvertExpression(Term term, (ImmutableDictionary<IndividualVariable, VariableInfo>, Scope<VariableInfo>, Scope<ExpressionInfo> rootScope) scope)
             {
                 switch (term)
                 {
@@ -1578,40 +1600,40 @@ namespace GameTheory.Gdl.Passes
                         return this.ConvertVariableExpression(individualVariable, scope);
 
                     case Constant constant:
-                        return this.ConvertConstantExpression(constant);
+                        return this.ConvertConstantExpression(constant, scope.rootScope);
 
                     default:
                         throw new NotSupportedException();
                 }
             }
 
-            private ExpressionSyntax ConvertConstantExpression(Constant constant) =>
-                CreateObjectReference((ObjectInfo)this.result.AssignedTypes.ExpressionTypes[(constant.Id, 0)]);
+            private ExpressionSyntax ConvertConstantExpression(Constant constant, Scope<ExpressionInfo> rootScope) =>
+                CreateObjectReference((ObjectInfo)this.result.AssignedTypes.ExpressionTypes[(constant, 0)], rootScope);
 
-            private ExpressionSyntax ConvertVariableExpression(IndividualVariable individualVariable, (ImmutableDictionary<IndividualVariable, VariableInfo> variables, Scope<VariableInfo> names) scope) =>
+            private ExpressionSyntax ConvertVariableExpression(IndividualVariable individualVariable, (ImmutableDictionary<IndividualVariable, VariableInfo> variables, Scope<VariableInfo> names, Scope<ExpressionInfo>) scope) =>
                 SyntaxFactory.ParseName(scope.names.TryGetPrivate(scope.variables[individualVariable]));
 
-            private ExpressionSyntax ConvertFunctionalTermExpression(ImplicitFunctionalTerm implicitFunctionalTerm, (ImmutableDictionary<IndividualVariable, VariableInfo>, Scope<VariableInfo>) scope) =>
+            private ExpressionSyntax ConvertFunctionalTermExpression(ImplicitFunctionalTerm implicitFunctionalTerm, (ImmutableDictionary<IndividualVariable, VariableInfo>, Scope<VariableInfo>, Scope<ExpressionInfo> rootScope) scope) =>
                 SyntaxFactory.ObjectCreationExpression( // TODO: Runtime type checks
-                    SyntaxFactory.IdentifierName(implicitFunctionalTerm.Function.Id))
+                    SyntaxFactory.IdentifierName(scope.rootScope.TryGetPublic(this.result.AssignedTypes.GetExpressionInfo(implicitFunctionalTerm))))
                 .WithArgumentList(
                     SyntaxFactory.ArgumentList(
                         SyntaxFactory.SeparatedList<ArgumentSyntax>()
                             .AddRange(implicitFunctionalTerm.Arguments.Select(arg => SyntaxFactory.Argument(this.ConvertExpression(arg, scope))))));
 
-            private ExpressionSyntax ConvertLogicalCondition(ConstantSentence constantSentence) =>
+            private ExpressionSyntax ConvertLogicalCondition(ConstantSentence constantSentence, Scope<ExpressionInfo> rootScope) =>
                 SyntaxFactory.InvocationExpression( // TODO: Runtime type checks
                     SyntaxFactory.MemberAccessExpression(
                         SyntaxKind.SimpleMemberAccessExpression,
                         SyntaxFactory.ThisExpression(),
-                        SyntaxFactory.IdentifierName(constantSentence.Constant.Id)));
+                        SyntaxFactory.IdentifierName(rootScope.TryGetPublic(this.result.AssignedTypes.GetExpressionInfo(constantSentence)))));
 
-            private ExpressionSyntax ConvertNegationCondition(Negation negation, (ImmutableDictionary<IndividualVariable, VariableInfo>, Scope<VariableInfo>) scope) =>
+            private ExpressionSyntax ConvertNegationCondition(Negation negation, (ImmutableDictionary<IndividualVariable, VariableInfo>, Scope<VariableInfo>, Scope<ExpressionInfo>) scope) =>
                 SyntaxFactory.PrefixUnaryExpression(
                     SyntaxKind.LogicalNotExpression,
                     this.ConvertCondition(negation.Negated, scope));
 
-            private ExpressionSyntax ConvertImplicitRelationalCondition(ImplicitRelationalSentence implicitRelationalSentence, (ImmutableDictionary<IndividualVariable, VariableInfo>, Scope<VariableInfo>) scope)
+            private ExpressionSyntax ConvertImplicitRelationalCondition(ImplicitRelationalSentence implicitRelationalSentence, (ImmutableDictionary<IndividualVariable, VariableInfo>, Scope<VariableInfo>, Scope<ExpressionInfo> rootScope) scope)
             {
                 // TODO: Runtime type checks
                 if (implicitRelationalSentence.Relation.Id == "DOES" && implicitRelationalSentence.Arguments.Count == 2)
@@ -1630,7 +1652,7 @@ namespace GameTheory.Gdl.Passes
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.ThisExpression(),
-                                SyntaxFactory.IdentifierName(implicitRelationalSentence.Relation.Id)), // TODO: Lookup.
+                                SyntaxFactory.IdentifierName(scope.rootScope.TryGetPublic(this.result.AssignedTypes.GetExpressionInfo(implicitRelationalSentence)))),
                             SyntaxFactory.ArgumentList(
                                 SyntaxFactory.SeparatedList<ArgumentSyntax>()
                                     .AddRange(implicitRelationalSentence.Arguments.Select(arg => SyntaxFactory.Argument(this.ConvertExpression(arg, scope))))));
@@ -1645,17 +1667,17 @@ namespace GameTheory.Gdl.Passes
                 foreach (var obj in enumType.Objects)
                 {
                     enumElement = enumElement.AddMembers(
-                        SyntaxFactory.EnumMemberDeclaration(obj.Id));
+                        SyntaxFactory.EnumMemberDeclaration(obj.Constant.Name));
                 }
 
                 return enumElement;
             }
 
-            private static StructDeclarationSyntax CreateFunctionTypeDeclaration(FunctionType functionType)
+            private static StructDeclarationSyntax CreateFunctionTypeDeclaration(FunctionType functionType, Scope<ExpressionInfo> rootScope)
             {
                 var functionInfo = functionType.FunctionInfo;
 
-                var structElement = SyntaxFactory.StructDeclaration(functionType.Name) // TODO: Name resolution.
+                var structElement = SyntaxFactory.StructDeclaration(rootScope.TryGetPublic(functionInfo))
                     .AddModifiers(SyntaxFactory.Token(SyntaxKind.PublicKeyword))
                     .AddBaseListTypes(
                         SyntaxFactory.SimpleBaseType(
@@ -1797,7 +1819,7 @@ namespace GameTheory.Gdl.Passes
                                             SyntaxKind.ArrayInitializerExpression)
                                             .AddExpressions(
                                                 SyntaxHelper.LiteralExpression("("),
-                                                SyntaxHelper.LiteralExpression(functionInfo.Id)) // TODO: This should be the original name as per usage in the source document.
+                                                SyntaxHelper.LiteralExpression(functionInfo.Constant.Name))
                                             .AddExpressions(
                                                 functionInfo.Arguments.SelectMany(arg => new ExpressionSyntax[]
                                                 {
@@ -2009,11 +2031,11 @@ namespace GameTheory.Gdl.Passes
             {
                 private readonly CompileResult result;
                 private readonly ArgumentInfo[] parameters;
-                private readonly Func<Term, (ImmutableDictionary<IndividualVariable, VariableInfo>, Scope<VariableInfo>), ExpressionSyntax> convertExpression;
+                private readonly Func<Term, (ImmutableDictionary<IndividualVariable, VariableInfo>, Scope<VariableInfo>, Scope<ExpressionInfo>), ExpressionSyntax> convertExpression;
                 private ArgumentInfo param;
                 private string path;
 
-                public ScopeWalker(CompileResult result, ArgumentInfo[] parameters, (ImmutableDictionary<IndividualVariable, VariableInfo>, Scope<VariableInfo>) scope, Func<Term, (ImmutableDictionary<IndividualVariable, VariableInfo>, Scope<VariableInfo>), ExpressionSyntax> convertExpression)
+                public ScopeWalker(CompileResult result, ArgumentInfo[] parameters, (ImmutableDictionary<IndividualVariable, VariableInfo>, Scope<VariableInfo>, Scope<ExpressionInfo>) scope, Func<Term, (ImmutableDictionary<IndividualVariable, VariableInfo>, Scope<VariableInfo>, Scope<ExpressionInfo>), ExpressionSyntax> convertExpression)
                 {
                     this.result = result;
                     this.parameters = parameters;
@@ -2027,7 +2049,7 @@ namespace GameTheory.Gdl.Passes
 
                 public List<ExpressionSyntax> ParameterEquality { get; }
 
-                public (ImmutableDictionary<IndividualVariable, VariableInfo> variables, Scope<VariableInfo> names) Scope { get; set; }
+                public (ImmutableDictionary<IndividualVariable, VariableInfo> variables, Scope<VariableInfo> names, Scope<ExpressionInfo> rootScope) Scope { get; set; }
 
                 public override void Walk(ConstantSentence constantSentence)
                 {
@@ -2058,7 +2080,7 @@ namespace GameTheory.Gdl.Passes
                         }
                         else
                         {
-                            this.Scope = (this.Scope.variables, this.Scope.names.SetPrivate(argVarInfo, this.path));
+                            this.Scope = (this.Scope.variables, this.Scope.names.SetPrivate(argVarInfo, this.path), this.Scope.rootScope);
                         }
                     }
                     else
@@ -2074,7 +2096,7 @@ namespace GameTheory.Gdl.Passes
                             // TODO: Allow arg to be a larger type than param. There's no iheritance. Will this matter? Perhaps with unions.
                             if (this.param.ReturnType != arg.ReturnType)
                             {
-                                this.Scope = (this.Scope.variables, this.Scope.names.AddPrivate(out var name, $"{this.path} as {arg.ReturnType}"));
+                                this.Scope = (this.Scope.variables, this.Scope.names.AddPrivate(out var name, $"{this.path} as {arg.ReturnType}"), this.Scope.rootScope);
 
                                 this.ParameterEquality.Add(
                                     SyntaxFactory.IsPatternExpression(

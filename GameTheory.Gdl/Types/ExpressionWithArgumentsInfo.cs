@@ -2,12 +2,12 @@
 
 namespace GameTheory.Gdl.Types
 {
-    using System.Collections.Generic;
+    using KnowledgeInterchangeFormat.Expressions;
 
-    public class ExpressionWithArgumentsInfo : ExpressionInfo
+    public class ExpressionWithArgumentsInfo : ConstantInfo
     {
-        public ExpressionWithArgumentsInfo(string id, int arity, ExpressionType returnType)
-            : base(id, returnType)
+        public ExpressionWithArgumentsInfo(Constant constant, int arity, ExpressionType returnType)
+            : base(constant, returnType)
         {
             this.Arity = arity;
             this.Arguments = new ArgumentInfo[arity];
@@ -23,6 +23,6 @@ namespace GameTheory.Gdl.Types
 
         public virtual Scope<VariableInfo> Scope { get; set; }
 
-        public override string ToString() => $"{this.Id}_{this.Arity}";
+        public override string ToString() => $"{base.ToString()}_{this.Arity}";
     }
 }

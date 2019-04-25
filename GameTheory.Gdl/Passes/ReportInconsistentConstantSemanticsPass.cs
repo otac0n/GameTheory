@@ -35,28 +35,28 @@ namespace GameTheory.Gdl.Passes
 
             public override void Walk(Constant constant)
             {
-                this.CheckError((constant.Id, 0), ConstantType.Object, constant);
+                this.CheckError((constant, 0), ConstantType.Object, constant);
                 base.Walk(constant);
             }
 
             public override void Walk(ConstantSentence constantSentence)
             {
-                this.CheckError((constantSentence.Constant.Id, 0), ConstantType.Logical, constantSentence);
+                this.CheckError((constantSentence.Constant, 0), ConstantType.Logical, constantSentence);
             }
 
             public override void Walk(ImplicitRelationalSentence implicitRelationalSentence)
             {
-                this.CheckError((implicitRelationalSentence.Relation.Id, implicitRelationalSentence.Arguments.Count), ConstantType.Relation, implicitRelationalSentence);
+                this.CheckError((implicitRelationalSentence.Relation, implicitRelationalSentence.Arguments.Count), ConstantType.Relation, implicitRelationalSentence);
                 base.Walk(implicitRelationalSentence);
             }
 
             public override void Walk(ImplicitFunctionalTerm implicitFunctionalTerm)
             {
-                this.CheckError((implicitFunctionalTerm.Function.Id, implicitFunctionalTerm.Arguments.Count), ConstantType.Function, implicitFunctionalTerm);
+                this.CheckError((implicitFunctionalTerm.Function, implicitFunctionalTerm.Arguments.Count), ConstantType.Function, implicitFunctionalTerm);
                 base.Walk(implicitFunctionalTerm);
             }
 
-            private void CheckError((string id, int arity) key, ConstantType type, Expression expression)
+            private void CheckError((Constant id, int arity) key, ConstantType type, Expression expression)
             {
                 if (this.result.ConstantTypes[key] == ConstantType.Invalid)
                 {

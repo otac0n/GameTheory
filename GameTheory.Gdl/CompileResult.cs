@@ -13,7 +13,7 @@ namespace GameTheory.Gdl
 
     public class CompileResult
     {
-        private readonly Lazy<ImmutableDictionary<(string, int), ConstantType>> constantTypes;
+        private readonly Lazy<ImmutableDictionary<(Constant, int), ConstantType>> constantTypes;
         private readonly Lazy<ImmutableDictionary<Expression, ImmutableHashSet<IndividualVariable>>> containedVariables;
         private readonly Lazy<AssignedTypes> assignedTypes;
 
@@ -22,7 +22,7 @@ namespace GameTheory.Gdl
             this.Name = name;
             this.KnowledgeBase = knowledgeBase;
             this.containedVariables = new Lazy<ImmutableDictionary<Expression, ImmutableHashSet<IndividualVariable>>>(() => ContainedVariablesAnalyzer.Analyze(this.KnowledgeBase));
-            this.constantTypes = new Lazy<ImmutableDictionary<(string, int), ConstantType>>(() => ConstantArityAnalyzer.Analyze(this.KnowledgeBase));
+            this.constantTypes = new Lazy<ImmutableDictionary<(Constant, int), ConstantType>>(() => ConstantArityAnalyzer.Analyze(this.KnowledgeBase));
             this.assignedTypes = new Lazy<AssignedTypes>(() => AssignTypesAnalyzer.Analyze(this.KnowledgeBase, this.ConstantTypes, this.ContainedVariables));
 
             this.AtomicSentences = new Dictionary<Sentence, bool>();
@@ -38,7 +38,7 @@ namespace GameTheory.Gdl
 
         public string Code { get; set; }
 
-        public ImmutableDictionary<(string, int), ConstantType> ConstantTypes => this.constantTypes.Value;
+        public ImmutableDictionary<(Constant, int), ConstantType> ConstantTypes => this.constantTypes.Value;
 
         public Dictionary<Sentence, bool> DatalogLiterals { get; }
 

@@ -7,10 +7,10 @@ namespace GameTheory.Gdl.Types
     using System.Linq;
     using KnowledgeInterchangeFormat.Expressions;
 
-    public class LogicalInfo : ExpressionInfo
+    public class LogicalInfo : ConstantInfo
     {
-        public LogicalInfo(string id, IEnumerable<Sentence> body)
-            : base(id, BooleanType.Instance)
+        public LogicalInfo(Constant constant, IEnumerable<Sentence> body)
+            : base(constant, BooleanType.Instance)
         {
             this.Body = body.ToList();
         }
