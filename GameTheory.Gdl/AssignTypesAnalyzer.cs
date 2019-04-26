@@ -132,6 +132,12 @@ namespace GameTheory.Gdl
                                         }
                                     }
 
+                                    if (unionType.Expressions.Contains(expression))
+                                    {
+                                        unionType.Expressions = unionType.Expressions.Remove(expression);
+                                        changed = true;
+                                    }
+
                                     // (X ∪ Y ∪ (X ∩ ...)) ⇔ (X ∪ Y)
                                     var degenerateIntersections = unionType.Expressions.Where(e =>
                                         e.ReturnType is IntersectionType subType &&
@@ -144,12 +150,6 @@ namespace GameTheory.Gdl
                                             unionType.Expressions = withoutDegenerateIntersections;
                                             changed = true;
                                         }
-                                    }
-
-                                    if (unionType.Expressions.Contains(expression))
-                                    {
-                                        unionType.Expressions = unionType.Expressions.Remove(expression);
-                                        changed = true;
                                     }
 
                                     if (unionType.Expressions.Count == 0)
