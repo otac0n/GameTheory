@@ -4,7 +4,7 @@ namespace GameTheory.Gdl.Types
     using System.Collections.Concurrent;
     using Intervals;
 
-    public class NumberRangeType : ObjectType, IInterval<int>
+    public class NumberRangeType : ExpressionType, IInterval<int>
     {
         private static ConcurrentDictionary<(int, int), NumberRangeType> instances = new ConcurrentDictionary<(int, int), NumberRangeType>();
 
@@ -14,10 +14,10 @@ namespace GameTheory.Gdl.Types
         /// <param name="start">The inclusive min value.</param>
         /// <param name="end">The inclusive max value.</param>
         private NumberRangeType(int start, int end)
-            : base($"{start} to {end}", typeof(int))
         {
             this.Start = start;
             this.End = end;
+            this.BuiltInType = typeof(int);
         }
 
         /// <summary>
@@ -40,6 +40,8 @@ namespace GameTheory.Gdl.Types
         bool IInterval<int>.StartInclusive => true;
 
         public static NumberRangeType GetInstance(int start, int end) => instances.GetOrAdd((start, end), _ => new NumberRangeType(start, end));
+
+        public override string ToString() => $"{this.Start} to {this.End}";
 
         IInterval<int> IInterval<int>.Clone(int start, bool startInclusive, int end, bool endInclusive)
         {

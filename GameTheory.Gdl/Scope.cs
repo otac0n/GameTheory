@@ -60,12 +60,12 @@ namespace GameTheory.Gdl
 
             var names = this.names;
 
-            if ((flags & ScopeFlags.Public) == 0)
+            if ((flags & ScopeFlags.Public) != 0)
             {
                 names = names.Add(value.@public);
             }
 
-            if ((flags & ScopeFlags.Private) == 0)
+            if ((flags & ScopeFlags.Private) != 0)
             {
                 names = names.Add(value.@private);
             }
@@ -81,12 +81,12 @@ namespace GameTheory.Gdl
 
             var names = this.names;
 
-            if ((flags & ScopeFlags.Public) == 0)
+            if ((flags & ScopeFlags.Public) != 0)
             {
                 names = names.Add(result.@public);
             }
 
-            if ((flags & ScopeFlags.Private) == 0)
+            if ((flags & ScopeFlags.Private) != 0)
             {
                 names = names.Add(result.@private);
             }
@@ -123,7 +123,9 @@ namespace GameTheory.Gdl
                     if (((flags & ScopeFlags.Public) == 0 || !this.names.Contains(@public)) &&
                         ((flags & ScopeFlags.Private) == 0 || !this.names.Contains(@private)))
                     {
-                        value = (@public, @private);
+                        value = (
+                            (flags & ScopeFlags.Public) == 0 ? null : @public,
+                            (flags & ScopeFlags.Private) == 0 ? null : @private);
                         break;
                     }
                 }

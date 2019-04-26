@@ -25,15 +25,15 @@ namespace GameTheory.Gdl
                         return new LogicalInfo(kvp.Key.Item1, bodies[kvp.Key]);
 
                     case ConstantType.Object:
-                        var id = kvp.Key.Item1.Id;
+                        var constant = kvp.Key.Item1;
                         ConstantInfo objectInfo;
-                        if (int.TryParse(id, out var value) && value.ToString().Equals(id, StringComparison.OrdinalIgnoreCase))
+                        if (int.TryParse(constant.Id, out var value) && value.ToString().Equals(constant.Id, StringComparison.OrdinalIgnoreCase))
                         {
                             objectInfo = new ObjectInfo(kvp.Key.Item1, NumberType.Instance, value);
                         }
                         else
                         {
-                            objectInfo = new ObjectInfo(kvp.Key.Item1, new ObjectType(id, typeof(string)), id);
+                            objectInfo = new ObjectInfo(kvp.Key.Item1, new ObjectType(constant, typeof(string)), constant.Id);
                         }
 
                         return objectInfo;
@@ -51,7 +51,7 @@ namespace GameTheory.Gdl
             var @true = (RelationInfo)expressionTypes[KnownConstants.True];
             var next = (RelationInfo)expressionTypes[KnownConstants.Next];
             var @base = expressionTypes.ContainsKey(KnownConstants.Base) ? (RelationInfo)expressionTypes[KnownConstants.Base] : null;
-            init.Arguments[0].ReturnType = @true.Arguments[0].ReturnType = next.Arguments[0].ReturnType = new StateType("State");
+            init.Arguments[0].ReturnType = @true.Arguments[0].ReturnType = next.Arguments[0].ReturnType = new StateType();
             if (@base != null)
             {
                 @base.Arguments[0].ReturnType = @true.Arguments[0].ReturnType;
@@ -74,7 +74,7 @@ namespace GameTheory.Gdl
 
             new TypeUsageWalker(assignedTypes).Walk((Expression)knowledgeBase);
             var roleUnion = (UnionType)role.Arguments[0].ReturnType;
-            var roleEnum = EnumType.Create("Role", roleUnion.Expressions.Cast<ObjectInfo>());
+            var roleEnum = EnumType.Create(role, roleUnion.Expressions.Cast<ObjectInfo>());
             does.Arguments[0].ReturnType = legal.Arguments[0].ReturnType = goal.Arguments[0].ReturnType = role.Arguments[0].ReturnType;
             if (input != null)
             {
@@ -82,7 +82,7 @@ namespace GameTheory.Gdl
             }
 
             goal.Arguments[1].ReturnType = NumberType.Instance;
-            distinct.Arguments[1].ReturnType = distinct.Arguments[0].ReturnType = ObjectType.Instance;
+            distinct.Arguments[1].ReturnType = distinct.Arguments[0].ReturnType = AnyType.Instance;
 
             ReduceTypes(assignedTypes);
             return assignedTypes;
@@ -112,11 +112,11 @@ namespace GameTheory.Gdl
                         {
                             case UnionType unionType:
                                 {
-                                    // (X ∪ object) ⇔ object
-                                    var objects = unionType.Expressions.Where(e => e.ReturnType == ObjectType.Instance);
-                                    if (objects.Any())
+                                    // (X ∪ any) ⇔ any
+                                    var anys = unionType.Expressions.Where(e => e.ReturnType is AnyType);
+                                    if (anys.Any())
                                     {
-                                        expression.ReturnType = ObjectType.Instance;
+                                        expression.ReturnType = AnyType.Instance;
                                         changed = true;
                                     }
 
@@ -162,9 +162,9 @@ namespace GameTheory.Gdl
                                         expression.ReturnType = unionType.Expressions.Single().ReturnType;
                                         changed = true;
                                     }
-                                    else if (unionType.Expressions.All(e => e.ReturnType is NumberRangeType || e.ReturnType == NumberType.Instance))
+                                    else if (unionType.Expressions.All(e => e.ReturnType is NumberRangeType || e.ReturnType is NumberType))
                                     {
-                                        if (unionType.Expressions.Any(e => e.ReturnType == NumberType.Instance && !(e is ObjectInfo)))
+                                        if (unionType.Expressions.Any(e => e.ReturnType is NumberType && !(e is ObjectInfo)))
                                         {
                                             expression.ReturnType = NumberType.Instance;
                                             changed = true;
@@ -216,14 +216,14 @@ namespace GameTheory.Gdl
                                         changed = true;
                                     }
 
-                                    // (X ∩ object) ⇔ X
-                                    var objects = intersectionType.Expressions.Where(e => e.ReturnType == ObjectType.Instance);
-                                    if (objects.Any())
+                                    // (X ∩ any) ⇔ X
+                                    var anys = intersectionType.Expressions.Where(e => e.ReturnType is AnyType);
+                                    if (anys.Any())
                                     {
-                                        var withoutObjects = intersectionType.Expressions.Except(objects);
-                                        if (withoutObjects.Count > 0)
+                                        var withoutAnys = intersectionType.Expressions.Except(anys);
+                                        if (withoutAnys.Count > 0)
                                         {
-                                            intersectionType.Expressions = withoutObjects;
+                                            intersectionType.Expressions = withoutAnys;
                                             changed = true;
                                         }
                                     }
@@ -236,7 +236,7 @@ namespace GameTheory.Gdl
 
                                     if (intersectionType.Expressions.Count == 0)
                                     {
-                                        expression.ReturnType = ObjectType.Instance;
+                                        expression.ReturnType = AnyType.Instance;
                                         changed = true;
                                     }
                                     else if (intersectionType.Expressions.Count == 1)
@@ -247,9 +247,9 @@ namespace GameTheory.Gdl
                                         };
                                         changed = true;
                                     }
-                                    else if (intersectionType.Expressions.All(e => e.ReturnType is NumberRangeType || e.ReturnType == NumberType.Instance))
+                                    else if (intersectionType.Expressions.All(e => e.ReturnType is NumberRangeType || e.ReturnType is NumberType))
                                     {
-                                        var allNumbers = intersectionType.Expressions.Where(e => e.ReturnType == NumberType.Instance && !(e is ObjectInfo));
+                                        var allNumbers = intersectionType.Expressions.Where(e => e.ReturnType is NumberType && !(e is ObjectInfo));
                                         var withoutAllNumbers = intersectionType.Expressions.Except(allNumbers);
                                         if (intersectionType.Expressions.Count != withoutAllNumbers.Count)
                                         {
@@ -411,7 +411,7 @@ namespace GameTheory.Gdl
                         {
                             (var relation, var unionType) = enumCandidates[i];
                             var arg = relation.Arguments[0];
-                            arg.ReturnType = EnumType.Create(arg.Id, unionType.Expressions.Cast<ObjectInfo>());
+                            arg.ReturnType = EnumType.Create(relation, unionType.Expressions.Cast<ObjectInfo>());
                             changed = true;
                         }
                     }

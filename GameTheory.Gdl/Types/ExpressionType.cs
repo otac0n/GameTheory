@@ -12,16 +12,9 @@ namespace GameTheory.Gdl.Types
         /// <summary>
         /// Initializes a new instance of the <see cref="ExpressionType"/> class.
         /// </summary>
-        /// <param name="name">The name of the type.</param>
-        public ExpressionType(string name)
+        public ExpressionType()
         {
-            this.Name = name;
         }
-
-        /// <summary>
-        /// Gets the name of the type.
-        /// </summary>
-        public string Name { get; protected set; }
 
         /// <summary>
         /// Gets or sets the built-in type to use for this type.
@@ -32,12 +25,12 @@ namespace GameTheory.Gdl.Types
         /// Gets the base type for this type.
         /// </summary>
         /// <remarks>
-        /// All objects ultimately inherit from <see cref="ObjectType.Instance"/>.
+        /// All objects ultimately inherit from <see cref="AnyType.Instance"/>.
         /// The <see cref="NoneType"><c>none</c></see> type doesn't represent any objects, so it can be its own base class.
         /// </remarks>
-        public virtual ExpressionType BaseType => ObjectType.Instance;
+        public virtual ExpressionType BaseType => AnyType.Instance;
 
         /// <inheritdoc/>
-        public override string ToString() => this.Name;
+        public abstract override string ToString();
     }
 }

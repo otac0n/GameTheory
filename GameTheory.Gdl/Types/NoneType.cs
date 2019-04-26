@@ -5,11 +5,13 @@ namespace GameTheory.Gdl.Types
         public static readonly NoneType Instance = new NoneType();
 
         private NoneType()
-            : base("(none)")
         {
         }
 
         /// <inheritdoc />
         public override ExpressionType BaseType => this;
+
+        /// <inheritdoc />
+        public override string ToString() => "(none)";
     }
 }

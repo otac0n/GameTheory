@@ -3,33 +3,34 @@
 namespace GameTheory.Gdl.Types
 {
     using System;
+    using KnowledgeInterchangeFormat.Expressions;
 
     /// <summary>
     /// The root type all other fully-constructed types inherit from.
     /// </summary>
     public class ObjectType : ExpressionType
     {
-        /// <summary>
-        /// The root type in the hierarchy, <c>object</c>.
-        /// </summary>
-        public static readonly ObjectType Instance = new ObjectType("object", typeof(object));
-
         private readonly ExpressionType baseType;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ObjectType"/> class.
         /// </summary>
-        /// <param name="name">The name of this type.</param>
+        /// <param name="constant">The constant corresponding to this type.</param>
         /// <param name="builtInType">The built-in type to use for this expression type.</param>
         /// <param name="baseType">The base type for this type.</param>
-        public ObjectType(string name, Type builtInType = null, ExpressionType baseType = null)
-            : base(name)
+        public ObjectType(Constant constant, Type builtInType = null, ExpressionType baseType = null)
         {
+            this.Constant = constant;
             this.baseType = baseType;
             this.BuiltInType = builtInType;
         }
 
+        public Constant Constant { get; }
+
         /// <inheritdoc/>
         public override ExpressionType BaseType => this.baseType ?? base.BaseType;
+
+        /// <inheritdoc/>
+        public override string ToString() => this.Constant.Id;
     }
 }

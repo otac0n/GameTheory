@@ -5,7 +5,7 @@ namespace GameTheory.Gdl.Types
     /// <summary>
     /// The type shared by all decimal numbers.
     /// </summary>
-    public class NumberType : ObjectType
+    public class NumberType : ExpressionType
     {
         /// <summary>
         /// The type shared by all decimal numbers, <c>number</c>.
@@ -13,11 +13,14 @@ namespace GameTheory.Gdl.Types
         /// <remarks>
         /// Underlying type is <see cref="int"/>.
         /// </remarks>
-        public static new readonly NumberType Instance = new NumberType();
+        public static readonly NumberType Instance = new NumberType();
 
         private NumberType()
-            : base("number", builtInType: typeof(int))
         {
+            this.BuiltInType = typeof(int);
         }
+
+        /// <inheritdoc />
+        public override string ToString() => "number";
     }
 }
