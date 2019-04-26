@@ -115,6 +115,26 @@ namespace GameTheory.Gdl
             return sb.ToString();
         }
 
+        public static string RenderDependencyGraph(ImmutableDictionary<(Constant, int), ImmutableHashSet<(Constant, int)>> dependencyGraph)
+        {
+            var sb = new StringBuilder();
+            sb.AppendLine("digraph {");
+
+            string id((Constant constant, int arity) relation) => $"{relation.constant.Id}_{relation.arity}";
+
+            foreach (var kvp in dependencyGraph)
+            {
+                sb.AppendLine($"{id(kvp.Key)} [label=\"{kvp.Key.Item1.Name}\"];");
+                foreach (var reference in kvp.Value)
+                {
+                    sb.AppendLine($"{id(kvp.Key)} -> {id(reference)};");
+                }
+            }
+
+            sb.AppendLine("}");
+            return sb.ToString();
+        }
+
         public static string RenderNameGraph(KnowledgeBase knowledgeBase, AssignedTypes assignedTypes)
         {
             var sb = new StringBuilder();
