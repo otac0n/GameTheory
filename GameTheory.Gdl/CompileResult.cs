@@ -38,6 +38,12 @@ namespace GameTheory.Gdl
 
         public CSharpSyntaxNode DeclarationSyntax { get; set; }
 
+        public Scope<object> GlobalScope { get; set; }
+
+        public Scope<object> NamespaceScope { get; set; }
+
+        public Scope<object> GameStateScope { get; set; }
+
         public string Code { get; set; }
 
         public ImmutableDictionary<(Constant, int), ConstantType> ConstantTypes => this.constantTypes.Value;

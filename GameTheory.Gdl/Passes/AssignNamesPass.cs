@@ -21,35 +21,72 @@ namespace GameTheory.Gdl.Passes
             EnforceGdlRestrictions.DoesRelationDependencyError,
         };
 
-        public override IList<string> ErrorsProduced => new[] {
+        public override IList<string> ErrorsProduced => new[]
+        {
             "GDL099", // TODO: Convert to constant, etc.
         };
 
         public override void Run(CompileResult result)
         {
-            if (string.IsNullOrWhiteSpace(result.Name))
-            {
-                result.Name = "Game";
-            }
-            else
-            {
-                result.Name = result.Name.Replace('.', '_').Replace('-', '_');
-                if (!char.IsLetter(result.Name[0]))
-                {
-                    result.Name = "_" + result.Name;
-                }
-            }
+            var allTypes = new List<ExpressionType>();
+            var allExpressions = new List<ExpressionInfo>();
+            ExpressionTypeVisitor.Visit(result.AssignedTypes, visitExpression: allExpressions.Add, visitType: allTypes.Add);
 
-            AssignArgumentNames(result.KnowledgeBase, result.AssignedTypes);
+            var globalScope = new Scope<object>()
+                .Add(result, ScopeFlags.Public, result.Name, "Game");
+            result.Name = globalScope.TryGetPublic(result);
+
+            var namespaceScope = new Scope<object>()
+                .Reserve(result.Name)
+                .Add("GameState", ScopeFlags.Public, "GameState")
+                .Add("Move", ScopeFlags.Public, "Move", $"{result.Name} Move", "RoleMove");
+            namespaceScope = allTypes.Aggregate(namespaceScope, (scope, type) =>
+            {
+                switch (type)
+                {
+                    case EnumType enumType:
+                        return scope.Add(type, ScopeFlags.Public, enumType.RelationInfo.Constant.Name);
+
+                    case StateType _:
+                        return scope.Add(type, ScopeFlags.Public, "State");
+
+                    case FunctionType functionType:
+                        return scope.Add(functionType, ScopeFlags.Public, functionType.FunctionInfo.Constant.Name);
+                }
+
+                return scope;
+            });
+
+            var gameStateScope = new Scope<object>();
+            gameStateScope = allExpressions.Concat(allExpressions.OfType<FunctionInfo>()).Aggregate(gameStateScope, (scope, expr) =>
+            {
+                switch (expr)
+                {
+                    case FunctionInfo functionInfo:
+                    case ObjectInfo objectInfo when objectInfo.Value is int:
+                        break;
+
+                    case ConstantInfo constantInfo:
+                        return scope.Add(expr, ScopeFlags.Public, constantInfo.Constant.Name);
+                }
+
+                return scope;
+            });
+
+            result.GlobalScope = globalScope;
+            result.NamespaceScope = namespaceScope;
+            result.GameStateScope = gameStateScope;
+
+            AssignArgumentNames(result);
 
             // TODO: Enable renaming variables.
             ////result.KnowledgeBase = (KnowledgeBase)new VariableReplacer(result).Walk((Expression)result.KnowledgeBase);
         }
 
-        private static void AssignArgumentNames(KnowledgeBase knowledgeBase, AssignedTypes assignedTypes)
+        private static void AssignArgumentNames(CompileResult result)
         {
-            var argumentVariables = assignedTypes.ExpressionTypes.Values.Where(e => e is ExpressionWithArgumentsInfo).ToDictionary(e => (ExpressionWithArgumentsInfo)e, e => new List<VariableInfo[]>());
-            new VariableNameWalker(assignedTypes, argumentVariables).Walk((Expression)knowledgeBase);
+            var argumentVariables = result.AssignedTypes.ExpressionTypes.Values.Where(e => e is ExpressionWithArgumentsInfo).ToDictionary(e => (ExpressionWithArgumentsInfo)e, e => new List<VariableInfo[]>());
+            new VariableNameWalker(result.AssignedTypes, argumentVariables).Walk((Expression)result.KnowledgeBase);
             var variableComparer = new StringArrayEqualityComparer(StringComparer.Ordinal);
             foreach (var kvp in argumentVariables)
             {
@@ -123,7 +160,10 @@ namespace GameTheory.Gdl.Passes
                     }
                 }
 
-                var scope = new Scope<VariableInfo>();
+                var scope = new Scope<VariableInfo>()
+                    .Reserve(expressionInfo is FunctionInfo functionInfo
+                        ? result.NamespaceScope.TryGetPublic(functionInfo.ReturnType)
+                        : result.GameStateScope.TryGetPublic(expressionInfo));
                 for (var b = 0; b < expressionInfo.Arity; b++)
                 {
                     var argument = expressionInfo.Arguments[b];

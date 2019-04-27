@@ -40,6 +40,8 @@ namespace GameTheory.Gdl
 
         public bool ContainsKey(TKey key) => this.value.ContainsKey(key);
 
+        public bool ContainsName(string name) => this.names.Contains(name) && this.value.Values.Any(v => v.@private == name || v.@public == name);
+
         public Scope<TKey> AddPrivate(TKey key, params string[] nameHints) => this.Add(key, ScopeFlags.Private, nameHints);
 
         public Scope<TKey> AddPrivate(out string name, params string[] nameHints)
@@ -53,6 +55,11 @@ namespace GameTheory.Gdl
             new Scope<TKey>(
                 this.names.Add(path),
                 this.value.Add(key, (null, path)));
+
+        public Scope<TKey> Reserve(string name) =>
+            new Scope<TKey>(
+                this.names.Add(name),
+                this.value);
 
         public Scope<TKey> Add(TKey key, ScopeFlags flags, params string[] nameHints)
         {
