@@ -129,14 +129,6 @@ namespace GameTheory.Gdl
 
                             break;
 
-                        case NumberType numberType:
-                            foreach (var inner in assignedTypes.ExpressionTypes.Values.Where(v => v is ObjectInfo objectInfo && objectInfo.ReturnType is NumberType))
-                            {
-                                result.Add(inner);
-                            }
-
-                            break;
-
                         default:
                             result.Add(expr);
                             break;
@@ -211,18 +203,14 @@ namespace GameTheory.Gdl
                                         expression.ReturnType = unionType.Expressions.Single().ReturnType;
                                         changed = true;
                                     }
-                                    else if (unionType.Expressions.All(e => e.ReturnType is NumberRangeType || e.ReturnType is NumberType))
+                                    else if (unionType.Expressions.All(e => e.ReturnType is NumberRangeType))
                                     {
-                                        var values = unionType.Expressions.Select(e =>
+                                        var resultingTypes = unionType.Expressions
+                                            .Select(e => (NumberRangeType)e.ReturnType)
+                                            .Simplify();
+                                        if (resultingTypes.Count == 1)
                                         {
-                                            return e is ObjectInfo objectInfo
-                                                ? NumberRangeType.GetInstance((int)objectInfo.Value, (int)objectInfo.Value)
-                                                : (NumberRangeType)e.ReturnType;
-                                        }).Simplify();
-
-                                        if (values.Count == 1)
-                                        {
-                                            expression.ReturnType = (ExpressionType)values.Single();
+                                            expression.ReturnType = (ExpressionType)resultingTypes.Single();
                                             changed = true;
                                         }
                                     }
@@ -290,17 +278,11 @@ namespace GameTheory.Gdl
                                         };
                                         changed = true;
                                     }
-                                    else if (intersectionType.Expressions.All(e => e.ReturnType is NumberRangeType || e.ReturnType is NumberType))
+                                    else if (intersectionType.Expressions.All(e => e.ReturnType is NumberRangeType))
                                     {
-                                        var resultingType = intersectionType.Expressions.Select(e =>
-                                        {
-                                            return e is ObjectInfo objectInfo
-                                                ? NumberRangeType.GetInstance((int)objectInfo.Value, (int)objectInfo.Value)
-                                                : e.ReturnType;
-                                        }).Aggregate((a, b) => a is NumberRangeType nA && b is NumberRangeType nB
-                                            ? (NumberRangeType)nA.IntersectWith(nB)
-                                            : (ExpressionType)NoneType.Instance);
-
+                                        var resultingType = intersectionType.Expressions
+                                            .Select(e => (NumberRangeType)e.ReturnType)
+                                            .Aggregate((a, b) => (NumberRangeType)a.IntersectWith(b));
                                         expression.ReturnType = resultingType;
                                         changed = true;
                                     }
@@ -350,10 +332,9 @@ namespace GameTheory.Gdl
                                         // (X ∪ Y ∪ Z) ∩ (X ∪ Z) ⇔ (X ∪ Z)
                                         if (intersectionType.Expressions.All(e =>
                                             (e.ReturnType is ObjectType) ||
-                                            (e.ReturnType is NumberRangeType) ||
                                             (e.ReturnType is EnumType) ||
-                                            (e.ReturnType is NumberType) ||
-                                            (e.ReturnType is UnionType unionType && unionType.Expressions.All(u => u.ReturnType is ObjectType || u.ReturnType is EnumType || u.ReturnType is NumberRangeType || u.ReturnType is NumberType))))
+                                            (e.ReturnType is NumberRangeType) ||
+                                            (e.ReturnType is UnionType unionType && unionType.Expressions.All(u => u.ReturnType is ObjectType || u.ReturnType is EnumType || u.ReturnType is NumberRangeType))))
                                         {
                                             var unions = intersectionType.Expressions
                                                     .Select(u => FlattenUnion(new[] { u }));

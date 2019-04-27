@@ -79,10 +79,18 @@ namespace GameTheory.Gdl.Passes
             {
                 switch (type)
                 {
+                    case AnyType anyType:
+                        return SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.ObjectKeyword));
+
+                    case NoneType noneType:
+                        return SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.VoidKeyword));
+
                     case BooleanType booleanType:
                         return SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.BoolKeyword));
 
-                    case NumberType numberType:
+                    case ObjectType objectType:
+                        return SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.StringKeyword));
+
                     case NumberRangeType numberRangeType:
                         return SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.IntKeyword));
 
@@ -116,7 +124,7 @@ namespace GameTheory.Gdl.Passes
                             this.Reference(enumType),
                             SyntaxFactory.IdentifierName(enumType.Scope.TryGetPublic(objectInfo)));
 
-                    case NumberType numberType:
+                    case NumberRangeType numberRangeType:
                         return SyntaxHelper.LiteralExpression((int)objectInfo.Value);
 
                     default:
@@ -128,6 +136,17 @@ namespace GameTheory.Gdl.Passes
             {
                 switch (type)
                 {
+                    case AnyType anyType:
+                        // TODO: Need to return all ground expressions.
+                        throw new NotImplementedException();
+
+                    case NoneType noneType:
+                        return SyntaxFactory.ArrayCreationExpression(
+                            SyntaxHelper.ArrayType(this.Reference(declaredAs)),
+                            SyntaxFactory.InitializerExpression(
+                                SyntaxKind.ArrayInitializerExpression,
+                                SyntaxFactory.SeparatedList<ExpressionSyntax>()));
+
                     case ObjectType objectType:
                         return SyntaxFactory.ArrayCreationExpression(
                             SyntaxHelper.ArrayType(this.Reference(declaredAs)),
@@ -135,9 +154,6 @@ namespace GameTheory.Gdl.Passes
                                 SyntaxKind.ArrayInitializerExpression,
                                 SyntaxFactory.SingletonSeparatedList(
                                     this.CreateObjectReference((ObjectInfo)this.result.AssignedTypes.ExpressionTypes[(objectType.Constant, 0)]))));
-
-                    case NumberType numberType:
-                        return SyntaxHelper.EnumerableRangeExpression(0, 101);
 
                     case NumberRangeType numberRangeType:
                         return SyntaxHelper.EnumerableRangeExpression(numberRangeType.Start, numberRangeType.End - numberRangeType.Start + 1);

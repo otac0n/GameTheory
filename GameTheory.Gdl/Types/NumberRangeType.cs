@@ -3,17 +3,18 @@ namespace GameTheory.Gdl.Types
     using System;
     using System.Collections.Concurrent;
     using Intervals;
+    using KnowledgeInterchangeFormat.Expressions;
 
     public class NumberRangeType : ExpressionType, IInterval<int>
     {
-        private static ConcurrentDictionary<(int, int), NumberRangeType> instances = new ConcurrentDictionary<(int, int), NumberRangeType>();
+        private static ConcurrentDictionary<(int, int), ExpressionType> instances = new ConcurrentDictionary<(int, int), ExpressionType>();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="NumberRangeType"/> class.
         /// </summary>
         /// <param name="start">The inclusive min value.</param>
         /// <param name="end">The inclusive max value.</param>
-        private NumberRangeType(int start, int end)
+        protected NumberRangeType(int start, int end)
         {
             this.Start = start;
             this.End = end;
@@ -36,7 +37,7 @@ namespace GameTheory.Gdl.Types
 
         bool IInterval<int>.StartInclusive => true;
 
-        public static NumberRangeType GetInstance(int start, int end) => instances.GetOrAdd((start, end), _ => new NumberRangeType(start, end));
+        public static ExpressionType GetInstance(int start, int end) => instances.GetOrAdd((start, end), _ => (ExpressionType)new NumberRangeType(start, end));
 
         public override string ToString() => $"{this.Start} to {this.End}";
 
@@ -47,7 +48,7 @@ namespace GameTheory.Gdl.Types
                 throw new NotImplementedException();
             }
 
-            return NumberRangeType.GetInstance(start, endInclusive ? end : end - 1);
+            return (IInterval<int>)NumberRangeType.GetInstance(start, endInclusive ? end : end - 1);
         }
     }
 }

@@ -56,7 +56,6 @@ namespace GameTheory.Gdl.Types
                             break;
 
                         case ObjectType objectType:
-                        case NumberType numberType:
                         case NumberRangeType numberRangeType:
                         case BooleanType booleanType:
                         case AnyType anyType:

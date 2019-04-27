@@ -12,7 +12,7 @@ namespace GameTheory.Gdl.Types
         {
             if (int.TryParse(constant.Id, out var value) && value.ToString().Equals(constant.Id, StringComparison.OrdinalIgnoreCase))
             {
-                this.ReturnType = new NumberType(constant);
+                this.ReturnType = NumberRangeType.GetInstance(value, value);
                 this.Value = value;
             }
             else
