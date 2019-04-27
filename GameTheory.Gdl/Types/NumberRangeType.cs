@@ -30,9 +30,6 @@ namespace GameTheory.Gdl.Types
         /// </summary>
         public int End { get; }
 
-        /// <inheritdoc/>
-        public override ExpressionType BaseType => NumberType.Instance;
-
         int IInterval<int>.End => this.End + 1;
 
         bool IInterval<int>.EndInclusive => false;

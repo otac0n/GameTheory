@@ -128,6 +128,14 @@ namespace GameTheory.Gdl.Passes
             {
                 switch (type)
                 {
+                    case ObjectType objectType:
+                        return SyntaxFactory.ArrayCreationExpression(
+                            SyntaxHelper.ArrayType(this.Reference(declaredAs)),
+                            SyntaxFactory.InitializerExpression(
+                                SyntaxKind.ArrayInitializerExpression,
+                                SyntaxFactory.SingletonSeparatedList(
+                                    this.CreateObjectReference((ObjectInfo)this.result.AssignedTypes.ExpressionTypes[(objectType.Constant, 0)]))));
+
                     case NumberType numberType:
                         return SyntaxHelper.EnumerableRangeExpression(0, 101);
 
@@ -151,22 +159,7 @@ namespace GameTheory.Gdl.Passes
 
                     case UnionType unionType:
                         return unionType.Expressions
-                            .Select(expr =>
-                            {
-                                switch (expr)
-                                {
-                                    case ObjectInfo objectInfo:
-                                        return SyntaxFactory.ArrayCreationExpression(
-                                            SyntaxHelper.ArrayType(this.Reference(declaredAs)),
-                                            SyntaxFactory.InitializerExpression(
-                                                SyntaxKind.ArrayInitializerExpression,
-                                                SyntaxFactory.SingletonSeparatedList(
-                                                    this.CreateObjectReference(objectInfo))));
-
-                                    default:
-                                        return this.AllMembers(expr.ReturnType, declaredAs);
-                                }
-                            })
+                            .Select(expr => this.AllMembers(expr.ReturnType, declaredAs))
                             .Aggregate((a, b) =>
                                 SyntaxFactory.InvocationExpression(
                                     SyntaxFactory.MemberAccessExpression(

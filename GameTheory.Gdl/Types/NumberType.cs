@@ -2,25 +2,26 @@
 
 namespace GameTheory.Gdl.Types
 {
+    using KnowledgeInterchangeFormat.Expressions;
+
     /// <summary>
     /// The type shared by all decimal numbers.
     /// </summary>
     public class NumberType : ExpressionType
     {
         /// <summary>
-        /// The type shared by all decimal numbers, <c>number</c>.
+        /// Initializes a new instance of the <see cref="NumberType"/> class.
         /// </summary>
-        /// <remarks>
-        /// Underlying type is <see cref="int"/>.
-        /// </remarks>
-        public static readonly NumberType Instance = new NumberType();
-
-        private NumberType()
+        /// <param name="constant">The constant corresponding to this type.</param>
+        public NumberType(Constant constant)
         {
+            this.Constant = constant;
             this.BuiltInType = typeof(int);
         }
 
+        public Constant Constant { get; }
+
         /// <inheritdoc />
-        public override string ToString() => "number";
+        public override string ToString() => this.Constant.Id;
     }
 }

@@ -19,27 +19,16 @@ namespace GameTheory.Gdl
                 switch (kvp.Value)
                 {
                     case ConstantType.Function:
-                        return new FunctionInfo(kvp.Key.Item1, kvp.Key.Item2);
+                        return (ConstantInfo)new FunctionInfo(kvp.Key.Item1, kvp.Key.Item2);
 
                     case ConstantType.Logical:
-                        return new LogicalInfo(kvp.Key.Item1, bodies[kvp.Key]);
+                        return (ConstantInfo)new LogicalInfo(kvp.Key.Item1, bodies[kvp.Key]);
 
                     case ConstantType.Object:
-                        var constant = kvp.Key.Item1;
-                        ConstantInfo objectInfo;
-                        if (int.TryParse(constant.Id, out var value) && value.ToString().Equals(constant.Id, StringComparison.OrdinalIgnoreCase))
-                        {
-                            objectInfo = new ObjectInfo(kvp.Key.Item1, NumberType.Instance, value);
-                        }
-                        else
-                        {
-                            objectInfo = new ObjectInfo(kvp.Key.Item1, new ObjectType(constant, typeof(string)), constant.Id);
-                        }
-
-                        return objectInfo;
+                        return (ConstantInfo)new ObjectInfo(kvp.Key.Item1);
 
                     case ConstantType.Relation:
-                        return new RelationInfo(kvp.Key.Item1, kvp.Key.Item2, bodies[kvp.Key]);
+                        return (ConstantInfo)new RelationInfo(kvp.Key.Item1, kvp.Key.Item2, bodies[kvp.Key]);
                 }
 
                 throw new InvalidOperationException();
@@ -81,7 +70,7 @@ namespace GameTheory.Gdl
                 input.Arguments[0].ReturnType = role.Arguments[0].ReturnType;
             }
 
-            goal.Arguments[1].ReturnType = NumberType.Instance;
+            goal.Arguments[1].ReturnType = NumberRangeType.GetInstance(0, 100);
             distinct.Arguments[1].ReturnType = distinct.Arguments[0].ReturnType = AnyType.Instance;
 
             ReduceTypes(assignedTypes);
@@ -110,15 +99,12 @@ namespace GameTheory.Gdl
                         continue;
                     }
 
-                    switch (expr)
-                    {
-                        case ObjectInfo objectInfo:
-                            result.Add(expr);
-                            continue;
-                    }
-
                     switch (expr.ReturnType)
                     {
+                        case ObjectType objectType:
+                            result.Add(assignedTypes.ExpressionTypes[(objectType.Constant, 0)]);
+                            break;
+
                         case UnionType unionType:
                             foreach (var inner in unionType.Expressions)
                             {
@@ -144,7 +130,7 @@ namespace GameTheory.Gdl
                             break;
 
                         case NumberType numberType:
-                            foreach (var inner in assignedTypes.ExpressionTypes.Values.Where(v => v is ObjectInfo objectInfo && objectInfo.ReturnType == NumberType.Instance))
+                            foreach (var inner in assignedTypes.ExpressionTypes.Values.Where(v => v is ObjectInfo objectInfo && objectInfo.ReturnType is NumberType))
                             {
                                 result.Add(inner);
                             }
@@ -227,23 +213,16 @@ namespace GameTheory.Gdl
                                     }
                                     else if (unionType.Expressions.All(e => e.ReturnType is NumberRangeType || e.ReturnType is NumberType))
                                     {
-                                        if (unionType.Expressions.Any(e => e.ReturnType is NumberType && !(e is ObjectInfo)))
+                                        var values = unionType.Expressions.Select(e =>
                                         {
-                                            expression.ReturnType = NumberType.Instance;
-                                            changed = true;
-                                        }
-                                        else
-                                        {
-                                            var values = unionType.Expressions.Select(e =>
-                                            {
-                                                return e is ObjectInfo objectInfo
-                                                    ? NumberRangeType.GetInstance((int)objectInfo.Value, (int)objectInfo.Value)
-                                                    : (NumberRangeType)e.ReturnType;
-                                            }).Simplify();
+                                            return e is ObjectInfo objectInfo
+                                                ? NumberRangeType.GetInstance((int)objectInfo.Value, (int)objectInfo.Value)
+                                                : (NumberRangeType)e.ReturnType;
+                                        }).Simplify();
 
-                                            expression.ReturnType = values.Count == 1
-                                                ? (ExpressionType)values.Single()
-                                                : NumberType.Instance;
+                                        if (values.Count == 1)
+                                        {
+                                            expression.ReturnType = (ExpressionType)values.Single();
                                             changed = true;
                                         }
                                     }
@@ -313,35 +292,17 @@ namespace GameTheory.Gdl
                                     }
                                     else if (intersectionType.Expressions.All(e => e.ReturnType is NumberRangeType || e.ReturnType is NumberType))
                                     {
-                                        var allNumbers = intersectionType.Expressions.Where(e => e.ReturnType is NumberType && !(e is ObjectInfo));
-                                        var withoutAllNumbers = intersectionType.Expressions.Except(allNumbers);
-                                        if (intersectionType.Expressions.Count != withoutAllNumbers.Count)
+                                        var resultingType = intersectionType.Expressions.Select(e =>
                                         {
-                                            if (withoutAllNumbers.IsEmpty)
-                                            {
-                                                expression.ReturnType = NumberType.Instance;
-                                            }
-                                            else
-                                            {
-                                                intersectionType.Expressions = withoutAllNumbers;
-                                            }
+                                            return e is ObjectInfo objectInfo
+                                                ? NumberRangeType.GetInstance((int)objectInfo.Value, (int)objectInfo.Value)
+                                                : e.ReturnType;
+                                        }).Aggregate((a, b) => a is NumberRangeType nA && b is NumberRangeType nB
+                                            ? (NumberRangeType)nA.IntersectWith(nB)
+                                            : (ExpressionType)NoneType.Instance);
 
-                                            changed = true;
-                                        }
-                                        else
-                                        {
-                                            var resultingType = intersectionType.Expressions.Select(e =>
-                                            {
-                                                return e is ObjectInfo objectInfo
-                                                    ? NumberRangeType.GetInstance((int)objectInfo.Value, (int)objectInfo.Value)
-                                                    : e.ReturnType;
-                                            }).Aggregate((a, b) => a is NumberRangeType nA && b is NumberRangeType nB
-                                                ? (NumberRangeType)nA.IntersectWith(nB)
-                                                : (ExpressionType)NoneType.Instance);
-
-                                            expression.ReturnType = resultingType;
-                                            changed = true;
-                                        }
+                                        expression.ReturnType = resultingType;
+                                        changed = true;
                                     }
                                     else
                                     {
@@ -388,11 +349,11 @@ namespace GameTheory.Gdl
 
                                         // (X ∪ Y ∪ Z) ∩ (X ∪ Z) ⇔ (X ∪ Z)
                                         if (intersectionType.Expressions.All(e =>
-                                            (e is ObjectInfo) ||
+                                            (e.ReturnType is ObjectType) ||
                                             (e.ReturnType is NumberRangeType) ||
                                             (e.ReturnType is EnumType) ||
                                             (e.ReturnType is NumberType) ||
-                                            (e.ReturnType is UnionType unionType && unionType.Expressions.All(u => u is ObjectInfo || u.ReturnType is EnumType || u.ReturnType is NumberRangeType || u.ReturnType is NumberType))))
+                                            (e.ReturnType is UnionType unionType && unionType.Expressions.All(u => u.ReturnType is ObjectType || u.ReturnType is EnumType || u.ReturnType is NumberRangeType || u.ReturnType is NumberType))))
                                         {
                                             var unions = intersectionType.Expressions
                                                     .Select(u => FlattenUnion(new[] { u }));
@@ -421,7 +382,8 @@ namespace GameTheory.Gdl
                                     unionTypesCache[unionType.Expressions] = unionType;
                                 }
 
-                                if (expression is ArgumentInfo argument &&
+                                if (!changed &&
+                                    expression is ArgumentInfo argument &&
                                     argument.Expression is RelationInfo relation &&
                                     relation.Arity == 1 &&
                                     unionType.Expressions.Count >= 2 &&
