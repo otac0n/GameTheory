@@ -61,6 +61,11 @@ namespace GameTheory.Gdl
                 this.names.Add(name),
                 this.value);
 
+        public Scope<T> SubScope<T>() =>
+            new Scope<T>(
+                this.names,
+                ImmutableDictionary<T, (string, string)>.Empty);
+
         public Scope<TKey> Add(TKey key, ScopeFlags flags, params string[] nameHints)
         {
             var value = this.SuggestNames(flags, nameHints);

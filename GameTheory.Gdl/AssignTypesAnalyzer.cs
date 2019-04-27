@@ -97,6 +97,69 @@ namespace GameTheory.Gdl
                 assignedTypes.ExpressionTypes.Count,
                 new ImmutableHashSetEqualityComparer<ExpressionInfo>());
 
+            ImmutableHashSet<ExpressionInfo> FlattenUnion(IEnumerable<ExpressionInfo> expressions)
+            {
+                var queue = new Queue<ExpressionInfo>(expressions);
+                var seen = new HashSet<ExpressionInfo>();
+                var result = ImmutableHashSet.CreateBuilder<ExpressionInfo>();
+                while (queue.Count > 0)
+                {
+                    var expr = queue.Dequeue();
+                    if (!seen.Add(expr))
+                    {
+                        continue;
+                    }
+
+                    switch (expr)
+                    {
+                        case ObjectInfo objectInfo:
+                            result.Add(expr);
+                            continue;
+                    }
+
+                    switch (expr.ReturnType)
+                    {
+                        case UnionType unionType:
+                            foreach (var inner in unionType.Expressions)
+                            {
+                                queue.Enqueue(inner);
+                            }
+
+                            break;
+
+                        case EnumType enumType:
+                            foreach (var inner in enumType.Objects)
+                            {
+                                result.Add(inner);
+                            }
+
+                            break;
+
+                        case NumberRangeType numberRangeType:
+                            foreach (var inner in Enumerable.Range(numberRangeType.Start, numberRangeType.End - numberRangeType.Start + 1).Select(i => assignedTypes.ExpressionTypes[(new Constant(i.ToString()), 0)]))
+                            {
+                                result.Add(inner);
+                            }
+
+                            break;
+
+                        case NumberType numberType:
+                            foreach (var inner in assignedTypes.ExpressionTypes.Values.Where(v => v is ObjectInfo objectInfo && objectInfo.ReturnType == NumberType.Instance))
+                            {
+                                result.Add(inner);
+                            }
+
+                            break;
+
+                        default:
+                            result.Add(expr);
+                            break;
+                    }
+                }
+
+                return result.ToImmutable();
+            }
+
             bool changed;
             do
             {
@@ -241,6 +304,7 @@ namespace GameTheory.Gdl
                                     }
                                     else if (intersectionType.Expressions.Count == 1)
                                     {
+                                        // Adding to a union instead of returning the single expression's type directly to avoid issues with circular references.
                                         expression.ReturnType = new UnionType
                                         {
                                             Expressions = intersectionType.Expressions,
@@ -323,13 +387,19 @@ namespace GameTheory.Gdl
                                         }
 
                                         // (X ∪ Y ∪ Z) ∩ (X ∪ Z) ⇔ (X ∪ Z)
-                                        if (intersectionType.Expressions.All(e => e.ReturnType is UnionType unionType && unionType.Expressions.All(u => u is ObjectInfo objectInfo && objectInfo.ReturnType is ObjectType)))
+                                        if (intersectionType.Expressions.All(e =>
+                                            (e is ObjectInfo) ||
+                                            (e.ReturnType is NumberRangeType) ||
+                                            (e.ReturnType is EnumType) ||
+                                            (e.ReturnType is NumberType) ||
+                                            (e.ReturnType is UnionType unionType && unionType.Expressions.All(u => u is ObjectInfo || u.ReturnType is EnumType || u.ReturnType is NumberRangeType || u.ReturnType is NumberType))))
                                         {
+                                            var unions = intersectionType.Expressions
+                                                    .Select(u => FlattenUnion(new[] { u }));
+                                            var intersected = unions.Aggregate((a, b) => a.Intersect(b));
                                             expression.ReturnType = new UnionType
                                             {
-                                                Expressions = intersectionType.Expressions
-                                                    .Select(e => ((UnionType)e.ReturnType).Expressions)
-                                                    .Aggregate((a, b) => a.Intersect(b)),
+                                                Expressions = intersected,
                                             };
                                             changed = true;
                                         }
