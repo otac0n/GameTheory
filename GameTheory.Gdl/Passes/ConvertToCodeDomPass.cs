@@ -294,6 +294,8 @@ namespace GameTheory.Gdl.Passes
                             throw new InvalidOperationException();
                         }).ToArray());
 
+                gameState = SyntaxHelper.ReorderMembers(gameState);
+
                 ns = ns
                     .AddMembers(gameState, move)
                     .AddMembers(
@@ -673,7 +675,7 @@ namespace GameTheory.Gdl.Passes
                                 SyntaxHelper.LiteralExpression(value))))))
                     .AddModifiers(
                         SyntaxFactory.Token(SyntaxKind.PrivateKeyword),
-                        SyntaxFactory.Token(SyntaxKind.StaticKeyword));
+                        SyntaxFactory.Token(SyntaxKind.ConstKeyword));
 
             private MemberDeclarationSyntax[] CreateGameStateConstructorDeclarations(RelationInfo init, StateType stateType, RelationInfo role, ExpressionType moveType, ObjectInfo noop)
             {
@@ -1851,7 +1853,7 @@ namespace GameTheory.Gdl.Passes
 
                 structElement = structElement.AddMembers(formatTokens, compareTo);
 
-                return structElement;
+                return SyntaxHelper.ReorderMembers(structElement);
             }
 
             private ClassDeclarationSyntax CreateStateTypeDeclaration(StateType stateType)
@@ -2039,7 +2041,7 @@ namespace GameTheory.Gdl.Passes
 
                 classElement = classElement.AddMembers(constructor, add, compareTo, contains);
 
-                return classElement;
+                return SyntaxHelper.ReorderMembers(classElement);
             }
 
             private class ScopeWalker : SupportedExpressionsTreeWalker
