@@ -98,10 +98,30 @@ namespace GameTheory.Gdl
             return comp;
         });
 
+        public static readonly PredefinedTypeSyntax BoolType =
+            SyntaxFactory.PredefinedType(
+                SyntaxFactory.Token(
+                    SyntaxKind.BoolKeyword));
+
+        public static readonly PredefinedTypeSyntax IntType =
+            SyntaxFactory.PredefinedType(
+                SyntaxFactory.Token(
+                    SyntaxKind.IntKeyword));
+
         public static readonly PredefinedTypeSyntax ObjectType =
             SyntaxFactory.PredefinedType(
                 SyntaxFactory.Token(
                     SyntaxKind.ObjectKeyword));
+
+        public static readonly PredefinedTypeSyntax StringType =
+            SyntaxFactory.PredefinedType(
+                SyntaxFactory.Token(
+                    SyntaxKind.StringKeyword));
+
+        public static readonly PredefinedTypeSyntax VoidType =
+            SyntaxFactory.PredefinedType(
+                SyntaxFactory.Token(
+                    SyntaxKind.VoidKeyword));
 
         public static readonly LiteralExpressionSyntax Null =
             SyntaxFactory.LiteralExpression(
