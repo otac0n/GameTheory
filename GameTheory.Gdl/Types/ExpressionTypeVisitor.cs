@@ -51,7 +51,14 @@ namespace GameTheory.Gdl.Types
                             AddAll(enumType.Objects);
                             break;
 
+                        case FunctionType functionType:
+                            // Walk arguments or argument types?
+                            break;
+
                         case ObjectType objectType:
+                        case NumberRangeType numberRangeType:
+                        case BooleanType booleanType:
+                        case AnyType anyType:
                         case NoneType noneType:
                             break;
 

@@ -2,13 +2,15 @@
 
 namespace GameTheory.Gdl.Types
 {
-    public class BooleanType : ObjectType
+    public class BooleanType : ExpressionType
     {
         public static readonly BooleanType Instance = new BooleanType();
 
         private BooleanType()
-            : base("bool", null, typeof(bool))
         {
+            this.BuiltInType = typeof(bool);
         }
+
+        public override string ToString() => "bool";
     }
 }

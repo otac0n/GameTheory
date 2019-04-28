@@ -4,20 +4,26 @@ namespace GameTheory.Gdl.Types
 {
     using System.Collections.Generic;
     using System.Collections.Immutable;
+    using System.Linq;
 
     public class EnumType : ExpressionType
     {
-        private EnumType(string name, IEnumerable<ObjectInfo> objects)
-            : base(name)
+        private EnumType(RelationInfo relationInfo, IEnumerable<ObjectInfo> objects)
         {
+            this.RelationInfo = relationInfo;
             this.Objects = ImmutableHashSet.CreateRange(objects);
+            this.Scope = this.Objects.Aggregate(new Scope<ObjectInfo>(), (scope, o) => scope.Add(o, ScopeFlags.Public, o.Constant.Name));
         }
+
+        public RelationInfo RelationInfo { get; }
 
         public ImmutableHashSet<ObjectInfo> Objects { get; }
 
-        public static EnumType Create(string name, IEnumerable<ObjectInfo> objects)
+        public Scope<ObjectInfo> Scope { get; }
+
+        public static EnumType Create(RelationInfo relationInfo, IEnumerable<ObjectInfo> objects)
         {
-            var enumType = new EnumType(name, objects);
+            var enumType = new EnumType(relationInfo, objects);
 
             foreach (var obj in enumType.Objects)
             {
@@ -26,5 +32,7 @@ namespace GameTheory.Gdl.Types
 
             return enumType;
         }
+
+        public override string ToString() => this.RelationInfo.Id;
     }
 }

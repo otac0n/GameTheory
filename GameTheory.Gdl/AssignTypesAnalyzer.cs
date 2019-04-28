@@ -10,63 +10,47 @@ namespace GameTheory.Gdl
 
     public static class AssignTypesAnalyzer
     {
-        public static AssignedTypes Analyze(KnowledgeBase knowledgeBase, Dictionary<(string, int), ConstantType> constantTypes, Dictionary<Expression, ImmutableHashSet<Variable>> containedVariables)
+        public static AssignedTypes Analyze(KnowledgeBase knowledgeBase, ImmutableDictionary<(Constant, int), ConstantType> constantTypes, ImmutableDictionary<Expression, ImmutableHashSet<IndividualVariable>> containedVariables)
         {
             var bodies = knowledgeBase.Forms.Cast<Sentence>().ToLookup(f => f.GetImplicatedConstantWithArity());
-            var expressionTypes = new Dictionary<(string, int), ExpressionInfo>();
-            foreach (var kvp in constantTypes)
+
+            var expressionTypes = constantTypes.ToDictionary(kvp => kvp.Key, kvp =>
             {
                 switch (kvp.Value)
                 {
                     case ConstantType.Function:
-                        expressionTypes[kvp.Key] = new FunctionInfo(kvp.Key.Item1, kvp.Key.Item2);
-                        break;
+                        return (ConstantInfo)new FunctionInfo(kvp.Key.Item1, kvp.Key.Item2);
 
                     case ConstantType.Logical:
-                        expressionTypes[kvp.Key] = new LogicalInfo(kvp.Key.Item1, bodies[kvp.Key]);
-                        break;
+                        return (ConstantInfo)new LogicalInfo(kvp.Key.Item1, bodies[kvp.Key]);
 
                     case ConstantType.Object:
-                        var id = kvp.Key.Item1;
-                        ObjectInfo objectInfo;
-                        if (int.TryParse(id, out var value) && value.ToString().Equals(id, StringComparison.OrdinalIgnoreCase))
-                        {
-                            objectInfo = new ObjectInfo(id, NumberType.Instance, value);
-                        }
-                        else
-                        {
-                            objectInfo = new ObjectInfo(id, new ObjectType(id), id);
-                        }
-
-                        expressionTypes[kvp.Key] = objectInfo;
-                        break;
+                        return (ConstantInfo)new ObjectInfo(kvp.Key.Item1);
 
                     case ConstantType.Relation:
-                        expressionTypes[kvp.Key] = new RelationInfo(kvp.Key.Item1, kvp.Key.Item2, bodies[kvp.Key]);
-                        break;
+                        return (ConstantInfo)new RelationInfo(kvp.Key.Item1, kvp.Key.Item2, bodies[kvp.Key]);
                 }
-            }
 
-            var variableTypes = (from f in knowledgeBase.Forms
-                                 from v in containedVariables[f]
-                                 select new { f, v }).ToLookup(p => p.f, p => ((IndividualVariable)p.v, new VariableInfo(p.v.Id)));
+                throw new InvalidOperationException();
+            }).ToImmutableDictionary();
+            var variableTypes = knowledgeBase.Forms.Cast<Sentence>().ToImmutableDictionary(s => s, s => containedVariables[s].ToImmutableDictionary(p => p, p => new VariableInfo(p.Id))); // TODO: Carry variable around, so that casing is perserved.
             var assignedTypes = new AssignedTypes(expressionTypes, variableTypes);
 
-            var init = (RelationInfo)expressionTypes[("INIT", 1)];
-            var @true = (RelationInfo)expressionTypes[("TRUE", 1)];
-            var next = (RelationInfo)expressionTypes[("NEXT", 1)];
-            var @base = expressionTypes.ContainsKey(("BASE", 1)) ? (RelationInfo)expressionTypes[("BASE", 1)] : null;
-            init.Arguments[0].ReturnType = @true.Arguments[0].ReturnType = next.Arguments[0].ReturnType = new StateType("State");
+            var init = (RelationInfo)expressionTypes[KnownConstants.Init];
+            var @true = (RelationInfo)expressionTypes[KnownConstants.True];
+            var next = (RelationInfo)expressionTypes[KnownConstants.Next];
+            var @base = expressionTypes.ContainsKey(KnownConstants.Base) ? (RelationInfo)expressionTypes[KnownConstants.Base] : null;
+            init.Arguments[0].ReturnType = @true.Arguments[0].ReturnType = next.Arguments[0].ReturnType = new StateType();
             if (@base != null)
             {
                 @base.Arguments[0].ReturnType = @true.Arguments[0].ReturnType;
             }
 
-            var role = (RelationInfo)expressionTypes[("ROLE", 1)];
-            var does = (RelationInfo)expressionTypes[("DOES", 2)];
-            var legal = (RelationInfo)expressionTypes[("LEGAL", 2)];
-            var input = expressionTypes.ContainsKey(("INPUT", 2)) ? (RelationInfo)expressionTypes[("INPUT", 2)] : null;
-            var goal = (RelationInfo)expressionTypes[("GOAL", 2)];
+            var role = (RelationInfo)expressionTypes[KnownConstants.Role];
+            var does = (RelationInfo)expressionTypes[KnownConstants.Does];
+            var legal = (RelationInfo)expressionTypes[KnownConstants.Legal];
+            var input = expressionTypes.ContainsKey(KnownConstants.Input) ? (RelationInfo)expressionTypes[KnownConstants.Input] : null;
+            var goal = (RelationInfo)expressionTypes[KnownConstants.Goal];
             var movesType = new IntersectionType();
             movesType.Expressions = movesType.Expressions.Add(legal.Arguments[1]);
             does.Arguments[1].ReturnType = movesType;
@@ -75,19 +59,19 @@ namespace GameTheory.Gdl
                 movesType.Expressions = movesType.Expressions.Add(input.Arguments[1]);
             }
 
-            var distinct = (RelationInfo)expressionTypes[("DISTINCT", 2)];
+            var distinct = (RelationInfo)expressionTypes[KnownConstants.Distinct];
 
             new TypeUsageWalker(assignedTypes).Walk((Expression)knowledgeBase);
             var roleUnion = (UnionType)role.Arguments[0].ReturnType;
-            var roleEnum = EnumType.Create("Role", roleUnion.Expressions.Cast<ObjectInfo>());
+            var roleEnum = EnumType.Create(role, roleUnion.Expressions.Cast<ObjectInfo>());
             does.Arguments[0].ReturnType = legal.Arguments[0].ReturnType = goal.Arguments[0].ReturnType = role.Arguments[0].ReturnType;
             if (input != null)
             {
                 input.Arguments[0].ReturnType = role.Arguments[0].ReturnType;
             }
 
-            goal.Arguments[1].ReturnType = NumberType.Instance;
-            distinct.Arguments[1].ReturnType = distinct.Arguments[0].ReturnType = ObjectType.Instance;
+            goal.Arguments[1].ReturnType = NumberRangeType.GetInstance(0, 100);
+            distinct.Arguments[1].ReturnType = distinct.Arguments[0].ReturnType = AnyType.Instance;
 
             ReduceTypes(assignedTypes);
             return assignedTypes;
@@ -101,6 +85,58 @@ namespace GameTheory.Gdl
             var intersectionTypesCache = new Dictionary<ImmutableHashSet<ExpressionInfo>, IntersectionType>(
                 assignedTypes.ExpressionTypes.Count,
                 new ImmutableHashSetEqualityComparer<ExpressionInfo>());
+
+            ImmutableHashSet<ExpressionInfo> FlattenUnion(IEnumerable<ExpressionInfo> expressions)
+            {
+                var queue = new Queue<ExpressionInfo>(expressions);
+                var seen = new HashSet<ExpressionInfo>();
+                var result = ImmutableHashSet.CreateBuilder<ExpressionInfo>();
+                while (queue.Count > 0)
+                {
+                    var expr = queue.Dequeue();
+                    if (!seen.Add(expr))
+                    {
+                        continue;
+                    }
+
+                    switch (expr.ReturnType)
+                    {
+                        case ObjectType objectType:
+                            result.Add(objectType.ObjectInfo);
+                            break;
+
+                        case UnionType unionType:
+                            foreach (var inner in unionType.Expressions)
+                            {
+                                queue.Enqueue(inner);
+                            }
+
+                            break;
+
+                        case EnumType enumType:
+                            foreach (var inner in enumType.Objects)
+                            {
+                                result.Add(inner);
+                            }
+
+                            break;
+
+                        case NumberRangeType numberRangeType:
+                            foreach (var inner in Enumerable.Range(numberRangeType.Start, numberRangeType.End - numberRangeType.Start + 1).Select(i => assignedTypes.ExpressionTypes[(new Constant(i.ToString()), 0)]))
+                            {
+                                result.Add(inner);
+                            }
+
+                            break;
+
+                        default:
+                            result.Add(expr);
+                            break;
+                    }
+                }
+
+                return result.ToImmutable();
+            }
 
             bool changed;
             do
@@ -117,11 +153,11 @@ namespace GameTheory.Gdl
                         {
                             case UnionType unionType:
                                 {
-                                    // (X ∪ object) ⇔ object
-                                    var objects = unionType.Expressions.Where(e => e.ReturnType == ObjectType.Instance);
-                                    if (objects.Any())
+                                    // (X ∪ any) ⇔ any
+                                    var anys = unionType.Expressions.Where(e => e.ReturnType is AnyType);
+                                    if (anys.Any())
                                     {
-                                        expression.ReturnType = ObjectType.Instance;
+                                        expression.ReturnType = AnyType.Instance;
                                         changed = true;
                                     }
 
@@ -135,6 +171,12 @@ namespace GameTheory.Gdl
                                             unionType.Expressions = withoutNones;
                                             changed = true;
                                         }
+                                    }
+
+                                    if (unionType.Expressions.Contains(expression))
+                                    {
+                                        unionType.Expressions = unionType.Expressions.Remove(expression);
+                                        changed = true;
                                     }
 
                                     // (X ∪ Y ∪ (X ∩ ...)) ⇔ (X ∪ Y)
@@ -151,12 +193,6 @@ namespace GameTheory.Gdl
                                         }
                                     }
 
-                                    if (unionType.Expressions.Contains(expression))
-                                    {
-                                        unionType.Expressions = unionType.Expressions.Remove(expression);
-                                        changed = true;
-                                    }
-
                                     if (unionType.Expressions.Count == 0)
                                     {
                                         expression.ReturnType = NoneType.Instance;
@@ -167,25 +203,14 @@ namespace GameTheory.Gdl
                                         expression.ReturnType = unionType.Expressions.Single().ReturnType;
                                         changed = true;
                                     }
-                                    else if (unionType.Expressions.All(e => e.ReturnType is NumberRangeType || e.ReturnType == NumberType.Instance))
+                                    else if (unionType.Expressions.All(e => e.ReturnType is NumberRangeType))
                                     {
-                                        if (unionType.Expressions.Any(e => e.ReturnType == NumberType.Instance && !(e is ObjectInfo)))
+                                        var resultingTypes = unionType.Expressions
+                                            .Select(e => (NumberRangeType)e.ReturnType)
+                                            .Simplify();
+                                        if (resultingTypes.Count == 1)
                                         {
-                                            expression.ReturnType = NumberType.Instance;
-                                            changed = true;
-                                        }
-                                        else
-                                        {
-                                            var values = unionType.Expressions.Select(e =>
-                                            {
-                                                return e is ObjectInfo objectInfo
-                                                    ? NumberRangeType.GetInstance((int)objectInfo.Value, (int)objectInfo.Value)
-                                                    : (NumberRangeType)e.ReturnType;
-                                            }).Simplify();
-
-                                            expression.ReturnType = values.Count == 1
-                                                ? (ExpressionType)values.Single()
-                                                : NumberType.Instance;
+                                            expression.ReturnType = (ExpressionType)resultingTypes.Single();
                                             changed = true;
                                         }
                                     }
@@ -221,14 +246,14 @@ namespace GameTheory.Gdl
                                         changed = true;
                                     }
 
-                                    // (X ∩ object) ⇔ X
-                                    var objects = intersectionType.Expressions.Where(e => e.ReturnType == ObjectType.Instance);
-                                    if (objects.Any())
+                                    // (X ∩ any) ⇔ X
+                                    var anys = intersectionType.Expressions.Where(e => e.ReturnType is AnyType);
+                                    if (anys.Any())
                                     {
-                                        var withoutObjects = intersectionType.Expressions.Except(objects);
-                                        if (withoutObjects.Count > 0)
+                                        var withoutAnys = intersectionType.Expressions.Except(anys);
+                                        if (withoutAnys.Count > 0)
                                         {
-                                            intersectionType.Expressions = withoutObjects;
+                                            intersectionType.Expressions = withoutAnys;
                                             changed = true;
                                         }
                                     }
@@ -241,48 +266,25 @@ namespace GameTheory.Gdl
 
                                     if (intersectionType.Expressions.Count == 0)
                                     {
-                                        expression.ReturnType = ObjectType.Instance;
+                                        expression.ReturnType = AnyType.Instance;
                                         changed = true;
                                     }
                                     else if (intersectionType.Expressions.Count == 1)
                                     {
+                                        // Adding to a union instead of returning the single expression's type directly to avoid issues with circular references.
                                         expression.ReturnType = new UnionType
                                         {
                                             Expressions = intersectionType.Expressions,
                                         };
                                         changed = true;
                                     }
-                                    else if (intersectionType.Expressions.All(e => e.ReturnType is NumberRangeType || e.ReturnType == NumberType.Instance))
+                                    else if (intersectionType.Expressions.All(e => e.ReturnType is NumberRangeType))
                                     {
-                                        var allNumbers = intersectionType.Expressions.Where(e => e.ReturnType == NumberType.Instance && !(e is ObjectInfo));
-                                        var withoutAllNumbers = intersectionType.Expressions.Except(allNumbers);
-                                        if (intersectionType.Expressions.Count != withoutAllNumbers.Count)
-                                        {
-                                            if (withoutAllNumbers.IsEmpty)
-                                            {
-                                                expression.ReturnType = NumberType.Instance;
-                                            }
-                                            else
-                                            {
-                                                intersectionType.Expressions = withoutAllNumbers;
-                                            }
-
-                                            changed = true;
-                                        }
-                                        else
-                                        {
-                                            var resultingType = intersectionType.Expressions.Select(e =>
-                                            {
-                                                return e is ObjectInfo objectInfo
-                                                    ? NumberRangeType.GetInstance((int)objectInfo.Value, (int)objectInfo.Value)
-                                                    : e.ReturnType;
-                                            }).Aggregate((a, b) => a is NumberRangeType nA && b is NumberRangeType nB
-                                                ? (NumberRangeType)nA.IntersectWith(nB)
-                                                : (ExpressionType)NoneType.Instance);
-
-                                            expression.ReturnType = resultingType;
-                                            changed = true;
-                                        }
+                                        var resultingType = intersectionType.Expressions
+                                            .Select(e => (NumberRangeType)e.ReturnType)
+                                            .Aggregate((a, b) => (NumberRangeType)a.IntersectWith(b));
+                                        expression.ReturnType = (ExpressionType)resultingType ?? NoneType.Instance;
+                                        changed = true;
                                     }
                                     else
                                     {
@@ -317,8 +319,6 @@ namespace GameTheory.Gdl
                                             }
                                         }
 
-                                        // TODO: (X ∪ Y ∪ Z) ∩ (X ∪ Z) ⇔ (X ∪ Z)
-
                                         // ((X) ∩ (Y ∩ Z)) ⇔ (X ∩ Y ∩ Z)
                                         var nestedIntersections = intersectionType.Expressions.Where(e => e.ReturnType is IntersectionType).ToList();
                                         if (nestedIntersections.Any())
@@ -326,6 +326,23 @@ namespace GameTheory.Gdl
                                             intersectionType.Expressions = intersectionType.Expressions
                                                 .Union(nestedIntersections.SelectMany(e => ((IntersectionType)e.ReturnType).Expressions))
                                                 .Except(nestedIntersections);
+                                            changed = true;
+                                        }
+
+                                        // (X ∪ Y ∪ Z) ∩ (X ∪ Z) ⇔ (X ∪ Z)
+                                        if (intersectionType.Expressions.All(e =>
+                                            (e.ReturnType is ObjectType) ||
+                                            (e.ReturnType is EnumType) ||
+                                            (e.ReturnType is NumberRangeType) ||
+                                            (e.ReturnType is UnionType unionType && unionType.Expressions.All(u => u.ReturnType is ObjectType || u.ReturnType is EnumType || u.ReturnType is NumberRangeType))))
+                                        {
+                                            var unions = intersectionType.Expressions
+                                                    .Select(u => FlattenUnion(new[] { u }));
+                                            var intersected = unions.Aggregate((a, b) => a.Intersect(b));
+                                            expression.ReturnType = new UnionType
+                                            {
+                                                Expressions = intersected,
+                                            };
                                             changed = true;
                                         }
                                     }
@@ -346,7 +363,8 @@ namespace GameTheory.Gdl
                                     unionTypesCache[unionType.Expressions] = unionType;
                                 }
 
-                                if (expression is ArgumentInfo argument &&
+                                if (!changed &&
+                                    expression is ArgumentInfo argument &&
                                     argument.Expression is RelationInfo relation &&
                                     relation.Arity == 1 &&
                                     unionType.Expressions.Count >= 2 &&
@@ -406,7 +424,7 @@ namespace GameTheory.Gdl
                         {
                             (var relation, var unionType) = enumCandidates[i];
                             var arg = relation.Arguments[0];
-                            arg.ReturnType = EnumType.Create(arg.Id, unionType.Expressions.Cast<ObjectInfo>());
+                            arg.ReturnType = EnumType.Create(relation, unionType.Expressions.Cast<ObjectInfo>());
                             changed = true;
                         }
                     }
@@ -417,10 +435,11 @@ namespace GameTheory.Gdl
 
         private class TypeUsageWalker : SupportedExpressionsTreeWalker
         {
-            private readonly Dictionary<(string, int), ExpressionInfo> expressionTypes;
-            private readonly ILookup<Form, (IndividualVariable, VariableInfo)> containedVariables;
-            private Dictionary<IndividualVariable, VariableInfo> variableTypes;
+            private readonly ImmutableDictionary<(Constant, int), ConstantInfo> expressionTypes;
+            private readonly ImmutableDictionary<Sentence, ImmutableDictionary<IndividualVariable, VariableInfo>> containedVariables;
+            private ImmutableDictionary<IndividualVariable, VariableInfo> variableTypes;
             private VariableDirection variableDirection;
+            private bool negated;
 
             public TypeUsageWalker(AssignedTypes assignedTypes)
             {
@@ -437,14 +456,14 @@ namespace GameTheory.Gdl
 
             public override void Walk(ImplicitRelationalSentence implicitRelationalSentence)
             {
-                var relationInfo = (RelationInfo)this.expressionTypes[(implicitRelationalSentence.Relation.Id, implicitRelationalSentence.Arguments.Count)];
+                var relationInfo = (RelationInfo)this.expressionTypes[(implicitRelationalSentence.Relation, implicitRelationalSentence.Arguments.Count)];
                 this.AddArgumentUsages(implicitRelationalSentence.Arguments, relationInfo);
                 base.Walk(implicitRelationalSentence);
             }
 
             public override void Walk(ImplicitFunctionalTerm implicitFunctionalTerm)
             {
-                var functionInfo = (FunctionInfo)this.expressionTypes[(implicitFunctionalTerm.Function.Id, implicitFunctionalTerm.Arguments.Count)];
+                var functionInfo = (FunctionInfo)this.expressionTypes[(implicitFunctionalTerm.Function, implicitFunctionalTerm.Arguments.Count)];
                 this.AddArgumentUsages(implicitFunctionalTerm.Arguments, functionInfo);
                 base.Walk(implicitFunctionalTerm);
             }
@@ -481,12 +500,25 @@ namespace GameTheory.Gdl
 
                 foreach (var form in knowledgeBase.Forms)
                 {
-                    this.variableTypes = this.containedVariables[form].ToDictionary(r => r.Item1, r => r.Item2);
+                    this.variableTypes = this.containedVariables[(Sentence)form];
                     this.Walk((Expression)form);
                     this.variableTypes = null;
                 }
 
                 this.variableDirection = VariableDirection.None;
+            }
+
+            public override void Walk(Expression expression)
+            {
+                var original = this.negated;
+                base.Walk(expression);
+                this.negated = original;
+            }
+
+            public override void Walk(Negation negation)
+            {
+                this.negated = !this.negated;
+                base.Walk(negation);
             }
 
             private static void AddUsage(VariableInfo variableInfo, ExpressionInfo expressionInfo)
@@ -525,7 +557,7 @@ namespace GameTheory.Gdl
                     switch (this.variableDirection)
                     {
                         case VariableDirection.In:
-                            if (valueExpression is VariableInfo variableInfo)
+                            if (!this.negated && valueExpression is VariableInfo variableInfo)
                             {
                                 AddUsage(variableInfo, relationInfo.Arguments[i]);
                             }
@@ -544,10 +576,10 @@ namespace GameTheory.Gdl
                 switch (arg)
                 {
                     case Constant constant:
-                        return this.expressionTypes[(constant.Id, 0)];
+                        return this.expressionTypes[(constant, 0)];
 
                     case ImplicitFunctionalTerm implicitFunctionalTerm:
-                        return this.expressionTypes[(implicitFunctionalTerm.Function.Id, implicitFunctionalTerm.Arguments.Count)];
+                        return this.expressionTypes[(implicitFunctionalTerm.Function, implicitFunctionalTerm.Arguments.Count)];
 
                     case IndividualVariable individualVariable:
                         return this.variableTypes[individualVariable];

@@ -4,12 +4,13 @@ namespace GameTheory.Gdl.Types
 
     public class StateType : ExpressionType
     {
-        public StateType(string name)
-            : base(name)
+        public StateType()
         {
             this.Relations = ImmutableHashSet<ExpressionInfo>.Empty;
         }
 
         public ImmutableHashSet<ExpressionInfo> Relations { get; set; }
+
+        public override string ToString() => "State";
     }
 }

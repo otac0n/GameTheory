@@ -3,11 +3,12 @@
 namespace GameTheory.Gdl.Types
 {
     using System;
+    using KnowledgeInterchangeFormat.Expressions;
 
     public class FunctionInfo : ExpressionWithArgumentsInfo
     {
-        public FunctionInfo(string id, int arity)
-            : base(id, arity, null)
+        public FunctionInfo(Constant constant, int arity)
+            : base(constant, arity, null)
         {
             base.ReturnType = new FunctionType(this);
         }

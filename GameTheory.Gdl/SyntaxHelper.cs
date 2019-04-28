@@ -2,12 +2,102 @@
 
 namespace GameTheory.Gdl
 {
+    using System;
+    using System.Collections.Generic;
     using System.Linq;
+    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     internal static class SyntaxHelper
     {
+        public static readonly Comparer<MemberDeclarationSyntax> MemberOrder = Comparer<MemberDeclarationSyntax>.Create((a, b) =>
+        {
+            var comp = 0;
+            if ((comp = (b is FieldDeclarationSyntax).CompareTo(a is FieldDeclarationSyntax)) != 0 ||
+                (comp = (b is ConstructorDeclarationSyntax).CompareTo(a is ConstructorDeclarationSyntax)) != 0 ||
+                (comp = (b is DestructorDeclarationSyntax).CompareTo(a is DestructorDeclarationSyntax)) != 0 ||
+                (comp = (b is DelegateDeclarationSyntax).CompareTo(a is DelegateDeclarationSyntax)) != 0 ||
+                (comp = (b is EventDeclarationSyntax).CompareTo(a is EventDeclarationSyntax)) != 0 ||
+                (comp = (b is EnumDeclarationSyntax).CompareTo(a is EnumDeclarationSyntax)) != 0 ||
+                (comp = (b is InterfaceDeclarationSyntax).CompareTo(a is InterfaceDeclarationSyntax)) != 0 ||
+                (comp = (b is PropertyDeclarationSyntax).CompareTo(a is PropertyDeclarationSyntax)) != 0 ||
+                (comp = (b is IndexerDeclarationSyntax).CompareTo(a is IndexerDeclarationSyntax)) != 0 ||
+                (comp = (b is MethodDeclarationSyntax).CompareTo(a is MethodDeclarationSyntax)) != 0 ||
+                (comp = (b is StructDeclarationSyntax).CompareTo(a is StructDeclarationSyntax)) != 0 ||
+                (comp = (b is ClassDeclarationSyntax).CompareTo(a is ClassDeclarationSyntax)) != 0)
+            {
+                return comp;
+            }
+
+            if (a is BaseFieldDeclarationSyntax aField && b is BaseFieldDeclarationSyntax bField)
+            {
+                if ((comp = bField.Modifiers.Any(SyntaxKind.ConstKeyword).CompareTo(aField.Modifiers.Any(SyntaxKind.ConstKeyword))) != 0 ||
+                    (comp = bField.Modifiers.Any(SyntaxKind.PublicKeyword).CompareTo(aField.Modifiers.Any(SyntaxKind.PublicKeyword))) != 0 ||
+                    (comp = bField.Modifiers.Any(SyntaxKind.InternalKeyword).CompareTo(aField.Modifiers.Any(SyntaxKind.InternalKeyword))) != 0 ||
+                    (comp = aField.Modifiers.Any(SyntaxKind.PrivateKeyword).CompareTo(bField.Modifiers.Any(SyntaxKind.PrivateKeyword))) != 0 ||
+                    (comp = aField.Modifiers.Any(SyntaxKind.ProtectedKeyword).CompareTo(bField.Modifiers.Any(SyntaxKind.ProtectedKeyword))) != 0 ||
+                    (comp = bField.Modifiers.Any(SyntaxKind.StaticKeyword).CompareTo(aField.Modifiers.Any(SyntaxKind.StaticKeyword))) != 0 ||
+                    (comp = bField.Modifiers.Any(SyntaxKind.ReadOnlyKeyword).CompareTo(aField.Modifiers.Any(SyntaxKind.ReadOnlyKeyword))) != 0)
+                {
+                    return comp;
+                }
+            }
+            else if (a is BasePropertyDeclarationSyntax aProp && b is BasePropertyDeclarationSyntax bProp)
+            {
+                if ((comp = bProp.Modifiers.Any(SyntaxKind.PublicKeyword).CompareTo(aProp.Modifiers.Any(SyntaxKind.PublicKeyword))) != 0 ||
+                    (comp = bProp.Modifiers.Any(SyntaxKind.InternalKeyword).CompareTo(aProp.Modifiers.Any(SyntaxKind.InternalKeyword))) != 0 ||
+                    (comp = aProp.Modifiers.Any(SyntaxKind.PrivateKeyword).CompareTo(bProp.Modifiers.Any(SyntaxKind.PrivateKeyword))) != 0 ||
+                    (comp = aProp.Modifiers.Any(SyntaxKind.ProtectedKeyword).CompareTo(bProp.Modifiers.Any(SyntaxKind.ProtectedKeyword))) != 0 ||
+                    (comp = bProp.Modifiers.Any(SyntaxKind.StaticKeyword).CompareTo(aProp.Modifiers.Any(SyntaxKind.StaticKeyword))) != 0)
+                {
+                    return comp;
+                }
+
+                if (a is PropertyDeclarationSyntax aProperty && b is PropertyDeclarationSyntax bProperty)
+                {
+                    if ((comp = aProperty.Identifier.Text.CompareTo(bProperty.Identifier.Text)) != 0)
+                    {
+                        return comp;
+                    }
+                }
+            }
+            else if (a is BaseMethodDeclarationSyntax aMethod && b is BaseMethodDeclarationSyntax bMethod)
+            {
+                if ((comp = bMethod.Modifiers.Any(SyntaxKind.PublicKeyword).CompareTo(aMethod.Modifiers.Any(SyntaxKind.PublicKeyword))) != 0 ||
+                    (comp = bMethod.Modifiers.Any(SyntaxKind.InternalKeyword).CompareTo(aMethod.Modifiers.Any(SyntaxKind.InternalKeyword))) != 0 ||
+                    (comp = aMethod.Modifiers.Any(SyntaxKind.PrivateKeyword).CompareTo(bMethod.Modifiers.Any(SyntaxKind.PrivateKeyword))) != 0 ||
+                    (comp = aMethod.Modifiers.Any(SyntaxKind.ProtectedKeyword).CompareTo(bMethod.Modifiers.Any(SyntaxKind.ProtectedKeyword))) != 0 ||
+                    (comp = bMethod.Modifiers.Any(SyntaxKind.StaticKeyword).CompareTo(aMethod.Modifiers.Any(SyntaxKind.StaticKeyword))) != 0 ||
+                    (comp = aMethod.Modifiers.Any(SyntaxKind.StaticKeyword).CompareTo(aMethod.Modifiers.Any(SyntaxKind.StaticKeyword))) != 0)
+                {
+                    return comp;
+                }
+
+                if (a is MethodDeclarationSyntax aMethodDeclaration && b is MethodDeclarationSyntax bMethodDeclaration)
+                {
+                    if ((comp = aMethodDeclaration.Identifier.Text.CompareTo(bMethodDeclaration.Identifier.Text)) != 0)
+                    {
+                        return comp;
+                    }
+                }
+            }
+            else if (a is BaseTypeDeclarationSyntax aType && b is BaseTypeDeclarationSyntax bType)
+            {
+                if ((comp = bType.Modifiers.Any(SyntaxKind.PublicKeyword).CompareTo(aType.Modifiers.Any(SyntaxKind.PublicKeyword))) != 0 ||
+                    (comp = bType.Modifiers.Any(SyntaxKind.InternalKeyword).CompareTo(aType.Modifiers.Any(SyntaxKind.InternalKeyword))) != 0 ||
+                    (comp = aType.Modifiers.Any(SyntaxKind.PrivateKeyword).CompareTo(bType.Modifiers.Any(SyntaxKind.PrivateKeyword))) != 0 ||
+                    (comp = aType.Modifiers.Any(SyntaxKind.ProtectedKeyword).CompareTo(bType.Modifiers.Any(SyntaxKind.ProtectedKeyword))) != 0 ||
+                    (comp = bType.Modifiers.Any(SyntaxKind.StaticKeyword).CompareTo(aType.Modifiers.Any(SyntaxKind.StaticKeyword))) != 0 ||
+                    (comp = aType.Identifier.Text.CompareTo(bType.Identifier.Text)) != 0)
+                {
+                    return comp;
+                }
+            }
+
+            return comp;
+        });
+
         public static readonly PredefinedTypeSyntax ObjectType =
             SyntaxFactory.PredefinedType(
                 SyntaxFactory.Token(
@@ -80,5 +170,14 @@ namespace GameTheory.Gdl
             SyntaxFactory.LiteralExpression(
                 SyntaxKind.StringLiteralExpression,
                 SyntaxFactory.Literal(value));
+
+        public static T ReorderMembers<T>(T type)
+            where T : TypeDeclarationSyntax
+        {
+            var members = type.Members
+                .Select(m => m is TypeDeclarationSyntax typeDeclarationSyntax ? ReorderMembers(typeDeclarationSyntax) : m)
+                .OrderBy(m => m, SyntaxHelper.MemberOrder);
+            return (T)type.WithMembers(SyntaxFactory.List(members));
+        }
     }
 }

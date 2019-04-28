@@ -5,14 +5,13 @@ namespace GameTheory.Gdl.Passes
     using System;
     using System.CodeDom.Compiler;
     using System.Collections.Generic;
-    using System.Collections.Immutable;
     using System.IO;
     using System.Linq;
     using Microsoft.CodeDom.Providers.DotNetCompilerPlatform;
 
     internal class CompileGeneratedCodePass : CompilePass
     {
-        public const string ErrorComilingTypeError = "GDL102";
+        public const string ErrorComilingTypeError = "GDL103";
 
         public override IList<string> BlockedByErrors => new[]
         {
@@ -34,10 +33,10 @@ namespace GameTheory.Gdl.Passes
                     GenerateExecutable = false,
                     GenerateInMemory = true,
                 };
-                options.ReferencedAssemblies.Add("System.dll");
-                options.ReferencedAssemblies.Add("System.Core.dll");
-                options.ReferencedAssemblies.Add(typeof(IGameState<>).Assembly.Location);
+                options.ReferencedAssemblies.Add(typeof(ISet<>).Assembly.Location);
                 options.ReferencedAssemblies.Add(typeof(IReadOnlyCollection<>).Assembly.Location);
+                options.ReferencedAssemblies.Add(typeof(Enumerable).Assembly.Location);
+                options.ReferencedAssemblies.Add(typeof(IGameState<>).Assembly.Location);
 
                 var results = compiler.CompileAssemblyFromSource(options, result.Code);
                 if (results.Errors.HasErrors)
@@ -55,7 +54,7 @@ namespace GameTheory.Gdl.Passes
             }
             catch (Exception ex)
             {
-                result.AddCompilerError(result.KnowledgeBase.StartCursor, () => Resources.GDL102_ERROR_ErrorComilingType, ex.ToString());
+                result.AddCompilerError(result.KnowledgeBase.StartCursor, () => Resources.GDL103_ERROR_ErrorComilingType, ex.ToString());
             }
         }
 

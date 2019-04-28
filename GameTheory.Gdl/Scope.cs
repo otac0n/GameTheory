@@ -3,7 +3,6 @@
 namespace GameTheory.Gdl
 {
     using System;
-    using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Globalization;
     using System.Linq;
@@ -39,9 +38,77 @@ namespace GameTheory.Gdl
 
         public string TryGetPrivate(TKey key) => this.value.TryGetValue(key, out var found) ? found.@private : null;
 
+        public bool ContainsKey(TKey key) => this.value.ContainsKey(key);
+
+        public bool ContainsName(string name) => this.names.Contains(name) && this.value.Values.Any(v => v.@private == name || v.@public == name);
+
         public Scope<TKey> AddPrivate(TKey key, params string[] nameHints) => this.Add(key, ScopeFlags.Private, nameHints);
 
+        public Scope<TKey> AddPrivate(out string name, params string[] nameHints)
+        {
+            var scope = this.Add(ScopeFlags.Private, out var result, nameHints);
+            name = result.@private;
+            return scope;
+        }
+
+        public Scope<TKey> SetPrivate(TKey key, string path) =>
+            new Scope<TKey>(
+                this.names.Add(path),
+                this.value.Add(key, (null, path)));
+
+        public Scope<TKey> Reserve(string name) =>
+            new Scope<TKey>(
+                this.names.Add(name),
+                this.value);
+
+        public Scope<T> SubScope<T>() =>
+            new Scope<T>(
+                this.names,
+                ImmutableDictionary<T, (string, string)>.Empty);
+
         public Scope<TKey> Add(TKey key, ScopeFlags flags, params string[] nameHints)
+        {
+            var value = this.SuggestNames(flags, nameHints);
+
+            var names = this.names;
+
+            if ((flags & ScopeFlags.Public) != 0)
+            {
+                names = names.Add(value.@public);
+            }
+
+            if ((flags & ScopeFlags.Private) != 0)
+            {
+                names = names.Add(value.@private);
+            }
+
+            return new Scope<TKey>(
+                names,
+                this.value.SetItem(key, value));
+        }
+
+        public Scope<TKey> Add(ScopeFlags flags, out (string @public, string @private) result, params string[] nameHints)
+        {
+            result = this.SuggestNames(flags, nameHints);
+
+            var names = this.names;
+
+            if ((flags & ScopeFlags.Public) != 0)
+            {
+                names = names.Add(result.@public);
+            }
+
+            if ((flags & ScopeFlags.Private) != 0)
+            {
+                names = names.Add(result.@private);
+            }
+
+            return new Scope<TKey>(
+                names,
+                this.value);
+        }
+
+        private (string @public, string @private) SuggestNames(ScopeFlags flags, string[] nameHints)
         {
             (string, string)? value = null;
 
@@ -68,7 +135,9 @@ namespace GameTheory.Gdl
                     if (((flags & ScopeFlags.Public) == 0 || !this.names.Contains(@public)) &&
                         ((flags & ScopeFlags.Private) == 0 || !this.names.Contains(@private)))
                     {
-                        value = (@public, @private);
+                        value = (
+                            (flags & ScopeFlags.Public) == 0 ? null : @public,
+                            (flags & ScopeFlags.Private) == 0 ? null : @private);
                         break;
                     }
                 }
@@ -79,21 +148,7 @@ namespace GameTheory.Gdl
                 }
             }
 
-            var names = this.names;
-
-            if ((flags & ScopeFlags.Public) == 0)
-            {
-                names = names.Add(value.Value.Item1);
-            }
-
-            if ((flags & ScopeFlags.Private) == 0)
-            {
-                names = names.Add(value.Value.Item2);
-            }
-
-            return new Scope<TKey>(
-                names,
-                this.value.SetItem(key, value.Value));
+            return value.Value;
         }
 
         private static (string @public, string @private)? NormalizeName(string hint, CultureInfo culture)

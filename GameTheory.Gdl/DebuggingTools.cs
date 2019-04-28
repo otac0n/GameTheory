@@ -22,12 +22,14 @@ namespace GameTheory.Gdl
             string typeId(ExpressionType type) => ids.TryGetValue(type, out var value) ? value : ids[type] = "t" + ids.Count.ToString();
             string varId(VariableInfo variable) => varIds.TryGetValue(variable, out var value) ? value : varIds[variable] = "v" + varIds.Count.ToString();
             string exprId(ExpressionInfo expression) => expression is ExpressionWithArgumentsInfo expressionWithArgumentsInfo
-                ? expressionWithArgumentsInfo.ToString()
-                : expression is ArgumentInfo argumentInfo
-                    ? $"{exprId(argumentInfo.Expression)}:{varId(argumentInfo)}"
-                    : expression is VariableInfo variableInfo
-                        ? varId(variableInfo)
-                        : expression.ToString();
+                ? $"{expressionWithArgumentsInfo.Constant.Id.Replace("+", "Plus")}_{expressionWithArgumentsInfo.Arity}"
+                : expression is ConstantInfo constantInfo
+                    ? constantInfo.Constant.Id
+                    : expression is ArgumentInfo argumentInfo
+                        ? $"{exprId(argumentInfo.Expression)}:{varId(argumentInfo)}"
+                        : expression is VariableInfo variableInfo
+                            ? varId(variableInfo)
+                            : expression.ToString();
 
             ExpressionTypeVisitor.Visit(
                 assignedTypes.ExpressionTypes.Values.Where(v => !(v is ObjectInfo objectInfo && objectInfo.Value is int)),
@@ -113,6 +115,26 @@ namespace GameTheory.Gdl
             return sb.ToString();
         }
 
+        public static string RenderDependencyGraph(ImmutableDictionary<(Constant, int), ImmutableHashSet<(Constant, int)>> dependencyGraph)
+        {
+            var sb = new StringBuilder();
+            sb.AppendLine("digraph {");
+
+            string id((Constant constant, int arity) relation) => $"{relation.constant.Id}_{relation.arity}";
+
+            foreach (var kvp in dependencyGraph)
+            {
+                sb.AppendLine($"{id(kvp.Key)} [label=\"{kvp.Key.Item1.Name}\"];");
+                foreach (var reference in kvp.Value)
+                {
+                    sb.AppendLine($"{id(kvp.Key)} -> {id(reference)};");
+                }
+            }
+
+            sb.AppendLine("}");
+            return sb.ToString();
+        }
+
         public static string RenderNameGraph(KnowledgeBase knowledgeBase, AssignedTypes assignedTypes)
         {
             var sb = new StringBuilder();
@@ -122,12 +144,14 @@ namespace GameTheory.Gdl
             var varIds = new Dictionary<VariableInfo, string>();
             string varId(VariableInfo variable) => varIds.TryGetValue(variable, out var value) ? value : varIds[variable] = "v" + varIds.Count.ToString();
             string exprId(ExpressionInfo expression) => expression is ExpressionWithArgumentsInfo expressionWithArgumentsInfo
-                ? expressionWithArgumentsInfo.ToString()
-                : expression is ArgumentInfo argumentInfo
-                    ? $"{exprId(argumentInfo.Expression)}:{varId(argumentInfo)}"
-                    : expression is VariableInfo variableInfo
-                        ? varId(variableInfo)
-                        : expression.ToString();
+                ? $"{expressionWithArgumentsInfo.Constant.Id.Replace("+", "Plus")}_{expressionWithArgumentsInfo.Arity}"
+                : expression is ConstantInfo constantInfo
+                    ? constantInfo.Constant.Id
+                    : expression is ArgumentInfo argumentInfo
+                        ? $"{exprId(argumentInfo.Expression)}:{varId(argumentInfo)}"
+                        : expression is VariableInfo variableInfo
+                            ? varId(variableInfo)
+                            : expression.ToString();
 
             ExpressionTypeVisitor.Visit(
                 assignedTypes.Where(v => !(v is ObjectInfo objectInfo && objectInfo.Value is int)),
@@ -167,12 +191,12 @@ namespace GameTheory.Gdl
 
         private class VariableNameWalker : SupportedExpressionsTreeWalker
         {
-            private readonly Dictionary<(string, int), ExpressionInfo> expressionTypes;
+            private readonly ImmutableDictionary<(Constant, int), ConstantInfo> expressionTypes;
             private readonly Func<ExpressionInfo, string> exprId;
-            private readonly ILookup<Form, (IndividualVariable, VariableInfo)> containedVariables;
+            private readonly ImmutableDictionary<Sentence, ImmutableDictionary<IndividualVariable, VariableInfo>> containedVariables;
             private readonly Func<VariableInfo, string> varId;
             private readonly StringBuilder sb;
-            private Dictionary<IndividualVariable, VariableInfo> variableTypes;
+            private ImmutableDictionary<IndividualVariable, VariableInfo> variableTypes;
             private VariableDirection variableDirection;
 
             public VariableNameWalker(StringBuilder sb, AssignedTypes assignedTypes, Func<ExpressionInfo, string> exprId, Func<VariableInfo, string> varId)
@@ -193,14 +217,14 @@ namespace GameTheory.Gdl
 
             public override void Walk(ImplicitRelationalSentence implicitRelationalSentence)
             {
-                var relationInfo = (RelationInfo)this.expressionTypes[(implicitRelationalSentence.Relation.Id, implicitRelationalSentence.Arguments.Count)];
+                var relationInfo = (RelationInfo)this.expressionTypes[(implicitRelationalSentence.Relation, implicitRelationalSentence.Arguments.Count)];
                 this.AddNameUsages(implicitRelationalSentence.Arguments, relationInfo);
                 base.Walk(implicitRelationalSentence);
             }
 
             public override void Walk(ImplicitFunctionalTerm implicitFunctionalTerm)
             {
-                var functionInfo = (FunctionInfo)this.expressionTypes[(implicitFunctionalTerm.Function.Id, implicitFunctionalTerm.Arguments.Count)];
+                var functionInfo = (FunctionInfo)this.expressionTypes[(implicitFunctionalTerm.Function, implicitFunctionalTerm.Arguments.Count)];
                 this.AddNameUsages(implicitFunctionalTerm.Arguments, functionInfo);
                 base.Walk(implicitFunctionalTerm);
             }
@@ -237,7 +261,7 @@ namespace GameTheory.Gdl
 
                 foreach (var form in knowledgeBase.Forms)
                 {
-                    this.variableTypes = this.containedVariables[form].ToDictionary(r => r.Item1, r => r.Item2);
+                    this.variableTypes = this.containedVariables[(Sentence)form];
                     this.Walk((Expression)form);
                     this.variableTypes = null;
                 }
@@ -267,10 +291,10 @@ namespace GameTheory.Gdl
                 switch (arg)
                 {
                     case Constant constant:
-                        return this.expressionTypes[(constant.Id, 0)];
+                        return this.expressionTypes[(constant, 0)];
 
                     case ImplicitFunctionalTerm implicitFunctionalTerm:
-                        return this.expressionTypes[(implicitFunctionalTerm.Function.Id, implicitFunctionalTerm.Arguments.Count)];
+                        return this.expressionTypes[(implicitFunctionalTerm.Function, implicitFunctionalTerm.Arguments.Count)];
 
                     case IndividualVariable individualVariable:
                         return this.variableTypes[individualVariable];

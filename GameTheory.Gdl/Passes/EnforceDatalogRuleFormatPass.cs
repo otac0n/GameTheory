@@ -92,23 +92,37 @@ namespace GameTheory.Gdl.Passes
                     {
                         this.result.AddCompilerError(implication.Consequent.StartCursor, () => Resources.GDL005_ERROR_RuleHeadMustBeAtomic);
                     }
-                    else if (!implication.Antecedents.All(a => this.datalogLiterals[a]))
-                    {
-                        foreach (var a in implication.Antecedents)
-                        {
-                            if (!this.datalogLiterals[a])
-                            {
-                                this.result.AddCompilerError(implication.Consequent.StartCursor, () => Resources.GDL006_ERROR_RuleBodyMustBeAtomic);
-                            }
-                        }
-                    }
                     else
                     {
-                        // TODO: Recursion restriction.
-                        ////if (!this.dependencyGraph.TryGetValue(key, out Node node))
-                        ////{
-                        ////    node = this.dependencyGraph[key] = new Node(key);
-                        ////}
+                        void EnsureCombinationOfDatalogLiterals(Sentence sentence)
+                        {
+                            if (this.datalogLiterals[sentence])
+                            {
+                            }
+                            else if (sentence is Conjunction conjunction)
+                            {
+                                foreach (var conjunct in conjunction.Conjuncts)
+                                {
+                                    EnsureCombinationOfDatalogLiterals(conjunct);
+                                }
+                            }
+                            else if (sentence is Disjunction disjunction)
+                            {
+                                foreach (var disjunct in disjunction.Disjuncts)
+                                {
+                                    EnsureCombinationOfDatalogLiterals(disjunct);
+                                }
+                            }
+                            else
+                            {
+                                this.result.AddCompilerError(sentence.StartCursor, () => Resources.GDL006_ERROR_RuleBodyMustBeAtomic);
+                            }
+                        }
+
+                        foreach (var antecedent in implication.Antecedents)
+                        {
+                            EnsureCombinationOfDatalogLiterals(antecedent);
+                        }
                     }
                 }
             }
@@ -119,9 +133,7 @@ namespace GameTheory.Gdl.Passes
 
                 var atomicSentence =
                     (sentence is ConstantSentence constantSentence &&
-                        this.result.ConstantTypes[(constantSentence.Constant.Id, 0)] == ConstantType.Logical) ||
-                    (sentence is Conjunction conjunction && conjunction.Conjuncts.All(c => this.atomicSentences[c])) ||
-                    ////(sentence is Disjunction disjunction && disjunction.Disjuncts.All(d => this.atomicSentences[d])) || // TODO: Disjunctions can only be used in certain circumstances.
+                        this.result.ConstantTypes[(constantSentence.Constant, 0)] == ConstantType.Logical) ||
                     (sentence is ImplicitRelationalSentence implicitRelationalSentence &&
                         implicitRelationalSentence.SequenceVariable == null &&
                         implicitRelationalSentence.Arguments.All(a => this.datalogTerms[a]));

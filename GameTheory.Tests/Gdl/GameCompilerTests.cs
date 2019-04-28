@@ -28,6 +28,7 @@ namespace GameTheory.Tests.Gdl
 
             var types = DebuggingTools.RenderTypeGraph(result.AssignedTypes).Replace("\"", "\"\"");
             var names = DebuggingTools.RenderNameGraph(result.KnowledgeBase, result.AssignedTypes).Replace("\"", "\"\"");
+            var dependencies = DebuggingTools.RenderDependencyGraph(result.DependencyGraph).Replace("\"", "\"\"");
             var code = result.Code;
 
             Assert.IsEmpty(result.Errors.Where(e => !e.IsWarning));
@@ -35,6 +36,7 @@ namespace GameTheory.Tests.Gdl
         }
 
         [TestCaseSource(nameof(Games))]
+        [Timeout(120000)]
         public void Compile_WhenGivenAGameDefinition_ReturnsAGameThatCanBePlayedToTheEnd(string game)
         {
             var gdl = LoadAssemblyResource(game, out var friendlyName);
@@ -43,6 +45,7 @@ namespace GameTheory.Tests.Gdl
 
             var types = DebuggingTools.RenderTypeGraph(result.AssignedTypes).Replace("\"", "\"\"");
             var names = DebuggingTools.RenderNameGraph(result.KnowledgeBase, result.AssignedTypes).Replace("\"", "\"\"");
+            var dependencies = DebuggingTools.RenderDependencyGraph(result.DependencyGraph).Replace("\"", "\"\"");
             var code = result.Code;
 
             var stateType = result.Type;

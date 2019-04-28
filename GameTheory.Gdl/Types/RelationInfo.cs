@@ -9,8 +9,8 @@ namespace GameTheory.Gdl.Types
 
     public class RelationInfo : ExpressionWithArgumentsInfo
     {
-        public RelationInfo(string id, int arity, IEnumerable<Sentence> body)
-            : base(id, arity, BooleanType.Instance)
+        public RelationInfo(Constant constant, int arity, IEnumerable<Sentence> body)
+            : base(constant, arity, BooleanType.Instance)
         {
             this.Body = body.ToList();
         }

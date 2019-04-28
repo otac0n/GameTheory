@@ -7,14 +7,14 @@ namespace GameTheory.Gdl
 
     internal static class KifExtensions
     {
-        public static (string id, int arity) GetImplicatedConstantWithArity(this Sentence form)
+        public static (Constant constant, int arity) GetImplicatedConstantWithArity(this Sentence form)
         {
             switch (form)
             {
                 case ConstantSentence constantSentence:
-                    return (constantSentence.Constant.Id, 0);
+                    return (constantSentence.Constant, 0);
                 case ImplicitRelationalSentence implicitRelationalSentence:
-                    return (implicitRelationalSentence.Relation.Id, implicitRelationalSentence.Arguments.Count);
+                    return (implicitRelationalSentence.Relation, implicitRelationalSentence.Arguments.Count);
                 case Implication implication:
                     return GetImplicatedConstantWithArity(implication.Consequent);
                 default:

@@ -2,12 +2,24 @@
 
 namespace GameTheory.Gdl.Types
 {
-    public class ObjectInfo : ExpressionInfo
+    using System;
+    using KnowledgeInterchangeFormat.Expressions;
+
+    public class ObjectInfo : ConstantInfo
     {
-        public ObjectInfo(string id, ExpressionType returnType, object value = null)
-            : base(id, returnType)
+        public ObjectInfo(Constant constant)
+            : base(constant, null)
         {
-            this.Value = value;
+            if (int.TryParse(constant.Id, out var value) && value.ToString().Equals(constant.Id, StringComparison.OrdinalIgnoreCase))
+            {
+                this.ReturnType = NumberRangeType.GetInstance(value, value);
+                this.Value = value;
+            }
+            else
+            {
+                this.ReturnType = new ObjectType(this);
+                this.Value = constant.Id;
+            }
         }
 
         public object Value { get; set; }
