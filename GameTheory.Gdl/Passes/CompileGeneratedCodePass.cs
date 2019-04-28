@@ -63,7 +63,19 @@ namespace GameTheory.Gdl.Passes
             private static readonly string CompilerPathSuffix = Path.Combine("roslyn", "csc.exe");
 
             /// <inheritdoc />
-            public string CompilerFullPath => CompilerSearchPaths.Select(p => Path.Combine(p, CompilerPathSuffix)).Where(File.Exists).FirstOrDefault();
+            public string CompilerFullPath
+            {
+                get
+                {
+                    var path = CompilerSearchPaths.Select(p => Path.Combine(p, CompilerPathSuffix)).Where(File.Exists).FirstOrDefault();
+                    if (string.IsNullOrEmpty(path))
+                    {
+                        throw new FileNotFoundException("Could not locate csc.exe");
+                    }
+
+                    return path;
+                }
+            }
 
             /// <inheritdoc />
             public int CompilerServerTimeToLive => 5;

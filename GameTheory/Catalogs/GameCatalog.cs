@@ -16,25 +16,25 @@ namespace GameTheory.Catalogs
         /// </summary>
         public static readonly GameCatalog Default = new AssemblyGameCatalog(typeof(IGameState<>).Assembly);
 
-        private readonly Lazy<ImmutableList<Game>> availableGames;
+        private readonly Lazy<ImmutableList<IGame>> availableGames;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GameCatalog"/> class.
         /// </summary>
         public GameCatalog()
         {
-            this.availableGames = new Lazy<ImmutableList<Game>>(() => this.GetGames().ToImmutableList(), isThreadSafe: true);
+            this.availableGames = new Lazy<ImmutableList<IGame>>(() => this.GetGames().ToImmutableList(), isThreadSafe: true);
         }
 
         /// <summary>
         /// Gets the available games in the catalog.
         /// </summary>
-        public IList<Game> AvailableGames => this.availableGames.Value;
+        public IList<IGame> AvailableGames => this.availableGames.Value;
 
         /// <summary>
         /// Enumerates the games in this catalog.
         /// </summary>
         /// <returns>The enumerable collection of games in the catalog.</returns>
-        protected abstract IEnumerable<Game> GetGames();
+        protected abstract IEnumerable<IGame> GetGames();
     }
 }

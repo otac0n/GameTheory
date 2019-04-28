@@ -6,7 +6,7 @@ namespace GameTheory.Gdl
     using System.Linq;
     using GameTheory.Catalogs;
 
-    public class GdlGameCatalog : GameTheory.Catalogs.GameCatalog
+    public class GdlGameCatalog : GameCatalog
     {
         private readonly string folder;
         private readonly string searchPattern;
@@ -19,37 +19,52 @@ namespace GameTheory.Gdl
             this.subFolders = subFolders;
         }
 
-        protected override IEnumerable<Game> GetGames()
+        protected override IEnumerable<IGame> GetGames()
         {
-            var patterns = this.searchPattern.Split('|');
-            var paths = patterns
+            var patterns = this.searchPattern.Split(new[] { '|' }, StringSplitOptions.RemoveEmptyEntries);
+            return patterns
                 .Aggregate(
                     Enumerable.Empty<string>(),
                     (acc, p) => acc.Concat(Directory.EnumerateFiles(this.folder, p, this.subFolders ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly)))
-                .Distinct();
+                .Distinct()
+                .Select(path => new Game(path));
+        }
 
-            foreach (var path in paths)
+        private class Game : IGame
+        {
+            private readonly string path;
+            private readonly Lazy<Type> gameStateType;
+            private readonly Lazy<Type> moveType;
+
+            public Game(string path)
             {
-                Game game;
-                try
-                {
-                    var gdl = File.ReadAllText(path);
-                    var compiler = new GameCompiler();
-                    var result = compiler.Compile(gdl, path);
-                    if (result.Errors.Any(e => !e.IsWarning))
+                this.path = path;
+                this.Name = Path.GetFileName(path);
+                this.gameStateType = new Lazy<Type>(
+                    () =>
                     {
-                        continue;
-                    }
-
-                    game = new Game(result.Type);
-                }
-                catch (Exception)
-                {
-                    continue;
-                }
-
-                yield return game;
+                        var gdl = File.ReadAllText(this.path);
+                        var compiler = new GameCompiler();
+                        var result = compiler.Compile(gdl, this.path);
+                        return result.Type;
+                    },
+                    isThreadSafe: true);
+                this.moveType = new Lazy<Type>(
+                    () => Catalogs.Game.GetMoveType(this.GameStateType),
+                    isThreadSafe: true);
             }
+
+            /// <inheritdoc />
+            public Type GameStateType => this.gameStateType.Value;
+
+            /// <inheritdoc />
+            public Type MoveType => this.moveType.Value;
+
+            /// <inheritdoc />
+            public string Name { get; }
+
+            /// <inheritdoc />
+            public override string ToString() => this.Name;
         }
     }
 }

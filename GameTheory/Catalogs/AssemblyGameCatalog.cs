@@ -31,7 +31,7 @@ namespace GameTheory.Catalogs
         }
 
         /// <inheritdoc/>
-        protected override IEnumerable<Game> GetGames()
+        protected override IEnumerable<IGame> GetGames()
         {
             foreach (var assembly in this.assemblies)
             {

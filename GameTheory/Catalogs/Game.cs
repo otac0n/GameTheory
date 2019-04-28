@@ -3,6 +3,7 @@
 namespace GameTheory.Catalogs
 {
     using System;
+    using System.Globalization;
     using System.Linq;
     using System.Reflection;
     using System.Resources;
@@ -10,7 +11,7 @@ namespace GameTheory.Catalogs
     /// <summary>
     /// A convenience class for dealing with types implementing <see cref="IGameState{TMove}"/>.
     /// </summary>
-    public sealed class Game
+    public sealed class Game : IGame
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="Game"/> class.
@@ -36,19 +37,13 @@ namespace GameTheory.Catalogs
                 : name;
         }
 
-        /// <summary>
-        /// Gets the type used as a game state.
-        /// </summary>
+        /// <inheritdoc/>
         public Type GameStateType { get; }
 
-        /// <summary>
-        /// Gets the type used for moves.
-        /// </summary>
+        /// <inheritdoc/>
         public Type MoveType { get; }
 
-        /// <summary>
-        /// Gets the name of the game.
-        /// </summary>
+        /// <inheritdoc/>
         public string Name { get; }
 
         /// <summary>
@@ -79,7 +74,7 @@ namespace GameTheory.Catalogs
 
             try
             {
-                return new ResourceManager(@namespace + ".Resources", gameType.Assembly).GetString("Name");
+                return new ResourceManager(@namespace + ".Resources", gameType.Assembly).GetString("Name", CultureInfo.CurrentCulture);
             }
             catch (MissingManifestResourceException)
             {
