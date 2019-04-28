@@ -19,7 +19,7 @@ namespace GameTheory.Catalogs
         public static readonly GameCatalog Default = new GameCatalog(typeof(IGameState<>).GetTypeInfo().Assembly);
 
         private readonly ImmutableList<Assembly> assemblies;
-        private readonly Lazy<ImmutableList<Game>> availableGames;
+        private readonly Lazy<ImmutableList<IGame>> availableGames;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GameCatalog"/> class.
@@ -37,15 +37,15 @@ namespace GameTheory.Catalogs
         public GameCatalog(IEnumerable<Assembly> assemblies)
         {
             this.assemblies = (assemblies ?? throw new ArgumentNullException(nameof(assemblies))).ToImmutableList();
-            this.availableGames = new Lazy<ImmutableList<Game>>(() => this.GetGames().ToImmutableList(), isThreadSafe: true);
+            this.availableGames = new Lazy<ImmutableList<IGame>>(() => this.GetGames().ToImmutableList(), isThreadSafe: true);
         }
 
         /// <summary>
         /// Gets the available games in the catalog.
         /// </summary>
-        public IList<Game> AvailableGames => this.availableGames.Value;
+        public IList<IGame> AvailableGames => this.availableGames.Value;
 
-        private IEnumerable<Game> GetGames()
+        private IEnumerable<IGame> GetGames()
         {
             foreach (var assembly in this.assemblies)
             {
