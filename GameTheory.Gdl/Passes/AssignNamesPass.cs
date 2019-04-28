@@ -57,7 +57,17 @@ namespace GameTheory.Gdl.Passes
                 return scope;
             });
 
-            var gameStateScope = new Scope<object>();
+            var gameStateScope = new Scope<object>()
+                .Reserve(namespaceScope.TryGetPublic("GameState"));
+
+            var role = (RelationInfo)result.AssignedTypes.ExpressionTypes[KnownConstants.Role];
+            var roles = ((EnumType)role.Arguments[0].ReturnType).Objects;
+            var noop = result.AssignedTypes.ExpressionTypes.TryGetValue(KnownConstants.Noop, out var noopExpr) ? (ObjectInfo)noopExpr : null;
+            if (roles.Count > 1 && noop != null)
+            {
+                gameStateScope = gameStateScope.Add("FindForcedNoOps", ScopeFlags.Public, "FindForcedNoOps");
+            }
+
             gameStateScope = allExpressions.Concat(allExpressions.OfType<FunctionInfo>()).Aggregate(gameStateScope, (scope, expr) =>
             {
                 switch (expr)

@@ -819,7 +819,7 @@ namespace GameTheory.Gdl.Passes
                                         SyntaxFactory.MemberAccessExpression(
                                             SyntaxKind.SimpleMemberAccessExpression,
                                             SyntaxFactory.ThisExpression(),
-                                            SyntaxFactory.IdentifierName("FindForcedNoOps")))));
+                                            SyntaxFactory.IdentifierName(this.result.GameStateScope.TryGetPublic("FindForcedNoOps"))))));
 
                         constructor2 = constructor2
                             .AddBodyStatements(
@@ -834,7 +834,7 @@ namespace GameTheory.Gdl.Passes
                                             SyntaxFactory.MemberAccessExpression(
                                                 SyntaxKind.SimpleMemberAccessExpression,
                                                 SyntaxFactory.ThisExpression(),
-                                                SyntaxFactory.IdentifierName("FindForcedNoOps"))))));
+                                                SyntaxFactory.IdentifierName(this.result.GameStateScope.TryGetPublic("FindForcedNoOps")))))));
                     }
                     else
                     {
@@ -875,7 +875,7 @@ namespace GameTheory.Gdl.Passes
                         SyntaxFactory.MethodDeclaration(
                             SyntaxHelper.ArrayType(
                                 SyntaxFactory.IdentifierName(this.result.NamespaceScope.TryGetPublic("Move"))),
-                            SyntaxFactory.Identifier("FindForcedNoOps"))
+                            SyntaxFactory.Identifier(this.result.GameStateScope.TryGetPublic("FindForcedNoOps")))
                             .AddModifiers(SyntaxFactory.Token(SyntaxKind.PrivateKeyword))
                             .WithBody(
                                 SyntaxFactory.Block(
