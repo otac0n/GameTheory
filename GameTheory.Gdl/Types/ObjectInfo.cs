@@ -17,7 +17,7 @@ namespace GameTheory.Gdl.Types
             }
             else
             {
-                this.ReturnType = new ObjectType(constant);
+                this.ReturnType = new ObjectType(this);
                 this.Value = constant.Id;
             }
         }

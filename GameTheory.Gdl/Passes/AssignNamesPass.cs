@@ -171,7 +171,7 @@ namespace GameTheory.Gdl.Passes
                         argument,
                         ScopeFlags.Private | ScopeFlags.Public,
                         fixedVariables[b],
-                        argument.ReturnType.ToString());
+                        argument.ReturnType?.ToString());
                     argument.Id = scope.TryGetPrivate(argument);
                 }
 

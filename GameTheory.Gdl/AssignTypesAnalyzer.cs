@@ -102,7 +102,7 @@ namespace GameTheory.Gdl
                     switch (expr.ReturnType)
                     {
                         case ObjectType objectType:
-                            result.Add(assignedTypes.ExpressionTypes[(objectType.Constant, 0)]);
+                            result.Add(objectType.ObjectInfo);
                             break;
 
                         case UnionType unionType:
@@ -283,7 +283,7 @@ namespace GameTheory.Gdl
                                         var resultingType = intersectionType.Expressions
                                             .Select(e => (NumberRangeType)e.ReturnType)
                                             .Aggregate((a, b) => (NumberRangeType)a.IntersectWith(b));
-                                        expression.ReturnType = resultingType;
+                                        expression.ReturnType = (ExpressionType)resultingType ?? NoneType.Instance;
                                         changed = true;
                                     }
                                     else
@@ -439,6 +439,7 @@ namespace GameTheory.Gdl
             private readonly ImmutableDictionary<Sentence, ImmutableDictionary<IndividualVariable, VariableInfo>> containedVariables;
             private ImmutableDictionary<IndividualVariable, VariableInfo> variableTypes;
             private VariableDirection variableDirection;
+            private bool negated;
 
             public TypeUsageWalker(AssignedTypes assignedTypes)
             {
@@ -507,6 +508,19 @@ namespace GameTheory.Gdl
                 this.variableDirection = VariableDirection.None;
             }
 
+            public override void Walk(Expression expression)
+            {
+                var original = this.negated;
+                base.Walk(expression);
+                this.negated = original;
+            }
+
+            public override void Walk(Negation negation)
+            {
+                this.negated = !this.negated;
+                base.Walk(negation);
+            }
+
             private static void AddUsage(VariableInfo variableInfo, ExpressionInfo expressionInfo)
             {
                 switch (variableInfo.ReturnType)
@@ -543,7 +557,7 @@ namespace GameTheory.Gdl
                     switch (this.variableDirection)
                     {
                         case VariableDirection.In:
-                            if (valueExpression is VariableInfo variableInfo)
+                            if (!this.negated && valueExpression is VariableInfo variableInfo)
                             {
                                 AddUsage(variableInfo, relationInfo.Arguments[i]);
                             }

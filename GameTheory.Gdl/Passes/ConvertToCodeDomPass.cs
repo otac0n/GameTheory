@@ -77,23 +77,35 @@ namespace GameTheory.Gdl.Passes
 
             public TypeSyntax Reference(ExpressionType type)
             {
+                var builtIn = type.BuiltInType;
+                if (builtIn != null)
+                {
+                    if (builtIn == typeof(object))
+                    {
+                        return SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.ObjectKeyword));
+                    }
+                    else if (builtIn == typeof(void))
+                    {
+                        return SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.VoidKeyword));
+                    }
+                    else if (builtIn == typeof(int))
+                    {
+                        return SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.IntKeyword));
+                    }
+                    else if (builtIn == typeof(bool))
+                    {
+                        return SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.BoolKeyword));
+                    }
+                    else if (builtIn == typeof(string))
+                    {
+                        return SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.StringKeyword));
+                    }
+
+                    return SyntaxFactory.ParseTypeName(type.BuiltInType.FullName);
+                }
+
                 switch (type)
                 {
-                    case AnyType anyType:
-                        return SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.ObjectKeyword));
-
-                    case NoneType noneType:
-                        return SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.VoidKeyword));
-
-                    case BooleanType booleanType:
-                        return SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.BoolKeyword));
-
-                    case ObjectType objectType:
-                        return SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.StringKeyword));
-
-                    case NumberRangeType numberRangeType:
-                        return SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.IntKeyword));
-
                     case EnumType enumType:
                     case FunctionType functionType:
                         var typeName = this.result.NamespaceScope.TryGetPublic(type);
@@ -103,12 +115,8 @@ namespace GameTheory.Gdl.Passes
                             : (TypeSyntax)typeReference;
 
                     case StateType stateType:
-                    case UnionType unionType:
                     case IntersectionType intersectionType:
                         return SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.ObjectKeyword));
-
-                    case ExpressionType _ when type.BuiltInType != null:
-                        return SyntaxFactory.ParseTypeName(type.BuiltInType.FullName);
                 }
 
                 throw new NotSupportedException($"Could not reference the type '{type}'");
@@ -153,7 +161,7 @@ namespace GameTheory.Gdl.Passes
                             SyntaxFactory.InitializerExpression(
                                 SyntaxKind.ArrayInitializerExpression,
                                 SyntaxFactory.SingletonSeparatedList(
-                                    this.CreateObjectReference((ObjectInfo)this.result.AssignedTypes.ExpressionTypes[(objectType.Constant, 0)]))));
+                                    this.CreateObjectReference(objectType.ObjectInfo))));
 
                     case NumberRangeType numberRangeType:
                         return SyntaxHelper.EnumerableRangeExpression(numberRangeType.Start, numberRangeType.End - numberRangeType.Start + 1);

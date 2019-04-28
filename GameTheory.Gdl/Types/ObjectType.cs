@@ -2,8 +2,6 @@
 
 namespace GameTheory.Gdl.Types
 {
-    using KnowledgeInterchangeFormat.Expressions;
-
     /// <summary>
     /// The root type all other fully-constructed types inherit from.
     /// </summary>
@@ -12,16 +10,16 @@ namespace GameTheory.Gdl.Types
         /// <summary>
         /// Initializes a new instance of the <see cref="ObjectType"/> class.
         /// </summary>
-        /// <param name="constant">The constant corresponding to this type.</param>
-        public ObjectType(Constant constant)
+        /// <param name="objectInfo">The <see cref="ObjectInfo"/> corresponding to this type.</param>
+        public ObjectType(ObjectInfo objectInfo)
         {
-            this.Constant = constant;
+            this.ObjectInfo = objectInfo;
             this.BuiltInType = typeof(string);
         }
 
-        public Constant Constant { get; }
+        public ObjectInfo ObjectInfo { get; }
 
         /// <inheritdoc/>
-        public override string ToString() => this.Constant.Id;
+        public override string ToString() => this.ObjectInfo.Constant.Id;
     }
 }

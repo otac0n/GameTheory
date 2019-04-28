@@ -37,9 +37,9 @@ namespace GameTheory.Gdl.Types
 
         bool IInterval<int>.StartInclusive => true;
 
-        public static ExpressionType GetInstance(int start, int end) => instances.GetOrAdd((start, end), _ => (ExpressionType)new NumberRangeType(start, end));
+        public static ExpressionType GetInstance(int start, int end) => instances.GetOrAdd((start, end), _ => new NumberRangeType(start, end));
 
-        public override string ToString() => $"{this.Start} to {this.End}";
+        public override string ToString() => this.Start == this.End ? this.Start.ToString() : $"{this.Start} to {this.End}";
 
         IInterval<int> IInterval<int>.Clone(int start, bool startInclusive, int end, bool endInclusive)
         {

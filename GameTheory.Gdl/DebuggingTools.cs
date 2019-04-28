@@ -22,7 +22,7 @@ namespace GameTheory.Gdl
             string typeId(ExpressionType type) => ids.TryGetValue(type, out var value) ? value : ids[type] = "t" + ids.Count.ToString();
             string varId(VariableInfo variable) => varIds.TryGetValue(variable, out var value) ? value : varIds[variable] = "v" + varIds.Count.ToString();
             string exprId(ExpressionInfo expression) => expression is ExpressionWithArgumentsInfo expressionWithArgumentsInfo
-                ? $"{expressionWithArgumentsInfo.Constant.Id}_{expressionWithArgumentsInfo.Arity}"
+                ? $"{expressionWithArgumentsInfo.Constant.Id.Replace("+", "Plus")}_{expressionWithArgumentsInfo.Arity}"
                 : expression is ConstantInfo constantInfo
                     ? constantInfo.Constant.Id
                     : expression is ArgumentInfo argumentInfo
@@ -144,7 +144,7 @@ namespace GameTheory.Gdl
             var varIds = new Dictionary<VariableInfo, string>();
             string varId(VariableInfo variable) => varIds.TryGetValue(variable, out var value) ? value : varIds[variable] = "v" + varIds.Count.ToString();
             string exprId(ExpressionInfo expression) => expression is ExpressionWithArgumentsInfo expressionWithArgumentsInfo
-                ? $"{expressionWithArgumentsInfo.Constant.Id}_{expressionWithArgumentsInfo.Arity}"
+                ? $"{expressionWithArgumentsInfo.Constant.Id.Replace("+", "Plus")}_{expressionWithArgumentsInfo.Arity}"
                 : expression is ConstantInfo constantInfo
                     ? constantInfo.Constant.Id
                     : expression is ArgumentInfo argumentInfo
