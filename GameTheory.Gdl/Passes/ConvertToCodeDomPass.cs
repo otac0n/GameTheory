@@ -340,13 +340,7 @@ namespace GameTheory.Gdl.Passes
                         .AddAccessorListAccessors(
                             SyntaxFactory.AccessorDeclaration(
                                 SyntaxKind.GetAccessorDeclaration)
-                                .WithSemicolonToken(
-                                    SyntaxFactory.Token(SyntaxKind.SemicolonToken)),
-                            SyntaxFactory.AccessorDeclaration(
-                                SyntaxKind.SetAccessorDeclaration)
-                                .AddModifiers(SyntaxFactory.Token(SyntaxKind.PrivateKeyword))
-                                .WithSemicolonToken(
-                                    SyntaxFactory.Token(SyntaxKind.SemicolonToken))),
+                                .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken))),
                     SyntaxFactory.MethodDeclaration(
                         SyntaxFactory.GenericName(
                             SyntaxFactory.Identifier("IEnumerable"))
@@ -405,8 +399,7 @@ namespace GameTheory.Gdl.Passes
                                         SyntaxFactory.ThisExpression(),
                                         SyntaxFactory.IdentifierName("state")),
                                     SyntaxFactory.IdentifierName("FormatTokens"))))
-                        .WithSemicolonToken(
-                            SyntaxFactory.Token(SyntaxKind.SemicolonToken)),
+                        .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken)),
                     SyntaxFactory.MethodDeclaration(
                         SyntaxFactory.GenericName(
                             SyntaxFactory.Identifier("IEnumerable"))
@@ -525,8 +518,7 @@ namespace GameTheory.Gdl.Passes
                                                     SyntaxKind.SimpleMemberAccessExpression,
                                                     SyntaxFactory.ThisExpression(),
                                                     SyntaxFactory.IdentifierName("FlattenFormatTokens")))))))
-                        .WithSemicolonToken(
-                            SyntaxFactory.Token(SyntaxKind.SemicolonToken)),
+                        .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken)),
                 };
             }
 
@@ -586,9 +578,6 @@ namespace GameTheory.Gdl.Passes
                             .AddModifiers(SyntaxFactory.Token(SyntaxKind.PublicKeyword))
                             .AddAccessorListAccessors(
                                 SyntaxFactory.AccessorDeclaration(SyntaxKind.GetAccessorDeclaration)
-                                    .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken)),
-                                SyntaxFactory.AccessorDeclaration(SyntaxKind.SetAccessorDeclaration)
-                                    .AddModifiers(SyntaxFactory.Token(SyntaxKind.PrivateKeyword))
                                     .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken))),
                         SyntaxFactory.PropertyDeclaration(
                             SyntaxFactory.GenericName(
@@ -621,9 +610,6 @@ namespace GameTheory.Gdl.Passes
                             .AddModifiers(SyntaxFactory.Token(SyntaxKind.PublicKeyword))
                             .AddAccessorListAccessors(
                                 SyntaxFactory.AccessorDeclaration(SyntaxKind.GetAccessorDeclaration)
-                                    .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken)),
-                                SyntaxFactory.AccessorDeclaration(SyntaxKind.SetAccessorDeclaration)
-                                    .AddModifiers(SyntaxFactory.Token(SyntaxKind.PrivateKeyword))
                                     .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken))),
                         SyntaxFactory.MethodDeclaration(
                             SyntaxFactory.PredefinedType(
@@ -666,8 +652,7 @@ namespace GameTheory.Gdl.Passes
                                                 SyntaxKind.SimpleMemberAccessExpression,
                                                 SyntaxFactory.IdentifierName("other"),
                                                 SyntaxFactory.IdentifierName("Value"))))))
-                            .WithSemicolonToken(
-                                SyntaxFactory.Token(SyntaxKind.SemicolonToken)),
+                            .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken)),
                         SyntaxFactory.MethodDeclaration(
                             SyntaxHelper.StringType,
                             SyntaxFactory.Identifier("ToString"))
@@ -688,8 +673,7 @@ namespace GameTheory.Gdl.Passes
                                                         SyntaxKind.SimpleMemberAccessExpression,
                                                         SyntaxFactory.ThisExpression(),
                                                         SyntaxFactory.IdentifierName("FlattenFormatTokens")))))))
-                            .WithSemicolonToken(
-                                SyntaxFactory.Token(SyntaxKind.SemicolonToken)));
+                            .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken)));
 
             private static ObjectCreationExpressionSyntax NewPlayerTokenExpression() =>
                 SyntaxFactory.ObjectCreationExpression(SyntaxFactory.IdentifierName("PlayerToken"))
@@ -1390,8 +1374,7 @@ namespace GameTheory.Gdl.Passes
                                                             SyntaxFactory.IdentifierName("r")))),
                                             SyntaxFactory.IdentifierName("Value")),
                                         SyntaxFactory.IdentifierName("m"))))
-                            .WithSemicolonToken(
-                                SyntaxFactory.Token(SyntaxKind.SemicolonToken)));
+                            .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken)));
                 }
                 else
                 {
@@ -1418,8 +1401,7 @@ namespace GameTheory.Gdl.Passes
                                                 SyntaxFactory.IdentifierName(scope.TryGetPrivate("move")),
                                                 SyntaxFactory.IdentifierName("Value")),
                                             SyntaxFactory.IdentifierName("m"))))
-                                .WithSemicolonToken(
-                                    SyntaxFactory.Token(SyntaxKind.SemicolonToken)));
+                                .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken)));
                 }
 
                 var nextIdentifier = SyntaxFactory.Identifier("next");
@@ -1951,8 +1933,7 @@ namespace GameTheory.Gdl.Passes
                                                 }).ToArray())
                                             .AddExpressions(
                                                 SyntaxHelper.LiteralExpression(")")))))
-                        .WithSemicolonToken(
-                            SyntaxFactory.Token(SyntaxKind.SemicolonToken));
+                        .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken));
 
                 structElement = structElement.AddMembers(formatTokens, compareTo);
 
@@ -2173,7 +2154,15 @@ namespace GameTheory.Gdl.Passes
                                     SyntaxHelper.IntType)
                                     .AddVariables(
                                         SyntaxFactory.VariableDeclarator(
-                                            SyntaxFactory.Identifier("comp")))),
+                                            SyntaxFactory.Identifier("comp"))
+                                            .WithInitializer(
+                                                SyntaxFactory.EqualsValueClause(
+                                                    SyntaxHelper.LiteralExpression(0)))))));
+
+                if (stateType.Relations.Count > 0)
+                {
+                    compareTo = compareTo
+                        .AddBodyStatements(
                             SyntaxFactory.IfStatement(
                                 stateType.Relations.Select(obj =>
                                     SyntaxFactory.BinaryExpression(
@@ -2203,9 +2192,13 @@ namespace GameTheory.Gdl.Passes
                                 SyntaxFactory.Block(
                                     SyntaxFactory.SingletonList<StatementSyntax>(
                                         SyntaxFactory.ReturnStatement(
-                                            SyntaxFactory.IdentifierName("comp"))))),
-                            SyntaxFactory.ReturnStatement(
-                                SyntaxFactory.IdentifierName("comp"))));
+                                            SyntaxFactory.IdentifierName("comp"))))));
+                }
+
+                compareTo = compareTo
+                    .AddBodyStatements(
+                        SyntaxFactory.ReturnStatement(
+                            SyntaxFactory.IdentifierName("comp")));
 
                 classElement = classElement.AddMembers(constructor, formatTokens, add, compareTo, contains);
 

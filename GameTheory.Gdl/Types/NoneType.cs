@@ -6,7 +6,7 @@ namespace GameTheory.Gdl.Types
 
         private NoneType()
         {
-            this.BuiltInType = typeof(void);
+            this.BuiltInType = typeof(object);
         }
 
         /// <inheritdoc />

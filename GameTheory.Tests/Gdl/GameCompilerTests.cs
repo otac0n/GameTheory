@@ -19,20 +19,30 @@ namespace GameTheory.Tests.Gdl
             where r.EndsWith(".gdl", StringComparison.InvariantCultureIgnoreCase) || r.EndsWith(".kif", StringComparison.InvariantCultureIgnoreCase)
             select r;
 
+        [TestCase(@"(role a) (goal a 100) terminal")]
+        [TestCase(@"(role a) (goal a 100) (init win) (<= terminal (true win))")]
+        [TestCase(@"(role a) (goal a 100) (<= (next ?x) (does a ?x)) (legal a win) (<= terminal (true win))")]
+        public void Compile_WhenGivenASimpleGame_ReturnsAGameThatCanBePlayedToTheEnd(string game)
+        {
+            var result = new GameCompiler().Compile(game);
+
+            GetDebugInfo(result, out var types, out var names, out var dependencies, out var code);
+
+            Assert.That(result.Errors.Where(e => !e.IsWarning), Is.Empty);
+            Assert.That(result.Type, Is.Not.Null);
+            RunGame(result);
+        }
+
         [TestCaseSource(nameof(Games))]
         public void Compile_WhenGivenAGameDefinition_ReturnsAFullyConstructedType(string game)
         {
             var gdl = LoadAssemblyResource(game, out var friendlyName);
-            var compiler = new GameCompiler();
-            var result = compiler.Compile(gdl, friendlyName);
+            var result = new GameCompiler().Compile(gdl, friendlyName);
 
-            var types = DebuggingTools.RenderTypeGraph(result.AssignedTypes).Replace("\"", "\"\"");
-            var names = DebuggingTools.RenderNameGraph(result.KnowledgeBase, result.AssignedTypes).Replace("\"", "\"\"");
-            var dependencies = DebuggingTools.RenderDependencyGraph(result.DependencyGraph).Replace("\"", "\"\"");
-            var code = result.Code;
+            GetDebugInfo(result, out var types, out var names, out var dependencies, out var code);
 
-            Assert.IsEmpty(result.Errors.Where(e => !e.IsWarning));
-            Assert.NotNull(result.Type);
+            Assert.That(result.Errors.Where(e => !e.IsWarning), Is.Empty);
+            Assert.That(result.Type, Is.Not.Null);
         }
 
         [TestCaseSource(nameof(Games))]
@@ -40,14 +50,17 @@ namespace GameTheory.Tests.Gdl
         public void Compile_WhenGivenAGameDefinition_ReturnsAGameThatCanBePlayedToTheEnd(string game)
         {
             var gdl = LoadAssemblyResource(game, out var friendlyName);
-            var compiler = new GameCompiler();
-            var result = compiler.Compile(gdl, friendlyName);
+            var result = new GameCompiler().Compile(gdl, friendlyName);
 
-            var types = DebuggingTools.RenderTypeGraph(result.AssignedTypes).Replace("\"", "\"\"");
-            var names = DebuggingTools.RenderNameGraph(result.KnowledgeBase, result.AssignedTypes).Replace("\"", "\"\"");
-            var dependencies = DebuggingTools.RenderDependencyGraph(result.DependencyGraph).Replace("\"", "\"\"");
-            var code = result.Code;
+            GetDebugInfo(result, out var types, out var names, out var dependencies, out var code);
 
+            Assume.That(result.Errors.Where(e => !e.IsWarning), Is.Empty);
+            Assume.That(result.Type, Is.Not.Null);
+            RunGame(result);
+        }
+
+        private static void RunGame(CompileResult result)
+        {
             var stateType = result.Type;
             var moveType = stateType.GetInterfaces().Single(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IGameState<>)).GetGenericArguments().Single();
             var startingState = Activator.CreateInstance(stateType);
@@ -65,6 +78,14 @@ namespace GameTheory.Tests.Gdl
             {
                 return reader.ReadToEnd();
             }
+        }
+
+        private static void GetDebugInfo(CompileResult result, out string types, out string names, out string dependencies, out string code)
+        {
+            types = DebuggingTools.RenderTypeGraph(result.AssignedTypes).Replace("\"", "\"\"");
+            names = DebuggingTools.RenderNameGraph(result.KnowledgeBase, result.AssignedTypes).Replace("\"", "\"\"");
+            dependencies = DebuggingTools.RenderDependencyGraph(result.DependencyGraph).Replace("\"", "\"\"");
+            code = result.Code;
         }
 
         private interface IGameManager
