@@ -7,6 +7,7 @@ namespace GameTheory.Gdl.Passes
 
     internal class EnforceGdlRestrictions : CompilePass
     {
+        public const string RecursionResrictionError = "GDL007";
         public const string RoleRelationUsedInRuleError = "GDL008";
         public const string InitRelationUsedInRuleBodyError = "GDL009";
         public const string InitRelationDependencyError = "GDL010";
@@ -19,11 +20,11 @@ namespace GameTheory.Gdl.Passes
         {
             EnforceDatalogRuleFormatPass.RuleHeadMustBeAtomicError,
             EnforceDatalogRuleFormatPass.RuleBodyMustBeAtomicError,
-            EnforceDatalogRuleFormatPass.RecursionResrictionError,
         };
 
         public override IList<string> ErrorsProduced => new[]
         {
+            RecursionResrictionError,
             RoleRelationUsedInRuleError,
             InitRelationUsedInRuleBodyError,
             InitRelationDependencyError,
@@ -35,6 +36,8 @@ namespace GameTheory.Gdl.Passes
 
         public override void Run(CompileResult result)
         {
+            var dependencies = result.DependencyGraph;
+
             new GdlEnforcementWalker(result).Walk((Expression)result.KnowledgeBase);
         }
 

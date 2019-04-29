@@ -115,7 +115,7 @@ namespace GameTheory.Gdl
             return sb.ToString();
         }
 
-        public static string RenderDependencyGraph(ImmutableDictionary<(Constant, int), ImmutableHashSet<(Constant, int)>> dependencyGraph)
+        public static string RenderDependencyGraph(ImmutableDictionary<(Constant, int), (int component, ImmutableHashSet<(Constant, int)> dependencies)> dependencyGraph)
         {
             var sb = new StringBuilder();
             sb.AppendLine("digraph {");
@@ -125,7 +125,7 @@ namespace GameTheory.Gdl
             foreach (var kvp in dependencyGraph)
             {
                 sb.AppendLine($"{id(kvp.Key)} [label=\"{kvp.Key.Item1.Name}\"];");
-                foreach (var reference in kvp.Value)
+                foreach (var reference in kvp.Value.dependencies)
                 {
                     sb.AppendLine($"{id(kvp.Key)} -> {id(reference)};");
                 }

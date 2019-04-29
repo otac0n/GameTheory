@@ -10,7 +10,6 @@ namespace GameTheory.Gdl.Passes
     {
         public const string RuleHeadMustBeAtomicError = "GDL005";
         public const string RuleBodyMustBeAtomicError = "GDL006";
-        public const string RecursionResrictionError = "GDL007";
 
         public EnforceDatalogRuleFormatPass()
         {
@@ -25,13 +24,11 @@ namespace GameTheory.Gdl.Passes
         {
             RuleHeadMustBeAtomicError,
             RuleBodyMustBeAtomicError,
-            RecursionResrictionError,
         };
 
         public override void Run(CompileResult result)
         {
-            var dependencyGraph = new Dictionary<Constant, Node>();
-            new RuleDefinitionWalker(result, dependencyGraph).Walk((Expression)result.KnowledgeBase);
+            new RuleDefinitionWalker(result).Walk((Expression)result.KnowledgeBase);
         }
 
         private class RuleDefinitionWalker : SupportedExpressionsTreeWalker
@@ -40,17 +37,15 @@ namespace GameTheory.Gdl.Passes
             private readonly Dictionary<Sentence, bool> atomicSentences;
             private readonly Dictionary<Term, bool> datalogTerms;
             private readonly Dictionary<Sentence, bool> datalogLiterals;
-            private readonly Dictionary<Constant, Node> dependencyGraph;
             private int depth = -1;
             private bool groundExpression;
 
-            public RuleDefinitionWalker(CompileResult result, Dictionary<Constant, Node> dependencyGraph)
+            public RuleDefinitionWalker(CompileResult result)
             {
                 this.result = result;
                 this.atomicSentences = result.AtomicSentences;
                 this.datalogTerms = result.DatalogTerms;
                 this.datalogLiterals = result.DatalogLiterals;
-                this.dependencyGraph = dependencyGraph;
             }
 
             public override void Walk(Expression expression)
@@ -142,36 +137,6 @@ namespace GameTheory.Gdl.Passes
 
                 this.datalogLiterals[sentence] = atomicSentence || (sentence is Negation negation && this.atomicSentences[negation.Negated]);
             }
-        }
-
-        private class Edge
-        {
-            public Edge(string name, bool negated)
-            {
-                this.Name = name;
-                this.Negated = negated;
-            }
-
-            public string Name { get; }
-
-            public bool Negated { get; }
-        }
-
-        private class Node
-        {
-            public Node(string name)
-            {
-                this.Name = name;
-                this.Edges = new List<Edge>();
-            }
-
-            public string Name { get; }
-
-            public List<Edge> Edges { get; }
-
-            public int Index { get; set; }
-
-            public int LowLink { get; set; }
         }
     }
 }

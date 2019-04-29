@@ -81,6 +81,7 @@ namespace GameTheory.Gdl.Passes
                                 case ListTerm listTerm:
                                 case LogicalPair logicalPair:
                                 case VariableSpecification variableSpecification:
+                                case Implication implication:
                                     supported = false;
                                     break;
                             }
