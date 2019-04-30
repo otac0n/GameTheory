@@ -3,6 +3,7 @@
 namespace GameTheory.Gdl
 {
     using System;
+    using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Globalization;
     using System.Linq;
@@ -36,7 +37,11 @@ namespace GameTheory.Gdl
 
         public string TryGetPublic(TKey key) => this.value.TryGetValue(key, out var found) ? found.@public : null;
 
+        public string GetPublic(TKey key) => this.value[key].@public ?? throw new KeyNotFoundException();
+
         public string TryGetPrivate(TKey key) => this.value.TryGetValue(key, out var found) ? found.@private : null;
+
+        public string GetPrivate(TKey key) => this.value[key].@private ?? throw new KeyNotFoundException();
 
         public bool ContainsKey(TKey key) => this.value.ContainsKey(key);
 
