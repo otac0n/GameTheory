@@ -58,7 +58,16 @@ namespace GameTheory.Gdl.Passes
             });
 
             var gameStateScope = new Scope<object>()
-                .Reserve(namespaceScope.TryGetPublic("GameState"));
+                .Reserve("CompareTo")
+                .Reserve("FormatTokens")
+                .Reserve(namespaceScope.TryGetPublic("GameState"))
+                .Reserve("GetAvailableMoves")
+                .Reserve("GetOutcomes")
+                .Reserve("GetView")
+                .Reserve("GetWinners")
+                .Reserve("Players")
+                .Reserve("MakeMove")
+                .Reserve("ToString");
 
             var role = (RelationInfo)result.AssignedTypes.ExpressionTypes[KnownConstants.Role];
             var roles = ((EnumType)role.Arguments[0].ReturnType).Objects;
