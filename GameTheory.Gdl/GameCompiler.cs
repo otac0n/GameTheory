@@ -37,7 +37,7 @@ namespace GameTheory.Gdl
 
             try
             {
-                knowledgeBase = new KifParser().Parse(game ?? string.Empty, fileName);
+                knowledgeBase = new KifParser(options).Parse(game ?? string.Empty, fileName);
             }
             catch (FormatException ex)
             {

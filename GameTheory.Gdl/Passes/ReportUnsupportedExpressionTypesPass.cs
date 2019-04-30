@@ -11,7 +11,11 @@ namespace GameTheory.Gdl.Passes
     {
         public const string UnsupportedExpressionTypeError = "GDL001";
 
-        public override IList<string> BlockedByErrors => Array.Empty<string>();
+        public override IList<string> BlockedByErrors => new[]
+        {
+            "KIF001",
+            "KIF002",
+        };
 
         public override IList<string> ErrorsProduced => new[]
         {
