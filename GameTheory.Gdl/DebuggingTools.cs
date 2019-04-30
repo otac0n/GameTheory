@@ -5,6 +5,7 @@ namespace GameTheory.Gdl
     using System.Collections.Immutable;
     using System.Linq;
     using System.Text;
+    using System.Text.RegularExpressions;
     using GameTheory.Gdl.Types;
     using KnowledgeInterchangeFormat.Expressions;
 
@@ -18,11 +19,13 @@ namespace GameTheory.Gdl
             sb.AppendLine("subgraph cluster_2 { ROLE_1; DOES_2; LEGAL_2; GOAL_2 }");
 
             var ids = new Dictionary<ExpressionType, string>();
+            var constIds = new Dictionary<Constant, string>();
             var varIds = new Dictionary<VariableInfo, string>();
-            string typeId(ExpressionType type) => ids.TryGetValue(type, out var value) ? value : ids[type] = "t" + ids.Count.ToString();
-            string varId(VariableInfo variable) => varIds.TryGetValue(variable, out var value) ? value : varIds[variable] = "v" + varIds.Count.ToString();
+            string typeId(ExpressionType type) => ids.TryGetValue(type, out var value) ? value : ids[type] = $"t{ids.Count}";
+            string varId(VariableInfo variable) => varIds.TryGetValue(variable, out var value) ? value : varIds[variable] = $"v{varIds.Count}";
+            string constId(Constant constant) => Regex.IsMatch(constant.Id, @"^[A-Za-z]+$") ? constant.Id : constIds.TryGetValue(constant, out var value) ? value : constIds[constant] = $"c{constIds.Count}";
             string exprId(ExpressionInfo expression) => expression is ExpressionWithArgumentsInfo expressionWithArgumentsInfo
-                ? $"{expressionWithArgumentsInfo.Constant.Id.Replace("+", "Plus")}_{expressionWithArgumentsInfo.Arity}"
+                ? $"{constId(expressionWithArgumentsInfo.Constant)}_{expressionWithArgumentsInfo.Arity}"
                 : expression is ConstantInfo constantInfo
                     ? constantInfo.Constant.Id
                     : expression is ArgumentInfo argumentInfo
@@ -30,6 +33,7 @@ namespace GameTheory.Gdl
                         : expression is VariableInfo variableInfo
                             ? varId(variableInfo)
                             : expression.ToString();
+            string escape(object value) => value.ToString().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;");
 
             ExpressionTypeVisitor.Visit(
                 assignedTypes.ExpressionTypes.Values.Where(v => !(v is ObjectInfo objectInfo && objectInfo.Value is int)),
@@ -38,11 +42,11 @@ namespace GameTheory.Gdl
                     switch (expression)
                     {
                         case ExpressionWithArgumentsInfo expressionWithArgumentsInfo:
-                            sb.Append($"{exprId(expression)} [shape={(expression is RelationInfo ? "tab" : "box")} label=<<table border=\"0\"><tr><td colspan=\"{expressionWithArgumentsInfo.Arity}\" >{expressionWithArgumentsInfo}</td></tr><tr>");
+                            sb.Append($"{exprId(expression)} [shape={(expression is RelationInfo ? "tab" : "box")} label=<<table border=\"0\"><tr><td colspan=\"{expressionWithArgumentsInfo.Arity}\" >{escape(expressionWithArgumentsInfo)}</td></tr><tr>");
 
                             foreach (var arg in expressionWithArgumentsInfo.Arguments)
                             {
-                                sb.Append($"<td port=\"{varId(arg)}\">{arg}</td>");
+                                sb.Append($"<td port=\"{varId(arg)}\">{escape(arg)}</td>");
                             }
 
                             sb.AppendLine("</tr></table>>]");
@@ -140,11 +144,12 @@ namespace GameTheory.Gdl
             var sb = new StringBuilder();
             sb.AppendLine("digraph {");
 
-            var ids = new Dictionary<ExpressionType, string>();
             var varIds = new Dictionary<VariableInfo, string>();
-            string varId(VariableInfo variable) => varIds.TryGetValue(variable, out var value) ? value : varIds[variable] = "v" + varIds.Count.ToString();
+            var constIds = new Dictionary<Constant, string>();
+            string varId(VariableInfo variable) => varIds.TryGetValue(variable, out var value) ? value : varIds[variable] = $"v{varIds.Count}";
+            string constId(Constant constant) => Regex.IsMatch(constant.Id, @"^[A-Za-z]+$") ? constant.Id : constIds.TryGetValue(constant, out var value) ? value : constIds[constant] = $"c{constIds.Count}";
             string exprId(ExpressionInfo expression) => expression is ExpressionWithArgumentsInfo expressionWithArgumentsInfo
-                ? $"{expressionWithArgumentsInfo.Constant.Id.Replace("+", "Plus")}_{expressionWithArgumentsInfo.Arity}"
+                ? $"{constId(expressionWithArgumentsInfo.Constant)}_{expressionWithArgumentsInfo.Arity}"
                 : expression is ConstantInfo constantInfo
                     ? constantInfo.Constant.Id
                     : expression is ArgumentInfo argumentInfo
@@ -152,6 +157,7 @@ namespace GameTheory.Gdl
                         : expression is VariableInfo variableInfo
                             ? varId(variableInfo)
                             : expression.ToString();
+            string escape(object value) => value.ToString().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;");
 
             ExpressionTypeVisitor.Visit(
                 assignedTypes.Where(v => !(v is ObjectInfo objectInfo && objectInfo.Value is int)),
@@ -160,11 +166,11 @@ namespace GameTheory.Gdl
                     switch (expression)
                     {
                         case ExpressionWithArgumentsInfo expressionWithArgumentsInfo:
-                            sb.Append($"{exprId(expression)} [shape={(expression is RelationInfo ? "tab" : "box")} label=<<table border=\"0\"><tr><td colspan=\"{expressionWithArgumentsInfo.Arity}\" >{expressionWithArgumentsInfo}</td></tr><tr>");
+                            sb.Append($"{exprId(expression)} [shape={(expression is RelationInfo ? "tab" : "box")} label=<<table border=\"0\"><tr><td colspan=\"{expressionWithArgumentsInfo.Arity}\" >{escape(expressionWithArgumentsInfo)}</td></tr><tr>");
 
                             foreach (var arg in expressionWithArgumentsInfo.Arguments)
                             {
-                                sb.Append($"<td port=\"{varId(arg)}\">{arg}</td>");
+                                sb.Append($"<td port=\"{varId(arg)}\">{escape(arg)}</td>");
                             }
 
                             sb.AppendLine("</tr></table>>]");
