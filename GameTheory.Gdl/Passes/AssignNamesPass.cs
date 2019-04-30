@@ -69,12 +69,22 @@ namespace GameTheory.Gdl.Passes
                 .Reserve("MakeMove")
                 .Reserve("ToString");
 
+            var makeMoveScope = new Scope<object>()
+                .Add("move", ScopeFlags.Private, "move");
+
             var role = (RelationInfo)result.AssignedTypes.ExpressionTypes[KnownConstants.Role];
             var roles = ((EnumType)role.Arguments[0].ReturnType).Objects;
             var noop = result.AssignedTypes.ExpressionTypes.TryGetValue(KnownConstants.Noop, out var noopExpr) ? (ObjectInfo)noopExpr : null;
-            if (roles.Count > 1 && noop != null)
+            if (roles.Count > 1)
             {
-                gameStateScope = gameStateScope.Add("FindForcedNoOps", ScopeFlags.Public, "FindForcedNoOps");
+                makeMoveScope = makeMoveScope
+                    .Add("role", ScopeFlags.Private, "role")
+                    .Add("moves", ScopeFlags.Private, "moves");
+
+                if (noop != null)
+                {
+                    gameStateScope = gameStateScope.Add("FindForcedNoOps", ScopeFlags.Public, "FindForcedNoOps");
+                }
             }
 
             gameStateScope = allExpressions.Concat(allExpressions.OfType<FunctionInfo>()).Aggregate(gameStateScope, (scope, expr) =>
@@ -95,11 +105,9 @@ namespace GameTheory.Gdl.Passes
             result.GlobalScope = globalScope;
             result.NamespaceScope = namespaceScope;
             result.GameStateScope = gameStateScope;
+            result.MakeMoveScope = makeMoveScope;
 
             AssignArgumentNames(result);
-
-            // TODO: Enable renaming variables.
-            ////result.KnowledgeBase = (KnowledgeBase)new VariableReplacer(result).Walk((Expression)result.KnowledgeBase);
         }
 
         private static void AssignArgumentNames(CompileResult result)
