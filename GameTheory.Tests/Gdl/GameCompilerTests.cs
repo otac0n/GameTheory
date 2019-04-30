@@ -19,12 +19,67 @@ namespace GameTheory.Tests.Gdl
             where r.EndsWith(".gdl", StringComparison.InvariantCultureIgnoreCase) || r.EndsWith(".kif", StringComparison.InvariantCultureIgnoreCase)
             select r;
 
+        [TestCase(@"(role a) terminal")]
         [TestCase(@"(role a) (goal a 100) terminal")]
         [TestCase(@"(role a) (goal a 100) (init win) (<= terminal (true win))")]
+        [TestCase(@"(role a) (goal a 100) (<= (next ?x) (does a ?x)) terminal")]
         [TestCase(@"(role a) (goal a 100) (<= (next ?x) (does a ?x)) (legal a win) (<= terminal (true win))")]
         public void Compile_WhenGivenASimpleGame_ReturnsAGameThatCanBePlayedToTheEnd(string game)
         {
             var result = new GameCompiler().Compile(game);
+
+            GetDebugInfo(result, out var types, out var names, out var dependencies, out var code);
+
+            Assert.That(result.Errors.Where(e => !e.IsWarning), Is.Empty);
+            Assert.That(result.Type, Is.Not.Null);
+            RunGame(result);
+        }
+
+        [Test]
+        public void Compile_WhenGivenAGameWithAPotentialNamingConflict_ReturnsAGameThatCanBePlayedToTheEnd(
+            [Values(
+                @"(role x) (goal x 100) (<= (next ?x) (does x ?x)) (legal x {0}) (<= terminal (true {0}))",
+                @"(role x) (goal x 100) (<= (next ?x) (does x ?x)) (legal x ({0})) (<= terminal (true ({0})))",
+                @"(role x) (goal x 100) (<= (next ?x) (does x ?x)) (legal x win) (<= terminal (true win)) {0}",
+                @"(role x) (goal x 100) (<= (next ?x) (does x ?x)) (legal x (win {0})) (<= terminal (true (win {0})))",
+                @"(role x) (goal x 100) (<= (next ?x) (does x ?x)) (legal x (win ?{0})) (<= terminal (true (win ?{0})))")]
+            string game,
+            [Values(
+                "a",
+                "Array",
+                "b",
+                "comp",
+                "CompareTo",
+                "Enum",
+                "Equals",
+                "FindForcedNoOps",
+                "FormatTokens",
+                "GameState",
+                "GameTheory",
+                "GetAvailableMoves",
+                "GetOutcomes",
+                "GetValues",
+                "GetView",
+                "GetWinners",
+                "List",
+                "MakeMove",
+                "maxStates",
+                "Move",
+                "moves",
+                "object",
+                "Players",
+                "Role",
+                "State",
+                "System",
+                "ToString",
+                "Value",
+                "var",
+                "Weighted",
+                "Where",
+                "winners")]
+            string conflict)
+        {
+            var result = new GameCompiler().Compile(string.Format(game, conflict));
 
             GetDebugInfo(result, out var types, out var names, out var dependencies, out var code);
 
