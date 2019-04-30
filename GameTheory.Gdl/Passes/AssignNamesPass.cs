@@ -87,7 +87,23 @@ namespace GameTheory.Gdl.Passes
                 }
             }
 
-            gameStateScope = allExpressions.Concat(allExpressions.OfType<FunctionInfo>()).Aggregate(gameStateScope, (scope, expr) =>
+            var dependencies = result.DependencyGraph;
+            var seen = new HashSet<(Constant, int)> { KnownConstants.Next };
+            var doesQueue = new Queue<(Constant, int)>();
+            doesQueue.Enqueue(KnownConstants.Does);
+            while (doesQueue.Count > 0)
+            {
+                var relation = doesQueue.Dequeue();
+                if (seen.Add(relation))
+                {
+                    foreach (var dependency in dependencies[relation].dependencies)
+                    {
+                        doesQueue.Enqueue(dependency);
+                    }
+                }
+            }
+
+            foreach (var expr in allExpressions)
             {
                 switch (expr)
                 {
@@ -96,11 +112,19 @@ namespace GameTheory.Gdl.Passes
                         break;
 
                     case ConstantInfo constantInfo:
-                        return scope.Add(expr, ScopeFlags.Public, constantInfo.Constant.Name);
+                        if ((constantInfo is RelationInfo relationInfo && seen.Contains((relationInfo.Constant, relationInfo.Arity))) ||
+                            (constantInfo is LogicalInfo logicalInfo && seen.Contains((logicalInfo.Constant, 0))))
+                        {
+                            makeMoveScope = makeMoveScope.Add(expr, ScopeFlags.Public, constantInfo.Constant.Name);
+                            break;
+                        }
+                        else
+                        {
+                            gameStateScope = gameStateScope.Add(expr, ScopeFlags.Public, constantInfo.Constant.Name);
+                            break;
+                        }
                 }
-
-                return scope;
-            });
+            }
 
             result.GlobalScope = globalScope;
             result.NamespaceScope = namespaceScope;

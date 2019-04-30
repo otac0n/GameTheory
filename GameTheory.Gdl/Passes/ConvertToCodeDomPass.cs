@@ -227,6 +227,7 @@ namespace GameTheory.Gdl.Passes
                     !(e is VariableInfo) &&
                     !(e is FunctionInfo) &&
                     !(e is ObjectInfo objectInfo && (objectInfo.Value is int || objectInfo.ReturnType is EnumType)));
+                var renderedInMakeMove = renderedExpressions.ToLookup(e => this.result.MakeMoveScope.ContainsKey(e));
 
                 var root = SyntaxFactory.CompilationUnit();
 
@@ -261,12 +262,12 @@ namespace GameTheory.Gdl.Passes
                             SyntaxFactory.IdentifierName("ITokenFormattable")))
                     .AddMembers(this.CreateGameStateConstructorDeclarations(init, stateType, role, moveType, noop))
                     .AddMembers(
-                        this.CreateMakeMoveDeclaration(next, stateType, role, does, noop),
+                        this.CreateMakeMoveDeclaration(next, stateType, role, does, noop, renderedInMakeMove[true]),
                         this.CreateGetWinnersDeclaration(goal, role, terminal),
                         this.CreateGetAvailableMovesDeclaration(legal, role, terminal))
                     .AddMembers(this.CreateSharedGameStateDeclarations())
                     .AddMembers(
-                        renderedExpressions.Select(expr =>
+                        renderedInMakeMove[false].Select(expr =>
                         {
                             switch (expr)
                             {
@@ -1177,7 +1178,7 @@ namespace GameTheory.Gdl.Passes
                                 SyntaxFactory.IdentifierName("winners"))));
             }
 
-            private MethodDeclarationSyntax CreateMakeMoveDeclaration(RelationInfo next, ExpressionType stateType, RelationInfo role, RelationInfo does, ObjectInfo noop)
+            private MethodDeclarationSyntax CreateMakeMoveDeclaration(RelationInfo next, ExpressionType stateType, RelationInfo role, RelationInfo does, ObjectInfo noop, IEnumerable<ExpressionInfo> internalRelations)
             {
                 var roles = ((EnumType)role.Arguments[0].ReturnType).Objects;
 
@@ -1344,7 +1345,7 @@ namespace GameTheory.Gdl.Passes
                             SyntaxFactory.LocalFunctionStatement(
                                 SyntaxFactory.PredefinedType(
                                     SyntaxFactory.Token(SyntaxKind.BoolKeyword)),
-                                SyntaxFactory.Identifier(does.Constant.Id)) // TODO: Lookup.
+                                SyntaxFactory.Identifier(this.result.MakeMoveScope.GetPublic(does)))
                                 .AddParameterListParameters(
                                     SyntaxFactory.Parameter(
                                         SyntaxFactory.Identifier("r"))
@@ -1377,7 +1378,7 @@ namespace GameTheory.Gdl.Passes
                             SyntaxFactory.LocalFunctionStatement(
                                 SyntaxFactory.PredefinedType(
                                     SyntaxFactory.Token(SyntaxKind.BoolKeyword)),
-                                SyntaxFactory.Identifier(does.Constant.Id)) // TODO: Lookup.
+                                SyntaxFactory.Identifier(this.result.MakeMoveScope.GetPublic(does)))
                                 .AddParameterListParameters(
                                     SyntaxFactory.Parameter(
                                         SyntaxFactory.Identifier("r"))
@@ -1397,6 +1398,31 @@ namespace GameTheory.Gdl.Passes
                                             SyntaxFactory.IdentifierName("m"))))
                                 .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken)));
                 }
+
+                makeMove = makeMove
+                    .AddBodyStatements(
+                        internalRelations.Select(expr =>
+                        {
+                            MethodDeclarationSyntax function;
+                            switch (expr)
+                            {
+                                case RelationInfo relationInfo:
+                                    function = this.CreateLogicalFunctionDeclaration(relationInfo, relationInfo.Arguments, relationInfo.Body);
+                                    break;
+
+                                case LogicalInfo logicalInfo:
+                                    function = this.CreateLogicalFunctionDeclaration(logicalInfo, Array.Empty<ArgumentInfo>(), logicalInfo.Body);
+                                    break;
+
+                                default:
+                                    throw new InvalidOperationException();
+                            }
+
+                            return SyntaxFactory.LocalFunctionStatement(function.ReturnType, function.Identifier)
+                                .WithParameterList(function.ParameterList)
+                                .WithBody(function.Body)
+                                .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken));
+                        }).ToArray());
 
                 var nextIdentifier = SyntaxFactory.Identifier("next");
                 var nextIdentifierName = SyntaxFactory.IdentifierName("next");
@@ -1471,13 +1497,13 @@ namespace GameTheory.Gdl.Passes
                 return makeMove;
             }
 
-            private MemberDeclarationSyntax CreateLogicalFunctionDeclaration(ExpressionInfo expression, ArgumentInfo[] parameters, IEnumerable<Sentence> sentences)
+            private MethodDeclarationSyntax CreateLogicalFunctionDeclaration(ExpressionInfo expression, ArgumentInfo[] parameters, IEnumerable<Sentence> sentences)
             {
                 var nameScope = (expression as RelationInfo)?.Scope ?? new Scope<VariableInfo>();
 
                 var methodElement = SyntaxFactory.MethodDeclaration(
                     this.Reference(expression.ReturnType),
-                    this.result.GameStateScope.TryGetPublic(expression))
+                    this.result.GameStateScope.TryGetPublic(expression) ?? this.result.MakeMoveScope.GetPublic(expression))
                     .AddModifiers(SyntaxFactory.Token(SyntaxKind.PrivateKeyword));
 
                 foreach (var param in parameters)
@@ -1736,27 +1762,18 @@ namespace GameTheory.Gdl.Passes
             private ExpressionSyntax ConvertImplicitRelationalCondition(ImplicitRelationalSentence implicitRelationalSentence, (ImmutableDictionary<IndividualVariable, VariableInfo>, Scope<VariableInfo>) scope)
             {
                 // TODO: Runtime type checks
-                if (implicitRelationalSentence.Relation.Id == "DOES" && implicitRelationalSentence.Arguments.Count == 2)
-                {
-                    return
-                        SyntaxFactory.InvocationExpression(
-                            SyntaxFactory.IdentifierName(implicitRelationalSentence.Relation.Id), // TODO: Lookup.
-                            SyntaxFactory.ArgumentList(
-                                SyntaxFactory.SeparatedList<ArgumentSyntax>()
-                                    .AddRange(implicitRelationalSentence.Arguments.Select(arg => SyntaxFactory.Argument(this.ConvertExpression(arg, scope))))));
-                }
-                else
-                {
-                    return
-                        SyntaxFactory.InvocationExpression(
-                            SyntaxFactory.MemberAccessExpression(
+                var expressionInfo = this.result.AssignedTypes.GetExpressionInfo(implicitRelationalSentence);
+                var makeMoveLocalName = this.result.MakeMoveScope.TryGetPublic(expressionInfo);
+                return SyntaxFactory.InvocationExpression(
+                        makeMoveLocalName != null
+                            ? (ExpressionSyntax)SyntaxFactory.IdentifierName(makeMoveLocalName)
+                            : SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.ThisExpression(),
-                                SyntaxFactory.IdentifierName(this.result.GameStateScope.TryGetPublic(this.result.AssignedTypes.GetExpressionInfo(implicitRelationalSentence)))),
-                            SyntaxFactory.ArgumentList(
-                                SyntaxFactory.SeparatedList<ArgumentSyntax>()
-                                    .AddRange(implicitRelationalSentence.Arguments.Select(arg => SyntaxFactory.Argument(this.ConvertExpression(arg, scope))))));
-                }
+                                SyntaxFactory.IdentifierName(this.result.GameStateScope.GetPublic(expressionInfo))),
+                        SyntaxFactory.ArgumentList(
+                            SyntaxFactory.SeparatedList<ArgumentSyntax>()
+                                .AddRange(implicitRelationalSentence.Arguments.Select(arg => SyntaxFactory.Argument(this.ConvertExpression(arg, scope))))));
             }
 
             private EnumDeclarationSyntax CreateEnumTypeDeclaration(EnumType enumType)

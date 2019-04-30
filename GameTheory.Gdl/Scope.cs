@@ -161,7 +161,7 @@ namespace GameTheory.Gdl
             var @public = string.Concat(
                 NameSplitter.Split(hint ?? string.Empty)
                     .Where(part => !string.IsNullOrEmpty(part))
-                    .Select(part => char.ToUpper(part[0], culture) + part.Substring(1).ToLower(culture)));
+                    .Select(part => char.ToUpper(part[0], culture) + part.Substring(1).ToLower(culture))).Substring(0, 511);
 
             if (string.IsNullOrEmpty(@public))
             {
