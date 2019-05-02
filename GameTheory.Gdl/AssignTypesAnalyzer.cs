@@ -388,6 +388,97 @@ namespace GameTheory.Gdl
                         }
                     });
 
+                if (!changed && intersectionTypesCache.Count > 0)
+                {
+                    var intersections = assignedTypes.Where(expr => expr.ReturnType is IntersectionType);
+
+                    void FindAtomic(ExpressionInfo e, HashSet<ExpressionInfo> seen, HashSet<ExpressionInfo> atomic)
+                    {
+                        if (seen.Add(e))
+                        {
+                            if (e.ReturnType is UnionType unionType)
+                            {
+                                foreach (var inner in unionType.Expressions)
+                                {
+                                    FindAtomic(inner, seen, atomic);
+                                }
+                            }
+                            else if (e.ReturnType is IntersectionType intersectionType)
+                            {
+                                foreach (var inner in intersectionType.Expressions)
+                                {
+                                    FindAtomic(inner, seen, atomic);
+                                }
+                            }
+                            else
+                            {
+                                atomic.Add(e);
+                            }
+                        }
+                    }
+
+                    bool? Contains(ExpressionInfo e, HashSet<ExpressionInfo> seen, ExpressionInfo value)
+                    {
+                        if (e.ReturnType is UnionType unionType)
+                        {
+                            bool? found = false;
+                            foreach (var inner in unionType.Expressions)
+                            {
+                                found |= Contains(inner, seen, value);
+                                if (found == true)
+                                {
+                                    break;
+                                }
+                            }
+
+                            return found;
+                        }
+                        else if (e.ReturnType is IntersectionType intersectionType)
+                        {
+                            if (!seen.Add(e))
+                            {
+                                return null;
+                            }
+
+                            bool? found = true;
+                            foreach (var inner in intersectionType.Expressions)
+                            {
+                                found &= Contains(inner, seen, value);
+                                if (!(found == true))
+                                {
+                                    break;
+                                }
+                            }
+
+                            return found;
+                        }
+                        else
+                        {
+                            return e == value;
+                        }
+                    }
+
+                    foreach (var expr in intersections)
+                    {
+                        var atomic = new HashSet<ExpressionInfo>();
+                        FindAtomic(expr, new HashSet<ExpressionInfo>(), atomic);
+                        var atomicContained = atomic.Select(subExpr => new { subExpr, contained = Contains(expr, new HashSet<ExpressionInfo>(), subExpr) }).ToList();
+                        if (atomicContained.Any(c => c.contained == null))
+                        {
+                            throw new NotImplementedException();
+                        }
+                        else
+                        {
+                            expr.ReturnType = new UnionType
+                            {
+                                Expressions = atomicContained.Where(c => c.contained == true).Select(c => c.subExpr).ToImmutableHashSet(),
+                            };
+                            changed = true;
+                            break;
+                        }
+                    }
+                }
+
                 var count = enumCandidates.Count;
                 if (!changed && count > 0)
                 {
