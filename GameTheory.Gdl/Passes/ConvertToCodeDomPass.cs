@@ -75,33 +75,38 @@ namespace GameTheory.Gdl.Passes
                 }
             }
 
+            public static TypeSyntax ReferenceBuiltIn(Type type)
+            {
+                if (type == typeof(object))
+                {
+                    return SyntaxHelper.ObjectType;
+                }
+                else if (type == typeof(void))
+                {
+                    return SyntaxHelper.VoidType;
+                }
+                else if (type == typeof(int))
+                {
+                    return SyntaxHelper.IntType;
+                }
+                else if (type == typeof(bool))
+                {
+                    return SyntaxHelper.BoolType;
+                }
+                else if (type == typeof(string))
+                {
+                    return SyntaxHelper.StringType;
+                }
+
+                return SyntaxFactory.ParseTypeName(type.FullName);
+            }
+
             public TypeSyntax Reference(ExpressionType type)
             {
                 var builtIn = type.BuiltInType;
                 if (builtIn != null)
                 {
-                    if (builtIn == typeof(object))
-                    {
-                        return SyntaxHelper.ObjectType;
-                    }
-                    else if (builtIn == typeof(void))
-                    {
-                        return SyntaxHelper.VoidType;
-                    }
-                    else if (builtIn == typeof(int))
-                    {
-                        return SyntaxHelper.IntType;
-                    }
-                    else if (builtIn == typeof(bool))
-                    {
-                        return SyntaxHelper.BoolType;
-                    }
-                    else if (builtIn == typeof(string))
-                    {
-                        return SyntaxHelper.StringType;
-                    }
-
-                    return SyntaxFactory.ParseTypeName(type.BuiltInType.FullName);
+                    return ReferenceBuiltIn(builtIn);
                 }
 
                 switch (type)
@@ -115,7 +120,6 @@ namespace GameTheory.Gdl.Passes
                             : (TypeSyntax)typeReference;
 
                     case StateType stateType:
-                    case IntersectionType intersectionType:
                         return SyntaxHelper.ObjectType;
                 }
 
@@ -1960,7 +1964,17 @@ namespace GameTheory.Gdl.Passes
 
             private ClassDeclarationSyntax CreateStateTypeDeclaration(StateType stateType)
             {
-                var fieldNames = stateType.Relations.Aggregate(new Scope<object>(), (s, r) => s.AddPrivate(r, r.Id));
+                var types = (from r in stateType.Relations
+                             group r by (object)r.ReturnType.BuiltInType ?? r.ReturnType into g
+                             select new
+                             {
+                                 g.Key,
+                                 Reference = g.Key is ExpressionType ? this.Reference((ExpressionType)g.Key) : ReferenceBuiltIn((Type)g.Key),
+                             }).ToList();
+
+                // TODO: Move to assign names pass.
+                // TODO: Use the object name if there is only a single expression in a group.
+                var fieldNames = types.Aggregate(new Scope<object>(), (s, r) => s.AddPrivate(r.Key, r.Key.ToString()));
 
                 var classElement = SyntaxFactory.ClassDeclaration(this.result.NamespaceScope.TryGetPublic(stateType))
                     .AddModifiers(SyntaxFactory.Token(SyntaxKind.PublicKeyword))
@@ -1972,10 +1986,9 @@ namespace GameTheory.Gdl.Passes
                     .WithBody(SyntaxFactory.Block())
                     .AddModifiers(SyntaxFactory.Token(SyntaxKind.PublicKeyword));
 
-                foreach (var obj in stateType.Relations)
+                foreach (var type in types)
                 {
-                    var type = this.Reference(obj.ReturnType);
-                    var fieldVariable = fieldNames.TryGetPrivate(obj);
+                    var fieldVariable = fieldNames.TryGetPrivate(type.Key);
 
                     classElement = classElement.AddMembers(
                         SyntaxFactory.FieldDeclaration(
@@ -1983,7 +1996,7 @@ namespace GameTheory.Gdl.Passes
                                 SyntaxFactory.GenericName(
                                     SyntaxFactory.Identifier("HashSet"),
                                     SyntaxFactory.TypeArgumentList(
-                                        SyntaxFactory.SingletonSeparatedList(type))))
+                                        SyntaxFactory.SingletonSeparatedList(type.Reference))))
                                 .AddVariables(
                                     SyntaxFactory.VariableDeclarator(
                                         SyntaxFactory.Identifier(fieldVariable))))
@@ -2004,7 +2017,7 @@ namespace GameTheory.Gdl.Passes
                                         SyntaxFactory.GenericName(
                                             SyntaxFactory.Identifier("HashSet"))
                                             .AddTypeArgumentListArguments(
-                                                type))
+                                                type.Reference))
                                         .WithArgumentList(SyntaxFactory.ArgumentList()))));
                 }
 
@@ -2043,7 +2056,7 @@ namespace GameTheory.Gdl.Passes
                                                                         SyntaxFactory.Token(SyntaxKind.ObjectKeyword))))
                                                             .WithArgumentList(
                                                                 SyntaxFactory.ArgumentList()))))))
-                                            .AddStatements(stateType.Relations.Select(obj =>
+                                            .AddStatements(types.Select(obj =>
                                                 SyntaxFactory.ExpressionStatement(
                                                     SyntaxFactory.InvocationExpression(
                                                         SyntaxFactory.MemberAccessExpression(
@@ -2058,7 +2071,7 @@ namespace GameTheory.Gdl.Passes
                                                                     SyntaxFactory.MemberAccessExpression(
                                                                         SyntaxKind.SimpleMemberAccessExpression,
                                                                         SyntaxFactory.ThisExpression(),
-                                                                        SyntaxFactory.IdentifierName(fieldNames.GetPrivate(obj))),
+                                                                        SyntaxFactory.IdentifierName(fieldNames.GetPrivate(obj.Key))),
                                                                     SyntaxFactory.IdentifierName("Select")))
                                                                 .AddArgumentListArguments(
                                                                     SyntaxFactory.Argument(
@@ -2088,14 +2101,14 @@ namespace GameTheory.Gdl.Passes
                                 SyntaxFactory.IdentifierName("value"))
                                 .WithOpenParenToken(SyntaxFactory.Token(SyntaxKind.OpenParenToken))
                                 .WithCloseParenToken(SyntaxFactory.Token(SyntaxKind.CloseParenToken))
-                                .AddSections(stateType.Relations.Select(obj =>
+                                .AddSections(types.Select(obj =>
                                     SyntaxFactory.SwitchSection()
                                         .AddLabels(
                                             SyntaxFactory.CasePatternSwitchLabel(
                                                 SyntaxFactory.DeclarationPattern(
-                                                    this.Reference(obj.ReturnType),
+                                                    obj.Reference,
                                                     SyntaxFactory.SingleVariableDesignation(
-                                                        SyntaxFactory.Identifier(fieldNames.GetPrivate(obj)))),
+                                                        SyntaxFactory.Identifier(fieldNames.GetPrivate(obj.Key)))),
                                                 SyntaxFactory.Token(SyntaxKind.ColonToken)))
                                         .AddStatements(
                                             SyntaxFactory.ReturnStatement(
@@ -2105,11 +2118,11 @@ namespace GameTheory.Gdl.Passes
                                                         SyntaxFactory.MemberAccessExpression(
                                                             SyntaxKind.SimpleMemberAccessExpression,
                                                             SyntaxFactory.ThisExpression(),
-                                                            SyntaxFactory.IdentifierName(fieldNames.GetPrivate(obj))),
+                                                            SyntaxFactory.IdentifierName(fieldNames.GetPrivate(obj.Key))),
                                                         SyntaxFactory.IdentifierName("Contains")))
                                                     .AddArgumentListArguments(
                                                         SyntaxFactory.Argument(
-                                                            SyntaxFactory.IdentifierName(fieldNames.GetPrivate(obj))))))).ToArray()),
+                                                            SyntaxFactory.IdentifierName(fieldNames.GetPrivate(obj.Key))))))).ToArray()),
                             SyntaxFactory.ReturnStatement(
                                 SyntaxHelper.False)));
 
@@ -2129,14 +2142,14 @@ namespace GameTheory.Gdl.Passes
                                 SyntaxFactory.IdentifierName("value"))
                                 .WithOpenParenToken(SyntaxFactory.Token(SyntaxKind.OpenParenToken))
                                 .WithCloseParenToken(SyntaxFactory.Token(SyntaxKind.CloseParenToken))
-                                .AddSections(stateType.Relations.Select(obj =>
+                                .AddSections(types.Select(obj =>
                                     SyntaxFactory.SwitchSection()
                                         .AddLabels(
                                             SyntaxFactory.CasePatternSwitchLabel(
                                                 SyntaxFactory.DeclarationPattern(
-                                                    this.Reference(obj.ReturnType),
+                                                    obj.Reference,
                                                     SyntaxFactory.SingleVariableDesignation(
-                                                        SyntaxFactory.Identifier(fieldNames.GetPrivate(obj)))),
+                                                        SyntaxFactory.Identifier(fieldNames.GetPrivate(obj.Key)))),
                                                 SyntaxFactory.Token(SyntaxKind.ColonToken)))
                                         .AddStatements(
                                             SyntaxFactory.ReturnStatement(
@@ -2146,11 +2159,11 @@ namespace GameTheory.Gdl.Passes
                                                         SyntaxFactory.MemberAccessExpression(
                                                             SyntaxKind.SimpleMemberAccessExpression,
                                                             SyntaxFactory.ThisExpression(),
-                                                            SyntaxFactory.IdentifierName(fieldNames.GetPrivate(obj))),
+                                                            SyntaxFactory.IdentifierName(fieldNames.GetPrivate(obj.Key))),
                                                         SyntaxFactory.IdentifierName("Add")))
                                                     .AddArgumentListArguments(
                                                         SyntaxFactory.Argument(
-                                                            SyntaxFactory.IdentifierName(fieldNames.GetPrivate(obj))))))).ToArray()),
+                                                            SyntaxFactory.IdentifierName(fieldNames.GetPrivate(obj.Key))))))).ToArray()),
                             SyntaxFactory.ReturnStatement(
                                 SyntaxHelper.False)));
 
@@ -2177,12 +2190,12 @@ namespace GameTheory.Gdl.Passes
                                                 SyntaxFactory.EqualsValueClause(
                                                     SyntaxHelper.LiteralExpression(0)))))));
 
-                if (stateType.Relations.Count > 0)
+                if (types.Count > 0)
                 {
                     compareTo = compareTo
                         .AddBodyStatements(
                             SyntaxFactory.IfStatement(
-                                stateType.Relations.Select(obj =>
+                                types.Select(obj =>
                                     SyntaxFactory.BinaryExpression(
                                         SyntaxKind.NotEqualsExpression,
                                         SyntaxFactory.ParenthesizedExpression(
@@ -2199,12 +2212,12 @@ namespace GameTheory.Gdl.Passes
                                                             SyntaxFactory.MemberAccessExpression(
                                                                 SyntaxKind.SimpleMemberAccessExpression,
                                                                 SyntaxFactory.ThisExpression(),
-                                                                SyntaxFactory.IdentifierName(fieldNames.GetPrivate(obj)))),
+                                                                SyntaxFactory.IdentifierName(fieldNames.GetPrivate(obj.Key)))),
                                                         SyntaxFactory.Argument(
                                                             SyntaxFactory.MemberAccessExpression(
                                                                 SyntaxKind.SimpleMemberAccessExpression,
                                                                 SyntaxFactory.IdentifierName("other"),
-                                                                SyntaxFactory.IdentifierName(fieldNames.GetPrivate(obj))))))),
+                                                                SyntaxFactory.IdentifierName(fieldNames.GetPrivate(obj.Key))))))),
                                         SyntaxHelper.LiteralExpression(0)))
                                     .Aggregate((a, b) => SyntaxFactory.BinaryExpression(SyntaxKind.LogicalOrExpression, a, b)),
                                 SyntaxFactory.Block(

@@ -151,6 +151,20 @@ namespace GameTheory.Gdl
                     {
                         switch (expression.ReturnType)
                         {
+                            case StateType stateType:
+                                {
+                                    if (stateType.Relations.Any(e => e.ReturnType == NoneType.Instance || e.ReturnType is UnionType))
+                                    {
+                                        stateType.Relations = stateType.Relations
+                                            .Where(e => e.ReturnType != NoneType.Instance)
+                                            .SelectMany(e => e.ReturnType is UnionType unionType ? unionType.Expressions.AsEnumerable() : new[] { e })
+                                            .ToImmutableHashSet();
+                                        changed = true;
+                                    }
+                                }
+
+                                break;
+
                             case UnionType unionType:
                                 {
                                     // (X ∪ any) ⇔ any
