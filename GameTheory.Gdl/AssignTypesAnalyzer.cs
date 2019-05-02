@@ -410,6 +410,13 @@ namespace GameTheory.Gdl
                                     FindAtomic(inner, seen, atomic);
                                 }
                             }
+                            else if (e.ReturnType is NumberRangeType numberRangeType)
+                            {
+                                foreach (var inner in Enumerable.Range(numberRangeType.Start, numberRangeType.End - numberRangeType.Start + 1).Select(i => assignedTypes.ExpressionTypes[(new Constant(i.ToString()), 0)]))
+                                {
+                                    atomic.Add(inner);
+                                }
+                            }
                             else
                             {
                                 atomic.Add(e);
@@ -452,9 +459,13 @@ namespace GameTheory.Gdl
 
                             return found;
                         }
+                        else if (e.ReturnType is NumberRangeType numberRangeType)
+                        {
+                            return value.ReturnType is NumberRangeType number && numberRangeType.Contains(number);
+                        }
                         else
                         {
-                            return e == value;
+                            return e.ReturnType == value.ReturnType;
                         }
                     }
 

@@ -1740,12 +1740,19 @@ namespace GameTheory.Gdl.Passes
                         SyntaxFactory.SeparatedList<ArgumentSyntax>()
                             .AddRange(implicitFunctionalTerm.Arguments.Select(arg => SyntaxFactory.Argument(this.ConvertExpression(arg, scope))))));
 
-            private ExpressionSyntax ConvertLogicalCondition(ConstantSentence constantSentence) =>
-                SyntaxFactory.InvocationExpression( // TODO: Runtime type checks
-                    SyntaxFactory.MemberAccessExpression(
-                        SyntaxKind.SimpleMemberAccessExpression,
-                        SyntaxFactory.ThisExpression(),
-                        SyntaxFactory.IdentifierName(this.result.GameStateScope.GetPublic(this.result.AssignedTypes.GetExpressionInfo(constantSentence)))));
+            private ExpressionSyntax ConvertLogicalCondition(ConstantSentence constantSentence)
+            {
+                var expressionInfo = this.result.AssignedTypes.GetExpressionInfo(constantSentence);
+                var makeMoveLocalName = this.result.MakeMoveScope.TryGetPublic(expressionInfo);
+
+                return SyntaxFactory.InvocationExpression( // TODO: Runtime type checks
+                    makeMoveLocalName != null
+                        ? (ExpressionSyntax)SyntaxFactory.IdentifierName(makeMoveLocalName)
+                        : SyntaxFactory.MemberAccessExpression(
+                            SyntaxKind.SimpleMemberAccessExpression,
+                            SyntaxFactory.ThisExpression(),
+                            SyntaxFactory.IdentifierName(this.result.GameStateScope.GetPublic(expressionInfo))));
+            }
 
             private ExpressionSyntax ConvertNegationCondition(Negation negation, (ImmutableDictionary<IndividualVariable, VariableInfo>, Scope<VariableInfo>) scope) =>
                 SyntaxFactory.PrefixUnaryExpression(

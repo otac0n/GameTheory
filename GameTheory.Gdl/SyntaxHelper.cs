@@ -42,6 +42,12 @@ namespace GameTheory.Gdl
                 {
                     return comp;
                 }
+
+                if ((comp = aField.Declaration.Variables.Count.CompareTo(bField.Declaration.Variables.Count)) != 0 ||
+                    (comp = aField.Declaration.Variables.First().Identifier.Text.CompareTo(bField.Declaration.Variables.First().Identifier.Text)) != 0)
+                {
+                    return comp;
+                }
             }
             else if (a is BasePropertyDeclarationSyntax aProp && b is BasePropertyDeclarationSyntax bProp)
             {
