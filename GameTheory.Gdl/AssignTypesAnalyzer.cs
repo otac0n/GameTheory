@@ -404,7 +404,7 @@ namespace GameTheory.Gdl
 
                 if (!changed && intersectionTypesCache.Count > 0)
                 {
-                    var intersections = assignedTypes.Where(expr => expr.ReturnType is IntersectionType);
+                    var intersections = assignedTypes.Concat(assignedTypes.ExpressionTypes.Values.OfType<ExpressionWithArgumentsInfo>().SelectMany(e => e.Arguments)).Where(expr => expr.ReturnType is IntersectionType);
 
                     void FindAtomic(ExpressionInfo e, HashSet<ExpressionInfo> seen, HashSet<ExpressionInfo> atomic)
                     {
@@ -483,23 +483,36 @@ namespace GameTheory.Gdl
                         }
                     }
 
+                    IntersectionType replaced = null;
+                    UnionType replacement = null;
                     foreach (var expr in intersections)
                     {
-                        var atomic = new HashSet<ExpressionInfo>();
-                        FindAtomic(expr, new HashSet<ExpressionInfo>(), atomic);
-                        var atomicContained = atomic.Select(subExpr => new { subExpr, contained = Contains(expr, new HashSet<ExpressionInfo>(), subExpr) }).ToList();
-                        if (atomicContained.Any(c => c.contained == null))
+                        if (replaced != null)
                         {
-                            throw new NotImplementedException();
+                            if (expr.ReturnType == replaced)
+                            {
+                                expr.ReturnType = replacement;
+                                changed = true;
+                            }
                         }
                         else
                         {
-                            expr.ReturnType = new UnionType
+                            replaced = (IntersectionType)expr.ReturnType;
+                            var atomic = new HashSet<ExpressionInfo>();
+                            FindAtomic(expr, new HashSet<ExpressionInfo>(), atomic);
+                            var atomicContained = atomic.Select(subExpr => new { subExpr, contained = Contains(expr, new HashSet<ExpressionInfo>(), subExpr) }).ToList();
+                            if (atomicContained.Any(c => c.contained == null))
                             {
-                                Expressions = atomicContained.Where(c => c.contained == true).Select(c => c.subExpr).ToImmutableHashSet(),
-                            };
-                            changed = true;
-                            break;
+                                throw new NotImplementedException();
+                            }
+                            else
+                            {
+                                expr.ReturnType = replacement = new UnionType
+                                {
+                                    Expressions = atomicContained.Where(c => c.contained == true).Select(c => c.subExpr).ToImmutableHashSet(),
+                                };
+                                changed = true;
+                            }
                         }
                     }
                 }

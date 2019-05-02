@@ -34,7 +34,7 @@ namespace GameTheory.Gdl.Passes
 
             var globalScope = new Scope<object>()
                 .Add(result, ScopeFlags.Public, result.Name, "Game");
-            result.Name = globalScope.TryGetPublic(result);
+            result.Name = globalScope.GetPublic(result);
 
             var namespaceScope = new Scope<object>()
                 .Reserve(result.Name)
@@ -60,7 +60,7 @@ namespace GameTheory.Gdl.Passes
             var gameStateScope = new Scope<object>()
                 .Reserve("CompareTo")
                 .Reserve("FormatTokens")
-                .Reserve(namespaceScope.TryGetPublic("GameState"))
+                .Reserve(namespaceScope.GetPublic("GameState"))
                 .Reserve("GetAvailableMoves")
                 .Reserve("GetOutcomes")
                 .Reserve("GetView")
@@ -223,7 +223,7 @@ namespace GameTheory.Gdl.Passes
                         ScopeFlags.Private | ScopeFlags.Public,
                         fixedVariables[b],
                         argument.ReturnType?.ToString());
-                    argument.Id = scope.TryGetPrivate(argument);
+                    argument.Id = scope.GetPrivate(argument);
                 }
 
                 expressionInfo.Scope = scope;
