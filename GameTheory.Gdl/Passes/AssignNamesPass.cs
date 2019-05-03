@@ -39,7 +39,8 @@ namespace GameTheory.Gdl.Passes
             var namespaceScope = new Scope<object>()
                 .Reserve(result.Name)
                 .Add("GameState", ScopeFlags.Public, "GameState")
-                .Add("Move", ScopeFlags.Public, "Move", $"{result.Name} Move", "RoleMove");
+                .Add("Move", ScopeFlags.Public, "Move", $"{result.Name} Move", "RoleMove")
+                .Add("ObjectComparer", ScopeFlags.Public, "ObjectComparer");
             namespaceScope = allTypes.Aggregate(namespaceScope, (scope, type) =>
             {
                 switch (type)

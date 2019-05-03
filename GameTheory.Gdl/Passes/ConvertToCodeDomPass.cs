@@ -322,7 +322,9 @@ namespace GameTheory.Gdl.Passes
                 ns = ns
                     .AddMembers(gameState, move)
                     .AddMembers(
-                        this.CreatePublicTypeDeclarations(renderedTypes));
+                        this.CreatePublicTypeDeclarations(renderedTypes))
+                    .AddMembers(
+                        this.CreateObjectComparerDeclaration(allTypes));
                 root = root.AddMembers(ns);
                 this.result.DeclarationSyntax = root.NormalizeWhitespace();
             }
@@ -343,6 +345,122 @@ namespace GameTheory.Gdl.Passes
 
                 throw new InvalidOperationException();
             }).ToArray();
+
+            private MemberDeclarationSyntax CreateObjectComparerDeclaration(IEnumerable<ExpressionType> allTypes)
+            {
+                var types = (from r in allTypes
+                             where r is EnumType || r is ObjectType || r is FunctionType || r is NumberRangeType
+                             group r by (object)r.BuiltInType ?? r into g
+                             select new
+                             {
+                                 g.Key,
+                                 Reference = g.Key is ExpressionType ? this.Reference((ExpressionType)g.Key) : ReferenceBuiltIn((Type)g.Key),
+                             }).ToList();
+
+                var scope = new Scope<object>()
+                    .Reserve("x")
+                    .Reserve("y");
+                scope = types.Aggregate(scope, (s, t) => s
+                    .AddPrivate(("x", t.Key), $"x as {t.Key}")
+                    .AddPrivate(("y", t.Key), $"y as {t.Key}"));
+
+                return SyntaxFactory.ClassDeclaration(SyntaxHelper.Identifier(this.result.NamespaceScope.GetPublic("ObjectComparer")))
+                    .AddModifiers(SyntaxFactory.Token(SyntaxKind.InternalKeyword))
+                    .AddBaseListTypes(
+                        SyntaxFactory.SimpleBaseType(
+                            SyntaxFactory.GenericName(
+                                SyntaxFactory.Identifier("IComparer"))
+                            .AddTypeArgumentListArguments(SyntaxHelper.ObjectType)))
+                    .AddMembers(
+                        SyntaxFactory.FieldDeclaration(
+                            SyntaxFactory.VariableDeclaration(
+                                SyntaxHelper.IdentifierName("ObjectComparer"))
+                                .AddVariables(
+                                    SyntaxFactory.VariableDeclarator(
+                                        SyntaxFactory.Identifier("Instance"))
+                                    .WithInitializer(
+                                        SyntaxFactory.EqualsValueClause(
+                                            SyntaxFactory.ObjectCreationExpression(
+                                                SyntaxHelper.IdentifierName("ObjectComparer"))
+                                            .WithArgumentList(
+                                                SyntaxFactory.ArgumentList())))))
+                            .AddModifiers(
+                                SyntaxFactory.Token(SyntaxKind.PublicKeyword),
+                                SyntaxFactory.Token(SyntaxKind.StaticKeyword),
+                                SyntaxFactory.Token(SyntaxKind.ReadOnlyKeyword)),
+                        SyntaxFactory.ConstructorDeclaration(
+                            SyntaxFactory.Identifier("ObjectComparer"))
+                            .AddModifiers(SyntaxFactory.Token(SyntaxKind.PrivateKeyword))
+                            .WithBody(
+                                SyntaxFactory.Block()),
+                        SyntaxFactory.MethodDeclaration(
+                            SyntaxFactory.PredefinedType(
+                                SyntaxFactory.Token(SyntaxKind.IntKeyword)),
+                            SyntaxFactory.Identifier("Compare"))
+                            .AddModifiers(SyntaxFactory.Token(SyntaxKind.PublicKeyword))
+                            .AddParameterListParameters(
+                                SyntaxFactory.Parameter(
+                                    SyntaxFactory.Identifier("x"))
+                                    .WithType(SyntaxHelper.ObjectType),
+                                SyntaxFactory.Parameter(
+                                    SyntaxFactory.Identifier("y"))
+                                    .WithType(SyntaxHelper.ObjectType))
+                            .WithBody(
+                                SyntaxFactory.Block(
+                                    types.Select(
+                                        t =>
+                                            SyntaxFactory.IfStatement(
+                                                SyntaxFactory.IsPatternExpression(
+                                                    SyntaxHelper.IdentifierName("x"),
+                                                    SyntaxFactory.DeclarationPattern(
+                                                        t.Reference,
+                                                        SyntaxFactory.SingleVariableDesignation(
+                                                            SyntaxHelper.Identifier(scope.GetPrivate(("x", t.Key)))))),
+                                                SyntaxFactory.Block(
+                                                    SyntaxFactory.SingletonList<StatementSyntax>(
+                                                        SyntaxFactory.IfStatement(
+                                                            SyntaxFactory.IsPatternExpression(
+                                                                SyntaxHelper.IdentifierName("y"),
+                                                                SyntaxFactory.DeclarationPattern(
+                                                                    t.Reference,
+                                                                    SyntaxFactory.SingleVariableDesignation(
+                                                                        SyntaxHelper.Identifier(scope.GetPrivate(("y", t.Key)))))),
+                                                            SyntaxFactory.Block(
+                                                                SyntaxFactory.SingletonList<StatementSyntax>(
+                                                                    SyntaxFactory.ReturnStatement(
+                                                                        SyntaxFactory.InvocationExpression(
+                                                                            SyntaxFactory.MemberAccessExpression(
+                                                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                                                SyntaxHelper.IdentifierName(scope.GetPrivate(("x", t.Key))),
+                                                                                SyntaxHelper.IdentifierName("CompareTo")))
+                                                                            .WithArgumentList(
+                                                                                SyntaxFactory.ArgumentList(
+                                                                                    SyntaxFactory.SingletonSeparatedList(
+                                                                                        SyntaxFactory.Argument(
+                                                                                            SyntaxHelper.IdentifierName(scope.GetPrivate(("y", t.Key)))))))))))
+                                                            .WithElse(
+                                                                SyntaxFactory.ElseClause(
+                                                                    SyntaxFactory.Block(
+                                                                        SyntaxFactory.SingletonList<StatementSyntax>(
+                                                                            SyntaxFactory.ReturnStatement(
+                                                                                SyntaxFactory.PrefixUnaryExpression(
+                                                                                    SyntaxKind.UnaryMinusExpression,
+                                                                                    SyntaxHelper.LiteralExpression(1))))))))))
+                                                .WithElse(
+                                                    SyntaxFactory.ElseClause(
+                                                        SyntaxFactory.IfStatement(
+                                                            SyntaxFactory.BinaryExpression(
+                                                                SyntaxKind.IsExpression,
+                                                                SyntaxHelper.IdentifierName("y"),
+                                                                t.Reference),
+                                                            SyntaxFactory.Block(
+                                                                SyntaxFactory.SingletonList<StatementSyntax>(
+                                                                    SyntaxFactory.ReturnStatement(
+                                                                        SyntaxHelper.LiteralExpression(1)))))))).ToArray()))
+                            .AddBodyStatements(
+                                SyntaxFactory.ReturnStatement(
+                                            SyntaxHelper.LiteralExpression(0))));
+            }
 
             private MemberDeclarationSyntax[] CreateSharedGameStateDeclarations()
             {
@@ -1920,20 +2038,40 @@ namespace GameTheory.Gdl.Passes
                                             SyntaxFactory.AssignmentExpression(
                                                 SyntaxKind.SimpleAssignmentExpression,
                                                 SyntaxHelper.IdentifierName("comp"),
-                                                SyntaxFactory.InvocationExpression(
-                                                    SyntaxFactory.MemberAccessExpression(
-                                                        SyntaxKind.SimpleMemberAccessExpression,
+                                                arg.ReturnType.BuiltInType == typeof(object)
+                                                    ? SyntaxFactory.InvocationExpression(
                                                         SyntaxFactory.MemberAccessExpression(
                                                             SyntaxKind.SimpleMemberAccessExpression,
-                                                            SyntaxFactory.ThisExpression(),
-                                                            SyntaxHelper.IdentifierName(functionInfo.Scope.GetPrivate(arg))),
-                                                        SyntaxHelper.IdentifierName("CompareTo")))
-                                                    .AddArgumentListArguments(
-                                                        SyntaxFactory.Argument(
                                                             SyntaxFactory.MemberAccessExpression(
                                                                 SyntaxKind.SimpleMemberAccessExpression,
-                                                                SyntaxHelper.IdentifierName("other"),
-                                                                SyntaxHelper.IdentifierName(functionInfo.Scope.GetPrivate(arg))))))),
+                                                                SyntaxHelper.IdentifierName(this.result.NamespaceScope.GetPublic("ObjectComparer")),
+                                                                SyntaxHelper.IdentifierName("Instance")),
+                                                            SyntaxHelper.IdentifierName("Compare")))
+                                                        .AddArgumentListArguments(
+                                                            SyntaxFactory.Argument(
+                                                                SyntaxFactory.MemberAccessExpression(
+                                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                                    SyntaxFactory.ThisExpression(),
+                                                                    SyntaxHelper.IdentifierName(functionInfo.Scope.GetPrivate(arg)))),
+                                                            SyntaxFactory.Argument(
+                                                                SyntaxFactory.MemberAccessExpression(
+                                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                                    SyntaxHelper.IdentifierName("other"),
+                                                                    SyntaxHelper.IdentifierName(functionInfo.Scope.GetPrivate(arg)))))
+                                                    : SyntaxFactory.InvocationExpression(
+                                                        SyntaxFactory.MemberAccessExpression(
+                                                            SyntaxKind.SimpleMemberAccessExpression,
+                                                            SyntaxFactory.MemberAccessExpression(
+                                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                                SyntaxFactory.ThisExpression(),
+                                                                SyntaxHelper.IdentifierName(functionInfo.Scope.GetPrivate(arg))),
+                                                            SyntaxHelper.IdentifierName("CompareTo")))
+                                                        .AddArgumentListArguments(
+                                                            SyntaxFactory.Argument(
+                                                                SyntaxFactory.MemberAccessExpression(
+                                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                                    SyntaxHelper.IdentifierName("other"),
+                                                                    SyntaxHelper.IdentifierName(functionInfo.Scope.GetPrivate(arg))))))),
                                         SyntaxHelper.LiteralExpression(0)))
                                     .Aggregate((a, b) => SyntaxFactory.BinaryExpression(SyntaxKind.LogicalOrExpression, a, b)),
                                 SyntaxFactory.Block(
