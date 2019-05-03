@@ -62,9 +62,11 @@ namespace GameTheory.Gdl
                 this.value.Add(key, (null, path)));
 
         public Scope<TKey> Reserve(string name) =>
-            new Scope<TKey>(
-                this.names.Add(name),
-                this.value);
+            string.IsNullOrEmpty(name)
+                ? this
+                : new Scope<TKey>(
+                    this.names.Add(name),
+                    this.value);
 
         public Scope<T> SubScope<T>() =>
             new Scope<T>(

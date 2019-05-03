@@ -21,7 +21,7 @@ namespace GameTheory.Gdl.Types
 
         public virtual ArgumentInfo[] Arguments { get; protected set; }
 
-        public virtual Scope<VariableInfo> Scope { get; set; }
+        public virtual Scope<object> Scope { get; set; }
 
         public override string ToString() => $"{base.ToString()}_{this.Arity}";
     }

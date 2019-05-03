@@ -22,5 +22,7 @@ namespace GameTheory.Gdl.Types
         }
 
         public List<Sentence> Body { get; }
+
+        public virtual Scope<object> Scope { get; set; }
     }
 }

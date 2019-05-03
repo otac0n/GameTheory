@@ -70,22 +70,12 @@ namespace GameTheory.Gdl.Passes
                 .Reserve("MakeMove")
                 .Reserve("ToString");
 
-            var makeMoveScope = new Scope<object>()
-                .Add("move", ScopeFlags.Private, "move");
-
             var role = (RelationInfo)result.AssignedTypes.ExpressionTypes[KnownConstants.Role];
             var roles = ((EnumType)role.Arguments[0].ReturnType).Objects;
             var noop = result.AssignedTypes.ExpressionTypes.TryGetValue(KnownConstants.Noop, out var noopExpr) ? (ObjectInfo)noopExpr : null;
-            if (roles.Count > 1)
+            if (roles.Count > 1 && noop != null)
             {
-                makeMoveScope = makeMoveScope
-                    .Add("role", ScopeFlags.Private, "role")
-                    .Add("moves", ScopeFlags.Private, "moves");
-
-                if (noop != null)
-                {
-                    gameStateScope = gameStateScope.Add("FindForcedNoOps", ScopeFlags.Public, "FindForcedNoOps");
-                }
+                gameStateScope = gameStateScope.Add("FindForcedNoOps", ScopeFlags.Public, "FindForcedNoOps");
             }
 
             var dependencies = result.DependencyGraph;
@@ -109,28 +99,38 @@ namespace GameTheory.Gdl.Passes
                 switch (expr)
                 {
                     case FunctionInfo functionInfo:
+                        functionInfo.Scope = new Scope<object>();
+                        break;
+
                     case ObjectInfo objectInfo when objectInfo.Value is int:
                         break;
 
                     case ConstantInfo constantInfo:
-                        if ((constantInfo is RelationInfo relationInfo && seen.Contains((relationInfo.Constant, relationInfo.Arity))) ||
-                            (constantInfo is LogicalInfo logicalInfo && seen.Contains((logicalInfo.Constant, 0))))
+                        if (constantInfo is RelationInfo relationInfo)
                         {
-                            makeMoveScope = makeMoveScope.Add(expr, ScopeFlags.Public, constantInfo.Constant.Name);
-                            break;
+                            relationInfo.Scope = new Scope<object>();
+                            if (seen.Contains((relationInfo.Constant, relationInfo.Arity)))
+                            {
+                                relationInfo.Scope = relationInfo.Scope.AddPrivate("moves", "moves");
+                            }
                         }
-                        else
+                        else if (constantInfo is LogicalInfo logicalInfo)
                         {
-                            gameStateScope = gameStateScope.Add(expr, ScopeFlags.Public, constantInfo.Constant.Name);
-                            break;
+                            logicalInfo.Scope = new Scope<object>();
+                            if (seen.Contains((logicalInfo.Constant, 0)))
+                            {
+                                logicalInfo.Scope = logicalInfo.Scope.AddPrivate("moves", "moves");
+                            }
                         }
+
+                        gameStateScope = gameStateScope.Add(expr, ScopeFlags.Public, constantInfo.Constant.Name);
+                        break;
                 }
             }
 
             result.GlobalScope = globalScope;
             result.NamespaceScope = namespaceScope;
             result.GameStateScope = gameStateScope;
-            result.MakeMoveScope = makeMoveScope;
 
             AssignArgumentNames(result);
         }
@@ -212,7 +212,7 @@ namespace GameTheory.Gdl.Passes
                     }
                 }
 
-                var scope = new Scope<VariableInfo>()
+                var scope = expressionInfo.Scope
                     .Reserve(expressionInfo is FunctionInfo functionInfo
                         ? result.NamespaceScope.TryGetPublic(functionInfo.ReturnType)
                         : result.GameStateScope.TryGetPublic(expressionInfo));

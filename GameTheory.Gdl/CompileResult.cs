@@ -40,8 +40,6 @@ namespace GameTheory.Gdl
 
         public Scope<object> GlobalScope { get; set; }
 
-        public Scope<object> MakeMoveScope { get; set; }
-
         public Scope<object> NamespaceScope { get; set; }
 
         public Scope<object> GameStateScope { get; set; }
