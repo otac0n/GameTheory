@@ -1,12 +1,14 @@
+// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+
 namespace GameTheory.Gdl.Types
 {
-    public class NoneType : ExpressionType
+    public class NoneType : BuiltInType
     {
         public static readonly NoneType Instance = new NoneType();
 
         private NoneType()
+            : base(typeof(void))
         {
-            this.BuiltInType = typeof(object);
         }
 
         /// <inheritdoc />

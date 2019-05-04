@@ -7,6 +7,8 @@ namespace GameTheory.Gdl.Types
     /// </summary>
     public class ObjectType : ExpressionType
     {
+        private static readonly BuiltInType ObjectStorageType = new BuiltInType(typeof(string));
+
         /// <summary>
         /// Initializes a new instance of the <see cref="ObjectType"/> class.
         /// </summary>
@@ -14,8 +16,9 @@ namespace GameTheory.Gdl.Types
         public ObjectType(ObjectInfo objectInfo)
         {
             this.ObjectInfo = objectInfo;
-            this.BuiltInType = typeof(string);
         }
+
+        public override ExpressionType StorageType => ObjectStorageType;
 
         public ObjectInfo ObjectInfo { get; }
 

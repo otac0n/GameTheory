@@ -23,7 +23,7 @@ namespace GameTheory.Gdl
 
         public ImmutableDictionary<Sentence, ImmutableDictionary<IndividualVariable, VariableInfo>> VariableTypes { get; }
 
-        public ConstantInfo GetExpressionInfo(Expression expression)
+        public ExpressionInfo GetExpressionInfo(Expression expression, ImmutableDictionary<IndividualVariable, VariableInfo> sentenceVariables)
         {
             switch (expression)
             {
@@ -38,6 +38,9 @@ namespace GameTheory.Gdl
 
                 case ImplicitFunctionalTerm implicitFunctionalTerm:
                     return this.ExpressionTypes[(implicitFunctionalTerm.Function, implicitFunctionalTerm.Arguments.Count)];
+
+                case IndividualVariable individualVariable:
+                    return sentenceVariables[individualVariable];
 
                 default:
                     throw new NotImplementedException();

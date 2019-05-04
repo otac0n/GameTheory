@@ -2,8 +2,6 @@
 
 namespace GameTheory.Gdl.Types
 {
-    using System;
-
     /// <summary>
     /// Describes types in the expression types hierarchy.
     /// </summary>
@@ -17,16 +15,16 @@ namespace GameTheory.Gdl.Types
         }
 
         /// <summary>
-        /// Gets or sets the built-in type to use for this type.
+        /// Gets the storage type to use for this type.
         /// </summary>
-        public virtual Type BuiltInType { get; protected set; }
+        public virtual ExpressionType StorageType => this;
 
         /// <summary>
         /// Gets the base type for this type.
         /// </summary>
         /// <remarks>
         /// All objects ultimately inherit from <see cref="AnyType.Instance"/>.
-        /// The <see cref="NoneType"><c>none</c></see> type doesn't represent any objects, so it can be its own base class.
+        /// The <see cref="NoneType"><c>none</c></see> type doesn't represent any objects, so it is its own base class.
         /// </remarks>
         public virtual ExpressionType BaseType => AnyType.Instance;
 

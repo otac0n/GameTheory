@@ -7,6 +7,8 @@ namespace GameTheory.Gdl.Types
 
     public class NumberRangeType : ExpressionType, IInterval<int>
     {
+        private static readonly BuiltInType NumberStorageType = new BuiltInType(typeof(int));
+
         private static ConcurrentDictionary<(int, int), ExpressionType> instances = new ConcurrentDictionary<(int, int), ExpressionType>();
 
         /// <summary>
@@ -18,7 +20,6 @@ namespace GameTheory.Gdl.Types
         {
             this.Start = start;
             this.End = end;
-            this.BuiltInType = typeof(int);
         }
 
         /// <summary>
@@ -30,6 +31,8 @@ namespace GameTheory.Gdl.Types
         /// Gets the inclusive max value.
         /// </summary>
         public int End { get; }
+
+        public override ExpressionType StorageType => NumberStorageType;
 
         int IInterval<int>.End => this.End + 1;
 

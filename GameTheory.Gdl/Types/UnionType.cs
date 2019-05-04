@@ -15,34 +15,27 @@ namespace GameTheory.Gdl.Types
 
         public ImmutableHashSet<ExpressionInfo> Expressions { get; set; }
 
-        public override Type BuiltInType
-        {
-            get
-            {
-                return this.Expressions
-                    .Select(e => e.ReturnType.BuiltInType ?? typeof(object))
-                    .Aggregate((a, b) =>
+        public override ExpressionType StorageType =>
+            this.Expressions
+                .Select(e => e.ReturnType.StorageType)
+                .Aggregate((a, b) =>
+                {
+                    if (a == b || a is AnyType || b is NoneType)
                     {
-                        if (a.IsAssignableFrom(b))
-                        {
-                            return a;
-                        }
-                        else if (b.IsAssignableFrom(a))
-                        {
-                            return b;
-                        }
-                        else
-                        {
-                            return typeof(object);
-                        }
-                    });
-            }
+                        return a;
+                    }
+                    else if (b is AnyType || a is NoneType)
+                    {
+                        return b;
+                    }
 
-            protected set
-            {
-                throw new InvalidOperationException();
-            }
-        }
+                    if (a is NumberRangeType aRange && b is NumberRangeType bRange)
+                    {
+                        return NumberRangeType.GetInstance(Math.Min(aRange.Start, bRange.Start), Math.Max(aRange.End, bRange.End));
+                    }
+
+                    return AnyType.Instance;
+                });
 
         /// <inheritdoc/>
         public override string ToString() => $"(any-of {string.Join(" or ", this.Expressions)})";
