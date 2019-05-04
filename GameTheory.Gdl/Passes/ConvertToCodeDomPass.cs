@@ -119,9 +119,30 @@ namespace GameTheory.Gdl.Passes
                     case FunctionType functionType:
                         var typeName = this.result.NamespaceScope.GetPublic(type);
                         var typeReference = SyntaxHelper.IdentifierName(typeName);
-                        return this.result.GameStateScope.ContainsName(typeName)
-                            ? SyntaxFactory.QualifiedName(SyntaxHelper.IdentifierName(this.result.GlobalScope.GetPublic(this.result)), typeReference)
-                            : (TypeSyntax)typeReference;
+                        if (this.result.GameStateScope.ContainsName(typeName))
+                        {
+                            var namespaceName = this.result.GlobalScope.GetPublic(this.result);
+                            var namespaceReference = SyntaxHelper.IdentifierName(namespaceName);
+                            if (this.result.GameStateScope.ContainsName(namespaceName))
+                            {
+                                return SyntaxFactory.QualifiedName(
+                                    SyntaxFactory.AliasQualifiedName(
+                                        SyntaxFactory.IdentifierName(
+                                            SyntaxFactory.Token(SyntaxKind.GlobalKeyword)),
+                                        namespaceReference),
+                                    typeReference);
+                            }
+                            else
+                            {
+                                return SyntaxFactory.QualifiedName(
+                                    namespaceReference,
+                                    typeReference);
+                            }
+                        }
+                        else
+                        {
+                            return typeReference;
+                        }
 
                     case StateType stateType:
                         return SyntaxHelper.ObjectType;
