@@ -101,7 +101,7 @@ namespace GameTheory.Tests.Gdl
         }
 
         [TestCaseSource(nameof(Games))]
-        [Timeout(120000)]
+        [Timeout(10000)]
         public void Compile_WhenGivenAGameDefinition_ReturnsAGameThatCanBePlayedToTheEnd(string game)
         {
             var gdl = LoadAssemblyResource(game, out var friendlyName);

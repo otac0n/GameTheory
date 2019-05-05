@@ -1699,7 +1699,7 @@ namespace GameTheory.Gdl.Passes
                         this.result,
                         parameters,
                         new ExpressionScope(this.result.AssignedTypes.VariableTypes[sentence], nameScope, ImmutableDictionary<VariableInfo, ExpressionSyntax>.Empty),
-                        this.Reference,
+                        this,
                         this.ConvertExpression);
                     walker.Walk((Expression)implicated);
                     var declarations = walker.Declarations;
@@ -1978,12 +1978,7 @@ namespace GameTheory.Gdl.Passes
                     var pStorage = param.ReturnType.StorageType;
                     var aStorage = argInfo.ReturnType.StorageType;
 
-                    var needsCast = !(pStorage is AnyType) // Any supports all types.
-                        && !(pStorage is StateType) // State type supports all types.
-                        && pStorage != aStorage // Not needed if types are the same.
-                        && (!(pStorage is BuiltInType pType) || !(aStorage is BuiltInType aType) || !pType.Type.IsAssignableFrom(aType.Type)); // Not needed if types are compatible.
-
-                    if (needsCast)
+                    if (!ExpressionType.IsAssignableFrom(pStorage, aStorage))
                     {
                         scope = new ExpressionScope(
                             scope.Variables,
@@ -2497,17 +2492,17 @@ namespace GameTheory.Gdl.Passes
             {
                 private readonly CompileResult result;
                 private readonly ArgumentInfo[] parameters;
-                private readonly Func<ExpressionType, TypeSyntax> reference;
+                private readonly Runner runner;
                 private readonly Func<Term, ExpressionScope, ExpressionSyntax> convertExpression;
                 private ArgumentInfo param;
                 private string pathString;
                 private ExpressionSyntax path;
 
-                public ScopeWalker(CompileResult result, ArgumentInfo[] parameters, ExpressionScope scope, Func<ExpressionType, TypeSyntax> reference, Func<Term, ExpressionScope, ExpressionSyntax> convertExpression)
+                public ScopeWalker(CompileResult result, ArgumentInfo[] parameters, ExpressionScope scope, Runner runner, Func<Term, ExpressionScope, ExpressionSyntax> convertExpression)
                 {
+                    this.runner = runner;
                     this.result = result;
                     this.parameters = parameters;
-                    this.reference = reference;
                     this.convertExpression = convertExpression;
                     this.Declarations = new List<StatementSyntax>();
                     this.ParameterEquality = new List<ExpressionSyntax>();
@@ -2535,6 +2530,39 @@ namespace GameTheory.Gdl.Passes
                         this.param = this.parameters[i];
                         this.pathString = this.ExpressionScope.Scope.GetPrivate(this.param);
                         this.path = SyntaxHelper.IdentifierName(this.pathString);
+
+                        var arg = implicitRelationalSentence.Arguments[i];
+                        if (arg is IndividualVariable argVar)
+                        {
+                            var argInfo = this.result.AssignedTypes.GetExpressionInfo(arg, this.ExpressionScope.Variables);
+                            var pStorage = this.param.ReturnType.StorageType;
+                            var aStorage = argInfo.ReturnType.StorageType;
+
+                            if (!ExpressionType.IsAssignableFrom(aStorage, pStorage))
+                            {
+                                var newArg = new VariableInfo(argVar.Id);
+                                newArg.ReturnType = aStorage;
+                                var newScope = this.ExpressionScope.Scope.AddPrivate(newArg, $"{arg} as {aStorage}");
+                                var name = newScope.GetPrivate(newArg);
+
+                                this.ExpressionScope = new ExpressionScope(
+                                    this.ExpressionScope.Variables.SetItem(argVar, newArg),
+                                    newScope,
+                                    this.ExpressionScope.Names);
+
+                                this.ParameterEquality.Add(
+                                    SyntaxFactory.IsPatternExpression(
+                                        this.path,
+                                        SyntaxFactory.DeclarationPattern(
+                                            this.runner.Reference(aStorage),
+                                            SyntaxFactory.SingleVariableDesignation(
+                                                SyntaxHelper.Identifier(name)))));
+
+                                this.pathString = name;
+                                this.path = SyntaxHelper.IdentifierName(name);
+                            }
+                        }
+
                         this.Walk((Expression)args[i]);
                     }
                 }
@@ -2578,7 +2606,7 @@ namespace GameTheory.Gdl.Passes
                                     SyntaxFactory.IsPatternExpression(
                                         this.path,
                                         SyntaxFactory.DeclarationPattern(
-                                            this.reference(arg.ReturnType),
+                                            this.runner.Reference(arg.ReturnType),
                                             SyntaxFactory.SingleVariableDesignation(
                                                 SyntaxHelper.Identifier(name)))));
 

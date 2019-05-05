@@ -30,5 +30,11 @@ namespace GameTheory.Gdl.Types
 
         /// <inheritdoc/>
         public abstract override string ToString();
+
+        public static bool IsAssignableFrom(ExpressionType assignTo, ExpressionType assignFrom) =>
+            assignTo is AnyType || // Any supports all types.
+            assignTo is StateType || // State type supports all types.
+            assignTo == assignFrom || // Assignable if types are the same.
+            (assignTo is BuiltInType toType && assignFrom is BuiltInType fromType && toType.Type.IsAssignableFrom(fromType.Type)); // Assignable if built in types are assignable.
     }
 }
