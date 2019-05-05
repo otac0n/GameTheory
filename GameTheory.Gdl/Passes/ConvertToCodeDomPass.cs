@@ -8,6 +8,7 @@ namespace GameTheory.Gdl.Passes
     using System.Diagnostics;
     using System.Linq;
     using GameTheory.Gdl.Types;
+    using Intervals;
     using KnowledgeInterchangeFormat.Expressions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -174,8 +175,22 @@ namespace GameTheory.Gdl.Passes
                 switch (type)
                 {
                     case AnyType anyType:
-                        // TODO: Need to return all ground expressions.
-                        throw new NotImplementedException();
+                        return SyntaxFactory.ArrayCreationExpression(
+                            SyntaxHelper.ArrayType(this.Reference(declaredAs)),
+                            SyntaxFactory.InitializerExpression(
+                                SyntaxKind.ArrayInitializerExpression)
+                                .AddExpressions(this.result.GroundTerms.Select(e => this.ConvertExpression(e, scope)).ToArray()));
+
+                    case FunctionType functionType:
+                        {
+                            var functionValues = this.result.GroundTerms.Where(t => this.result.AssignedTypes.GetExpressionInfo(t, scope.Variables).ReturnType == functionType);
+
+                            return SyntaxFactory.ArrayCreationExpression(
+                                SyntaxHelper.ArrayType(this.Reference(declaredAs)),
+                                SyntaxFactory.InitializerExpression(
+                                    SyntaxKind.ArrayInitializerExpression)
+                                    .AddExpressions(functionValues.Select(e => this.ConvertExpression(e, scope)).ToArray()));
+                        }
 
                     case NoneType noneType:
                         return SyntaxFactory.ArrayCreationExpression(
@@ -193,55 +208,85 @@ namespace GameTheory.Gdl.Passes
                                     this.CreateObjectReference(objectType.ObjectInfo))));
 
                     case NumberRangeType numberRangeType:
-                        return SyntaxHelper.EnumerableRangeExpression(numberRangeType.Start, numberRangeType.End - numberRangeType.Start + 1);
-
-                    case EnumType enumType:
-                        var enumValues = SyntaxFactory.ParenthesizedExpression(
-                            SyntaxFactory.CastExpression(
-                                SyntaxHelper.ArrayType(this.Reference(enumType)),
-                                SyntaxFactory.InvocationExpression(
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxHelper.IdentifierName("Enum"),
-                                        SyntaxHelper.IdentifierName("GetValues")),
-                                    SyntaxFactory.ArgumentList(
-                                        SyntaxFactory.SingletonSeparatedList(
-                                            SyntaxFactory.Argument(
-                                                SyntaxFactory.TypeOfExpression(
-                                                    SyntaxFactory.ParseTypeName(this.result.NamespaceScope.GetPublic(enumType)))))))));
-
-                        if (enumType == declaredAs)
                         {
-                            return enumValues;
+                            var numberValues = SyntaxHelper.EnumerableRangeExpression(numberRangeType.Start, numberRangeType.End - numberRangeType.Start + 1);
+
+                            if (numberRangeType == declaredAs)
+                            {
+                                return numberValues;
+                            }
+
+                            var subScope = scope.Scope.SubScope<object>()
+                                .AddPrivate("v", "v");
+                            return SyntaxFactory.InvocationExpression(
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    numberValues,
+                                    SyntaxHelper.IdentifierName("Select")))
+                                    .AddArgumentListArguments(
+                                        SyntaxFactory.Argument(
+                                            SyntaxFactory.SimpleLambdaExpression(
+                                                SyntaxFactory.Parameter(
+                                                    SyntaxFactory.Identifier(subScope.GetPrivate("v"))),
+                                                SyntaxFactory.CastExpression(
+                                                    this.Reference(declaredAs),
+                                                    SyntaxFactory.IdentifierName(subScope.GetPrivate("v"))))));
                         }
 
-                        var subScope = scope.Scope.SubScope<object>()
-                            .AddPrivate("v", "v");
-                        return SyntaxFactory.InvocationExpression(
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                enumValues,
-                                SyntaxHelper.IdentifierName("Select")))
-                                .AddArgumentListArguments(
-                                    SyntaxFactory.Argument(
-                                        SyntaxFactory.SimpleLambdaExpression(
-                                            SyntaxFactory.Parameter(
-                                                SyntaxFactory.Identifier(subScope.GetPrivate("v"))),
-                                            SyntaxFactory.CastExpression(
-                                                this.Reference(declaredAs),
-                                                SyntaxFactory.IdentifierName(subScope.GetPrivate("v"))))));
+                    case EnumType enumType:
+                        {
+                            var enumValues = SyntaxFactory.ParenthesizedExpression(
+                                SyntaxFactory.CastExpression(
+                                    SyntaxHelper.ArrayType(this.Reference(enumType)),
+                                    SyntaxFactory.InvocationExpression(
+                                        SyntaxFactory.MemberAccessExpression(
+                                            SyntaxKind.SimpleMemberAccessExpression,
+                                            SyntaxHelper.IdentifierName("Enum"),
+                                            SyntaxHelper.IdentifierName("GetValues")),
+                                        SyntaxFactory.ArgumentList(
+                                            SyntaxFactory.SingletonSeparatedList(
+                                                SyntaxFactory.Argument(
+                                                    SyntaxFactory.TypeOfExpression(
+                                                        SyntaxFactory.ParseTypeName(this.result.NamespaceScope.GetPublic(enumType)))))))));
+
+                            if (enumType == declaredAs)
+                            {
+                                return enumValues;
+                            }
+
+                            var subScope = scope.Scope.SubScope<object>()
+                                .AddPrivate("v", "v");
+                            return SyntaxFactory.InvocationExpression(
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    enumValues,
+                                    SyntaxHelper.IdentifierName("Select")))
+                                    .AddArgumentListArguments(
+                                        SyntaxFactory.Argument(
+                                            SyntaxFactory.SimpleLambdaExpression(
+                                                SyntaxFactory.Parameter(
+                                                    SyntaxFactory.Identifier(subScope.GetPrivate("v"))),
+                                                SyntaxFactory.CastExpression(
+                                                    this.Reference(declaredAs),
+                                                    SyntaxFactory.IdentifierName(subScope.GetPrivate("v"))))));
+                        }
 
                     case UnionType unionType:
-                        return (from e in unionType.Expressions
-                                group e by e.ReturnType into g
-                                let explicitList = g.Key is EnumType && !((EnumType)g.Key).Objects.SetEquals(g.Cast<ObjectInfo>())
-                                select explicitList
-                                    ? SyntaxFactory.ArrayCreationExpression(
-                                        SyntaxHelper.ArrayType(this.Reference(declaredAs)),
-                                        SyntaxFactory.InitializerExpression(
-                                            SyntaxKind.ArrayInitializerExpression)
-                                            .AddExpressions(g.Cast<ObjectInfo>().Select(e => this.CreateObjectReference(e)).ToArray()))
-                                    : this.AllMembers(g.Key, declaredAs, scope))
+                        var numbers = unionType.Expressions.ToLookup(e => e.ReturnType is NumberRangeType);
+                        var numberRanges = (numbers[true].Select(e => (NumberRangeType)e.ReturnType).Simplify() ?? Array.Empty<IInterval<int>>()).Select(r => (NumberRangeType)r);
+                        var nonNumbersGrouped = numbers[false].GroupBy(e => e.ReturnType);
+                        var nonNumbersByExplicitList = nonNumbersGrouped.ToLookup(g => g.Key is EnumType enumType && g.All(e => e is ObjectInfo) && !enumType.Objects.SetEquals(g.Cast<ObjectInfo>()));
+
+                        var numberExpressions = numberRanges;
+                        var explicitListExpressions = nonNumbersByExplicitList[true].Select(g =>
+                            SyntaxFactory.ArrayCreationExpression(
+                                SyntaxHelper.ArrayType(this.Reference(declaredAs)),
+                                SyntaxFactory.InitializerExpression(
+                                    SyntaxKind.ArrayInitializerExpression)
+                                    .AddExpressions(g.Cast<ObjectInfo>().Select(e => this.CreateObjectReference(e)).ToArray())));
+                        var restExpressions = numberRanges.Concat(nonNumbersByExplicitList[false].Select(g => g.Key)).Select(t => this.AllMembers(t, declaredAs, scope));
+
+                        return explicitListExpressions.Concat(restExpressions)
                             .Aggregate((a, b) =>
                                 SyntaxFactory.InvocationExpression(
                                     SyntaxFactory.MemberAccessExpression(

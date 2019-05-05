@@ -7,6 +7,7 @@ namespace GameTheory.Gdl
     using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Globalization;
+    using System.Linq;
     using KnowledgeInterchangeFormat.Expressions;
     using Microsoft.CodeAnalysis.CSharp;
     using Pegasus.Common;
@@ -16,6 +17,7 @@ namespace GameTheory.Gdl
         private readonly Lazy<ImmutableDictionary<(Constant, int), ConstantType>> constantTypes;
         private readonly Lazy<ImmutableDictionary<Expression, ImmutableHashSet<IndividualVariable>>> containedVariables;
         private readonly Lazy<ImmutableDictionary<(Constant, int), (int, ImmutableHashSet<(Constant, int)>)>> dependencyGraph;
+        private readonly Lazy<ImmutableHashSet<Term>> groundTerms;
         private readonly Lazy<AssignedTypes> assignedTypes;
 
         public CompileResult(string name, KnowledgeBase knowledgeBase)
@@ -26,6 +28,7 @@ namespace GameTheory.Gdl
             this.constantTypes = new Lazy<ImmutableDictionary<(Constant, int), ConstantType>>(() => ConstantArityAnalyzer.Analyze(this.KnowledgeBase));
             this.assignedTypes = new Lazy<AssignedTypes>(() => AssignTypesAnalyzer.Analyze(this.KnowledgeBase, this.ConstantTypes, this.ContainedVariables));
             this.dependencyGraph = new Lazy<ImmutableDictionary<(Constant, int), (int, ImmutableHashSet<(Constant, int)>)>>(() => DependencyAnalyzer.Analyze(this.KnowledgeBase));
+            this.groundTerms = new Lazy<ImmutableHashSet<Term>>(() => this.ContainedVariables.Where(v => v.Value.IsEmpty).Select(v => v.Key).OfType<Term>().ToImmutableHashSet());
 
             this.AtomicSentences = new Dictionary<Sentence, bool>();
             this.DatalogTerms = new Dictionary<Term, bool>();
@@ -43,6 +46,8 @@ namespace GameTheory.Gdl
         public Scope<object> NamespaceScope { get; set; }
 
         public Scope<object> GameStateScope { get; set; }
+
+        public ImmutableHashSet<Term> GroundTerms => this.groundTerms.Value;
 
         public string Code { get; set; }
 
