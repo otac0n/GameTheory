@@ -234,7 +234,14 @@ namespace GameTheory.Gdl.Passes
                     case UnionType unionType:
                         return (from e in unionType.Expressions
                                 group e by e.ReturnType into g
-                                select this.AllMembers(g.Key, declaredAs, scope)) // TODO: Handle enums.
+                                let explicitList = g.Key is EnumType && !((EnumType)g.Key).Objects.SetEquals(g.Cast<ObjectInfo>())
+                                select explicitList
+                                    ? SyntaxFactory.ArrayCreationExpression(
+                                        SyntaxHelper.ArrayType(this.Reference(declaredAs)),
+                                        SyntaxFactory.InitializerExpression(
+                                            SyntaxKind.ArrayInitializerExpression)
+                                            .AddExpressions(g.Cast<ObjectInfo>().Select(e => this.CreateObjectReference(e)).ToArray()))
+                                    : this.AllMembers(g.Key, declaredAs, scope))
                             .Aggregate((a, b) =>
                                 SyntaxFactory.InvocationExpression(
                                     SyntaxFactory.MemberAccessExpression(
