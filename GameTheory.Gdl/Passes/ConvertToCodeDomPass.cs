@@ -900,7 +900,7 @@ namespace GameTheory.Gdl.Passes
                                     SyntaxHelper.IdentifierName(this.result.NamespaceScope.GetPublic("Move"))))
                                 .AddVariables(
                                     SyntaxFactory.VariableDeclarator(
-                                        SyntaxHelper.Identifier("moves"))))
+                                        SyntaxHelper.Identifier(this.result.GameStateScope.GetPrivate("moves")))))
                             .AddModifiers(
                                 SyntaxFactory.Token(SyntaxKind.PrivateKeyword),
                                 SyntaxFactory.Token(SyntaxKind.ReadOnlyKeyword)));
@@ -998,7 +998,7 @@ namespace GameTheory.Gdl.Passes
                     constructor2 = constructor2
                         .AddParameterListParameters(
                             SyntaxFactory.Parameter(
-                                SyntaxHelper.Identifier("moves"))
+                                SyntaxHelper.Identifier(this.result.GameStateScope.GetPrivate("moves")))
                                 .WithType(
                                     SyntaxHelper.ArrayType(
                                         SyntaxHelper.IdentifierName(this.result.NamespaceScope.GetPublic("Move")))));
@@ -1011,7 +1011,7 @@ namespace GameTheory.Gdl.Passes
                                     SyntaxFactory.MemberAccessExpression(
                                         SyntaxKind.SimpleMemberAccessExpression,
                                         SyntaxFactory.ThisExpression(),
-                                        SyntaxHelper.IdentifierName("moves")),
+                                        SyntaxHelper.IdentifierName(this.result.GameStateScope.GetPrivate("moves"))),
                                     SyntaxFactory.InvocationExpression(
                                         SyntaxFactory.MemberAccessExpression(
                                             SyntaxKind.SimpleMemberAccessExpression,
@@ -1024,9 +1024,9 @@ namespace GameTheory.Gdl.Passes
                                     SyntaxFactory.MemberAccessExpression(
                                         SyntaxKind.SimpleMemberAccessExpression,
                                         SyntaxFactory.ThisExpression(),
-                                        SyntaxHelper.IdentifierName("moves")),
+                                        SyntaxHelper.IdentifierName(this.result.GameStateScope.GetPrivate("moves"))),
                                     SyntaxHelper.Coalesce(
-                                        SyntaxHelper.IdentifierName("moves"),
+                                        SyntaxHelper.IdentifierName(this.result.GameStateScope.GetPrivate("moves")),
                                         SyntaxFactory.InvocationExpression(
                                             SyntaxFactory.MemberAccessExpression(
                                                 SyntaxKind.SimpleMemberAccessExpression,
@@ -1041,7 +1041,7 @@ namespace GameTheory.Gdl.Passes
                                     SyntaxFactory.MemberAccessExpression(
                                         SyntaxKind.SimpleMemberAccessExpression,
                                         SyntaxFactory.ThisExpression(),
-                                        SyntaxHelper.IdentifierName("moves")),
+                                        SyntaxHelper.IdentifierName(this.result.GameStateScope.GetPrivate("moves"))),
                                     SyntaxFactory.ArrayCreationExpression(
                                         SyntaxHelper.ArrayType(
                                             SyntaxHelper.IdentifierName(this.result.NamespaceScope.GetPublic("Move")),
@@ -1053,9 +1053,9 @@ namespace GameTheory.Gdl.Passes
                                     SyntaxFactory.MemberAccessExpression(
                                         SyntaxKind.SimpleMemberAccessExpression,
                                         SyntaxFactory.ThisExpression(),
-                                        SyntaxHelper.IdentifierName("moves")),
+                                        SyntaxHelper.IdentifierName(this.result.GameStateScope.GetPrivate("moves"))),
                                     SyntaxHelper.Coalesce(
-                                        SyntaxHelper.IdentifierName("moves"),
+                                        SyntaxHelper.IdentifierName(this.result.GameStateScope.GetPrivate("moves")),
                                         SyntaxFactory.ArrayCreationExpression(
                                             SyntaxHelper.ArrayType(
                                                 SyntaxHelper.IdentifierName(this.result.NamespaceScope.GetPublic("Move")),
@@ -1181,7 +1181,7 @@ namespace GameTheory.Gdl.Passes
                                                 SyntaxFactory.MemberAccessExpression(
                                                     SyntaxKind.SimpleMemberAccessExpression,
                                                     SyntaxFactory.ThisExpression(),
-                                                    SyntaxHelper.IdentifierName("moves")))
+                                                    SyntaxHelper.IdentifierName(this.result.GameStateScope.GetPrivate("moves"))))
                                                 .AddArgumentListArguments(
                                                     SyntaxFactory.Argument(
                                                         SyntaxFactory.CastExpression(
@@ -1938,11 +1938,23 @@ namespace GameTheory.Gdl.Passes
                         SyntaxFactory.ThisExpression(),
                         SyntaxHelper.IdentifierName(this.result.GameStateScope.GetPublic(logicalInfo))));
 
-                if (scope.Scope.ContainsKey("moves") && logicalInfo.Scope.ContainsKey("moves"))
+                if (logicalInfo.Scope.ContainsKey("moves"))
                 {
-                    invocation = invocation.AddArgumentListArguments(
-                        SyntaxFactory.Argument(
-                            SyntaxHelper.IdentifierName(scope.Scope.GetPrivate("moves"))));
+                    if (scope.Scope.ContainsKey("moves"))
+                    {
+                        invocation = invocation.AddArgumentListArguments(
+                            SyntaxFactory.Argument(
+                                SyntaxHelper.IdentifierName(scope.Scope.GetPrivate("moves"))));
+                    }
+                    else
+                    {
+                        invocation = invocation.AddArgumentListArguments(
+                            SyntaxFactory.Argument(
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.ThisExpression(),
+                                    SyntaxHelper.IdentifierName(this.result.GameStateScope.GetPrivate("moves")))));
+                    }
                 }
 
                 return invocation;
@@ -2008,11 +2020,23 @@ namespace GameTheory.Gdl.Passes
                     }
                 }
 
-                if (scope.Scope.ContainsKey("moves") && relationInfo.Scope.ContainsKey("moves"))
+                if (relationInfo.Scope.ContainsKey("moves"))
                 {
-                    invocation = invocation.AddArgumentListArguments(
-                        SyntaxFactory.Argument(
-                            SyntaxHelper.IdentifierName(scope.Scope.GetPrivate("moves"))));
+                    if (scope.Scope.ContainsKey("moves"))
+                    {
+                        invocation = invocation.AddArgumentListArguments(
+                            SyntaxFactory.Argument(
+                                SyntaxHelper.IdentifierName(scope.Scope.GetPrivate("moves"))));
+                    }
+                    else
+                    {
+                        invocation = invocation.AddArgumentListArguments(
+                            SyntaxFactory.Argument(
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.ThisExpression(),
+                                    SyntaxHelper.IdentifierName(this.result.GameStateScope.GetPrivate("moves")))));
+                    }
                 }
 
                 if (conditions.Count > 0)

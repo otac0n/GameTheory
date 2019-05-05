@@ -59,6 +59,7 @@ namespace GameTheory.Gdl.Passes
             });
 
             var gameStateScope = new Scope<object>()
+                .AddPrivate("moves", "moves")
                 .Reserve("CompareTo")
                 .Reserve("FormatTokens")
                 .Reserve(namespaceScope.GetPublic("GameState"))
