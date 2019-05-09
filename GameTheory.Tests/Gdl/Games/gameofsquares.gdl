@@ -45,7 +45,7 @@
 
 (<= (next (flipplayer 1))
 	(true (control ?player))
-	(true (must_stop ?player)))
+	(must_stop ?player))
 
 (<= (next (flipplayer 0))
 	(true (control ?player))
@@ -98,9 +98,9 @@
 	(distinct ?numofpeb 0)) 
 
 (<= (home_squares_empty ?player)
-	(true (homesq ?player ?sq))
+	(homesq ?player ?sq)
 	(true (square ?sq 0)))
-	
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Legal moves
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

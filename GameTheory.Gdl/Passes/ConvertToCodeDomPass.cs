@@ -1187,6 +1187,22 @@ namespace GameTheory.Gdl.Passes
             private MethodDeclarationSyntax CreateGetAvailableMovesDeclaration(RelationInfo legal, RelationInfo role, LogicalInfo terminal)
             {
                 var roles = ((EnumType)role.Arguments[0].ReturnType).Objects;
+
+                var terminalInvocation = SyntaxFactory.InvocationExpression(
+                    SyntaxFactory.MemberAccessExpression(
+                        SyntaxKind.SimpleMemberAccessExpression,
+                        SyntaxFactory.ThisExpression(),
+                        SyntaxHelper.IdentifierName(this.result.GameStateScope.GetPublic(terminal))));
+                if (terminal.Scope.ContainsKey("moves"))
+                {
+                    terminalInvocation = terminalInvocation.AddArgumentListArguments(
+                        SyntaxFactory.Argument(
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.ThisExpression(),
+                                SyntaxHelper.IdentifierName(this.result.GameStateScope.GetPrivate("moves")))));
+                }
+
                 var statements = SyntaxFactory.Block(
                     this.ConvertImplicatedSentences(
                         legal.Body,
@@ -1271,11 +1287,7 @@ namespace GameTheory.Gdl.Passes
                             SyntaxFactory.IfStatement(
                                 SyntaxFactory.PrefixUnaryExpression(
                                     SyntaxKind.LogicalNotExpression,
-                                    SyntaxFactory.InvocationExpression(
-                                        SyntaxFactory.MemberAccessExpression(
-                                            SyntaxKind.SimpleMemberAccessExpression,
-                                            SyntaxFactory.ThisExpression(),
-                                            SyntaxHelper.IdentifierName(this.result.GameStateScope.GetPublic(terminal))))),
+                                    terminalInvocation),
                                 statements),
                             SyntaxFactory.ReturnStatement(
                             SyntaxHelper.IdentifierName("moves"))));
@@ -1287,6 +1299,21 @@ namespace GameTheory.Gdl.Passes
                     .AddPrivate("winners", "winners")
                     .AddPrivate("role", "role")
                     .AddPrivate("g", "g");
+
+                var terminalInvocation = SyntaxFactory.InvocationExpression(
+                    SyntaxFactory.MemberAccessExpression(
+                        SyntaxKind.SimpleMemberAccessExpression,
+                        SyntaxFactory.ThisExpression(),
+                        SyntaxHelper.IdentifierName(this.result.GameStateScope.GetPublic(terminal))));
+                if (terminal.Scope.ContainsKey("moves"))
+                {
+                    terminalInvocation = terminalInvocation.AddArgumentListArguments(
+                        SyntaxFactory.Argument(
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.ThisExpression(),
+                                SyntaxHelper.IdentifierName(this.result.GameStateScope.GetPrivate("moves")))));
+                }
 
                 return SyntaxFactory.MethodDeclaration(
                     SyntaxFactory.GenericName(
@@ -1315,11 +1342,7 @@ namespace GameTheory.Gdl.Passes
                                                         .WithArgumentList(
                                                             SyntaxFactory.ArgumentList()))))),
                             SyntaxFactory.IfStatement(
-                                SyntaxFactory.InvocationExpression(
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.ThisExpression(),
-                                        SyntaxHelper.IdentifierName(this.result.GameStateScope.GetPublic(terminal)))),
+                                terminalInvocation,
                                 SyntaxFactory.Block(
                                     SyntaxFactory.SingletonList<StatementSyntax>(
                                         SyntaxFactory.ForStatement(

@@ -33,7 +33,7 @@ namespace GameTheory.Gdl
 
                 throw new InvalidOperationException();
             }).ToImmutableDictionary();
-            var variableTypes = knowledgeBase.Forms.Cast<Sentence>().ToImmutableDictionary(s => s, s => containedVariables[s].ToImmutableDictionary(p => p, p => new VariableInfo(p.Id))); // TODO: Carry variable around, so that casing is perserved.
+            var variableTypes = knowledgeBase.Forms.Cast<Sentence>().Distinct().ToImmutableDictionary(s => s, s => containedVariables[s].ToImmutableDictionary(p => p, p => new VariableInfo(p.Id))); // TODO: Carry variable around, so that casing is perserved.
             var assignedTypes = new AssignedTypes(expressionTypes, variableTypes);
 
             var init = (RelationInfo)expressionTypes[KnownConstants.Init];
@@ -107,6 +107,14 @@ namespace GameTheory.Gdl
 
                         case UnionType unionType:
                             foreach (var inner in unionType.Expressions)
+                            {
+                                queue.Enqueue(inner);
+                            }
+
+                            break;
+
+                        case StateType stateType:
+                            foreach (var inner in stateType.Relations)
                             {
                                 queue.Enqueue(inner);
                             }
@@ -344,11 +352,11 @@ namespace GameTheory.Gdl
                                         }
 
                                         // (X ∪ Y ∪ Z) ∩ (X ∪ Z) ⇔ (X ∪ Z)
+                                        bool IsSimple(ExpressionInfo e) => (e.ReturnType is ObjectType) || (e.ReturnType is EnumType) || (e.ReturnType is NumberRangeType);
                                         if (intersectionType.Expressions.All(e =>
-                                            (e.ReturnType is ObjectType) ||
-                                            (e.ReturnType is EnumType) ||
-                                            (e.ReturnType is NumberRangeType) ||
-                                            (e.ReturnType is UnionType unionType && unionType.Expressions.All(u => u.ReturnType is ObjectType || u.ReturnType is EnumType || u.ReturnType is NumberRangeType))))
+                                            IsSimple(e) ||
+                                            (e.ReturnType is UnionType unionType && unionType.Expressions.All(u => IsSimple(u))) ||
+                                            (e.ReturnType is StateType stateType && stateType.Relations.All(u => IsSimple(u)))))
                                         {
                                             var unions = intersectionType.Expressions
                                                     .Select(u => FlattenUnion(new[] { u }));
