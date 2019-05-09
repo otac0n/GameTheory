@@ -988,18 +988,21 @@ namespace GameTheory.Gdl.Passes
                             init.Body,
                             (i, s1) => new[]
                             {
-                                SyntaxFactory.ExpressionStatement(
-                                    SyntaxFactory.InvocationExpression(
-                                        SyntaxFactory.MemberAccessExpression(
-                                            SyntaxKind.SimpleMemberAccessExpression,
+                                this.FixVariables(
+                                    i,
+                                    s2 => SyntaxFactory.ExpressionStatement(
+                                        SyntaxFactory.InvocationExpression(
                                             SyntaxFactory.MemberAccessExpression(
                                                 SyntaxKind.SimpleMemberAccessExpression,
-                                                SyntaxFactory.ThisExpression(),
-                                                SyntaxHelper.IdentifierName("state")),
-                                            SyntaxHelper.IdentifierName("Add")))
-                                        .AddArgumentListArguments(
-                                            SyntaxFactory.Argument(
-                                                this.ConvertExpression(((ImplicitRelationalSentence)i).Arguments[0], s1)))),
+                                                SyntaxFactory.MemberAccessExpression(
+                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                    SyntaxFactory.ThisExpression(),
+                                                    SyntaxHelper.IdentifierName("state")),
+                                                SyntaxHelper.IdentifierName("Add")))
+                                            .AddArgumentListArguments(
+                                                SyntaxFactory.Argument(
+                                                    this.ConvertExpression(((ImplicitRelationalSentence)i).Arguments[0], s2)))),
+                                    s1),
                             },
                             new Scope<object>(),
                             ImmutableDictionary<VariableInfo, ExpressionSyntax>.Empty));
@@ -1208,51 +1211,57 @@ namespace GameTheory.Gdl.Passes
                         legal.Body,
                         (i, s1) =>
                         {
-                            var implicated = (ImplicitRelationalSentence)i;
-                            StatementSyntax addStatement = SyntaxFactory.ExpressionStatement(
-                                SyntaxFactory.InvocationExpression(
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxHelper.IdentifierName("moves"),
-                                        SyntaxHelper.IdentifierName("Add")))
-                                    .AddArgumentListArguments(
-                                        SyntaxFactory.Argument(
-                                            SyntaxFactory.ObjectCreationExpression(
-                                                SyntaxHelper.IdentifierName(this.result.NamespaceScope.GetPublic("Move")))
+                            return new[]
+                            {
+                                this.FixVariables(
+                                    i,
+                                    s2 =>
+                                    {
+                                        var implicated = (ImplicitRelationalSentence)i;
+                                        StatementSyntax addStatement = SyntaxFactory.ExpressionStatement(
+                                            SyntaxFactory.InvocationExpression(
+                                                SyntaxFactory.MemberAccessExpression(
+                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                    SyntaxHelper.IdentifierName("moves"),
+                                                    SyntaxHelper.IdentifierName("Add")))
                                                 .AddArgumentListArguments(
                                                     SyntaxFactory.Argument(
-                                                        SyntaxFactory.ElementAccessExpression(
-                                                            SyntaxFactory.MemberAccessExpression(
-                                                                SyntaxKind.SimpleMemberAccessExpression,
-                                                                SyntaxFactory.ThisExpression(),
-                                                                SyntaxHelper.IdentifierName("Players")))
+                                                        SyntaxFactory.ObjectCreationExpression(
+                                                            SyntaxHelper.IdentifierName(this.result.NamespaceScope.GetPublic("Move")))
+                                                            .AddArgumentListArguments(
+                                                                SyntaxFactory.Argument(
+                                                                    SyntaxFactory.ElementAccessExpression(
+                                                                        SyntaxFactory.MemberAccessExpression(
+                                                                            SyntaxKind.SimpleMemberAccessExpression,
+                                                                            SyntaxFactory.ThisExpression(),
+                                                                            SyntaxHelper.IdentifierName("Players")))
+                                                                    .AddArgumentListArguments(
+                                                                        SyntaxFactory.Argument(
+                                                                            SyntaxFactory.CastExpression(
+                                                                                SyntaxHelper.IntType,
+                                                                                this.ConvertExpression(implicated.Arguments[0], s2))))),
+                                                                SyntaxFactory.Argument(this.ConvertExpression(implicated.Arguments[1], s2))))));
+
+                                        return roles.Count > 1
+                                            ? SyntaxFactory.IfStatement(
+                                                SyntaxFactory.IsPatternExpression(
+                                                    SyntaxFactory.ElementAccessExpression(
+                                                        SyntaxFactory.MemberAccessExpression(
+                                                            SyntaxKind.SimpleMemberAccessExpression,
+                                                            SyntaxFactory.ThisExpression(),
+                                                            SyntaxHelper.IdentifierName(this.result.GameStateScope.GetPrivate("moves"))))
                                                         .AddArgumentListArguments(
                                                             SyntaxFactory.Argument(
                                                                 SyntaxFactory.CastExpression(
                                                                     SyntaxHelper.IntType,
-                                                                    this.ConvertExpression(implicated.Arguments[0], s1))))),
-                                                    SyntaxFactory.Argument(this.ConvertExpression(implicated.Arguments[1], s1))))));
-
-                            return new[]
-                            {
-                                roles.Count > 1
-                                    ? SyntaxFactory.IfStatement(
-                                        SyntaxFactory.IsPatternExpression(
-                                            SyntaxFactory.ElementAccessExpression(
-                                                SyntaxFactory.MemberAccessExpression(
-                                                    SyntaxKind.SimpleMemberAccessExpression,
-                                                    SyntaxFactory.ThisExpression(),
-                                                    SyntaxHelper.IdentifierName(this.result.GameStateScope.GetPrivate("moves"))))
-                                                .AddArgumentListArguments(
-                                                    SyntaxFactory.Argument(
-                                                        SyntaxFactory.CastExpression(
-                                                            SyntaxHelper.IntType,
-                                                            this.ConvertExpression(implicated.Arguments[0], s1)))),
-                                            SyntaxFactory.ConstantPattern(
-                                                SyntaxHelper.Null)),
-                                        SyntaxFactory.Block(
-                                            addStatement))
-                                    : addStatement,
+                                                                    this.ConvertExpression(implicated.Arguments[0], s2)))),
+                                                    SyntaxFactory.ConstantPattern(
+                                                        SyntaxHelper.Null)),
+                                                SyntaxFactory.Block(
+                                                    addStatement))
+                                            : addStatement;
+                                    },
+                                    s1),
                             };
                         },
                         new Scope<object>(),
@@ -1648,15 +1657,18 @@ namespace GameTheory.Gdl.Passes
                             next.Body,
                             (i, s1) => new[]
                             {
-                                SyntaxFactory.ExpressionStatement(
-                                    SyntaxFactory.InvocationExpression(
-                                        SyntaxFactory.MemberAccessExpression(
-                                            SyntaxKind.SimpleMemberAccessExpression,
-                                            nextIdentifierName,
-                                            SyntaxHelper.IdentifierName("Add")))
-                                        .AddArgumentListArguments(
-                                            SyntaxFactory.Argument(
-                                                this.ConvertExpression(((ImplicitRelationalSentence)i).Arguments[0], s1)))),
+                                this.FixVariables(
+                                    i,
+                                    s2 => SyntaxFactory.ExpressionStatement(
+                                        SyntaxFactory.InvocationExpression(
+                                            SyntaxFactory.MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                nextIdentifierName,
+                                                SyntaxHelper.IdentifierName("Add")))
+                                            .AddArgumentListArguments(
+                                                SyntaxFactory.Argument(
+                                                    this.ConvertExpression(((ImplicitRelationalSentence)i).Arguments[0], s1)))),
+                                    s1),
                             },
                             makeMoveScope,
                             ImmutableDictionary<VariableInfo, ExpressionSyntax>.Empty));
@@ -1918,7 +1930,7 @@ namespace GameTheory.Gdl.Passes
                 return GetStatement(0, scope);
             }
 
-            private StatementSyntax ConvertSentence(Sentence sentence, Func<ExpressionScope, StatementSyntax[]> inner, ExpressionScope scope)
+            private StatementSyntax FixVariables(Sentence sentence, Func<ExpressionScope, StatementSyntax> inner, ExpressionScope scope)
             {
                 var variable = this.result.ContainedVariables[sentence].Where(v => !scope.Names.ContainsKey(scope.Variables[v])).FirstOrDefault();
                 if (variable is object)
@@ -1932,15 +1944,23 @@ namespace GameTheory.Gdl.Passes
                         SyntaxHelper.Identifier(scope.Scope.GetPrivate(variableInfo)),
                         this.AllMembers(variableInfo.ReturnType, variableInfo.ReturnType, scope),
                         SyntaxFactory.Block(
-                            this.ConvertSentence(sentence, inner, scope)));
+                            this.FixVariables(sentence, inner, scope)));
                 }
                 else
                 {
-                    return SyntaxFactory.IfStatement(
-                        this.ConvertCondition(sentence, ref scope),
-                        SyntaxFactory.Block(inner(scope)))
-                    .WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.Comment($"// {sentence}")));
+                    return inner(scope);
                 }
+            }
+
+            private StatementSyntax ConvertSentence(Sentence sentence, Func<ExpressionScope, StatementSyntax[]> inner, ExpressionScope scope)
+            {
+                return this.FixVariables(
+                    sentence,
+                    s1 => SyntaxFactory.IfStatement(
+                        this.ConvertCondition(sentence, ref s1),
+                        SyntaxFactory.Block(inner(s1)))
+                        .WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.Comment($"// {sentence}"))),
+                    scope);
             }
 
             private ExpressionSyntax ConvertCondition(Sentence condition, ref ExpressionScope scope)
@@ -1985,8 +2005,21 @@ namespace GameTheory.Gdl.Passes
             private ExpressionSyntax ConvertConstantExpression(Constant constant) =>
                 this.CreateObjectReference((ObjectInfo)this.result.AssignedTypes.ExpressionTypes[(constant, 0)]);
 
-            private ExpressionSyntax ConvertVariableExpression(IndividualVariable individualVariable, ExpressionScope scope) =>
-                scope.Names[scope.Variables[individualVariable]];
+            private ExpressionSyntax ConvertVariableExpression(IndividualVariable individualVariable, ExpressionScope scope)
+            {
+                if (!scope.Variables.ContainsKey(individualVariable))
+                {
+                    return SyntaxFactory.IdentifierName(individualVariable.Name);
+                }
+
+                var variable = scope.Variables[individualVariable];
+                if (!scope.Names.ContainsKey(variable))
+                {
+                    return SyntaxFactory.IdentifierName(variable.Id);
+                }
+
+                return scope.Names[variable];
+            }
 
             private ExpressionSyntax ConvertFunctionalTermExpression(ImplicitFunctionalTerm implicitFunctionalTerm, ExpressionScope scope) =>
                 SyntaxFactory.ObjectCreationExpression( // TODO: Runtime type checks
