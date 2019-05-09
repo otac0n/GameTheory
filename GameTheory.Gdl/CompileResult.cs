@@ -28,7 +28,7 @@ namespace GameTheory.Gdl
             this.constantTypes = new Lazy<ImmutableDictionary<(Constant, int), ConstantType>>(() => ConstantArityAnalyzer.Analyze(this.KnowledgeBase));
             this.assignedTypes = new Lazy<AssignedTypes>(() => AssignTypesAnalyzer.Analyze(this.KnowledgeBase, this.ConstantTypes, this.ContainedVariables));
             this.dependencyGraph = new Lazy<ImmutableDictionary<(Constant, int), (int, ImmutableHashSet<(Constant, int)>)>>(() => DependencyAnalyzer.Analyze(this.KnowledgeBase));
-            this.groundTerms = new Lazy<ImmutableHashSet<Term>>(() => this.ContainedVariables.Where(v => v.Value.IsEmpty).Select(v => v.Key).OfType<Term>().ToImmutableHashSet());
+            this.groundTerms = new Lazy<ImmutableHashSet<Term>>(() => GroundTermAnalyzer.Analyze(this.KnowledgeBase, this.ContainedVariables));
 
             this.AtomicSentences = new Dictionary<Sentence, bool>();
             this.DatalogTerms = new Dictionary<Term, bool>();
