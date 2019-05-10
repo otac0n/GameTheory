@@ -1819,7 +1819,6 @@ namespace GameTheory.Gdl.Passes
                     methodElement = methodElement.AddBodyStatements(root);
                 }
 
-                // TODO: Runtime type checks
                 methodElement = methodElement.AddBodyStatements(SyntaxFactory.ReturnStatement(SyntaxHelper.False));
 
                 return methodElement;
@@ -2022,18 +2021,18 @@ namespace GameTheory.Gdl.Passes
             }
 
             private ExpressionSyntax ConvertFunctionalTermExpression(ImplicitFunctionalTerm implicitFunctionalTerm, ExpressionScope scope) =>
-                SyntaxFactory.ObjectCreationExpression( // TODO: Runtime type checks
+                SyntaxFactory.ObjectCreationExpression(
                     SyntaxHelper.IdentifierName(this.result.NamespaceScope.GetPublic(this.result.AssignedTypes.GetExpressionInfo(implicitFunctionalTerm, scope.Variables).ReturnType)))
                 .WithArgumentList(
                     SyntaxFactory.ArgumentList(
                         SyntaxFactory.SeparatedList<ArgumentSyntax>()
-                            .AddRange(implicitFunctionalTerm.Arguments.Select(arg => SyntaxFactory.Argument(this.ConvertExpression(arg, scope))))));
+                            .AddRange(implicitFunctionalTerm.Arguments.Select(arg => SyntaxFactory.Argument(this.ConvertExpression(arg, scope)))))); // TODO: Runtime type checks
 
             private ExpressionSyntax ConvertLogicalCondition(ConstantSentence constantSentence, ExpressionScope scope)
             {
                 var logicalInfo = (LogicalInfo)this.result.AssignedTypes.GetExpressionInfo(constantSentence, scope.Variables);
 
-                var invocation = SyntaxFactory.InvocationExpression( // TODO: Runtime type checks
+                var invocation = SyntaxFactory.InvocationExpression(
                     SyntaxFactory.MemberAccessExpression(
                         SyntaxKind.SimpleMemberAccessExpression,
                         SyntaxFactory.ThisExpression(),
@@ -2405,6 +2404,9 @@ namespace GameTheory.Gdl.Passes
                                         .WithArgumentList(SyntaxFactory.ArgumentList()))));
                 }
 
+                var formatTokensScope = fieldNames
+                    .AddPrivate("tokens", "tokens");
+
                 var formatTokens = SyntaxFactory.PropertyDeclaration(
                     SyntaxFactory.GenericName(
                         SyntaxHelper.Identifier("IList"))
@@ -2429,7 +2431,7 @@ namespace GameTheory.Gdl.Passes
                                                     SyntaxHelper.IdentifierName("var"))
                                                 .AddVariables(
                                                     SyntaxFactory.VariableDeclarator(
-                                                        SyntaxHelper.Identifier("tokens"))
+                                                        SyntaxHelper.Identifier(formatTokensScope.GetPrivate("tokens")))
                                                     .WithInitializer(
                                                         SyntaxFactory.EqualsValueClause(
                                                             SyntaxFactory.ObjectCreationExpression(
@@ -2445,7 +2447,7 @@ namespace GameTheory.Gdl.Passes
                                                     SyntaxFactory.InvocationExpression(
                                                         SyntaxFactory.MemberAccessExpression(
                                                             SyntaxKind.SimpleMemberAccessExpression,
-                                                            SyntaxHelper.IdentifierName("tokens"),
+                                                            SyntaxHelper.IdentifierName(formatTokensScope.GetPrivate("tokens")),
                                                             SyntaxHelper.IdentifierName("AddRange")))
                                                     .AddArgumentListArguments(
                                                         SyntaxFactory.Argument(
@@ -2467,7 +2469,10 @@ namespace GameTheory.Gdl.Passes
                                                                                 SyntaxHelper.IdentifierName("o"))))))))).ToArray())
                                             .AddStatements(
                                                 SyntaxFactory.ReturnStatement(
-                                                    SyntaxHelper.IdentifierName("tokens")))))));
+                                                    SyntaxHelper.IdentifierName(formatTokensScope.GetPrivate("tokens"))))))));
+
+                var containsScope = fieldNames
+                    .AddPrivate("value", "value");
 
                 var contains = SyntaxFactory.MethodDeclaration(
                     SyntaxFactory.PredefinedType(
@@ -2476,13 +2481,13 @@ namespace GameTheory.Gdl.Passes
                     .AddModifiers(SyntaxFactory.Token(SyntaxKind.PublicKeyword))
                     .AddParameterListParameters(
                         SyntaxFactory.Parameter(
-                            SyntaxHelper.Identifier("value"))
+                            SyntaxHelper.Identifier(containsScope.GetPrivate("value")))
                             .WithType(
                                 this.Reference(stateType)))
                     .WithBody(
                         SyntaxFactory.Block(
                             SyntaxFactory.SwitchStatement(
-                                SyntaxHelper.IdentifierName("value"))
+                                SyntaxHelper.IdentifierName(containsScope.GetPrivate("value")))
                                 .WithOpenParenToken(SyntaxFactory.Token(SyntaxKind.OpenParenToken))
                                 .WithCloseParenToken(SyntaxFactory.Token(SyntaxKind.CloseParenToken))
                                 .AddSections(types.Select(obj =>
@@ -2510,6 +2515,9 @@ namespace GameTheory.Gdl.Passes
                             SyntaxFactory.ReturnStatement(
                                 SyntaxHelper.False)));
 
+                var addScope = fieldNames
+                    .AddPrivate("value", "value");
+
                 var add = SyntaxFactory.MethodDeclaration(
                     SyntaxFactory.PredefinedType(
                         SyntaxFactory.Token(SyntaxKind.BoolKeyword)),
@@ -2517,13 +2525,13 @@ namespace GameTheory.Gdl.Passes
                     .AddModifiers(SyntaxFactory.Token(SyntaxKind.PublicKeyword))
                     .AddParameterListParameters(
                         SyntaxFactory.Parameter(
-                            SyntaxHelper.Identifier("value"))
+                            SyntaxHelper.Identifier(addScope.GetPrivate("value")))
                             .WithType(
                                 this.Reference(stateType)))
                     .WithBody(
                         SyntaxFactory.Block(
                             SyntaxFactory.SwitchStatement(
-                                SyntaxHelper.IdentifierName("value"))
+                                SyntaxHelper.IdentifierName(addScope.GetPrivate("value")))
                                 .WithOpenParenToken(SyntaxFactory.Token(SyntaxKind.OpenParenToken))
                                 .WithCloseParenToken(SyntaxFactory.Token(SyntaxKind.CloseParenToken))
                                 .AddSections(types.Select(obj =>
