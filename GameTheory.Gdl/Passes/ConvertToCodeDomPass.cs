@@ -2635,8 +2635,7 @@ namespace GameTheory.Gdl.Passes
                 private readonly Runner runner;
                 private readonly Func<Term, ExpressionScope, ExpressionSyntax> convertExpression;
                 private ArgumentInfo param;
-                private string pathString;
-                private ExpressionSyntax path;
+                private (string lexical, ExpressionSyntax expression, ExpressionType type) path;
 
                 public ScopeWalker(CompileResult result, ArgumentInfo[] parameters, ExpressionScope scope, Runner runner, Func<Term, ExpressionScope, ExpressionSyntax> convertExpression)
                 {
@@ -2668,8 +2667,8 @@ namespace GameTheory.Gdl.Passes
                     for (var i = 0; i < args.Count; i++)
                     {
                         this.param = this.parameters[i];
-                        this.pathString = this.ExpressionScope.Scope.GetPrivate(this.param);
-                        this.path = SyntaxHelper.IdentifierName(this.pathString);
+                        var newPathString = this.ExpressionScope.Scope.GetPrivate(this.param);
+                        this.path = (newPathString, SyntaxHelper.IdentifierName(newPathString), this.param.ReturnType);
 
                         var arg = implicitRelationalSentence.Arguments[i];
                         if (arg is IndividualVariable argVar)
@@ -2692,14 +2691,13 @@ namespace GameTheory.Gdl.Passes
 
                                 this.ParameterEquality.Add(
                                     SyntaxFactory.IsPatternExpression(
-                                        this.path,
+                                        this.path.expression,
                                         SyntaxFactory.DeclarationPattern(
                                             this.runner.Reference(aStorage),
                                             SyntaxFactory.SingleVariableDesignation(
                                                 SyntaxHelper.Identifier(name)))));
 
-                                this.pathString = name;
-                                this.path = SyntaxHelper.IdentifierName(name);
+                                this.path = (name, SyntaxHelper.IdentifierName(name), argInfo.ReturnType);
                             }
                         }
 
@@ -2714,21 +2712,21 @@ namespace GameTheory.Gdl.Passes
                         var argVarInfo = this.ExpressionScope.Variables[argVar];
                         if (this.ExpressionScope.Names.ContainsKey(argVarInfo))
                         {
-                            this.ParameterEquality.Add(SyntaxHelper.ObjectEqualsExpression(this.path, this.ExpressionScope.Names[argVarInfo]));
+                            this.ParameterEquality.Add(SyntaxHelper.ObjectEqualsExpression(this.path.expression, this.ExpressionScope.Names[argVarInfo]));
                         }
                         else
                         {
                             this.ExpressionScope = new ExpressionScope(
                                 this.ExpressionScope.Variables,
-                                this.ExpressionScope.Scope.SetPrivate(argVarInfo, this.pathString),
-                                this.ExpressionScope.Names.Add(argVarInfo, this.path));
+                                this.ExpressionScope.Scope.SetPrivate(argVarInfo, this.path.lexical),
+                                this.ExpressionScope.Names.Add(argVarInfo, this.path.expression));
                         }
                     }
                     else
                     {
                         if (this.result.ContainedVariables[term].Count == 0)
                         {
-                            this.ParameterEquality.Add(SyntaxHelper.ObjectEqualsExpression(this.path, this.convertExpression(term, this.ExpressionScope)));
+                            this.ParameterEquality.Add(SyntaxHelper.ObjectEqualsExpression(this.path.expression, this.convertExpression(term, this.ExpressionScope)));
                         }
                         else
                         {
@@ -2739,19 +2737,18 @@ namespace GameTheory.Gdl.Passes
                             {
                                 this.ExpressionScope = new ExpressionScope(
                                     this.ExpressionScope.Variables,
-                                    this.ExpressionScope.Scope.AddPrivate(out var name, $"{this.path} as {arg.ReturnType}"),
+                                    this.ExpressionScope.Scope.AddPrivate(out var name, $"{this.path.expression} as {arg.ReturnType}"),
                                     this.ExpressionScope.Names);
 
                                 this.ParameterEquality.Add(
                                     SyntaxFactory.IsPatternExpression(
-                                        this.path,
+                                        this.path.expression,
                                         SyntaxFactory.DeclarationPattern(
                                             this.runner.Reference(arg.ReturnType),
                                             SyntaxFactory.SingleVariableDesignation(
                                                 SyntaxHelper.Identifier(name)))));
 
-                                this.pathString = name;
-                                this.path = SyntaxHelper.IdentifierName(this.pathString);
+                                this.path = (name, SyntaxHelper.IdentifierName(name), arg.ReturnType);
                             }
 
                             base.Walk(term);
@@ -2767,13 +2764,39 @@ namespace GameTheory.Gdl.Passes
                     for (var i = 0; i < args.Count; i++)
                     {
                         var originalPath = this.path;
-                        var name = functionInfo.Scope.GetPublic(functionInfo.Arguments[i]);
 
-                        this.pathString += "." + name;
-                        this.path = SyntaxFactory.MemberAccessExpression(
+                        var param = functionInfo.Arguments[i];
+                        var name = functionInfo.Scope.GetPublic(param);
+
+                        var newPathString = this.path.lexical + "." + name;
+                        this.path = (newPathString, SyntaxFactory.MemberAccessExpression(
                             SyntaxKind.SimpleMemberAccessExpression,
-                            this.path,
-                            SyntaxHelper.IdentifierName(name));
+                            this.path.expression,
+                            SyntaxHelper.IdentifierName(name)), param.ReturnType);
+
+                        var arg = implicitFunctionalTerm.Arguments[i];
+                        if (arg is IndividualVariable argVar)
+                        {
+                            var argInfo = this.result.AssignedTypes.GetExpressionInfo(arg, this.ExpressionScope.Variables);
+                            var pStorage = param.ReturnType.StorageType;
+                            var aStorage = argInfo.ReturnType.StorageType;
+
+                            if (!ExpressionType.IsAssignableFrom(aStorage, pStorage))
+                            {
+                                var newArg = new VariableInfo(argVar.Id);
+                                newArg.ReturnType = aStorage;
+
+                                this.ParameterEquality.Add(
+                                    SyntaxFactory.IsPatternExpression(
+                                        this.path.expression,
+                                        SyntaxFactory.DeclarationPattern(
+                                            this.runner.Reference(aStorage),
+                                            SyntaxFactory.SingleVariableDesignation(
+                                                SyntaxHelper.Identifier(name)))));
+
+                                this.path = (name, SyntaxHelper.IdentifierName(name), argInfo.ReturnType);
+                            }
+                        }
 
                         this.Walk((Expression)args[i]);
 
