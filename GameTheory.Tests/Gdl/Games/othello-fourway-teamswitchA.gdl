@@ -376,10 +376,11 @@
     (does ?player (place ?i ?j))
     (or (distinct ?x ?i) (distinct ?y ?j)))
 
-(<= (next (fringe ?x ?y))
-    (true (fringe ?x ?y))
-    (does white noop)
-    (does black noop))
+;;; BUG: This appears to be a bug, as neither "white" nor "black" are a role.
+;(<= (next (fringe ?x ?y))
+;    (true (fringe ?x ?y))
+;    (does white noop)
+;    (does black noop))
 
 (<= (next (fringe ?x ?y))
     (true (fringe ?x ?y))
