@@ -34,7 +34,7 @@
       (role ?role)
       (doublet ?u ?v ?x ?y))
 
-  (<= (input ?role (move ?u ?v ?w ?x ?y ?z))
+  (<= (input ?role (jump ?u ?v ?w ?x ?y ?z))
       (role ?role)
       (triplet ?u ?v ?w ?x ?y ?z))
 
@@ -71,7 +71,6 @@
   (init (cell 4 2 red))
   (init (cell 4 3 red))
   (init (cell 4 4 red))
-  (init (cell 4 5 red))
   (init (score red 0))
   (init (score black 0))
   (init (control red))
@@ -87,14 +86,14 @@
       (doublet ?u ?v ?x ?y)
       (true (cell ?x ?y blank)))
 
-  (<= (legal red (move ?u ?v ?w ?x ?y ?z))
+  (<= (legal red (jump ?u ?v ?w ?x ?y ?z))
       (true (control red))
       (true (cell ?u ?v red))
       (triplet ?u ?v ?w ?x ?y ?z)
       (true (cell ?w ?x red))
       (true (cell ?y ?z black)))
 
-  (<= (legal black (move ?u ?v ?w ?x ?y ?z))
+  (<= (legal black (jump ?u ?v ?w ?x ?y ?z))
       (true (control black))
       (true (cell ?u ?v black))
       (triplet ?u ?v ?w ?x ?y ?z)
@@ -124,13 +123,13 @@
       (distinctcell ?m ?n ?x ?y))
 
   (<= (next (cell ?u ?v blank))
-      (does ?role (move ?u ?v ?w ?x ?y ?z)))
+      (does ?role (jump ?u ?v ?w ?x ?y ?z)))
 
   (<= (next (cell ?y ?z ?role))
-      (does ?role (move ?u ?v ?w ?x ?y ?z)))
+      (does ?role (jump ?u ?v ?w ?x ?y ?z)))
 
   (<= (next (cell ?m ?n ?mark))
-      (does ?role (move ?u ?v ?w ?x ?y ?z))
+      (does ?role (jump ?u ?v ?w ?x ?y ?z))
       (true (cell ?m ?n ?mark))
       (distinctcell ?m ?n ?u ?v)
       (distinctcell ?m ?n ?y ?z))
@@ -140,7 +139,7 @@
       (true (score ?role ?n)))
 
   (<= (next (score ?role ?n))
-      (does ?role (move ?u ?v ?w ?x ?y ?z))
+      (does ?role (jump ?u ?v ?w ?x ?y ?z))
       (true (score ?role ?m))
       (incr ?m ?n))
 
@@ -169,6 +168,10 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
   (<= terminal (true (score ?role 100)))
+
+  (<= terminal
+      (true (control ?role))
+      (not (haslegalmove ?role)))
 
   (<= terminal (true (step 30)))
   
@@ -250,20 +253,24 @@
 
 
   (<= (horizontal ?u ?v ?x ?v)
-      (next ?u ?x)
+      (nextspot ?u ?x)
       (index ?v))
 
   (<= (vertical ?u ?v ?u ?y)
-      (next ?v ?y)
+      (nextspot ?v ?y)
       (index ?u))
+
+
+  (<= (haslegalmove ?role)
+      (legal ?role ?move))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Data
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-  (next 1 2)
-  (next 2 3)
-  (next 3 4)
+  (nextspot 1 2)
+  (nextspot 2 3)
+  (nextspot 3 4)
 
   (incr  0  12)
   (incr 12  25)
@@ -307,4 +314,3 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
