@@ -1,0 +1,8 @@
+{
+  "gameName": "3pffa",
+  "rulesheet": "3pffa.gdl",
+  "sourceUri": "http://ggpserver.general-game-playing.de/ggpserver/public/download_gdl.jsp?name=3pffa",
+  "uploadedBy": "admin",
+  "gdlVersion": "v1",
+  "seesXml": "(<= (sees_xml random ?t) (true ?t))\n(<= (sees_xml ?p ?t) (role ?p) (distinct ?p random) (true ?t))"
+}

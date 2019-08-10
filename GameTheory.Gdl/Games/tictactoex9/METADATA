@@ -1,0 +1,8 @@
+{
+  "gameName": "tictactoex9",
+  "rulesheet": "tictactoex9.gdl",
+  "sourceUri": "http://ggpserver.general-game-playing.de/ggpserver/public/download_gdl.jsp?name=tictactoex9",
+  "uploadedBy": "admin",
+  "gdlVersion": "v1",
+  "seesXml": "(<= (sees_xml random ?t)(sees_xml1 ?t))\r\n(<= (sees_xml ?p ?t) (role ?p) (distinct ?p random) (sees_xml1 ?t))\r\n\r\n(<= (sees_xml1 (control ?p)) (true (control ?p)))\r\n(<= (sees_xml1 (boardtoplay ?x ?y)) (true (boardtoplay ?x ?y)))\r\n(<= (sees_xml1 (cell ?x ?y ?c))\r\n    (true (cell ?x1 ?y1 ?x2 ?y2 ?c))\r\n    (map ?x1 ?x2 ?x)\r\n    (map ?y1 ?y2 ?y)\r\n    )\r\n\r\n(map 1 1 1)\r\n(map 1 2 2)\r\n(map 1 3 3)\r\n(map 2 1 4)\r\n(map 2 2 5)\r\n(map 2 3 6)\r\n(map 3 1 7)\r\n(map 3 2 8)\r\n(map 3 3 9)"
+}

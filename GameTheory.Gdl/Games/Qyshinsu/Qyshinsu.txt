@@ -1,0 +1,8 @@
+A 2 player abstract strategy game where the piece you play constrains where the opponent can play.
+
+Full Description as PDF
+
+The game was created by Rodney A. Frederickson and can be ordered as board game on his website.
+
+
+GDL by: Ethan Dreyfuss

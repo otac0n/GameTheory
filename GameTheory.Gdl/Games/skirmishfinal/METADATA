@@ -1,0 +1,8 @@
+{
+  "gameName": "skirmishfinal",
+  "rulesheet": "skirmishfinal.gdl",
+  "sourceUri": "http://ggpserver.general-game-playing.de/ggpserver/public/download_gdl.jsp?name=skirmishfinal",
+  "uploadedBy": "admin",
+  "gdlVersion": "v1",
+  "seesXml": "(<= (sees_xml random ?t) (sees_xml1 ?t))\r\n(<= (sees_xml ?p ?t) (role ?p) (distinct ?p random) (sees_xml1 ?t))\r\n\r\n(<= (sees_xml1 ?f) (true ?f))\r\n; show cells that are off limit as red circle\r\n(<= (sees_xml1 (location ?x ?y red))\r\n    (true (cellofflimits ?x ?y))\r\n)"
+}

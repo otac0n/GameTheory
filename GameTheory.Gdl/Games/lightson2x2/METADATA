@@ -1,0 +1,8 @@
+{
+  "gameName": "lightson2x2",
+  "rulesheet": "lightson2x2.gdl",
+  "sourceUri": "http://ggpserver.general-game-playing.de/ggpserver/public/download_gdl.jsp?name=lightson2x2",
+  "uploadedBy": "admin",
+  "gdlVersion": "v1",
+  "seesXml": "(<= (sees_xml random ?t) (true ?t))\n(<= (sees_xml ?p ?t) (role ?p) (distinct ?p random) (true ?t))"
+}

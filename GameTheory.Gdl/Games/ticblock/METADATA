@@ -1,0 +1,8 @@
+{
+  "gameName": "ticblock",
+  "rulesheet": "ticblock.gdl",
+  "sourceUri": "http://ggpserver.general-game-playing.de/ggpserver/public/download_gdl.jsp?name=ticblock",
+  "uploadedBy": "admin",
+  "gdlVersion": "v1",
+  "seesXml": "(<= (sees_xml random ?t) (sees_xml1 ?t))\r\n(<= (sees_xml ?p ?t) (role ?p) (distinct ?p random) (sees_xml1 ?t))\r\n\r\n; keep these fluents\r\n(<= (sees_xml1 (cell ?x ?y ?c)) (true (cell ?x ?y ?c)))\r\n(<= (sees_xml1 (control ?p)) (true (control ?p)))\r\n(<= (sees_xml1 (ticscores ?x ?y)) (true (ticscores ?x ?y)))\r\n\r\n; rename the cell contents of the blocker cells\r\n(<= (sees_xml1 (cellb ?x ?y x)) (true (cellb ?x ?y xcplayer)))\r\n(<= (sees_xml1 (cellb ?x ?y o)) (true (cellb ?x ?y blk)))\r\n(<= (sees_xml1 (cellb ?x ?y b)) (true (cellb ?x ?y b)))\r\n(<= (sees_xml1 (cellb 0 ?y x)) (true (cellb ?x ?y ?c)))\r\n(<= (sees_xml1 (cellb 5 ?y x)) (true (cellb ?x ?y ?c)))\r\n(<= (sees_xml1 (cellb ?x 0 o)) (true (cellb ?x ?y ?c)))\r\n(<= (sees_xml1 (cellb ?x 5 o)) (true (cellb ?x ?y ?c)))"
+}

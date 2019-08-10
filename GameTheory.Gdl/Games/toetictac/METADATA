@@ -1,0 +1,8 @@
+{
+  "gameName": "toetictac",
+  "rulesheet": "toetictac.gdl",
+  "sourceUri": "http://ggpserver.general-game-playing.de/ggpserver/public/download_gdl.jsp?name=toetictac",
+  "uploadedBy": "admin",
+  "gdlVersion": "v1",
+  "seesXml": "(<= (sees_xml random ?t) (sees_xml1 ?t))\r\n(<= (sees_xml ?p ?t) (role ?p) (distinct ?p random) (sees_xml1 ?t))\r\n\r\n; transform the cells such that the normal chess stylesheet understands them\r\n(<= (sees_xml1 (cell ?x ?y b))\r\n    (true (blank ?loc))\r\n    (loc_to_coords ?loc ?x ?y))\r\n(<= (sees_xml1 (cell ?x ?y x))\r\n    (true (ecks ?loc))\r\n    (loc_to_coords ?loc ?x ?y))\r\n(<= (sees_xml1 (cell ?x ?y o))\r\n    (true (oh ?loc))\r\n    (loc_to_coords ?loc ?x ?y))\r\n(<= (sees_xml1 (control ?p)) (true (control ?p)))\r\n\r\n(loc_to_coords a 1 1)\r\n(loc_to_coords b 1 2)\r\n(loc_to_coords c 1 3)\r\n(loc_to_coords d 2 1)\r\n(loc_to_coords e 2 2)\r\n(loc_to_coords f 2 3)\r\n(loc_to_coords g 3 1)\r\n(loc_to_coords h 3 2)\r\n(loc_to_coords i 3 3)"
+}

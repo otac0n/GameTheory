@@ -1,0 +1,8 @@
+{
+  "gameName": "golden_rectangle",
+  "rulesheet": "golden_rectangle.gdl",
+  "sourceUri": "http://ggpserver.general-game-playing.de/ggpserver/public/download_gdl.jsp?name=golden_rectangle",
+  "uploadedBy": "admin",
+  "gdlVersion": "v1",
+  "seesXml": "(<= (sees_xml random ?t) (sees_xml1 ?t))\r\n(<= (sees_xml ?p ?t) (role ?p) (distinct ?p random) (sees_xml1 ?t))\r\n\r\n; transform the cells such that the normal chess stylesheet understands them\r\n(<= (sees_xml1 (cell ?x ?y b)) (true (cell ?x ?y b)))\r\n(<= (sees_xml1 (cell ?x ?y red)) (true (cell ?x ?y r)))\r\n(<= (sees_xml1 (cell ?x ?y yellow)) (true (cell ?x ?y y)))\r\n(<= (sees_xml1 (control ?p)) (true (control ?p)))"
+}

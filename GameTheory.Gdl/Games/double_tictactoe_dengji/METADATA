@@ -1,0 +1,8 @@
+{
+  "gameName": "double_tictactoe_dengji",
+  "rulesheet": "double_tictactoe_dengji.gdl",
+  "sourceUri": "http://ggpserver.general-game-playing.de/ggpserver/public/download_gdl.jsp?name=double_tictactoe_dengji",
+  "uploadedBy": "admin",
+  "gdlVersion": "v1",
+  "seesXml": "(<= (sees_xml random ?t) (true ?t))\n(<= (sees_xml ?p ?t) (role ?p) (distinct ?p random) (true ?t))"
+}

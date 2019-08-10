@@ -1,0 +1,9 @@
+A 2 player abstract strategy game with a placement phase and a movement phase, where the first piece you capture determines what other piece you need to capture in order to win.
+
+Full Description as PDF
+
+The game was created by Rodney A. Frederickson and can be ordered as board game on his website.
+
+
+GDL by: Sam Schreiber (schreib@cs.stanford.edu)
+slightly modified by: Stephan Schiffel (stephan.schiffel@gmx.de)
