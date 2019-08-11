@@ -93,11 +93,9 @@
     <EmbeddedResource Include="Gdl\Games\dual_hamilton.kif" />
     <EmbeddedResource Include="Gdl\Games\dual_hunter.kif" />
     <EmbeddedResource Include="Gdl\Games\dual_rainbow.kif" />
-    <EmbeddedResource Include="Gdl\Games\eotcitcit.gdl" />
     <EmbeddedResource Include="Gdl\Games\farming_quandries.kif" />
     <EmbeddedResource Include="Gdl\Games\fire_sheep.kif" />
     <EmbeddedResource Include="Gdl\Games\freeforall.kif" />
-    <EmbeddedResource Include="Gdl\Games\gameofsquares.gdl" />
     <EmbeddedResource Include="Gdl\Games\hamilton.kif" />
     <EmbeddedResource Include="Gdl\Games\hex.kif" />
     <EmbeddedResource Include="Gdl\Games\horseshoe.kif" />
@@ -110,13 +108,7 @@
     <EmbeddedResource Include="Gdl\Games\madness.kif" />
     <EmbeddedResource Include="Gdl\Games\multiple_buttons_and_lights.kif" />
     <EmbeddedResource Include="Gdl\Games\nine_board_tictactoe.kif" />
-    <EmbeddedResource Include="Gdl\Games\othello-fourway.gdl" />
-    <EmbeddedResource Include="Gdl\Games\othello-fourway-teamswitchA.gdl" />
-    <EmbeddedResource Include="Gdl\Games\othello-fourway-teamswitchB.gdl" />
-    <EmbeddedResource Include="Gdl\Games\slidingpieces.gdl" />
     <EmbeddedResource Include="Gdl\Games\TicTacToe.gdl" />
-    <EmbeddedResource Include="Gdl\Games\tictactoe_3player.gdl" />
-    <EmbeddedResource Include="Gdl\Games\tritactoe.gdl" />
     <Compile Include="Gdl\Passes\ReportInconsistentConstantSemanticsPassTests.cs" />
     <Compile Include="Gdl\GameCompilerTests.cs" />
     <Compile Include="Players\DuhPlayerTests.cs" />
