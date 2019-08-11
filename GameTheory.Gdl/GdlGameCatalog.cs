@@ -5,47 +5,41 @@ namespace GameTheory.Gdl
     using System.IO;
     using System.Linq;
     using GameTheory.Catalogs;
+    using Newtonsoft.Json;
+    using Newtonsoft.Json.Linq;
 
     public class GdlGameCatalog : GameCatalog
     {
         private readonly string folder;
-        private readonly string searchPattern;
-        private readonly bool subFolders;
 
-        public GdlGameCatalog(string folder, string searchPattern = "*.gdl|*.kif", bool subFolders = true)
+        public GdlGameCatalog(string folder)
         {
             this.folder = folder;
-            this.searchPattern = searchPattern;
-            this.subFolders = subFolders;
         }
 
-        protected override IEnumerable<IGame> GetGames()
-        {
-            var patterns = this.searchPattern.Split(new[] { '|' }, StringSplitOptions.RemoveEmptyEntries);
-            return patterns
-                .Aggregate(
-                    Enumerable.Empty<string>(),
-                    (acc, p) => acc.Concat(Directory.EnumerateFiles(this.folder, p, this.subFolders ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly)))
+        protected override IEnumerable<IGame> GetGames() =>
+            Directory.EnumerateFiles(this.folder, "METADATA", SearchOption.AllDirectories)
                 .Distinct()
                 .Select(path => new Game(path));
-        }
 
         private class Game : IGame
         {
-            private readonly string path;
+            private readonly string gdlPath;
             private readonly Lazy<Type> gameStateType;
             private readonly Lazy<Type> moveType;
 
-            public Game(string path)
+            public Game(string metadataPath)
             {
-                this.path = path;
-                this.Name = Path.GetFileName(path);
+                var metadata = JsonConvert.DeserializeObject<GameMetadata>(File.ReadAllText(metadataPath));
+                this.gdlPath = Path.Combine(Path.GetDirectoryName(metadataPath), metadata.RuleSheet);
+
+                this.Name = metadata.GameName;
                 this.gameStateType = new Lazy<Type>(
                     () =>
                     {
-                        var gdl = File.ReadAllText(this.path);
+                        var gdl = File.ReadAllText(this.gdlPath);
                         var compiler = new GameCompiler();
-                        var result = compiler.Compile(gdl, this.path);
+                        var result = compiler.Compile(gdl, this.gdlPath);
                         return result.Type;
                     },
                     isThreadSafe: true);

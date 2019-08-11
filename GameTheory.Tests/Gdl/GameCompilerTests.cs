@@ -9,15 +9,16 @@ namespace GameTheory.Tests.Gdl
     using System.Reflection;
     using GameTheory.Gdl;
     using GameTheory.Players;
+    using Newtonsoft.Json;
     using NUnit.Framework;
 
     [TestFixture]
     public class GameCompilerTests
     {
         public static IEnumerable<string> Games =>
-            from r in Assembly.GetExecutingAssembly().GetManifestResourceNames()
-            where r.EndsWith(".gdl", StringComparison.InvariantCultureIgnoreCase) || r.EndsWith(".kif", StringComparison.InvariantCultureIgnoreCase)
-            select r;
+            from m in Directory.EnumerateFiles("../../..", "METADATA", SearchOption.AllDirectories)
+            let metadata = JsonConvert.DeserializeObject<GameMetadata>(File.ReadAllText(m))
+            select Path.Combine(Path.GetDirectoryName(m), metadata.RuleSheet);
 
         [TestCase(@"(role a) terminal")]
         [TestCase(@"(role a) (goal a 100) terminal")]
