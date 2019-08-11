@@ -1,8 +1,10 @@
 {
-  "gameName": "knightstour",
-  "rulesheet": "knightstour.gdl",
-  "sourceUri": "http://ggpserver.general-game-playing.de/ggpserver/public/download_gdl.jsp?name=knightstour",
-  "uploadedBy": "admin",
+  "gameName": "Knights Tour",
+  "rulesheet": "knightstour.kif",
+  "stylesheet": "knightstour.js",
+  "description": "knightstour.txt",
+  "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=knightstour",
+  "curator": "genesereth@stanford.edu",
   "gdlVersion": "v1",
   "seesXml": "(<= (sees_xml random ?t) (true ?t))\n(<= (sees_xml ?p ?t) (role ?p) (distinct ?p random) (true ?t))"
 }

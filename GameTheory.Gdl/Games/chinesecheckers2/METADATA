@@ -1,8 +1,10 @@
 {
-  "gameName": "chinesecheckers2",
-  "rulesheet": "chinesecheckers2.gdl",
-  "sourceUri": "http://ggpserver.general-game-playing.de/ggpserver/public/download_gdl.jsp?name=chinesecheckers2",
-  "uploadedBy": "admin",
+  "gameName": "Chinese Checkers 2",
+  "rulesheet": "chinesecheckers2.kif",
+  "stylesheet": "chinesecheckers2.js",
+  "description": "chinesecheckers2.txt",
+  "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=chinesecheckers2",
+  "curator": "genesereth@stanford.edu",
   "gdlVersion": "v1",
   "seesXml": "(<= (sees_xml random ?t) (true ?t))\n(<= (sees_xml ?p ?t) (role ?p) (distinct ?p random) (true ?t))"
 }

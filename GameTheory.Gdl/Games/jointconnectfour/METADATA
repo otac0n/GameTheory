@@ -1,0 +1,8 @@
+{
+  "gameName": "Joint Connect Four",
+  "rulesheet": "jointconnectfour.kif",
+  "stylesheet": "jointconnectfour.js",
+  "description": "jointconnectfour.txt",
+  "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=jointconnectfour",
+  "curator": "ptr.pham@gmail.com"
+}

@@ -1,8 +1,10 @@
 {
-  "gameName": "knightthrough",
-  "rulesheet": "knightthrough.gdl",
-  "sourceUri": "http://ggpserver.general-game-playing.de/ggpserver/public/download_gdl.jsp?name=knightthrough",
-  "uploadedBy": "admin",
+  "gameName": "Knight Through",
+  "rulesheet": "knightthrough.kif",
+  "stylesheet": "knightthrough.js",
+  "description": "knightthrough.txt",
+  "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=knightthrough",
+  "curator": "genesereth@stanford.edu",
   "gdlVersion": "v1",
   "seesXml": "(<= (sees_xml random ?t) (true ?t))\n(<= (sees_xml ?p ?t) (role ?p) (distinct ?p random) (true ?t))"
 }

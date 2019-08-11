@@ -1,0 +1,6 @@
+
+The 3-puzzle is a very simple sliding tile puzzle. The game board is a 2x2 square with numbered tiles in all but one of the cells.
+
+The state of the game is modified by sliding numbered tiles into the empty space from adjacent cells, thus moving the empty space to a new location. There are four possible moves - moving the empty space up, down, left, or right. Obviously, not all moves are possible in all states.
+
+The ultimate object of the game is to place the tiles in order and position the empty square in the lower right cell.  The game terminates after 6 moves. The goal state is worth 100 points; all other states are worth 0 points.

@@ -1,0 +1,1 @@
+Connect Four Suicide is the suicide version of Connect Four.  Two players (red and black) take turns. Each drops a disc of their color into the grid from the top. The first player to get four in a row (horizontally, vertically, or diagonally) *loses*.  The game is a forced win for the second player (if the player is smart enough to see it).

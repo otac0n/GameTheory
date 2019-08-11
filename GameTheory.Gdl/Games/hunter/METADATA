@@ -1,0 +1,8 @@
+{
+  "gameName": "Hunter",
+  "rulesheet": "hunter.kif",
+  "stylesheet": "hunter.js",
+  "description": "hunter.txt",
+  "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=hunter",
+  "curator": "genesereth@stanford.edu"
+}

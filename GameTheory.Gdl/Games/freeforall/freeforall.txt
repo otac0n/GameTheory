@@ -1,0 +1,1 @@
+On each turn, the player in control may spawn a new piece from their starting location, move an existing piece as though it were a Chess knight, or capture with an existing piece as though it were a Chess king. Whenever a player captures another piece it receives 10 points.  The game terminates after 30 moves.

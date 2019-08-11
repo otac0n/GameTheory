@@ -1,8 +1,10 @@
 {
-  "gameName": "tictactoe",
+  "gameName": "Tic Tac Toe",
   "rulesheet": "tictactoe.gdl",
-  "sourceUri": "http://ggpserver.general-game-playing.de/ggpserver/public/download_gdl.jsp?name=tictactoe",
-  "uploadedBy": "admin",
+  "stylesheet": "tictactoe.js",
+  "description": "tictactoe.txt",
+  "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=tictactoe",
+  "curator": "genesereth@stanford.edu",
   "gdlVersion": "v1",
   "seesXml": "(<= (sees_xml random ?t) (true ?t))\n(<= (sees_xml ?p ?t) (role ?p) (distinct ?p random) (true ?t))"
 }

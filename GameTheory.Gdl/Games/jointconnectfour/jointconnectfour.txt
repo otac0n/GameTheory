@@ -1,0 +1,3 @@
+
+Joint Connect Four is a disjunctively factorable joining of Connect Four and Connect Four Suicide. You win if you win on either board. 
+

@@ -1,0 +1,8 @@
+{
+  "gameName": "Kono",
+  "rulesheet": "kono.kif",
+  "stylesheet": "kono.js",
+  "description": "kono.txt",
+  "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=kono",
+  "curator": "genesereth@stanford.edu"
+}

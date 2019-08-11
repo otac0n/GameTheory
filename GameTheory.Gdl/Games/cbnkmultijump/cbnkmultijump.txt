@@ -1,0 +1,1 @@
+Checkers played on a barrel, i.e. the board wraps around from top to bottom.  No kings.  Jumps are mandatory; and, once a jump takes place, a player gets to jump again.  The objective of the game is to take as many of the opponent's pieces as possible.  Terminates on step 50 or when all pieces are taken, whichever comes first.

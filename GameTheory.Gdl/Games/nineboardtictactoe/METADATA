@@ -1,0 +1,8 @@
+{
+  "gameName": "Nine Board Tic Tac Toe",
+  "rulesheet": "nineboardtictactoe.kif",
+  "stylesheet": "nineboardtictactoe.js",
+  "description": "nineboardtictactoe.txt",
+  "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=nineboardtictactoe",
+  "curator": "sam.schreiber@gmail.com"
+}

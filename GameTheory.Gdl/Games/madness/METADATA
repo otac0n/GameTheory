@@ -1,0 +1,8 @@
+{
+  "gameName": "Madness",
+  "rulesheet": "madness.kif",
+  "stylesheet": "madness.js",
+  "description": "madness.txt",
+  "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=madness",
+  "curator": "genesereth@stanford.edu"
+}

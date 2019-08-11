@@ -1,0 +1,2 @@
+
+Madness is a variant of chess in which the objective is to capture material.  Except that there is a twist - both opponents gain 5 points for every white piece taken and lose 5 points for every black piece taken.  The game ends after 60 steps or when one player has no remaining material.

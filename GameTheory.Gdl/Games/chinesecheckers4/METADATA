@@ -1,8 +1,10 @@
 {
-  "gameName": "chinesecheckers4",
-  "rulesheet": "chinesecheckers4.gdl",
-  "sourceUri": "http://ggpserver.general-game-playing.de/ggpserver/public/download_gdl.jsp?name=chinesecheckers4",
-  "uploadedBy": "admin",
+  "gameName": "Chinese Checkers 4",
+  "rulesheet": "chinesecheckers4.kif",
+  "stylesheet": "chinesecheckers4.js",
+  "description": "chinesecheckers4.txt",
+  "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=chinesecheckers4",
+  "curator": "genesereth@stanford.edu",
   "gdlVersion": "v1",
   "seesXml": "(<= (sees_xml random ?t) (true ?t))\n(<= (sees_xml ?p ?t) (role ?p) (distinct ?p random) (true ?t))"
 }

@@ -1,0 +1,8 @@
+{
+  "gameName": "Three Puzzle",
+  "rulesheet": "threepuzzle.kif",
+  "stylesheet": "threepuzzle.js",
+  "description": "threepuzzle.txt",
+  "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=threepuzzle",
+  "curator": "genesereth@stanford.edu"
+}

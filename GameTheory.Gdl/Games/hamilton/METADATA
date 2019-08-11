@@ -1,0 +1,8 @@
+{
+  "gameName": "Hamilton",
+  "rulesheet": "hamilton.kif",
+  "stylesheet": "hamilton.js",
+  "description": "hamilton.txt",
+  "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=hamilton",
+  "curator": "genesereth@stanford.edu"
+}

@@ -1,0 +1,8 @@
+{
+  "gameName": "Eight Puzzle",
+  "rulesheet": "eightpuzzle.kif",
+  "stylesheet": "eightpuzzle.js",
+  "description": "eightpuzzle.txt",
+  "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=eightpuzzle",
+  "curator": "genesereth@stanford.edu"
+}

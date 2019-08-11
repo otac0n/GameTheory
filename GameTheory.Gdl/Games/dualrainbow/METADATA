@@ -1,0 +1,8 @@
+{
+  "gameName": "Dual Rainbow",
+  "rulesheet": "dualrainbow.kif",
+  "stylesheet": "dualrainbow.js",
+  "description": "dualrainbow.txt",
+  "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=dualrainbow",
+  "curator": "genesereth@stanford.edu"
+}

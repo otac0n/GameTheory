@@ -1,0 +1,3 @@
+
+Dual Hunter is a two player game consisting of games of single-player hunter played in parallel.  There are two boards and two players, and each player plays on its own board.
+

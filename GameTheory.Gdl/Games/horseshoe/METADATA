@@ -1,0 +1,8 @@
+{
+  "gameName": "Horseshoe",
+  "rulesheet": "horseshoe.kif",
+  "stylesheet": "horseshoe.js",
+  "description": "horseshoe.txt",
+  "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=horseshoe",
+  "curator": "genesereth@stanford.edu"
+}

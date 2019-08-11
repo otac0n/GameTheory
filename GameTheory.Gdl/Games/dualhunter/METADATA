@@ -1,0 +1,8 @@
+{
+  "gameName": "Dual Hunter",
+  "rulesheet": "dualhunter.kif",
+  "stylesheet": "dualhunter.js",
+  "description": "dualhunter.txt",
+  "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=dualhunter",
+  "curator": "genesereth@stanford.edu"
+}

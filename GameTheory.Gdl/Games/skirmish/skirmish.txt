@@ -1,0 +1,2 @@
+
+Skirmish is a variant of chess in which the objective is to take the opponent's material.  The final score is a linear function of the number of opponent pieces captured, with every piece worth approximately the same amount.  The game ends on step 40 or when one player has no remaining material, whichever comes first.

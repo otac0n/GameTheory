@@ -1,0 +1,171 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Connect Four Suicide
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Components
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+  (role blue)
+  (role red)
+
+  (<= (base (cell ?x ?y ?p)) (x ?x) (y ?y) (role ?p))
+  (base (control blue))
+  (base (control red))
+
+  (<= (input ?p (drop ?x)) (role ?p) (x ?x))
+  (<= (input ?p noop) (role ?p))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; init
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+  (init (control blue))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; legal
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+  (<= (legal blue noop)
+      (true (control red)))
+
+  (<= (legal blue (drop ?x))
+      (true (control blue))
+      (columnopen ?x))
+
+  (<= (legal red noop)
+      (true (control blue)))
+
+  (<= (legal red (drop ?x))
+      (true (control red))
+      (columnopen ?x))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; next
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+  (<= (next (cell ?x 1 ?player))
+      (does ?player (drop ?x))
+	  (columnempty ?x))
+
+  (<= (next (cell ?x ?y2 ?player))
+      (does ?player (drop ?x))
+      (cellopen ?x ?y2)
+      (succ ?y1 ?y2)
+      (not (cellopen ?x ?y1))) 
+
+  (<= (next (cell ?x ?y ?player))
+      (true (cell ?x ?y ?player)))
+      
+  (<= (next (control blue))
+      (true (control red)))
+
+  (<= (next (control red))
+      (true (control blue)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; goal
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+  (<= (goal blue 100)
+      (line red))
+
+  (<= (goal blue 50)
+      (not (line blue))
+      (not (line red)))
+
+  (<= (goal blue 0)
+      (line blue))
+
+
+  (<= (goal red 100)
+      (line blue))
+
+  (<= (goal red 50)
+      (not (line blue))
+      (not (line red)))
+
+  (<= (goal red 0)
+      (line red))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; terminal
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+  (<= terminal (line blue))
+  (<= terminal (line red))
+  (<= terminal (not boardopen))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Views
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+  (<= (cellopen ?x ?y)
+      (x ?x)
+      (y ?y)
+      (not (true (cell ?x ?y blue)))
+      (not (true (cell ?x ?y red))))
+
+  (<= (columnopen ?x)
+      (cellopen ?x 6))
+
+  (<= (columnempty ?x)
+      (cellopen ?x 1))
+
+  (<= boardopen
+      (x ?x)
+      (columnopen ?x))
+
+  (<= (line ?player)
+      (true (cell ?x1 ?y ?player))
+      (succ ?x1 ?x2)
+      (succ ?x2 ?x3)
+      (succ ?x3 ?x4)
+      (true (cell ?x2 ?y ?player))
+      (true (cell ?x3 ?y ?player))
+      (true (cell ?x4 ?y ?player)))
+
+  (<= (line ?player)
+      (true (cell ?x ?y1 ?player))
+      (succ ?y1 ?y2)
+      (succ ?y2 ?y3)
+      (succ ?y3 ?y4)
+      (true (cell ?x ?y2 ?player))
+      (true (cell ?x ?y3 ?player))
+      (true (cell ?x ?y4 ?player)))
+
+  (<= (line ?player)
+      (true (cell ?x1 ?y1 ?player))
+      (succ ?x1 ?x2)
+      (succ ?x2 ?x3)
+      (succ ?x3 ?x4)
+      (succ ?y1 ?y2)
+      (succ ?y2 ?y3)
+      (succ ?y3 ?y4)
+      (true (cell ?x2 ?y2 ?player))
+      (true (cell ?x3 ?y3 ?player))
+      (true (cell ?x4 ?y4 ?player)))
+
+  (<= (line ?player)
+      (true (cell ?x1 ?y4 ?player))
+      (succ ?x1 ?x2)
+      (succ ?x2 ?x3)
+      (succ ?x3 ?x4)
+      (succ ?y3 ?y4)
+      (succ ?y2 ?y3)
+      (succ ?y1 ?y2)
+      (true (cell ?x2 ?y3 ?player))
+      (true (cell ?x3 ?y2 ?player))
+      (true (cell ?x4 ?y1 ?player)))
+      
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Data
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+  (succ 1 2) (succ 2 3) (succ 3 4) (succ 4 5) (succ 5 6) (succ 6 7)
+
+  (x 1) (x 2) (x 3) (x 4) (x 5) (x 6) (x 7)
+  (y 1) (y 2) (y 3) (y 4) (y 5) (y 6)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

@@ -1,0 +1,2 @@
+
+Hamilton is a single player game played on a graph with two interconnected nodes.  The player starts out on one of the twenty nodes, and on each step moves to an adjacent node.  The objective of the game is to visit as many nodes as possible in twenty steps.  The reward at the end of the game is an increasing function of the number of nodes visited.  (Theoretical version of this problem - trying to find a Hamiltonian path under resource constraints.)

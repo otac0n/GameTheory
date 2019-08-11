@@ -1,0 +1,8 @@
+{
+  "gameName": "Dual Hamilton",
+  "rulesheet": "dualhamilton.kif",
+  "stylesheet": "dualhamilton.js",
+  "description": "dualhamilton.txt",
+  "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=dualhamilton",
+  "curator": "genesereth@stanford.edu"
+}

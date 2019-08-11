@@ -1,0 +1,10 @@
+{
+  "gameName": "Chinese Checkers",
+  "rulesheet": "chinesecheckers.kif",
+  "stylesheet": "chinesecheckers.js",
+  "description": "chinesecheckers.txt",
+  "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=chinesecheckers",
+  "curator": "genesereth@stanford.edu",
+  "gdlVersion": "v1",
+  "seesXml": "(<= (sees_xml random ?t) (true ?t))\n(<= (sees_xml ?p ?t) (role ?p) (distinct ?p random) (true ?t))"
+}

@@ -1,0 +1,7 @@
+{
+  "gameName": "cbnkmultijump",
+  "rulesheet": "cbnkmultijump.kif",
+  "stylesheet": "cbnkmultijump.js",
+  "description": "cbnkmultijump.txt",
+  "sourceUri": "http://ggp.stanford.edu/ggp/games/cbnkmultijump/"
+}

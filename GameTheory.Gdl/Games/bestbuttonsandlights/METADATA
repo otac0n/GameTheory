@@ -1,0 +1,8 @@
+{
+  "gameName": "Best Buttons and Lights",
+  "rulesheet": "bestbuttonsandlights.kif",
+  "stylesheet": "bestbuttonsandlights.js",
+  "description": "bestbuttonsandlights.txt",
+  "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=bestbuttonsandlights",
+  "curator": "genesereth@stanford.edu"
+}

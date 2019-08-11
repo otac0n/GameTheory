@@ -1,0 +1,3 @@
+
+Dual Rainbow is a two player game consisting of two single player map coloring problems.  There are two maps and two players, and each player colors its own map.  Four colors; no two adjacent regions can be the same color, including those that meet at a point.
+

@@ -1,0 +1,8 @@
+{
+  "gameName": "Joint Buttons and Lights",
+  "rulesheet": "jointbuttonsandlights.kif",
+  "stylesheet": "jointbuttonsandlights.js",
+  "description": "jointbuttonsandlights.txt",
+  "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=jointbuttonsandlights",
+  "curator": "genesereth@stanford.edu"
+}

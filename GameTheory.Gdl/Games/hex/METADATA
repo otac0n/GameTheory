@@ -1,0 +1,8 @@
+{
+  "gameName": "Hex",
+  "rulesheet": "hex.kif",
+  "stylesheet": "hex.js",
+  "description": "hex.txt",
+  "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=hex",
+  "curator": "genesereth@stanford.edu"
+}

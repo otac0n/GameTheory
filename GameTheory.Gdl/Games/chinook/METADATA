@@ -1,0 +1,8 @@
+{
+  "gameName": "Chinook",
+  "rulesheet": "chinook.kif",
+  "stylesheet": "chinook.js",
+  "description": "chinook.txt",
+  "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=chinook",
+  "curator": "genesereth@stanford.edu"
+}

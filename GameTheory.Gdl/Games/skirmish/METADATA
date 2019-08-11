@@ -1,8 +1,10 @@
 {
-  "gameName": "skirmish",
-  "rulesheet": "skirmish.gdl",
-  "sourceUri": "http://ggpserver.general-game-playing.de/ggpserver/public/download_gdl.jsp?name=skirmish",
-  "uploadedBy": "admin",
+  "gameName": "Skirmish",
+  "rulesheet": "skirmish.kif",
+  "stylesheet": "skirmish.js",
+  "description": "skirmish.txt",
+  "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=skirmish",
+  "curator": "genesereth@stanford.edu",
   "gdlVersion": "v1",
   "seesXml": "(<= (sees_xml random ?t) (true ?t))\n(<= (sees_xml ?p ?t) (role ?p) (distinct ?p random) (true ?t))"
 }

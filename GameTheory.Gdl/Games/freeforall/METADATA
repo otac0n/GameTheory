@@ -1,0 +1,8 @@
+{
+  "gameName": "Freeforall",
+  "rulesheet": "freeforall.kif",
+  "stylesheet": "freeforall.js",
+  "description": "freeforall.txt",
+  "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=freeforall",
+  "curator": "genesereth@stanford.edu"
+}

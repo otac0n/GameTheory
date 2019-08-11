@@ -1,0 +1,8 @@
+{
+  "gameName": "Buttons and Lights",
+  "rulesheet": "buttonsandlights.kif",
+  "stylesheet": "buttonsandlights.js",
+  "description": "buttonsandlights.txt",
+  "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=buttonsandlights",
+  "curator": "genesereth@stanford.edu"
+}
