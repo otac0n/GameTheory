@@ -1,0 +1,8 @@
+{
+  "gameName": "Pentago",
+  "rulesheet": "pentago.kif",
+  "stylesheet": "pentago.js",
+  "description": "pentago.txt",
+  "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=pentago",
+  "curator": "genesereth@stanford.edu"
+}

@@ -1,0 +1,2 @@
+
+Skirmish is a variant of chess in which the objective is to take the opponent's material.  The game ends after 60 moves or when one player has no remaining pieces.  Whichever player has the most pieces at the end wins.  If they both have the same number of pieces, the game is a draw.

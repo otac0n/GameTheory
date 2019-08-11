@@ -1,0 +1,1 @@
+There are 40 objects arranged in a line. Two players alternate. On each turn, a player may remove any object. The objects to either side of it are also removed, if they are still present. The goal is to be the player who takes the last object.

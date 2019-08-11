@@ -1,0 +1,7 @@
+{
+  "gameName": "alquerquenoreward",
+  "rulesheet": "alquerquenoreward.kif",
+  "stylesheet": "alquerquenoreward.js",
+  "description": "alquerquenoreward.txt",
+  "sourceUri": "http://ggp.stanford.edu/ggp/games/alquerquenoreward/"
+}

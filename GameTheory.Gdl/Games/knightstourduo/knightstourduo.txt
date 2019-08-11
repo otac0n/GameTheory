@@ -1,0 +1,2 @@
+
+Knight's Tour Duo is a two player cooperative game played on a 10x6 board.  Each player begins with a knight towards the center of the board.  On each step, each knight moves like a knight in Chess.  Each time the knight moves, it leaves behind a hole.  The goal of the game is to get as many holes on the board as possible.  The game ends when either knight jumps onto a square with a hole, or the knights move to the same space.

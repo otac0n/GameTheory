@@ -1,0 +1,7 @@
+{
+  "gameName": "multiplehunter",
+  "rulesheet": "multiplehunter.kif",
+  "stylesheet": "multiplehunter.js",
+  "description": "multiplehunter.txt",
+  "sourceUri": "http://ggp.stanford.edu/ggp/games/multiplehunter/"
+}

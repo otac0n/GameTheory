@@ -1,0 +1,8 @@
+{
+  "gameName": "Leafy McFall Face",
+  "rulesheet": "leafymcfallface.kif",
+  "stylesheet": "leafymcfallface.js",
+  "description": "leafymcfallface.txt",
+  "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=leafymcfallface",
+  "curator": "bhz@stanford.edu"
+}

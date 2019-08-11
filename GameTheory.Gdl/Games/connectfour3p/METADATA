@@ -1,0 +1,7 @@
+{
+  "gameName": "connectfour3p",
+  "rulesheet": "connectfour3p.kif",
+  "stylesheet": "connectfour3p.js",
+  "description": "connectfour3p.txt",
+  "sourceUri": "http://ggp.stanford.edu/ggp/games/connectfour3p/"
+}

@@ -1,0 +1,2 @@
+
+Classic Sudoku.  Place digits 1, ... , 9 on the board so that no row or column or 3x3 square contains more than one occurrence of any digit.  The game is over when there are no further legal moves.  100 points for successful completion; 0 points otherwise.

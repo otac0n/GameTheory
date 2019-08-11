@@ -1,0 +1,3 @@
+
+TTCC4 is an amalgam of Chess, Checkers, Tic Tac Toe, and Connect Four.  Each player has a pawn, a checker king, and a knight in home positions.  On each turn, the active player can move one of its pieces or drop a disk in one of the central chutes on the board.  Captures are permitted according to the rules of the games from which the pieces are drawn.  The objective of the game is to make three in a row, column, or diagonal in the middle 9 squares of the board.
+

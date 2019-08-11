@@ -1,0 +1,234 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Tictactoe
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Components
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+    (role white)
+    (role black)
+
+    (<= (base (cell ?board ?m ?n x)) (board ?board) (index ?m) (index ?n))
+    (<= (base (cell ?board ?m ?n o)) (board ?board) (index ?m) (index ?n))
+    (<= (base (cell ?board ?m ?n b)) (board ?board) (index ?m) (index ?n))
+    (<= (base (control ?role)) (role ?role))
+    (<= (base (step ?n)) (succ ?m ?n))
+
+    (<= (input ?r (mark ?board ?m ?n)) (role ?r) (board ?board) (index ?m) (index ?n))
+    (<= (input ?r noop) (role ?r))
+
+    (board 1)
+    (board 2)
+    (board 3)
+    (board 4)
+    (board 5)
+    (board 6)
+    (board 7)
+    (board 8)
+    (board 9)
+
+    (index 1)
+    (index 2)
+    (index 3)
+  
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; init
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+    (<= (init (cell ?board ?m ?n b))
+        (board ?board)
+        (index ?m)
+        (index ?n))
+
+    (init (control white))
+    
+    (init (step 1))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; legal
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+    (<= (legal ?w (mark ?board ?x ?y))
+        (true (cell ?board ?x ?y b))
+        (true (control ?w)))
+    
+    (<= (legal white noop)
+        (true (control black)))
+    
+    (<= (legal black noop)
+        (true (control white)))
+    
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; next
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+    (<= (next (cell ?board ?m ?n x))
+        (does white (mark ?board ?m ?n))
+        (true (cell ?board ?m ?n b)))
+    
+    (<= (next (cell ?board ?m ?n o))
+        (does black (mark ?board ?m ?n))
+        (true (cell ?board ?m ?n b)))
+    
+    (<= (next (cell ?board ?m ?n ?w))
+        (true (cell ?board ?m ?n ?w))
+        (distinct ?w b))
+    
+    (<= (next (cell ?board ?m ?n b))
+        (true (cell ?board ?m ?n b))
+        (not (does white (mark ?board ?m ?n)))
+        (not (does black (mark ?board ?m ?n))))
+    
+    (<= (next (control white))
+        (true (control black)))
+    
+    (<= (next (control black))
+        (true (control white)))
+
+  (<= (next (step ?new))
+      (true (step ?old))
+      (succ ?old ?new))
+
+    
+    
+    (<= (row ?board ?m ?x)
+        (true (cell ?board ?m 1 ?x))
+        (true (cell ?board ?m 2 ?x))
+        (true (cell ?board ?m 3 ?x)))
+    
+    (<= (column ?board ?n ?x)
+        (true (cell ?board 1 ?n ?x))
+        (true (cell ?board 2 ?n ?x))
+        (true (cell ?board 3 ?n ?x)))
+    
+    (<= (diagonal ?board ?x)
+        (true (cell ?board 1 1 ?x))
+        (true (cell ?board 2 2 ?x))
+        (true (cell ?board 3 3 ?x)))
+    
+    (<= (diagonal ?board ?x)
+        (true (cell ?board 1 3 ?x))
+        (true (cell ?board 2 2 ?x))
+        (true (cell ?board 3 1 ?x)))
+    
+    
+    (<= (line ?board ?x) (row ?board ?m ?x))
+    (<= (line ?board ?x) (column ?board ?m ?x))
+    (<= (line ?board ?x) (diagonal ?board ?x))
+    
+    
+    (<= (open ?board) (true (cell ?board ?m ?n b)))
+    
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; goal
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+  (<= (goal white 100)
+      (line 5 x)
+      (not (line 5 o))
+      firsthalf)
+
+  (<= (goal white 75)
+      (not (line 5 x))
+      (not (line 5 o))
+      firsthalf)
+
+  (<= (goal white 50)
+      (line 5 x)
+      (not (line 5 o))
+      (not firsthalf))
+
+  (<= (goal white 25)
+      (not (line 5 x))
+      (not (line 5 o))
+      (not firsthalf))
+
+  (<= (goal white 0)
+      (not (line 5 x))
+      (line 5 o))
+
+
+  (<= (goal black 100)
+      (line 5 o)
+      (not (line 5 x))
+      firsthalf)
+
+  (<= (goal black 75)
+      (not (line 5 o))
+      (not (line 5 x))
+      firsthalf)
+
+  (<= (goal black 50)
+      (line 5 o)
+      (not (line 5 x))
+      (not firsthalf))
+
+  (<= (goal black 25)
+      (not (line 5 o))
+      (not (line 5 x))
+      (not firsthalf))
+
+  (<= (goal black 0)
+      (not (line 5 o))
+      (line 5 x))
+
+
+  (<= firsthalf
+      (true (step ?n))
+      (early ?n))
+    
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; terminal
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    
+    (<= terminal
+        (line 5 x))
+
+    (<= terminal
+        (line 5 o))
+
+    (<= terminal
+        (not (open 5)))
+
+    (<= terminal
+        (true (step 19)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Data
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+  (succ  0  1)
+  (succ  1  2)
+  (succ  2  3)
+  (succ  3  4)
+  (succ  4  5)
+  (succ  5  6)
+  (succ  6  7)
+  (succ  7  8)
+  (succ  8  9)
+  (succ  9 10)
+  (succ 10 11)
+  (succ 11 12)
+  (succ 12 13)
+  (succ 13 14)
+  (succ 14 15)
+  (succ 15 16)
+  (succ 16 17)
+  (succ 17 18)
+  (succ 18 19)
+
+  (early 1)
+  (early 2)
+  (early 3)
+  (early 4)
+  (early 5)
+  (early 6)
+  (early 7)
+  (early 8)
+  (early 9)
+  (early 10)
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

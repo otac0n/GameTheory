@@ -1,0 +1,3 @@
+
+Rainbow is a graph coloring game.  The player is given a planar map and four colors.  The goal of the game is to color the regions of the map with colors so that no two adjacent regions have the same color, including regions that meet at a point.
+

@@ -1,0 +1,8 @@
+{
+  "gameName": "Reversi",
+  "rulesheet": "reversi.kif",
+  "stylesheet": "reversi.js",
+  "description": "reversi.txt",
+  "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=reversi",
+  "curator": "genesereth@stanford.edu"
+}

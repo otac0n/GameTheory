@@ -1,0 +1,1 @@
+A variant of capture the flag where each player possesses a chess knight. The goal is to pick up the flag and return it to the other edge of your side without getting captured. A player can capture by moving onto the same cell as an opponent while on their defending side, or anywhere if the opponent is carrying the flag.

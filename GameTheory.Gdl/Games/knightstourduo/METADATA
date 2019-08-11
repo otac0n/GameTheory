@@ -1,0 +1,8 @@
+{
+  "gameName": "Knights Tour Duo",
+  "rulesheet": "knightstourduo.kif",
+  "stylesheet": "knightstourduo.js",
+  "description": "knightstourduo.txt",
+  "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=knightstourduo",
+  "curator": "chuchro3@stanford.edu"
+}

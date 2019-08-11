@@ -1,0 +1,3 @@
+
+Dual Hamilton is a two player game consisting of two games of single-player Hamilton played in parallel.  There are two graphs and two players, and each player plays on its own graph.
+

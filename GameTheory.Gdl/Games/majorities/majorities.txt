@@ -1,0 +1,1 @@
+Majorities is played on a made of hexagonal cells.  The board is initially empty, except for six unusable cells. The first player places a stone on any unoccupied cell, then players take turns placing pieces on empty cells.  A majority of stones in a line wins that line.  A majority of parallel lines in a direction wins that direction.  A majority of directions wins the game.

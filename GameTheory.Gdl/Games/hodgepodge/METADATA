@@ -1,0 +1,7 @@
+{
+  "gameName": "hodgepodge",
+  "rulesheet": "hodgepodge.kif",
+  "stylesheet": "hodgepodge.js",
+  "description": "hodgepodge.txt",
+  "sourceUri": "http://ggp.stanford.edu/ggp/games/hodgepodge/"
+}

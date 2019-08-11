@@ -1,0 +1,8 @@
+{
+  "gameName": "Best Sukoshi",
+  "rulesheet": "bestsukoshi.kif",
+  "stylesheet": "bestsukoshi.js",
+  "description": "bestsukoshi.txt",
+  "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=bestsukoshi",
+  "curator": "genesereth@stanford.edu"
+}

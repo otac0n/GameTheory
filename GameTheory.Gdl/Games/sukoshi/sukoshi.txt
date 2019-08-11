@@ -1,0 +1,2 @@
+
+Sukoshi is 3x3 Sudoku.  The player places digits 1, 2, 3 on the board so that no row or column contains more than one occurrence of any digit.  The game is over when there are no further legal moves.  100 points for successful completion; 0 points otherwise.

@@ -1,0 +1,8 @@
+{
+  "gameName": "Lightboard",
+  "rulesheet": "lightboard.kif",
+  "stylesheet": "lightboard.js",
+  "description": "lightboard.txt",
+  "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=lightboard",
+  "curator": "genesereth@stanford.edu"
+}

@@ -1,0 +1,2 @@
+
+"Multiple" version of hunterbig, made "worse" in some sense because "all moves are always legal" in the other boards--which may create weird situations--but may be easier to factor because the other boards are now truly irrelevant.

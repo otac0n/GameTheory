@@ -1,0 +1,8 @@
+{
+  "gameName": "Rainbow",
+  "rulesheet": "rainbow.kif",
+  "stylesheet": "rainbow.js",
+  "description": "rainbow.txt",
+  "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=rainbow",
+  "curator": "genesereth@stanford.edu"
+}

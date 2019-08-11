@@ -1,0 +1,7 @@
+{
+  "gameName": "hexforfour",
+  "rulesheet": "hexforfour.kif",
+  "stylesheet": "hexforfour.js",
+  "description": "hexforfour.txt",
+  "sourceUri": "http://ggp.stanford.edu/ggp/games/hexforfour/"
+}

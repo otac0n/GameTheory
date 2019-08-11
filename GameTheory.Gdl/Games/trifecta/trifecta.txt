@@ -1,0 +1,12 @@
+<p>
+Trifecta! is a 2-player game. At the start, the game deck has 9 cards all facing up. Players take turns to pick up one card from the deck. The player who first collects three cards with <b>ANY</b> of the following characteristics wins game:
+<ul>
+	<li>Same <b>background</b> color (for e.g. black)</li>
+	<li>Same <b>foreground</b> color (for e.g. yellow)</li>
+	<li>Same <b>suit</b> (for e.g. hearts)</li> 
+	<li>Same <b>value</b> (for e.g. four)</li>
+</ul>
+</p>
+<p>
+If there are no winners after 9 cards have been picked, the game ends in a draw.
+</p>

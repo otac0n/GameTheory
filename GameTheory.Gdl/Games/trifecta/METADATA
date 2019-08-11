@@ -1,0 +1,8 @@
+{
+  "gameName": "Trifecta!",
+  "rulesheet": "trifecta.kif",
+  "stylesheet": "trifecta.js",
+  "description": "trifecta.txt",
+  "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=trifecta",
+  "curator": "abhijeet@stanford.edu"
+}

@@ -1,0 +1,8 @@
+{
+  "gameName": "Dont Touch",
+  "rulesheet": "donttouch.kif",
+  "stylesheet": "donttouch.js",
+  "description": "donttouch.txt",
+  "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=donttouch",
+  "curator": "bhz@stanford.edu"
+}

@@ -1,0 +1,8 @@
+{
+  "gameName": "Duidoku",
+  "rulesheet": "duidoku.kif",
+  "stylesheet": "duidoku.js",
+  "description": "duidoku.txt",
+  "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=duidoku",
+  "curator": "genesereth@stanford.edu"
+}

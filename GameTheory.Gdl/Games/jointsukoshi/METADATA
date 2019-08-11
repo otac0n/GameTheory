@@ -1,0 +1,7 @@
+{
+  "gameName": "Joint Sukoshi",
+  "rulesheet": "jointsukoshi.kif",
+  "stylesheet": "jointsukoshi.js",
+  "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=jointsukoshi",
+  "curator": "genesereth@stanford.edu"
+}

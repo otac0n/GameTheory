@@ -1,0 +1,8 @@
+{
+  "gameName": "Multiple Tic Tac Toe",
+  "rulesheet": "multipletictactoe.kif",
+  "stylesheet": "multipletictactoe.js",
+  "description": "multipletictactoe.txt",
+  "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=multipletictactoe",
+  "curator": "genesereth@stanford.edu"
+}

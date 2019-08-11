@@ -1,0 +1,2 @@
+
+Ten rows of tens lights, all initially off.  Clicking a light toggles it on and off.  The goal is to get turn on eight lights around the center making a rough O figure.  The game once the O is illuminated or after 8 steps, whichever comes first.

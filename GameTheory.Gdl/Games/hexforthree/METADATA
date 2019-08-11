@@ -1,0 +1,8 @@
+{
+  "gameName": "Hex For Three",
+  "rulesheet": "hexforthree.kif",
+  "stylesheet": "hexforthree.js",
+  "description": "hexforthree.txt",
+  "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=hexforthree",
+  "curator": "genesereth@stanford.edu"
+}

@@ -1,0 +1,8 @@
+{
+  "gameName": "Bad Skirmish",
+  "rulesheet": "badskirmish.kif",
+  "stylesheet": "badskirmish.js",
+  "description": "badskirmish.txt",
+  "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=badskirmish",
+  "curator": "genesereth@stanford.edu"
+}

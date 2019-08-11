@@ -1,0 +1,8 @@
+{
+  "gameName": "Battle of Numbers",
+  "rulesheet": "battleofnumbers.kif",
+  "stylesheet": "battleofnumbers.js",
+  "description": "battleofnumbers.txt",
+  "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=battleofnumbers",
+  "curator": "dustinsfink@gmail.com"
+}

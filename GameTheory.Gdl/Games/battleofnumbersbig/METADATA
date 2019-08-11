@@ -1,0 +1,7 @@
+{
+  "gameName": "Battle of Numbers Big",
+  "rulesheet": "battleofnumbersbig.kif",
+  "stylesheet": "battleofnumbersbig.js",
+  "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=battleofnumbersbig",
+  "curator": "bhz@stanford.edu"
+}

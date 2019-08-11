@@ -1,0 +1,8 @@
+{
+  "gameName": "Breakthrough Small",
+  "rulesheet": "breakthroughsmall.kif",
+  "stylesheet": "breakthroughsmall.js",
+  "description": "breakthroughsmall.txt",
+  "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=breakthroughsmall",
+  "curator": "genesereth@stanford.edu"
+}

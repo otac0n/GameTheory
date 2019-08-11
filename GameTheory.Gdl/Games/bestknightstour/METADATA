@@ -1,0 +1,8 @@
+{
+  "gameName": "Best Knights Tour",
+  "rulesheet": "bestknightstour.kif",
+  "stylesheet": "bestknightstour.js",
+  "description": "bestknightstour.txt",
+  "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=bestknightstour",
+  "curator": "genesereth@stanford.edu"
+}

@@ -1,0 +1,1 @@
+Two players take turns placing Xs and Os on a 4x4 grid. The game ends once a player marks a square adjacent to its own mark (not including diagonals).

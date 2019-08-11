@@ -1,0 +1,3 @@
+
+Multiple Hamilton is a one player game consisting of two subgames of single-player Hamilton.  A player can move in either subgame but only the second subgame counts.
+

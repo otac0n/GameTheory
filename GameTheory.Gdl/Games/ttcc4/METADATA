@@ -1,0 +1,8 @@
+{
+  "gameName": "Tic Tac Chess Checkers 4",
+  "rulesheet": "ttcc4.kif",
+  "stylesheet": "ttcc4.js",
+  "description": "ttcc4.txt",
+  "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=ttcc4",
+  "curator": "genesereth@stanford.edu"
+}

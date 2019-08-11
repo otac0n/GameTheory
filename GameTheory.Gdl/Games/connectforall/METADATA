@@ -1,0 +1,6 @@
+{
+  "gameName": "connectforall",
+  "rulesheet": "connectforall.kif",
+  "stylesheet": "connectforall.js",
+  "sourceUri": "http://ggp.stanford.edu/ggp/games/connectforall/"
+}

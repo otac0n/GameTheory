@@ -1,0 +1,95 @@
+; initialize m, n, k
+(index m 9)
+(index n 4)
+(index k 4)
+
+(role x)
+(role o)
+(other x o)
+(other o x)
+
+(<= (base (cell ?x ?y ?mark)) (index m ?x) (index n ?y) (role ?mark))
+(<= (base (control ?role)) (role ?role))
+
+(init (control x))
+
+(<= (input ?role (mark ?x ?y)) (index m ?x) (index n ?y) (role ?role))
+(<= (input ?role noop) (role ?role))
+
+(<= (legal ?role (mark ?x ?y)) (cellempty ?x ?y) (true (control ?role)))
+(<= (legal ?role noop) (role ?role) (not (true (control ?role))))
+
+(<= (next (cell ?x ?y ?mark)) (true (cell ?x ?y ?mark)))
+(<= (next (cell ?x ?y ?mark)) (does ?mark (mark ?x ?y)))
+
+(<= (next (control ?role)) (other ?role ?role2) (true (control ?role2)))
+
+(<= (cellempty ?x ?y) 
+    (index m ?x) 
+    (index n ?y) 
+    (not (true (cell ?x ?y x))) 
+    (not (true (cell ?x ?y o))))
+(<= anycellempty (cellempty ?x ?y))
+(<= terminal (not anycellempty))
+
+(linetype up)
+(linetype right)
+(linetype updiagonal)
+(linetype downdiagonal)
+
+(<= (line ?type ?x ?y ?mark 1) (true (cell ?x ?y ?mark)) (linetype ?type))
+
+(<= (line up ?x ?y ?mark ?k) 
+    (true (cell ?x ?y ?mark)) 
+    (succ ?pk ?k) 
+    (succ ?py ?y) 
+    (line up ?x ?py ?mark ?pk))
+(<= (line right ?x ?y ?mark ?k) 
+    (true (cell ?x ?y ?mark)) 
+    (succ ?pk ?k) 
+    (succ ?px ?x) 
+    (line right ?px ?y ?mark ?pk))
+(<= (line updiagonal ?x ?y ?mark ?k) 
+    (true (cell ?x ?y ?mark)) 
+    (succ ?pk ?k) 
+    (succ ?px ?x) 
+    (succ ?py ?y) 
+    (line updiagonal ?px ?py ?mark ?pk))
+(<= (line downdiagonal ?x ?y ?mark ?k) 
+    (true (cell ?x ?y ?mark)) 
+    (succ ?pk ?k) 
+    (succ ?x ?px) 
+    (succ ?py ?y) 
+    (line downdiagonal ?px ?py ?mark ?pk))
+    
+;(<= (line sq ua re o 4)
+;    (true (cell ?i ?j o))
+;    (true (cell ?i ?l o))
+;    (true (cell ?k ?l o))
+;    (true (cell ?k ?j o))
+;    (succ ?i ?k)
+;    (succ ?j ?l)
+;		(distinct ?j 2))
+
+(<= (win ?mark) (line ?direction ?x ?y ?mark ?k) (index k ?k))
+(<= (goal ?role 100) (win ?role))
+(<= (goal ?role 50) (role ?role) (not (win x)) (not (win o)))
+(<= (goal ?role 0) (other ?role ?other) (win ?other))
+(<= terminal (win ?mark))
+
+
+
+; data
+
+(succ 1 2)
+(succ 2 3)
+(succ 3 4)
+(succ 4 5)
+(succ 5 6)
+(succ 6 7)
+(succ 7 8)
+(succ 8 9)
+
+(<= (index ?mn ?x) (succ ?x ?y) (index ?mn ?y) (mn ?mn)))
+(mn m)
+(mn n)

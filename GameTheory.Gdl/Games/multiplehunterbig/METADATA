@@ -1,0 +1,8 @@
+{
+  "gameName": "Multiple Hunter Big",
+  "rulesheet": "multiplehunterbig.kif",
+  "stylesheet": "multiplehunterbig.js",
+  "description": "multiplehunterbig.txt",
+  "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=multiplehunterbig",
+  "curator": "bhz@stanford.edu"
+}

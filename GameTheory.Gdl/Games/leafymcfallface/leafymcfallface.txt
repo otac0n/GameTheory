@@ -1,0 +1,1 @@
+Leafy McFallface! There are 2 caterpillars on a 5 by 5 grid of leaves, initially at opposite corners. Each time they move, they eat the leaf behind them, so they can never move to that square again. Once a player is surrounded by empty space (which has been eaten) they have no moves and they lose. The last player with valid moves is the winner.

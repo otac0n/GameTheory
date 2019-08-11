@@ -1,0 +1,8 @@
+{
+  "gameName": "Connect Four Team",
+  "rulesheet": "connectfourteam.kif",
+  "stylesheet": "connectfourteam.js",
+  "description": "connectfourteam.txt",
+  "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=connectfourteam",
+  "curator": "chuchro3@stanford.edu"
+}

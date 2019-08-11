@@ -1,0 +1,3 @@
+
+Duikoshi is two-player 4x4 Sukoshi.  The player to play the last possible legal move wins the game.  The other player loses.  Unless, that is, the board is completely full, in which case the game is a tie.
+

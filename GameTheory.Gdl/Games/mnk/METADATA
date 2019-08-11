@@ -1,0 +1,7 @@
+{
+  "gameName": "mnk",
+  "rulesheet": "mnk.kif",
+  "stylesheet": "mnk.js",
+  "description": "mnk.txt",
+  "sourceUri": "http://ggp.stanford.edu/ggp/games/mnk/"
+}

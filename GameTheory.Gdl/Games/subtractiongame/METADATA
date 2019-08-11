@@ -1,0 +1,6 @@
+{
+  "gameName": "subtractiongame",
+  "rulesheet": "subtractiongame.kif",
+  "description": "subtractiongame.txt",
+  "sourceUri": "http://ggp.stanford.edu/ggp/games/subtractiongame/"
+}

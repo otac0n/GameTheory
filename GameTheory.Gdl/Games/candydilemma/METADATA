@@ -1,0 +1,7 @@
+{
+  "gameName": "candydilemma",
+  "rulesheet": "candydilemma.kif",
+  "stylesheet": "candydilemma.js",
+  "description": "candydilemma.txt",
+  "sourceUri": "http://ggp.stanford.edu/ggp/games/candydilemma/"
+}

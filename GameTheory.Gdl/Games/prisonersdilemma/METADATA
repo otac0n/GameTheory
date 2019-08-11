@@ -1,0 +1,7 @@
+{
+  "gameName": "prisonersdilemma",
+  "rulesheet": "prisonersdilemma.kif",
+  "stylesheet": "prisonersdilemma.js",
+  "description": "prisonersdilemma.txt",
+  "sourceUri": "http://ggp.stanford.edu/ggp/games/prisonersdilemma/"
+}

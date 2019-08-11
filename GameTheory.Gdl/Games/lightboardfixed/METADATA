@@ -1,0 +1,7 @@
+{
+  "gameName": "lightboardfixed",
+  "rulesheet": "lightboardfixed.kif",
+  "stylesheet": "lightboardfixed.js",
+  "description": "lightboardfixed.txt",
+  "sourceUri": "http://ggp.stanford.edu/ggp/games/lightboardfixed/"
+}

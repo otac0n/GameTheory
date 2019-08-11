@@ -1,0 +1,262 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Hunter
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Components
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+  (role robot)
+
+  (<= (base (cell ?board ?m ?n ?p)) (board ?board) (row ?m) (col ?n) (piece ?p))
+  (<= (base (captures ?m)) (scoremap ?m ?n))
+  (<= (base (step ?n)) (succ ?m ?n))
+
+  (<= (input robot (move ?board ?m1 ?n1 ?m2 ?n2))
+      (board ?board)
+      (row ?m1)
+      (col ?n1)
+      (knightmove ?m1 ?n1 ?m2 ?n2))
+
+  (row 1)
+  (row 2)
+  (row 3)
+  (row 4)
+  (row 5)
+	(row 6)
+
+  (col 1)
+  (col 2)
+  (col 3)
+	(col 4)
+	(col 5)
+
+  (piece knight)
+  (piece pawn)
+  (piece none)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; init
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+  (<= (init (cell ?board 1 1 knight)) (board ?board))
+  (<= (init (cell ?board ?i ?j pawn)) (board ?board) (row ?i) (col ?j) (distinct ?i 1))
+  (<= (init (cell ?board ?i ?j pawn)) (board ?board) (row ?i) (col ?j) (distinct ?j 1))
+  (init (captures 0))
+  (init (step 1))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; legal
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	
+  (<= (legal robot (move 1 ?m1 ?n1 ?m2 ?n2))
+      (true (cell 1 ?m1 ?n1 knight))
+      (knightmove ?m1 ?n1 ?m2 ?n2))
+  (<= (legal robot (move ?board ?m1 ?n1 ?m2 ?n2)) 
+      (distinct ?board 1)
+      (board ?board) 
+      (knightmove ?m1 ?n1 ?m2 ?n2))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; next
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+  (<= (moveboard ?board) (does robot (move ?board ?m1 ?n1 ?m2 ?n2)))
+
+  (<= (next (cell ?board ?m2 ?n2 knight))
+      (does robot (move ?board ?m1 ?n1 ?m2 ?n2)))
+  
+  (<= (next (cell ?board ?m2 ?n2 knight))
+      (true (cell ?board ?m2 ?n2 knight))
+      (not (moveboard ?board)))
+
+  (<= (next (cell ?board ?m1 ?n1 none))
+      (does robot (move ?board ?m1 ?n1 ?m2 ?n2)))
+
+  (<= (next (cell ?board ?u ?v pawn))
+      (true (cell ?board ?u ?v pawn))
+      (does robot (move ?board ?m1 ?n1 ?m2 ?n2))
+      (distinct ?u ?m2))
+
+  (<= (next (cell ?board ?u ?v pawn))
+      (true (cell ?board ?u ?v pawn))
+      (does robot (move ?board ?m1 ?n1 ?m2 ?n2))
+      (distinct ?v ?n2))
+      
+  (<= (next (cell ?board ?u ?v pawn))
+      (true (cell ?board ?u ?v pawn))
+      (not (moveboard ?board)))
+
+  (<= (next (cell ?board ?u ?v none))
+      (true (cell ?board ?u ?v none)))
+
+  (<= (next (captures ?old))
+      (does robot (move 1 ?m1 ?n1 ?m2 ?n2))
+      (true (cell 1 ?m2 ?n2 none))
+      (true (captures ?old)))
+      
+  (<= (next (captures ?old))
+      (not (moveboard 1))
+      (true (captures ?old)))
+
+  (<= (next (captures ?new))
+      (does robot (move 1 ?m1 ?n1 ?m2 ?n2))
+      (true (cell 1 ?m2 ?n2 pawn))
+      (true (captures ?old))
+      (succ ?old ?new))
+
+  (<= (next (step ?new))
+      (true (step ?old))
+      (succ ?old ?new))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; goal
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+  (<= (goal robot ?goal)
+      (true (captures ?count))
+      (scoremap ?count ?goal))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; terminal
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+  (<= terminal (true (step 30)))
+  ;(<= terminal (true (cell ?m ?n knight)) (true (cell ?m ?n none)))
+	; uncomment the above line to get knightstour
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Views
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	
+  (<= (knightmove ?m1 ?n1 ?m2 ?n2)
+      (add1row ?m1 ?m2)
+      (add2col ?n1 ?n2))
+
+  (<= (knightmove ?m1 ?n1 ?m2 ?n2)
+      (add1row ?m1 ?m2)
+      (add2col ?n2 ?n1))
+
+  (<= (knightmove ?m1 ?n1 ?m2 ?n2)
+      (add1row ?m2 ?m1)
+      (add2col ?n1 ?n2))
+
+  (<= (knightmove ?m1 ?n1 ?m2 ?n2)
+      (add1row ?m2 ?m1)
+      (add2col ?n2 ?n1))
+
+  (<= (knightmove ?m1 ?n1 ?m2 ?n2)
+      (add2row ?m1 ?m2)
+      (add1col ?n1 ?n2))
+
+  (<= (knightmove ?m1 ?n1 ?m2 ?n2)
+      (add2row ?m1 ?m2)
+      (add1col ?n2 ?n1))
+
+  (<= (knightmove ?m1 ?n1 ?m2 ?n2)
+      (add2row ?m2 ?m1)
+      (add1col ?n1 ?n2))
+
+  (<= (knightmove ?m1 ?n1 ?m2 ?n2)
+      (add2row ?m2 ?m1)
+      (add1col ?n2 ?n1))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Data
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+  (board 1)
+  (board 2)
+  (board 3)
+  (board 4)
+  (board 5)
+  (board 6)
+  (board 7)
+  (board 8)
+  (board 0)
+
+  (succ  0  1)
+  (succ  1  2)
+  (succ  2  3)
+  (succ  3  4)
+  (succ  4  5)
+  (succ  5  6)
+  (succ  6  7)
+  (succ  7  8)
+  (succ  8  9)
+  (succ  9 10)
+  (succ 10 11)
+  (succ 11 12)
+  (succ 12 13)
+  (succ 13 14)
+  (succ 14 15)
+  (succ 15 16)
+	(succ 16 17)
+	(succ 17 18)
+  (succ 18 19)
+  (succ 19 20)
+  (succ 20 21)
+  (succ 21 22)
+  (succ 22 23)
+  (succ 23 24)
+  (succ 24 25)
+  (succ 25 26)
+  (succ 26 27)
+  (succ 27 28)
+  (succ 28 29)
+  (succ 29 30)
+  (succ 30 31)
+
+  (add1row 1 2)
+  (add1row 2 3)
+  (add1row 3 4)
+  (add1row 4 5)
+	(add1row 5 6)
+
+  (add2row 1 3)
+  (add2row 2 4)
+  (add2row 3 5)
+	(add2row 4 6)
+
+  (add1col 1 2)
+  (add1col 2 3)
+	(add1col 3 4)
+	(add1col 4 5)
+
+  (add2col 1 3)
+	(add2col 2 4)
+	(add2col 3 5)
+
+  (scoremap 0 0)
+  (scoremap 1 1)
+  (scoremap 2 2)
+  (scoremap 3 3)
+  (scoremap 4 4)
+  (scoremap 5 5)
+  (scoremap 6 6)
+  (scoremap 7 7)
+  (scoremap 8 8)
+  (scoremap 9 9)
+  (scoremap 10 10)
+  (scoremap 11 11)
+  (scoremap 12 12)
+  (scoremap 13 13)
+  (scoremap 14 14)
+  (scoremap 15 15)
+  (scoremap 16 16)
+  (scoremap 17 17)
+  (scoremap 18 18)
+  (scoremap 19 19)
+  (scoremap 20 21)
+  (scoremap 21 25)
+  (scoremap 22 29)
+  (scoremap 23 35)
+  (scoremap 24 42)
+  (scoremap 25 50)
+  (scoremap 26 59)
+  (scoremap 27 70)
+  (scoremap 28 84)
+  (scoremap 29 100)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

@@ -1,0 +1,1 @@
+There are 40 objects. Two players alternate. On each turn, a player may remove one or two objects. The goal is to be the player who takes the last object.

@@ -1,0 +1,7 @@
+{
+  "gameName": "avoidadjacent",
+  "rulesheet": "avoidadjacent.kif",
+  "stylesheet": "avoidadjacent.js",
+  "description": "avoidadjacent.txt",
+  "sourceUri": "http://ggp.stanford.edu/ggp/games/avoidadjacent/"
+}

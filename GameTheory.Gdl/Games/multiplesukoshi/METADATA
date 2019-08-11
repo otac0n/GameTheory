@@ -1,0 +1,8 @@
+{
+  "gameName": "Multiple Sukoshi",
+  "rulesheet": "multiplesukoshi.kif",
+  "stylesheet": "multiplesukoshi.js",
+  "description": "multiplesukoshi.txt",
+  "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=multiplesukoshi",
+  "curator": "genesereth@stanford.edu"
+}

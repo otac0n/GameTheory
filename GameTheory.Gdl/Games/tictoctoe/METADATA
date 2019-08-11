@@ -1,0 +1,8 @@
+{
+  "gameName": "Toc Toc Toe",
+  "rulesheet": "tictoctoe.kif",
+  "stylesheet": "tictoctoe.js",
+  "description": "tictoctoe.txt",
+  "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=tictoctoe",
+  "curator": "genesereth@stanford.edu"
+}

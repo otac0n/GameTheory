@@ -1,0 +1,2 @@
+
+Hex For Four is a 4-player version of Hex.  The red and yellow players try to form a path from upper left to lower right.  The green and blue players try to build a path from upper right to lower left.

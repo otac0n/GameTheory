@@ -1,0 +1,7 @@
+{
+  "gameName": "konozero",
+  "rulesheet": "konozero.kif",
+  "stylesheet": "konozero.js",
+  "description": "konozero.txt",
+  "sourceUri": "http://ggp.stanford.edu/ggp/games/konozero/"
+}

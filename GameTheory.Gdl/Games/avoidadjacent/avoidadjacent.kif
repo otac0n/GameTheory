@@ -1,0 +1,131 @@
+(role one)
+(role two)
+
+(<= (base (cell ?m x)) (index ?m))
+(<= (base (cell ?m b)) (index ?m))
+(base (control one))
+(base (control two))
+
+(<= (input ?r (mark ?m)) (role ?r) (index ?m))
+(<= (input ?r noop) (role ?r))
+
+(<= (index ?i) (adjacent ?i ?j))
+(<= (index ?j) (adjacent ?i ?j))
+
+(<= (init (cell ?i b)) (index ?i))
+(init (control one))
+
+(<= (legal ?w (mark ?x))
+    (open ?x)
+    (true (cell ?x b))
+    (true (control ?w)))
+
+(<= (legal one noop)
+    (true (control two)))
+
+(<= (legal two noop)
+    (true (control one)))
+
+(<= (next (cell ?m x))
+    (does ?w (mark ?m))
+    (true (cell ?m b)))
+
+(<= (next (cell ?m ?w))
+    (true (cell ?m ?w))
+    (distinct ?w b))
+
+(<= (next (cell ?m b))
+    (does ?w (mark ?j))
+    (true (cell ?m b))
+    (distinct ?m ?j))
+
+(<= (next (control one))
+    (true (control two)))
+
+(<= (next (control two))
+    (true (control one)))
+
+(<= (goal one 100)
+    (true (control two)))
+
+(<= (goal one 0)
+    (true (control one)))
+
+(<= (goal two 100)
+    (true (control one)))
+
+(<= (goal two 0)
+    (true (control two)))
+		
+(<= anyopen (open ?x))
+
+(<= terminal (not anyopen))
+
+(adjacent 1 2)
+(adjacent 2 3)
+(adjacent 3 4)
+(adjacent 4 5)
+(adjacent 5 6)
+(adjacent 6 7)
+(adjacent 7 8)
+(adjacent 8 9)
+(adjacent 9 10)
+(adjacent 10 11)
+(adjacent 11 12)
+(adjacent 12 13)
+(adjacent 13 14)
+(adjacent 14 15)
+(adjacent 15 16)
+(adjacent 16 17)
+(adjacent 17 18)
+(adjacent 18 19)
+(adjacent 19 20)
+(adjacent 20 21)
+(adjacent 21 22)
+(adjacent 22 23)
+(adjacent 23 24)
+(adjacent 24 25)
+(adjacent 25 26)
+(adjacent 26 27)
+(adjacent 27 28)
+(adjacent 28 29)
+(adjacent 29 30)
+(adjacent 30 31)
+(adjacent 31 32)
+(adjacent 32 33)
+(adjacent 33 34)
+(adjacent 34 35)
+(adjacent 35 36)
+(adjacent 36 37)
+(adjacent 37 38)
+(adjacent 38 39)
+(adjacent 39 40)
+(last 40)
+
+(<= (open ?x)
+    (adjacent ?x ?xr)
+    (adjacent ?xl ?x)
+    (true (cell ?x b))
+    (true (cell ?xr b))
+    (true (cell ?xl b)))
+
+(<= (open 1)
+    (true (cell 1 b))
+    (true (cell 2 b)))
+
+(<= (open ?last)
+		(adjacent ?prev ?last)
+		(last ?last)
+    (true (cell ?prev b))
+    (true (cell ?last b)))
+
+(<= (closed ?x)
+    (true (cell ?x x)))
+
+(<= (closed ?x)
+    (adjacent ?x ?xr)
+    (true (cell ?xr x)))
+
+(<= (closed ?x)
+    (adjacent ?xl ?x)
+    (true (cell ?xl x)))

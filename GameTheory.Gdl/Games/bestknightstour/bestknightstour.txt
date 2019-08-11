@@ -1,0 +1,2 @@
+
+The overall game consists of nine games of Knight's Tour.  Each game is played on a 5x6 board.  Each game begins with a single knight in the upper left corner of the board.  On each step, the knight moves like a knight in Chess.  Each time the knight moves, it leaves behind a hole.  The goal of the game is to get as many holes on one board as possible.  90 points for games in the first row, 100 points for games in the second row, 80 points for games in the third row.  The game ends after 30 moves or whenever the knight jumps onto a square with a hole.

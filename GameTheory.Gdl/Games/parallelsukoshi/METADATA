@@ -1,0 +1,7 @@
+{
+  "gameName": "parallelsukoshi",
+  "rulesheet": "parallelsukoshi.kif",
+  "stylesheet": "parallelsukoshi.js",
+  "description": "parallelsukoshi.txt",
+  "sourceUri": "http://ggp.stanford.edu/ggp/games/parallelsukoshi/"
+}

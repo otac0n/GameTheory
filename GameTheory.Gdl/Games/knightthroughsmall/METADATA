@@ -1,0 +1,7 @@
+{
+  "gameName": "knightthroughsmall",
+  "rulesheet": "knightthroughsmall.kif",
+  "stylesheet": "knightthroughsmall.js",
+  "description": "knightthroughsmall.txt",
+  "sourceUri": "http://ggp.stanford.edu/ggp/games/knightthroughsmall/"
+}

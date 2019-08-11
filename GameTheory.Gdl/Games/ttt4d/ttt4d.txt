@@ -1,0 +1,1 @@
+Four-dimensional tic-tac-toe. The board is 4x4x4, and the goal is to get 4 in a row along any axis. The three rows of the visualization are "rotations" of the board: each row shows the same board position, but with a different axis aligned to the "depth" axis. This may help players see what is happening.

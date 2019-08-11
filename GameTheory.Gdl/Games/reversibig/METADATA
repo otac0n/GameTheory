@@ -1,0 +1,7 @@
+{
+  "gameName": "reversibig",
+  "rulesheet": "reversibig.kif",
+  "stylesheet": "reversibig.js",
+  "description": "reversibig.txt",
+  "sourceUri": "http://ggp.stanford.edu/ggp/games/reversibig/"
+}

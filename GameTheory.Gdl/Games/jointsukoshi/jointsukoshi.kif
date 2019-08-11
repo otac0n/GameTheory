@@ -1,0 +1,169 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Simultaneous Sukoshi - conjunctive actions
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Components
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+  (role robot)
+
+
+  (<= (base (cell ?b ?i ?j ?x))
+      (board ?b)
+      (index ?i)
+      (index ?j)
+      (filler ?x))
+
+
+  (<= (input robot (mark ?b ?i ?j ?x))
+      (board ?b)
+      (index ?i)
+      (index ?j)
+      (marker ?x))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; init
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+  (init (cell 1 1 1 b))
+  (init (cell 1 1 2 1))
+  (init (cell 1 1 3 b))
+  (init (cell 1 2 1 2))
+  (init (cell 1 2 2 b))
+  (init (cell 1 2 3 b))
+  (init (cell 1 3 1 b))
+  (init (cell 1 3 2 b))
+  (init (cell 1 3 3 b))
+
+  (init (cell 2 1 1 b))
+  (init (cell 2 1 2 1))
+  (init (cell 2 1 3 b))
+  (init (cell 2 2 1 b))
+  (init (cell 2 2 2 2))
+  (init (cell 2 2 3 b))
+  (init (cell 2 3 1 b))
+  (init (cell 2 3 2 b))
+  (init (cell 2 3 3 b))
+
+  (init (cell 3 1 1 b))
+  (init (cell 3 1 2 b))
+  (init (cell 3 1 3 3))
+  (init (cell 3 2 1 b))
+  (init (cell 3 2 2 b))
+  (init (cell 3 2 3 b))
+  (init (cell 3 3 1 b))
+  (init (cell 3 3 2 b))
+  (init (cell 3 3 3 2))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; legal
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+  (<= (legal robot ?x ?y ?z)
+      (legalone 1 ?x)
+      (legalone 2 ?y)
+      (legalone 3 ?z))
+
+
+  (<= (legalone ?b ?x)
+      (legalmove ?b ?x))
+
+  (<= (legalone ?b (mark ?i ?j x))
+      (true (cell ?b ?i ?j b))
+      (not (playable ?b)))
+
+
+  (<= (playable ?b) (legalmove ?b ?x))
+
+
+  (<= (legalmove ?b (mark ?i ?j ?x))     
+      (true (cell ?b ?i ?j b))
+      (index ?x)
+      (not (row ?b ?i ?x))
+      (not (col ?b ?j ?x)))
+
+
+  (<= (row ?b ?i ?x) (true (cell ?b ?i 1 ?x)))
+  (<= (row ?b ?i ?x) (true (cell ?b ?i 2 ?x)))
+  (<= (row ?b ?i ?x) (true (cell ?b ?i 3 ?x)))
+
+  (<= (col ?b ?j ?x) (true (cell ?b 1 ?j ?x)))
+  (<= (col ?b ?j ?x) (true (cell ?b 2 ?j ?x)))
+  (<= (col ?b ?j ?x) (true (cell ?b 3 ?j ?x)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; next
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+  (<= (next (cell ?b ?i ?j ?x))
+      (doesone ?role ?b (mark ?i ?j ?x)))
+
+  (<= (next (cell ?b ?k ?l ?x))
+      (true (cell ?b ?k ?l ?x))
+      (distinct ?x b))
+
+  (<= (next (cell ?b ?i ?j b))
+      (doesone ?role ?c (mark ?k ?l ?x))
+      (true (cell ?b ?i ?j b))
+      (distinct ?b ?c))
+
+  (<= (next (cell ?b ?i ?j b))
+      (doesone ?role ?b (mark ?k ?l ?x))
+      (true (cell ?b ?i ?j b))
+      (distinct ?i ?k))
+
+  (<= (next (cell ?b ?i ?j b))
+      (doesone ?role ?b (mark ?k ?l ?x))
+      (true (cell ?b ?i ?j b))
+      (distinct ?j ?l))
+
+
+  (<= (doesone ?role 1 ?x) (does ?role ?x ?y ?z))
+  (<= (doesone ?role 2 ?y) (does ?role ?x ?y ?z))
+  (<= (doesone ?role 3 ?z) (does ?role ?x ?y ?z))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; goal
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+  (<= (goal robot 100) (index ?b) (not (open ?b)) (not (bad ?b)))
+
+  (<= (goal robot 0) (open ?b))
+  (<= (goal robot 0) (bad 1) (bad 2) (bad 3))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; terminal
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+  (<= terminal (index ?b) (not (open ?b)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Views
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+  (<= (filler ?x) (index ?x))
+  (filler b)
+  (filler x)
+
+  (<= (marker ?x) (index ?x))
+  (marker x)
+
+  (<= (open ?b) (true (cell ?b ?i ?j b)))
+
+  (<= (bad ?b) (true (cell ?b ?i ?j x)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Data
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+  (board 1)
+  (board 2)
+  (board 3)
+
+  (index 1)
+  (index 2)
+  (index 3)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

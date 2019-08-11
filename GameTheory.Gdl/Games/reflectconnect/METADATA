@@ -1,0 +1,6 @@
+{
+  "gameName": "reflectconnect",
+  "rulesheet": "reflectconnect.kif",
+  "stylesheet": "reflectconnect.js",
+  "sourceUri": "http://ggp.stanford.edu/ggp/games/reflectconnect/"
+}

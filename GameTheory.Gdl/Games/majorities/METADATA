@@ -1,0 +1,8 @@
+{
+  "gameName": "Majorities",
+  "rulesheet": "majorities.kif",
+  "stylesheet": "majorities.js",
+  "description": "majorities.txt",
+  "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=majorities",
+  "curator": "genesereth@stanford.edu"
+}

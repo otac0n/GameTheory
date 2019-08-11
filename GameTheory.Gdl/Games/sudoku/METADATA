@@ -1,0 +1,8 @@
+{
+  "gameName": "Sudoku",
+  "rulesheet": "sudoku.kif",
+  "stylesheet": "sudoku.js",
+  "description": "sudoku.txt",
+  "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=sudoku",
+  "curator": "genesereth@stanford.edu"
+}

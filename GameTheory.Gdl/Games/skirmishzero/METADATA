@@ -1,0 +1,8 @@
+{
+  "gameName": "Skirmish Zero",
+  "rulesheet": "skirmishzero.kif",
+  "stylesheet": "skirmishzero.js",
+  "description": "skirmishzero.txt",
+  "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=skirmishzero",
+  "curator": "alandau@cs.stanford.edu"
+}

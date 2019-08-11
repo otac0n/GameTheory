@@ -1,0 +1,8 @@
+{
+  "gameName": "Hunter Big",
+  "rulesheet": "hunterbig.kif",
+  "stylesheet": "hunterbig.js",
+  "description": "hunterbig.txt",
+  "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=hunterbig",
+  "curator": "bhz@stanford.edu"
+}

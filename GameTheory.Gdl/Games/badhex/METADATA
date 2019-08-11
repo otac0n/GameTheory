@@ -1,0 +1,7 @@
+{
+  "gameName": "badhex",
+  "rulesheet": "player.kif",
+  "stylesheet": "badhex.js",
+  "description": "badhex.txt",
+  "sourceUri": "http://ggp.stanford.edu/ggp/games/badhex/"
+}

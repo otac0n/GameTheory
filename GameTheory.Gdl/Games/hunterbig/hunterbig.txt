@@ -1,0 +1,2 @@
+
+A bigger version of hunter. The player is given just barely enough moves to capture all pawns.

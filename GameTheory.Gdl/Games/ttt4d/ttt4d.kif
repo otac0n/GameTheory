@@ -1,0 +1,134 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Tictactoe
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Components
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+    (role white)
+    (role black)
+
+    (<= (base (cell ?board ?m ?n x)) (board ?board) (index ?m) (index ?n))
+    (<= (base (cell ?board ?m ?n o)) (board ?board) (index ?m) (index ?n))
+    (<= (base (cell ?board ?m ?n b)) (board ?board) (index ?m) (index ?n))
+    (<= (base (control ?role)) (role ?role))
+
+    (<= (input ?r (mark ?board ?m ?n)) (role ?r) (board ?board) (index ?m) (index ?n))
+    (<= (input ?r noop) (role ?r))
+		
+
+    (board 1)
+    (board 2)
+    (board 3)
+    (board 4)
+
+    (index 1)
+    (index 2)
+    (index 3)
+	(index 4)
+  
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; init
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+    (<= (init (cell ?board ?m ?n b))
+        (board ?board)
+        (index ?m)
+        (index ?n))
+
+    (init (control white))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; legal
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+    (<= (legal ?w (mark ?board ?x ?y))
+        (true (cell ?board ?x ?y b))
+        (true (control ?w)))
+    
+    (<= (legal white noop)
+        (true (control black)))
+    
+    (<= (legal black noop)
+        (true (control white)))
+    
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; next
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+    (<= (next (cell ?board ?m ?n x))
+        (does white (mark ?board ?m ?n))
+        (true (cell ?board ?m ?n b)))
+    
+    (<= (next (cell ?board ?m ?n o))
+        (does black (mark ?board ?m ?n))
+        (true (cell ?board ?m ?n b)))
+    
+    (<= (next (cell ?board ?m ?n ?w))
+        (true (cell ?board ?m ?n ?w))
+        (distinct ?w b))
+    
+    (<= (next (cell ?board ?m ?n b))
+        (true (cell ?board ?m ?n b))
+        (not (does white (mark ?board ?m ?n)))
+        (not (does black (mark ?board ?m ?n))))
+    
+    (<= (next (control white))
+        (true (control black)))
+    
+    (<= (next (control black))
+        (true (control white)))
+			
+		(<= (line ?dx ?dy ?dz ?x ?y ?z ?mark 1) 
+				(true (cell ?x ?y ?z ?mark)) 
+				(validdir ?dx ?dy ?dz))
+		
+		(<= (line ?dx ?dy ?dz ?x ?y ?z ?mark ?k) 
+				(true (cell ?x ?y ?z ?mark)) 
+				(add ?dx ?px ?x)
+				(add ?dy ?py ?y)
+				(add ?dz ?pz ?z)
+				(succ ?pk ?k)
+				(line ?dx ?dy ?dz ?px ?py ?pz ?mark ?pk))
+				
+		(mark white x) (mark black o)
+		(<= (win ?role) 
+				(mark ?role ?mark) 
+				(validstart ?dx ?x)
+				(validstart ?dy ?y)
+				(validstart ?dz ?z)
+				(line ?dx ?dy ?dz ?x ?y ?z ?mark 4))
+		
+		(<= (goal ?role 100) (win ?role))
+		(<= (goal ?role 50) (role ?role) (not (win white)) (not (win black)))
+		(<= (goal ?role 0) (other ?role ?other) (win ?other))
+		(<= terminal (win ?mark))
+		(<= terminal (not open))
+    
+    (<= open (true (cell ?board ?m ?n b)))
+   
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Data
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+	(validdir 0 0 p)
+	(<= (validdir 0 p ?dz) (dir ?dz))
+	(<= (validdir p ?dy ?dz) (dir ?dy) (dir ?dz))
+	(dir 0) (dir p) (dir n)
+	
+	(<= (validstart 0 ?x) (index ?x))
+	(validstart n 1)
+	(validstart p 4)
+	
+  (<= (add p ?x ?y) (succ ?x ?y))
+	(<= (add n ?x ?y) (succ ?y ?x))
+	(<= (add 0 ?x ?x) (succ ?x ?y))
+	(<= (add 0 ?x ?x) (succ ?y ?x))
+
+  (succ  1   2)
+  (succ  2   3)
+  (succ  3   4)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

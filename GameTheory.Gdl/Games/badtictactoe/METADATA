@@ -1,0 +1,8 @@
+{
+  "gameName": "Bad Tic Tac Toe",
+  "rulesheet": "badtictactoe.kif",
+  "stylesheet": "badtictactoe.js",
+  "description": "badtictactoe.txt",
+  "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=badtictactoe",
+  "curator": "genesereth@stanford.edu"
+}

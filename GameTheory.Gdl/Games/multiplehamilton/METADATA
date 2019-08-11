@@ -1,0 +1,8 @@
+{
+  "gameName": "Multiple Hamilton",
+  "rulesheet": "multiplehamilton.kif",
+  "stylesheet": "multiplehamilton.js",
+  "description": "multiplehamilton.txt",
+  "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=multiplehamilton",
+  "curator": "genesereth@stanford.edu"
+}

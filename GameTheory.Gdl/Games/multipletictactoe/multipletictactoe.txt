@@ -1,0 +1,1 @@
+The overall game consists of nine copies of Tic Tac Toe.  The goal is to win the game on the middle board.  Performance in all other boards is irrelevant. Scores higher if game over within first 9 moves, lower afterward.

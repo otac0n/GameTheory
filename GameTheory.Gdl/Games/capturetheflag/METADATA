@@ -1,0 +1,7 @@
+{
+  "gameName": "capturetheflag",
+  "rulesheet": "capturetheflag.kif",
+  "stylesheet": "capturetheflag.js",
+  "description": "capturetheflag.txt",
+  "sourceUri": "http://ggp.stanford.edu/ggp/games/capturetheflag/"
+}

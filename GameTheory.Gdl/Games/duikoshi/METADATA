@@ -1,0 +1,8 @@
+{
+  "gameName": "Duikoshi",
+  "rulesheet": "duikoshi.kif",
+  "stylesheet": "duikoshi.js",
+  "description": "duikoshi.txt",
+  "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=duikoshi",
+  "curator": "genesereth@stanford.edu"
+}

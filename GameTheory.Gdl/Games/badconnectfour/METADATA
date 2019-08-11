@@ -1,0 +1,8 @@
+{
+  "gameName": "Bad Connect Four",
+  "rulesheet": "badconnectfour.kif",
+  "stylesheet": "badconnectfour.js",
+  "description": "badconnectfour.txt",
+  "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=badconnectfour",
+  "curator": "genesereth@stanford.edu"
+}

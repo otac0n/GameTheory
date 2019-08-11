@@ -1,0 +1,7 @@
+{
+  "gameName": "parallelhamilton",
+  "rulesheet": "parallelhamilton.kif",
+  "stylesheet": "parallelhamilton.js",
+  "description": "parallelhamilton.txt",
+  "sourceUri": "http://ggp.stanford.edu/ggp/games/parallelhamilton/"
+}

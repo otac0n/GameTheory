@@ -1,0 +1,6 @@
+{
+  "gameName": "nqueens12",
+  "rulesheet": "nqueens12.kif",
+  "stylesheet": "nqueens12.js",
+  "sourceUri": "http://ggp.stanford.edu/ggp/games/nqueens12/"
+}

@@ -1,0 +1,516 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Oware
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Components
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+  (role rock)
+  (role stone)
+
+
+  (<= (base (cell ?r ?c ?p)) (cup ?r ?c) (c ?p))
+
+  (<= (base (capture ?r ?p)) (role ?r) (c ?p))
+
+  (base (control rock))
+  (base (control stone))
+
+  (base (step 1))
+
+  (<= (base (step ?n)) (pp ?m ?n))
+
+
+  (<= (input ?r (move ?c)) (cup ?r ?c))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; init
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+  (init (control rock))
+  (init (capture rock 0))
+  (init (capture stone 0))
+  (<= (init (cell ?r ?c 4)) (cup ?r ?c))
+  (init (step 1))	
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; legal
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(<= (legal ?r (move ?c))
+	(true (control ?r))
+	(true (cell ?r ?c ?p))
+	(distinct ?p 0))
+
+(<= (legal ?r noop)
+(role ?r)
+	(not (true (control ?r))))
+
+;;;usually a terminal signifier
+(<= (legal ?r noop)
+	(true (control ?r))
+	(allzero ?r))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; next
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(<= (next (control ?r))
+	(role ?r)
+	(not (true (control ?r))))
+
+(<= (next (cell ?r ?c ?p))
+	(cup ?r ?c)
+	(not (captured ?c))
+	(c ?p)
+	(contains ?c ?p))
+
+(<= (next (cell ?r ?c 0))
+	(cup ?r ?c)
+	(captured ?c))
+
+(<= (next (capture ?r ?p))
+	(role ?r)
+	(not (true (control ?r)))
+	(true (capture ?r ?p)))
+
+(<= (next (capture ?r ?p))
+	(true (control ?r))
+	(true (capture ?r ?p))
+	nocapture)
+
+(<= (next (capture ?r ?p2))
+	(true (control ?r))
+	(true (capture ?r ?p))
+	(true (cell ?r ?c ?pc))
+	(does ?r (move ?c))
+	(modadd ?c ?pc ?c2)
+	(c ?p1)
+	(captureTotal ?p1 ?c2)
+	(c ?p2)
+	(add ?p ?p1 ?p2))
+
+(<= (next (step ?tNext))
+    (true (step ?tCurrent))
+    (pp ?tCurrent ?tNext))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; goal
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+  (<= (goal rock ?p)
+	(not terminal)
+      (true (capture rock ?p)))
+
+  (<= (goal stone ?p)
+	(not terminal)
+	(true (capture stone ?p)))
+
+  (<= (goal ?r ?p)
+	terminal
+	(true (capture ?r ?p))
+	(allzero ?r))
+
+  (<= (goal ?r ?p)
+	terminal
+	(role ?r)
+	(not (allzero ?r))
+	(true (capture ?r2 ?p1))
+	(distinct ?r ?r2)
+	(add ?p1 ?p 48))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; terminal
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+  (<= terminal
+	(true (capture ?r ?p))
+	(c ?p1)
+	(add 25 ?p1 ?p))
+
+  (<= terminal
+	(true (capture rock 24))
+	(true (capture stone 24)))
+
+  (<= terminal (true (step 100)))
+
+  (<= terminal (role ?r) (allzero ?r))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Views
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(<= (captured ?c2)
+	(true (cell ?r ?c ?p))
+	(does ?r (move ?c))
+	(modadd ?c ?p ?c2)
+	(or (true (cell ?r2 ?c2 1))
+    	(true (cell ?r2 ?c2 2)))
+	(distinct ?r ?r2))
+
+(<= (captured ?c2)
+	(modsucc ?c2 ?c)
+	(or (true (cell ?r2 ?c2 1))
+    	(true (cell ?r2 ?c2 2)))
+	(true (control ?r))
+	(distinct ?r ?r2)
+	(captured ?c))
+
+(<= (captureTotal 0 ?c)
+	(cup ?r ?c)
+	(true (control ?r)))
+
+(<= (captureTotal 0 ?c)
+	(role ?r)
+	(cup ?r ?c)
+	(not (true (cell ?r ?c 1)))
+	(not (true (cell ?r ?c 2)))
+	(true (control ?r2))
+	(distinct ?r ?r2))
+
+(<= (captureTotal ?p ?c)
+	(true (cell ?r ?c ?p1))
+	(true (control ?r2))
+	(distinct ?r ?r2)
+	(or (true (cell ?r ?c 1))
+    	(true (cell ?r ?c 2)))
+	(succ ?p1 ?p2)
+	(modsucc ?c1 ?c)
+	(c ?p3)
+	(captureTotal ?p3 ?c1)
+	(add ?p2 ?p3 ?p))
+    
+
+;;; views and arithmetic
+
+  (<= (contains ?c 0)
+	(cup ?r ?c)
+	(does ?r (move ?c)))
+
+  (<= (contains ?c2 ?pt)
+	(true (cell ?r2 ?c2 ?p))
+	(succ ?p ?pt)
+	(does ?r (move ?c))
+	(inrange ?c ?c2)    
+	(distinct ?c ?c2))
+
+  (<= (contains ?c2 ?p)
+	(true (cell ?r2 ?c2 ?p))
+	(does ?r (move ?c))
+	(not (inrange ?c ?c2))
+	(distinct ?c ?c2))
+
+
+  (<= nocapture
+      (not onecapture))
+
+
+  (<= onecapture
+      (role ?r)
+      (cup ?r ?x)
+      (captured ?x))
+
+
+  (<= (allzero ?r)
+      (role ?r)
+      (not (nonzero ?r)))
+
+
+  (<= (nonzero ?r)
+      (true (cell ?r ?c ?p))
+      (distinct ?p 0))
+
+
+  (<= (inrange ?c ?c2)
+      (true (cell ?player ?c ?p))
+      (upto ?c ?p ?c2))
+
+
+  (<= (upto ?c ?p ?c2)
+	(role ?r)
+	(cup ?r ?c)
+	(cup ?r ?c2)
+	(c ?p)
+	(not (distinct ?c ?c2)))
+
+  (<= (upto ?c ?p ?c2)
+	(c ?p1)
+	(role ?r)
+	(cup ?r ?c2)
+	(succ ?p1 ?p)
+	(modsucc ?c ?c1)
+	(upto ?c1 ?p1 ?c2))
+
+
+  (<= (modadd ?c 0 ?c2)
+	(role ?r)
+	(cup ?r ?c)
+	(cup ?r ?c2)
+	(not (distinct ?c ?c2)))
+
+  (<= (modadd ?c ?p ?c2)
+	(role ?r1)
+	(cup ?r1 ?c1)
+	(role ?r2)
+	(cup ?r2 ?c2)
+	(succ ?p1 ?p)
+	(modsucc ?c ?c1)
+	(modadd ?c1 ?p1 ?c2))
+
+
+  (<= (add ?c 0 ?c2)
+      (c ?c)
+      (c ?c2)
+      (not (distinct ?c ?c2)))
+
+  (<= (add ?c ?p ?c2)
+      (c ?c2)
+      (succ ?p1 ?p)
+      (succ ?c ?c1)
+      (add ?c1 ?p1 ?c2))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Data
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(cup rock 1)
+(cup rock 2)
+(cup rock 3)
+(cup rock 4)
+(cup rock 5)
+(cup rock 6)
+(cup stone 7)
+(cup stone 8)
+(cup stone 9)
+(cup stone 10)
+(cup stone 11)
+(cup stone 12)
+
+(succ 0 1)
+(succ 1 2)
+(succ 2 3)
+(succ 3 4)
+(succ 4 5)
+(succ 5 6)
+(succ 6 7)
+(succ 7 8)
+(succ 8 9)
+(succ 9 10)
+(succ 10 11)
+(succ 11 12)
+(succ 12 13)
+(succ 13 14)
+(succ 14 15)
+(succ 15 16)
+(succ 16 17)
+(succ 17 18)
+(succ 18 19)
+(succ 19 20)
+(succ 20 21)
+(succ 21 22)
+(succ 22 23)
+(succ 23 24)
+(succ 24 25)
+(succ 25 26)
+(succ 26 27)
+(succ 27 28)
+(succ 28 29)
+(succ 29 30)
+(succ 30 31)
+(succ 31 32)
+(succ 32 33)
+(succ 33 34)
+(succ 34 35)
+(succ 35 36)
+(succ 36 37)
+(succ 37 38)
+(succ 38 39)
+(succ 39 40)
+(succ 40 41)
+(succ 41 42)
+(succ 42 43)
+(succ 43 44)
+(succ 44 45)
+(succ 45 46)
+(succ 46 47)
+(succ 47 48)
+
+(modsucc 1 2)
+(modsucc 2 3)
+(modsucc 3 4)
+(modsucc 4 5)
+(modsucc 5 6)
+(modsucc 6 7)
+(modsucc 7 8)
+(modsucc 8 9)
+(modsucc 9 10)
+(modsucc 10 11)
+(modsucc 11 12)
+(modsucc 12 1)
+
+(opposite 1 12)
+(opposite 2 11)
+(opposite 3 10)
+(opposite 4 9)
+(opposite 5 8)
+(opposite 6 7)
+(opposite 7 6)
+(opposite 8 5)
+(opposite 9 4)
+(opposite 10 3)
+(opposite 11 2)
+(opposite 12 1)
+
+(c 0)
+(c 1)
+(c 2)
+(c 3)
+(c 4)
+(c 5)
+(c 6)
+(c 7)
+(c 8)
+(c 9)
+(c 10)
+(c 11)
+(c 12)
+(c 13)
+(c 14)
+(c 15)
+(c 16)
+(c 17)
+(c 18)
+(c 19)
+(c 20)
+(c 21)
+(c 22)
+(c 23)
+(c 24)
+(c 25)
+(c 26)
+(c 27)
+(c 28)
+(c 29)
+(c 30)
+(c 31)
+(c 32)
+(c 33)
+(c 34)
+(c 35)
+(c 36)
+(c 37)
+(c 38)
+(c 39)
+(c 40)
+(c 41)
+(c 42)
+(c 43)
+(c 44)
+(c 45)
+(c 46)
+(c 47)
+(c 48)
+
+  (pp  1   2)
+  (pp  2   3)
+  (pp  3   4)
+  (pp  4   5)
+  (pp  5   6)
+  (pp  6   7)
+  (pp  7   8)
+  (pp  8   9)
+  (pp  9  10)
+  (pp 10  11)
+  (pp 11  12)
+  (pp 12  13)
+  (pp 13  14)
+  (pp 14  15)
+  (pp 15  16)
+  (pp 16  17)
+  (pp 17  18)
+  (pp 18  19)
+  (pp 19  20)	
+  (pp 20  21)
+  (pp 21  22)
+  (pp 22  23)
+  (pp 23  24)
+  (pp 24  25)
+  (pp 25  26)
+  (pp 26  27)
+  (pp 27  28)
+  (pp 28  29)
+  (pp 29  30)	
+  (pp 30  31)
+  (pp 31  32)
+  (pp 32  33)
+  (pp 33  34)
+  (pp 34  35)
+  (pp 35  36)
+  (pp 36  37)
+  (pp 37  38)
+  (pp 38  39)
+  (pp 39  40)	
+  (pp 40  41)
+  (pp 41  42)
+  (pp 42  43)
+  (pp 43  44)
+  (pp 44  45)
+  (pp 45  46)
+  (pp 46  47)
+  (pp 47  48)
+  (pp 48  49)
+  (pp 49  50)	
+  (pp 50  51)
+  (pp 51  52)
+  (pp 52  53)
+  (pp 53  54)
+  (pp 54  55)
+  (pp 55  56)
+  (pp 56  57)
+  (pp 57  58)
+  (pp 58  59)
+  (pp 59  60)	
+  (pp 60  61)
+  (pp 61  62)
+  (pp 62  63)
+  (pp 63  64)
+  (pp 64  65)
+  (pp 65  66)
+  (pp 66  67)
+  (pp 67  68)
+  (pp 68  69)
+  (pp 69  70)	
+  (pp 70  71)
+  (pp 71  72)
+  (pp 72  73)
+  (pp 73  74)
+  (pp 74  75)
+  (pp 75  76)
+  (pp 76  77)
+  (pp 77  78)
+  (pp 78  79)
+  (pp 79  80)	
+  (pp 80  81)
+  (pp 81  82)
+  (pp 82  83)
+  (pp 83  84)
+  (pp 84  85)
+  (pp 85  86)
+  (pp 86  87)
+  (pp 87  88)
+  (pp 88  89)
+  (pp 89  90)	
+  (pp 90  91)
+  (pp 91  92)
+  (pp 92  93)
+  (pp 93  94)
+  (pp 94  95)
+  (pp 95  96)
+  (pp 96  97)
+  (pp 97  98)
+  (pp 98  99)
+  (pp 99 100)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

@@ -1,0 +1,8 @@
+{
+  "gameName": "Tic Tac Toe 5",
+  "rulesheet": "tictactoe5.kif",
+  "stylesheet": "tictactoe5.js",
+  "description": "tictactoe5.txt",
+  "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=tictactoe5",
+  "curator": "genesereth@stanford.edu"
+}

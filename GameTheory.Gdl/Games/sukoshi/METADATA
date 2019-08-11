@@ -1,0 +1,8 @@
+{
+  "gameName": "Sukoshi",
+  "rulesheet": "sukoshi.kif",
+  "stylesheet": "sukoshi.js",
+  "description": "sukoshi.txt",
+  "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=sukoshi",
+  "curator": "genesereth@stanford.edu"
+}

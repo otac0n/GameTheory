@@ -1,0 +1,7 @@
+{
+  "gameName": "ttt4d",
+  "rulesheet": "ttt4d.kif",
+  "stylesheet": "ttt4d.js",
+  "description": "ttt4d.txt",
+  "sourceUri": "http://ggp.stanford.edu/ggp/games/ttt4d/"
+}

@@ -1,0 +1,8 @@
+{
+  "gameName": "Asylum",
+  "rulesheet": "asylum.kif",
+  "stylesheet": "asylum.js",
+  "description": "asylum.txt",
+  "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=asylum",
+  "curator": "genesereth@stanford.edu"
+}
