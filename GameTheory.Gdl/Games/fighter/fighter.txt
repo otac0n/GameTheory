@@ -1,0 +1,3 @@
+Discretized and simplified GGP version of the well-known arcade game "Street Fighter".
+
+GDL by Tim Federholzner (TZI, University of Bremen)

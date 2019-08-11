@@ -1,0 +1,626 @@
+;; GDL-II
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; see: http://en.wikipedia.org/wiki/Backgammon
+;
+; GDL by: Stephan Schiffel <stephan.schiffel@gmx.de>
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; roles
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(role random)
+
+(role red)
+(role black)
+
+(other_player red black)
+(other_player black red)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; sees rules
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+; no hidden information
+(<= (sees ?role (did ?otherRole ?move))
+	(role ?role)
+	(does ?otherRole ?move)
+)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; board layout
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(next_point 1 2)
+(next_point 2 3)
+(next_point 3 4)
+(next_point 4 5)
+(next_point 5 6)
+(next_point 6 7)
+(next_point 7 8)
+(next_point 8 9)
+(next_point 9 10)
+(next_point 10 11)
+(next_point 11 12)
+(next_point 12 13)
+(next_point 13 14)
+(next_point 14 15)
+(next_point 15 16)
+(next_point 16 17)
+(next_point 17 18)
+(next_point 18 19)
+(next_point 19 20)
+(next_point 20 21)
+(next_point 21 22)
+(next_point 22 23)
+(next_point 23 24)
+
+(succ_point red bar 1)
+(succ_point red 24 out)
+(succ_point red out out)
+
+(<= (succ_point red ?from ?to)
+	(next_point ?from ?to)
+)
+
+(succ_point black bar 24)
+(succ_point black 1 out)
+(succ_point black out out)
+
+(<= (succ_point black ?from ?to)
+	(next_point ?to ?from)
+)
+
+(<= (n_further ?role ?from 1 ?to)
+	(succ_point ?role ?from ?to)
+)
+
+(<= (n_further ?role ?from ?pips ?to)
+	(succ_nb_pips ?pips-- ?pips)
+	(succ_point ?role ?from ?from++)
+	(n_further ?role ?from++ ?pips-- ?to)
+)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; initial state
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(init (board_point bar 0 red))
+(init (board_point bar 0 black))
+
+(init (board_point out 0 red))
+(init (board_point out 0 black))
+
+(init (board_point 1 2 red))
+(init (board_point 1 0 black))
+(init (board_point 2 0 red))
+(init (board_point 2 0 black))
+(init (board_point 3 0 red))
+(init (board_point 3 0 black))
+(init (board_point 4 0 red))
+(init (board_point 4 0 black))
+(init (board_point 5 0 red))
+(init (board_point 5 0 black))
+(init (board_point 6 0 red))
+(init (board_point 6 5 black))
+(init (board_point 7 0 red))
+(init (board_point 7 0 black))
+(init (board_point 8 0 red))
+(init (board_point 8 3 black))
+(init (board_point 9 0 red))
+(init (board_point 9 0 black))
+(init (board_point 10 0 red))
+(init (board_point 10 0 black))
+(init (board_point 11 0 red))
+(init (board_point 11 0 black))
+(init (board_point 12 5 red))
+(init (board_point 12 0 black))
+(init (board_point 13 0 red))
+(init (board_point 13 5 black))
+(init (board_point 14 0 red))
+(init (board_point 14 0 black))
+(init (board_point 15 0 red))
+(init (board_point 15 0 black))
+(init (board_point 16 0 red))
+(init (board_point 16 0 black))
+(init (board_point 17 3 red))
+(init (board_point 17 0 black))
+(init (board_point 18 0 red))
+(init (board_point 18 0 black))
+(init (board_point 19 5 red))
+(init (board_point 19 0 black))
+(init (board_point 20 0 red))
+(init (board_point 20 0 black))
+(init (board_point 21 0 red))
+(init (board_point 21 0 black))
+(init (board_point 22 0 red))
+(init (board_point 22 0 black))
+(init (board_point 23 0 red))
+(init (board_point 23 0 black))
+(init (board_point 24 0 red))
+(init (board_point 24 2 black))
+
+(init (control random))
+
+(init (step 0))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; arithmetics for numbers of pieces
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(succ_number_pieces 0 1)
+(succ_number_pieces 1 2)
+(succ_number_pieces 2 3)
+(succ_number_pieces 3 4)
+(succ_number_pieces 4 5)
+(succ_number_pieces 5 6)
+(succ_number_pieces 6 7)
+(succ_number_pieces 7 8)
+(succ_number_pieces 8 9)
+(succ_number_pieces 9 10)
+(succ_number_pieces 10 11)
+(succ_number_pieces 11 12)
+(succ_number_pieces 12 13)
+(succ_number_pieces 13 14)
+(succ_number_pieces 14 15)
+
+(<= (greater_nb_of_pieces ?x ?y)
+	(succ_number_pieces ?y ?x)
+)
+(<= (greater_nb_of_pieces ?x ?y)
+	(succ_number_pieces ?z ?x)
+	(greater_nb_of_pieces ?z ?y)
+)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; count the steps
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(<= (next (step ?y))
+	rolling_dice
+	(true (step ?x))
+	(succ_step ?x ?y)
+)
+
+(<= (next (step ?x))
+	(not rolling_dice)
+	(true (step ?x))
+)
+
+(<= rolling_dice
+	(does random (roll_dice ?x ?y))
+)
+
+(succ_step 0 1)
+(succ_step 1 2)
+(succ_step 2 3)
+(succ_step 3 4)
+(succ_step 4 5)
+(succ_step 5 6)
+(succ_step 6 7)
+(succ_step 7 8)
+(succ_step 8 9)
+(succ_step 9 10)
+(succ_step 10 11)
+(succ_step 11 12)
+(succ_step 12 13)
+(succ_step 13 14)
+(succ_step 14 15)
+(succ_step 15 16)
+(succ_step 16 17)
+(succ_step 17 18)
+(succ_step 18 19)
+(succ_step 19 20)
+(succ_step 20 21)
+(succ_step 21 22)
+(succ_step 22 23)
+(succ_step 23 24)
+(succ_step 24 25)
+(succ_step 25 26)
+(succ_step 26 27)
+(succ_step 27 28)
+(succ_step 28 29)
+(succ_step 29 30)
+(succ_step 30 31)
+(succ_step 31 32)
+(succ_step 32 33)
+(succ_step 33 34)
+(succ_step 34 35)
+(succ_step 35 36)
+(succ_step 36 37)
+(succ_step 37 38)
+(succ_step 38 39)
+(succ_step 39 40)
+(succ_step 40 41)
+(succ_step 41 42)
+(succ_step 42 43)
+(succ_step 43 44)
+(succ_step 44 45)
+(succ_step 45 46)
+(succ_step 46 47)
+(succ_step 47 48)
+(succ_step 48 49)
+(succ_step 49 50)
+(succ_step 50 51)
+(succ_step 51 52)
+(succ_step 52 53)
+(succ_step 53 54)
+(succ_step 54 55)
+(succ_step 55 56)
+(succ_step 56 57)
+(succ_step 57 58)
+(succ_step 58 59)
+(succ_step 59 60)
+(succ_step 60 61)
+(succ_step 61 62)
+(succ_step 62 63)
+(succ_step 63 64)
+(succ_step 64 65)
+(succ_step 65 66)
+(succ_step 66 67)
+(succ_step 67 68)
+(succ_step 68 69)
+(succ_step 69 70)
+(succ_step 70 71)
+(succ_step 71 72)
+(succ_step 72 73)
+(succ_step 73 74)
+(succ_step 74 75)
+(succ_step 75 76)
+(succ_step 76 77)
+(succ_step 77 78)
+(succ_step 78 79)
+(succ_step 79 80)
+(succ_step 80 81)
+(succ_step 81 82)
+(succ_step 82 83)
+(succ_step 83 84)
+(succ_step 84 85)
+(succ_step 85 86)
+(succ_step 86 87)
+(succ_step 87 88)
+(succ_step 88 89)
+(succ_step 89 90)
+(succ_step 90 91)
+(succ_step 91 92)
+(succ_step 92 93)
+(succ_step 93 94)
+(succ_step 94 95)
+(succ_step 95 96)
+(succ_step 96 97)
+(succ_step 97 98)
+(succ_step 98 99)
+(succ_step 99 100)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; control change
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(<= (next (control ?nextPlayer))
+	last_move_by_player
+	(true (control ?currentPlayer))
+	(other_player ?currentPlayer ?nextPlayer)
+)
+
+(<= (next (control ?player))
+	(true (control ?player))
+	(not last_move_by_player)
+)
+
+; initial control
+(<= (next (control ?player))
+	(true (control random))
+	(higher_number_thrown ?player)
+)
+
+(<= (higher_number_thrown ?player)
+	(thrown_initially ?player ?n)
+	(other_player ?player ?otherPlayer)
+	(thrown_initially ?otherPlayer ?m)
+	(greater_nb_of_pieces ?n ?m)
+)
+
+(<= (thrown_initially red ?n)
+	(does random (roll_dice ?n ?black)))
+(<= (thrown_initially black ?n)
+	(does random (roll_dice ?red ?n)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; rolling dice
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(<= (legal random (roll_dice ?red ?black))
+	(true (control random)) ; initial step
+	(pips ?red)
+	(pips ?black)
+	(distinct ?red ?black)
+)
+
+(<= (legal random (roll_dice ?pips1 ?pips2))
+	(not (true (control random))) ; not the initial step
+	last_move_by_player
+	(pips ?pips1)
+	(pips ?pips2)
+)
+
+(<= (legal random noop)
+	(not (true (control random))) ; not the initial step
+	(not last_move_by_player)
+)
+
+(<= last_move_by_player
+	(not two_dice_left)
+)
+
+(<= last_move_by_player
+	(must_discard ?role)
+)
+
+(<= two_dice_left
+	(true (die ?i1 ?n1))
+	(true (die ?i2 ?n2))
+	(distinct ?i1 ?i2)
+)
+
+(<= (next (die 1 ?pips1))
+	(does random (roll_dice ?pips1 ?pips2))
+)
+(<= (next (die 2 ?pips2))
+	(does random (roll_dice ?pips1 ?pips2))
+)
+(<= (next (die 3 ?pips))
+	(does random (roll_dice ?pips ?pips))
+)
+(<= (next (die 4 ?pips))
+	(does random (roll_dice ?pips ?pips))
+)
+
+(pips 1)
+(pips 2)
+(pips 3)
+(pips 4)
+(pips 5)
+(pips 6)
+
+(succ_nb_pips 1 2)
+(succ_nb_pips 2 3)
+(succ_nb_pips 3 4)
+(succ_nb_pips 4 5)
+(succ_nb_pips 5 6)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; the players moves
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+; noop if it is not the players turn
+(<= (legal ?role noop)
+	(role ?role)
+	(distinct ?role random)
+	(not (true (control ?role)))
+)
+
+; move if it is the players turn
+(<= (legal ?role ?move)
+	(true (control ?role))
+	(distinct ?role random)
+	(legal_move ?role ?move)
+)
+
+(<= (legal_move ?role ?move)
+	(legal_move_piece ?role ?move)
+)
+
+(<= (legal_move ?role discard_dice)
+	(must_discard ?role)
+)
+
+(<= (must_discard ?role)
+	(true (control ?role))
+	(not (any_legal_move_piece ?role))
+)
+
+(<= (any_legal_move_piece ?role)
+	(legal_move_piece ?role ?move)
+)
+
+(<= (legal_move_piece ?role (move ?die ?from ?to))
+	(true (die ?die ?pips))
+	(other_player ?role ?otherRole)
+	(possible_move_source ?role ?from)
+	(n_further ?role ?from ?pips ?to)
+	(possible_move_dest ?role ?to)
+)
+
+; move from bar first
+(<= (possible_move_source ?role bar)
+	(true (board_point bar ?nfrom ?role))
+	(distinct ?nfrom 0)
+)
+
+; only move other pieces if move from bar is not possible
+(<= (possible_move_source ?role ?from)
+	(true (board_point bar 0 ?role))
+	(true (board_point ?from ?nfrom ?role))
+	(distinct ?nfrom 0)
+	(distinct ?from out)
+)
+
+; move to a different board location if there is at most 1 piece of the opponent there
+(<= (possible_move_dest ?role ?to)
+	(other_player ?role ?otherRole)
+	(true (board_point ?to ?nto ?otherRole))
+	(distinct ?to out)
+	(greater_nb_of_pieces 2 ?nto)
+)
+
+; move out if there are no more pieces outside the home area
+(<= (possible_move_dest ?role out)
+	(role ?role)
+	(not (piece_out_of_home ?role))
+)
+
+(<= (piece_out_of_home ?role)
+	(true (board_point ?point ?n ?role))
+	(distinct ?n 0)
+	(out_of_home ?role ?point)
+)
+
+(<= (out_of_home ?role bar) (role ?role))
+(out_of_home red 1)
+(out_of_home red 2)
+(out_of_home red 3)
+(out_of_home red 4)
+(out_of_home red 5)
+(out_of_home red 6)
+(<= (out_of_home ?role 7) (role ?role))
+(<= (out_of_home ?role 8) (role ?role))
+(<= (out_of_home ?role 9) (role ?role))
+(<= (out_of_home ?role 10) (role ?role))
+(<= (out_of_home ?role 11) (role ?role))
+(<= (out_of_home ?role 12) (role ?role))
+(<= (out_of_home ?role 13) (role ?role))
+(<= (out_of_home ?role 14) (role ?role))
+(<= (out_of_home ?role 15) (role ?role))
+(<= (out_of_home ?role 16) (role ?role))
+(<= (out_of_home ?role 17) (role ?role))
+(<= (out_of_home ?role 18) (role ?role))
+(out_of_home black 19)
+(out_of_home black 20)
+(out_of_home black 21)
+(out_of_home black 22)
+(out_of_home black 23)
+(out_of_home black 24)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; when things don't change
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(<= (next (board_point ?point ?n ?role))
+	(true (board_point ?point ?n ?role))
+	(not (affected ?point ?role))
+)
+
+(<= (next (die ?die ?pips))
+	(true (die ?die ?pips))
+	(does ?role (move ?otherDie ?from ?point))
+	(distinct ?die ?otherDie)
+)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; changes of the board
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(<= (next (board_point ?point ?n ?role))
+	(change_to ?point ?n ?role)
+)
+
+(<= (affected ?point ?role)
+	(change_to ?point ?n ?role)
+)
+
+; reduce number of pieces on source location
+(<= (change_to ?point ?n1 ?role)
+	(does ?role (move ?die ?point ?to))
+	(true (board_point ?point ?n ?role))
+	(succ_number_pieces ?n1 ?n)
+)
+
+; increase number of pieces on destination
+(<= (change_to ?point ?n1 ?role)
+	(does ?role (move ?die ?from ?point))
+	(true (board_point ?point ?n ?role))
+	(succ_number_pieces ?n ?n1)
+)
+
+; change number of pieces to 0 if captured
+(<= (change_to ?point 0 ?role)
+	(captured ?point ?role)
+)
+
+; increase number of pieces on bar if captured
+(<= (change_to bar ?n++ ?role)
+	(captured_any ?role)
+	(true (board_point bar ?n ?role))
+	(succ_number_pieces ?n ?n++)
+)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; captured pieces
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(<= (captured ?point ?otherRole)
+	(does ?role (move ?die ?from ?point))
+	(distinct ?point out)
+	(other_player ?role ?otherRole)
+	(true (board_point ?point 1 ?otherRole))
+)	
+
+(<= (captured_any ?role)
+	(captured ?point ?role)
+)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; terminal
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(<= someone_wins
+	(true (board_point out 15 ?role))
+)
+
+(<= terminal
+	someone_wins
+)
+
+(<= terminal
+	timeout
+)
+
+(<= timeout
+	(true (step 100))
+	(not someone_wins)
+)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; goal
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(goal random 100)
+
+(<= (goal ?role 100)
+	(true (board_point out 15 ?role))
+)
+
+(<= (goal ?role 75)
+	timeout
+	(more_out ?role ?otherRole)
+)
+
+(<= (goal ?role 50)
+	terminal
+	(true (board_point out ?n ?role))
+	(other_player ?role ?otherRole)
+	(true (board_point out ?n ?otherRole))
+)
+
+(<= (goal ?otherRole 25)
+	timeout
+	(more_out ?role ?otherRole)
+)
+
+(<= (goal ?role 0)
+	(true (board_point out 15 ?otherRole))
+	(other_player ?role ?otherRole)
+)
+
+(<= (goal ?role 0)
+	(not terminal)
+	(role ?role)
+	(distinct ?role random)
+)
+
+(<= (more_out ?role ?otherRole)
+	(true (board_point out ?n ?role))
+	(other_player ?role ?otherRole)
+	(true (board_point out ?nOther ?otherRole))
+	(greater_nb_of_pieces ?n ?nOther)
+)

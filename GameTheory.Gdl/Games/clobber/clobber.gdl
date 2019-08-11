@@ -1,0 +1,281 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Clobber (4x5-board)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(role black)
+(role white)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;; the board contains alternating black and white pieces
+;;; players can move their pieces only to cells with a piece of the opponent on it
+;;; the last player that can move wins the game
+
+;;; initially the board is checkered black and white
+(<= (init (cell ?x ?y white))
+    (x ?x)
+    (y ?y)
+    (even ?x)
+    (even ?y)
+)
+
+(<= (init (cell ?x ?y white))
+    (x ?x)
+    (y ?y)
+    (odd ?x)
+    (odd ?y)
+)
+
+(<= (init (cell ?x ?y black))
+    (x ?x)
+    (y ?y)
+    (even ?x)
+    (odd ?y)
+)
+
+(<= (init (cell ?x ?y black))
+    (x ?x)
+    (y ?y)
+    (odd ?x)
+    (even ?y)
+)
+
+;;; the players move alternatingly beginning with white
+(init (control white))
+(<= (next (control white))
+    (true (control black))
+)
+(<= (next (control black))
+    (true (control white))
+)
+
+;;; every player has 10 pieces at the beginning
+(init (tokens black 10))
+(init (tokens white 10))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;; a cell turns white/black, if the white/black player moves there
+(<= (next (cell ?x2 ?y2 ?player))
+    (does ?player (move ?x1 ?y1 ?x2 ?y2))
+)
+;;; if a piece is moved away from a cell, the cell is blank in the next step
+(<= (next (cell ?x1 ?y1 blank))
+    (does ?player (move ?x1 ?y1 ?x2 ?y2))
+)
+
+;;; cells stay unchanged in all other cases
+(<= (next (cell ?x ?y ?t))
+    (does ?player (move ?x1 ?y1 ?x2 ?y2))
+    (true (cell ?x ?y ?t))
+    (distinct ?x ?x1)
+    (distinct ?x ?x2)
+)
+(<= (next (cell ?x ?y ?t))
+    (does ?player (move ?x1 ?y1 ?x2 ?y2))
+    (true (cell ?x ?y ?t))
+    (distinct ?y ?y1)
+    (distinct ?x ?x2)
+)
+(<= (next (cell ?x ?y ?t))
+    (does ?player (move ?x1 ?y1 ?x2 ?y2))
+    (true (cell ?x ?y ?t))
+    (distinct ?x ?x1)
+    (distinct ?y ?y2)
+)
+(<= (next (cell ?x ?y ?t))
+    (does ?player (move ?x1 ?y1 ?x2 ?y2))
+    (true (cell ?x ?y ?t))
+    (distinct ?y ?y1)
+    (distinct ?y ?y2)
+)
+
+;;; if a player moves, the other player loses a piece
+(<= (next (tokens ?opponent ?n1))
+    (true (control ?player))
+    (role ?opponent)
+    (distinct ?player ?opponent)
+    (true (tokens ?opponent ?n))
+    (succ ?n1 ?n)
+)
+;;; the moving player keeps all its pieces
+(<= (next (tokens ?player ?n))
+    (true (control ?player))
+    (true (tokens ?player ?n))
+)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;; a player can move to any adjacent cell, where there is a piece of the opponent
+(<= (legal white (move ?x1 ?y1 ?x2 ?y2))
+    (true (control white))
+    (true (cell ?x1 ?y1 white))
+    (true (cell ?x2 ?y2 black))
+    (neighbourCells ?x1 ?y1 ?x2 ?y2)
+)
+
+(<= (legal black (move ?x1 ?y1 ?x2 ?y2))
+    (true (control black))
+    (true (cell ?x1 ?y1 black))
+    (true (cell ?x2 ?y2 white))
+    (neighbourCells ?x1 ?y1 ?x2 ?y2)
+)
+
+;;; the other players does a noop
+(<= (legal ?player noop)
+    (role ?player)
+    (true (control ?player2))
+    (distinct ?player ?player2)
+)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;; neighborhood relation
+(succ 0 1)
+(succ 1 2)
+(succ 2 3)
+(succ 3 4)
+(succ 4 5)
+(succ 5 6)
+(succ 6 7)
+(succ 7 8)
+(succ 8 9)
+(succ 9 10)
+
+;;; coordinates
+(x 1)
+(x 2)
+(x 3)
+(x 4)
+
+(y 1)
+(y 2)
+(y 3)
+(y 4)
+(y 5)
+
+(odd 1)
+(odd 3)
+(odd 5)
+
+(even 2)
+(even 4)
+
+;;; a cell is next to another, if exactly one coordinate is equal and the other is one higher or lower
+(<= (neighbourCells ?x ?y1 ?x ?y2)
+    (x ?x)
+    (y ?y1)
+    (y ?y2)
+    (succ ?y1 ?y2)
+)
+(<= (neighbourCells ?x ?y1 ?x ?y2)
+    (x ?x)
+    (y ?y1)
+    (y ?y2)
+    (succ ?y2 ?y1)
+)
+(<= (neighbourCells ?x1 ?y ?x2 ?y)
+    (x ?x1)
+    (x ?x2)
+    (y ?y)
+    (succ ?x1 ?x2)
+)
+(<= (neighbourCells ?x1 ?y ?x2 ?y)
+    (x ?x1)
+    (x ?x2)
+    (y ?y)
+    (succ ?x2 ?x1)
+)
+
+;;; if there are no pieces of the opponent in range, noone can move
+(<= (movePossible)
+    (true (cell ?x1 ?y1 black))
+    (neighbourCells ?x1 ?y1 ?x2 ?y2)
+    (true (cell ?x2 ?y2 white))
+)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(<= terminal
+    (not (movePossible))
+)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;; the more own pieces are left, the more points the winning player gets
+(<= (goal white 100)
+    (not (movePossible))
+    (true (tokens white 7))
+    (true (tokens black 6))
+)
+(<= (goal white 85)
+    (not (movePossible))
+    (true (tokens white 6))
+    (true (tokens black 5))
+)
+(<= (goal white 71)
+    (not (movePossible))
+    (true (tokens white 5))
+    (true (tokens black 4))
+)
+(<= (goal white 57)
+    (not (movePossible))
+    (true (tokens white 4))
+    (true (tokens black 3))
+)
+(<= (goal white 42)
+    (not (movePossible))
+    (true (tokens white 3))
+    (true (tokens black 2))
+)
+(<= (goal white 28)
+    (not (movePossible))
+    (true (tokens white 2))
+    (true (tokens black 1))
+)
+(<= (goal white 14)
+    (not (movePossible))
+    (true (tokens white 1))
+    (true (tokens black 0))
+)
+
+;;; the losing player gets nothing
+(<= (goal white 0)
+    (not (movePossible))
+    (true (control white))
+)
+
+(<= (goal black 100)
+    (not (movePossible))
+    (true (tokens white 6))
+    (true (tokens black 6))
+)
+(<= (goal black 83)
+    (not (movePossible))
+    (true (tokens white 5))
+    (true (tokens black 5))
+)
+(<= (goal black 66)
+    (not (movePossible))
+    (true (tokens white 4))
+    (true (tokens black 4))
+)
+(<= (goal black 50)
+    (not (movePossible))
+    (true (tokens white 3))
+    (true (tokens black 3))
+)
+(<= (goal black 33)
+    (not (movePossible))
+    (true (tokens white 2))
+    (true (tokens black 2))
+)
+(<= (goal black 16)
+    (not (movePossible))
+    (true (tokens white 1))
+    (true (tokens black 1))
+)
+(<= (goal black 0)
+    (not (movePossible))
+    (true (control black))
+)

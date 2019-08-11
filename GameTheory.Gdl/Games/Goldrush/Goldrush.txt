@@ -1,0 +1,1 @@
+Two players walk in a labyrinth and search for gold. Each piece of gold on map is worth some points; they all sum to 100. Players can destroy obstacles and place new ones by using items, which can be found in the labyrinth. If both players steps on the same item/gold no one gets it. A player being on a field with an obstacle immediately lose.

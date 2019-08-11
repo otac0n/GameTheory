@@ -1,0 +1,4 @@
+A two-player logistics game. Boxes are distributed over several cities throughout Europe and the goal is to move as many of these as possible to their destination by driving to the box, loading it, driving to the destination and unloading the box there.
+Each delivered box brings one point, with the exception of a special "golden box", which brings two points. The reward at the end depends on the points earned during the game (25 for each point, with a maximum of 100).
+
+GDL by Tim Federholzner (TZI, University of Bremen)

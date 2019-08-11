@@ -1,0 +1,4 @@
+The game "Breakthrough-Checkers" is a mixture of Breakthrough and Checkers. It is played on an 8x8 checkers board by two players, white and black. Each player gets 12 pieces in his color that are put on the black tiles on the 3 top-most (black) and bottom-most rows (white). Players take turns in moving one of their pieces according to the rules in Checkers:
+- moving one step diagonally forward (up for white and down for black) onto an empty tile, or
+- capturing a single piece of the opponent by jumping diagonally forward over it onto an empty tile.
+In "Breakthrough-Checkers" only single jumps are allowed (no sequences of jumps over multiple pieces) and it is not mandatory to capture. The player to first reach the opposite side of the board with one of its pieces wins the game. The game also ends if the player to make a move does not have a legal move. In that case the player with more pieces left on the board wins.

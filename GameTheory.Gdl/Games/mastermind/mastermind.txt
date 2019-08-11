@@ -1,0 +1,5 @@
+GDL version of a simplified Mastermind game (see, e.g., http://en.wikipedia.org/wiki/Mastermind_%28board_game%29)
+
+In this version, the random player chooses one of four possible colors for each of the four cells. The player has to guess the correct colors. After each guess the player is informed exactly which colors where placed correctly.
+
+GDL by Tim Federholzner and Peter Kissmann (TZI, University of Bremen)

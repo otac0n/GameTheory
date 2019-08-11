@@ -1,0 +1,9 @@
+{
+  "gameName": "firesheep",
+  "rulesheet": "firesheep.gdl",
+  "description": "firesheep.txt",
+  "sourceUri": "http://ggpserver.general-game-playing.de/ggpserver/public/download_gdl.jsp?name=firesheep",
+  "uploadedBy": "stephan",
+  "gdlVersion": "v1",
+  "seesXml": "(<= (sees_xml random ?t) (true ?t))\r\n(<= (sees_xml ?p ?t) (role ?p) (distinct ?p random) (true ?t))"
+}

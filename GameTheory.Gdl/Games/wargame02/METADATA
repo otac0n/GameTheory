@@ -1,0 +1,9 @@
+{
+  "gameName": "wargame02",
+  "rulesheet": "wargame02.gdl",
+  "description": "wargame02.txt",
+  "sourceUri": "http://ggpserver.general-game-playing.de/ggpserver/public/download_gdl.jsp?name=wargame02",
+  "uploadedBy": "stephan",
+  "gdlVersion": "v1",
+  "seesXml": "(<= (sees_xml random ?t) (true ?t))\r\n(<= (sees_xml ?p ?t) (role ?p) (distinct ?p random) (true ?t))"
+}

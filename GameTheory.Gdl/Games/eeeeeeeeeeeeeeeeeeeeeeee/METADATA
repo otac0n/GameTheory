@@ -1,0 +1,8 @@
+{
+  "gameName": "eeeeeeeeeeeeeeeeeeeeeeee",
+  "rulesheet": "eeeeeeeeeeeeeeeeeeeeeeee.gdl",
+  "sourceUri": "http://ggpserver.general-game-playing.de/ggpserver/public/download_gdl.jsp?name=eeeeeeeeeeeeeeeeeeeeeeee",
+  "uploadedBy": "simserver",
+  "gdlVersion": "v2",
+  "seesXml": "(<= (sees_xml player1 (card player1Card ?Player1Card))\r\n\t(true (card player1Card ?Player1Card))\r\n)\r\n(<= (sees_xml player1 (card player2Card 0))\r\n\t(true (card player2Card ?SomeValue))\r\n)\r\n\r\n(<= (sees_xml player2 (card player1Card 0))\r\n\t(true (card player1Card ?SomeValue))\r\n)\r\n(<= (sees_xml player2 (card player2Card ?Player2Card))\r\n\t(true (card player2Card ?Player2Card))\r\n)\r\n\r\n(<= (sees_xml ?Player (card talonCard1 0))\r\n\t(true (card talonCard1 ?SomeValue))\r\n)\r\n(<= (sees_xml ?Player (card talonCard2 0))\r\n\t(true (card talonCard2 ?SomeValue))\r\n)\r\n\r\n(<= (sees_xml ?Player (card trickCard1 ?TrickCard1))\r\n\t(true (card trickCard1 ?TrickCard1))\r\n)\r\n(<= (sees_xml ?Player (card trickCard2 ?TrickCard2))\r\n\t(true (card trickCard2 ?TrickCard2))\r\n)"
+}

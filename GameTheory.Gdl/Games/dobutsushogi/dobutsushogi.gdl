@@ -1,0 +1,473 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Dobutsu Shogi in GDLv1
+; 2013/01/26
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Roles: sente and gote
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(role sente)
+(role gote)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Initial State
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+; pieces on board
+(init (board a 1 s_giraffe))
+(init (board b 1 s_lion))
+(init (board c 1 s_elephant))
+(init (board a 2 empty))
+(init (board b 2 s_chick))
+(init (board c 2 empty))
+(init (board a 3 empty))
+(init (board b 3 g_chick))
+(init (board c 3 empty))
+(init (board a 4 g_elephant))
+(init (board b 4 g_lion))
+(init (board c 4 g_giraffe))
+
+; pieces in hand
+(init (hand sente giraffe 0))
+(init (hand sente elephant 0))
+(init (hand sente chick 0))
+(init (hand sente lion 0))
+(init (hand gote giraffe 0))
+(init (hand gote elephant 0))
+(init (hand gote chick 0))
+(init (hand gote lion 0))
+
+; control
+(init (control sente))
+
+; step counter (a game will be terminated after 60 steps)
+(init (step 0))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Grobal Facts
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+; columns of board
+(col a)
+(col b)
+(col c)
+
+; rows of board
+(row 1)
+(row 2)
+(row 3)
+(row 4)
+
+; order of columns
+(succ_row 1 2)
+(succ_row 2 3)
+(succ_row 3 4)
+
+; order of rows
+(succ_col a b)
+(succ_col b c)
+
+; definition of cell, which consists of column and row
+(<= (cell ?col ?row)
+	(col ?col)
+	(row ?row))
+
+; distinction betweel two cells
+(<= (distinct_cell ?col1 ?row1 ?col2 ?row2)
+	(cell ?col1 ?row1)
+	(cell ?col2 ?row2)
+	(or (distinct ?col1 ?col2)
+		(distinct ?row1 ?row2)))
+
+; acjacency between two columns
+(<= (adjacent_col ?n ?m)
+	(or (succ_col ?n ?m)
+		(succ_col ?m ?n)))
+
+; adjacency between two rows
+(<= (adjacent_row ?n ?m)
+	(or (succ_row ?n ?m)
+		(succ_row ?m ?n)))
+
+; sameness between two columns
+(<= (same_col ?col_from ?col_to)
+	(col ?col_from)
+	(col ?col_to)
+	(not (distinct ?col_from ?col_to)))
+
+; sameness between two rows
+(<= (same_row ?row_from ?row_to)
+	(row ?row_from)
+	(row ?row_to)
+	(not (distinct ?row_from ?row_to)))
+
+; diagonal adjacency between two cells
+(<= (diagonally_adjacent ?col_from ?row_from ?col_to ?row_to)
+	(adjacent_col ?col_from ?col_to)
+	(adjacent_row ?row_from ?row_to))
+
+; vertical adjacency between two cells
+(<= (vertically_adjacent ?col_from ?row_from ?col_to ?row_to)
+	(adjacent_row ?row_from ?row_to)
+	(same_col ?col_from ?col_to))
+
+; horizontal adjacency between two cells
+(<= (horizontally_adjacent ?col_from ?row_from ?col_to ?row_to)
+	(adjacent_col ?col_from ?col_to)
+	(same_row ?row_from ?row_to))
+
+; diagonal adjacency between two cells, the latter of which is in front of the former
+(<= (forward_diagonally_adjacent ?role ?col_from ?row_from ?col_to ?row_to)
+	(adjacent_col ?col_from ?col_to)
+	(front_row ?role ?row_from ?row_to))
+
+; pieces
+(piece s_chick)
+(piece s_giraffe)
+(piece s_elephant)
+(piece s_lion)
+(piece s_hen)
+(piece g_chick)
+(piece g_giraffe)
+(piece g_elephant)
+(piece g_lion)
+(piece g_hen)
+
+; kinds of pieces
+(kind chick)
+(kind giraffe)
+(kind elephant)
+(kind lion)
+(kind hen)
+
+; relation of piece and kind
+(<= (piece_kind ?piece ?kind)
+	(role_kind_piece ?role ?kind ?piece))
+
+; relation of piece and kind-in-hand (hen piece will be captured as chick)
+(<= (piece_kind_in_hand ?piece ?kind)
+	(piece_kind ?piece ?kind)
+	(distinct ?kind hen))
+(<= (piece_kind_in_hand ?piece chick)
+	(piece_kind ?piece hen))
+
+; relation of role, kind and piece
+(role_kind_piece sente chick s_chick)
+(role_kind_piece sente giraffe s_giraffe)
+(role_kind_piece sente elephant s_elephant)
+(role_kind_piece sente lion s_lion)
+(role_kind_piece sente hen s_hen)
+(role_kind_piece gote chick g_chick)
+(role_kind_piece gote giraffe g_giraffe)
+(role_kind_piece gote elephant g_elephant)
+(role_kind_piece gote lion g_lion)
+(role_kind_piece gote hen g_hen)
+
+; relation of role and piece (piece and its owner)
+(<= (own ?role ?piece)
+	(role_kind_piece ?role ?kind ?piece))
+
+; order of numbers for counting pieces in hand
+(succ_number 0 1)
+(succ_number 1 2)
+
+; order of steps
+(succ_step 0 1)
+(succ_step 1 2)
+(succ_step 2 3)
+(succ_step 3 4)
+(succ_step 4 5)
+(succ_step 5 6)
+(succ_step 6 7)
+(succ_step 7 8)
+(succ_step 8 9)
+(succ_step 9 10)
+(succ_step 10 11)
+(succ_step 11 12)
+(succ_step 12 13)
+(succ_step 13 14)
+(succ_step 14 15)
+(succ_step 15 16)
+(succ_step 16 17)
+(succ_step 17 18)
+(succ_step 18 19)
+(succ_step 19 20)
+(succ_step 20 21)
+(succ_step 21 22)
+(succ_step 22 23)
+(succ_step 23 24)
+(succ_step 24 25)
+(succ_step 25 26)
+(succ_step 26 27)
+(succ_step 27 28)
+(succ_step 28 29)
+(succ_step 29 30)
+(succ_step 30 31)
+(succ_step 31 32)
+(succ_step 32 33)
+(succ_step 33 34)
+(succ_step 34 35)
+(succ_step 35 36)
+(succ_step 36 37)
+(succ_step 37 38)
+(succ_step 38 39)
+(succ_step 39 40)
+(succ_step 40 41)
+(succ_step 41 42)
+(succ_step 42 43)
+(succ_step 43 44)
+(succ_step 44 45)
+(succ_step 45 46)
+(succ_step 46 47)
+(succ_step 47 48)
+(succ_step 48 49)
+(succ_step 49 50)
+(succ_step 50 51)
+(succ_step 51 52)
+(succ_step 52 53)
+(succ_step 53 54)
+(succ_step 54 55)
+(succ_step 55 56)
+(succ_step 56 57)
+(succ_step 57 58)
+(succ_step 58 59)
+(succ_step 59 60)
+
+; definition of front row, which differes between sente and gote
+(<= (front_row sente ?row_from ?row_to)
+	(succ_row ?row_from ?row_to))
+(<= (front_row gote ?row_from ?row_to)
+	(succ_row ?row_to ?row_from))
+
+; opponent roles
+(opponent sente gote)
+(opponent gote sente)
+
+; back rank
+(back_rank sente 4)
+(back_rank gote 1)
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Derivation of Next State
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+; non-chick piece will just move between two cells
+(<= (next (board ?col_to ?row_to ?piece))
+	(does ?role (move ?col_from ?row_from ?col_to ?row_to ?kind))
+	(true (board ?col_from ?row_from ?piece))
+	(piece_kind ?piece ?kind)
+	(own ?role ?piece)
+	(or (distinct ?kind chick)
+		(not (back_rank ?role ?row_to))))
+
+; chick will turn into hen when it will be in back rank
+(<= (next (board ?col_to ?row_to ?piece_after))
+	(does ?role (move ?col_from ?row_from ?col_to ?row_to chick))
+	(true (board ?col_from ?row_from ?piece_before))
+	(role_kind_piece ?role chick ?piece_before)
+	(role_kind_piece ?role hen ?piece_after)
+	(back_rank ?role ?row_to))
+
+; a starting point of move will be empty
+(<= (next (board ?col_from ?row_from empty))
+	(does ?role (move ?col_from ?row_from ?any_col ?any_row ?any_kind)))
+
+; switch control
+(<= (next (control sente))
+	(true (control gote)))
+(<= (next (control gote))
+	(true (control sente)))
+
+; next step
+(<= (next (step ?next_step))
+	(true (step ?step))
+	(succ_step ?step ?next_step))
+
+; whether or not role moved its piece and captured its opponent's piece
+(<= (move_and_got_piece ?role ?kind)
+	(does ?role (move ?col_from ?row_from ?col_to ?row_to ?any_kind))
+	(true (board ?col_to ?row_to ?opp_piece))
+	(opponent ?role ?opponent)
+	(own ?opponent ?opp_piece)
+	(piece_kind_in_hand ?opp_piece ?kind))
+
+; captured pieces will be in hand
+(<= (next (hand ?role ?kind ?after))
+	(true (hand ?role ?kind ?before))
+	(move_and_got_piece ?role ?kind)
+	(succ_number ?before ?after))
+
+; putting a piece into board
+(<= (next (board ?col_to ?row_to ?piece))
+	(does ?role (put ?col_to ?row_to ?kind))
+	(role_kind_piece ?role ?kind ?piece))
+
+; putting a piece into board will decrease pieces in hand
+(<= (next (hand ?role ?kind ?after))
+	(does ?role (put ?col ?row ?kind))
+	(true (hand ?role ?kind ?before))
+	(succ_number ?after ?before))
+
+; a state of a cell will remain the same when irrelevant piece-moving is made
+(<= (next (board ?col ?row ?piece))
+	(true (board ?col ?row ?piece))
+	(does ?any_role (move ?col_from ?row_from ?col_to ?row_to ?any_kind))
+	(distinct_cell ?col ?row ?col_from ?row_from)
+	(distinct_cell ?col ?row ?col_to ?row_to))
+
+; a state of a cell will remain the same when irrelevant piece-putting is made
+(<= (next (board ?col ?row ?piece))
+	(true (board ?col ?row ?piece))
+	(does ?any_role (put ?col_to ?row_to ?any_kind))
+	(distinct_cell ?col ?row ?col_to ?row_to))
+
+; whether or not the captured piece is of a certain kind
+(<= (move_and_got_other_piece ?role ?kind)
+	(move_and_got_piece ?role ?other_kind)
+	(kind ?kind)
+	(distinct ?kind ?other_kind))
+
+; whether or not the move-maker captured any piece
+(<= (move_and_got_no_piece ?role)
+	(does ?role (move ?any_col ?any_row ?col_to ?row_to ?any_kind))
+	(true (board ?col_to ?row_to empty)))
+
+; whether or not the put piece is of a certain kind
+(<= (put_other_piece ?role ?kind)
+	(does ?role (put ?any_col ?any_row ?other_kind))
+	(kind ?kind)
+	(distinct ?kind ?other_kind))
+
+; a piece in hand will remain the same when
+;	 1) capturing a piece of the other kind
+;	 2) capturing no piece
+;	 3) putting a piece of the other kind
+;	 4) noop
+(<= (next (hand ?role ?kind ?n))
+	(true (hand ?role ?kind ?n))
+	(or (move_and_got_other_piece ?role ?kind)
+		(move_and_got_no_piece ?role)
+		(put_other_piece ?role ?kind)
+		(does ?role noop)))
+
+; whether or not a cell is either empty or occupied by the opponent's piece
+(<= (cell_empty_or_opponent_piece ?role ?col ?row)
+	(role ?role)
+	(true (board ?col ?row empty)))
+(<= (cell_empty_or_opponent_piece ?role ?col ?row)
+	(true (board ?col ?row ?piece))
+	(opponent ?role ?opponent)
+	(own ?opponent ?piece))
+
+; whether or not a role has a piece of a certain kind in a cell
+(<= (cell_piece_kind ?role ?col ?row ?piece ?kind)
+	(true (board ?col ?row ?piece))
+	(role_kind_piece ?role ?kind ?piece))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Legal Moves
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+; moving chick
+(<= (legal ?role (move ?col_from ?row_from ?col_to ?row_to chick))
+	(true (control ?role))
+	(cell_piece_kind ?role ?col_from ?row_from ?piece chick)
+	(cell_empty_or_opponent_piece ?role ?col_to ?row_to)
+	(front_row ?role ?row_from ?row_to)
+	(same_col ?col_from ?col_to))
+
+; moving elephant
+(<= (legal ?role (move ?col_from ?row_from ?col_to ?row_to elephant))
+	(true (control ?role))
+	(cell_piece_kind ?role ?col_from ?row_from ?piece elephant)
+	(cell_empty_or_opponent_piece ?role ?col_to ?row_to)
+	(diagonally_adjacent ?col_from ?row_from ?col_to ?row_to))
+
+; moving giraffe
+(<= (legal ?role (move ?col_from ?row_from ?col_to ?row_to giraffe))
+	(true (control ?role))
+	(cell_piece_kind ?role ?col_from ?row_from ?piece giraffe)
+	(cell_empty_or_opponent_piece ?role ?col_to ?row_to)
+	(or (vertically_adjacent ?col_from ?row_from ?col_to ?row_to)
+		(horizontally_adjacent ?col_from ?row_from ?col_to ?row_to)))
+
+; moving lion
+(<= (legal ?role (move ?col_from ?row_from ?col_to ?row_to lion))
+	(true (control ?role))
+	(cell_piece_kind ?role ?col_from ?row_from ?piece lion)
+	(cell_empty_or_opponent_piece ?role ?col_to ?row_to)
+	(or (vertically_adjacent ?col_from ?row_from ?col_to ?row_to)
+		(horizontally_adjacent ?col_from ?row_from ?col_to ?row_to)
+		(diagonally_adjacent ?col_from ?row_from ?col_to ?row_to)))
+
+; moving hen
+(<= (legal ?role (move ?col_from ?row_from ?col_to ?row_to hen))
+	(true (control ?role))
+	(cell_piece_kind ?role ?col_from ?row_from ?piece hen)
+	(cell_empty_or_opponent_piece ?role ?col_to ?row_to)
+	(or (vertically_adjacent ?col_from ?row_from ?col_to ?row_to)
+		(horizontally_adjacent ?col_from ?row_from ?col_to ?row_to)
+		(forward_diagonally_adjacent ?role ?col_from ?row_from ?col_to ?row_to)))
+
+; putting a piece in hand
+(<= (legal ?role (put ?col ?row ?piece))
+	(true (board ?col ?row empty))
+	(true (hand ?role ?piece ?n))
+	(true (control ?role))
+	(distinct ?n 0))
+
+; all non-active roles can do is noop
+(<= (legal ?role noop)
+	(role ?role)
+	(not (true (control ?role))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Terminal States and Goals
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+; winning by capturing the opponent's lion
+(<= (winner ?role)
+	(true (hand ?role lion 1)))
+
+; winning by putting lion into back rank and surviving next step
+(<= (winner ?role)
+	(true (control ?role))
+	(true (board ?any_col ?row ?piece))
+	(role_kind_piece ?role lion ?piece)
+	(back_rank ?role ?row))
+
+; loser is the opponent of the winner
+(<= (loser ?role)
+	(opponent ?role ?opp)
+	(winner ?opp))
+
+; whether or not there is a winner
+(<= any_winner
+	(winner ?role))
+
+; time will be up after 60 steps
+(<= timeup
+	(not any_winner)
+	(true (step 60)))
+
+; a game will be terminated when anyone wins or time is up
+(<= terminal
+	(or (winner ?role)
+		timeup))
+
+; goal for the winner
+(<= (goal ?role 100)
+	(winner ?role))
+
+; goal for everyone when time is up
+(<= (goal ?role 50)
+	(role ?role)
+	timeup)
+
+; goal for the loser
+(<= (goal ?role 0)
+	(loser ?role))
+

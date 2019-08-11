@@ -1,0 +1,3 @@
+Simultaneous two-player version of the existing game asteroids. The goal is to land the satelite on one of the four planets. Additionally, both players should land on the same planet to maximize their points.
+
+Adapted GDL by Tim Federholzner (TZI, University of Bremen)

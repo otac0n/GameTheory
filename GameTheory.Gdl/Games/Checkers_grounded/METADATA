@@ -1,0 +1,9 @@
+{
+  "gameName": "Checkers_grounded",
+  "rulesheet": "Checkers_grounded.gdl",
+  "description": "Checkers_grounded.txt",
+  "sourceUri": "http://ggpserver.general-game-playing.de/ggpserver/public/download_gdl.jsp?name=Checkers_grounded",
+  "uploadedBy": "dspyz",
+  "gdlVersion": "v1",
+  "seesXml": "(<= (sees_xml random ?t) (true ?t))\r\n(<= (sees_xml ?p ?t) (role ?p) (distinct ?p random) (true ?t))"
+}

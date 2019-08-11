@@ -1,0 +1,102 @@
+; game contains errors
+
+(role guard)
+(role intruder)
+(init (at guard 1 1))
+(init (at intruder 1 5))
+
+(<= (terminal)
+(true (at guard ?x ?y))
+(true (at intruder ?x ?y)))
+
+(<= (terminal)
+(not (remain)))
+
+(<= (remain)
+(true (at intruder ?x ?y)))  
+
+(<= (legal ?r stay) 
+(true (at ?r ?x ?y)))
+
+(<= (legal intruder exit)
+(not terminal) 
+(true (at intruder 1 1)))
+
+(<= (legal ?r (move ?d))
+(not terminal) 
+(true (at ?r ?u ?v)) 
+(adjacent ?u ?v ?d ?x ?y))
+
+(<= (adjacent ?x ?y1 north ?x ?y2)
+(true (co ?x)) 
+(succ ?y1 ?y2))
+
+(<= (adjacent ?x ?y1 south ?x ?y2)
+(true (co ?x))
+(true (succ ?y2 ?y1)))
+
+(<= (adjacent ?x1 ?y1 east ?x2 ?y)
+(true(co ?y))
+(true(succ ?x1 ?x2)))
+
+(<= (adjacent ?x1 ?y west ?x2 ?y)
+(true(co ?y))
+(true(succ ?x2 ?x1)))
+
+(true(co 1))
+(true(co 2))
+(true(co 3))
+(true(co 4))
+(true(co 5))
+(true(succ 1 2))
+(true(succ 2 3))
+(true(succ 3 4))
+(true(succ 4 5))  
+
+(<= (next (at ?r ?x ?y))
+(does ?r stay)
+(true (at ?r ?x ?y)))
+
+(<= (next (at ?r ?x ?y))
+(does ?r (move ?d)) 
+(true (at ?r ?u ?v)) 
+(adjacent ?u ?v ?d ?x ?y)
+(not (capture ?r)))
+
+(<= (next (at intruder ?x ?y))
+(true (at intruder ?x ?y))
+(capture intruder))  
+
+(<= (capture intruder)
+(true (at intruder ?x ?y))
+(true (at ?r ?u ?v))) 
+(does intruder (move ?d1)) 
+(does ?r (move ?d2))
+(adjacent ?x ?y ?d1 ?u ?v) 
+(adjacent ?u ?v ?d2 ?x ?y)
+
+
+(<= (goal ?r 0)
+(role ?r)
+(not terminal))
+
+(<= (goal ?r 0)
+(role ?r)
+(distinct ?r intruder)
+(terminal)
+(not (remain)))
+
+(<= (goal ?r 100)
+(role ?r)
+(distinct ?r intruder)
+(terminal)
+(true (at intruder ?x ?y)))
+
+(<= (goal intruder 0)
+(terminal)
+(true (at intruder ?x ?y)))
+
+(<= (goal intruder 100)
+(terminal)
+(not (remain)))
+

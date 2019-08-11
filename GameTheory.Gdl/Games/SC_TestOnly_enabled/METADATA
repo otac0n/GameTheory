@@ -1,0 +1,9 @@
+{
+  "gameName": "SC_TestOnly_enabled",
+  "rulesheet": "SC_TestOnly_enabled.gdl",
+  "description": "SC_TestOnly_enabled.txt",
+  "sourceUri": "http://ggpserver.general-game-playing.de/ggpserver/public/download_gdl.jsp?name=SC_TestOnly_enabled",
+  "uploadedBy": "TheCat",
+  "gdlVersion": "v1",
+  "seesXml": "(<= (sees_xml random ?t) (true ?t))\r\n(<= (sees_xml ?p ?t) (role ?p) (distinct ?p random) (true ?t))"
+}

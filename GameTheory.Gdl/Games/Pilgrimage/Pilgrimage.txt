@@ -1,0 +1,3 @@
+This game involves two phases of play. In the first phase, players build the terrain of the board together. A player can transition to the next phase by placing all of his pieces on tiles with the maximum height of 5. Before the player moves to the pilgrimage phase, he must select one of his pieces to be the "pilgrim". In order to gain points/win, the player must attempt to move his pilgrim down to a tile of height 0 within 20 moves. Pieces can only move between tiles if they have a height difference of at most one. Tradeoffs in this game include how much time a player spends manipulating the terrain/getting his pieces into a favorable position versus when he starts the pilgrimage phase. It is possible for pieces to become trapped.
+
+by: Peter Pham

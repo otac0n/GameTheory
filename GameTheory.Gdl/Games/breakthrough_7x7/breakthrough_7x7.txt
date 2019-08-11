@@ -1,0 +1,8 @@
+Break through the opponents' ranks with one of your pawns.
+
+- two-player turn-taking game played on a board of varying size
+- both players have two rows of pawns
+- pawns move and capture like in chess, but cannot go two steps forward
+- the goal is to bring one pawn to the opposite side of the board
+- game ends in a draw if moving player does not have a legal move
+  (e.g., getting stuck or running out of pieces)

@@ -1,0 +1,8 @@
+{
+  "gameName": "guess6",
+  "rulesheet": "guess6.gdl",
+  "sourceUri": "http://ggpserver.general-game-playing.de/ggpserver/public/download_gdl.jsp?name=guess6",
+  "uploadedBy": "baum",
+  "gdlVersion": "v2",
+  "seesXml": ";;;;;;;;;;;;;;;;;;;; sees predicates ;;;;;;;;;;;;;;;;;;;;;;;;;;\r\n\r\n(<= (sees player (result ?n))\r\n\t(does random (rollDice ?n))\r\n)"
+}

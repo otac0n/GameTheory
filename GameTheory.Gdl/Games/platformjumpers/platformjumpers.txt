@@ -1,0 +1,3 @@
+This game involves two phases of play. During the first phase, players effectively construct two separate boards by coloring in squares on the board an entire row or column at a time. A tile that is already colored no longer changes color. During the second phase, pieces can only move to a tile with the same color that they start on. The second phase begins once the board has been completely colored. In the second phase players can make pawn moves and forward-only knight moves with their pieces. The game ends once a player gets a piece to the other side or once a player can not make a move on his turn.
+
+by: Peter Pham

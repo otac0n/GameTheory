@@ -1,0 +1,405 @@
+;; Nine Mens Morris
+;; Author: Martin Boelle
+;; v 0.1
+;;
+;; A non GDL description of the game can
+;; be found here:
+;; http://en.wikipedia.org/wiki/Nine_Men's_Morris
+;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+(role white)
+(role black)
+
+(init (spot 1 a blank))
+(init (spot 1 d- blank))
+(init (spot 1 g blank))
+(init (spot 2 b blank))
+(init (spot 2 d- blank))
+(init (spot 2 f blank))
+(init (spot 3 c blank))
+(init (spot 3 d- blank))
+(init (spot 3 e blank))
+(init (spot 4- a blank))
+(init (spot 4- b blank))
+(init (spot 4- c blank))
+(init (spot 4+ e blank))
+(init (spot 4+ f blank))
+(init (spot 4+ g blank))
+(init (spot 5 c blank))
+(init (spot 5 d+ blank))
+(init (spot 5 e blank))
+(init (spot 6 b blank))
+(init (spot 6 d+ blank))
+(init (spot 6 f blank))
+(init (spot 7 a blank))
+(init (spot 7 d+ blank))
+(init (spot 7 g blank))
+
+(init (turnOf white))
+(init (phase opening))
+
+(init (remainders white 9))
+(init (remainders black 9))
+
+(init (ply 1))
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; NEXT Relations
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+	;; Player occupies empty spot
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	
+(<=	(next (spot ?x ?y ?player))
+	(does ?player (put ?x ?y))				)
+
+(<=	(next (remainingPieces ?player z2))
+	(does ?player (put ?x ?y))
+	(true (remainingPieces ?player z1))
+	(-- z1 z2)								)
+	
+(<=	(next (turnOf black))
+	(does white (put ?x ?y))
+	(not (closingMill ?x ?y white))			)
+	
+(<=	(next (turnOf white))
+	(does black (put ?x ?y))
+	(not (closingMill ?x ?y black))			)
+
+(<=	(next (turnOf ?player))
+	(does ?player (put ?x ?y))
+	(closingMill ?x ?y ?player)				)
+
+(<=	(next millClosed)
+	(does ?player (put ?x ?y))
+	(closingMill ?x ?y ?player)				)
+
+(<=	(next (spot ?u ?v ?w))						;; Frame Axiom
+	(does ?player (put ?x ?y))
+	(true (spot ?u ?v ?w))
+	(distinctSpot ?x ?y ?u ?v)				)
+	
+(<=	(next (remainders ?anyPlayer ?u))			;; Frame Axiom
+	(does ?player (put ?x ?y))
+	(true (remainders ?anyPlayer ?u))		)
+
+
+	;; Player moves from ab to xy
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(<=	(next (spot ?a ?b blank))
+	(does ?player (move ?a ?b ?x ?y))		)
+
+(<=	(next (spot ?x ?y ?player))
+	(does ?player (move ?a ?b ?x ?y))		)
+	
+(<=	(next (turnOf black))
+	(does white (move ?a ?b ?x ?y))
+	(not (closingMill ?a ?b ?x ?y white))	)
+
+(<=	(next (turnOf white))
+	(does black (move ?a ?b ?x ?y))
+	(not (closingMill ?a ?b ?x ?y black))	)
+
+(<=	(next (turnOf ?player))
+	(does ?player (move ?a ?b ?x ?y))
+	(closingMill ?a ?b ?x ?y ?player)		)
+
+(<=	(next millClosed)
+	(does ?player (move ?a ?b ?x ?y))
+	(closingMill ?a ?b ?x ?y ?player)		)
+		
+(<=	(next (spot ?u ?v ?w))						;; Frame Axiom
+	(does ?player (move ?a ?b ?x ?y))
+	(true (spot ?u ?v ?w))
+	(distinctSpot ?a ?b ?u ?v)
+	(distinctSpot ?x ?y ?u ?v)				)
+	
+(<=	(next (remainders ?anyPlayer ?u))			;; Frame Axiom
+	(does ?player (move ?a ?b ?x ?y))
+	(true (remainders ?anyPlayer ?u))		)
+		
+
+	;; Player removes a piece
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(<=	(next (spot ?x ?y blank))
+	(does ?player (pick ?x ?y))				)
+	
+(<= (next (spot ?u ?v ?w))						;; Frame Axiom
+	(does ?player (pick ?x ?y))
+	(true (spot ?u ?v ?w))
+	(distinctSpot ?x ?y ?u ?v)				)
+	
+(<=	(next (remainders black ?z1))
+	(does white (pick ?x ?y))
+	(true (remainders black ?z2))
+	(++ ?z1 ?z2)							)
+	
+(<=	(next (remainders white ?z1))			
+	(does black (pick ?x ?y))
+	(true (remainders white ?z2))
+	(++ ?z1 ?z2)							)
+
+(<=	(next (turnOf white))
+	(does black (pick ?x ?y))				)
+	
+(<=	(next (turnOf black))
+	(does white (pick ?x ?y))				)
+
+(<=	(next (remainders ?player ?u))				;; Frame Axiom
+	(does ?player (pick ?x ?y))
+	(true (remainders ?player ?u))			)
+
+
+	;; counting plyes to determine end of Opening Phase
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(<=	(next (ply ?z2))
+	(does ?player (pick ?x ?y))
+	(true (ply ?z1))
+	(++ ?z1 ?z2)							)
+
+(<=	(next (ply ?z2))
+	(does ?player (put ?x ?y))
+	(not (closingMill ?x ?y ?player))
+	(true (ply ?z1))
+	(++ ?z1 ?z2)							)
+	
+(<=	(next (ply ?z))
+	(does ?player (put ?x ?y))
+	(closingMill ?x ?y ?player)
+	(true (ply ?z))							)
+
+(<=	(next (phase opening))
+	(true (phase opening))
+	(not (true (ply 18)))					)
+	
+(<=	(next (phase midgame))
+	(true (phase opening))
+	(true (ply 18))							)
+
+(<=	(next (phase midgame))
+	(true (phase midgame))					)	
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; LEGAL Relations
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
+	
+	
+(<=	(legal ?player (put ?x ?y))
+	(true (spot ?x ?y blank))
+	(true (turnOf ?player))
+	(true (phase opening))
+	(not (true millClosed))					)
+	
+(<=	(legal ?player (move ?a ?b ?x ?y))
+	(true (spot ?a ?b ?player))
+	(true (spot ?x ?y blank))
+	(true (turnOf ?player))
+	(true (phase midgame))
+	(or	(adjacent ?a ?b ?x ?y)
+		(true (remainders ?player 3)))
+	(not (true millClosed))					)
+
+(<=	(legal white (pick ?x ?y))
+	(true (spot ?x ?y black))
+	(or (not (closingMill ?x ?y black))
+		(allInMill black))
+	(true (turnOf white))
+	(true millClosed)						)
+	
+(<=	(legal black (pick ?x ?y))
+	(true (spot ?x ?y white))
+	(or	(not (closingMill ?x ?y white))
+		(allInMill white))
+	(true (turnOf black))
+	(true millClosed)						)
+	
+(<=	(legal white noop)
+	(true (turnOf black))					)
+
+	
+(<=	(legal black noop)
+	(true (turnOf white))					)
+
+	
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; TERMINAL Relations
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+(<=	terminal
+	(true (remainders ?player 2))			)
+	
+(<=	terminal
+	(true (jailed ?player))					)
+	
+	
+	
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; GOAL Relations
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+(<= (goal white 100)
+	(true (remainders black 2))				)
+	
+(<= (goal black 100)
+	(true (remainders white 2))				)
+
+(<= (goal ?player 0)
+	(true (remainders ?player 2))			)
+	
+(<=	(goal white 100)
+	(jailed black)							)
+	
+(<=	(goal black 100)
+	(jailed white)							)
+	
+(<=	(goal ?player 0)
+	(jailed player)							)
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; View Definitions
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;		
+
+
+(<=	(closingMill ?x ?y ?player)
+	(true (spot ?x ?y ?z))				;; binding ?x and ?y
+	(true (spot ?x1 ?y ?player))
+	(true (spot ?x2 ?y ?player))
+	(distinct ?x ?x1)
+	(distinct ?x ?x2)
+	(distinct ?x1 ?x2)						)
+
+(<=	(closingMill ?x ?y ?player)
+	(true (spot ?x ?y ?z))				;; binding ?x and ?y
+	(true (spot ?x ?y1 ?player))
+	(true (spot ?x ?y2 ?player))
+	(distinct ?y ?y1)
+	(distinct ?y ?y2)
+	(distinct ?y1 ?y2)						)
+
+
+(<=	(closingMill ?a ?b ?x ?y ?player)
+	(true (spot ?a ?b ?z1))				;; binding ?a and ?b
+	(true (spot ?x ?y ?z2))				;; binding ?x and ?y
+	(true (spot ?x1 ?y ?player))
+	(true (spot ?x2 ?y ?player))
+	(distinct ?x ?x1)
+	(distinct ?x ?x2)
+	(distinct ?x1 ?x2)
+	(distinctSpot ?a ?b ?x1 ?y)
+	(distinctSpot ?a ?b ?x2 ?y)				)
+
+
+	
+(<=	(closingMill ?a ?b ?x ?y ?player)
+	(true (spot ?a ?b ?z1))				;; binding ?a and ?b
+	(true (spot ?x ?y ?z2))				;; binding ?x and ?y
+	(true (spot ?x ?y1 ?player))
+	(true (spot ?x ?y2 ?player))
+	(distinct ?y ?y1)
+	(distinct ?y ?y2)
+	(distinct ?y1 ?y2)
+	(distinctSpot ?a ?b ?x ?y1)
+	(distinctSpot ?a ?b ?x ?y2)				)
+
+
+(<=	(nonMillStone ?player)
+	(true (spot ?x ?y ?player))
+	(not (closingMill ?x ?y ?player))		)
+
+(<= (allInMill ?player)
+	(not (nonMillStone ?player))			)
+
+(<=	(jailed ?player)
+	(not (free ?player))					)
+	
+(<=	(free ?player)
+	(true (spot ?a ?b ?player))
+	(true (spot ?x ?y blank))
+	(or	(adjacent ?a ?b ?x ?y)
+		(true (remainders ?player 3)))		)
+		
+(<=	(distinctSpot ?a ?b ?x ?y)
+	(or	(distinct ?a ?x)
+		(distinct ?b ?y))					)
+
+	
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Static Relations
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+(<= (adjacent ?a ?b ?x ?y)
+	(or	(adj ?a ?b ?x ?y)
+		(adj ?x ?y ?a ?b))					)
+
+(adj 1 a 1 d-)
+(adj 1 d- 1 g)
+(adj 1 g 4+ g)
+(adj 4+ g 7 g)
+(adj 7 g 7 d+)
+(adj 7 d+ 7 a)
+(adj 7 a 4- a)
+(adj 4- a 1 a)
+
+(adj 2 b 2 d-)
+(adj 2 d- 2 f)
+(adj 2 f 4+ f)
+(adj 4+ f 6 f)
+(adj 6 f 6 d+)
+(adj 6 d+ 6 b)
+(adj 6 b 4- b)
+(adj 4- b 2 b)
+
+(adj 3 c 3 d-)
+(adj 3 d- 3 e)
+(adj 3 e 4+ e)
+(adj 4+ e 5 e)
+(adj 5 e 5 d+)
+(adj 5 d+ 5 c)
+(adj 5 c 4- c)
+(adj 4- c 3 c)
+
+(adj 4- a 4- b)
+(adj 4- b 4- c)
+(adj 1 d- 2 d-)
+(adj 2 d- 3 d-)
+(adj 4+ g 4+ f)
+(adj 4+ f 4+ e)
+(adj 7 d+ 6 d+)
+(adj 6 d+ 5 d+)
+
+
+(++ 0 1)
+(++ 1 2)
+(++ 2 3)
+(++ 3 4)
+(++ 4 5)
+(++ 5 6)
+(++ 6 7)
+(++ 7 8)
+(++ 8 9)
+(++ 9 10)
+(++ 10 11)
+(++ 11 12)
+(++ 12 13)
+(++ 13 14)
+(++ 14 15)
+(++ 15 16)
+(++ 16 17)
+(++ 17 18)

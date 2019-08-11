@@ -1,0 +1,10 @@
+; This is test version to check corectness of game controller
+; In rule:
+;(<= (next (OnMap (Spell ?name ?dmg ?mana) ?x ?y))
+;    (true (OnMap (Spell ?name ?dmg ?mana) ?x ?y))
+;    (not (does ?r (Move ?x ?y)))
+;    (role ?r))
+;
+; computations differs when last two conjuncts ar permuted.
+; In upper case spell disapper when ANY of the players step on the field, so maximal goal is 10.
+; In other case spell don't disappear (unless BOTH players step its field) so larger goal is avilable.

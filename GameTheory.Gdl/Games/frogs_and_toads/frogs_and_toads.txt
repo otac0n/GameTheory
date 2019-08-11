@@ -1,0 +1,5 @@
+The frogs start in the lower right square of the board, the toads in the upper left one. The cell in the intersection of the two squares is empty. The player can move a piece (frog or toad) either to a horizontally or vertically adjacent cell if that is empty or jump over another piece onto the empty cell. The goal is to inverse the initial position.
+
+In this version, the player gets points depending on the number of pieces placed correctly.
+
+GDL by Peter Kissmann (TZI, University of Bremen)

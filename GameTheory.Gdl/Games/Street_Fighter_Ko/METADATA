@@ -1,0 +1,9 @@
+{
+  "gameName": "Street_Fighter_Ko",
+  "rulesheet": "Street_Fighter_Ko.gdl",
+  "description": "Street_Fighter_Ko.txt",
+  "sourceUri": "http://ggpserver.general-game-playing.de/ggpserver/public/download_gdl.jsp?name=Street_Fighter_Ko",
+  "uploadedBy": "Francois23",
+  "gdlVersion": "v1",
+  "seesXml": "(<= (sees_xml random ?t) (true ?t))\r\n(<= (sees_xml ?p ?t) (role ?p) (distinct ?p random) (true ?t))"
+}

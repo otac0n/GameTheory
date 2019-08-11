@@ -1,0 +1,365 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Bell, Book & Candle
+;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; ROLE Relations
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(role Player1)
+(role Player2)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; INIT Relations
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(init (control Player1))
+(init (step 1))
+(init (on Player1 start))
+(init (on Player2 start))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; LEGAL Relations
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(<= (legal Player1 noop)
+    (true (control Player2)))
+
+(<= (legal Player2 noop)
+    (true (control Player1)))
+
+(<= (legal ?player (go ?j))
+	(role ?player)
+	(field ?i)
+	(field ?j)
+	(edge ?i ?j)
+    (true (control ?player))
+	(true(on ?player ?i)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; NEXT Relations
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(<= (next (got bell ?player))
+    (role ?player)
+    (does ?player (go 34))
+	(not (true (got bell Player1)))
+	(not (true (got bell Player2)))
+	(field 34))
+(<= (next (got book ?player))
+    (role ?player)
+    (does ?player (go 21))
+	(not (true (got book Player1)))
+	(not (true (got book Player2)))
+	(field 21))
+(<= (next (got candle ?player))
+    (role ?player)
+    (does ?player (go 31))
+	(not (true (got candle Player1)))
+	(not (true (got candle Player2)))
+	(field 31))
+
+(<= (next (on ?player ?f))
+	(role ?player)
+	(field ?f)
+	(does ?player (go ?f)))
+
+(<= (next (on ?player ?f))
+	(role ?player)
+	(field ?f)
+	(true(on ?player ?f))
+	(does ?player noop))
+
+(<= (next (got ?i ?player))
+	(role ?player)
+	(item ?i)
+	(true (got ?i ?player)))
+
+(<= (next (control Player1))
+    (true (control Player2)))
+(<= (next (control Player2))
+    (true (control Player1)))
+
+(<= (next (step ?s2))
+	(true (step ?s1))
+	(succ ?s1 ?s2))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; TERMINAL Relations
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(<= terminal
+   	(true(got bell ?p1))
+	(true(got book ?p2))
+	(true(got candle ?p3))
+	(role ?p1)
+	(role ?p2)
+	(role ?p3))
+(<= terminal
+	(true (step 50)))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; GOAL Relations
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(<= (goal Player1 100)
+	(true(got bell Player1))
+	(true(got book Player1))
+	(true(got candle Player1)))
+(<= (goal Player1 0)
+	(not(true(got bell Player1)))
+	(not(true(got book Player1)))
+	(not(true(got candle Player1))))
+(<= (goal Player1 30)
+	(true (got bell Player1))
+	(not(true(got book Player1)))
+	(not(true(got candle Player1))))
+(<= (goal Player1 30)
+	(not(true (got bell Player1)))
+	(true(got book Player1))
+	(not(true(got candle Player1))))
+(<= (goal Player1 30)
+	(not(true (got  bell Player1)))
+	(not(true(got book Player1)))
+	(true(got candle Player1)))
+(<= (goal Player1 60)
+	(not(true (got bell Player1)))
+	(true(got book Player1))
+	(true(got candle Player1)))
+(<= (goal Player1 60)
+	(true (got bell Player1))
+	(not(true(got book Player1)))
+	(true(got candle Player1)))
+(<= (goal Player1 60)
+	(true (got bell Player1))
+	(true(got book Player1))
+	(not(true(got candle Player1))))
+
+
+(<= (goal Player2 100)
+	(true(got bell Player2))
+	(true(got book Player2))
+	(true(got candle Player2)))
+(<= (goal Player2 0)
+	(not(true(got bell Player2)))
+	(not(true(got book Player2)))
+	(not(true(got candle Player2))))
+(<= (goal Player2 30)
+	(true (got bell Player2))
+	(not(true(got book Player2)))
+	(not(true(got candle Player2))))
+(<= (goal Player2 30)
+	(not(true (got bell Player2)))
+	(true(got book Player2))
+	(not(true(got candle Player2))))
+(<= (goal Player2 30)
+	(not(true (got bell Player2)))
+	(not(true(got book Player2)))
+	(true(got candle Player2)))
+(<= (goal Player2 60)
+	(not(true (got bell Player2)))
+	(true(got book Player2))
+	(true(got candle Player2)))
+(<= (goal Player2 60)
+	(true (got bell Player2))
+	(not(true(got book Player2)))
+	(true(got candle Player2)))
+(<= (goal Player2 60)
+	(true (got bell Player2))
+	(true(got book Player2))
+	(not(true(got candle Player2))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; connections
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(<= (edge ?i ?j)
+	(conected ?i ?j)
+	(field ?i)
+	(field ?j))
+
+(<= (edge ?i ?j)
+	(conected ?j ?i)
+	(field ?i)
+	(field ?j))
+
+(conected start 1)
+(conected start 2)
+(conected start 35)
+(conected start 12)
+
+(conected 1 12)
+(conected 1 5)
+
+(conected 2 3)
+
+(conected 3 5)
+(conected 3 6)
+
+(conected 4 29)
+(conected 4 30)
+
+(conected 5 6)
+(conected 5 10)
+(conected 5 9)
+(conected 5 8)
+
+(conected 6 7)
+
+(conected 7 11)
+
+(conected 8 13)
+(conected 8 14)
+
+(conected 9 15)
+(conected 9 17)
+
+(conected 11 31)
+(conected 11 17)
+
+(conected 12 13)
+
+(conected 15 26)
+
+(conected 16 17)
+(conected 16 23)
+(conected 16 25)
+
+(conected 17 33)
+
+(conected 18 32)
+(conected 18 34)
+
+(conected 19 20)
+
+(conected 20 24)
+(conected 20 25)
+(conected 20 26)
+
+(conected 21 26)
+(conected 21 22)
+
+(conected 22 23)
+
+(conected 23 27)
+
+(conected 24 34)
+
+(conected 25 28)
+
+(conected 28 34)
+
+(conected 29 35)
+
+(conected 30 31)
+
+(conected 32 33)
+
+(conected 33 34)
+
+(conected 19 32)
+(conected 13 10)
+(conected 2 27)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Items
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(item bell) (item book) (item candle)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Field Definitions
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(field start)
+(field 1)
+(field 2)
+(field 3)
+(field 4)
+(field 5)
+(field 6)
+(field 7)
+(field 8)
+(field 9)
+(field 10)
+(field 11)
+(field 12)
+(field 13)
+(field 14)
+(field 15)
+(field 16)
+(field 17)
+(field 18)
+(field 19)
+(field 20)
+(field 21)
+(field 22)
+(field 23)
+(field 24)
+(field 25)
+(field 26)
+(field 27)
+(field 28)
+(field 29)
+(field 30)
+(field 31)
+(field 32)
+(field 33)
+(field 34)
+(field 35)    
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; successor Relations
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(succ 1 2)
+(succ 2 3)
+(succ 3 4)
+(succ 4 5)
+(succ 5 6)
+(succ 6 7)
+(succ 7 8)
+(succ 8 9)
+(succ 9 10)
+(succ 10 11)
+(succ 11 12)
+(succ 12 13)
+(succ 13 14)
+(succ 14 15)
+(succ 15 16)
+(succ 16 17)
+(succ 17 18)
+(succ 18 19)
+(succ 19 20)
+(succ 20 21)
+(succ 21 22)
+(succ 22 23)
+(succ 23 24)
+(succ 24 25)
+(succ 25 26)
+(succ 26 27)
+(succ 27 28)
+(succ 28 29)
+(succ 29 30)
+(succ 30 31)
+(succ 31 32)
+(succ 32 33)
+(succ 33 34)
+(succ 34 35)
+(succ 35 36)
+(succ 36 37)
+(succ 37 38)
+(succ 38 39)
+(succ 39 40)
+(succ 40 41)
+(succ 41 42)
+(succ 42 43)
+(succ 43 44)
+(succ 44 45)
+(succ 45 46)
+(succ 46 47)
+(succ 47 48)
+(succ 48 49)
+(succ 49 50)
+(succ 50 51)

@@ -1,0 +1,9 @@
+{
+  "gameName": "breakthrough_7x7",
+  "rulesheet": "breakthrough_7x7.gdl",
+  "description": "breakthrough_7x7.txt",
+  "sourceUri": "http://ggpserver.general-game-playing.de/ggpserver/public/download_gdl.jsp?name=breakthrough_7x7",
+  "uploadedBy": "stephan",
+  "gdlVersion": "v1",
+  "seesXml": "(<= (sees_xml random ?t) (true ?t))\r\n(<= (sees_xml ?p ?t) (role ?p) (distinct ?p random) (true ?t))\r\n\r\n(<= (sees_xml random (cell ?x ?y b)) (cellEmpty ?x ?y))\r\n(<= (sees_xml ?p (cell ?x ?y b)) (role ?p) (distinct ?p random) (cellEmpty ?x ?y))"
+}

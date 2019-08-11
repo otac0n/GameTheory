@@ -1,0 +1,9 @@
+{
+  "gameName": "pennies",
+  "rulesheet": "pennies.gdl",
+  "description": "pennies.txt",
+  "sourceUri": "http://ggpserver.general-game-playing.de/ggpserver/public/download_gdl.jsp?name=pennies",
+  "uploadedBy": "syllag",
+  "gdlVersion": "v2",
+  "seesXml": "(<= (sees_xml random ?t) (true ?t))\r\n(<= (sees_xml ?p ?t) (role ?p) (distinct ?p random) (true ?t))"
+}

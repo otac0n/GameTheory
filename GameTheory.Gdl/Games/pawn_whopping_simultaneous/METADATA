@@ -1,0 +1,9 @@
+{
+  "gameName": "pawn_whopping_simultaneous",
+  "rulesheet": "pawn_whopping_simultaneous.gdl",
+  "description": "pawn_whopping_simultaneous.txt",
+  "sourceUri": "http://ggpserver.general-game-playing.de/ggpserver/public/download_gdl.jsp?name=pawn_whopping_simultaneous",
+  "uploadedBy": "stephan",
+  "gdlVersion": "v1",
+  "seesXml": "(<= (sees_xml random ?t) (true ?t))\r\n(<= (sees_xml ?p ?t) (role ?p) (distinct ?p random) (true ?t))"
+}

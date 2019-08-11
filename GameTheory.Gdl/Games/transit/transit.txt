@@ -1,0 +1,6 @@
+The game includes two players and it is played on 4x8 grid with few blocked fields. The "transit" player starts in row 1 of the grid and its goal is to move to row 8 of the grid (i.e., cross the region). The goal of the "patrol" player is to intercept the "transit" (i.e., be positioned at the same position).
+If the "transit" reaches row 8 without being intercepted within the time limit of 30 moves, it wins. Otherwise, the patrol wins. The players do not learn any information until the last move of the game!
+
+Created by: Viliam Lisy (viliam.lisy@agents.felk.cvut.cz)
+Czech Technical University in Prague
+Faculty of Electrical Engineering, Department of Cybernetics.

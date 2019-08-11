@@ -1,0 +1,215 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; pawn whopping with two rows of pawns
+;;;
+;;; - two-player turn-taking game played on a board of varying size
+;;;   (changable using the size parameter below)
+;;; - both players have two rows of pawns
+;;; - pawns move and capture like in chess, but cannot go two steps forward
+;;; - the goal is to bring one pawn to the opposite side of the board
+;;; - game ends in a draw if moving player does not have a legal move
+;;;   (e.g., getting stuck or running out of pieces)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(width 5)
+; height needs to be at least 4
+(height 5)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Static Relations
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(succ 1 2)
+(succ 2 3)
+(succ 3 4)
+(succ 4 5)
+(succ 5 6)
+(succ 6 7)
+(succ 7 8)
+(succ 8 9)
+(succ 9 10)
+
+(<= (smallereq 1 ?y)
+	(succ ?y ?z)
+)
+(<= (smallereq ?x ?y)
+	(succ ?x1 ?x)
+	(succ ?y1 ?y)
+	(smallereq ?x1 ?y1)
+)
+
+(<= (xcoord ?x)
+	(width ?w)
+	(smallereq ?x ?w)
+)
+
+(<= (ycoord ?y)
+	(height ?h)
+	(smallereq ?y ?h)
+)
+
+(<= (forward white ?y1 ?y2)
+	(succ ?y1 ?y2)
+	(ycoord ?y2)
+)
+(<= (forward black ?y1 ?y2)
+	(succ ?y2 ?y1)
+	(ycoord ?y1)
+)
+
+(<= (neighbor ?x1 ?x2)
+	(succ ?x1 ?x2)
+	(xcoord ?x2)
+)
+(<= (neighbor ?x1 ?x2)
+	(succ ?x2 ?x1)
+	(xcoord ?x1)
+)
+
+(<= (cell ?x ?y)
+    (xcoord ?x)
+    (ycoord ?y))
+    
+(<= (distinctCell ?x1 ?y1 ?x2 ?y2)
+    (cell ?x1 ?y1)
+    (cell ?x2 ?y2)
+    (distinct ?x1 ?x2))
+(<= (distinctCell ?x1 ?y1 ?x2 ?y2)
+    (cell ?x1 ?y1)
+    (cell ?x2 ?y2)
+    (distinct ?y1 ?y2))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; ROLE Relations
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(role white)
+(role black)
+
+(opponent white black)
+(opponent black white)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; BASE & INPUT Relations
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(<= (base (cell ?x ?y ?p))
+    (cell ?x ?y)
+    (role ?p))
+(<= (base (control ?p))
+    (role ?p))
+
+(<= (input ?p noop)
+    (role ?p))
+(<= (input ?p (move ?x ?y1 ?x ?y2))
+    (xcoord ?x)
+	(forward ?p ?y1 ?y2))
+(<= (input ?p (move ?x1 ?y1 ?x2 ?y2))
+    (neighbor ?x1 ?x2)
+	(forward ?p ?y1 ?y2))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; INIT Relations
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(<= (init (cell ?x 1 white))
+    (xcoord ?x))
+(<= (init (cell ?x 2 white))
+    (xcoord ?x))
+(<= (init (cell ?x ?y black))
+    (xcoord ?x)
+	(height ?y))
+(<= (init (cell ?x ?y black))
+    (xcoord ?x)
+	(height ?h)
+	(succ ?y ?h))
+
+(init (control white))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; LEGAL Relations
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(<= (cellEmpty ?x ?y)
+    (cell ?x ?y)
+    (not (true (cell ?x ?y white)))
+    (not (true (cell ?x ?y black))))
+
+; move forward
+(<= (legal ?p (move ?x ?y1 ?x ?y2))
+    (true (control ?p))
+    (true (cell ?x ?y1 ?p))
+    (forward ?p ?y1 ?y2)
+    (cellEmpty ?x ?y2))
+
+; capture diagonally
+(<= (legal ?p (move ?x1 ?y1 ?x2 ?y2))
+    (true (control ?p))
+    (true (cell ?x1 ?y1 ?p))
+	(forward ?p ?y1 ?y2)
+	(neighbor ?x1 ?x2)
+	(opponent ?p ?p2)
+    (true (cell ?x2 ?y2 ?p2)))
+
+(<= (legal ?p noop)
+	(role ?p)
+	(not (true (control ?p))))
+    
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; NEXT Relations
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    
+(<= (next (cell ?x2 ?y2 ?player))
+    (does ?player (move ?x1 ?y1 ?x2 ?y2)))
+(<= (next (cell ?x3 ?y3 ?state))
+    (true (cell ?x3 ?y3 ?state))
+    (does ?player (move ?x1 ?y1 ?x2 ?y2))
+    (distinctCell ?x1 ?y1 ?x3 ?y3)
+    (distinctCell ?x2 ?y2 ?x3 ?y3))
+    
+(<= (next (control ?p))
+    (true (control ?p2))
+	(opponent ?p ?p2))
+    
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; GOAL Relations
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(<= (wins white)
+	(height ?h)
+    (true (cell ?x ?h white)))
+(<= (wins black)
+    (true (cell ?x 1 black)))
+
+(<= (goal ?p 100)
+    (wins ?p))
+(<= (goal ?p 50)
+	(role ?p)
+    (not (wins white))
+	(not (wins black)))
+(<= (goal ?p 0)
+	(opponent ?p ?p2)
+	(wins ?p2))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; TERMINAL Relations
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(<= (any_legal_move ?p)
+	(legal ?p ?m))
+
+(<= terminal
+    (wins ?someone))
+
+(<= terminal
+	(true (control ?p))
+	(not (any_legal_move ?p)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; to have access to height and width in the game state
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(<= (init (width ?w)) (width ?w))
+(<= (init (height ?h)) (height ?h))
+(<= (next (width ?w)) (width ?w))
+(<= (next (height ?h)) (height ?h))

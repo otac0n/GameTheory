@@ -1,0 +1,3 @@
+GDL version of the game Backgammon (see, e.g., http://en.wikipedia.org/wiki/Backgammon).
+
+GDL by Stephan Schiffel (School of Computer Science, Reykjavik University)

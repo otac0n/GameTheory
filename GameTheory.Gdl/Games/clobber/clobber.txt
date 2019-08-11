@@ -1,0 +1,6 @@
+In this game the players take turns moving one of their pieces to a horizontally or vertically adjacent cell occupied by an opponent's piece removing the piece from the destination cell. If no such cell exists the game ends and the player who made the last move wins the game.
+
+In this version, a decreasing amount of points is awarded, depending on the time it took to defeat the opponent.
+(See M. Albert, J.P. Grossman, R.J. Nowakowski, and D. Wolfe: "An Introduction to Clobber", INTEGERS: The Electronic Journal of Combinatorial Number Theory, 5(2), 2005)
+
+GDL by Peter Kissmann (TZI, University of Bremen)

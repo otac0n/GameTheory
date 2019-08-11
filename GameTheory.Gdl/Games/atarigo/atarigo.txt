@@ -1,0 +1,3 @@
+Atari-Go, also known as Capture-Go.
+
+Two players alternate in placing stones of their color on the board. The first player to surround some opponents piece(s) with his own wins.

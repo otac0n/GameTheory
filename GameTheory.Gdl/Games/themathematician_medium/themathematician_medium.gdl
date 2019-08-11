@@ -1,0 +1,267 @@
+; disabled because some rules are invalid
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+; THE MATHEMATICIAN
+;
+; by Peter Grossmann <s9777260@mail.inf.tu-dresden.de> (player TAKT)
+; (General Game Playing course at TU Dresden, winter term 09/10)
+;
+; The goal is to transform (proof) a given term into another term using mathematical operations.
+;
+; The stopoverterms are mainly to guide the search in order to help the player to find any
+; solution at all to the goal.
+;
+
+;;; Task: transform x*2 = 2 into x = 1 ;;;
+(init (term (= (op * x 2) 2)))
+(goalterm (= x 1))
+(score 1 50)
+(stopoverterm 1 (= (op / (op * x 2) 2) 1))
+(shorteststep 5)
+(maximumstep 10)
+(variable x)
+(<= (constant ?c) (variable ?c))
+(<= (constant ?c) (number ?c))
+(operation *)
+(operation /)
+(number 1)
+(number 2)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;
+;;; Role, goals, terminals.
+;;;
+(role mathematician)
+(init (step 0))
+
+(<= terminal
+	(true (term ?t))
+	(goalterm ?t))
+
+(<= terminal
+	(maximumstep ?s)
+	(true (step ?s)))
+
+(<= terminal
+	(true pencil_has_been_thrown_away))
+
+(<= (goal mathematician 100)
+	(true (term ?t))
+	(goalterm ?t)
+	(shorteststep ?s)
+	(true (step ?s)))
+
+(<= (goal mathematician 90)
+	(true (term ?t))
+	(goalterm ?t)
+	(shorteststep ?s)
+	(not (true (step ?s))))
+
+(<= (goal mathematician ?score)
+	(true (term ?t))
+	(score ?number ?score)
+	(stopoverterm ?number ?t))
+
+; else 0
+(goal mathematician 0) ; is this valid?
+
+;(<= (goal mathematician 0)
+;	(true (term ?t)))
+;	(not (goalterm ?t))
+;	(score ?number ?score)
+;	(not (stopoverterm ?number ?t)))
+
+;;;
+;;; Legal and next rules.
+;;;
+(legal mathematician think)
+(legal mathematician throw_pencil_away)
+
+(<= (legal mathematician (operation ?op ?n))
+	(operation ?op)
+	(constant ?n))
+
+(<= (legal mathematician (operation switch))
+	(true (term (= ?term1 ?term2))))
+
+(<= (legal mathematician (transforminto ?nterm))
+	(true (term ?term))
+	(termequals ?term ?nterm)
+	(distinct ?term ?nterm))
+
+(<= (legal mathematician (transforminto ?nterm))
+	(true (term ?term))
+	(termequals ?nterm ?term)
+	(distinct ?term ?nterm))
+
+(<= (next (term ?term))
+	(does mathematician think)
+	(true (term ?term)))
+
+(<= (next (term ?term))
+	(does mathematician throw_pencil_away)
+	(true (term ?term)))
+
+(<= (next pencil_has_been_thrown_away)
+	(does mathematician throw_pencil_away))
+
+(<= (next (term (= ?term2 ?term1)))
+	(does mathematician (operation switch))
+	(true (term (= ?term1 ?term2))))
+
+(<= (next (term ?nterm))
+	(does mathematician (operation ?op ?n))
+	(true (term ?term))
+	(doop ?term ?nterm ?op ?n))
+
+(<= (next (term ?nterm))
+	(does mathematician (transforminto ?nterm))
+	(true (term ?term)))
+
+(<= (next (step ?sn))
+	(true (step ?s))
+	(succ ?s ?sn))
+
+;;;
+;;; Term manipulation and checking.
+;;;
+(<= (doop (= ?term1 ?term2) (= ?nterm1 ?nterm2) ?op ?n)
+	(doop ?term1 ?nterm1 ?op ?n)
+	(doop ?term2 ?nterm2 ?op ?n))
+
+(<= (doop ?term (op ?op ?term ?n) ?op ?n)
+	(operation ?op)
+	(constant ?n)
+	(term_without_equation ?term))
+
+(<= (term_without_equation ?term)
+	(constant ?term))
+
+(<= (term_without_equation (op ?op ?term1 ?term2))
+	(operation ?op)
+	(term_without_equation ?term1)
+	(term_without_equation ?term2))
+
+;go recursive into it
+(<= (termequals (= ?term1 ?term2) (= ?nterm1 ?nterm2))
+	(termequals ?term1 ?nterm1)
+	(termequals_do_not_change ?term2 ?nterm2))
+
+;go recursive into it
+(<= (termequals (= ?term1 ?term2) (= ?nterm1 ?nterm2))
+	(termequals_do_not_change ?term1 ?nterm1)
+	(termequals ?term2 ?nterm2))
+
+;go recursive into it
+(<= (termequals (op ?op ?term1 ?term2) (op ?op ?nterm1 ?nterm2))
+	(operation ?op)
+	(termequals ?term1 ?nterm1)
+	(termequals_do_not_change ?term2 ?nterm2))
+
+;go recursive into it
+(<= (termequals_do_not_change (op ?op ?term1 ?term2) (op ?op ?nterm1 ?nterm2))
+	(operation ?op)
+	(termequals_do_not_change ?term1 ?nterm1)
+	(termequals_do_not_change ?term2 ?nterm2))
+
+;go recursive into it
+(<= (termequals (op ?op ?term1 ?term2) (op ?op ?nterm1 ?nterm2))
+	(operation ?op)
+	(termequals_do_not_change ?term1 ?nterm1)
+	(termequals ?term2 ?nterm2))
+
+; multiplication (3 * 2 = 6)
+(<= (termequals (op * ?n1 ?n2) ?n)
+	(number ?n1)
+	(number ?n2)
+	(multiply ?n1 ?n2 ?n))
+
+; division (8 / 2 = 4)
+(<= (termequals (op / ?n1 ?n2) ?n)
+	(number ?n1)
+	(number ?n2)
+	(distinct ?n2 0)
+	(multiply ?n ?n2 ?n1))
+
+; x / x = 1
+(<= (termequals (op / ?n1 ?n1) 1)
+	(constant ?n1)
+	(distinct ?n1 0))
+
+; 1 * x = x
+(<= (termequals (op * 1 ?n) ?n)
+	(constant ?n))
+
+; x / 1 = x
+(<= (termequals (op / ?n 1) ?n)
+	(constant ?n))
+
+; commutativity
+(<= (termequals (op * ?term1 ?term2) (op * ?nterm2 ?nterm1))
+	(termequals_do_not_change ?term1 ?nterm1)
+	(termequals_do_not_change ?term2 ?nterm2))
+
+; associativity
+(<= (termequals (op * ?term1 (op * ?term21 ?term22)) (op * (op * ?nterm11 ?nterm12) ?nterm2))
+	(termequals_do_not_change ?term1 ?nterm11)
+	(termequals_do_not_change ?term21 ?nterm12)
+	(termequals_do_not_change ?term22 ?nterm2))
+
+; (a/b)/c = a/(b*c) (it is implictly with associativity given: (a/b)/c = (a/c)/b)
+(<= (termequals (op / (op / ?term11 ?term12) ?term2) (op / ?nterm1 (op * ?nterm21 ?nterm22)))
+	(termequals_do_not_change ?term11 ?nterm1)
+	(termequals_do_not_change ?term12 ?nterm21)
+	(termequals_do_not_change ?term2 ?nterm22))
+
+; a/(b/c) = (a*c)/b
+(<= (termequals (op / ?term1 (op / ?term21 ?term22)) (op / (op * ?nterm11 ?nterm12) ?nterm2))
+	(termequals_do_not_change ?term1 ?nterm11)
+	(termequals_do_not_change ?term22 ?nterm12)
+	(termequals_do_not_change ?term21 ?nterm2))
+
+; (a*b)/c = (a/c)*b (a*(b/c) is by commutativity implicitly given)
+(<= (termequals (op / (op * ?term11 ?term12) ?term2) (op * (op / ?nterm11 ?nterm12) ?nterm2))
+	(termequals_do_not_change ?term11 ?nterm11)
+	(termequals_do_not_change ?term12 ?nterm2)
+	(termequals_do_not_change ?term2 ?nterm12))
+
+(<= (termequals_do_not_change ?term ?term)
+	(constant ?term))
+
+(<= (termequals ?term ?term)
+	(constant ?term))
+
+;;;
+;;; Numerical calculations.
+;;;
+(<= (multiply 0 ?n 0)
+	(constant ?n))
+(<= (multiply ?n 0 0)
+	(constant ?n))
+(<= (multiply 1 ?n ?n)
+	(constant ?n))
+(<= (multiply ?n1 ?n2 ?n)
+	(add ?n2 ?n3 ?n)
+	(succ ?n1prev ?n1)
+	(multiply ?n1prev ?n2 ?n3)
+	(number ?n))
+
+(add 0 ?n ?n)
+(<= (add 1 ?n ?nsucc)
+	(succ ?n ?nsucc))
+
+(<= (add ?n1 ?n2 ?n)
+	(succ ?n1prev ?n1)
+	(succ ?n2 ?n2succ)
+	(add ?n1prev ?n2succ ?n))
+
+(succ 0 1)
+(succ 1 2)
+(succ 2 3)
+(succ 3 4)
+(succ 4 5)
+(succ 5 6)
+(succ 6 7)
+(succ 7 8)
+(succ 8 9)
+(succ 9 10)

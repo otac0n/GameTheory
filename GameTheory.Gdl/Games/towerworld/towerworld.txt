@@ -1,0 +1,9 @@
+A 2 player board game, where both players have a knight figure with which they have to jump from tower to tower in order to reach their opponent's start line.
+
+At the same time, both players have to try and prevent each other from doing the above. If you are the first player to place a tower on your opponent's start line and occupy it with your knight, you win the game.
+
+
+The game was invented by Thomas Brunner.
+The board game can be ordered here: http://www.intellego-holzspiele.de/
+GDL by: Gernot Ruscher gernot(dot)ruscher(at)googlemail(dot)com
+Copyright: intellego holzspiele

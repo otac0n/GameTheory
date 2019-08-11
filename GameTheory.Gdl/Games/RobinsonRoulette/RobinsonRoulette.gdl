@@ -1,0 +1,148 @@
+;; Robinson Roulette
+;; Author: Martin Boelle
+;; v 0.1
+;;
+;; A non GDL description of the game can
+;; be found here:
+;; http://www.jaapsch.net/puzzles/robinson.htm
+;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+(role player)
+
+(init (outer 1 empty))
+(init (outer 2 empty))
+(init (outer 3 empty))
+(init (outer 4 empty))
+(init (outer 5 empty))
+(init (outer 6 empty))
+(init (outer 7 empty))
+(init (outer 8 empty))
+(init (outer 9 empty))
+(init (outer 10 empty))
+(init (outer 11 empty))
+
+(init (inner 1 peg))
+(init (inner 2 peg))
+(init (inner 3 peg))
+(init (inner 4 peg))
+(init (inner 5 whitePeg))
+(init (inner 6 empty))
+(init (inner 7 peg))
+(init (inner 8 peg))
+(init (inner 9 peg))
+(init (inner 10 peg))
+(init (inner 11 peg))
+(init (inner 12 peg))
+
+	
+;;; Does Relations
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; Stick goes from inner to outer ring
+(<=	(next (outer ?a ?p))
+	(does player (turn ?a))
+	(true (inner 12 ?p))		)
+	
+(<=	(next (inner ?a empty))
+	(does player (turn ?a))		)
+
+;; Rotation of inner ring
+(<= (next (inner ?y ?z))
+	(does player (turn ?a))
+	(true (inner ?x ?z))
+	(distance ?x ?y ?a)			
+	(distinct ?y ?a)			)
+
+;; Frame Axiom outer ring
+(<= (next (outer ?x ?z))
+	(does player (turn ?a))
+	(true (outer ?x ?z))
+	(distinct ?a ?x)			)
+	
+	
+;;; Legal Relations
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(<=	(legal player (turn ?a))
+	(true (outer ?a empty))
+	(or	(true (inner 12 peg))
+		(true (inner 12 whitePeg))))
+	
+	
+;;; Terminal Relations
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(<=	terminal
+	(true (outer ?y whitePeg))	)
+	
+(<=	terminal
+	(true (inner 12 empty))		)
+	
+		
+;;; Goal Relations
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
+	
+(<=	(goal player 0)
+	(true (outer ?x empty))		)
+	
+(<=	(goal player 100)
+	(not (true (outer ?x empty))))
+
+
+;;; Static Relations
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(distance 1 2 1)
+(distance 2 3 1)
+(distance 3 4 1)
+(distance 4 5 1)
+(distance 5 6 1)
+(distance 6 7 1)
+(distance 7 8 1)
+(distance 8 9 1)
+(distance 9 10 1)
+(distance 10 11 1)
+(distance 11 12 1)
+(distance 12 1 1)
+
+(<=	(distance ?x ?y 2)
+	(distance ?x ?z 1)
+	(distance ?z ?y 1))
+	
+(<=	(distance ?x ?y 3)
+	(distance ?x ?z 2)
+	(distance ?z ?y 1))
+
+(<=	(distance ?x ?y 4)
+	(distance ?x ?z 3)
+	(distance ?z ?y 1))
+	
+(<=	(distance ?x ?y 5)
+	(distance ?x ?z 4)
+	(distance ?z ?y 1))
+	
+(<=	(distance ?x ?y 6)
+	(distance ?x ?z 5)
+	(distance ?z ?y 1))
+	
+(<=	(distance ?x ?y 7)
+	(distance ?x ?z 6)
+	(distance ?z ?y 1))
+	
+(<=	(distance ?x ?y 8)
+	(distance ?x ?z 7)
+	(distance ?z ?y 1))
+	
+(<=	(distance ?x ?y 9)
+	(distance ?x ?z 8)
+	(distance ?z ?y 1))
+	
+(<=	(distance ?x ?y 10)
+	(distance ?x ?z 9)
+	(distance ?z ?y 1))
+	
+(<=	(distance ?x ?y 11)
+	(distance ?x ?z 10)
+	(distance ?z ?y 1))

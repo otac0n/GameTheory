@@ -1,0 +1,3 @@
+Simultaneous version of the 2-player game pawn-whopping.
+
+Adapted GDL by Tim Federholzner (TZI, University of Bremen)

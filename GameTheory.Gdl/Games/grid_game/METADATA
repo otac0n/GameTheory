@@ -1,0 +1,8 @@
+{
+  "gameName": "grid_game",
+  "rulesheet": "grid_game.gdl",
+  "sourceUri": "http://ggpserver.general-game-playing.de/ggpserver/public/download_gdl.jsp?name=grid_game",
+  "uploadedBy": "Manju",
+  "gdlVersion": "v1",
+  "seesXml": "(<= (sees_xml random ?t) (true_p ?t))\r\n(<= (sees_xml ?p ?t) (role ?p) (distinct ?p random) (true_p ?t))\r\n\r\n(<= (true_p (control ?p))\r\n    (true (control ?p)))\r\n(<= (true_p (step ?s))\r\n    (true (step ?s)))\r\n(<= (true_p (cell ?x ?y b))\r\n    (true (cell ?x ?y))\r\n    (not (true (isat playerx ?x ?y)))\r\n    (not (true (isat playery ?x ?y)))\r\n    (or (distinct ?x 4) (distinct ?y 7))\r\n    )\r\n(<= (true_p (cell ?x ?y x))\r\n    (true (isat playerx ?x ?y))\r\n    (or (distinct ?x 4) (distinct ?y 7))\r\n    )\r\n(<= (true_p (cell ?x ?y o))\r\n    (true (isat playery ?x ?y))\r\n    (or (distinct ?x 4) (distinct ?y 7))\r\n    )\r\n(<= (true_p (cell 4 7 green))\r\n    )"
+}

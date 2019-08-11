@@ -1,0 +1,4 @@
+A GDL-II version of a Krieg-Tictactoe game. In this game, the board has a size of 5x5 cells, the players mark cells simultaneously, and the goal is to achieve a horizontal or vertical line of four pieces of the own color.
+The players do not see the opponent's move, but are informed if they tried to place a piece on an already occupied position (which might also be a position where the opponent tried to place a piece in this turn). This position may not be played on again, unless a valid move is performed.
+
+GDL by Michael Thielscher (School of Computer Science and Engineering, The University of New South Wales)

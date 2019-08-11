@@ -1,0 +1,3 @@
+Escape from the terrorists and capture the flag.
+
+The same as wargame01 with the bug fixed that the soldier is invincible.

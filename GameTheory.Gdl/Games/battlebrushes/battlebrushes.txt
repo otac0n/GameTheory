@@ -1,0 +1,5 @@
+Inspired by the game "Battle Painters", where some players with brushes try to color as large an area as possible in their own color.
+
+In this four-player version, the board is set to a size of 8 x 8 and the brushes can only be moved to a horizontally or vertically adjacent cell. With each step to a cell the destination is colored in the player's color. If more than one player tries to reach the same cell in the same step, they become dizzy and cannot move for two turns.
+
+GDL by Tim Federholzner and Peter Kissmann (TZI, University of Bremen)

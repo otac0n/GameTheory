@@ -1,0 +1,8 @@
+{
+  "gameName": "sat_test_20v_91c_visualisation",
+  "rulesheet": "sat_test_20v_91c_visualisation.gdl",
+  "sourceUri": "http://ggpserver.general-game-playing.de/ggpserver/public/download_gdl.jsp?name=sat_test_20v_91c_visualisation",
+  "uploadedBy": "hannes",
+  "gdlVersion": "v1",
+  "seesXml": "(<= (sees_xml random ?t) (sees_xml1 ?t))\r\n(<= (sees_xml ?p ?t) (role ?p) (distinct ?p random) (sees_xml1 ?t))\r\n\r\n(<= (sees_xml1 ?t) (true ?t))\r\n(<= (sees_xml1 (contains ?clause ?literal)) (contains ?clause ?literal))"
+}

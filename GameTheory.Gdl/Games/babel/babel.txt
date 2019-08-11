@@ -1,0 +1,4 @@
+Three players build a tower together.
+
+A simple cooperative three-player game. The goal is to create a tower as high as possible. All players decide simultaneously on which level they wish to build. A block is built on a level if the level below has at least one block more than the resulting current level.
+GDL by Tim Federholzner and Peter Kissmann (TZI, University of Bremen)

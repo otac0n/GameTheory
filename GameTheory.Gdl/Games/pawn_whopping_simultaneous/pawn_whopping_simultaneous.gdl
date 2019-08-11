@@ -1,0 +1,213 @@
+(role x)
+(role o)
+
+; Initial conditions
+(init (cell 1 7 o))
+(init (cell 2 7 o))
+(init (cell 3 7 o))
+(init (cell 4 7 o))
+(init (cell 5 7 o))
+(init (cell 6 7 o))
+(init (cell 7 7 o))
+(init (cell 8 7 o))
+(init (cell 1 2 x))
+(init (cell 2 2 x))
+(init (cell 3 2 x))
+(init (cell 4 2 x))
+(init (cell 5 2 x))
+(init (cell 6 2 x))
+(init (cell 7 2 x))
+(init (cell 8 2 x))
+
+; Legal moves
+(<= (legal ?p ?move)
+	(can_move ?p ?move))
+(<= (legal ?p noop)
+	(role ?p)
+	(not (can_move_somewhere ?p)))
+; Move forward
+(<= (can_move x (move ?x ?y1 ?x ?y2))
+	(true (cell ?x ?y1 x))
+	(succ ?y1 ?y2)
+	(not (occupied ?x ?y2)))
+(<= (occupied ?x ?y)
+	(role ?r)
+	(true (cell ?x ?y ?r)))
+(<= (can_move o (move ?x ?y1 ?x ?y2))
+	(true (cell ?x ?y1 o))
+	(succ ?y2 ?y1)
+	(not (occupied ?x ?y2)))
+; First move can be a double.
+(<= (can_move x (move ?x 2 ?x 4))
+	(true (cell ?x 2 x))
+	(not (occupied ?x 3))
+	(not (occupied ?x 4)))
+(<= (can_move o (move ?x 7 ?x 5))
+	(true (cell ?x 7 o))
+	(not (occupied ?x 6))
+	(not (occupied ?x 5)))
+; Capture diagonally
+(<= (can_move x (capture ?x1 ?y1 ?x2 ?y2))
+	(true (cell ?x1 ?y1 x))
+	(true (cell ?x2 ?y2 o))
+	(succ ?y1 ?y2)
+	(succ ?x1 ?x2))
+(<= (can_move x (capture ?x1 ?y1 ?x2 ?y2))
+	(true (cell ?x1 ?y1 x))
+	(true (cell ?x2 ?y2 o))
+	(succ ?y1 ?y2)
+	(succ ?x2 ?x1))
+(<= (can_move o (capture ?x1 ?y1 ?x2 ?y2))
+	(true (cell ?x1 ?y1 o))
+	(true (cell ?x2 ?y2 x))
+	(succ ?y2 ?y1)
+	(succ ?x1 ?x2))
+(<= (can_move o (capture ?x1 ?y1 ?x2 ?y2))
+	(true (cell ?x1 ?y1 o))
+	(true (cell ?x2 ?y2 x))
+	(succ ?y2 ?y1)
+	(succ ?x2 ?x1))
+
+; Possible conflicts in simultaneous play
+(<= movingToSameCell
+	(role ?r)
+	(role ?r2)
+	(distinct ?r ?r2)
+	(does ?r (move ?x ?y ?x2 ?y2))
+	(does ?r2 (move ?x3 ?y3 ?x2 ?y2))
+)
+(<= capturingEachOther
+	(role ?r)
+	(role ?r2)
+	(distinct ?r ?r2)
+	(does ?r (capture ?x ?y ?x2 ?y2))
+	(does ?r2 (capture ?x2 ?y2 ?x ?y))
+)
+
+; Transition rules
+(<= (next (cell ?x ?y ?p))
+	(true (cell ?x ?y ?p))
+	(not (changes ?x ?y)))
+(<= (next (cell ?x ?y ?p))
+	(does ?p (move ?any_x ?any_y ?x ?y))
+	(not movingToSameCell))
+(<= (next (cell ?x ?y ?p))
+	(does ?p (capture ?any_x ?any_y ?x ?y))
+	(not capturingEachOther))
+
+(<= (changes ?x ?y)
+	(does ?r (move ?x ?y ?any_x ?any_y))
+	(not movingToSameCell))
+(<= (changes ?x ?y)
+	(does ?r (capture ?x ?y ?any_x ?any_y)))
+(<= (changes ?x ?y)
+	(does ?r (capture ?any_x ?any_y ?x ?y)))
+
+; Goal
+(<= (goal x 100)
+	xwins
+	(not owins))
+
+(<= (goal o 100)
+	owins
+	(not xwins))
+
+(<= (has_pieces ?p)
+	(true (cell ?x ?y ?p)))
+
+(<= (goal ?p 50)
+	(role ?p)
+	(not (can_move_somewhere x))
+	(not (can_move_somewhere o))
+	(not xwins)
+	(not owins))
+(<= (goal ?p 50)
+	(role ?p)
+	owins
+	xwins
+)
+(<= (goal ?p 50)
+	(role ?p)
+	(true (step 30))
+	(not owins)
+	(not xwins)
+)
+
+(<= (goal x 0)
+	owins
+	(not xwins))
+
+(<= (goal o 0)
+	xwins
+	(not owins))
+
+(<= xwins
+	(true (cell ?any_x 8 x)))
+(<= xwins
+	(not (has_pieces o)))
+
+(<= owins
+	(true (cell ?any_x 1 o)))
+(<= owins
+	(not (has_pieces x)))
+
+; Terminal conditions
+(<= terminal
+	xwins)
+(<= terminal
+	owins)
+
+(<= terminal
+	(not (can_move_somewhere x))
+	(not (can_move_somewhere o)))
+
+(<= (can_move_somewhere ?p)
+	(can_move ?p ?m))
+
+; Successor axioms
+(succ 1 2)
+(succ 2 3)
+(succ 3 4)
+(succ 4 5)
+(succ 5 6)
+(succ 6 7)
+(succ 7 8)
+; Step counter
+(init (step 0))
+(<= (next (step ?n2))
+	(true (step ?n))
+	(succ ?n ?n2)
+)
+(succ 0 1)
+(succ 1 2)
+(succ 2 3)
+(succ 3 4)
+(succ 4 5)
+(succ 5 6)
+(succ 6 7)
+(succ 7 8)
+(succ 8 9)
+(succ 9 10)
+(succ 10 11)
+(succ 11 12)
+(succ 12 13)
+(succ 13 14)
+(succ 14 15)
+(succ 15 16)
+(succ 16 17)
+(succ 17 18)
+(succ 18 19)
+(succ 19 20)
+(succ 20 21)
+(succ 21 22)
+(succ 22 23)
+(succ 23 24)
+(succ 24 25)
+(succ 25 26)
+(succ 26 27)
+(succ 27 28)
+(succ 28 29)
+(succ 29 30)
+(<= terminal
+	(true (step 30))
+)

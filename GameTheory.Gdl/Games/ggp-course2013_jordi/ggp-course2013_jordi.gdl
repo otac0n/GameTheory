@@ -1,0 +1,200 @@
+;; General Game Playing
+;; Assignment 1
+;; Jordi Bieger
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; DEFINE PLAYER ROLES
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(role white)
+(role black)
+
+(other white black)
+(other black white)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; INITIALIZE STATE
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+; White gets to start
+(init (control white))
+
+; Each player has 12 pieces
+(init (pieces white 12))
+(init (pieces black 12))
+
+; Set the states of the board cells
+(<= (init (cell ?x ?y blank)) (tile light ?x ?y)) ; all light tiles are blank
+(<= (init (cell ?x 4 blank)) (on_board ?x)) ; all tiles on row 4 are blank
+(<= (init (cell ?x 5 blank)) (on_board ?x)) ; all tiles on row 5 are blank
+(<= (init (cell ?x ?y white)) (tile dark ?x ?y) (smaller ?y 4)) ; all dark tiles on rows 1-3 have a white piece on them
+(<= (init (cell ?x ?y black)) (tile dark ?x ?y) (not (smaller ?y 6))) ; all dark tiles on rows 6-8 have a black piece on them
+
+; Number succession
+(succ 1 2)
+(succ 2 3)
+(succ 3 4)
+(succ 4 5)
+(succ 5 6)
+(succ 6 7)
+(succ 7 8)
+(succ 8 9)
+(succ 9 10)
+(succ 10 11)
+(succ 11 12)
+
+; Only define for 1-8, because we really only care about even/oddness for
+; coordinates that are on the board and this way it's easy to define on_board
+; as well
+(even 2)
+(even 4)
+(even 6)
+(even 8)
+(odd 1)
+(odd 3)
+(odd 5)
+(odd 7)
+
+; Check if a number is on the board (i.e. 1-8)
+(<= (on_board ?x) (even ?x))
+(<= (on_board ?x) (odd ?x))
+
+(<= (tile light ?x ?y) (even ?x)  (odd ?y))
+(<= (tile light ?x ?y) (odd ?x)  (even ?y))
+(<= (tile dark ?x ?y) (odd ?x)  (odd ?y))
+(<= (tile dark ?x ?y) (even ?x)  (even ?y))
+
+(<= (smaller ?a ?b) (succ ?a ?b))
+(<= (smaller ?a ?c) (succ ?b ?c) (smaller ?a ?b))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; DEFINE LEGAL MOVES
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+; noop is legal if the other player has control
+(<= (legal black noop) (true (control white)))
+(<= (legal white noop) (true (control black)))
+
+; the move action moves a piece from one set of coordinates to another
+; if ?type = step: move the piece one step diagonally
+; if ?type = capture: move the piece two steps diagonally, over an opponent's piece, which is then removed
+(<= (legal ?p (move ?type ?xfrom ?yfrom ?xto ?yto))
+    (true (control ?p))
+    (true (cell ?xfrom ?yfrom ?p))
+    
+    (movement ?p ?type ?xfrom ?yfrom ?xto ?yto)
+    
+    (true (cell ?xto ?yto blank)))
+
+; check if the specified movement is possible
+(<= (movement ?p step ?xfrom ?yfrom ?xto ?yto)
+    (adjacent ?xfrom ?xto) ; steps must move 1 step in x direction
+    (fwd ?p ?yfrom ?yto)) ; and in the correct y direction
+(<= (movement ?p capture ?xfrom ?yfrom ?xto ?yto)
+    (triple ?xfrom ?xover ?xto)
+    (fwd2 ?p ?yfrom ?yover ?yto)
+    (other ?p ?p2)
+    (true (cell ?xover ?yover ?p2)))
+
+; step forward on the y-axis (different for each player)
+(<= (fwd white ?yfrom ?yto) (succ ?yfrom ?yto))
+(<= (fwd black ?yfrom ?yto) (succ ?yto ?yfrom))
+
+; go 2 steps forward on the y-axis (different for each player)
+(<= (fwd2 ?p ?yfrom ?yover ?yto) (fwd ?p ?yfrom ?yover) (fwd ?p ?yover ?yto))
+
+; checks if numbers are adjacent
+(<= (adjacent ?a ?b) (succ ?a ?b))
+(<= (adjacent ?a ?b) (succ ?b ?a))
+
+; three adjacent numbers are a triple
+(<= (triple ?a ?b ?c) (succ ?a ?b) (succ ?b ?c))
+(<= (triple ?a ?b ?c) (succ ?c ?b) (succ ?b ?a))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; DEFINE NEXT STATE
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+; Define the next state of control (turn-taking)
+(<= (next (control ?p))
+    (other ?p ?p2)
+    (true (control ?p2)))
+
+; Define next state of cells
+(<= (next (cell ?x ?y ?p)) ; player moved into tile
+    (moved_to ?p ?x ?y))
+(<= (next (cell ?x ?y blank)) ; player moved out of tile
+    (moved_from ?p ?x ?y))
+(<= (next (cell ?x ?y blank)) ; player moved over tile
+    (moved_over ?p ?x ?y))
+(<= (next (cell ?x ?y ?c)) ; tile stays the same if it's not moved into, out of or over
+    (true (cell ?x ?y ?c))
+    (true (control ?p))
+    (not (moved_from ?p ?x ?y))
+    (not (moved_to ?p ?x ?y))
+    (not (moved_over ?p ?x ?y)))
+
+(<= (moved_from ?p ?xfrom ?yfrom)
+    (does ?p (move ?t ?xfrom ?yfrom ?xto ?yto)))
+(<= (moved_to ?p ?xto ?yto)
+    (does ?p (move ?t ?xfrom ?yfrom ?xto ?yto)))
+(<= (moved_over ?p ?xover ?yover)
+    (triple ?xfrom ?xover ?xto)
+    (fwd2 ?p ?yfrom ?yover ?yto)
+    (does ?p (move capture ?xfrom ?yfrom ?xto ?yto))) ;;;EDITED FOR ASSIGNMENT 2
+
+; Define next state for the number of pieces
+(<= (next (pieces ?player ?n)) ; pieces are decreased if one was captured
+    (true (pieces ?player ?m))
+    (succ ?n ?m)
+    (captured ?player))
+(<= (next (pieces ?player ?n)) ; pieces stay the same if nothing was captured by the other player
+    (true (pieces ?player ?n))
+    (not (captured ?player)))
+
+; Check if one of player ?p's pieces were just captured
+(<= (captured ?p)
+    (does ?p2 (move capture ?xfrom ?yfrom ?xto ?yto)) ;;;EDITED FOR ASSIGNMENT 2
+    (other ?p ?p2))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; DEFINE TERMINAL STATES
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+; The game terminates when one player reaches the finish line or when no move is available.
+(<= terminal cant_move)
+(<= terminal (finish ?p))
+
+; Check if the player in control can make a move
+(<= can_move
+    (true (control ?p))
+    (legal ?p (move ?t ?xfrom ?yfrom ?xto ?yto)))
+(<= cant_move (not can_move))
+
+; Check if player reached the opposite finish row
+(<= (finish white) (true (cell ?x 8 white)))
+(<= (finish black) (true (cell ?x 1 black)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; DEFINE REWARDS
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(<= (goal ?p 100) (win ?p))
+(<= (goal ?p 0) (other ?p ?p2) (win ?p2))
+(<= (goal ?p 50) (role ?p) draw)
+
+; You win if you reach the finish row
+(<= (win ?p) (finish ?p))
+; ... or if the player in control can't move and you have more pieces than the other
+(<= (win ?p)
+    (other ?p ?p2)
+    (not (finish ?p2))
+    cant_move
+    (true (pieces ?p ?mine))
+    (true (pieces ?p2 ?their))
+    (smaller ?their ?mine))
+; It's a draw if the player in control can't move and both players have the same number of pieces
+(<= draw
+    cant_move
+    (not (win white))
+    (not (win black)))

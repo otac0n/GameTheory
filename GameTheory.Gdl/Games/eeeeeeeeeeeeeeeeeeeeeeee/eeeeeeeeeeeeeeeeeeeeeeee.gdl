@@ -1,0 +1,245 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; OneCardGame
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Roles
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(role player1)
+(role player2)
+(role random)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Initial State
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;starting player
+(init (control random))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Legality
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;choose random lead and deal random cards
+(<= (legal random (leadAndDeal (lead ?Player) (dealing ?Player1Card ?Player2Card ?TalonCard1 ?TalonCard2)))
+	(true (control random))
+	(card ?Player1Card)
+	(card ?Player2Card)
+	(card ?TalonCard1)
+	(card ?TalonCard2)
+	(distinct ?Player1Card ?Player2Card)
+	(distinct ?Player1Card ?TalonCard1)
+	(distinct ?Player1Card ?TalonCard2)
+	(distinct ?Player2Card ?TalonCard1)
+	(distinct ?Player2Card ?TalonCard2)
+	(distinct ?TalonCard1 ?TalonCard2)
+)
+
+;play handcard
+(<= (legal player1 (play player1Card))
+	(true (control player1))
+)
+
+(<= (legal player2 (play player2Card))
+	(true (control player2))
+)
+
+;play talon
+(<= (legal ?Player (play talonCard1))
+	(true (control ?Player))
+	(distinct ?Player random)
+	(true (card talonCard1 ?SomeValue))
+)
+
+(<= (legal ?Player (play talonCard2))
+	(true (control ?Player))
+	(distinct ?Player random)
+	(not (true (card talonCard1 ?SomeValue)))
+)
+
+;if not players turn
+(<= (legal ?Player noop)
+	(true (control ?NotPlayer))
+	(distinct ?Player ?NotPlayer)
+)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Update Rules
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;choose random lead
+(<= (next (control ?Player))
+	(true (control random))
+	(does random (leadAndDeal (lead ?Player) (dealing ?Player1Card ?Player2Card ?TalonCard1 ?TalonCard2)))
+)
+
+;deal random cards
+(<= (next (card player1Card ?Player1Card))
+	(does random (leadAndDeal (lead ?Player) (dealing ?Player1Card ?Player2Card ?TalonCard1 ?TalonCard2)))
+)
+(<= (next (card player2Card ?Player2Card))
+	(does random (leadAndDeal (lead ?Player) (dealing ?Player1Card ?Player2Card ?TalonCard1 ?TalonCard2)))
+)
+(<= (next (card talonCard1 ?TalonCard1))
+	(does random (leadAndDeal (lead ?Player) (dealing ?Player1Card ?Player2Card ?TalonCard1 ?TalonCard2)))
+)
+(<= (next (card talonCard2 ?TalonCard2))
+	(does random (leadAndDeal (lead ?Player) (dealing ?Player1Card ?Player2Card ?TalonCard1 ?TalonCard2)))
+)
+
+;every card stays the same except trickposition becomes played card
+(<= (next (card ?Position ?Value))
+	(true (card ?Position ?Value))
+  	(does ?Player (play ?PlayedCard))
+	(distinct ?Position ?PlayedCard)
+	(distinct ?Position trickCard1)
+	(not (true (card trickCard1 ?SomeValue)))
+)
+
+(<= (next (card ?Position ?Value))
+	(true (card ?Position ?Value))
+	(does ?Player (play ?PlayedCard))
+	(distinct ?Position ?PlayedCard)
+	(distinct ?Position trickCard2)
+	(true (card trickCard1 ?SomeValue))
+)
+
+;trickPosition becomes played card
+(<= (next (card trickCard1 ?Value))
+	(does ?Player (play ?PlayedCard))
+	(true (card ?PlayedCard ?Value))
+	(not (true (card trickCard1 ?SomeValue)))
+)
+
+(<= (next (card trickCard2 ?Value))
+	(does ?Player (play ?PlayedCard))
+	(true (card ?PlayedCard ?Value))
+	(true (card trickCard1 ?SomeValue))
+)
+
+;whos turn
+(<= (next (control ?Player))
+	(true (control ?Opponent))
+	(distinct ?Opponent random)
+	(role ?Player)
+	(distinct ?Player ?Opponent)
+	(distinct ?Player random)
+)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Percepts
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;player1 after dealing
+(<= (sees player1 (card player1Card ?Player1Card))
+	(does random (leadAndDeal (lead ?Player) (dealing ?Player1Card ?Player2Card ?TalonCard1 ?TalonCard2)))
+)
+(<= (sees player1 (card player2Card 0))
+	(does random (leadAndDeal (lead ?Player) (dealing ?Player1Card ?Player2Card ?TalonCard1 ?TalonCard2)))
+)
+
+;player2 after dealing
+(<= (sees player2 (card player1Card 0))
+	(does random (leadAndDeal (lead ?Player) (dealing ?Player1Card ?Player2Card ?TalonCard1 ?TalonCard2)))
+)
+(<= (sees player2 (card player2Card ?Player2Card))
+	(does random (leadAndDeal (lead ?Player) (dealing ?Player1Card ?Player2Card ?TalonCard1 ?TalonCard2)))
+)
+
+;both players after dealing
+(<= (sees ?Player (card talonCard1 0))
+	(does random (leadAndDeal (lead ?PlayerLead) (dealing ?Player1Card ?Player2Card ?TalonCard1 ?TalonCard2)))
+)
+(<= (sees ?Player (card talonCard2 0))
+	(does random (leadAndDeal (lead ?PlayerLead) (dealing ?Player1Card ?Player2Card ?TalonCard1 ?TalonCard2)))
+)
+
+;playerX perceives trickCard after playerY action
+(<= (sees ?Player (card trickCard1 ?TrickCard1))
+	(does ?PlayingPlayer (play ?PlayedCard))
+	(true (card ?PlayedCard ?TrickCard1))
+	(not (true (card trickCard1 ?SomeValue)))
+)
+(<= (sees ?Player (card trickCard2 ?TrickCard2))
+	(does ?PlayingPlayer (play ?PlayedCard))
+	(true (card ?PlayedCard ?TrickCard2))
+	(true (card trickCard1 ?SomeValue))
+)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Supporting Concepts
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(lead player1)
+(lead player2)
+
+(card 1)
+(card 2)
+(card 3)
+(card 4)
+(card 5)
+(card 6)
+(card 7)
+(card 8)
+(card 9)
+(card 10)
+
+(succ 0 1)
+(succ 1 2)
+(succ 2 3)
+(succ 3 4)
+(succ 4 5)
+(succ 5 6)
+(succ 6 7)
+(succ 7 8)
+(succ 8 9)
+(succ 9 10)
+
+(<= (greaterthan ?X ?Y)
+	(succ ?Y ?X)
+)
+
+(<= (greaterthan ?X ?Y)
+	(succ ?Z ?X)
+	(greaterthan ?Z ?Y)
+)
+
+(<= (higherCard ?Player)
+	(true (control ?Player))
+	(true (card trickCard1 ?PlayerCardValue))
+	(true (card trickCard2 ?OpponentCardValue))
+	(greaterthan ?PlayerCardValue ?OpponentCardValue)
+)
+
+(<= (higherCard ?Player)
+	(true (control ?Opponent))
+	(role ?Player)
+	(distinct ?Player ?Opponent)
+	(distinct ?Player random)
+	(true (card trickCard1 ?OpponentCardValue))
+	(true (card trickCard2 ?PlayerCardValue))
+	(greaterthan ?PlayerCardValue ?OpponentCardValue)
+)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Termination
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(<= terminal
+	(true (card trickCard2 ?Value))
+)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Goals
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(<= (goal ?Player 100)
+	(higherCard ?Player)
+)
+
+(<= (goal ?Player 0)
+	(higherCard ?Opponent)
+	(role ?Player)
+	(distinct ?Player ?Opponent)
+)

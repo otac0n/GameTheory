@@ -1,0 +1,8 @@
+{
+  "gameName": "catch_me_if_u_can",
+  "rulesheet": "catch_me_if_u_can.gdl",
+  "sourceUri": "http://ggpserver.general-game-playing.de/ggpserver/public/download_gdl.jsp?name=catch_me_if_u_can",
+  "uploadedBy": "reachable",
+  "gdlVersion": "v1",
+  "seesXml": "(<= (sees_xml random ?t) (true ?t))\r\n(<= (sees_xml ?p ?t) (role ?p) (distinct ?p random) (true ?t))"
+}

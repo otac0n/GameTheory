@@ -1,0 +1,8 @@
+{
+  "gameName": "battlesnakes1409",
+  "rulesheet": "battlesnakes1409.gdl",
+  "sourceUri": "http://ggpserver.general-game-playing.de/ggpserver/public/download_gdl.jsp?name=battlesnakes1409",
+  "uploadedBy": "stephan",
+  "gdlVersion": "v1",
+  "seesXml": "(<= (sees_xml random ?term)\r\n   (sees_xml1 ?term)\r\n)\r\n(<= (sees_xml ?role ?term)\r\n   (role ?role)\r\n   (sees_xml1 ?term)\r\n)\r\n(<= (sees_xml1 (cell ?x ?y ?c))\r\n\t(cell_color ?x ?y ?c)\r\n    (not (true (snake ?x ?y ?c 1)))\r\n)\r\n(<= (sees_xml1 (cell ?x ?y red_pawn))\r\n    (true (snake ?x ?y red 1))\r\n    (cell_color ?x ?y red)\r\n)\r\n(<= (sees_xml1 (cell ?x ?y blue_pawn))\r\n    (true (snake ?x ?y blue 1))\r\n    (cell_color ?x ?y blue)\r\n)\r\n(<= (sees_xml1 (step ?x))\r\n    (true (step ?x))\r\n)\r\n(<= (sees_xml1 (size ?x ?y))\r\n    (true (size ?x ?y))\r\n)\r\n(<= (sees_xml1 ?t)\r\n    (true ?t)\r\n)\r\n(<= (cell_color ?x ?y green)\r\n    (any_part_of_snake_at ?x ?y red)\r\n\t(any_part_of_snake_at ?x ?y blue)\r\n)\r\n(<= (cell_color ?x ?y red)\r\n    (any_part_of_snake_at ?x ?y red)\r\n\t(not (any_part_of_snake_at ?x ?y blue))\r\n)\r\n(<= (cell_color ?x ?y blue)\r\n\t(any_part_of_snake_at ?x ?y blue)\r\n    (not (any_part_of_snake_at ?x ?y red))\r\n)\r\n(<= (any_part_of_snake_at ?x ?y ?player)\r\n\t(true (snake ?x ?y ?player ?n))\r\n)"
+}

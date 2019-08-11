@@ -1,0 +1,9 @@
+{
+  "gameName": "vis_pacman3p",
+  "rulesheet": "vis_pacman3p.gdl",
+  "description": "vis_pacman3p.txt",
+  "sourceUri": "http://ggpserver.general-game-playing.de/ggpserver/public/download_gdl.jsp?name=vis_pacman3p",
+  "uploadedBy": "stephan",
+  "gdlVersion": "v2",
+  "seesXml": "(index 1)\r\n(index 2)\r\n(index 3)\r\n(index 4)\r\n(index 5)\r\n(index 6)\r\n(index 7)\r\n(index 8)\r\n\r\n(<= (visible 1 ?y1 1 ?y2)\r\n    (index ?y1)\r\n    (index ?y2))\r\n(<= (visible 3 ?y1 3 ?y2)\r\n    (index ?y1)\r\n    (index ?y2))\r\n(<= (visible 6 ?y1 6 ?y2)\r\n    (index ?y1)\r\n    (index ?y2))\r\n(<= (visible 8 ?y1 8 ?y2)\r\n    (index ?y1)\r\n    (index ?y2))\r\n(<= (visible ?x1 1 ?x2 1)\r\n    (index ?x1)\r\n    (index ?x2))\r\n(<= (visible ?x1 3 ?x2 3)\r\n    (index ?x1)\r\n    (index ?x2))\r\n(<= (visible ?x1 6 ?x2 6)\r\n    (index ?x1)\r\n    (index ?x2))\r\n(<= (visible ?x1 8 ?x2 8)\r\n    (index ?x1)\r\n    (index ?x2))\r\n\r\n(<= (sees_xml ?r1 (location ?r2 ?x2 ?y2))\r\n    (true (location ?r2 ?x2 ?y2))\r\n    (true (location ?r1 ?x1 ?y1))\r\n    (visible ?x1 ?y1 ?x2 ?y2))\r\n(<= (sees_xml ?r1 (collected ?n))\r\n    (role ?r1)\r\n    (true (collected ?n)))\r\n(<= (sees_xml ?r (control ?r2))\r\n    (role ?r)\r\n    (true (control ?r2))\r\n)\r\n(<= (sees_xml ?r (step ?s))\r\n    (role ?r)\r\n    (true (step ?s))\r\n)"
+}

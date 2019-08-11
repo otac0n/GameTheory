@@ -1,0 +1,9 @@
+{
+  "gameName": "Tiger_vs_Dogs",
+  "rulesheet": "Tiger_vs_Dogs.gdl",
+  "description": "Tiger_vs_Dogs.txt",
+  "sourceUri": "http://ggpserver.general-game-playing.de/ggpserver/public/download_gdl.jsp?name=Tiger_vs_Dogs",
+  "uploadedBy": "andy",
+  "gdlVersion": "v1",
+  "seesXml": "(<= (sees_xml random ?t) (true ?t))\r\n(<= (sees_xml ?p ?t) (role ?p) (distinct ?p random) (true ?t))"
+}

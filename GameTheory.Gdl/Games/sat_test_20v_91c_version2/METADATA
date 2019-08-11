@@ -1,0 +1,8 @@
+{
+  "gameName": "sat_test_20v_91c_version2",
+  "rulesheet": "sat_test_20v_91c_version2.gdl",
+  "sourceUri": "http://ggpserver.general-game-playing.de/ggpserver/public/download_gdl.jsp?name=sat_test_20v_91c_version2",
+  "uploadedBy": "stephan_admin",
+  "gdlVersion": "v1",
+  "seesXml": "(<= (sees_xml random ?t) (true ?t))\n(<= (sees_xml ?p ?t) (role ?p) (distinct ?p random) (true ?t))"
+}

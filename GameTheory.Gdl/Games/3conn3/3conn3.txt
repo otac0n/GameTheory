@@ -1,0 +1,5 @@
+3conn3 is a three player version of Connect Four except a player needs just 3 coins in a line to win the match.
+
+GDL by: Arne König, Christian Drescher, Max Ostrowski and Torsten Grote
+
+http://deepthought.23inch.de/

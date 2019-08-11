@@ -1,0 +1,9 @@
+{
+  "gameName": "montyhall",
+  "rulesheet": "montyhall.gdl",
+  "description": "montyhall.txt",
+  "sourceUri": "http://ggpserver.general-game-playing.de/ggpserver/public/download_gdl.jsp?name=montyhall",
+  "uploadedBy": "stephan",
+  "gdlVersion": "v2",
+  "seesXml": "(<= (sees_xml random ?t) (true ?t))\r\n\r\n(<= (sees_xml candidate (closed ?d)) (true (closed ?d)))\r\n(<= (sees_xml candidate (chosen ?d)) (true (chosen ?d)))\r\n(<= (sees_xml candidate (step ?s)) (true (step ?s)))\r\n(<= (sees_xml candidate (car ?d)) (true (step 4)) (true (car ?d)))"
+}

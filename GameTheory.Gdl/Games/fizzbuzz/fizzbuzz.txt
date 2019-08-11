@@ -1,0 +1,1 @@
+Play a FizzBuzz game from 1 to 30.

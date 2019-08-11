@@ -1,0 +1,1 @@
+GDL version of the Monty Hall game (cf., e.g., J. Rosenhouse: "The Monty Hall Problem", Oxford University Press, 2009

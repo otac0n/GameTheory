@@ -1,0 +1,9 @@
+{
+  "gameName": "small_dominion",
+  "rulesheet": "small_dominion.gdl",
+  "description": "small_dominion.txt",
+  "sourceUri": "http://ggpserver.general-game-playing.de/ggpserver/public/download_gdl.jsp?name=small_dominion",
+  "uploadedBy": "stephan",
+  "gdlVersion": "v2",
+  "seesXml": "(<= (sees_xml random ?t) (true ?t))\r\n(<= (sees_xml ?p ?t) (role ?p) (distinct ?p random) (true ?t))"
+}

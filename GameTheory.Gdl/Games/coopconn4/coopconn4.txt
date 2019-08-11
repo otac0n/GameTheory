@@ -1,0 +1,5 @@
+Connect Four played in two teams of two players each
+
+GDL by: Arne König, Christian Drescher, Max Ostrowski and Torsten Grote
+
+http://deepthought.23inch.de/

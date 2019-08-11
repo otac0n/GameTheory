@@ -1,0 +1,9 @@
+{
+  "gameName": "kriegTTT_5x5",
+  "rulesheet": "kriegTTT_5x5.gdl",
+  "description": "kriegTTT_5x5.txt",
+  "sourceUri": "http://ggpserver.general-game-playing.de/ggpserver/public/download_gdl.jsp?name=kriegTTT_5x5",
+  "uploadedBy": "stephan",
+  "gdlVersion": "v2",
+  "seesXml": "(role_or_random random)\r\n(<= (role_or_random ?p)\r\n    (role ?p))\r\n\r\n(<= (sees_xml ?p (cell ?x ?y x))\r\n    (role_or_random ?p)\r\n    (distinct ?p oplayer)\r\n    (true (cell ?x ?y xplayer)))\r\n(<= (sees_xml ?p (cell ?x ?y o))\r\n    (role_or_random ?p)\r\n    (distinct ?p xplayer)\r\n    (true (cell ?x ?y oplayer)))\r\n(<= (sees_xml ?p (cell ?x ?y b))\r\n    (role_or_random ?p)\r\n    (true (cell ?x ?y b)))\r\n(<= (sees_xml ?p (step ?x))\r\n    (role_or_random ?p)\r\n    (true (step ?x)))\r\n(<= (sees_xml ?p (tried ?p ?m ?n))\r\n    (role_or_random ?p)\r\n    (true (tried ?p ?m ?n)))"
+}

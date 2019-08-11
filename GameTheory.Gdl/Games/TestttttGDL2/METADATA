@@ -1,0 +1,8 @@
+{
+  "gameName": "TestttttGDL2",
+  "rulesheet": "TestttttGDL2.gdl",
+  "sourceUri": "http://ggpserver.general-game-playing.de/ggpserver/public/download_gdl.jsp?name=TestttttGDL2",
+  "uploadedBy": "syllag",
+  "gdlVersion": "v2",
+  "seesXml": "(<= (sees_xml random ?t) (true ?t))\r\n(<= (sees_xml ?p ?t) (role ?p) (distinct ?p random) (true ?t))"
+}

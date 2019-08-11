@@ -1,0 +1,6 @@
+The same rules as for standard pacman apply, but the players do not see the other players unless they are in the same row/column and there are no walls between them.
+
+Based on pacman3p
+Created by: Viliam Lisy (viliam.lisy@agents.felk.cvut.cz)
+Czech Technical University in Prague
+Faculty of Electrical Engineering, Department of Cybernetics.

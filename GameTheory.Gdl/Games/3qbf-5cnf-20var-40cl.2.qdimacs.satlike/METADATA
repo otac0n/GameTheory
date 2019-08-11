@@ -1,0 +1,8 @@
+{
+  "gameName": "3qbf-5cnf-20var-40cl.2.qdimacs.satlike",
+  "rulesheet": "3qbf-5cnf-20var-40cl.2.qdimacs.satlike.gdl",
+  "sourceUri": "http://ggpserver.general-game-playing.de/ggpserver/public/download_gdl.jsp?name=3qbf-5cnf-20var-40cl.2.qdimacs.satlike",
+  "uploadedBy": "hannes",
+  "gdlVersion": "v1",
+  "seesXml": "(<= (sees_xml random ?t) (sees_xml1 ?t))\r\n(<= (sees_xml ?p ?t) (role ?p) (distinct ?p random) (sees_xml1 ?t))\r\n\r\n(<= (sees_xml1 ?t) (true ?t))\r\n(<= (sees_xml1 (contains ?clause ?literal)) (contains ?clause ?literal))"
+}

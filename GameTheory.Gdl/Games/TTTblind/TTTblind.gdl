@@ -1,0 +1,194 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Tictactoe
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Roles
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(role white)
+(role black)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Base
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(<= (base (cell ?M ?N x))
+  (index ?M)
+  (index ?N)
+)
+(<= (base (cell ?M ?N o))
+  (index ?M)
+  (index ?N)
+)
+(<= (base (cell ?M ?N b))
+  (index ?M)
+  (index ?N)
+)
+
+(<= (base (control white)))
+(<= (base (control black)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Input
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(<= (input ?R (mark ?M ?N))
+  (role ?R)
+  (index ?M)
+  (index ?N)
+)
+(<= (input ?R noop)
+  (role ?R)
+)
+
+(index 1)
+(index 2)
+(index 3)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Initial State
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(init (cell 1 1 b))
+(init (cell 1 2 b))
+(init (cell 1 3 b))
+(init (cell 2 1 b))
+(init (cell 2 2 b))
+(init (cell 2 3 b))
+(init (cell 3 1 b))
+(init (cell 3 2 b))
+(init (cell 3 3 b))
+(init (control white))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Legality
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(<= (legal ?W (mark X Y))
+  (true (cell ?X ?Y b))
+  (true (control ?W))
+)
+
+(<= (legal white noop)
+  (true (control black))
+)
+
+(<= (legal black noop)
+  (true (control white))
+)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Update Rules
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(<= (next (cell ?M ?N x))
+  (does white (mark ?M ?N))
+  (true (cell ?M ?N b))
+)
+(<= (next (cell ?M ?N o))
+  (does black (mark ?M ?N))
+  (true (cell ?M ?N b))
+)
+(<= (next (cell ?M ?N ?W))
+  (true (cell ?M ?N ?W))
+  (distinct ?W b)
+)
+(<= (next (cell ?M ?N b))
+  (does ?W (mark ?J ?K))
+  (true (cell ?M ?N b))
+  (distinct ?M ?J)
+)
+(<= (next (cell ?M ?N b))
+  (does W (mark ?J ?K))
+  (true (cell ?M ?N b))
+  (distinct ?N ?K)
+)
+(<= (next (control white))
+  (true (control black))
+)
+(<= (next (control black))
+  (true (control white))
+)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Supporting Concepts
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(<= (line ?Z)
+  (row ?M ?Z)
+)
+(<= (line ?Z)
+  (column ?M ?Z)
+)
+(<= (line ?Z)
+  (diagonal ?Z)
+)
+
+(<= (row ?M ?Z)
+  (true (cell ?M 1 ?Z))
+  (true (cell ?M 2 ?Z))
+  (true (cell ?M 3 ?Z))
+)
+(<= (column ?M ?Z)
+  (true (cell 1 ?N ?Z))
+  (true (cell 2 ?N ?Z))
+  (true (cell 3 ?N ?Z))
+)
+(<= (diagonal ?Z)
+  (true (cell 1 1 ?Z))
+  (true (cell 2 2 ?Z))
+  (true (cell 3 3 ?Z))
+)
+(<= (diagonal ?Z)
+  (true (cell 1 3 ?Z))
+  (true (cell 2 2 ?Z))
+  (true (cell 3 1 ?Z))
+)
+
+(<= open
+  (true (cell ?M ?N b))
+)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Goals
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(<= (goal white 100)
+  (line x)
+  (not (line o))
+)
+(<= (goal white 50)
+  (not (line x))
+  (not (line o))
+)
+(<= (goal white 0)
+  (not (line x))
+  (line o)
+)
+(<= (goal black 100)
+  (not (linex))
+  (line o)
+)
+(<= (goal black 50)
+  (not (line x))
+  (not (line o))
+)
+(<= (goal black 0)
+  (line x)
+  (not (line o))
+)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Termination
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(<= terminal
+  (line x)
+)
+(<= terminal
+  (line o)
+)
+(<= terminal
+  (not open)
+)

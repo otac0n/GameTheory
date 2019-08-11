@@ -1,0 +1,173 @@
+; This is test version to check corectness of game controller
+; In rule:
+;(<= (next (OnMap (Spell ?name ?dmg ?mana) ?x ?y))
+;    (true (OnMap (Spell ?name ?dmg ?mana) ?x ?y))
+;    (not (does ?r (Move ?x ?y)))
+;    (role ?r))
+;
+; computations differs when last two conjuncts ar permuted.
+; In upper case spell disapper when ANY of the players step on the field, so maximal goal is 10.
+; In other case spell don't disappear (unless BOTH players step its field) so larger goal is avilable.
+
+
+;       ROLE section
+(role Sorceress)
+(role Wizard)
+
+;       INIT section
+; Player position
+(init (OnMap Sorceress 1 1))
+(init (OnMap Wizard 7 7))
+; Mana pools positions
+(init (OnMap ManaPool 4 2))
+(init (OnMap ManaPool 4 6))
+; Spells positions (Spell name damage cost)
+(init (OnMap (Spell Fireball 2 2) 1 7))
+(init (OnMap (Spell RingOfCold 3 3) 4 4))
+(init (OnMap (Spell LightingStrike 1 2) 7 1))
+; Monsters positions (Monster name HP)
+(init (OnMap (Monster FlameAtronach 3) 3 3))
+(init (OnMap (Monster FlameAtronach 3) 5 5))
+(init (OnMap (Monster StormAtronach 4) 1 5))
+(init (OnMap (Monster StormAtronach 4) 7 3))
+; Spellcasters info (Caster name HP mana)
+(<= (init (Caster ?r 10 10))
+    (role ?r))
+
+(<= (init (Spellbook ?r (Spell PainfullTouch 1 0)))
+    (role ?r))
+
+(init (Turn 1))
+
+(<= (init (Score ?r 0))
+    (role ?r))
+
+;       LEGAL section
+; cast a spell
+;(<= (legal ?r (Cast ?s))
+;    (true (Spellbook ?r (Spell ?s ?dmg ?cost)))
+;    (true (Caster ?r ?hp ?mana))
+;    (>eq ?mana ?cost))
+; horizontal moves
+(<= (legal ?r (Move ?nx ?y))
+    (true (OnMap ?r ?x ?y))
+    (role ?r)
+    (or (+1 ?x ?nx)
+        (-1 ?x ?nx))
+    (InBoard ?nx))
+; vertical moves
+(<= (legal ?r (Move ?x ?ny))
+    (true (OnMap ?r ?x ?y))
+    (role ?r)
+    (or (+1 ?y ?ny)
+        (-1 ?y ?ny))
+    (InBoard ?ny))
+
+
+
+;       NEXT section
+;    OnMap
+; Mana pool always stays the same position
+(<= (next (OnMap ManaPool ?x ?y))
+    (true (OnMap ManaPool ?x ?y)))
+; Player changes position when move
+(<= (next (OnMap ?r ?x ?y))
+    (does ?r (Move ?x ?y)))
+; Spells stays only when noone moved at them
+; note: gamemaster accepts this rule without last conjunct but it is against specification (2008) - Definition6, point 3. 
+(<= (next (OnMap (Spell ?name ?dmg ?mana) ?x ?y))
+    (true (OnMap (Spell ?name ?dmg ?mana) ?x ?y))
+    (not (does ?r (Move ?x ?y)))
+    (role ?r))
+
+(<= (next (Caster ?r ?hp ?mana))
+    (true (Caster ?r ?hp ?mana)))
+
+;    Spellbook
+; Wrote down spells remains
+(<= (next (Spellbook ?r ?spell))
+    (true (Spellbook ?r ?spell)))
+; Grabbed spell are added to spelbook
+(<= (next (Spellbook ?r (Spell ?name ?dmg ?mana)))
+    (true (OnMap (Spell ?name ?dmg ?mana) ?x ?y))
+    (does ?r (Move ?x ?y)))
+
+
+;(<= (next (OnMap ?r ?x ?y))
+;    (does ?r (Move ?x ?y)))
+
+
+(<= (TookSpell ?r)
+    (true (OnMap (Spell ?name ?dmg ?mana) ?x ?y))
+    (does ?r (Move ?x ?y)))
+
+;    Score
+; +1 for grabbing spell
+(<= (next (Score ?r ?ns))
+    (TookSpell ?r)
+    (true (Score ?r ?s))
+    (+1 ?s ?ns))
+
+(<= (next (Score ?r ?s))
+    (true (Score ?r ?s))
+    (not (TookSpell ?r)))
+
+
+
+;    Turn
+(<= (next (Turn ?nt))
+    (true (Turn ?t))
+    (+1 ?t ?nt))
+
+
+(+1 0 1)
+(+1 1 2)
+(+1 2 3)
+(+1 3 4)
+(+1 4 5)
+(+1 5 6)
+(+1 6 7)
+(+1 7 8)
+(+1 8 9)
+(+1 9 10)
+
+(<= (-1 ?n ?m)
+    (+1 ?m ?n))
+
+(*10 0 0)
+(*10 1 10)
+(*10 2 20)
+(*10 3 30)
+(*10 4 40)
+(*10 5 50)
+(*10 6 60)
+(*10 7 70)
+(*10 8 80)
+(*10 9 90)
+(*10 10 100)
+
+(<= (>eq ?n ?n)
+    (+1 ?n ?m))
+
+(<= (>eq ?n ?m)
+    (-1 ?n ?k)
+    (>eq ?k ?m))
+
+
+(InBoard 1)
+(InBoard 2)
+(InBoard 3)
+(InBoard 4)
+(InBoard 5)
+(InBoard 6)
+(InBoard 7)
+
+
+(<= (goal ?r ?s10)
+    (true (Score ?r ?s))
+    (*10 ?s ?s10))
+
+(<= terminal (true (Turn 10)))
+;// terminal jesli ktorys z graczy ma 0 hp (?)
+
+

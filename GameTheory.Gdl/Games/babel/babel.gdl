@@ -1,0 +1,463 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                ;;;;;;;;;;;;;;;;;
+;;;;             Tower of Babel                     ;;;;;;;;;;;;;;;;;
+;;;;                                                ;;;;;;;;;;;;;;;;;
+;;;;    by Tim Federholzner and Peter Kissmann 2011 ;;;;;;;;;;;;;;;;;
+;;;;                                                ;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+;;; Three players build a tower together.
+
+;;; Every player may build one tile in one of eight levels.
+;;; Except for the first level, there must be two tiles in the level
+;;; before to support it.
+;;; For example: If there are 3 tiles on level 1, 2 can be built on
+;;; level 2.
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(role builder1)
+(role builder2)
+(role builder3)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;; Initially there is no tile in every level
+(<= (init (built ?n 0))
+	(level ?n)
+)
+
+;;; Every player may build on every level
+;;; If there are already 14 tiles built on a level, that level is full
+(<= (legal ?r (build ?n))
+	(role ?r)
+	(true (built ?n ?k))
+	(greater ?k 14)
+)
+
+;;; Players may always do nothing
+(<= (legal ?r think)
+	(role ?r)
+)
+
+;;; Support predicate used to get all players in any order
+(<= (threeDifferentRoles ?r1 ?r2 ?r3)
+	(role ?r1)
+	(role ?r2)
+	(distinct ?r1 ?r2)
+	(role ?r3)
+	(distinct ?r1 ?r3)
+	(distinct ?r2 ?r3)
+)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;; if noone builds on a level, it does not change
+(<= (next (built ?n ?k))
+	(true (built ?n ?k))
+	(new ?n 0)
+)
+
+;;; if one/two/three player(s) successfully build(s) on a level,
+;;; one tile is added
+(<= (next (built ?n ?k1))
+	(true (built ?n ?k))
+	(new ?n 1)
+	(succSAME ?k ?k1)
+)
+(<= (next (built ?n ?k2))
+	(true (built ?n ?k))
+	(new ?n 2)
+	(succSAME ?k ?k1)
+	(succSAME ?k1 ?k2)
+)
+(<= (next (built ?n ?k3))
+	(true (built ?n ?k))
+	(new ?n 3)
+	(succSAME ?k ?k1)
+	(succSAME ?k1 ?k2)
+	(succSAME ?k2 ?k3)
+)
+
+;;; on level one, there is no check for supportive tiles
+(<= (new 1 0)
+	(zeroBuiltLevel 1)
+)
+(<= (new 1 1)
+	(oneBuiltLevel 1)
+)
+(<= (new 1 2)
+	(twoBuiltLevel 1)
+)
+(<= (new 1 3)
+	(threeBuiltLevel 1)
+)
+;;; tried three new, all fit
+(<= (new ?n 3)
+	(level ?n)
+	(distinct ?n 1)
+	(threeBuiltLevel ?n)
+	(true (built ?n ?k))
+	(succSAME ?k ?k1)
+	(succSAME ?k1 ?k2)
+	(succSAME ?k2 ?k3)
+	(succLVL ?n1 ?n)
+	(true (built ?n1 ?l))
+	(greater ?k3 ?l)
+)
+;;; tried three new, two fit
+(<= (new ?n 2)
+	(level ?n)
+	(distinct ?n 1)
+	(threeBuiltLevel ?n)
+	(true (built ?n ?k))
+	(succSAME ?k ?k1)
+	(succSAME ?k1 ?k2)
+	(succSAME ?k2 ?k3)
+	(succLVL ?n1 ?n)
+	(true (built ?n1 ?k3))
+)
+;;; tried three new, one fits
+(<= (new ?n 1)
+	(level ?n)
+	(distinct ?n 1)
+	(threeBuiltLevel ?n)
+	(true (built ?n ?k))
+	(succSAME ?k ?k1)
+	(succSAME ?k1 ?k2)
+	(succLVL ?n1 ?n)
+	(true (built ?n1 ?k2))
+)
+;;; tried three new, none fits
+(<= (new ?n 0)
+	(level ?n)
+	(distinct ?n 1)
+	(threeBuiltLevel ?n)
+	(true (built ?n ?k))
+	(succSAME ?k ?k1)
+	(succLVL ?n1 ?n)
+	(true (built ?n1 ?k1))
+)
+;;; tried two new, both immediately fit
+(<= (new ?n 2)
+	(level ?n)
+	(distinct ?n 1)
+	(twoBuiltLevel ?n)
+	(true (built ?n ?k))
+	(succSAME ?k ?k1)
+	(succSAME ?k1 ?k2)
+	(succLVL ?n1 ?n)
+	(true (built ?n1 ?l))
+	(greater ?k2 ?l)
+)
+;;; tried two new, both fit due to increased lower level
+(<= (new ?n 2)
+	(level ?n)
+	(distinct ?n 1)
+	(twoBuiltLevel ?n)
+	(true (built ?n ?k))
+	(succSAME ?k ?k1)
+	(succSAME ?k1 ?k2)
+	(succLVL ?n1 ?n)
+	(true (built ?n1 ?k2))
+	(new ?n1 1)
+)
+;;; tried two new, one fits due to unincreased lower level
+(<= (new ?n 1)
+	(level ?n)
+	(distinct ?n 1)
+	(twoBuiltLevel ?n)
+	(true (built ?n ?k))
+	(succSAME ?k ?k1)
+	(succSAME ?k1 ?k2)
+	(succLVL ?n1 ?n)
+	(true (built ?n1 ?k2))
+	(new ?n1 0)
+)
+;;; tried two new, one fits due to increased lower level
+(<= (new ?n 1)
+	(level ?n)
+	(distinct ?n 1)
+	(twoBuiltLevel ?n)
+	(true (built ?n ?k))
+	(succSAME ?k ?k1)
+	(succLVL ?n1 ?n)
+	(true (built ?n1 ?k1))
+	(new ?n1 1)
+)
+;;; tried two new, none fits
+(<= (new ?n 0)
+	(level ?n)
+	(distinct ?n 1)
+	(twoBuiltLevel ?n)
+	(true (built ?n ?k))
+	(succSAME ?k ?k1)
+	(succLVL ?n1 ?n)
+	(true (built ?n1 ?k1))
+	(new ?n1 0)
+)
+;;; tried one, immediately fits
+(<= (new ?n 1)
+	(level ?n)
+	(distinct ?n 1)
+	(oneBuiltLevel ?n)
+	(true (built ?n ?k))
+	(succSAME ?k ?k1)
+	(succLVL ?n1 ?n)
+	(true (built ?n1 ?l))
+	(greater ?k1 ?l)
+)
+;;; tried one, fits due to increased lower level
+(<= (new ?n 1)
+	(level ?n)
+	(distinct ?n 1)
+	(oneBuiltLevel ?n)
+	(true (built ?n ?k))
+	(succSAME ?k ?k1)
+	(succLVL ?n1 ?n)
+	(true (built ?n1 ?k1))
+	(new ?n1 1)
+)
+(<= (new ?n 1)
+	(level ?n)
+	(distinct ?n 1)
+	(oneBuiltLevel ?n)
+	(true (built ?n ?k))
+	(succSAME ?k ?k1)
+	(succLVL ?n1 ?n)
+	(true (built ?n1 ?k1))
+	(new ?n1 2)
+)
+(<= (new ?n 1)
+	(level ?n)
+	(distinct ?n 1)
+	(oneBuiltLevel ?n)
+	(true (built ?n 0))
+	(succLVL ?n1 ?n)
+	(true (built ?n1 0))
+	(new ?n1 2)
+)
+;;; tried one, does not fit
+(<= (new ?n 0)
+	(level ?n)
+	(distinct ?n 1)
+	(oneBuiltLevel ?n)
+	(true (built ?n ?k))
+	(succSAME ?k ?k1)
+	(succLVL ?n1 ?n)
+	(true (built ?n1 ?k1))
+	(new ?n1 0)
+)
+;;; tried three, none fits
+(<= (new ?n 0)
+	(level ?n)
+	(distinct ?n 1)
+	(threeBuiltLevel ?n)
+	(true (built ?n 0))
+	(succLVL ?n1 ?n)
+	(true (built ?n1 0))
+)
+;;; tried two, none fits
+(<= (new ?n 0)
+	(level ?n)
+	(distinct ?n 1)
+	(twoBuiltLevel ?n)
+	(true (built ?n 0))
+	(succLVL ?n1 ?n)
+	(true (built ?n1 0))
+)
+;;; tried one, doesn't fit
+(<= (new ?n 0)
+	(level ?n)
+	(distinct ?n 1)
+	(oneBuiltLevel ?n)
+	(true (built ?n 0))
+	(succLVL ?n1 ?n)
+	(true (built ?n1 0))
+	(new ?n1 0)
+)
+;;; tried one, lower level is increased, but only to one tile
+(<= (new ?n 0)
+	(level ?n)
+	(distinct ?n 1)
+	(oneBuiltLevel ?n)
+	(true (built ?n 0))
+	(succLVL ?n1 ?n)
+	(true (built ?n1 0))
+	(new ?n1 1)
+)
+;;; tried none
+(<= (new ?n 0)
+	(level ?n)
+	(distinct ?n 1)
+	(zeroBuiltLevel ?n)
+)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;; the number of players, who built on a certain level
+
+(<= (zeroBuiltLevel ?n)
+	(level ?n)
+	(not (does builder1 (build ?n)))
+	(not (does builder2 (build ?n)))
+	(not (does builder3 (build ?n)))
+)
+
+(<= (oneBuiltLevel ?n)
+	(does ?r1 (build ?n))
+	(threeDifferentRoles ?r1 ?r2 ?r3)
+	(not (does ?r2 (build ?n)))
+	(not (does ?r3 (build ?n)))
+)
+
+(<= (twoBuiltLevel ?n)
+	(does ?r1 (build ?n))
+	(does ?r2 (build ?n))
+	(threeDifferentRoles ?r1 ?r2 ?r3)
+	(not (does ?r3 (build ?n)))
+)
+
+(<= (threeBuiltLevel ?n)
+	(does builder1 (build ?n))
+	(does builder2 (build ?n))
+	(does builder3 (build ?n))
+)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;; the levels available
+(level 1)
+(level 2)
+(level 3)
+(level 4)
+(level 5)
+(level 6)
+(level 7)
+(level 8)
+
+;;; level 2 is on top of level 1 and so on
+(succLVL 1 2)
+(succLVL 2 3)
+(succLVL 3 4)
+(succLVL 4 5)
+(succLVL 5 6)
+(succLVL 6 7)
+(succLVL 7 8)
+
+;;; on the same level the number of tiles is increased by this predicate
+(succSAME 0 1)
+(succSAME 1 2)
+(succSAME 2 3)
+(succSAME 3 4)
+(succSAME 4 5)
+(succSAME 5 6)
+(succSAME 6 7)
+(succSAME 7 8)
+(succSAME 8 9)
+(succSAME 9 10)
+(succSAME 10 11)
+(succSAME 11 12)
+(succSAME 12 13)
+(succSAME 13 14)
+(succSAME 14 15)
+(succSAME 15 16)
+
+;;; a simple recursive greater-than predicate
+(<= (greater ?n ?m)
+	(succSAME ?n ?m)
+)
+
+(<= (greater ?n ?m)
+	(succSAME ?n ?t)
+	(greater ?t ?m)
+)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;; the goal is to reach level 8
+(<= terminal
+	(true (built 8 ?n))
+	(distinct ?n 0)
+)
+
+;;; the players all get the same points
+;;; the higher the level, the more points they get
+(<= (goal ?r ?k)
+	(role ?r)
+	(highestLVL ?n)
+	(goalmap ?n ?k)
+)
+
+;;; if players reached level n, they get k points
+(goalmap 1 0)
+(goalmap 2 0)
+(goalmap 3 10)
+(goalmap 4 20)
+(goalmap 5 50)
+(goalmap 6 70)
+(goalmap 7 80)
+(goalmap 8 100)
+
+;;; determines, which level is reached
+(<= (highestLVL ?n)
+	(true (built ?n ?k))
+	(level ?n)
+	(distinct ?k 0)
+	(succLVL ?n2 ?n)
+	(true (built ?n2 ?k2))
+	(succLVL ?n ?higher)
+	(true (built ?higher 0))
+)
+(<= (highestLVL 1)
+	(true (built 2 0))
+)
+(<= (highestLVL 8)
+	(true (built 8 1))
+)
+(<= (highestLVL 8)
+	(true (built 8 2))
+)
+(<= (highestLVL 8)
+	(true (built 8 3))
+)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;; a simple step counter, to make the game always end
+
+(init (step 0))
+(<= (next (step ?n))
+	(true (step ?m))
+	(step++ ?m ?n)
+)
+
+(<= terminal
+	(true (step 20))
+)
+
+(step++ 0 1)
+(step++ 1 2)
+(step++ 2 3)
+(step++ 3 4)
+(step++ 4 5)
+(step++ 5 6)
+(step++ 6 7)
+(step++ 7 8)
+(step++ 8 9)
+(step++ 9 10)
+(step++ 10 11)
+(step++ 11 12)
+(step++ 12 13)
+(step++ 13 14)
+(step++ 14 15)
+(step++ 15 16)
+(step++ 16 17)
+(step++ 17 18)
+(step++ 18 19)
+(step++ 19 20)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

@@ -1,0 +1,9 @@
+{
+  "gameName": "PEG_3v1_turn",
+  "rulesheet": "PEG_3v1_turn.gdl",
+  "description": "PEG_3v1_turn.txt",
+  "sourceUri": "http://ggpserver.general-game-playing.de/ggpserver/public/download_gdl.jsp?name=PEG_3v1_turn",
+  "uploadedBy": "freaz",
+  "gdlVersion": "v1",
+  "seesXml": "(<= (sees_xml random ?t) (true ?t))\r\n(<= (sees_xml ?p ?t) (role ?p) (distinct ?p random) (true ?t))"
+}

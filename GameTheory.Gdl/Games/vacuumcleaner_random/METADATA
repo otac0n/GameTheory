@@ -1,0 +1,9 @@
+{
+  "gameName": "vacuumcleaner_random",
+  "rulesheet": "vacuumcleaner_random.gdl",
+  "description": "vacuumcleaner_random.txt",
+  "sourceUri": "http://ggpserver.general-game-playing.de/ggpserver/public/download_gdl.jsp?name=vacuumcleaner_random",
+  "uploadedBy": "stephan",
+  "gdlVersion": "v2",
+  "seesXml": "(<= (sees_xml random ?t) (sees_xml1 ?t))\r\n(<= (sees_xml ?p ?t) (role ?p) (distinct ?p random) (sees_xml1 ?t))\r\n\r\n(<= (sees_xml1 (cell ?x ?y b))\r\n    (xcoordinate ?x)\r\n    (ycoordinate ?y)\r\n    (not (true (at ?what ?x ?y)))\r\n)\r\n(<= (sees_xml1 (cell ?x ?y x))\r\n    (true (at obstacle ?x ?y))\r\n)\r\n(<= (sees_xml1 (cell ?x ?y whitepawn))\r\n    (true (at agent ?x ?y))\r\n    (not (true (at dirt ?x ?y)))\r\n)\r\n(<= (sees_xml1 (cell ?x ?y blackpawn))\r\n    (true (at dirt ?x ?y))\r\n    (true (at agent ?x ?y))\r\n)\r\n(<= (sees_xml1 (cell ?x ?y brown_disc))\r\n    (true (at dirt ?x ?y))\r\n    (not (true (at agent ?x ?y)))\r\n)\r\n(<= (sees_xml1 stopped)\r\n    (true stopped)\r\n)\r\n(<= (sees_xml1 (orientation ?x))\r\n    (true (orientation ?x))\r\n)\r\n(<= (sees_xml1 (cell ?x ?y x))\r\n    (true (at wall ?x ?y))\r\n)\r\n(<= (sees_xml1 (points ?x))\r\n    (true (points ?x))\r\n)\r\n(<= (sees_xml1 (step ?x))\r\n    (true (step ?x))\r\n)\r\n(<= (sees_xml1 (size ?x ?y))\r\n    (size ?x ?y)\r\n)"
+}

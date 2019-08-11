@@ -1,0 +1,9 @@
+{
+  "gameName": "atarigo",
+  "rulesheet": "atarigo.gdl",
+  "description": "atarigo.txt",
+  "sourceUri": "http://ggpserver.general-game-playing.de/ggpserver/public/download_gdl.jsp?name=atarigo",
+  "uploadedBy": "stephan",
+  "gdlVersion": "v1",
+  "seesXml": "(<= (sees_xml random ?t) (sees_xml1 ?t))\r\n(<= (sees_xml ?p ?t) (role ?p) (distinct ?p random) (sees_xml1 ?t))\r\n\r\n(<= (sees_xml1 (cell ?x ?y b))\r\n    (index ?x)\r\n    (index ?y)\r\n    (not (cellnotblank ?x ?y)))\r\n\r\n(<= (sees_xml1 (cell ?x ?y ?p))\r\n    (true (cell ?x ?y ?p ?s)))\r\n\r\n(<= (cellnotblank ?x ?y)\r\n    (true (cell ?x ?y ?c ?s)))\r\n\r\n(<= (sees_xml1 (control ?p))\r\n    (true (control ?p)))\r\n\r\n(<= (sees_xml1 (step ?s))\r\n    (true (step ?s)))"
+}

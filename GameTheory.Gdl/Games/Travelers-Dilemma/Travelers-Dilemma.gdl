@@ -1,0 +1,220 @@
+;
+; Traveler's Dilemma in 10 rounds
+;
+; Parallel, Counter-intuitive non-zero-sum-game featuring a nash-equilibrium
+; http://en.wikipedia.org/wiki/Traveler%27s_dilemma
+;
+; GDL by Toni Mattis <toni.mattis@student.hpi.uni-potsdam.de>
+;
+; ** Modification: Reduced range of estimations from (2 .. 100) to (1 .. 8),
+;    reducing the branching factor from 9801 down to 64.
+;
+
+(role alice)
+(role bob)
+
+(init (score 0 0))
+(init (round 0))
+
+; players estimate a value between 1 and 8 simultanously
+; nash equilibrium: estimations (1, 1)
+; pareto optimum: estimations (8, 8)
+
+(<= (legal ?player ?estimation)
+	(role ?player)
+	(number ?estimation)
+)
+
+; equal estimations result in an equal number of points for each player
+(<= (next (score ?new_a ?new_b))
+	(true (score ?old_a ?old_b))
+	(does alice ?estimation)
+	(does bob   ?estimation)
+	
+	(add ?old_a ?estimation ?new_a)
+	(add ?old_b ?estimation ?new_b)
+)
+
+; the player with the lower estimation gets the estimated value + 2
+; the player with the higher estimation gets the lower estimated value
+(<= (next (score ?new_a ?new_b))
+	(true (score ?old_a ?old_b))
+	(does alice ?est_a)
+	(does bob   ?est_b)
+	(distinct ?est_a ?est_b)
+	
+	(greater ?est_a ?est_b)
+	(add ?est_a 2 ?score_a)
+	(add ?old_a ?score_a ?new_a)
+	(add ?old_b ?est_a ?new_b)
+)
+
+(<= (next (score ?new_a ?new_b))
+	(true (score ?old_a ?old_b))
+	(does alice ?est_a)
+	(does bob   ?est_b)
+	(distinct ?est_a ?est_b)
+	
+	(greater ?est_b ?est_a)
+	(add ?est_b 2 ?score_b)
+	(add ?old_a ?est_a ?new_a)
+	(add ?old_b ?score_b ?new_b)
+)
+
+; round counter
+(<= (next (round ?new_r))
+	(true (round ?old_r))
+	(succ ?old_r ?new_r)
+)
+
+
+;;; terminal state ;;;
+
+(<= terminal (true (round 10)))
+
+;;; goal values ;;;
+
+(<= (goal alice ?score)
+	(true (score ?score ?_))
+)
+
+(<= (goal bob ?score)
+	(true (score ?_ ?score))
+)
+
+;;;   Estimations   ;;;
+
+(number 1)
+(number 2)
+(number 3)
+(number 4)
+(number 5)
+(number 6)
+(number 7)
+(number 8)
+
+
+;;;   Greater Relation   ;;;
+
+(<= (greater ?x ?y)
+	(succ ?x ?y)
+)
+
+(<= (greater ?x ?y)
+	(succ ?x ?z)
+	(greater ?z ?y)
+)
+
+
+;;;   Addition   ;;;
+(<= (add ?x 0 ?x)
+	(succ ?x ?y)
+)
+
+(<= (add ?x ?y ?z)
+	(succ ?x ?xs)
+	(succ ?yp ?y)
+	(add ?xs ?yp ?z)
+)
+
+
+(succ	0	1	)
+(succ	1	2	)
+(succ	2	3	)
+(succ	3	4	)
+(succ	4	5	)
+(succ	5	6	)
+(succ	6	7	)
+(succ	7	8	)
+(succ	8	9	)
+(succ	9	10	)
+(succ	10	11	)
+(succ	11	12	)
+(succ	12	13	)
+(succ	13	14	)
+(succ	14	15	)
+(succ	15	16	)
+(succ	16	17	)
+(succ	17	18	)
+(succ	18	19	)
+(succ	19	20	)
+(succ	20	21	)
+(succ	21	22	)
+(succ	22	23	)
+(succ	23	24	)
+(succ	24	25	)
+(succ	25	26	)
+(succ	26	27	)
+(succ	27	28	)
+(succ	28	29	)
+(succ	29	30	)
+(succ	30	31	)
+(succ	31	32	)
+(succ	32	33	)
+(succ	33	34	)
+(succ	34	35	)
+(succ	35	36	)
+(succ	36	37	)
+(succ	37	38	)
+(succ	38	39	)
+(succ	39	40	)
+(succ	40	41	)
+(succ	41	42	)
+(succ	42	43	)
+(succ	43	44	)
+(succ	44	45	)
+(succ	45	46	)
+(succ	46	47	)
+(succ	47	48	)
+(succ	48	49	)
+(succ	49	50	)
+(succ	50	51	)
+(succ	51	52	)
+(succ	52	53	)
+(succ	53	54	)
+(succ	54	55	)
+(succ	55	56	)
+(succ	56	57	)
+(succ	57	58	)
+(succ	58	59	)
+(succ	59	60	)
+(succ	60	61	)
+(succ	61	62	)
+(succ	62	63	)
+(succ	63	64	)
+(succ	64	65	)
+(succ	65	66	)
+(succ	66	67	)
+(succ	67	68	)
+(succ	68	69	)
+(succ	69	70	)
+(succ	70	71	)
+(succ	71	72	)
+(succ	72	73	)
+(succ	73	74	)
+(succ	74	75	)
+(succ	75	76	)
+(succ	76	77	)
+(succ	77	78	)
+(succ	78	79	)
+(succ	79	80	)
+(succ	80	81	)
+(succ	81	82	)
+(succ	82	83	)
+(succ	83	84	)
+(succ	84	85	)
+(succ	85	86	)
+(succ	86	87	)
+(succ	87	88	)
+(succ	88	89	)
+(succ	89	90	)
+(succ	90	91	)
+(succ	91	92	)
+(succ	92	93	)
+(succ	93	94	)
+(succ	94	95	)
+(succ	95	96	)
+(succ	96	97	)
+(succ	97	98	)
+(succ	98	99	)
+(succ	99	100	)

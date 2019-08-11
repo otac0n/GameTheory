@@ -1,0 +1,5 @@
+GDL version of the single-player board game "Mimikry" by Heinz Meister.
+
+On the 6x6-board, 34 sea shells are placed (at most one on each cell). The shells can be moved a certain number of cells (horizontally, vertically, or diagonally) onto an empty seafloor cell, depending on the row they reside in. A moved shell is turned to become invisible and can no longer move. The goal is to make all shells invisible. The number of cells to move for rows from top to bottom: 1, 4, 2, 1, 3, 2.
+
+GDL by Peter Kissmann (TZI, University of Bremen)

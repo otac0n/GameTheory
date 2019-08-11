@@ -1,0 +1,413 @@
+(reverse 1 8)
+(reverse 2 7)
+(reverse 3 6)
+(reverse 4 5)
+(reverse 5 4)
+(reverse 6 3)
+(reverse 7 2)
+(reverse 8 1)
+
+(<= (rename_move (move ?y1p ?x1p ?y2p ?x2p) (move ?x1 ?y1 ?x2 ?y2))
+	(or
+		(successor ?y1 ?y2)
+		(successor ?y2 ?y1))
+	(or
+		(successor ?x1 ?x2)
+		(successor ?x2 ?x1))
+	(reverse ?x1 ?x1p)
+	(reverse ?y1 ?y1p)
+	(reverse ?x2 ?x2p)
+	(reverse ?y2 ?y2p)
+)
+
+(<= (rename_move (move ?y1p ?x1p ?y3p ?x3p) (take ?x1 ?y1 ?x2 ?y2 ?x3 ?y3))
+	(successor ?y2 ?y1)
+	(successor ?y3 ?y2)
+	(successor ?x1 ?x2) 
+	(successor ?x2 ?x3)
+	(reverse ?x1 ?x1p)
+	(reverse ?y1 ?y1p)
+	(reverse ?x3 ?x3p)
+	(reverse ?y3 ?y3p)
+)
+(<= (rename_move (move ?y1p ?x1p ?y3p ?x3p) (take ?x1 ?y1 ?x2 ?y2 ?x3 ?y3))
+	(successor ?y1 ?y2)
+	(successor ?y2 ?y3)
+	(successor ?x2 ?x1) 
+	(successor ?x3 ?x2)
+	(reverse ?x1 ?x1p)
+	(reverse ?y1 ?y1p)
+	(reverse ?x3 ?x3p)
+	(reverse ?y3 ?y3p)
+)
+(<= (rename_move (move ?y1p ?x1p ?y3p ?x3p) (take ?x1 ?y1 ?x2 ?y2 ?x3 ?y3))
+	(successor ?y2 ?y1)
+	(successor ?y3 ?y2)
+	(successor ?x2 ?x1) 
+	(successor ?x3 ?x2)
+	(reverse ?x1 ?x1p)
+	(reverse ?y1 ?y1p)
+	(reverse ?x3 ?x3p)
+	(reverse ?y3 ?y3p)
+)
+(<= (rename_move (move ?y1p ?x1p ?y3p ?x3p) (take ?x1 ?y1 ?x2 ?y2 ?x3 ?y3))
+	(successor ?y1 ?y2)
+	(successor ?y2 ?y3)
+	(successor ?x1 ?x2) 
+	(successor ?x2 ?x3)
+	(reverse ?x1 ?x1p)
+	(reverse ?y1 ?y1p)
+	(reverse ?x3 ?x3p)
+	(reverse ?y3 ?y3p)
+)
+
+(rename_move noop noop)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;
+(successor 0 1)
+(successor 1 2)
+(successor 2 3)
+(successor 3 4)
+(successor 4 5)
+(successor 5 6)
+(successor 6 7)
+(successor 7 8)
+(successor 8 9)
+(successor 9 10)
+(successor 10 11)
+(successor 11 12)
+(successor 12 13)
+
+( <= (smaller ?X ?Y)
+	(successor ?X ?Y))
+	
+( <= (smaller ?X ?Y)
+	(successor ?Y1 ?Y)
+	(smaller ?X ?Y1))
+
+(role white)
+(role black)
+
+
+(init (piece_count white 12))
+(init (piece_count black 12))
+
+(init (control white))
+
+(init (cell  1 1 black))
+(init (cell  1 3 black))
+(init (cell  1 5 black))
+(init (cell  1 7 black))
+(init (cell  2 2 black))
+(init (cell  2 4 black))
+(init (cell  2 6 black))
+(init (cell  2 8 black))
+(init (cell  3 1 black))
+(init (cell  3 3 black))
+(init (cell  3 5 black))
+(init (cell  3 7 black))
+
+(init (cell  4 2 blank))
+(init (cell  4 4 blank))
+(init (cell  4 6 blank))
+(init (cell  4 8 blank))
+(init (cell  5 1 blank))
+(init (cell  5 3 blank))
+(init (cell  5 5 blank))
+(init (cell  5 7 blank))
+
+
+(init (cell  6 2 white))
+(init (cell  6 4 white))
+(init (cell  6 6 white))
+(init (cell  6 8 white))
+(init (cell  7 1 white))
+(init (cell  7 3 white))
+(init (cell  7 5 white))
+(init (cell  7 7 white))
+(init (cell  8 2 white))
+(init (cell  8 4 white))
+(init (cell  8 6 white))
+(init (cell  8 8 white))
+
+
+(<= (legal ?p noop)
+	(role ?p)
+	(not(true (control ?p))))
+	
+(<= (legal ?player (move ?x1 ?y1 ?x2 ?y2))
+	(true (control ?player))
+	(can_move ?player ?x1 ?y1 ?x2 ?y2)
+)
+
+(<= (legal ?player (take ?x1 ?y1 ?xm ?ym ?x2 ?y2))
+	(true (control ?player))
+	(can_take ?player ?x1 ?y1 ?xm ?ym ?x2 ?y2)
+)
+
+;source goes blank
+(<= (next (cell ?x ?y blank))
+	(moved_from ?x ?y))
+
+(<= (next (cell ?x1 ?y1 blank))
+	(does ?player (take ?x1 ?y1 ?x ?y ?x2 ?y2))
+)
+
+(<= (moved_from ?x ?y)
+	(does ?player (move ?x ?y ?xto ?yto))
+)
+
+;destination is filled
+(<= (next (cell ?x ?y ?piece))
+	(does ?player (move ?xfrom ?yfrom ?x ?y))
+	(true (cell ?xfrom ?yfrom ?piece))
+)	
+
+(<= (next (cell ?x2 ?y2 ?piece))
+	(does ?player (take ?x1 ?y1 ?x ?y ?x2 ?y2))
+	(true (cell ?x1 ?y1 ?piece))	
+)
+
+
+;unchanged cells remain unchanged
+(<= (next (cell ?x ?y ?p))
+    (does ?player (move ?x1 ?y1 ?x2 ?y2))
+    (true (cell ?x ?y ?p))
+    (distinct ?x ?x1)
+	(distinct ?x ?x2)
+)
+
+;unchanged cells remain unchanged
+(<= (next (cell ?x ?y ?p))
+    (does ?player (move ?x1 ?y1 ?x2 ?y2))
+    (true (cell ?x ?y ?p))
+	(distinct ?y ?y1)
+	(distinct ?y ?y2)
+)
+
+;also in case player jumps
+(<= (next (cell ?x ?y ?p))
+    (does ?player (take ?x1 ?y1 ?xm ?ym ?x2 ?y2))
+    (true (cell ?x ?y ?p))
+    (distinct ?x ?x1)
+	(distinct ?x ?xm)
+	(distinct ?x ?x2)
+
+)
+
+;also in case player jumps
+(<= (next (cell ?x ?y ?p))
+    (does ?player (take ?x1 ?y1 ?xm ?ym ?x2 ?y2))
+    (true (cell ?x ?y ?p))
+ 
+	(distinct ?y ?y1)
+	(distinct ?y ?ym)
+	(distinct ?y ?y2)
+)
+
+;captured cell goes blank
+(<= (next (cell ?x ?y blank))
+	(does ?player (take ?x1 ?y1 ?x ?y ?x2 ?y2))
+)
+
+(<= (single_jump_capture ?player ?x ?y)
+	(does ?player (take ?x1 ?y1 ?x ?y ?xto ?yto))
+	)
+
+; CONTROL TRANSFER
+(<= (next (control white))
+    (true (control black)))
+(<= (next (control black))
+    (true (control white)))
+	
+;Piece Counting
+
+;no change for player that takes a pawn
+(<= (next (piece_count ?player ?n))
+	 (does ?player (take ?x1 ?y1 ?xm ?ym ?x2 ?y2))
+	(true (piece_count ?player ?n))
+)
+
+;or that moves
+(<= (next (piece_count ?player ?n))
+	 (does ?player (move ?x1 ?y1 ?x2 ?y2))
+	(true (piece_count ?player ?n))
+)
+
+(<= (next (piece_count ?player ?n))
+	 (does ?p (move ?x1 ?y1 ?x2 ?y2))
+	(true (piece_count ?player ?n))
+	(distinct ?p ?player)
+)
+;white loses a piece if black takes one
+(<= (next (piece_count white ?n))
+	 (does black (take ?x1 ?y1 ?xm ?ym ?x2 ?y2))
+	(true (piece_count white ?k))
+	(successor ?n ?k)
+)
+
+;black loses a piece if white takes one
+(<= (next (piece_count black ?n))
+	 (does white (take ?x1 ?y1 ?xm ?ym ?x2 ?y2))
+	(true (piece_count black ?k))
+	(successor ?n ?k)
+)
+
+;Terminals 
+
+(<= (has_legal_move ?player)
+    (legal ?player (move ?x1 ?y1 ?x2 ?y2))
+)
+
+(<= (has_legal_move ?player)
+    (legal ?player (take ?x1 ?y1 ?xm ?ym ?x2 ?y2))
+)		
+
+(<= (has_legal_move ?player)
+    (legal ?player noop)
+)
+
+(<= (stuck ?player)
+    (role ?player)
+    (not (has_legal_move ?player))
+)
+
+(<= terminal
+	(true (control ?player))
+	(stuck ?player)
+)
+	
+(<= terminal
+	(true (piece_count ?player 0))
+)
+
+;Goals
+
+(<= (goal ?p 100)
+	(reaches_goal ?p)
+)
+
+(<= (goal ?p 0)
+	(role ?p)
+	(reaches_goal ?p2)
+	(distinct ?p ?p2)
+)
+
+(<= (goal white 100)
+	(not (reaches_goal black))
+	(true (piece_count white ?rc))
+	(true (piece_count black ?bc))
+	(smaller ?bc ?rc))
+
+(<= (goal white 50)
+	(not (reaches_goal black))
+	(true (piece_count white ?x))
+	(true (piece_count black ?x)))
+
+(<= (goal white 0)
+	(not (reaches_goal black))
+	(true (piece_count white ?rc))
+	(true (piece_count black ?bc))
+	(smaller ?rc ?bc))
+
+(<= (goal black 100)
+	(not (reaches_goal white))
+	(true (piece_count white ?rc))
+	(true (piece_count black ?bc))
+	(smaller ?rc ?bc))
+
+(<= (goal black 50)
+	(not (reaches_goal white))
+	(true (piece_count white ?x))
+	(true (piece_count black ?x)))
+
+(<= (goal black 0)
+	(not (reaches_goal white))
+	(true (piece_count white ?rc))
+	(true (piece_count black ?bc))
+	(smaller ?bc ?rc))
+	
+(<= (reaches_goal black)
+	(true (cell ?x 8 black))
+	)
+
+(<= (reaches_goal white)
+	(true (cell ?x 1 white))
+	)
+
+;black down right
+(<= (can_move black ?x1 ?y1 ?x2 ?y2)
+	(true (cell ?x1 ?y1 black))
+	(true (cell ?x2 ?y2 blank))
+	(successor ?x1 ?x2)
+	(successor ?y1 ?y2)
+)
+
+;black down left
+(<= (can_move black ?x1 ?y1 ?x2 ?y2)
+	(true (cell ?x1 ?y1 black))
+	(true (cell ?x2 ?y2 blank))
+	(successor ?x2 ?x1)
+	(successor ?y1 ?y2)
+)
+
+;white up right
+(<= (can_move white ?x1 ?y1 ?x2 ?y2)
+	(true (cell ?x1 ?y1 white))
+	(true (cell ?x2 ?y2 blank))
+	(successor ?x1 ?x2)
+	(successor ?y2 ?y1)
+)
+
+;white up left
+(<= (can_move white ?x1 ?y1 ?x2 ?y2)
+	(true (cell ?x1 ?y1 white))
+	(true (cell ?x2 ?y2 blank))
+	(successor ?x2 ?x1)
+	(successor ?y2 ?y1)
+)
+
+;black down right capture
+(<= (can_take black ?x1 ?y1 ?xm ?ym ?x2 ?y2)
+	(true (cell ?x1 ?y1 black))
+	(true (cell ?x2 ?y2 blank))
+	(successor ?x1 ?xm)
+	(successor ?xm ?x2)
+	(successor ?y1 ?ym)
+	(successor ?ym ?y2)
+	(true (cell ?xm ?ym white))
+)
+
+;black down left capture
+(<= (can_take black ?x1 ?y1 ?xm ?ym ?x2 ?y2)
+	(true (cell ?x1 ?y1 black))
+	(true (cell ?x2 ?y2 blank))
+	(successor ?x2 ?xm)
+	(successor ?xm ?x1)
+	(successor ?y1 ?ym)
+	(successor ?ym ?y2)
+	(true (cell ?xm ?ym white))
+)
+
+;white up right capture
+(<= (can_take white ?x1 ?y1 ?xm ?ym ?x2 ?y2)
+	(true (cell ?x1 ?y1 white))
+	(true (cell ?x2 ?y2 blank))
+	(successor ?x1 ?xm)
+	(successor ?xm ?x2)
+	(successor ?y2 ?ym)
+	(successor ?ym ?y1)
+	(true (cell ?xm ?ym black))
+)
+
+;white up left capture
+(<= (can_take white ?x1 ?y1 ?xm ?ym ?x2 ?y2)
+	(true (cell ?x1 ?y1 white))
+	(true (cell ?x2 ?y2 blank))
+	(successor ?x2 ?xm)
+	(successor ?xm ?x1)
+	(successor ?y2 ?ym)
+	(successor ?ym ?y1)
+	(true (cell ?xm ?ym black))
+)
+

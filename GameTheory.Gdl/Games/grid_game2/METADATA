@@ -1,0 +1,8 @@
+{
+  "gameName": "grid_game2",
+  "rulesheet": "grid_game2.gdl",
+  "sourceUri": "http://ggpserver.general-game-playing.de/ggpserver/public/download_gdl.jsp?name=grid_game2",
+  "uploadedBy": "Manju",
+  "gdlVersion": "v1",
+  "seesXml": "(<= (sees_xml random ?t) (true ?t))\n(<= (sees_xml ?p ?t) (role ?p) (distinct ?p random) (true ?t))"
+}

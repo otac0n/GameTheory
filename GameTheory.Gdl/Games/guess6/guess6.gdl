@@ -1,0 +1,68 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;; Guess 6 ;;; Guessing the result of a dice ;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;; made by Tim Federholzner (baum) ;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(role random)
+(role player)
+
+;;;;;;;;;;;;;;;;;;;;;; turn counter ;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(init t1)
+
+(succ t1 t2)
+(succ t2 t3)
+(succ t3 t4)
+(succ t4 t5)
+(succ t5 t6)
+(succ t6 t7)
+
+(<= (next ?t)
+	(true ?t0)
+	(succ ?t0 ?t)
+)
+
+(<= terminal
+	(or
+		(true t7)
+		(true guessRight)
+	)
+)
+
+;;;;;;;;;;;;;;;;;;;; legal moves ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(number 1)
+(number 2)
+(number 3)
+(number 4)
+(number 5)
+(number 6)
+
+(<= (legal random (rollDice ?n))
+	(number ?n)
+)
+
+(<= (legal player (guessNumber ?n))
+	(number ?n)
+)
+
+;;;;;;;;;;;;;;;;;; goal values ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(<= (next guessRight)
+	(does random (rollDice ?n))
+	(does player (guessNumber ?n))
+)
+
+(goal random 100)
+
+(<= (goal player 100)
+	(true guessRight)
+)
+
+(<= (goal player 0)
+	(true t7)
+	(not (true guessRight))
+)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

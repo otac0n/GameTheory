@@ -1,0 +1,347 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Goldrush
+; v. 1.0
+; Author: Jakub Kowalski <kot@ii.uni.wroc.pl>
+; Corrections: Marek Szykula <msz@ii.uni.wroc.pl>
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Brief description:
+; Two players walk in a labirynth and search for gold.
+; Each piece of gold on map is worth some points; they all sum to 100.
+; Players can destroy obstacles and place new ones by using items,
+; which can be found in the labirynth.
+; If both players steps on the same item/gold no one gets it.
+; A player being on a field with an obstacle immediately lose.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Map:
+; G  s O2 
+;   OO1 O 
+;   b     
+; bO $ Ob 
+;     b   
+; O 1OO   
+; 2O s   R
+;
+; G - Green player; R - Red player; O - Obstacle; b - blaster; s - stoneplacer
+; 1, 2 - gold worth 10x points; $ - gold under the obstacle worth 40 points
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;       ROLE section
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(role Green)
+(role Red)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;       INIT section
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(init (OnMap Green 1 1))
+(init (OnMap Red 7 7))
+
+(init (OnMap Obstacle 1 6))
+(init (OnMap Obstacle 2 4))
+(init (OnMap Obstacle 2 7))
+(init (OnMap Obstacle 3 2))
+(init (OnMap Obstacle 4 2))
+(init (OnMap Obstacle 4 4))
+(init (OnMap Obstacle 4 6))
+(init (OnMap Obstacle 5 6))
+(init (OnMap Obstacle 6 1))
+(init (OnMap Obstacle 6 4))
+(init (OnMap Obstacle 7 2))
+
+(init (OnMap (Gold 2) 1 7))
+(init (OnMap (Gold 1) 3 6))
+(init (OnMap (Gold 4) 4 4))
+(init (OnMap (Gold 1) 5 2))
+(init (OnMap (Gold 2) 7 1))
+
+(init (OnMap (Item Blaster 1) 3 3))
+(init (OnMap (Item Blaster 1) 5 5))
+(init (OnMap (Item Blaster 3) 4 1))
+(init (OnMap (Item Blaster 3) 7 4))
+(init (OnMap (Item Stoneplacer 3) 1 4))
+(init (OnMap (Item Stoneplacer 3) 7 4))
+
+(<= (init (Equipment ?r Blaster 2))
+    (role ?r))
+(<= (init (Equipment ?r Stoneplacer 1))
+    (role ?r))
+
+(<= (init (Score ?r 0))
+    (role ?r))
+
+(init (Turn 1))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;       LEGAL section
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(<= (legal ?r (Move ?nx ?y))
+    (true (OnMap ?r ?x ?y))
+    (role ?r)
+    (or (+ ?x 1 ?nx)
+        (- ?x 1 ?nx))
+    (InBoard ?nx))
+
+(<= (legal ?r (Move ?x ?ny))
+    (true (OnMap ?r ?x ?y))
+    (role ?r)
+    (or (+ ?y 1 ?ny)
+        (- ?y 1 ?ny))
+    (InBoard ?ny))
+
+(<= (legal ?r (Use ?e ?nx ?ny))
+    (true (Equipment ?r ?e ?q))
+    (> ?q 0)
+    (true (OnMap ?r ?x ?y))
+    (role ?r)
+    (DiagonalMove ?x ?y ?nx ?ny))
+
+(<= (DiagonalMove ?x ?y ?nx ?ny)
+    (InBoard ?x)
+    (InBoard ?y)
+    (+ ?x 1 ?nx)
+    (InBoard ?nx)
+    (or (+ ?y 1 ?ny)
+        (- ?y 1 ?ny))
+    (InBoard ?ny))
+
+(<= (DiagonalMove ?x ?y ?nx ?ny)
+    (InBoard ?x)
+    (InBoard ?y)
+    (- ?x 1 ?nx)
+    (InBoard ?nx)
+    (or (+ ?y 1 ?ny)
+        (- ?y 1 ?ny))
+    (InBoard ?ny))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;       NEXT section
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;    OnMap
+; Players
+(<= (next (OnMap ?r ?x ?y))
+    (role ?r)
+    (does ?r (Move ?x ?y)))
+(<= (next (OnMap ?r ?x ?y))
+    (true (OnMap ?r ?x ?y))
+    (role ?r)
+    (does ?r (Use ?e ?nx ?ny)))
+; Obstacles
+(<= (next (OnMap Obstacle ?x ?y))
+    (does ?r (Use Stoneplacer ?x ?y)))
+(<= (next (OnMap Obstacle ?x ?y))
+    (true (OnMap Obstacle ?x ?y))
+    (not (does Green (Use Blaster ?x ?y)))
+    (not (does Red (Use Blaster ?x ?y))))
+; Gold
+(<= (next (OnMap (Gold ?q) ?x ?y))
+    (true (OnMap (Gold ?q) ?x ?y))
+    (not (does Green (Move ?x ?y)))
+    (not (does Red (Move ?x ?y))))
+; Items
+(<= (next (OnMap (Item ?e ?q) ?x ?y))
+    (true (OnMap (Item ?e ?q) ?x ?y))
+    (not (does Green (Move ?x ?y)))
+    (not (does Red (Move ?x ?y))))
+
+;    Equipment
+(<= (next (Equipment ?r ?e ?q))
+    (true (Equipment ?r ?e ?q))
+    (does ?r (Move ?x ?y)))
+(<= (next (Equipment ?r ?e1 ?q))
+    (true (Equipment ?r ?e1 ?q))
+    (does ?r (Use ?e2 ?x ?y))
+    (distinct ?e1 ?e2))
+(<= (next (Equipment ?r ?e ?nq))
+    (does ?r (Use ?e ?x ?y))
+    (true (Equipment ?r ?e ?q))
+    (- ?q 1 ?nq))
+(<= (next (Equipment ?r ?e ?q3))
+    (DistinctMove ?r ?x ?y)
+    (true (OnMap (Item ?e ?q1) ?x ?y))
+    (true (Equipment ?r ?e ?q2))
+    (+ ?q1 ?q2 ?q3))
+
+;    Score
+(<= (next (Score ?r ?s3))
+    (DistinctMove ?r ?x ?y)
+    (true (OnMap (Gold ?s1) ?x ?y))
+    (true (Score ?r ?s2))
+    (+ ?s1 ?s2 ?s3))
+(<= (next (Score ?r ?s))
+    (true (Score ?r ?s))
+    (not (ChangedScore ?r)))
+
+(<= (DistinctMove ?r1 ?x ?y)
+    (role ?r1)
+    (role ?r2)
+    (distinct ?r1 ?r2)
+    (does ?r1 (Move ?x ?y))
+    (not (does ?r2 (Move ?x ?y))))
+
+(<= (ChangedScore ?r)
+    (DistinctMove ?r ?x ?y)
+    (true (OnMap (Gold ?s1) ?x ?y)))
+
+;    Turn
+(<= (next (Turn ?nt))
+    (true (Turn ?t))
+    (NextTurn ?t ?nt))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;       GOAL section
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(<= (goal ?r 0)
+    (UnderStone ?r))
+(<= (goal ?r ?s10)
+    (true (Score ?r ?s))
+    (not (UnderStone ?r))
+    (*10 ?s ?s10))
+(<= (UnderStone ?r)
+    (role ?r)
+    (true (OnMap ?r ?x ?y))
+    (true (OnMap Obstacle ?x ?y)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;       TERM section
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(<=  terminal 
+    (true (Turn 50)))
+(<=  terminal 
+    (UnderStone ?r))
+(<=  terminal 
+    (not GoldAtMap))
+(<=  GoldAtMap
+    (true (OnMap (Gold ?q) ?x ?y)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;       CONSTS section
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(InBoard 1)
+(InBoard 2)
+(InBoard 3)
+(InBoard 4)
+(InBoard 5)
+(InBoard 6)
+(InBoard 7)
+
+(*10 0 0)
+(*10 1 10)
+(*10 2 20)
+(*10 3 30)
+(*10 4 40)
+(*10 5 50)
+(*10 6 60)
+(*10 7 70)
+(*10 8 80)
+(*10 9 90)
+(*10 10 100)
+
+
+(NextTurn 0 1)
+(NextTurn 1 2)
+(NextTurn 2 3)
+(NextTurn 3 4)
+(NextTurn 4 5)
+(NextTurn 5 6)
+(NextTurn 6 7)
+(NextTurn 7 8)
+(NextTurn 8 9)
+(NextTurn 9 10)
+(NextTurn 10 11)
+(NextTurn 11 12)
+(NextTurn 12 13)
+(NextTurn 13 14)
+(NextTurn 14 15)
+(NextTurn 15 16)
+(NextTurn 16 17)
+(NextTurn 17 18)
+(NextTurn 18 19)
+(NextTurn 19 20)
+(NextTurn 20 21)
+(NextTurn 21 22)
+(NextTurn 22 23)
+(NextTurn 23 24)
+(NextTurn 24 25)
+(NextTurn 25 26)
+(NextTurn 26 27)
+(NextTurn 27 28)
+(NextTurn 28 29)
+(NextTurn 29 30)
+(NextTurn 30 31)
+(NextTurn 31 32)
+(NextTurn 32 33)
+(NextTurn 33 34)
+(NextTurn 34 35)
+(NextTurn 35 36)
+(NextTurn 36 37)
+(NextTurn 37 38)
+(NextTurn 38 39)
+(NextTurn 39 40)
+(NextTurn 40 41)
+(NextTurn 41 42)
+(NextTurn 42 43)
+(NextTurn 43 44)
+(NextTurn 44 45)
+(NextTurn 45 46)
+(NextTurn 46 47)
+(NextTurn 47 48)
+(NextTurn 48 49)
+(NextTurn 49 50)
+
+(Succ 0 1)
+(Succ 1 2)
+(Succ 2 3)
+(Succ 3 4)
+(Succ 4 5)
+(Succ 5 6)
+(Succ 6 7)
+(Succ 7 8)
+(Succ 8 9)
+(Succ 9 10)
+(Succ 10 11)
+(Succ 11 12)
+(Succ 12 13)
+(Succ 13 14)
+(Succ 14 15)
+
+
+(+ 0 0 0)
+(+ 1 0 1)
+(+ 2 0 2)
+(+ 3 0 3)
+(+ 4 0 4)
+(+ 5 0 5)
+(+ 6 0 6)
+(+ 7 0 7)
+(+ 8 0 8)
+(+ 9 0 9)
+(+ 10 0 10)
+(+ 11 0 11)
+(+ 12 0 12)
+(+ 13 0 13)
+(+ 14 0 14)
+(+ 15 0 15)
+
+(<= (+ ?x ?sy ?sz)
+    (Succ ?y ?sy)
+    (Succ ?z ?sz)
+    (+ ?x ?y ?z))
+
+(<= (- ?x ?y ?z)
+    (+ ?y ?z ?x))
+
+(<= (> ?x ?y)
+    (Succ ?y ?x))
+(<= (> ?sx ?y)
+    (Succ ?x ?sx)
+    (> ?x ?y))
+
