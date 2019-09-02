@@ -1,3 +1,5 @@
+// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+
 namespace GameTheory.Gdl
 {
     using System;
@@ -6,7 +8,6 @@ namespace GameTheory.Gdl
     using System.Linq;
     using GameTheory.Catalogs;
     using Newtonsoft.Json;
-    using Newtonsoft.Json.Linq;
 
     public class GdlGameCatalog : GameCatalog
     {

@@ -14,6 +14,10 @@ namespace GameTheory.ConsoleRunner
 
     internal class Program
     {
+        private static GameCatalog Catalog = new CompositeGameCatalog(
+            GameCatalog.Default,
+            new Gdl.GdlGameCatalog(Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, "..", "..", ".."))));
+
         private static object ConstructType(Type type, Func<ParameterInfo, object> getParameter = null)
         {
             getParameter = getParameter ?? (p => GetArgument(p));
@@ -131,9 +135,7 @@ namespace GameTheory.ConsoleRunner
             NativeMethods.SetConsoleFont();
             NativeMethods.Maximize();
 
-            var catalog1 = GameCatalog.Default;
-            var catalog2 = new Gdl.GdlGameCatalog(Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, "..", "..", "..")));
-            var game = ConsoleInteraction.Choose(catalog1.AvailableGames.Concat(catalog2.AvailableGames).ToList());
+            var game = ConsoleInteraction.Choose(Catalog.AvailableGames);
             var gameType = game.GameStateType;
             var state = ConstructType(gameType);
 

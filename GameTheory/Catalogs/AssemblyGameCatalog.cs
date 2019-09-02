@@ -8,6 +8,9 @@ namespace GameTheory.Catalogs
     using System.Linq;
     using System.Reflection;
 
+    /// <summary>
+    /// Exposes the games available as exported types from a list of assemblies.
+    /// </summary>
     public class AssemblyGameCatalog : GameCatalog
     {
         private readonly ImmutableList<Assembly> assemblies;
@@ -15,7 +18,7 @@ namespace GameTheory.Catalogs
         /// <summary>
         /// Initializes a new instance of the <see cref="AssemblyGameCatalog"/> class.
         /// </summary>
-        /// <param name="assemblies">The assemblies to search for games</param>
+        /// <param name="assemblies">The assemblies to search for games.</param>
         public AssemblyGameCatalog(params Assembly[] assemblies)
             : this((IEnumerable<Assembly>)assemblies)
         {
@@ -24,7 +27,7 @@ namespace GameTheory.Catalogs
         /// <summary>
         /// Initializes a new instance of the <see cref="AssemblyGameCatalog"/> class.
         /// </summary>
-        /// <param name="assemblies">The assemblies to search for games</param>
+        /// <param name="assemblies">The assemblies to search for games.</param>
         public AssemblyGameCatalog(IEnumerable<Assembly> assemblies)
         {
             this.assemblies = (assemblies ?? throw new ArgumentNullException(nameof(assemblies))).ToImmutableList();
@@ -47,6 +50,5 @@ namespace GameTheory.Catalogs
                 }
             }
         }
-
     }
 }
