@@ -16,5 +16,14 @@ namespace GameTheory.FormsRunner
         {
             this.InitializeComponent();
         }
+
+        private void NewGameMenu_Click(object sender, System.EventArgs e)
+        {
+        }
+
+        private void QuitMenu_Click(object sender, System.EventArgs e)
+        {
+            this.Close();
+        }
     }
 }
