@@ -9,6 +9,8 @@ namespace GameTheory.FormsRunner
     /// </summary>
     public partial class GameManagerForm : Form
     {
+        private NewGameForm newGameForm;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="GameManagerForm"/> class.
         /// </summary>
@@ -19,6 +21,16 @@ namespace GameTheory.FormsRunner
 
         private void NewGameMenu_Click(object sender, System.EventArgs e)
         {
+            if (this.newGameForm == null || this.newGameForm.IsDisposed)
+            {
+                this.newGameForm = new NewGameForm();
+                this.newGameForm.GameSelected += (_, args) =>
+                {
+                    MessageBox.Show($"Selected {args.Game.Name} ({args.Game.GameStateType.FullName})");
+                };
+            }
+
+            this.newGameForm.Show(this);
         }
 
         private void QuitMenu_Click(object sender, System.EventArgs e)

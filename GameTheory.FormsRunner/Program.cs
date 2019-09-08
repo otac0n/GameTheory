@@ -3,6 +3,7 @@
 namespace GameTheory.FormsRunner
 {
     using System;
+    using System.ComponentModel;
     using System.IO;
     using System.Windows.Forms;
     using GameTheory.Catalogs;
@@ -26,6 +27,23 @@ namespace GameTheory.FormsRunner
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new GameManagerForm());
+        }
+
+        /// <summary>
+        /// Extension method allowing conditional invoke usage.
+        /// </summary>
+        /// <param name="this">The object with which to synchronize.</param>
+        /// <param name="action">The action to perform.</param>
+        public static void InvokeIfRequired(this ISynchronizeInvoke @this, MethodInvoker action)
+        {
+            if (@this.InvokeRequired)
+            {
+                @this.Invoke(action, new object[0]);
+            }
+            else
+            {
+                action();
+            }
         }
     }
 }

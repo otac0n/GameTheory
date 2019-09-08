@@ -84,6 +84,15 @@
     <EmbeddedResource Include="GameManagerForm.resx">
       <DependentUpon>GameManagerForm.cs</DependentUpon>
     </EmbeddedResource>
+    <Compile Include="NewGameForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="NewGameForm.Designer.cs">
+      <DependentUpon>NewGameForm.cs</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="NewGameForm.resx">
+      <DependentUpon>NewGameForm.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="packages.config" />
     <Compile Include="Program.cs" />
     <AdditionalFiles Include="..\stylecop.json">
@@ -95,13 +104,13 @@
     <Analyzer Include="..\packages\StyleCop.Analyzers.1.1.118\analyzers\dotnet\cs\StyleCop.Analyzers.dll" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\GameTheory.Gdl\GameTheory.Gdl.csproj">
-      <Project>{e9225da4-7ebc-4915-93a5-d14df8aad0a3}</Project>
-      <Name>GameTheory.Gdl</Name>
-    </ProjectReference>
     <ProjectReference Include="..\GameTheory\GameTheory.csproj">
       <Project>{3b3e3456-b950-44c1-b8a2-fe6c79c2232f}</Project>
       <Name>GameTheory</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\GameTheory.Gdl\GameTheory.Gdl.csproj">
+      <Project>{e9225da4-7ebc-4915-93a5-d14df8aad0a3}</Project>
+      <Name>GameTheory.Gdl</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
