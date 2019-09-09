@@ -2,7 +2,11 @@
 
 namespace GameTheory.FormsRunner
 {
+    using System.Linq;
+    using System.Reflection;
+    using System.Threading.Tasks;
     using System.Windows.Forms;
+    using GameTheory.Catalogs;
 
     /// <summary>
     /// Tracks ongoing games and players.
@@ -26,7 +30,25 @@ namespace GameTheory.FormsRunner
                 this.newGameForm = new NewGameForm();
             }
 
-            this.newGameForm.Show(this);
+            if (this.newGameForm.ShowDialog(this) != DialogResult.Cancel)
+            {
+                StartGame(this.newGameForm.SelectedGame, this.newGameForm.StartingState, this.newGameForm.SelectedPlayers);
+                this.newGameForm.Dispose();
+            }
+        }
+
+        private static void StartGame(IGame selectedGame, object startingState, object[] selectedPlayers)
+        {
+            var game = (Task)typeof(GameManagerForm).GetMethod(nameof(PlayGame), BindingFlags.Static | BindingFlags.NonPublic).MakeGenericMethod(selectedGame.MoveType).Invoke(null, new object[] { startingState, selectedPlayers });
+        }
+
+        private static Task PlayGame<TMove>(IGameState<TMove> state, object[] players)
+            where TMove : IMove
+        {
+            var playersList = players.Select(p => (IPlayer<TMove>)p).ToArray();
+            return GameUtilities.PlayGame(state, playerTokens => playersList, (a, b, c) =>
+            {
+            });
         }
 
         private void QuitMenu_Click(object sender, System.EventArgs e)

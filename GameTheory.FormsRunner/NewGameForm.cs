@@ -3,6 +3,7 @@
 namespace GameTheory.FormsRunner
 {
     using System;
+    using System.Collections.Generic;
     using System.Data;
     using System.Linq;
     using System.Media;
@@ -16,6 +17,7 @@ namespace GameTheory.FormsRunner
         private Task<IGame[]> allGamesTask;
         private Task<IGame[]> searchTask;
         private object startingState;
+        private object[] selectedPlayers;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="NewGameForm"/> class.
@@ -37,6 +39,11 @@ namespace GameTheory.FormsRunner
         /// Raised when the user changes the starting state.
         /// </summary>
         public event EventHandler<StartingStateChangedEventArgs> StartingStateChanged;
+
+        /// <summary>
+        /// Raised when the user changes the players.
+        /// </summary>
+        public event EventHandler<SelectedPlayersChangedEventArgs> SelectedPlayersChanged;
 
         /// <summary>
         /// Gets the currently selected game.
@@ -67,8 +74,26 @@ namespace GameTheory.FormsRunner
             }
         }
 
+        /// <summary>
+        /// Gets the currently selected starting state.
+        /// </summary>
+        public object[] SelectedPlayers
+        {
+            get { return this.selectedPlayers; }
+
+            private set
+            {
+                if (this.selectedPlayers != null || value != null)
+                {
+                    this.selectedPlayers = value;
+                    this.OnSelectedPlayersChanged();
+                }
+            }
+        }
+
         protected virtual void OnSelectedGameChanged()
         {
+            this.SelectedPlayers = null;
             this.StartingState = null;
             var game = this.SelectedGame;
             this.SelectedGameChanged?.Invoke(this, new SelectedGameChangedEventArgs(game));
@@ -104,21 +129,122 @@ namespace GameTheory.FormsRunner
 
         protected virtual void OnStartingStateChanged()
         {
+            this.SelectedPlayers = null;
             var state = this.StartingState;
             this.StartingStateChanged?.Invoke(this, new StartingStateChangedEventArgs(state));
 
+            this.playersTable.Controls.Clear(); // TODO: Dispose controls.
             if (state != null)
             {
                 var game = this.SelectedGame;
-                typeof(NewGameForm).GetMethod(nameof(CountPlayers), BindingFlags.Static | BindingFlags.NonPublic).MakeGenericMethod(game.MoveType).Invoke(null, new object[] { state });
+                var playerOptions = (PlayerOptions)typeof(NewGameForm).GetMethod(nameof(CountPlayers), BindingFlags.Static | BindingFlags.NonPublic).MakeGenericMethod(game.MoveType).Invoke(null, new object[] { state });
+                var playerCount = playerOptions.Names.Length;
+                this.playersTable.RowCount = playerCount * 2;
+                var players = new object[playerCount];
+                var playersValid = new bool[playerCount];
+
+                void Touch()
+                {
+                    this.SelectedPlayers = playersValid.All(p => p) ? players : null;
+                }
+
+                for (var i = 0; i < playerCount; i++)
+                {
+                    var p = i; // Closure variable.
+                    var name = playerOptions.Names[p];
+                    var playerToken = playerOptions.PlayerTokens[p];
+                    var label = new Label
+                    {
+                        AutoSize = true,
+                        Text = name,
+                    };
+                    var playersList = new ComboBox
+                    {
+                        DisplayMember = "Name",
+                        DropDownStyle = ComboBoxStyle.DropDownList,
+                    };
+                    label.Margin = new Padding(label.Margin.Left, label.Margin.Top + 5, label.Margin.Right, label.Margin.Bottom);
+                    playersList.Margin = new Padding(playersList.Margin.Left, playersList.Margin.Top, playersList.Margin.Right + 32, playersList.Margin.Bottom);
+
+                    playersList.SelectedValueChanged += (_, a) =>
+                    {
+                        var player = (Player)playersList.SelectedItem;
+                        var previous = this.playersTable.GetControlFromPosition(1, p * 2 + 1);
+                        if (previous != null)
+                        {
+                            this.playersTable.Controls.Remove(previous); // TODO: Dispose.
+                        }
+
+                        var editor = ObjectGraphEditor.MakeEditor(
+                            player.Name,
+                            player.PlayerType,
+                            out var errorControl,
+                            out var playerLabel,
+                            this.errorProvider.SetError,
+                            (value, valid) =>
+                            {
+                                playersValid[p] = valid;
+                                players[p] = valid ? value : null;
+                                Touch();
+                            },
+                            (string innerName, Type type, out Control innerControl, out Control innerErrorControl, out Label innerLabel, Action<Control, string> setError, Action<object, bool> set) =>
+                            {
+                                if (type == typeof(PlayerToken))
+                                {
+                                    innerControl = new Label
+                                    {
+                                        AutoSize = true,
+                                        Text = name,
+                                    };
+                                    innerControl.Margin = new Padding(innerControl.Margin.Left, innerControl.Margin.Top, innerControl.Margin.Right, innerControl.Margin.Bottom + 7);
+                                    innerErrorControl = innerControl;
+                                    innerLabel = new Label
+                                    {
+                                        AutoSize = true,
+                                        Text = innerName,
+                                    };
+                                    set(playerToken, true);
+                                    return true;
+                                }
+                                else
+                                {
+                                    innerControl = null;
+                                    innerErrorControl = null;
+                                    innerLabel = null;
+                                    return false;
+                                }
+                            });
+
+                        this.playersTable.Controls.Add(editor, 1, p * 2 + 1);
+                    };
+
+                    playersList.Items.AddRange(playerOptions.Players.ToArray());
+                    if (playersList.Items.Count > 0)
+                    {
+                        playersList.SelectedIndex = 0;
+                    }
+
+                    this.playersTable.Controls.Add(label, 0, p * 2);
+                    this.playersTable.Controls.Add(playersList, 1, p * 2);
+                }
+            }
+            else
+            {
+                this.playersTable.RowCount = 0;
             }
         }
 
-        private static void CountPlayers<TMove>(IGameState<TMove> state)
+        protected virtual void OnSelectedPlayersChanged()
+        {
+            this.SelectedPlayersChanged?.Invoke(this, new SelectedPlayersChangedEventArgs(this.SelectedPlayers));
+        }
+
+        private static PlayerOptions CountPlayers<TMove>(IGameState<TMove> state)
             where TMove : IMove
         {
             var players = Program.PlayerCatalog.FindPlayers(typeof(TMove));
             var names = state.Players.Select(state.GetPlayerName).ToArray();
+            return new PlayerOptions(names, state.Players.ToArray(), players);
         }
 
         private void Search(string searchText)
@@ -160,7 +286,8 @@ namespace GameTheory.FormsRunner
         {
             if (true)
             {
-                this.Close();
+                this.DialogResult = DialogResult.OK;
+                this.Hide();
             }
             else
             {
@@ -170,6 +297,7 @@ namespace GameTheory.FormsRunner
 
         private void NewGameForm_Shown(object sender, EventArgs e)
         {
+            this.DialogResult = DialogResult.None;
             this.wizardTabs.SelectedIndex = 0;
         }
 
@@ -222,7 +350,8 @@ namespace GameTheory.FormsRunner
 
         private void CancelButton_Click(object sender, EventArgs e)
         {
-            this.Close();
+            this.DialogResult = DialogResult.Cancel;
+            this.Hide();
         }
 
         private void SearchBox_TextChanged(object sender, EventArgs e)
@@ -235,7 +364,7 @@ namespace GameTheory.FormsRunner
             if (e.CloseReason == CloseReason.UserClosing)
             {
                 e.Cancel = true;
-                this.Hide();
+                this.CancelButton_Click(sender, e);
             }
         }
 
@@ -282,6 +411,42 @@ namespace GameTheory.FormsRunner
             /// Gets the starting game state.
             /// </summary>
             public object StartingState { get; }
+        }
+
+        /// <summary>
+        /// <see cref="EventArgs"/> for the <see cref="SelectedPlayersChanged"/> event.
+        /// </summary>
+        public class SelectedPlayersChangedEventArgs
+        {
+            /// <summary>
+            /// Initializes a new instance of the <see cref="SelectedPlayersChangedEventArgs"/> class.
+            /// </summary>
+            /// <param name="players">The players chosen.</param>
+            public SelectedPlayersChangedEventArgs(object[] players)
+            {
+                this.Players = players;
+            }
+
+            /// <summary>
+            /// Gets the players chosen.
+            /// </summary>
+            public object[] Players { get; }
+        }
+
+        private class PlayerOptions
+        {
+            public PlayerOptions(string[] names, PlayerToken[] playerTokens, IList<Player> players)
+            {
+                this.Names = names;
+                this.Players = players;
+                this.PlayerTokens = playerTokens;
+            }
+
+            public string[] Names { get; }
+
+            public PlayerToken[] PlayerTokens { get; }
+
+            public IList<Player> Players { get; }
         }
     }
 }

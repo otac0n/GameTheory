@@ -40,12 +40,14 @@ namespace GameTheory.FormsRunner
             this.wizardTabs = new System.Windows.Forms.TabControl();
             this.backButton = new System.Windows.Forms.Button();
             this.errorProvider = new System.Windows.Forms.ErrorProvider(this.components);
+            this.playersTable = new System.Windows.Forms.TableLayoutPanel();
             nextButton = new System.Windows.Forms.Button();
             cancelButton = new System.Windows.Forms.Button();
             gameTab = new System.Windows.Forms.TabPage();
             searchLabel = new System.Windows.Forms.Label();
             playersTab = new System.Windows.Forms.TabPage();
             gameTab.SuspendLayout();
+            playersTab.SuspendLayout();
             this.wizardTabs.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
             this.SuspendLayout();
@@ -122,6 +124,17 @@ namespace GameTheory.FormsRunner
             this.searchBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.SearchBox_KeyDown);
             this.searchBox.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.SearchBox_PreviewKeyDown);
             // 
+            // playersTab
+            // 
+            playersTab.Controls.Add(this.playersTable);
+            playersTab.Location = new System.Drawing.Point(4, 22);
+            playersTab.Name = "playersTab";
+            playersTab.Padding = new System.Windows.Forms.Padding(3);
+            playersTab.Size = new System.Drawing.Size(429, 334);
+            playersTab.TabIndex = 2;
+            playersTab.Text = "Players";
+            playersTab.UseVisualStyleBackColor = true;
+            // 
             // configurationTab
             // 
             this.configurationTab.Location = new System.Drawing.Point(4, 22);
@@ -131,16 +144,6 @@ namespace GameTheory.FormsRunner
             this.configurationTab.TabIndex = 1;
             this.configurationTab.Text = "Configure";
             this.configurationTab.UseVisualStyleBackColor = true;
-            // 
-            // playersTab
-            // 
-            playersTab.Location = new System.Drawing.Point(4, 22);
-            playersTab.Name = "playersTab";
-            playersTab.Padding = new System.Windows.Forms.Padding(3);
-            playersTab.Size = new System.Drawing.Size(429, 334);
-            playersTab.TabIndex = 2;
-            playersTab.Text = "Players";
-            playersTab.UseVisualStyleBackColor = true;
             // 
             // wizardTabs
             // 
@@ -172,6 +175,19 @@ namespace GameTheory.FormsRunner
             // 
             this.errorProvider.ContainerControl = this;
             // 
+            // playersTable
+            // 
+            this.playersTable.ColumnCount = 2;
+            this.playersTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.playersTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.playersTable.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.playersTable.Location = new System.Drawing.Point(3, 3);
+            this.playersTable.Name = "playersTable";
+            this.playersTable.RowCount = 1;
+            this.playersTable.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.playersTable.Size = new System.Drawing.Size(423, 328);
+            this.playersTable.TabIndex = 0;
+            // 
             // NewGameForm
             // 
             this.AcceptButton = nextButton;
@@ -193,6 +209,7 @@ namespace GameTheory.FormsRunner
             this.Shown += new System.EventHandler(this.NewGameForm_Shown);
             gameTab.ResumeLayout(false);
             gameTab.PerformLayout();
+            playersTab.ResumeLayout(false);
             this.wizardTabs.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).EndInit();
             this.ResumeLayout(false);
@@ -207,5 +224,6 @@ namespace GameTheory.FormsRunner
         private System.Windows.Forms.Button backButton;
         private System.Windows.Forms.TabPage configurationTab;
         private System.Windows.Forms.ErrorProvider errorProvider;
+        private System.Windows.Forms.TableLayoutPanel playersTable;
     }
 }

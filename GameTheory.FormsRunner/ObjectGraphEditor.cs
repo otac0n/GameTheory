@@ -10,14 +10,36 @@ namespace GameTheory.FormsRunner
 
     public static class ObjectGraphEditor
     {
-        public static Control MakeEditor(string description, Type type, out Control errorControl, out Control label, Action<Control, string> setError, Action<object, bool> set)
+        public delegate bool OverrideEditor(string name, Type type, out Control control, out Control errorControl, out Label label, Action<Control, string> setError, Action<object, bool> set);
+
+        private static Label MakeLabel(string text) => new Label
         {
+            Text = text,
+            AutoSize = true,
+        };
+
+        private static void PadControls(Label label, Control control, int labelTop)
+        {
+            const int ErrorIconPadding = 32;
+            label.Margin = new Padding(label.Margin.Left, label.Margin.Top + labelTop, label.Margin.Right, label.Margin.Bottom);
+            control.Margin = new Padding(control.Margin.Left, control.Margin.Top, control.Margin.Right + ErrorIconPadding, control.Margin.Bottom);
+        }
+
+        public static Control MakeEditor(string name, Type type, out Control errorControl, out Label label, Action<Control, string> setError, Action<object, bool> set, OverrideEditor overrideEditor = null)
+        {
+            if (overrideEditor != null && overrideEditor(name, type, out var overrideControl, out var overrideError, out var overrideLabel, setError, set))
+            {
+                errorControl = overrideError;
+                label = overrideLabel;
+                return overrideControl;
+            }
+
             if (type == typeof(bool))
             {
                 label = null;
                 var control = new CheckBox
                 {
-                    Text = description,
+                    Text = name,
                     AutoSize = true,
                 };
                 control.Margin = new Padding(control.Margin.Left, control.Margin.Top, control.Margin.Right + 32, control.Margin.Bottom);
@@ -31,17 +53,12 @@ namespace GameTheory.FormsRunner
                 return errorControl = control;
             }
 
-            label = new Label
-            {
-                Text = description,
-                AutoSize = true,
-            };
+            label = MakeLabel(name);
 
             if (type == typeof(string))
             {
                 var control = new TextBox();
-                label.Margin = new Padding(label.Margin.Left, label.Margin.Top + 5, label.Margin.Right, label.Margin.Bottom);
-                control.Margin = new Padding(control.Margin.Left, control.Margin.Top, control.Margin.Right + 32, control.Margin.Bottom);
+                PadControls(label, control, 5);
                 control.TextChanged += (_, a) =>
                 {
                     setError(control, null);
@@ -54,8 +71,7 @@ namespace GameTheory.FormsRunner
             else if (type == typeof(int))
             {
                 var control = new NumericUpDown();
-                label.Margin = new Padding(label.Margin.Left, label.Margin.Top + 5, label.Margin.Right, label.Margin.Bottom);
-                control.Margin = new Padding(control.Margin.Left, control.Margin.Top, control.Margin.Right + 32, control.Margin.Bottom);
+                PadControls(label, control, 5);
                 control.ValueChanged += (_, a) =>
                 {
                     setError(control, null);
@@ -69,9 +85,9 @@ namespace GameTheory.FormsRunner
             {
                 var constructors = from constructor in type.GetConstructors()
                                    let parameters = constructor.GetParameters().Select(p => new InitializerParameter(p.Name, p.ParameterType)).ToArray()
-                                   let name = parameters.Length == 0 ? "Default Instance" : $"Specify {string.Join(", ", parameters.Select(p => p.Name))}"
+                                   let text = parameters.Length == 0 ? "Default Instance" : $"Specify {string.Join(", ", parameters.Select(p => p.Name))}"
                                    let accessor = new Func<object[], object>(args => constructor.Invoke(args))
-                                   select new { order = parameters.Length == 0 ? 0 : 2, selection = new InitializerSelection(name, accessor, parameters) };
+                                   select new { order = parameters.Length == 0 ? 0 : 2, selection = new InitializerSelection(text, accessor, parameters) };
                 var noParameters = new InitializerParameter[0];
                 var staticProperties = from staticProperty in type.GetProperties(BindingFlags.Public | BindingFlags.Static)
                                        where staticProperty.PropertyType == type
@@ -91,8 +107,7 @@ namespace GameTheory.FormsRunner
                     DisplayMember = "Name",
                     DropDownStyle = ComboBoxStyle.DropDownList,
                 };
-                label.Margin = new Padding(label.Margin.Left, label.Margin.Top + 10, label.Margin.Right, label.Margin.Bottom);
-                constructorList.Margin = new Padding(constructorList.Margin.Left, constructorList.Margin.Top, constructorList.Margin.Right + 32, constructorList.Margin.Bottom);
+                PadControls(label, constructorList, 10);
 
                 constructorList.SelectedIndexChanged += (_, a) =>
                 {
@@ -146,15 +161,22 @@ namespace GameTheory.FormsRunner
                     {
                         var p = i; // Closure variable.
                         var parameter = constructor.Parameters[p];
-                        var innerControl = MakeEditor(parameter.Name, parameter.ParameterType, out var innerErrorControl, out var innerLabel, setError, (value, valid) =>
-                        {
-                            parameters[p] = value;
-                            innerValid[p] = valid;
-                            if (i >= parameterCount)
+                        var innerControl = MakeEditor(
+                            parameter.Name,
+                            parameter.ParameterType,
+                            out var innerErrorControl,
+                            out var innerLabel,
+                            setError,
+                            (value, valid) =>
                             {
-                                Touch();
-                            }
-                        });
+                                parameters[p] = value;
+                                innerValid[p] = valid;
+                                if (i >= parameterCount)
+                                {
+                                    Touch();
+                                }
+                            },
+                            overrideEditor);
 
                         if (innerLabel != null)
                         {
