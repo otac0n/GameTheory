@@ -5,6 +5,7 @@ namespace GameTheory.FormsRunner
     using System;
     using System.ComponentModel;
     using System.IO;
+    using System.Reflection;
     using System.Windows.Forms;
     using GameTheory.Catalogs;
 
@@ -17,6 +18,13 @@ namespace GameTheory.FormsRunner
         /// The shared static game catalog for the application.
         /// </summary>
         public static readonly GameCatalog GameCatalog = GameCatalog.Default;
+
+        /// <summary>
+        /// The shared static player catalong for the application.
+        /// </summary>
+        public static readonly PlayerCatalog PlayerCatalog = new PlayerCatalog(
+            Assembly.GetExecutingAssembly(),
+            typeof(IGameState<>).Assembly);
 
         /// <summary>
         /// The main entry point for the application.

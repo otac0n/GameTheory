@@ -24,10 +24,6 @@ namespace GameTheory.FormsRunner
             if (this.newGameForm == null || this.newGameForm.IsDisposed)
             {
                 this.newGameForm = new NewGameForm();
-                this.newGameForm.GameSelected += (_, args) =>
-                {
-                    MessageBox.Show($"Selected {args.Game.Name} ({args.Game.GameStateType.FullName})");
-                };
             }
 
             this.newGameForm.Show(this);

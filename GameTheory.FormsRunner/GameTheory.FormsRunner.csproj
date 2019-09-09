@@ -93,6 +93,7 @@
     <EmbeddedResource Include="NewGameForm.resx">
       <DependentUpon>NewGameForm.cs</DependentUpon>
     </EmbeddedResource>
+    <Compile Include="ObjectGraphEditor.cs" />
     <None Include="packages.config" />
     <Compile Include="Program.cs" />
     <AdditionalFiles Include="..\stylecop.json">
