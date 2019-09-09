@@ -26,9 +26,13 @@ namespace GameTheory.Games.Draughts
         /// <param name="movePriorityImpact">The impact of choosing a move that doesn't maximize the move priority.</param>
         public Variant(int width, int height, bool rightHandCornerOccupied = false, bool flyingKings = false, bool menCaptureBackwards = false, bool menCanCaptureKings = true, bool crownOnEntry = false, MovePriorityImpact movePriorityImpact = MovePriorityImpact.None, IComparer<Move> movePriority = null)
         {
-            if (width % 2 != 0)
+            if (width <= 0 || width % 2 != 0)
             {
                 throw new ArgumentOutOfRangeException(nameof(width));
+            }
+            else if (height <= 1)
+            {
+                throw new ArgumentOutOfRangeException(nameof(height));
             }
 
             if (movePriorityImpact != MovePriorityImpact.None && movePriority == null)
