@@ -12,7 +12,7 @@ namespace GameTheory.Players.MaximizingPlayer
     /// </summary>
     /// <typeparam name="TMove">The type of move in the game state.</typeparam>
     /// <typeparam name="TScore">The type used to keep track of the inner score.</typeparam>
-    public sealed class ResultScoringMetric<TMove, TScore> : IGameStateScoringMetric<TMove, ResultScore<TScore>>, IScorePlyExtender<ResultScore<TScore>>
+    public class ResultScoringMetric<TMove, TScore> : IGameStateScoringMetric<TMove, ResultScore<TScore>>, IScorePlyExtender<ResultScore<TScore>>, IComparer<Result>
         where TMove : IMove
     {
         private readonly IScoringMetric<PlayerState<TMove>, TScore> scoringMetric;
@@ -62,12 +62,25 @@ namespace GameTheory.Players.MaximizingPlayer
                 results[r, InPly] = double.IsNaN(results[r, InPly]) || results[r, InPly].CompareTo(resultScore.InPly) < 0 ? resultScore.InPly : results[r, InPly]; // TODO: Should use PlyCountSortDirection?
             }
 
-            var pessimisticResult = 0;
-            for (; pessimisticResult < ResultCount; pessimisticResult++)
+            int pessimisticResult;
+            if (this.Compare(Result.Win, Result.Loss) > 0)
             {
-                if (results[pessimisticResult, Weight] > 0)
+                for (pessimisticResult = 0; pessimisticResult < ResultCount; pessimisticResult++)
                 {
-                    break;
+                    if (results[pessimisticResult, Weight] > 0)
+                    {
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                for (pessimisticResult = ResultCount - 1; pessimisticResult >= 0; pessimisticResult--)
+                {
+                    if (results[pessimisticResult, Weight] > 0)
+                    {
+                        break;
+                    }
                 }
             }
 
@@ -80,7 +93,7 @@ namespace GameTheory.Players.MaximizingPlayer
         public int Compare(ResultScore<TScore> x, ResultScore<TScore> y)
         {
             int comp;
-            if ((comp = EnumComparer<Result>.Default.Compare(x.Result, y.Result)) != 0)
+            if ((comp = this.Compare(x.Result, y.Result)) != 0)
             {
                 return comp;
             }
@@ -96,6 +109,9 @@ namespace GameTheory.Players.MaximizingPlayer
 
             return this.scoringMetric.Compare(x.Rest, y.Rest);
         }
+
+        /// <inheritdoc/>
+        public virtual int Compare(Result a, Result b) => EnumComparer<Result>.Default.Compare(a, b);
 
         /// <inheritdoc/>
         public ResultScore<TScore> Difference(ResultScore<TScore> minuend, ResultScore<TScore> subtrahend)
