@@ -17,7 +17,8 @@ namespace GameTheory.FormsRunner
         private Task<IGame[]> allGamesTask;
         private Task<IGame[]> searchTask;
         private object startingState;
-        private object[] selectedPlayers;
+        private Player[] selectedPlayers;
+        private object[] playerInstances;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="NewGameForm"/> class.
@@ -44,6 +45,11 @@ namespace GameTheory.FormsRunner
         /// Raised when the user changes the players.
         /// </summary>
         public event EventHandler<SelectedPlayersChangedEventArgs> SelectedPlayersChanged;
+
+        /// <summary>
+        /// Raised when the user changes the player instances.
+        /// </summary>
+        public event EventHandler<PlayerInstancesChangedEventArgs> PlayerInstancesChanged;
 
         /// <summary>
         /// Gets the currently selected game.
@@ -75,9 +81,9 @@ namespace GameTheory.FormsRunner
         }
 
         /// <summary>
-        /// Gets the currently selected starting state.
+        /// Gets the currently selected players.
         /// </summary>
-        public object[] SelectedPlayers
+        public Player[] SelectedPlayers
         {
             get { return this.selectedPlayers; }
 
@@ -91,8 +97,26 @@ namespace GameTheory.FormsRunner
             }
         }
 
+        /// <summary>
+        /// Gets the currently selected player instances.
+        /// </summary>
+        public object[] PlayerInstances
+        {
+            get { return this.playerInstances; }
+
+            private set
+            {
+                if (this.playerInstances != null || value != null)
+                {
+                    this.playerInstances = value;
+                    this.OnPlayerInstancesChanged();
+                }
+            }
+        }
+
         protected virtual void OnSelectedGameChanged()
         {
+            this.PlayerInstances = null;
             this.SelectedPlayers = null;
             this.StartingState = null;
             var game = this.SelectedGame;
@@ -129,6 +153,7 @@ namespace GameTheory.FormsRunner
 
         protected virtual void OnStartingStateChanged()
         {
+            this.PlayerInstances = null;
             this.SelectedPlayers = null;
             var state = this.StartingState;
             this.StartingStateChanged?.Invoke(this, new StartingStateChangedEventArgs(state));
@@ -140,12 +165,24 @@ namespace GameTheory.FormsRunner
                 var playerOptions = (PlayerOptions)typeof(NewGameForm).GetMethod(nameof(CountPlayers), BindingFlags.Static | BindingFlags.NonPublic).MakeGenericMethod(game.MoveType).Invoke(null, new object[] { state });
                 var playerCount = playerOptions.Names.Length;
                 this.playersTable.RowCount = playerCount * 2;
-                var players = new object[playerCount];
+                var players = new Player[playerCount];
+                var playerInstances = new object[playerCount];
                 var playersValid = new bool[playerCount];
 
                 void Touch()
                 {
-                    this.SelectedPlayers = playersValid.All(p => p) ? players : null;
+                    var allValid = playersValid.All(p => p);
+                    if (!allValid)
+                    {
+                        this.PlayerInstances = null;
+                        this.SelectedPlayers = null;
+                    }
+                    else
+                    {
+                        this.playerInstances = null;
+                        this.SelectedPlayers = players;
+                        this.PlayerInstances = playerInstances;
+                    }
                 }
 
                 for (var i = 0; i < playerCount; i++)
@@ -184,7 +221,8 @@ namespace GameTheory.FormsRunner
                             (value, valid) =>
                             {
                                 playersValid[p] = valid;
-                                players[p] = valid ? value : null;
+                                players[p] = valid ? player : null;
+                                playerInstances[p] = valid ? value : null;
                                 Touch();
                             },
                             (string innerName, Type type, out Control innerControl, out Control innerErrorControl, out Label innerLabel, Action<Control, string> setError, Action<object, bool> set) =>
@@ -237,6 +275,11 @@ namespace GameTheory.FormsRunner
         protected virtual void OnSelectedPlayersChanged()
         {
             this.SelectedPlayersChanged?.Invoke(this, new SelectedPlayersChangedEventArgs(this.SelectedPlayers));
+        }
+
+        protected virtual void OnPlayerInstancesChanged()
+        {
+            this.PlayerInstancesChanged?.Invoke(this, new PlayerInstancesChangedEventArgs(this.PlayerInstances));
         }
 
         private static PlayerOptions CountPlayers<TMove>(IGameState<TMove> state)
@@ -422,7 +465,7 @@ namespace GameTheory.FormsRunner
             /// Initializes a new instance of the <see cref="SelectedPlayersChangedEventArgs"/> class.
             /// </summary>
             /// <param name="players">The players chosen.</param>
-            public SelectedPlayersChangedEventArgs(object[] players)
+            public SelectedPlayersChangedEventArgs(Player[] players)
             {
                 this.Players = players;
             }
@@ -431,6 +474,26 @@ namespace GameTheory.FormsRunner
             /// Gets the players chosen.
             /// </summary>
             public object[] Players { get; }
+        }
+
+        /// <summary>
+        /// <see cref="EventArgs"/> for the <see cref="PlayerInstancesChanged"/> event.
+        /// </summary>
+        public class PlayerInstancesChangedEventArgs
+        {
+            /// <summary>
+            /// Initializes a new instance of the <see cref="PlayerInstancesChangedEventArgs"/> class.
+            /// </summary>
+            /// <param name="playersInstances">The player instances chosen.</param>
+            public PlayerInstancesChangedEventArgs(object[] playersInstances)
+            {
+                this.PlayerInstances = playersInstances;
+            }
+
+            /// <summary>
+            /// Gets the player instances chosen.
+            /// </summary>
+            public object[] PlayerInstances { get; }
         }
 
         private class PlayerOptions

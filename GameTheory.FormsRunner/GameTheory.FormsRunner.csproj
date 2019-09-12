@@ -75,6 +75,7 @@
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
     <None Include="App.config" />
+    <Compile Include="GameInfo.cs" />
     <Compile Include="GameManagerForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -84,6 +85,7 @@
     <EmbeddedResource Include="GameManagerForm.resx">
       <DependentUpon>GameManagerForm.cs</DependentUpon>
     </EmbeddedResource>
+    <Compile Include="IGameInfo.cs" />
     <Compile Include="NewGameForm.cs">
       <SubType>Form</SubType>
     </Compile>
