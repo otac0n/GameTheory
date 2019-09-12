@@ -14,8 +14,8 @@ namespace GameTheory.Players.MaximizingPlayers
     /// </summary>
     public sealed class TwentyFortyEightMaximizingPlayer : MaximizingPlayer<Move, ResultScore<double>>
     {
-        private static readonly ResultScoringMetric<Move, double> Metric =
-            new ResultScoringMetric<Move, double>(ScoringMetric.Create<Move>(Score));
+        private static readonly IGameStateScoringMetric<Move, double> Metric =
+            ScoringMetric.Create<Move>(Score);
 
         private static readonly double[] Pow = Enumerable.Range(0, GameState.Size * GameState.Size).Select(value => Math.Pow(10, value)).ToArray();
 
@@ -27,8 +27,9 @@ namespace GameTheory.Players.MaximizingPlayers
         /// <param name="playerToken">The token that represents the player.</param>
         /// <param name="minPly">The minimum number of ply to think ahead.</param>
         /// <param name="thinkSeconds">The minimum number of seconds to think.</param>
-        public TwentyFortyEightMaximizingPlayer(PlayerToken playerToken, int minPly = 4, int thinkSeconds = 2)
-            : base(playerToken, Metric, minPly)
+        /// <param name="misereMode">A value indicating whether or not to play misère.</param>
+        public TwentyFortyEightMaximizingPlayer(PlayerToken playerToken, int minPly = 4, int thinkSeconds = 2, bool misereMode = false)
+            : base(playerToken, ResultScoringMetric.Create(Metric, misereMode), minPly)
         {
             this.minThinkTime = TimeSpan.FromSeconds(Math.Max(1, thinkSeconds) - 0.1);
         }
