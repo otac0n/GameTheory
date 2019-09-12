@@ -3,7 +3,7 @@
 namespace GameTheory.Players.MaximizingPlayer
 {
     /// <summary>
-    /// A scoring metric that attempts to play misère, or play to lose.
+    /// A scoring metric that allows a <see cref="MaximizingPlayer{TMove, TScore}"/> to play misère.
     /// </summary>
     /// <typeparam name="TMove">The type of move in the game state.</typeparam>
     /// <typeparam name="TScore">The type used to keep track of the inner score.</typeparam>

@@ -458,10 +458,11 @@
     <Compile Include="Players\MaximizingPlayer\ComparableEqualityComparer.cs" />
     <Compile Include="Players\MaximizingPlayer\MaximizingPlayer.cs" />
     <Compile Include="Players\MaximizingPlayer\MaximizingPlayerBase.cs" />
-    <Compile Include="Players\MaximizingPlayer\MisereResultScoringMetric.cs" />
+    <Compile Include="Players\MaximizingPlayer\MisereResultScoringMetric{TMove,TScore}.cs" />
     <Compile Include="Players\MaximizingPlayer\MonteCarloTreeSearchPlayer.cs" />
     <Compile Include="Players\MaximizingPlayer\ResultScore.cs" />
     <Compile Include="Players\MaximizingPlayer\ResultScoringMetric.cs" />
+    <Compile Include="Players\MaximizingPlayer\ResultScoringMetric{TMove,TScore}.cs" />
     <Compile Include="Players\CenturySpiceRoadMaximizingPlayer.cs" />
     <Compile Include="Players\ChessMaximizingPlayer.cs" />
     <Compile Include="Players\DraughtsMaximizingPlayer.cs" />
