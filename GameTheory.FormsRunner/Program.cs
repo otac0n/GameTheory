@@ -17,7 +17,9 @@ namespace GameTheory.FormsRunner
         /// <summary>
         /// The shared static game catalog for the application.
         /// </summary>
-        public static readonly GameCatalog GameCatalog = GameCatalog.Default;
+        public static readonly GameCatalog GameCatalog = new CompositeGameCatalog(
+            GameCatalog.Default,
+            new Gdl.GdlGameCatalog(Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, "..", "..", ".."))));
 
         /// <summary>
         /// The shared static player catalong for the application.
