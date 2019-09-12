@@ -1,4 +1,4 @@
-﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Players.MaximizingPlayers
 {
@@ -10,16 +10,17 @@ namespace GameTheory.Players.MaximizingPlayers
     /// </summary>
     public class DraughtsMaximizingPlayer : MaximizingPlayer<Move, ResultScore<double>>
     {
-        private static readonly ResultScoringMetric<Move, double> Metric =
-            new ResultScoringMetric<Move, double>(ScoringMetric.Create<Move>(Score));
+        private static readonly IGameStateScoringMetric<Move, double> Metric =
+            ScoringMetric.Create<Move>(Score);
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DraughtsMaximizingPlayer"/> class.
         /// </summary>
         /// <param name="playerToken">The token that represents the player.</param>
         /// <param name="minPly">The minimum number of ply to think ahead.</param>
-        public DraughtsMaximizingPlayer(PlayerToken playerToken, int minPly = 6)
-            : base(playerToken, Metric, minPly)
+        /// <param name="misereMode">A value indicating whether or not to play misère.</param>
+        public DraughtsMaximizingPlayer(PlayerToken playerToken, int minPly = 6, bool misereMode = false)
+            : base(playerToken, ResultScoringMetric.Create(Metric, misereMode), minPly)
         {
         }
 

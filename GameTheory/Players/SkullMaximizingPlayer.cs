@@ -10,16 +10,17 @@ namespace GameTheory.Players.MaximizingPlayers
     /// </summary>
     public sealed class SkullMaximizingPlayer : MaximizingPlayer<Move, ResultScore<double>>
     {
-        private static readonly ResultScoringMetric<Move, double> Metric =
-            new ResultScoringMetric<Move, double>(ScoringMetric.Create<Move>(Score));
+        private static readonly IGameStateScoringMetric<Move, double> Metric =
+            ScoringMetric.Create<Move>(Score);
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SkullMaximizingPlayer"/> class.
         /// </summary>
         /// <param name="playerToken">The token that represents the player.</param>
         /// <param name="minPly">The minimum number of ply to think ahead.</param>
-        public SkullMaximizingPlayer(PlayerToken playerToken, int minPly = 9)
-            : base(playerToken, Metric, minPly)
+        /// <param name="misereMode">A value indicating whether or not to play misère.</param>
+        public SkullMaximizingPlayer(PlayerToken playerToken, int minPly = 9, bool misereMode = false)
+            : base(playerToken, ResultScoringMetric.Create(Metric, misereMode), minPly)
         {
         }
 

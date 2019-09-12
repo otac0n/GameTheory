@@ -1,4 +1,4 @@
-﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Players.MaximizingPlayers
 {
@@ -8,7 +8,7 @@ namespace GameTheory.Players.MaximizingPlayers
     using GameTheory.Players.MaximizingPlayer;
 
     /// <summary>
-    /// Provides a maximizing player for the game of <see cref="GameState{T}">Mancala</see>.
+    /// Provides a maximizing player for normal form games.
     /// </summary>
     /// <typeparam name="T">The type representing the distint moves available.</typeparam>
     public class NormalFormGameMaximizingPlayer<T> : MaximizingPlayer<Move<T>, double>
