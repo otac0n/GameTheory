@@ -1,4 +1,4 @@
-﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Catalogs
 {
@@ -72,18 +72,7 @@ namespace GameTheory.Catalogs
         {
             var @namespace = gameType.Namespace;
 
-            try
-            {
-                return new ResourceManager(@namespace + ".Resources", gameType.GetTypeInfo().Assembly).GetString("Name", CultureInfo.CurrentCulture);
-            }
-            catch (MissingManifestResourceException)
-            {
-            }
-            catch (InvalidOperationException)
-            {
-            }
-
-            return @namespace.Split(new[] { '.' }, StringSplitOptions.RemoveEmptyEntries).LastOrDefault();
+            return FormatUtilities.GetGameStateResource(gameType, "Name") ?? @namespace.Split(new[] { '.' }, StringSplitOptions.RemoveEmptyEntries).LastOrDefault();
         }
     }
 }
