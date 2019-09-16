@@ -23,9 +23,7 @@ namespace GameTheory.FormsRunner
             ListDisplay.Instance,
         }.AsReadOnly();
 
-        public delegate bool OverrideDisplay(string path, string name, Type type, object value, out Control control);
-
-        public delegate bool OverrideEditor(string path, string name, Type type, out Control control, out Control errorControl, out Label label, Action<Control, string> setError, Action<object, bool> set);
+        public delegate bool OverrideEditor(string path, string name, Type type, object value, out Control control, out Control errorControl, out Label label, Action<Control, string> setError, Action<object, bool> set);
 
         public static Control MakeDisplay(string path, string name, Type type, object value, IReadOnlyList<Display> overrideDisplays = null)
         {
@@ -227,9 +225,9 @@ namespace GameTheory.FormsRunner
             return propertiesTable;
         }
 
-        public static Control MakeEditor(string path, string name, Type type, out Control errorControl, out Label label, Action<Control, string> setError, Action<object, bool> set, OverrideEditor overrideEditor = null)
+        public static Control MakeEditor(string path, string name, Type type, object value, out Control errorControl, out Label label, Action<Control, string> setError, Action<object, bool> set, OverrideEditor overrideEditor = null)
         {
-            if (overrideEditor != null && overrideEditor(path, name, type, out var overrideControl, out var overrideError, out var overrideLabel, setError, set))
+            if (overrideEditor != null && overrideEditor(path, name, type, value, out var overrideControl, out var overrideError, out var overrideLabel, setError, set))
             {
                 errorControl = overrideError;
                 label = overrideLabel;
@@ -241,8 +239,9 @@ namespace GameTheory.FormsRunner
                 label = null;
                 var control = new CheckBox
                 {
-                    Text = name,
                     AutoSize = true,
+                    Checked = value as bool? ?? default(bool),
+                    Text = name,
                 };
                 control.Margin = new Padding(control.Margin.Left, control.Margin.Top, control.Margin.Right + 32, control.Margin.Bottom);
                 control.CheckedChanged += (_, a) =>
@@ -259,7 +258,10 @@ namespace GameTheory.FormsRunner
 
             if (type == typeof(string))
             {
-                var control = new TextBox();
+                var control = new TextBox
+                {
+                    Text = value as string ?? string.Empty,
+                };
                 PadControls(label, control, 5);
                 control.TextChanged += (_, a) =>
                 {
@@ -272,7 +274,10 @@ namespace GameTheory.FormsRunner
             }
             else if (type == typeof(int))
             {
-                var control = new NumericUpDown();
+                var control = new NumericUpDown
+                {
+                    Value = value as int? ?? default(int),
+                };
                 PadControls(label, control, 5);
                 control.ValueChanged += (_, a) =>
                 {
@@ -286,7 +291,7 @@ namespace GameTheory.FormsRunner
             else
             {
                 var constructors = from constructor in type.GetConstructors()
-                                   let parameters = constructor.GetParameters().Select(p => new InitializerParameter(p.Name, p.ParameterType)).ToArray()
+                                   let parameters = constructor.GetParameters().Select(p => new InitializerParameter(p.Name, p.ParameterType, p.HasDefaultValue ? p.DefaultValue : null)).ToArray()
                                    let text = parameters.Length == 0 ? "Default Instance" : $"Specify {string.Join(", ", parameters.Select(p => p.Name))}"
                                    let accessor = new Func<object[], object>(args => constructor.Invoke(args))
                                    select new { order = parameters.Length == 0 ? 0 : 2, selection = new InitializerSelection(text, accessor, parameters) };
@@ -327,13 +332,13 @@ namespace GameTheory.FormsRunner
                     {
                         setError(constructorList, null);
 
-                        object value = null;
+                        object parameterValue = null;
                         var valid = innerValid.All(v => v);
                         if (valid)
                         {
                             try
                             {
-                                value = constructor.Accessor(parameters);
+                                parameterValue = constructor.Accessor(parameters);
                                 foreach (var innerErrorControl in errorControls.Values)
                                 {
                                     setError(innerErrorControl, null);
@@ -358,7 +363,7 @@ namespace GameTheory.FormsRunner
                             }
                         }
 
-                        set(value, valid);
+                        set(parameterValue, valid);
                     }
 
                     for (var i = 0; i < parameterCount; i++)
@@ -369,12 +374,13 @@ namespace GameTheory.FormsRunner
                             Extend(path, parameter.Name),
                             parameter.Name,
                             parameter.ParameterType,
+                            parameter.DefaultValue,
                             out var innerErrorControl,
                             out var innerLabel,
                             setError,
-                            (value, valid) =>
+                            (innerValue, valid) =>
                             {
-                                parameters[p] = value;
+                                parameters[p] = innerValue;
                                 innerValid[p] = valid;
                                 if (i >= parameterCount)
                                 {
@@ -547,11 +553,14 @@ namespace GameTheory.FormsRunner
 
         private class InitializerParameter
         {
-            public InitializerParameter(string name, Type parameterType)
+            public InitializerParameter(string name, Type parameterType, object defaultValue)
             {
                 this.Name = name;
                 this.ParameterType = parameterType;
+                this.DefaultValue = defaultValue;
             }
+
+            public object DefaultValue { get; }
 
             public string Name { get; }
 
