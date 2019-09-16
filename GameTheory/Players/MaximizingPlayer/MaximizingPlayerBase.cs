@@ -116,24 +116,30 @@ namespace GameTheory.Players.MaximizingPlayer
             {
                 fullyDetermined &= mainline.FullyDetermined;
 
-                var strategy = mainline.Strategies.Peek();
-                foreach (var move in strategy)
+                if (!mainline.Strategies.IsEmpty)
                 {
-                    if (moveWeights.TryGetValue(move.Value, out var weighted))
+                    var strategy = mainline.Strategies.Peek();
+                    foreach (var move in strategy)
                     {
-                        weighted = Weighted.Create(weighted.Value, weighted.Weight + move.Weight);
-                    }
-                    else
-                    {
-                        weighted = Weighted.Create(mainline, move.Weight);
-                    }
+                        if (moveWeights.TryGetValue(move.Value, out var weighted))
+                        {
+                            weighted = Weighted.Create(weighted.Value, weighted.Weight + move.Weight);
+                        }
+                        else
+                        {
+                            weighted = Weighted.Create(mainline, move.Weight);
+                        }
 
-                    moveWeights[move.Value] = weighted;
+                        moveWeights[move.Value] = weighted;
+                    }
                 }
             }
 
             var sourceMainline = mainlines.Pick();
             var maxMoves = moveWeights.Select(m => (IWeighted<TMove>)Weighted.Create(m.Key, m.Value.Weight)).ToImmutableArray();
+            var sourceStrategy = sourceMainline.Strategies.IsEmpty
+                ? maxMoves.Length > 0 ? sourceMainline.Strategies.Push(maxMoves) : sourceMainline.Strategies
+                : sourceMainline.Strategies.Pop().Push(maxMoves);
             var depth = fullyDetermined ? mainlines.Max(m => m.Depth) : mainlines.Where(m => !m.FullyDetermined).Min(m => m.Depth);
             var scores = (from m in mainlines
                           from s in m.Scores
@@ -143,7 +149,7 @@ namespace GameTheory.Players.MaximizingPlayer
                               PlayerToken = g.Key,
                               Score = this.scoringMetric.Combine(g.Select(s => Weighted.Create(s, 1)).ToArray()),
                           }).ToDictionary(m => m.PlayerToken, m => m.Score);
-            return new Mainline<TMove, TScore>(scores, sourceMainline.GameState, sourceMainline.PlayerToken, sourceMainline.Strategies.Pop().Push(maxMoves), depth, fullyDetermined);
+            return new Mainline<TMove, TScore>(scores, sourceMainline.GameState, sourceMainline.PlayerToken, sourceStrategy, depth, fullyDetermined);
         }
 
         protected Mainline<TMove, TScore> CombineOutcomes(IGameState<TMove> state, IList<Weighted<Mainline<TMove, TScore>>> mainlines)
