@@ -2,22 +2,29 @@
 
 namespace GameTheory.FormsRunner
 {
+    using System;
     using System.Collections.Generic;
     using System.Windows.Forms;
 
     public interface IGameInfo
     {
+        event EventHandler<EventArgs> Move;
+
         Catalogs.IGame Game { get; }
-
-        IReadOnlyList<Catalogs.Player> Players { get; }
-
-        IReadOnlyList<object> PlayerInstances { get; }
-
-        ListViewItem Row { get; }
 
         IReadOnlyList<object> GameStates { get; }
 
         IReadOnlyList<IMove> Moves { get; }
+
+        IReadOnlyList<object> PlayerInstances { get; }
+
+        IReadOnlyList<string> PlayerNames { get; }
+
+        IReadOnlyList<Catalogs.Player> Players { get; }
+
+        IReadOnlyList<PlayerToken> PlayerTokens { get; }
+
+        ListViewItem Row { get; }
 
         void Show();
     }

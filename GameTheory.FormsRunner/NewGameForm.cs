@@ -125,7 +125,7 @@ namespace GameTheory.FormsRunner
             this.configurationTab.Controls.Clear(); // TODO: Dispose controls.
             if (game != null)
             {
-                var editor = ObjectGraphEditor.MakeEditor(game.Name, game.GameStateType, out var errorControl, out var label, this.errorProvider.SetError, (value, valid) =>
+                var editor = ObjectGraphEditor.MakeEditor(null, game.Name, game.GameStateType, out var errorControl, out var label, this.errorProvider.SetError, (value, valid) =>
                 {
                     this.StartingState = valid ? value : null;
                 });
@@ -213,6 +213,7 @@ namespace GameTheory.FormsRunner
                         }
 
                         var editor = ObjectGraphEditor.MakeEditor(
+                            null,
                             player.Name,
                             player.PlayerType,
                             out var errorControl,
@@ -225,7 +226,7 @@ namespace GameTheory.FormsRunner
                                 playerInstances[p] = valid ? value : null;
                                 Touch();
                             },
-                            (string innerName, Type type, out Control innerControl, out Control innerErrorControl, out Label innerLabel, Action<Control, string> setError, Action<object, bool> set) =>
+                            (string innerPath, string innerName, Type type, out Control innerControl, out Control innerErrorControl, out Label innerLabel, Action<Control, string> setError, Action<object, bool> set) =>
                             {
                                 if (type == typeof(PlayerToken))
                                 {

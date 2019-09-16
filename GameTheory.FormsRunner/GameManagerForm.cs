@@ -23,6 +23,10 @@ namespace GameTheory.FormsRunner
         public GameManagerForm()
         {
             this.InitializeComponent();
+            this.gamesList
+                .GetType()
+                .GetProperty("DoubleBuffered", BindingFlags.Instance | BindingFlags.NonPublic)
+                .SetValue(this.gamesList, true, null);
         }
 
         private void NewGameMenu_Click(object sender, System.EventArgs e)
@@ -54,6 +58,15 @@ namespace GameTheory.FormsRunner
 
         private IGameInfo StartGame(IGame game, Player[] players, object startingState, object[] playerInstances) =>
             (IGameInfo)typeof(GameManagerForm).GetMethod(nameof(PlayGame), BindingFlags.Static | BindingFlags.NonPublic).MakeGenericMethod(game.MoveType).Invoke(null, new object[] { game, players, startingState, playerInstances, this });
+
+        private void ViewGameMenuItem_Click(object sender, EventArgs e)
+        {
+            foreach (ListViewItem gameRow in this.gamesList.SelectedItems)
+            {
+                var gameInfo = gameRow.Tag as IGameInfo;
+                gameInfo?.Show();
+            }
+        }
 
         private void QuitMenu_Click(object sender, System.EventArgs e)
         {

@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.Windows.Forms.MenuStrip topMenu;
             System.Windows.Forms.ToolStripMenuItem newGameMenu;
             System.Windows.Forms.ToolStripMenuItem quitMenu;
@@ -35,9 +36,11 @@
             System.Windows.Forms.TabControl managerTabs;
             System.Windows.Forms.TabPage gamesTab;
             System.Windows.Forms.ColumnHeader gameColumn;
-            System.Windows.Forms.ColumnHeader playersColumn;
             System.Windows.Forms.ColumnHeader stateColumn;
+            System.Windows.Forms.ColumnHeader playersColumn;
             System.Windows.Forms.ColumnHeader winnersColumn;
+            System.Windows.Forms.ContextMenuStrip gameContextMenu;
+            System.Windows.Forms.ToolStripMenuItem viewGameMenuItem;
             this.gameMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.gamesList = new System.Windows.Forms.ListView();
             topMenu = new System.Windows.Forms.MenuStrip();
@@ -47,12 +50,15 @@
             managerTabs = new System.Windows.Forms.TabControl();
             gamesTab = new System.Windows.Forms.TabPage();
             gameColumn = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            playersColumn = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             stateColumn = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            playersColumn = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             winnersColumn = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            gameContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+            viewGameMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             topMenu.SuspendLayout();
             managerTabs.SuspendLayout();
             gamesTab.SuspendLayout();
+            gameContextMenu.SuspendLayout();
             this.SuspendLayout();
             // 
             // topMenu
@@ -77,14 +83,14 @@
             // newGameMenu
             // 
             newGameMenu.Name = "newGameMenu";
-            newGameMenu.Size = new System.Drawing.Size(180, 22);
+            newGameMenu.Size = new System.Drawing.Size(132, 22);
             newGameMenu.Text = "New Game";
             newGameMenu.Click += new System.EventHandler(this.NewGameMenu_Click);
             // 
             // quitMenu
             // 
             quitMenu.Name = "quitMenu";
-            quitMenu.Size = new System.Drawing.Size(180, 22);
+            quitMenu.Size = new System.Drawing.Size(132, 22);
             quitMenu.Text = "Quit";
             quitMenu.Click += new System.EventHandler(this.QuitMenu_Click);
             // 
@@ -124,6 +130,7 @@
             stateColumn,
             playersColumn,
             winnersColumn});
+            this.gamesList.ContextMenuStrip = gameContextMenu;
             this.gamesList.Dock = System.Windows.Forms.DockStyle.Fill;
             this.gamesList.FullRowSelect = true;
             this.gamesList.Location = new System.Drawing.Point(3, 3);
@@ -139,20 +146,34 @@
             gameColumn.Text = "Game";
             gameColumn.Width = 200;
             // 
-            // playersColumn
-            // 
-            playersColumn.Text = "Players";
-            playersColumn.Width = 200;
-            // 
             // stateColumn
             // 
             stateColumn.Text = "State";
             stateColumn.Width = 100;
             // 
+            // playersColumn
+            // 
+            playersColumn.Text = "Players";
+            playersColumn.Width = 200;
+            // 
             // winnersColumn
             // 
             winnersColumn.Text = "Winners";
             winnersColumn.Width = 100;
+            // 
+            // gameContextMenu
+            // 
+            gameContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            viewGameMenuItem});
+            gameContextMenu.Name = "gameContextMenu";
+            gameContextMenu.Size = new System.Drawing.Size(100, 26);
+            // 
+            // viewGameMenuItem
+            // 
+            viewGameMenuItem.Name = "viewGameMenuItem";
+            viewGameMenuItem.Size = new System.Drawing.Size(99, 22);
+            viewGameMenuItem.Text = "&View";
+            viewGameMenuItem.Click += new System.EventHandler(this.ViewGameMenuItem_Click);
             // 
             // GameManagerForm
             // 
@@ -169,6 +190,7 @@
             topMenu.PerformLayout();
             managerTabs.ResumeLayout(false);
             gamesTab.ResumeLayout(false);
+            gameContextMenu.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 

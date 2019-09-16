@@ -2,6 +2,7 @@
 
 namespace GameTheory.FormsRunner
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
@@ -10,14 +11,16 @@ namespace GameTheory.FormsRunner
     public class GameInfo<TMove> : IGameInfo
         where TMove : IMove
     {
-        private GameManagerForm parent;
         private GameDisplayForm displayForm;
+        private GameManagerForm parent;
 
         public GameInfo(Catalogs.IGame game, Catalogs.Player[] players, IGameState<TMove> startingState, IPlayer<TMove>[] playerInstances, GameManagerForm parent)
         {
             this.parent = parent;
             this.Game = game;
             this.Players = players.ToArray();
+            this.PlayerTokens = startingState.Players.ToArray();
+            this.PlayerNames = this.PlayerTokens.Select(p => startingState.GetPlayerName(p)).ToArray();
             this.GameStates = new List<IGameState<TMove>> { startingState };
             this.PlayerInstances = playerInstances.ToArray();
             this.Moves = new List<IMove>();
@@ -26,7 +29,7 @@ namespace GameTheory.FormsRunner
             {
                 game.Name,
                 "Pending",
-                string.Join(", ", Enumerable.Range(0, this.Players.Count).Select(i => $"{startingState.GetPlayerName(startingState.Players[i])}: {this.Players[i]}")),
+                string.Join(", ", Enumerable.Range(0, this.Players.Count).Select(i => $"{this.PlayerNames[i]}: {this.Players[i]}")),
                 string.Empty,
             };
 
@@ -45,61 +48,69 @@ namespace GameTheory.FormsRunner
                     };
                 }
 
-                this.UpdateRow(1, "Playing");
+                this.parent.InvokeIfRequired(() => this.UpdateRow(1, "Playing"));
 
                 var result = GameUtilities.PlayGame(startingState, playerTokens => this.PlayerInstances, (previousState, move, newState) =>
                 {
                     this.Moves.Add(move);
                     this.GameStates.Add(newState);
                     var winners = newState.GetWinners();
-                    this.UpdateRow(3, string.Join(", ", winners.Select(w => newState.GetPlayerName(w))));
+                    this.parent.InvokeIfRequired(() =>
+                    {
+                        this.UpdateRow(3, string.Join(", ", winners.Select(w => newState.GetPlayerName(w))));
+                        this.Move?.Invoke(this, new EventArgs());
+                    });
                 }).Result;
 
-                this.UpdateRow(1, "Done");
+                this.parent.InvokeIfRequired(() => this.UpdateRow(1, "Done"));
                 return result;
             });
         }
 
-        private void UpdateRow(int index, string value)
-        {
-            this.parent.InvokeIfRequired(() =>
-            {
-                this.Row.SubItems[index].Text = value;
-                if (index == 0)
-                {
-                    this.Row.Text = value;
-                }
-            });
-        }
-
-        public Task<IGameState<TMove>> GameTask { get; }
-
-        public ListViewItem Row { get; }
+        /// <inheritdoc/>
+        public event EventHandler<EventArgs> Move;
 
         public Catalogs.IGame Game { get; }
 
         public List<IGameState<TMove>> GameStates { get; }
 
-        public IReadOnlyList<Catalogs.Player> Players { get; }
+        IReadOnlyList<object> IGameInfo.GameStates => this.GameStates;
 
-        public IReadOnlyList<IPlayer<TMove>> PlayerInstances { get; }
+        public Task<IGameState<TMove>> GameTask { get; }
 
         public List<IMove> Moves { get; }
 
+        IReadOnlyList<IMove> IGameInfo.Moves => this.Moves;
+
+        public IReadOnlyList<IPlayer<TMove>> PlayerInstances { get; }
+
         IReadOnlyList<object> IGameInfo.PlayerInstances => this.PlayerInstances;
 
-        IReadOnlyList<object> IGameInfo.GameStates => this.GameStates;
+        public IReadOnlyList<string> PlayerNames { get; }
 
-        IReadOnlyList<IMove> IGameInfo.Moves => this.Moves;
+        public IReadOnlyList<Catalogs.Player> Players { get; }
+
+        public IReadOnlyList<PlayerToken> PlayerTokens { get; }
+
+        public ListViewItem Row { get; }
 
         public void Show()
         {
             if (this.displayForm == null || this.displayForm.IsDisposed)
             {
-                this.displayForm = new GameDisplayForm();
+                this.displayForm = new GameDisplayForm(this);
             }
 
-            this.displayForm.Show(this.parent);
+            this.displayForm.Show();
+        }
+
+        private void UpdateRow(int index, string value)
+        {
+            this.Row.SubItems[index].Text = value;
+            if (index == 0)
+            {
+                this.Row.Text = value;
+            }
         }
     }
 }
