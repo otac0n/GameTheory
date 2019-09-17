@@ -420,6 +420,7 @@ namespace GameTheory.FormsRunner
             AutoSize = true,
             RowCount = rows,
             ColumnCount = columns,
+            Margin = Padding.Empty,
         };
 
         private static string Extend(string path, string name) => string.IsNullOrEmpty(path) ? name : $"{path}.{name}";
@@ -615,18 +616,28 @@ namespace GameTheory.FormsRunner
 
                 flowPanel.SuspendLayout();
 
+                var showVertical = true;
                 var i = 0;
                 foreach (var item in (IEnumerable)value)
                 {
                     var itemName = $"[{i}]";
+                    var itemPath = path + itemName;
+
+                    showVertical = showVertical && this.CanDisplay(itemPath, itemName, elementType, item);
+
                     var itemControl = MakeDisplay(
-                        path + itemName,
+                        itemPath,
                         itemName,
                         elementType,
                         item,
                         overrideDisplays);
                     flowPanel.Controls.Add(itemControl);
                     i++;
+                }
+
+                if (showVertical)
+                {
+                    flowPanel.FlowDirection = FlowDirection.TopDown;
                 }
 
                 flowPanel.ResumeLayout();
