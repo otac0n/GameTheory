@@ -10,8 +10,8 @@ namespace GameTheory.ConsoleRunner
     using System.Reflection;
     using System.Text;
     using GameTheory.Catalogs;
-    using GameTheory.ConsoleRunner.ConsoleRenderers;
     using GameTheory.ConsoleRunner.Properties;
+    using GameTheory.ConsoleRunner.Shared;
 
     internal class Program
     {
@@ -155,7 +155,7 @@ namespace GameTheory.ConsoleRunner
             Console.WriteLine(Resources.GamePlayerCount, string.Format(state.Players.Count == 1 ? Resources.SingularPlayer : Resources.PluralPlayers, state.Players.Count));
             var catalog = new PlayerCatalog(Assemblies.Concat(new[] { Assembly.GetExecutingAssembly(), typeof(IGameState<>).Assembly, typeof(BaseConsoleRenderer<>).Assembly }));
             var players = catalog.FindPlayers(typeof(TMove));
-            var consoleRenderer = ConsoleRenderer.Default<TMove>();
+            var consoleRenderer = ConsoleRenderers.Default<TMove>();
             var font = consoleRenderer.GetType().GetCustomAttributes(inherit: true).OfType<ConsoleFontAttribute>().FirstOrDefault();
             if (font != null)
             {

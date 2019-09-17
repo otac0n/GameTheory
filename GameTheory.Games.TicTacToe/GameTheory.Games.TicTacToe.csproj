@@ -25,6 +25,16 @@
     <AdditionalFiles Include="GameTheory.Games.TicTacToe.ruleset" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Weave" Version="2.0.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\GameTheory.ConsoleRunner.Shared\GameTheory.ConsoleRunner.Shared.csproj" />
     <ProjectReference Include="..\GameTheory\GameTheory.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <WeaveTemplate Include="Console\GameState.weave" />
   </ItemGroup>
 </Project>

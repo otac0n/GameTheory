@@ -1,0 +1,35 @@
+@using System.Linq
+@using GameTheory.ConsoleRunner.Shared
+@namespace GameTheory.Games.CenturySpiceRoad.Console
+@static false
+@model GameState
+{{if model.PointCardTrack.Count > 0}}
+  {{= Resources.PointCards }}:
+    {{if model.Tokens.Count > 0}}
+      {{= Resources.AvailableTokens }}: {{= model.Tokens }}
+    {{/if}}
+    {{each pointCard in model.PointCardTrack}}
+      {{= pointCard }} [{{= Resources.Cost }}: {{= pointCard.Cost }}]
+    {{/each}}
+
+{{/if}}
+  {{= Resources.MerchantCards }}:
+    {{each i in Enumerable.Range(0, model.MerchantCardTrack.Count)}}
+      {{ var stall = model.MerchantCardTrack[i]; }}
+      {{if i == model.MerchantCardIndexAfforded}}*{{else}} {{/if}}{{= stall.MerchantCard }}{{if stall.Spices.Count > 0}} [{{= Resources.Bonus }}: {{= stall.Spices }}]{{/if}}
+    {{/each}}
+
+{{if this.playerToken != null}}
+  {{ var inventory = model.Inventory[playerToken]; }}
+  {{= playerToken }}:
+    {{if inventory.Caravan.Count > 0}}
+      {{= Resources.Caravan }}: {{= inventory.Caravan }}
+    {{/if}}
+    {{if inventory.Hand.Count > 0}}
+      {{= Resources.Hand }}:
+        {{each card in inventory.Hand}}
+          {{= card }}
+        {{/each}}
+    {{/if}}
+
+{{/if}}

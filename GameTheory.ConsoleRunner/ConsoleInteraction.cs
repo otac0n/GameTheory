@@ -1,4 +1,4 @@
-﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.ConsoleRunner
 {
@@ -9,15 +9,6 @@ namespace GameTheory.ConsoleRunner
 
     internal static class ConsoleInteraction
     {
-        private static readonly IReadOnlyList<ConsoleColor> PlayerColors = new List<ConsoleColor>
-        {
-            ConsoleColor.DarkGreen,
-            ConsoleColor.DarkCyan,
-            ConsoleColor.DarkYellow,
-            ConsoleColor.DarkMagenta,
-            ConsoleColor.DarkRed,
-        }.AsReadOnly();
-
         private static object @lock = new object();
 
         public static T Choose<T>(IList<T> options, CancellationToken? cancel = null, Action<T> render = null, Func<T, string> skipMessage = null)
@@ -60,23 +51,6 @@ namespace GameTheory.ConsoleRunner
                 i => i > 0 && i <= options.Count ? null : string.Format(Resources.InvalidListItem, options.Count));
 
             return options[selection - 1];
-        }
-
-        public static ConsoleColor GetPlayerColor<TMove>(IGameState<TMove> state, PlayerToken playerToken)
-            where TMove : IMove
-        {
-            var i = 0;
-            foreach (var player in state.Players)
-            {
-                if (player == playerToken)
-                {
-                    return PlayerColors[i % PlayerColors.Count];
-                }
-
-                i++;
-            }
-
-            return ConsoleColor.White;
         }
 
         public static void List<T>(IList<T> items, Action<T> render = null)
@@ -123,37 +97,6 @@ namespace GameTheory.ConsoleRunner
                 }
 
                 return value;
-            }
-        }
-
-        public static void WithColor(ConsoleColor color, Action action)
-        {
-            var originalColor = Console.ForegroundColor;
-            try
-            {
-                Console.ForegroundColor = color;
-                action();
-            }
-            finally
-            {
-                Console.ForegroundColor = originalColor;
-            }
-        }
-
-        public static void WithColor(ConsoleColor foreground, ConsoleColor background, Action action)
-        {
-            var originalForeground = Console.ForegroundColor;
-            var originalBackground = Console.BackgroundColor;
-            try
-            {
-                Console.ForegroundColor = foreground;
-                Console.BackgroundColor = background;
-                action();
-            }
-            finally
-            {
-                Console.ForegroundColor = originalForeground;
-                Console.BackgroundColor = originalBackground;
             }
         }
 

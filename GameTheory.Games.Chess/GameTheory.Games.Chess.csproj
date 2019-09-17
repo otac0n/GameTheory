@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\SharedAssemblyInfo.props" />
   <PropertyGroup>
@@ -25,6 +25,7 @@
     <AdditionalFiles Include="GameTheory.Games.Chess.ruleset" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\GameTheory.ConsoleRunner.Shared\GameTheory.ConsoleRunner.Shared.csproj" />
     <ProjectReference Include="..\GameTheory\GameTheory.csproj" />
   </ItemGroup>
 </Project>

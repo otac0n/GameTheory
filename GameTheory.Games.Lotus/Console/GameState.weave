@@ -1,0 +1,51 @@
+@using System.Linq
+@namespace GameTheory.Games.Lotus.Console
+@static false
+@model GameState
+{{= Resources.Field}}:
+    {{each flowerType in Enum.GetValues(typeof(FlowerType)).Cast<FlowerType>()}}
+        {{= flowerType}} ({{= (int)flowerType}}):
+            {{
+                var flower = model.Field[flowerType];
+            }}
+            {{each petal in flower.Petals}}
+                {{= petal}}{{if petal.Owner != null}} ({{= petal.Owner}}){{/if}}
+            {{/each}}
+            {{each guardian in flower.Guardians}}
+                {{= string.Format(Resources.GuardianBonusFormat, 1)}} {{= guardian}}
+            {{/each}}
+    {{/each}}
+
+{{= Resources.Wildflowers}}:
+    {{each wildflower in model.AvailableWildflowers}}
+        {{if wildflower == null}}
+            {{= Resources.Taken}}
+        {{else}}
+            {{= wildflower}}
+        {{/if}}
+    {{/each}}
+{{if this.playerToken != null}}
+    {{
+        var inventory = model.Inventory[this.playerToken];
+    }}
+
+    {{= Resources.Inventory}}:
+        {{= Resources.Hand}}:
+            {{each card in inventory.Hand}}
+                {{= card}}
+            {{/each}}
+        {{= Resources.SpecialPowers}}: {{= inventory.SpecialPowers}}
+        {{= Resources.ScoringPile}}: {{= inventory.ScoringPile.Count}}
+        {{= Resources.ScoringTokens}}: {{= inventory.ScoringTokens}}
+{{else}}
+    {{each player in model.Players}}
+        {{
+            var inventory = model.Inventory[player];
+        }}
+
+        {{= player}}:
+            {{= Resources.SpecialPowers}}: {{= inventory.SpecialPowers}}
+            {{= Resources.ScoringPile}}: {{= inventory.ScoringPile.Count}}
+            {{= Resources.ScoringTokens}}: {{= inventory.ScoringTokens}}
+    {{/each}}
+{{/if}}

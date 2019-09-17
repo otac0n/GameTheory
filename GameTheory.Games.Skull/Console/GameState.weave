@@ -1,0 +1,18 @@
+@using System.Linq
+@namespace GameTheory.Games.Skull.Console
+@static false
+@model GameState
+{{each player in model.Players}}
+    {{
+        var inventory = model.Inventory[player];
+    }}
+    {{= player }}:
+        Challenges Won: {{= inventory.ChallengesWon }}
+        {{if player == this.playerToken }}
+            {{= Resources.Hand }}: {{= inventory.Hand }}
+            {{= Resources.Stack }}: [{{each card in inventory.Stack}}{{= card }}{{delimit}}, {{/each}}]{{if inventory.Revealed.Count > 0}} {{= inventory.Revealed }}{{/if}}
+        {{else}}
+            {{= Resources.Hand }}: {{if inventory.Hand.Count > 0}}{{= inventory.Hand.Count }}{{= SharedResources.Times }}{{= Card.Unknown }}{{/if}}
+            {{= Resources.Stack }}: [{{if inventory.Stack.Count > 0}}{{= inventory.Stack.Count }}{{= SharedResources.Times }}{{= Card.Unknown }}{{/if}}]{{if inventory.Revealed.Count > 0}} {{= inventory.Revealed }}{{/if}}
+        {{/if}}
+{{/each}}
