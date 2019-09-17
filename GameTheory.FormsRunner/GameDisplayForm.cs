@@ -4,6 +4,7 @@ namespace GameTheory.FormsRunner
 {
     using System;
     using System.Collections.Generic;
+    using System.Drawing;
     using System.Linq;
     using System.Windows.Forms;
 
@@ -46,11 +47,41 @@ namespace GameTheory.FormsRunner
                 this.gameInfo = gameInfo;
             }
 
+            public static Color GetPlayerColor(PlayerToken playerToken)
+            {
+                var bad = SystemColors.Control;
+                var bytes = playerToken.Id.ToByteArray();
+                var r = (int)bytes[0];
+                var g = (int)bytes[1];
+                var b = (int)bytes[2];
+
+                int[] v = { r - bad.R, g - bad.G, b - bad.B };
+                double[] t =
+                {
+                    v[0] == 0 ? double.PositiveInfinity : v[0] > 0 ? (255.0 - r) / v[0] : (0.0 - r) / v[0],
+                    v[1] == 0 ? double.PositiveInfinity : v[1] > 0 ? (255.0 - g) / v[1] : (0.0 - g) / v[1],
+                    v[2] == 0 ? double.PositiveInfinity : v[2] > 0 ? (255.0 - b) / v[2] : (0.0 - b) / v[2],
+                };
+
+                var minT = Math.Min(t[0], Math.Min(t[1], t[2]));
+
+                r = (int)Math.Round(r + v[0] * minT);
+                g = (int)Math.Round(g + v[1] * minT);
+                b = (int)Math.Round(b + v[2] * minT);
+
+                return Color.FromArgb(r, g, b);
+            }
+
             public override bool CanDisplay(string path, string name, Type type, object value) =>
                 value is PlayerToken playerToken && this.gameInfo.PlayerTokens.Contains(playerToken);
 
-            public override Control Create(string path, string name, Type type, object value, IReadOnlyList<ObjectGraphEditor.Display> overrideDisplays) =>
-                ObjectGraphEditor.MakeLabel(this.gameInfo.PlayerNames[this.gameInfo.PlayerTokens.IndexOf((PlayerToken)value)]);
+            public override Control Create(string path, string name, Type type, object value, IReadOnlyList<ObjectGraphEditor.Display> overrideDisplays)
+            {
+                var playerToken = (PlayerToken)value;
+                var label = ObjectGraphEditor.MakeLabel(this.gameInfo.PlayerNames[this.gameInfo.PlayerTokens.IndexOf(playerToken)]);
+                label.ForeColor = GetPlayerColor(playerToken);
+                return label;
+            }
         }
     }
 }
