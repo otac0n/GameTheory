@@ -26,42 +26,95 @@ namespace GameTheory
             where TKey : IComparable<TKey>
             where TValue : IComparable<TValue>
         {
-            var comp = 0;
-
-            if (!object.ReferenceEquals(left, right))
+            if (object.ReferenceEquals(left, right))
             {
-                if (object.ReferenceEquals(left, null))
-                {
-                    return -1;
-                }
+                return 0;
+            }
 
-                if (object.ReferenceEquals(right, null))
-                {
-                    return 1;
-                }
+            if (object.ReferenceEquals(left, null))
+            {
+                return -1;
+            }
 
-                if ((comp = left.Count.CompareTo(right.Count)) != 0)
+            if (object.ReferenceEquals(right, null))
+            {
+                return 1;
+            }
+
+            int comp;
+            if ((comp = left.Count.CompareTo(right.Count)) != 0)
+            {
+                return comp;
+            }
+
+            keyComparer = keyComparer ?? Comparer<TKey>.Default;
+            valueComparer = valueComparer ?? Comparer<TValue>.Default;
+
+            var otherKeys = new List<TKey>(right.Count);
+            otherKeys.AddRange(right.Keys);
+            otherKeys.Sort(keyComparer);
+
+            var i = 0;
+            foreach (var a in left.Keys.OrderBy(k => k, keyComparer))
+            {
+                var b = otherKeys[i++];
+
+                if ((comp = keyComparer.Compare(a, b)) != 0 ||
+                    (comp = valueComparer.Compare(left[a], right[b])) != 0)
                 {
                     return comp;
                 }
+            }
 
-                keyComparer = keyComparer ?? Comparer<TKey>.Default;
-                valueComparer = valueComparer ?? Comparer<TValue>.Default;
+            return comp;
+        }
 
-                var otherKeys = new List<TKey>(right.Count);
-                otherKeys.AddRange(right.Keys);
-                otherKeys.Sort(keyComparer);
+        /// <summary>
+        /// Compares two sets of comparable elements.
+        /// </summary>
+        /// <typeparam name="TKey">The type of keys in each set.</typeparam>
+        /// <param name="left">The first set.</param>
+        /// <param name="right">The second set.</param>
+        /// <param name="comparer">An optional comparer to use when evaluating elements.</param>
+        /// <returns>A value indicating whether the sets are the same size and contain the same elements.</returns>
+        public static int CompareSets<TKey>(ISet<TKey> left, ISet<TKey> right, IComparer<TKey> comparer = null)
+            where TKey : IComparable<TKey>
+        {
+            if (object.ReferenceEquals(left, right))
+            {
+                return 0;
+            }
 
-                var i = 0;
-                foreach (var a in left.Keys.OrderBy(k => k, keyComparer))
+            if (object.ReferenceEquals(left, null))
+            {
+                return -1;
+            }
+
+            if (object.ReferenceEquals(right, null))
+            {
+                return 1;
+            }
+
+            int comp;
+            if ((comp = left.Count.CompareTo(right.Count)) != 0)
+            {
+                return comp;
+            }
+
+            comparer = comparer ?? Comparer<TKey>.Default;
+
+            var otherKeys = new List<TKey>(right.Count);
+            otherKeys.AddRange(right);
+            otherKeys.Sort(comparer);
+
+            var i = 0;
+            foreach (var a in left.OrderBy(k => k, comparer))
+            {
+                var b = otherKeys[i++];
+
+                if ((comp = comparer.Compare(a, b)) != 0)
                 {
-                    var b = otherKeys[i++];
-
-                    if ((comp = keyComparer.Compare(a, b)) != 0 ||
-                        (comp = valueComparer.Compare(left[a], right[b])) != 0)
-                    {
-                        return comp;
-                    }
+                    return comp;
                 }
             }
 
@@ -81,42 +134,43 @@ namespace GameTheory
             where TKey : IComparable
             where TValue : IComparable<TValue>
         {
-            var comp = 0;
-
-            if (!object.ReferenceEquals(left, right))
+            if (object.ReferenceEquals(left, right))
             {
-                if (object.ReferenceEquals(left, null))
-                {
-                    return -1;
-                }
+                return 0;
+            }
 
-                if (object.ReferenceEquals(right, null))
-                {
-                    return 1;
-                }
+            if (object.ReferenceEquals(left, null))
+            {
+                return -1;
+            }
 
-                if ((comp = left.Count.CompareTo(right.Count)) != 0)
+            if (object.ReferenceEquals(right, null))
+            {
+                return 1;
+            }
+
+            int comp;
+            if ((comp = left.Count.CompareTo(right.Count)) != 0)
+            {
+                return comp;
+            }
+
+            var keyComparer = EnumComparer<TKey>.Default;
+            valueComparer = valueComparer ?? Comparer<TValue>.Default;
+
+            var otherKeys = new List<TKey>(right.Count);
+            otherKeys.AddRange(right.Keys);
+            otherKeys.Sort(keyComparer);
+
+            var i = 0;
+            foreach (var a in left.Keys.OrderBy(k => k, keyComparer))
+            {
+                var b = otherKeys[i++];
+
+                if ((comp = keyComparer.Compare(a, b)) != 0 ||
+                    (comp = valueComparer.Compare(left[a], right[b])) != 0)
                 {
                     return comp;
-                }
-
-                var keyComparer = EnumComparer<TKey>.Default;
-                valueComparer = valueComparer ?? Comparer<TValue>.Default;
-
-                var otherKeys = new List<TKey>(right.Count);
-                otherKeys.AddRange(right.Keys);
-                otherKeys.Sort(keyComparer);
-
-                var i = 0;
-                foreach (var a in left.Keys.OrderBy(k => k, keyComparer))
-                {
-                    var b = otherKeys[i++];
-
-                    if ((comp = keyComparer.Compare(a, b)) != 0 ||
-                        (comp = valueComparer.Compare(left[a], right[b])) != 0)
-                    {
-                        return comp;
-                    }
                 }
             }
 
@@ -133,32 +187,33 @@ namespace GameTheory
         public static int CompareEnumLists<T>(IList<T> left, IList<T> right)
             where T : IComparable
         {
-            var comp = 0;
-
-            if (!object.ReferenceEquals(left, right))
+            if (object.ReferenceEquals(left, right))
             {
-                if (object.ReferenceEquals(left, null))
-                {
-                    return -1;
-                }
+                return 0;
+            }
 
-                if (object.ReferenceEquals(right, null))
-                {
-                    return 1;
-                }
+            if (object.ReferenceEquals(left, null))
+            {
+                return -1;
+            }
 
-                if ((comp = left.Count.CompareTo(right.Count)) != 0)
+            if (object.ReferenceEquals(right, null))
+            {
+                return 1;
+            }
+
+            int comp;
+            if ((comp = left.Count.CompareTo(right.Count)) != 0)
+            {
+                return comp;
+            }
+
+            var comparer = EnumComparer<T>.Default;
+            for (var i = 0; i < left.Count; i++)
+            {
+                if ((comp = comparer.Compare(left[i], right[i])) != 0)
                 {
                     return comp;
-                }
-
-                var comparer = EnumComparer<T>.Default;
-                for (var i = 0; i < left.Count; i++)
-                {
-                    if ((comp = comparer.Compare(left[i], right[i])) != 0)
-                    {
-                        return comp;
-                    }
                 }
             }
 
@@ -175,8 +230,7 @@ namespace GameTheory
         public static int CompareEnumLists<T>(ImmutableArray<T> left, ImmutableArray<T> right)
             where T : IComparable
         {
-            var comp = 0;
-
+            int comp;
             if ((comp = left.Length.CompareTo(right.Length)) != 0)
             {
                 return comp;
@@ -202,48 +256,48 @@ namespace GameTheory
         /// <param name="left">The first dictionary.</param>
         /// <param name="right">The second dictionary.</param>
         /// <param name="keyComparer">An optional comparer to use when evaluating keys.</param>
-        /// <param name="valueComparer">An optional comparer to use when evaluating values.</param>
         /// <returns>A value indicating whether the dictionaries are the same size and contain the same keys and elements.</returns>
         public static int CompareEnumValueDictionaries<TKey, TValue>(ImmutableDictionary<TKey, TValue> left, ImmutableDictionary<TKey, TValue> right, IComparer<TKey> keyComparer = null)
             where TKey : IComparable<TKey>
             where TValue : IComparable
         {
-            var comp = 0;
-
-            if (!object.ReferenceEquals(left, right))
+            if (object.ReferenceEquals(left, right))
             {
-                if (object.ReferenceEquals(left, null))
-                {
-                    return -1;
-                }
+                return 0;
+            }
 
-                if (object.ReferenceEquals(right, null))
-                {
-                    return 1;
-                }
+            if (object.ReferenceEquals(left, null))
+            {
+                return -1;
+            }
 
-                if ((comp = left.Count.CompareTo(right.Count)) != 0)
+            if (object.ReferenceEquals(right, null))
+            {
+                return 1;
+            }
+
+            int comp;
+            if ((comp = left.Count.CompareTo(right.Count)) != 0)
+            {
+                return comp;
+            }
+
+            keyComparer = keyComparer ?? Comparer<TKey>.Default;
+            var valueComparer = EnumComparer<TValue>.Default;
+
+            var otherKeys = new List<TKey>(right.Count);
+            otherKeys.AddRange(right.Keys);
+            otherKeys.Sort(keyComparer);
+
+            var i = 0;
+            foreach (var a in left.Keys.OrderBy(k => k, keyComparer))
+            {
+                var b = otherKeys[i++];
+
+                if ((comp = keyComparer.Compare(a, b)) != 0 ||
+                    (comp = valueComparer.Compare(left[a], right[b])) != 0)
                 {
                     return comp;
-                }
-
-                keyComparer = keyComparer ?? Comparer<TKey>.Default;
-                var valueComparer = EnumComparer<TValue>.Default;
-
-                var otherKeys = new List<TKey>(right.Count);
-                otherKeys.AddRange(right.Keys);
-                otherKeys.Sort(keyComparer);
-
-                var i = 0;
-                foreach (var a in left.Keys.OrderBy(k => k, keyComparer))
-                {
-                    var b = otherKeys[i++];
-
-                    if ((comp = keyComparer.Compare(a, b)) != 0 ||
-                        (comp = valueComparer.Compare(left[a], right[b])) != 0)
-                    {
-                        return comp;
-                    }
                 }
             }
 
@@ -260,40 +314,41 @@ namespace GameTheory
         public static int CompareLists<T>(IReadOnlyList<T> left, IReadOnlyList<T> right)
             where T : class, IComparable<T>
         {
-            var comp = 0;
-
-            if (!object.ReferenceEquals(left, right))
+            if (object.ReferenceEquals(left, right))
             {
-                if (object.ReferenceEquals(left, null))
-                {
-                    return -1;
-                }
+                return 0;
+            }
 
-                if (object.ReferenceEquals(right, null))
-                {
-                    return 1;
-                }
+            if (object.ReferenceEquals(left, null))
+            {
+                return -1;
+            }
 
-                if ((comp = left.Count.CompareTo(right.Count)) != 0)
-                {
-                    return comp;
-                }
+            if (object.ReferenceEquals(right, null))
+            {
+                return 1;
+            }
 
-                for (var i = 0; i < left.Count; i++)
+            int comp;
+            if ((comp = left.Count.CompareTo(right.Count)) != 0)
+            {
+                return comp;
+            }
+
+            for (var i = 0; i < left.Count; i++)
+            {
+                var l = left[i];
+                var r = right[i];
+                if (!object.ReferenceEquals(l, r))
                 {
-                    var l = left[i];
-                    var r = right[i];
-                    if (!object.ReferenceEquals(l, r))
+                    if (l == null)
                     {
-                        if (l == null)
-                        {
-                            return -1;
-                        }
+                        return -1;
+                    }
 
-                        if ((comp = l.CompareTo(r)) != 0)
-                        {
-                            return comp;
-                        }
+                    if ((comp = l.CompareTo(r)) != 0)
+                    {
+                        return comp;
                     }
                 }
             }
@@ -311,8 +366,7 @@ namespace GameTheory
         public static int CompareLists<T>(ImmutableArray<T> left, ImmutableArray<T> right)
             where T : class, IComparable<T>
         {
-            var comp = 0;
-
+            int comp;
             if ((comp = left.Length.CompareTo(right.Length)) != 0)
             {
                 return comp;
@@ -349,8 +403,7 @@ namespace GameTheory
         public static int CompareLists<T>(ImmutableArray<T?> left, ImmutableArray<T?> right)
             where T : struct, IComparable<T>
         {
-            var comp = 0;
-
+            int comp;
             if ((comp = left.Length.CompareTo(right.Length)) != 0)
             {
                 return comp;
@@ -387,32 +440,33 @@ namespace GameTheory
         public static int CompareReadOnlyEnumLists<T>(IReadOnlyList<T> left, IReadOnlyList<T> right)
             where T : IComparable
         {
-            var comp = 0;
-
-            if (!object.ReferenceEquals(left, right))
+            if (object.ReferenceEquals(left, right))
             {
-                if (object.ReferenceEquals(left, null))
-                {
-                    return -1;
-                }
+                return 0;
+            }
 
-                if (object.ReferenceEquals(right, null))
-                {
-                    return 1;
-                }
+            if (object.ReferenceEquals(left, null))
+            {
+                return -1;
+            }
 
-                if ((comp = left.Count.CompareTo(right.Count)) != 0)
+            if (object.ReferenceEquals(right, null))
+            {
+                return 1;
+            }
+
+            int comp;
+            if ((comp = left.Count.CompareTo(right.Count)) != 0)
+            {
+                return comp;
+            }
+
+            var comparer = EnumComparer<T>.Default;
+            for (var i = 0; i < left.Count; i++)
+            {
+                if ((comp = comparer.Compare(left[i], right[i])) != 0)
                 {
                     return comp;
-                }
-
-                var comparer = EnumComparer<T>.Default;
-                for (var i = 0; i < left.Count; i++)
-                {
-                    if ((comp = comparer.Compare(left[i], right[i])) != 0)
-                    {
-                        return comp;
-                    }
                 }
             }
 
@@ -429,40 +483,41 @@ namespace GameTheory
         public static int CompareReadOnlyLists<T>(IReadOnlyList<T> left, IReadOnlyList<T> right)
             where T : class, IComparable<T>
         {
-            var comp = 0;
-
-            if (!object.ReferenceEquals(left, right))
+            if (object.ReferenceEquals(left, right))
             {
-                if (object.ReferenceEquals(left, null))
-                {
-                    return -1;
-                }
+                return 0;
+            }
 
-                if (object.ReferenceEquals(right, null))
-                {
-                    return 1;
-                }
+            if (object.ReferenceEquals(left, null))
+            {
+                return -1;
+            }
 
-                if ((comp = left.Count.CompareTo(right.Count)) != 0)
-                {
-                    return comp;
-                }
+            if (object.ReferenceEquals(right, null))
+            {
+                return 1;
+            }
 
-                for (var i = 0; i < left.Count; i++)
+            int comp;
+            if ((comp = left.Count.CompareTo(right.Count)) != 0)
+            {
+                return comp;
+            }
+
+            for (var i = 0; i < left.Count; i++)
+            {
+                var l = left[i];
+                var r = right[i];
+                if (!object.ReferenceEquals(l, r))
                 {
-                    var l = left[i];
-                    var r = right[i];
-                    if (!object.ReferenceEquals(l, r))
+                    if (l == null)
                     {
-                        if (l == null)
-                        {
-                            return -1;
-                        }
+                        return -1;
+                    }
 
-                        if ((comp = l.CompareTo(r)) != 0)
-                        {
-                            return comp;
-                        }
+                    if ((comp = l.CompareTo(r)) != 0)
+                    {
+                        return comp;
                     }
                 }
             }
@@ -480,31 +535,32 @@ namespace GameTheory
         public static int CompareReadOnlyValueLists<T>(IReadOnlyList<T> left, IReadOnlyList<T> right)
             where T : struct, IComparable<T>
         {
-            var comp = 0;
-
-            if (!object.ReferenceEquals(left, right))
+            if (object.ReferenceEquals(left, right))
             {
-                if (object.ReferenceEquals(left, null))
-                {
-                    return -1;
-                }
+                return 0;
+            }
 
-                if (object.ReferenceEquals(right, null))
-                {
-                    return 1;
-                }
+            if (object.ReferenceEquals(left, null))
+            {
+                return -1;
+            }
 
-                if ((comp = left.Count.CompareTo(right.Count)) != 0)
+            if (object.ReferenceEquals(right, null))
+            {
+                return 1;
+            }
+
+            int comp;
+            if ((comp = left.Count.CompareTo(right.Count)) != 0)
+            {
+                return comp;
+            }
+
+            for (var i = 0; i < left.Count; i++)
+            {
+                if ((comp = left[i].CompareTo(right[i])) != 0)
                 {
                     return comp;
-                }
-
-                for (var i = 0; i < left.Count; i++)
-                {
-                    if ((comp = left[i].CompareTo(right[i])) != 0)
-                    {
-                        return comp;
-                    }
                 }
             }
 
@@ -565,31 +621,32 @@ namespace GameTheory
         public static int CompareValueLists<T>(IList<T> left, IList<T> right)
             where T : struct, IComparable<T>
         {
-            var comp = 0;
-
-            if (!object.ReferenceEquals(left, right))
+            if (object.ReferenceEquals(left, right))
             {
-                if (object.ReferenceEquals(left, null))
-                {
-                    return -1;
-                }
+                return 0;
+            }
 
-                if (object.ReferenceEquals(right, null))
-                {
-                    return 1;
-                }
+            if (object.ReferenceEquals(left, null))
+            {
+                return -1;
+            }
 
-                if ((comp = left.Count.CompareTo(right.Count)) != 0)
+            if (object.ReferenceEquals(right, null))
+            {
+                return 1;
+            }
+
+            int comp;
+            if ((comp = left.Count.CompareTo(right.Count)) != 0)
+            {
+                return comp;
+            }
+
+            for (var i = 0; i < left.Count; i++)
+            {
+                if ((comp = left[i].CompareTo(right[i])) != 0)
                 {
                     return comp;
-                }
-
-                for (var i = 0; i < left.Count; i++)
-                {
-                    if ((comp = left[i].CompareTo(right[i])) != 0)
-                    {
-                        return comp;
-                    }
                 }
             }
 
@@ -606,8 +663,7 @@ namespace GameTheory
         public static int CompareValueLists<T>(ImmutableArray<T> left, ImmutableArray<T> right)
             where T : struct, IComparable<T>
         {
-            var comp = 0;
-
+            int comp;
             if ((comp = left.Length.CompareTo(right.Length)) != 0)
             {
                 return comp;

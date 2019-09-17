@@ -89,6 +89,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Catalogs\AssemblyGameCatalog.cs" />
+    <Compile Include="Catalogs\CompositeGameCatalog.cs" />
     <Compile Include="Catalogs\Game.cs" />
     <Compile Include="Catalogs\GameCatalog.cs" />
     <Compile Include="Catalogs\IGame.cs" />
