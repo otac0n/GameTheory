@@ -316,6 +316,11 @@ namespace GameTheory.FormsRunner
             this.Hide();
         }
 
+        private void SearchResults_DoubleClick(object sender, EventArgs e)
+        {
+            this.NextButton_Click(sender, e);
+        }
+
         private void Finish()
         {
             if (true)

@@ -36,11 +36,11 @@ namespace GameTheory.FormsRunner
             System.Windows.Forms.TabPage playersTab;
             this.searchResults = new System.Windows.Forms.ListView();
             this.searchBox = new System.Windows.Forms.TextBox();
+            this.playersTable = new System.Windows.Forms.TableLayoutPanel();
             this.configurationTab = new System.Windows.Forms.TabPage();
             this.wizardTabs = new System.Windows.Forms.TabControl();
             this.backButton = new System.Windows.Forms.Button();
             this.errorProvider = new System.Windows.Forms.ErrorProvider(this.components);
-            this.playersTable = new System.Windows.Forms.TableLayoutPanel();
             nextButton = new System.Windows.Forms.Button();
             cancelButton = new System.Windows.Forms.Button();
             gameTab = new System.Windows.Forms.TabPage();
@@ -102,6 +102,7 @@ namespace GameTheory.FormsRunner
             this.searchResults.UseCompatibleStateImageBehavior = false;
             this.searchResults.View = System.Windows.Forms.View.List;
             this.searchResults.ItemSelectionChanged += new System.Windows.Forms.ListViewItemSelectionChangedEventHandler(this.SearchResults_ItemSelectionChanged);
+            this.searchResults.DoubleClick += new System.EventHandler(this.SearchResults_DoubleClick);
             // 
             // searchLabel
             // 
@@ -134,6 +135,19 @@ namespace GameTheory.FormsRunner
             playersTab.TabIndex = 2;
             playersTab.Text = "Players";
             playersTab.UseVisualStyleBackColor = true;
+            // 
+            // playersTable
+            // 
+            this.playersTable.ColumnCount = 2;
+            this.playersTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.playersTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.playersTable.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.playersTable.Location = new System.Drawing.Point(3, 3);
+            this.playersTable.Name = "playersTable";
+            this.playersTable.RowCount = 1;
+            this.playersTable.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.playersTable.Size = new System.Drawing.Size(423, 328);
+            this.playersTable.TabIndex = 0;
             // 
             // configurationTab
             // 
@@ -174,19 +188,6 @@ namespace GameTheory.FormsRunner
             // errorProvider
             // 
             this.errorProvider.ContainerControl = this;
-            // 
-            // playersTable
-            // 
-            this.playersTable.ColumnCount = 2;
-            this.playersTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.playersTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.playersTable.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.playersTable.Location = new System.Drawing.Point(3, 3);
-            this.playersTable.Name = "playersTable";
-            this.playersTable.RowCount = 1;
-            this.playersTable.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.playersTable.Size = new System.Drawing.Size(423, 328);
-            this.playersTable.TabIndex = 0;
             // 
             // NewGameForm
             // 
