@@ -23,6 +23,10 @@ namespace GameTheory.FormsRunner
         public GameManagerForm()
         {
             this.InitializeComponent();
+            this.gamesList
+                .GetType()
+                .GetProperty("DoubleBuffered", BindingFlags.Instance | BindingFlags.NonPublic)
+                .SetValue(this.gamesList, true, null);
         }
 
         private void NewGameMenu_Click(object sender, System.EventArgs e)
@@ -35,109 +39,38 @@ namespace GameTheory.FormsRunner
             if (this.newGameForm.ShowDialog(this) != DialogResult.Cancel)
             {
                 var game = this.newGameForm.SelectedGame;
-                var state = this.newGameForm.StartingState;
                 var players = this.newGameForm.SelectedPlayers;
+                var startingState = this.newGameForm.StartingState;
+                var playerInstances = this.newGameForm.PlayerInstances;
                 this.newGameForm.Dispose();
-                var gameInfo = this.StartGame(game, state, players);
+                var gameInfo = this.StartGame(game, players, startingState, playerInstances);
                 this.gamesList.Items.Add(gameInfo.Row);
             }
         }
 
-        private static GameInfo<TMove> PlayGame<TMove>(GameManagerForm parent, IGame selectedGame, IGameState<TMove> state, object[] players)
+        private static GameInfo<TMove> PlayGame<TMove>(IGame game, Player[] players, IGameState<TMove> startingState, object[] playerInstances, GameManagerForm parent)
             where TMove : IMove
         {
-            var playersList = new IPlayer<TMove>[players.Length];
-            for (var i = 0; i < players.Length; i++)
-            {
-                var player = (IPlayer<TMove>)players[i];
-                playersList[i] = player;
-            }
-
-            var gameInfo = new GameInfo<TMove>(parent, selectedGame, state, playersList);
+            var gameInfo = new GameInfo<TMove>(game, players, startingState, playerInstances.Cast<IPlayer<TMove>>().ToArray(), parent);
 
             return gameInfo;
         }
 
-        private IGameInfo StartGame(IGame selectedGame, object startingState, object[] selectedPlayers) =>
-            (IGameInfo)typeof(GameManagerForm).GetMethod(nameof(PlayGame), BindingFlags.Static | BindingFlags.NonPublic).MakeGenericMethod(selectedGame.MoveType).Invoke(null, new object[] { this, selectedGame, startingState, selectedPlayers });
+        private IGameInfo StartGame(IGame game, Player[] players, object startingState, object[] playerInstances) =>
+            (IGameInfo)typeof(GameManagerForm).GetMethod(nameof(PlayGame), BindingFlags.Static | BindingFlags.NonPublic).MakeGenericMethod(game.MoveType).Invoke(null, new object[] { game, players, startingState, playerInstances, this });
+
+        private void ViewGameMenuItem_Click(object sender, EventArgs e)
+        {
+            foreach (ListViewItem gameRow in this.gamesList.SelectedItems)
+            {
+                var gameInfo = gameRow.Tag as IGameInfo;
+                gameInfo?.Show();
+            }
+        }
 
         private void QuitMenu_Click(object sender, System.EventArgs e)
         {
             this.Close();
-        }
-
-        private interface IGameInfo
-        {
-            ListViewItem Row { get; }
-        }
-
-        private class GameInfo<TMove> : IGameInfo
-            where TMove : IMove
-        {
-            private GameManagerForm parent;
-
-            public GameInfo(GameManagerForm parent, IGame game, IGameState<TMove> startingState, IPlayer<TMove>[] players)
-            {
-                this.parent = parent;
-                this.Game = game;
-                this.StartingState = startingState;
-                this.Players = players.ToArray();
-                this.Moves = new List<TMove>();
-                this.Row = new ListViewItem(new string[4]
-                {
-                    game.Name,
-                    "Pending",
-                    string.Join(", ", Enumerable.Range(0, players.Length).Select(i => $"{startingState.GetPlayerName(startingState.Players[i])}: {this.Players[i]}")),
-                    string.Empty,
-                });
-
-                this.GameTask = Task.Factory.StartNew(() =>
-                {
-                    for (var i = 0; i < this.Players.Length; i++)
-                    {
-                        var player = this.Players[i];
-                        player.MessageSent += (sender, args) =>
-                        {
-                        };
-                    }
-
-                    this.UpdateRow(1, "Playing");
-
-                    var result = GameUtilities.PlayGame(startingState, playerTokens => players, (previousState, move, newState) =>
-                    {
-                        this.Moves.Add(move);
-                        var winners = newState.GetWinners();
-                        this.UpdateRow(3, string.Join(", ", winners.Select(w => newState.GetPlayerName(w))));
-                    }).Result;
-
-                    this.UpdateRow(1, "Done");
-                    return result;
-                });
-            }
-
-            private void UpdateRow(int index, string value)
-            {
-                this.parent.InvokeIfRequired(() =>
-                {
-                    this.Row.SubItems[index].Text = value;
-                    if (index == 0)
-                    {
-                        this.Row.Text = value;
-                    }
-                });
-            }
-
-            public Task<IGameState<TMove>> GameTask { get; }
-
-            public ListViewItem Row { get; }
-
-            public IGame Game { get; }
-
-            public IGameState<TMove> StartingState { get; }
-
-            public IPlayer<TMove>[] Players { get; }
-
-            public List<TMove> Moves { get; }
         }
     }
 }

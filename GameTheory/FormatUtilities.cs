@@ -4,7 +4,10 @@ namespace GameTheory
 {
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.Linq;
+    using System.Reflection;
+    using System.Resources;
     using System.Text.RegularExpressions;
 
     /// <summary>
@@ -133,6 +136,29 @@ namespace GameTheory
         }
 
         /// <summary>
+        /// Gets a resource string for the specified game type, if the resource can be found; or the specified default, if the resource could not be found.
+        /// </summary>
+        /// <param name="gameType">The type of game for which to fetch resources.</param>
+        /// <param name="resourceName">The name of the resource to fetch.</param>
+        /// <param name="default">The default value if the resource cannot be found.</param>
+        /// <returns>The specified resource, if the resource can be found; or <paramref name="default"/>, if the resource could not be found</returns>
+        public static string GetGameStateResource(Type gameType, string resourceName, string @default = null)
+        {
+            try
+            {
+                return new ResourceManager(gameType.Namespace + ".Resources", gameType.GetTypeInfo().Assembly).GetString(resourceName, CultureInfo.CurrentCulture);
+            }
+            catch (MissingManifestResourceException)
+            {
+            }
+            catch (InvalidOperationException)
+            {
+            }
+
+            return @default;
+        }
+
+        /// <summary>
         /// Gets a player name for display.
         /// </summary>
         /// <typeparam name="TMove">The type of object that represents a move in the game state.</typeparam>
@@ -140,8 +166,12 @@ namespace GameTheory
         /// <param name="playerToken">The player to search for.</param>
         /// <returns>A name representing the specified player token.</returns>
         public static string GetPlayerName<TMove>(this IGameState<TMove> state, PlayerToken playerToken)
-            where TMove : IMove =>
-            string.Format(SharedResources.PlayerName, state.GetPlayerNumber(playerToken));
+            where TMove : IMove
+        {
+            var playerNumber = state.GetPlayerNumber(playerToken);
+            return GetGameStateResource(state.GetType(), $"Player{playerNumber}") ??
+                string.Format(SharedResources.PlayerName, playerNumber);
+        }
 
         /// <summary>
         /// Provides a replacement for conditional expressions that avoids explicit casting.

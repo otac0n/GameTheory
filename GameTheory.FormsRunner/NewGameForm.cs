@@ -15,9 +15,10 @@ namespace GameTheory.FormsRunner
     public partial class NewGameForm : Form
     {
         private Task<IGame[]> allGamesTask;
+        private object[] playerInstances;
         private Task<IGame[]> searchTask;
+        private Player[] selectedPlayers;
         private object startingState;
-        private object[] selectedPlayers;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="NewGameForm"/> class.
@@ -31,9 +32,19 @@ namespace GameTheory.FormsRunner
         }
 
         /// <summary>
+        /// Raised when the user changes the player instances.
+        /// </summary>
+        public event EventHandler<PlayerInstancesChangedEventArgs> PlayerInstancesChanged;
+
+        /// <summary>
         /// Raised when the user changes the game selection.
         /// </summary>
         public event EventHandler<SelectedGameChangedEventArgs> SelectedGameChanged;
+
+        /// <summary>
+        /// Raised when the user changes the players.
+        /// </summary>
+        public event EventHandler<SelectedPlayersChangedEventArgs> SelectedPlayersChanged;
 
         /// <summary>
         /// Raised when the user changes the starting state.
@@ -41,9 +52,24 @@ namespace GameTheory.FormsRunner
         public event EventHandler<StartingStateChangedEventArgs> StartingStateChanged;
 
         /// <summary>
-        /// Raised when the user changes the players.
+        /// Gets the currently selected player instances.
         /// </summary>
-        public event EventHandler<SelectedPlayersChangedEventArgs> SelectedPlayersChanged;
+        public object[] PlayerInstances
+        {
+            get
+            {
+                return this.playerInstances;
+            }
+
+            private set
+            {
+                if (this.playerInstances != null || value != null)
+                {
+                    this.playerInstances = value;
+                    this.OnPlayerInstancesChanged();
+                }
+            }
+        }
 
         /// <summary>
         /// Gets the currently selected game.
@@ -58,28 +84,14 @@ namespace GameTheory.FormsRunner
         }
 
         /// <summary>
-        /// Gets the currently selected starting state.
+        /// Gets the currently selected players.
         /// </summary>
-        public object StartingState
+        public Player[] SelectedPlayers
         {
-            get { return this.startingState; }
-
-            private set
+            get
             {
-                if (!object.ReferenceEquals(this.startingState, value))
-                {
-                    this.startingState = value;
-                    this.OnStartingStateChanged();
-                }
+                return this.selectedPlayers;
             }
-        }
-
-        /// <summary>
-        /// Gets the currently selected starting state.
-        /// </summary>
-        public object[] SelectedPlayers
-        {
-            get { return this.selectedPlayers; }
 
             private set
             {
@@ -91,8 +103,34 @@ namespace GameTheory.FormsRunner
             }
         }
 
+        /// <summary>
+        /// Gets the currently selected starting state.
+        /// </summary>
+        public object StartingState
+        {
+            get
+            {
+                return this.startingState;
+            }
+
+            private set
+            {
+                if (!object.ReferenceEquals(this.startingState, value))
+                {
+                    this.startingState = value;
+                    this.OnStartingStateChanged();
+                }
+            }
+        }
+
+        protected virtual void OnPlayerInstancesChanged()
+        {
+            this.PlayerInstancesChanged?.Invoke(this, new PlayerInstancesChangedEventArgs(this.PlayerInstances));
+        }
+
         protected virtual void OnSelectedGameChanged()
         {
+            this.PlayerInstances = null;
             this.SelectedPlayers = null;
             this.StartingState = null;
             var game = this.SelectedGame;
@@ -101,7 +139,7 @@ namespace GameTheory.FormsRunner
             this.configurationTab.Controls.Clear(); // TODO: Dispose controls.
             if (game != null)
             {
-                var editor = ObjectGraphEditor.MakeEditor(game.Name, game.GameStateType, out var errorControl, out var label, this.errorProvider.SetError, (value, valid) =>
+                var editor = ObjectGraphEditor.MakeEditor(null, game.Name, game.GameStateType, null, out var errorControl, out var label, this.errorProvider.SetError, (value, valid) =>
                 {
                     this.StartingState = valid ? value : null;
                 });
@@ -127,8 +165,14 @@ namespace GameTheory.FormsRunner
             }
         }
 
+        protected virtual void OnSelectedPlayersChanged()
+        {
+            this.SelectedPlayersChanged?.Invoke(this, new SelectedPlayersChangedEventArgs(this.SelectedPlayers));
+        }
+
         protected virtual void OnStartingStateChanged()
         {
+            this.PlayerInstances = null;
             this.SelectedPlayers = null;
             var state = this.StartingState;
             this.StartingStateChanged?.Invoke(this, new StartingStateChangedEventArgs(state));
@@ -140,12 +184,24 @@ namespace GameTheory.FormsRunner
                 var playerOptions = (PlayerOptions)typeof(NewGameForm).GetMethod(nameof(CountPlayers), BindingFlags.Static | BindingFlags.NonPublic).MakeGenericMethod(game.MoveType).Invoke(null, new object[] { state });
                 var playerCount = playerOptions.Names.Length;
                 this.playersTable.RowCount = playerCount * 2;
-                var players = new object[playerCount];
+                var players = new Player[playerCount];
+                var playerInstances = new object[playerCount];
                 var playersValid = new bool[playerCount];
 
                 void Touch()
                 {
-                    this.SelectedPlayers = playersValid.All(p => p) ? players : null;
+                    var allValid = playersValid.All(p => p);
+                    if (!allValid)
+                    {
+                        this.PlayerInstances = null;
+                        this.SelectedPlayers = null;
+                    }
+                    else
+                    {
+                        this.playerInstances = null;
+                        this.SelectedPlayers = players;
+                        this.PlayerInstances = playerInstances;
+                    }
                 }
 
                 for (var i = 0; i < playerCount; i++)
@@ -176,18 +232,21 @@ namespace GameTheory.FormsRunner
                         }
 
                         var editor = ObjectGraphEditor.MakeEditor(
+                            null,
                             player.Name,
                             player.PlayerType,
+                            null, // TODO: Remember previously selected player?
                             out var errorControl,
                             out var playerLabel,
                             this.errorProvider.SetError,
                             (value, valid) =>
                             {
                                 playersValid[p] = valid;
-                                players[p] = valid ? value : null;
+                                players[p] = valid ? player : null;
+                                playerInstances[p] = valid ? value : null;
                                 Touch();
                             },
-                            (string innerName, Type type, out Control innerControl, out Control innerErrorControl, out Label innerLabel, Action<Control, string> setError, Action<object, bool> set) =>
+                            (string innerPath, string innerName, Type type, object innerValue, out Control innerControl, out Control innerErrorControl, out Label innerLabel, Action<Control, string> setError, Action<object, bool> set) =>
                             {
                                 if (type == typeof(PlayerToken))
                                 {
@@ -234,11 +293,6 @@ namespace GameTheory.FormsRunner
             }
         }
 
-        protected virtual void OnSelectedPlayersChanged()
-        {
-            this.SelectedPlayersChanged?.Invoke(this, new SelectedPlayersChangedEventArgs(this.SelectedPlayers));
-        }
-
         private static PlayerOptions CountPlayers<TMove>(IGameState<TMove> state)
             where TMove : IMove
         {
@@ -247,20 +301,60 @@ namespace GameTheory.FormsRunner
             return new PlayerOptions(names, state.Players.ToArray(), players);
         }
 
-        private void Search(string searchText)
+        private void BackButton_Click(object sender, EventArgs e)
         {
-            var search = searchText.Split(new[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
-            if (search.Length == 0)
+            var ix = this.wizardTabs.SelectedIndex;
+            if (ix > 0)
             {
-                this.searchTask = this.allGamesTask;
+                this.wizardTabs.SelectedIndex = ix - 1;
+            }
+        }
+
+        private void CancelButton_Click(object sender, EventArgs e)
+        {
+            this.DialogResult = DialogResult.Cancel;
+            this.Hide();
+        }
+
+        private void Finish()
+        {
+            if (true)
+            {
+                this.DialogResult = DialogResult.OK;
+                this.Hide();
             }
             else
             {
-                this.searchTask = this.allGamesTask.ContinueWith(results => results.Result.Where(g => search.All(s => g.Name.IndexOf(s, StringComparison.CurrentCultureIgnoreCase) > -1)).OrderBy(g => search.Min(s => g.Name.IndexOf(s, StringComparison.CurrentCultureIgnoreCase))).ToArray());
+                SystemSounds.Beep.Play();
             }
+        }
 
-            this.searchTask.ContinueWith(_ => this.RefreshResults());
-            this.RefreshResults();
+        private void NewGameForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (e.CloseReason == CloseReason.UserClosing)
+            {
+                e.Cancel = true;
+                this.CancelButton_Click(sender, e);
+            }
+        }
+
+        private void NewGameForm_Shown(object sender, EventArgs e)
+        {
+            this.DialogResult = DialogResult.None;
+            this.wizardTabs.SelectedIndex = 0;
+        }
+
+        private void NextButton_Click(object sender, EventArgs e)
+        {
+            var ix = this.wizardTabs.SelectedIndex;
+            if (ix < this.wizardTabs.TabCount - 1)
+            {
+                this.wizardTabs.SelectedIndex = ix + 1;
+            }
+            else
+            {
+                this.Finish();
+            }
         }
 
         private void RefreshResults()
@@ -282,53 +376,27 @@ namespace GameTheory.FormsRunner
             });
         }
 
-        private void Finish()
+        private void Search(string searchText)
         {
-            if (true)
+            var search = searchText.Split(new[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
+            if (search.Length == 0)
             {
-                this.DialogResult = DialogResult.OK;
-                this.Hide();
+                this.searchTask = this.allGamesTask;
             }
             else
             {
-                SystemSounds.Beep.Play();
+                this.searchTask = this.allGamesTask.ContinueWith(results => results.Result.Where(g => search.All(s => g.Name.IndexOf(s, StringComparison.CurrentCultureIgnoreCase) > -1)).OrderBy(g => search.Min(s => g.Name.IndexOf(s, StringComparison.CurrentCultureIgnoreCase))).ToArray());
             }
-        }
 
-        private void NewGameForm_Shown(object sender, EventArgs e)
-        {
-            this.DialogResult = DialogResult.None;
-            this.wizardTabs.SelectedIndex = 0;
-        }
-
-        private void BackButton_Click(object sender, EventArgs e)
-        {
-            var ix = this.wizardTabs.SelectedIndex;
-            if (ix > 0)
+            if (this.searchTask.IsCompleted)
             {
-                this.wizardTabs.SelectedIndex = ix - 1;
-            }
-        }
-
-        private void NextButton_Click(object sender, EventArgs e)
-        {
-            var ix = this.wizardTabs.SelectedIndex;
-            if (ix < this.wizardTabs.TabCount - 1)
-            {
-                this.wizardTabs.SelectedIndex = ix + 1;
+                this.RefreshResults();
             }
             else
             {
-                this.Finish();
+                this.RefreshResults();
+                this.searchTask.ContinueWith(_ => this.RefreshResults());
             }
-        }
-
-        private void WizardTabs_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            var ix = this.wizardTabs.SelectedIndex;
-
-            // TODO: set "Finish" button text.
-            this.backButton.Enabled = ix != 0;
         }
 
         private void SearchBox_KeyDown(object sender, KeyEventArgs e)
@@ -348,29 +416,42 @@ namespace GameTheory.FormsRunner
             }
         }
 
-        private void CancelButton_Click(object sender, EventArgs e)
-        {
-            this.DialogResult = DialogResult.Cancel;
-            this.Hide();
-        }
-
         private void SearchBox_TextChanged(object sender, EventArgs e)
         {
             this.Search(this.searchBox.Text);
         }
 
-        private void NewGameForm_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            if (e.CloseReason == CloseReason.UserClosing)
-            {
-                e.Cancel = true;
-                this.CancelButton_Click(sender, e);
-            }
-        }
-
         private void SearchResults_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
         {
             this.OnSelectedGameChanged();
+        }
+
+        private void WizardTabs_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            var ix = this.wizardTabs.SelectedIndex;
+
+            // TODO: set "Finish" button text.
+            this.backButton.Enabled = ix != 0;
+        }
+
+        /// <summary>
+        /// <see cref="EventArgs"/> for the <see cref="PlayerInstancesChanged"/> event.
+        /// </summary>
+        public class PlayerInstancesChangedEventArgs
+        {
+            /// <summary>
+            /// Initializes a new instance of the <see cref="PlayerInstancesChangedEventArgs"/> class.
+            /// </summary>
+            /// <param name="playersInstances">The player instances chosen.</param>
+            public PlayerInstancesChangedEventArgs(object[] playersInstances)
+            {
+                this.PlayerInstances = playersInstances;
+            }
+
+            /// <summary>
+            /// Gets the player instances chosen.
+            /// </summary>
+            public object[] PlayerInstances { get; }
         }
 
         /// <summary>
@@ -394,6 +475,26 @@ namespace GameTheory.FormsRunner
         }
 
         /// <summary>
+        /// <see cref="EventArgs"/> for the <see cref="SelectedPlayersChanged"/> event.
+        /// </summary>
+        public class SelectedPlayersChangedEventArgs
+        {
+            /// <summary>
+            /// Initializes a new instance of the <see cref="SelectedPlayersChangedEventArgs"/> class.
+            /// </summary>
+            /// <param name="players">The players chosen.</param>
+            public SelectedPlayersChangedEventArgs(Player[] players)
+            {
+                this.Players = players;
+            }
+
+            /// <summary>
+            /// Gets the players chosen.
+            /// </summary>
+            public object[] Players { get; }
+        }
+
+        /// <summary>
         /// <see cref="EventArgs"/> for the <see cref="StartingStateChanged"/> event.
         /// </summary>
         public class StartingStateChangedEventArgs : EventArgs
@@ -413,26 +514,6 @@ namespace GameTheory.FormsRunner
             public object StartingState { get; }
         }
 
-        /// <summary>
-        /// <see cref="EventArgs"/> for the <see cref="SelectedPlayersChanged"/> event.
-        /// </summary>
-        public class SelectedPlayersChangedEventArgs
-        {
-            /// <summary>
-            /// Initializes a new instance of the <see cref="SelectedPlayersChangedEventArgs"/> class.
-            /// </summary>
-            /// <param name="players">The players chosen.</param>
-            public SelectedPlayersChangedEventArgs(object[] players)
-            {
-                this.Players = players;
-            }
-
-            /// <summary>
-            /// Gets the players chosen.
-            /// </summary>
-            public object[] Players { get; }
-        }
-
         private class PlayerOptions
         {
             public PlayerOptions(string[] names, PlayerToken[] playerTokens, IList<Player> players)
@@ -444,9 +525,9 @@ namespace GameTheory.FormsRunner
 
             public string[] Names { get; }
 
-            public PlayerToken[] PlayerTokens { get; }
-
             public IList<Player> Players { get; }
+
+            public PlayerToken[] PlayerTokens { get; }
         }
     }
 }

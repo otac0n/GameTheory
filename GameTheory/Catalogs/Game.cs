@@ -72,18 +72,7 @@ namespace GameTheory.Catalogs
         {
             var @namespace = gameType.Namespace;
 
-            try
-            {
-                return new ResourceManager(@namespace + ".Resources", gameType.Assembly).GetString("Name", CultureInfo.CurrentCulture);
-            }
-            catch (MissingManifestResourceException)
-            {
-            }
-            catch (InvalidOperationException)
-            {
-            }
-
-            return @namespace.Split(new[] { '.' }, StringSplitOptions.RemoveEmptyEntries).LastOrDefault();
+            return FormatUtilities.GetGameStateResource(gameType, "Name") ?? @namespace.Split(new[] { '.' }, StringSplitOptions.RemoveEmptyEntries).LastOrDefault();
         }
     }
 }
