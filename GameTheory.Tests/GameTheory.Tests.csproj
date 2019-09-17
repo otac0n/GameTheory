@@ -95,6 +95,10 @@
       <Project>{3b3e3456-b950-44c1-b8a2-fe6c79c2232f}</Project>
       <Name>GameTheory</Name>
     </ProjectReference>
+    <ProjectReference Include="..\GameTheory.Games.Chess\GameTheory.Games.Chess.csproj">
+      <Project>{09437adf-6793-4252-b014-6ccaa5a10846}</Project>
+      <Name>GameTheory.Games.Chess</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />

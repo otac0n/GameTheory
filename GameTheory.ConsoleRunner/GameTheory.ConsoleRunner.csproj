@@ -131,6 +131,10 @@
       <Project>{3b3e3456-b950-44c1-b8a2-fe6c79c2232f}</Project>
       <Name>GameTheory</Name>
     </ProjectReference>
+    <ProjectReference Include="..\GameTheory.Games.Chess\GameTheory.Games.Chess.csproj">
+      <Project>{09437adf-6793-4252-b014-6ccaa5a10846}</Project>
+      <Name>GameTheory.Games.Chess</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />

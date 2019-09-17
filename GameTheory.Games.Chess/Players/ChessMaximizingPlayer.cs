@@ -1,9 +1,8 @@
 // Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
-namespace GameTheory.Players.MaximizingPlayers
+namespace GameTheory.Games.Chess.Players.MaximizingPlayers
 {
     using System;
-    using GameTheory.Games.Chess;
     using GameTheory.Players.MaximizingPlayer;
 
     /// <summary>
