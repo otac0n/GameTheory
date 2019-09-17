@@ -3,7 +3,9 @@
 namespace GameTheory.ConsoleRunner
 {
     using System;
+    using System.Collections.Generic;
     using System.Diagnostics;
+    using System.IO;
     using System.Linq;
     using System.Reflection;
     using System.Text;
@@ -13,6 +15,10 @@ namespace GameTheory.ConsoleRunner
 
     internal class Program
     {
+        private static readonly IReadOnlyList<Assembly> Assemblies =
+            (from file in Directory.EnumerateFiles(Environment.CurrentDirectory, "GameTheory.Games.*.dll")
+             select Assembly.LoadFrom(file)).ToList().AsReadOnly();
+
         private static object ConstructType(Type type, Func<ParameterInfo, object> getParameter = null)
         {
             getParameter = getParameter ?? (p => GetArgument(p));
@@ -130,7 +136,7 @@ namespace GameTheory.ConsoleRunner
             NativeMethods.SetConsoleFont();
             NativeMethods.Maximize();
 
-            var catalog = GameCatalog.Default;
+            var catalog = new AssemblyGameCatalog(Assemblies);
             var game = ConsoleInteraction.Choose(catalog.AvailableGames);
             var gameType = game.GameStateType;
             var state = ConstructType(gameType);
@@ -147,7 +153,7 @@ namespace GameTheory.ConsoleRunner
             where TMove : IMove
         {
             Console.WriteLine(Resources.GamePlayerCount, string.Format(state.Players.Count == 1 ? Resources.SingularPlayer : Resources.PluralPlayers, state.Players.Count));
-            var catalog = new PlayerCatalog(Assembly.GetExecutingAssembly(), typeof(IGameState<>).Assembly);
+            var catalog = new PlayerCatalog(Assemblies.Concat(new[] { Assembly.GetExecutingAssembly(), typeof(IGameState<>).Assembly, typeof(BaseConsoleRenderer<>).Assembly }));
             var players = catalog.FindPlayers(typeof(TMove));
             var consoleRenderer = ConsoleRenderer.Default<TMove>();
             var font = consoleRenderer.GetType().GetCustomAttributes(inherit: true).OfType<ConsoleFontAttribute>().FirstOrDefault();
