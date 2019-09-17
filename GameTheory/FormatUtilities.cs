@@ -146,7 +146,7 @@ namespace GameTheory
         {
             try
             {
-                return new ResourceManager(gameType.Namespace + ".Resources", gameType.GetTypeInfo().Assembly).GetString(resourceName, CultureInfo.CurrentCulture);
+                return new ResourceManager(gameType.Namespace + ".Resources", gameType.Assembly).GetString(resourceName, CultureInfo.CurrentCulture);
             }
             catch (MissingManifestResourceException)
             {

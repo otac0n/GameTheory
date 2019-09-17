@@ -22,7 +22,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Tests.ruleset = Tests.ruleset
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameTheory", "GameTheory\GameTheory.csproj", "{3B3E3456-B950-44C1-B8A2-FE6C79C2232F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameTheory", "GameTheory\GameTheory.csproj", "{3B3E3456-B950-44C1-B8A2-FE6C79C2232F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameTheory.Tests", "GameTheory.Tests\GameTheory.Tests.csproj", "{95EF578E-DAF2-4D88-9399-E05190C08634}"
 EndProject
@@ -55,5 +55,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {AF8EF90D-CCA7-4C9E-AA38-20BFD59E4629}
 	EndGlobalSection
 EndGlobal

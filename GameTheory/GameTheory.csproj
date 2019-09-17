@@ -1,556 +1,152 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="..\SharedAssemblyInfo.props" />
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{3B3E3456-B950-44C1-B8A2-FE6C79C2232F}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>GameTheory</RootNamespace>
-    <AssemblyName>GameTheory</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <TargetFrameworkProfile>Profile7</TargetFrameworkProfile>
-    <FileAlignment>512</FileAlignment>
-    <StyleCopTreatErrorsAsWarnings>false</StyleCopTreatErrorsAsWarnings>
-    <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
-    <RestorePackages>true</RestorePackages>
-    <CodeContractsAssemblyMode>0</CodeContractsAssemblyMode>
-    <MinimumVisualStudioVersion>14.0</MinimumVisualStudioVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Debug\GameTheory.xml</DocumentationFile>
-    <CodeAnalysisRuleSet>..\Strict.ruleset</CodeAnalysisRuleSet>
-    <CodeAnalysisAdditionalOptions> /assemblycomparemode:StrongNameIgnoringVersion</CodeAnalysisAdditionalOptions>
-    <RunCodeAnalysis>true</RunCodeAnalysis>
-    <Prefer32Bit>false</Prefer32Bit>
-    <CodeContractsEnableRuntimeChecking>True</CodeContractsEnableRuntimeChecking>
-    <CodeContractsRuntimeOnlyPublicSurface>False</CodeContractsRuntimeOnlyPublicSurface>
-    <CodeContractsRuntimeThrowOnFailure>False</CodeContractsRuntimeThrowOnFailure>
-    <CodeContractsRuntimeCallSiteRequires>False</CodeContractsRuntimeCallSiteRequires>
-    <CodeContractsRuntimeSkipQuantifiers>False</CodeContractsRuntimeSkipQuantifiers>
-    <CodeContractsRunCodeAnalysis>False</CodeContractsRunCodeAnalysis>
-    <CodeContractsNonNullObligations>True</CodeContractsNonNullObligations>
-    <CodeContractsBoundsObligations>True</CodeContractsBoundsObligations>
-    <CodeContractsArithmeticObligations>True</CodeContractsArithmeticObligations>
-    <CodeContractsEnumObligations>True</CodeContractsEnumObligations>
-    <CodeContractsRedundantAssumptions>True</CodeContractsRedundantAssumptions>
-    <CodeContractsAssertsToContractsCheckBox>True</CodeContractsAssertsToContractsCheckBox>
-    <CodeContractsRedundantTests>True</CodeContractsRedundantTests>
-    <CodeContractsMissingPublicRequiresAsWarnings>True</CodeContractsMissingPublicRequiresAsWarnings>
-    <CodeContractsMissingPublicEnsuresAsWarnings>False</CodeContractsMissingPublicEnsuresAsWarnings>
-    <CodeContractsInferRequires>True</CodeContractsInferRequires>
-    <CodeContractsInferEnsures>False</CodeContractsInferEnsures>
-    <CodeContractsInferEnsuresAutoProperties>True</CodeContractsInferEnsuresAutoProperties>
-    <CodeContractsInferObjectInvariants>False</CodeContractsInferObjectInvariants>
-    <CodeContractsSuggestAssumptions>False</CodeContractsSuggestAssumptions>
-    <CodeContractsSuggestAssumptionsForCallees>False</CodeContractsSuggestAssumptionsForCallees>
-    <CodeContractsSuggestRequires>False</CodeContractsSuggestRequires>
-    <CodeContractsNecessaryEnsures>True</CodeContractsNecessaryEnsures>
-    <CodeContractsSuggestObjectInvariants>False</CodeContractsSuggestObjectInvariants>
-    <CodeContractsSuggestReadonly>True</CodeContractsSuggestReadonly>
-    <CodeContractsRunInBackground>True</CodeContractsRunInBackground>
-    <CodeContractsShowSquigglies>True</CodeContractsShowSquigglies>
-    <CodeContractsUseBaseLine>False</CodeContractsUseBaseLine>
-    <CodeContractsEmitXMLDocs>False</CodeContractsEmitXMLDocs>
-    <CodeContractsCacheAnalysisResults>True</CodeContractsCacheAnalysisResults>
-    <CodeContractsSkipAnalysisIfCannotConnectToCache>False</CodeContractsSkipAnalysisIfCannotConnectToCache>
-    <CodeContractsFailBuildOnWarnings>False</CodeContractsFailBuildOnWarnings>
-    <CodeContractsBeingOptimisticOnExternal>True</CodeContractsBeingOptimisticOnExternal>
-    <CodeContractsRuntimeCheckingLevel>Full</CodeContractsRuntimeCheckingLevel>
-    <CodeContractsReferenceAssembly>%28none%29</CodeContractsReferenceAssembly>
-    <CodeContractsAnalysisWarningLevel>0</CodeContractsAnalysisWarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Release\GameTheory.xml</DocumentationFile>
-    <CodeAnalysisRuleSet>..\Strict.ruleset</CodeAnalysisRuleSet>
-    <CodeAnalysisAdditionalOptions> /assemblycomparemode:StrongNameIgnoringVersion</CodeAnalysisAdditionalOptions>
-    <RunCodeAnalysis>true</RunCodeAnalysis>
-    <Prefer32Bit>false</Prefer32Bit>
+    <CodeAnalysisRuleSet>GameTheory.ruleset</CodeAnalysisRuleSet>
+    <DebugType>Full</DebugType>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <TargetFrameworks>net462;netcoreapp2.0</TargetFrameworks>
+    <Description />
+    <PackageLicenseUrl>https://raw.github.com/otac0n/GameTheory/master/license.md</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/otac0n/GameTheory</PackageProjectUrl>
+    <PackageTags />
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System.Collections.Immutable, Version=1.2.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Collections.Immutable.1.4.0\lib\portable-net45+win8+wp8+wpa81\System.Collections.Immutable.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Catalogs\AssemblyGameCatalog.cs" />
-    <Compile Include="Catalogs\CompositeGameCatalog.cs" />
-    <Compile Include="Catalogs\Game.cs" />
-    <Compile Include="Catalogs\GameCatalog.cs" />
-    <Compile Include="Catalogs\IGame.cs" />
-    <Compile Include="Catalogs\Player.cs" />
-    <Compile Include="Catalogs\PlayerCatalog.cs" />
-    <Compile Include="Games\CenturySpiceRoad\MerchantCards\SpiceCard.cs" />
-    <Compile Include="Games\CenturySpiceRoad\MerchantCards\TradeCard.cs" />
-    <Compile Include="Games\CenturySpiceRoad\MerchantCards\UpgradeCard.cs" />
-    <Compile Include="Games\CenturySpiceRoad\Moves\AcquireMove.cs" />
-    <Compile Include="Games\CenturySpiceRoad\Moves\ClaimMove.cs" />
-    <Compile Include="Games\CenturySpiceRoad\Moves\DiscardSpicesMove.cs" />
-    <Compile Include="Games\CenturySpiceRoad\Moves\PayMove.cs" />
-    <Compile Include="Games\CenturySpiceRoad\Moves\RestMove.cs" />
-    <Compile Include="Games\CenturySpiceRoad\Moves\SpiceCardMove.cs" />
-    <Compile Include="Games\CenturySpiceRoad\Moves\TradeCardMove.cs" />
-    <Compile Include="Games\CenturySpiceRoad\Moves\UpgradeCardMove.cs" />
-    <Compile Include="Games\CenturySpiceRoad\Moves\UpgradeMove.cs" />
-    <Compile Include="Games\CenturySpiceRoad\Moves\YieldUpgradeMove.cs" />
-    <Compile Include="Games\CenturySpiceRoad\GameState.cs" />
-    <Compile Include="Games\CenturySpiceRoad\Inventory.cs" />
-    <Compile Include="Games\CenturySpiceRoad\MerchantCard.cs" />
-    <Compile Include="Games\CenturySpiceRoad\MerchantStall.cs" />
-    <Compile Include="Games\CenturySpiceRoad\Move.cs" />
-    <Compile Include="Games\CenturySpiceRoad\Phase.cs" />
-    <Compile Include="Games\CenturySpiceRoad\PointCard.cs" />
-    <Compile Include="Games\CenturySpiceRoad\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
+    <Compile Update="Games\CenturySpiceRoad\Resources.Designer.cs">
       <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="Games\CenturySpiceRoad\Resources.resx">
+    <EmbeddedResource Update="Games\CenturySpiceRoad\Resources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <Compile Include="Games\CenturySpiceRoad\Spice.cs" />
-    <Compile Include="Games\CenturySpiceRoad\Token.cs" />
-    <Compile Include="Games\Chess\Moves\BasicMove.cs" />
-    <Compile Include="Games\Chess\Moves\CastleMove.cs" />
-    <Compile Include="Games\Chess\Moves\EnPassantCaptureMove.cs" />
-    <Compile Include="Games\Chess\Moves\PromotionMove.cs" />
-    <Compile Include="Games\Chess\Moves\TwoSquareMove.cs" />
-    <Compile Include="Games\Chess\NotationSystems\AlgebraicNotation.cs" />
-    <Compile Include="Games\Chess\NotationSystems\FigurineAlgebraicNotation.cs" />
-    <Compile Include="Games\Chess\NotationSystems\LongAlgebraicNotation.cs" />
-    <Compile Include="Games\Chess\GameState.cs" />
-    <Compile Include="Games\Chess\Move.cs" />
-    <Compile Include="Games\Chess\NotationSystem.cs" />
-    <Compile Include="Games\Chess\Parser.cs" />
-    <Compile Include="Games\Chess\PieceMasks.cs" />
-    <Compile Include="Games\Chess\Pieces.cs" />
-    <Compile Include="Games\Chess\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
+    <Compile Update="Games\Chess\Resources.Designer.cs">
       <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="Games\Chess\Resources.resx">
+    <EmbeddedResource Update="Games\Chess\Resources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <Compile Include="Games\Chess\Variant.cs" />
-    <Compile Include="Games\Draughts\Moves\BasicMove.cs" />
-    <Compile Include="Games\Draughts\Moves\CaptureMove.cs" />
-    <Compile Include="Games\Draughts\Moves\RemovePieceMove.cs" />
-    <Compile Include="Games\Draughts\Moves\YieldCaptureMove.cs" />
-    <Compile Include="Games\Draughts\Moves\YieldRemovePieceMove.cs" />
-    <Compile Include="Games\Draughts\GameState.cs" />
-    <Compile Include="Games\Draughts\Move.cs" />
-    <Compile Include="Games\Draughts\MovePriorities.cs" />
-    <Compile Include="Games\Draughts\Phase.cs" />
-    <Compile Include="Games\Draughts\Pieces.cs" />
-    <Compile Include="Games\Draughts\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
+    <Compile Update="Games\Draughts\Resources.Designer.cs">
       <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="Games\Draughts\Resources.resx">
+    <EmbeddedResource Update="Games\Draughts\Resources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <Compile Include="Games\Draughts\Variant.cs" />
-    <Compile Include="Games\Ergo\Cards\ErgoCard.cs" />
-    <Compile Include="Games\Ergo\Cards\FallacyCard.cs" />
-    <Compile Include="Games\Ergo\Cards\JustificationCard.cs" />
-    <Compile Include="Games\Ergo\Cards\RevolutionCard.cs" />
-    <Compile Include="Games\Ergo\Cards\SymbolCard.cs" />
-    <Compile Include="Games\Ergo\Cards\TabulaRasaCard.cs" />
-    <Compile Include="Games\Ergo\Moves\DealMove.cs" />
-    <Compile Include="Games\Ergo\Moves\DiscardMove.cs" />
-    <Compile Include="Games\Ergo\Moves\DrawCardsMove.cs" />
-    <Compile Include="Games\Ergo\Moves\PlaceSymbolMove.cs" />
-    <Compile Include="Games\Ergo\Moves\PlayErgoMove.cs" />
-    <Compile Include="Games\Ergo\Moves\PlayFallacyMove.cs" />
-    <Compile Include="Games\Ergo\Moves\PlayJustificationMove.cs" />
-    <Compile Include="Games\Ergo\Moves\PlayRevolutionMove.cs" />
-    <Compile Include="Games\Ergo\Moves\PlayTabulaRasaMove.cs" />
-    <Compile Include="Games\Ergo\Card.cs" />
-    <Compile Include="Games\Ergo\Compiler.cs" />
-    <Compile Include="Games\Ergo\GameState.cs" />
-    <Compile Include="Games\Ergo\Move.cs" />
-    <Compile Include="Games\Ergo\Phase.cs" />
-    <Compile Include="Games\Ergo\PlacedCard.cs" />
-    <Compile Include="Games\Ergo\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
+    <Compile Update="Games\Ergo\Resources.Designer.cs">
       <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="Games\Ergo\Resources.resx">
+    <EmbeddedResource Update="Games\Ergo\Resources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <Compile Include="Games\FiveTribes\Djinns\AlAmin.cs" />
-    <Compile Include="Games\FiveTribes\Djinns\AnunNak.cs" />
-    <Compile Include="Games\FiveTribes\Djinns\Baal.cs" />
-    <Compile Include="Games\FiveTribes\Djinns\Boaz.cs" />
-    <Compile Include="Games\FiveTribes\Djinns\Bouraq.cs" />
-    <Compile Include="Games\FiveTribes\Djinns\Dhenim.cs" />
-    <Compile Include="Games\FiveTribes\Djinns\Echidna.cs" />
-    <Compile Include="Games\FiveTribes\Djinns\Enki.cs" />
-    <Compile Include="Games\FiveTribes\Djinns\Hagis.cs" />
-    <Compile Include="Games\FiveTribes\Djinns\Haurvatat.cs" />
-    <Compile Include="Games\FiveTribes\Djinns\Ibus.cs" />
-    <Compile Include="Games\FiveTribes\Djinns\Jafaar.cs" />
-    <Compile Include="Games\FiveTribes\Djinns\Kandicha.cs" />
-    <Compile Include="Games\FiveTribes\Djinns\Kumarbi.cs" />
-    <Compile Include="Games\FiveTribes\Djinns\Lamia.cs" />
-    <Compile Include="Games\FiveTribes\Djinns\Leta.cs" />
-    <Compile Include="Games\FiveTribes\Djinns\Marid.cs" />
-    <Compile Include="Games\FiveTribes\Djinns\Monkir.cs" />
-    <Compile Include="Games\FiveTribes\Djinns\Nekir.cs" />
-    <Compile Include="Games\FiveTribes\Djinns\OnAcquireDjinnBase.cs" />
-    <Compile Include="Games\FiveTribes\Djinns\PayPerActionDjinnBase.cs" />
-    <Compile Include="Games\FiveTribes\Djinns\Shamhat.cs" />
-    <Compile Include="Games\FiveTribes\Djinns\Sibittis.cs" />
-    <Compile Include="Games\FiveTribes\Djinns\Sloar.cs" />
-    <Compile Include="Games\FiveTribes\Djinns\Utug.cs" />
-    <Compile Include="Games\FiveTribes\Moves\AddMeeplesMove.cs" />
-    <Compile Include="Games\FiveTribes\Moves\AssassinateMove.cs" />
-    <Compile Include="Games\FiveTribes\Moves\AssassinatePlayerMove.cs" />
-    <Compile Include="Games\FiveTribes\Moves\BidMove.cs" />
-    <Compile Include="Games\FiveTribes\Moves\ChangePhaseMove.cs" />
-    <Compile Include="Games\FiveTribes\Moves\DoubleAssassinKillCountMove.cs" />
-    <Compile Include="Games\FiveTribes\Moves\DoubleBuilderScoreMove.cs" />
-    <Compile Include="Games\FiveTribes\Moves\DrawDjinnsMove.cs" />
-    <Compile Include="Games\FiveTribes\Moves\DrawTopCardMove.cs" />
-    <Compile Include="Games\FiveTribes\Moves\DropMeepleMove.cs" />
-    <Compile Include="Games\FiveTribes\Moves\EndTurnMove.cs" />
-    <Compile Include="Games\FiveTribes\Moves\MoveTurnMarkerMove.cs" />
-    <Compile Include="Games\FiveTribes\Moves\PayGoldMove.cs" />
-    <Compile Include="Games\FiveTribes\Moves\PayMeeplesAndResourcesMove.cs" />
-    <Compile Include="Games\FiveTribes\Moves\PayMeeplesMove.cs" />
-    <Compile Include="Games\FiveTribes\Moves\PayResourcesMove.cs" />
-    <Compile Include="Games\FiveTribes\Moves\PickUpMeeplesMove.cs" />
-    <Compile Include="Games\FiveTribes\Moves\PickUpTribeMove.cs" />
-    <Compile Include="Games\FiveTribes\Moves\PlaceCamelMove.cs" />
-    <Compile Include="Games\FiveTribes\Moves\PlacePalaceMove.cs" />
-    <Compile Include="Games\FiveTribes\Moves\PlacePalmTreeMove.cs" />
-    <Compile Include="Games\FiveTribes\Moves\ScoreBuildersInHandMove.cs" />
-    <Compile Include="Games\FiveTribes\Moves\SellMerchandiseMove.cs" />
-    <Compile Include="Games\FiveTribes\Moves\TakeDealtDjinnMove.cs" />
-    <Compile Include="Games\FiveTribes\Moves\TakeDjinnMove.cs" />
-    <Compile Include="Games\FiveTribes\Moves\TakeMeeplesInHandMove.cs" />
-    <Compile Include="Games\FiveTribes\Moves\TakeResourceMove.cs" />
-    <Compile Include="Games\FiveTribes\Moves\TradeMerchantsInHandMove.cs" />
-    <Compile Include="Games\FiveTribes\Moves\TradeSlavesForResourceMove.cs" />
-    <Compile Include="Games\FiveTribes\Tiles\BigMarket.cs" />
-    <Compile Include="Games\FiveTribes\Tiles\Oasis.cs" />
-    <Compile Include="Games\FiveTribes\Tiles\SacredPlace.cs" />
-    <Compile Include="Games\FiveTribes\Tiles\SmallMarket.cs" />
-    <Compile Include="Games\FiveTribes\Tiles\Village.cs" />
-    <Compile Include="Games\FiveTribes\AssassinationTable.cs" />
-    <Compile Include="Games\FiveTribes\Cost.cs" />
-    <Compile Include="Games\FiveTribes\Djinn.cs" />
-    <Compile Include="Games\FiveTribes\GameState.cs" />
-    <Compile Include="Games\FiveTribes\InterstitialState.cs" />
-    <Compile Include="Games\FiveTribes\Inventory.cs" />
-    <Compile Include="Games\FiveTribes\Meeple.cs" />
-    <Compile Include="Games\FiveTribes\Move.cs" />
-    <Compile Include="Games\FiveTribes\Phase.cs" />
-    <Compile Include="Games\FiveTribes\Resource.cs" />
-    <Compile Include="Games\FiveTribes\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
+    <Compile Update="Games\FiveTribes\Resources.Designer.cs">
       <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="Games\FiveTribes\Resources.resx">
+    <EmbeddedResource Update="Games\FiveTribes\Resources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <Compile Include="Games\FiveTribes\ScoreTable.cs" />
-    <Compile Include="Games\FiveTribes\Square.cs" />
-    <Compile Include="Games\FiveTribes\Sultanate.cs" />
-    <Compile Include="Games\FiveTribes\Tile.cs" />
-    <Compile Include="Games\FiveTribes\TileColor.cs" />
-    <Compile Include="Games\Lotus\Moves\ClaimScoringTokenMove.cs" />
-    <Compile Include="Games\Lotus\Moves\ClaimSpecialPowerMove.cs" />
-    <Compile Include="Games\Lotus\Moves\DrawCardMove.cs" />
-    <Compile Include="Games\Lotus\Moves\ExchangePetalCardsMove.cs" />
-    <Compile Include="Games\Lotus\Moves\MoveGuardianMove.cs" />
-    <Compile Include="Games\Lotus\Moves\PlayPetalCardsMove.cs" />
-    <Compile Include="Games\Lotus\Moves\TakeWildflowerMove.cs" />
-    <Compile Include="Games\Lotus\Flower.cs" />
-    <Compile Include="Games\Lotus\FlowerType.cs" />
-    <Compile Include="Games\Lotus\GameState.cs" />
-    <Compile Include="Games\Lotus\Inventory.cs" />
-    <Compile Include="Games\Lotus\Move.cs" />
-    <Compile Include="Games\Lotus\PetalCard.cs" />
-    <Compile Include="Games\Lotus\Phase.cs" />
-    <Compile Include="Games\Lotus\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
+    <Compile Update="Games\Lotus\Resources.Designer.cs">
       <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="Games\Lotus\Resources.resx">
+    <EmbeddedResource Update="Games\Lotus\Resources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <Compile Include="Games\Lotus\SpecialPowers.cs" />
-    <Compile Include="Games\Mancala\GameState.cs" />
-    <Compile Include="Games\Mancala\Move.cs" />
-    <Compile Include="Games\Mancala\Phase.cs" />
-    <Compile Include="Games\Mancala\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
+    <Compile Update="Games\Mancala\Resources.Designer.cs">
       <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="Games\Mancala\Resources.resx">
+    <EmbeddedResource Update="Games\Mancala\Resources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <Compile Include="Games\NormalFormGame\Chicken\GameState.cs" />
-    <Compile Include="Games\NormalFormGame\MatchingPennies\GameState.cs" />
-    <Compile Include="Games\NormalFormGame\PrisonersDilemma\GameState.cs" />
-    <Compile Include="Games\NormalFormGame\RockPaperScissors\GameState.cs" />
-    <Compile Include="Games\NormalFormGame\StagHunt\GameState.cs" />
-    <Compile Include="Games\NormalFormGame\GameState.cs" />
-    <Compile Include="Games\NormalFormGame\Move.cs" />
-    <Compile Include="Games\PositivelyPerfectParfaitGame\Moves\ChooseAFlavorMove.cs" />
-    <Compile Include="Games\PositivelyPerfectParfaitGame\Moves\LoseAFlavorMove.cs" />
-    <Compile Include="Games\PositivelyPerfectParfaitGame\Moves\SpinMove.cs" />
-    <Compile Include="Games\PositivelyPerfectParfaitGame\Moves\SwitchAScoopMove.cs" />
-    <Compile Include="Games\PositivelyPerfectParfaitGame\Moves\TakeACherryMove.cs" />
-    <Compile Include="Games\PositivelyPerfectParfaitGame\Flavor.cs" />
-    <Compile Include="Games\PositivelyPerfectParfaitGame\GameState.cs" />
-    <Compile Include="Games\PositivelyPerfectParfaitGame\Move.cs" />
-    <Compile Include="Games\PositivelyPerfectParfaitGame\Parfait.cs" />
-    <Compile Include="Games\PositivelyPerfectParfaitGame\Phase.cs" />
-    <Compile Include="Games\PositivelyPerfectParfaitGame\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
+    <Compile Update="Games\PositivelyPerfectParfaitGame\Resources.Designer.cs">
       <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="Games\PositivelyPerfectParfaitGame\Resources.resx">
+    <EmbeddedResource Update="Games\PositivelyPerfectParfaitGame\Resources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <Compile Include="Games\SevenDragons\Cards\ActionCard.cs" />
-    <Compile Include="Games\SevenDragons\Cards\DragonCard.cs" />
-    <Compile Include="Games\SevenDragons\Cards\MoveACardCard.cs" />
-    <Compile Include="Games\SevenDragons\Cards\RotateGoalsCard.cs" />
-    <Compile Include="Games\SevenDragons\Cards\TradeGoalsCard.cs" />
-    <Compile Include="Games\SevenDragons\Cards\TradeHandsCard.cs" />
-    <Compile Include="Games\SevenDragons\Cards\ZapACardCard.cs" />
-    <Compile Include="Games\SevenDragons\Moves\DiscardCardMove.cs" />
-    <Compile Include="Games\SevenDragons\Moves\DrawCardsMove.cs" />
-    <Compile Include="Games\SevenDragons\Moves\MoveCardMove.cs" />
-    <Compile Include="Games\SevenDragons\Moves\PlaceCardMove.cs" />
-    <Compile Include="Games\SevenDragons\Moves\PlayActionMove.cs" />
-    <Compile Include="Games\SevenDragons\Moves\RotateGoalsMove.cs" />
-    <Compile Include="Games\SevenDragons\Moves\TradeGoalsMove.cs" />
-    <Compile Include="Games\SevenDragons\Moves\TradeHandsMove.cs" />
-    <Compile Include="Games\SevenDragons\Moves\ZapCardMove.cs" />
-    <Compile Include="Games\SevenDragons\Card.cs" />
-    <Compile Include="Games\SevenDragons\Color.cs" />
-    <Compile Include="Games\SevenDragons\GameState.cs" />
-    <Compile Include="Games\SevenDragons\InterstitialState.cs" />
-    <Compile Include="Games\SevenDragons\Inventory.cs" />
-    <Compile Include="Games\SevenDragons\Move.cs" />
-    <Compile Include="Games\SevenDragons\Phase.cs" />
-    <Compile Include="Games\SevenDragons\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
+    <Compile Update="Games\SevenDragons\Resources.Designer.cs">
       <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="Games\SevenDragons\Resources.resx">
+    <EmbeddedResource Update="Games\SevenDragons\Resources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <Compile Include="Games\SevenDragons\RotateDirection.cs" />
-    <Compile Include="Games\Skull\Moves\AddCardMove.cs" />
-    <Compile Include="Games\Skull\Moves\ArrangeCardsMove.cs" />
-    <Compile Include="Games\Skull\Moves\BidMove.cs" />
-    <Compile Include="Games\Skull\Moves\ChooseStartingPlayerMove.cs" />
-    <Compile Include="Games\Skull\Moves\DiscardCardMove.cs" />
-    <Compile Include="Games\Skull\Moves\PassMove.cs" />
-    <Compile Include="Games\Skull\Moves\RemoveCardMove.cs" />
-    <Compile Include="Games\Skull\Moves\RevealCardsMove.cs" />
-    <Compile Include="Games\Skull\Card.cs" />
-    <Compile Include="Games\Skull\GameState.cs" />
-    <Compile Include="Games\Skull\Inventory.cs" />
-    <Compile Include="Games\Skull\Move.cs" />
-    <Compile Include="Games\Skull\Phase.cs" />
-    <Compile Include="Games\Skull\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
+    <Compile Update="Games\Skull\Resources.Designer.cs">
       <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="Games\Skull\Resources.resx">
+    <EmbeddedResource Update="Games\Skull\Resources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <Compile Include="Games\Splendor\Moves\ChooseNobleMove.cs" />
-    <Compile Include="Games\Splendor\Moves\DiscardTokensMove.cs" />
-    <Compile Include="Games\Splendor\Moves\PurchaseFromBoardMove.cs" />
-    <Compile Include="Games\Splendor\Moves\PurchaseFromHandMove.cs" />
-    <Compile Include="Games\Splendor\Moves\ReserveFromBoardMove.cs" />
-    <Compile Include="Games\Splendor\Moves\ReserveFromDeckMove.cs" />
-    <Compile Include="Games\Splendor\Moves\TakeTokensMove.cs" />
-    <Compile Include="Games\Splendor\DevelopmentCard.cs" />
-    <Compile Include="Games\Splendor\GameState.cs" />
-    <Compile Include="Games\Splendor\Inventory.cs" />
-    <Compile Include="Games\Splendor\Move.cs" />
-    <Compile Include="Games\Splendor\Noble.cs" />
-    <Compile Include="Games\Splendor\Phase.cs" />
-    <Compile Include="Games\Splendor\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
+    <Compile Update="Games\Splendor\Resources.Designer.cs">
       <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="Games\Splendor\Resources.resx">
+    <EmbeddedResource Update="Games\Splendor\Resources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <Compile Include="Games\Splendor\Token.cs" />
-    <Compile Include="Games\TicTacToe\GameState.cs" />
-    <Compile Include="Games\TicTacToe\Move.cs" />
-    <Compile Include="Games\TicTacToe\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
+    <Compile Update="Games\TicTacToe\Resources.Designer.cs">
       <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="Games\TicTacToe\Resources.resx">
+    <EmbeddedResource Update="Games\TicTacToe\Resources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <Compile Include="Games\TwentyFortyEight\Moves\ComputerMove.cs" />
-    <Compile Include="Games\TwentyFortyEight\Moves\PlayerMove.cs" />
-    <Compile Include="Games\TwentyFortyEight\GameState.cs" />
-    <Compile Include="Games\TwentyFortyEight\Move.cs" />
-    <Compile Include="Games\TwentyFortyEight\MoveDirection.cs" />
-    <Compile Include="Games\TwentyFortyEight\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
+    <Compile Update="Games\TwentyFortyEight\Resources.Designer.cs">
       <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="Games\TwentyFortyEight\Resources.resx">
+    <EmbeddedResource Update="Games\TwentyFortyEight\Resources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <Compile Include="GameTree\Caches\DictionaryCache.cs" />
-    <Compile Include="GameTree\Caches\NullCache.cs" />
-    <Compile Include="GameTree\Caches\SplayTreeCache.cs" />
-    <Compile Include="GameTree\GameTree.cs" />
-    <Compile Include="GameTree\IGameStateCache.cs" />
-    <Compile Include="GameTree\IScorePlyExtender.cs" />
-    <Compile Include="GameTree\Mainline.cs" />
-    <Compile Include="GameTree\MoveNode.cs" />
-    <Compile Include="GameTree\StateNode.cs" />
-    <Compile Include="Players\MaximizingPlayer\ComparableEqualityComparer.cs" />
-    <Compile Include="Players\MaximizingPlayer\MaximizingPlayer.cs" />
-    <Compile Include="Players\MaximizingPlayer\MaximizingPlayerBase.cs" />
-    <Compile Include="Players\MaximizingPlayer\MisereResultScoringMetric{TMove,TScore}.cs" />
-    <Compile Include="Players\MaximizingPlayer\MonteCarloTreeSearchPlayer.cs" />
-    <Compile Include="Players\MaximizingPlayer\ResultScore.cs" />
-    <Compile Include="Players\MaximizingPlayer\ResultScoringMetric.cs" />
-    <Compile Include="Players\MaximizingPlayer\ResultScoringMetric{TMove,TScore}.cs" />
-    <Compile Include="Players\CenturySpiceRoadMaximizingPlayer.cs" />
-    <Compile Include="Players\ChessMaximizingPlayer.cs" />
-    <Compile Include="Players\DraughtsMaximizingPlayer.cs" />
-    <Compile Include="Players\ErgoMaximizingPlayer.cs" />
-    <Compile Include="Players\FiveTribesMaximizingPlayer.cs" />
-    <Compile Include="Players\LotusMaximizingPlayer.cs" />
-    <Compile Include="Players\MancalaMaximizingPlayer.cs" />
-    <Compile Include="Players\NormalFormGameMaximizingPlayer.cs" />
-    <Compile Include="Players\PositivelyPerfectParfaitGameMaximizingPlayer.cs" />
-    <Compile Include="Players\RandomPlayer.cs" />
-    <Compile Include="Players\SkullMaximizingPlayer.cs" />
-    <Compile Include="Players\SplendorMaximizingPlayer.cs" />
-    <Compile Include="Players\StrategyPlayer.cs" />
-    <Compile Include="Players\TicTacToeMaximizingPlayer.cs" />
-    <Compile Include="Players\TwentyFortyEightMaximizingPlayer.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="..\SharedAssemblyInfo.cs">
-      <Link>Properties\SharedAssemblyInfo.cs</Link>
-    </Compile>
-    <Compile Include="Strategies\CompositeStrategy.cs" />
-    <Compile Include="Strategies\ImmediateWinStrategy.cs" />
-    <Compile Include="Strategies\NullStrategy.cs" />
-    <Compile Include="CachingUtils.cs" />
-    <Compile Include="Combinatorics.cs" />
-    <Compile Include="CompareUtilities.cs" />
-    <CodeAnalysisDictionary Include="..\CustomDictionary.xml">
-      <Link>CustomDictionary.xml</Link>
-    </CodeAnalysisDictionary>
-    <Compile Include="EnumCollection.cs" />
-    <Compile Include="EnumComparer.cs" />
-    <Compile Include="EnumerableExtensions.cs" />
-    <Compile Include="EnumUtilities.cs" />
-    <Compile Include="FormatUtilities.cs" />
-    <Compile Include="GameShuffler.cs" />
-    <Compile Include="GameStateExtensions.cs" />
-    <Compile Include="GameUtilities.cs" />
-    <Compile Include="HashUtilities.cs" />
-    <Compile Include="IGameState.cs" />
-    <Compile Include="IGameStateScoringMetric.cs" />
-    <Compile Include="IMove.cs" />
-    <Compile Include="IPlayer.cs" />
-    <Compile Include="IScoringMetric.cs" />
-    <Compile Include="IStrategy.cs" />
-    <Compile Include="ITokenFormattable.cs" />
-    <Compile Include="IWeighted.cs" />
-    <Compile Include="Maybe.cs" />
-    <Compile Include="MessageSentEventArgs.cs" />
-    <None Include="packages.config">
-      <SubType>Designer</SubType>
-    </None>
-    <Compile Include="PlayerState.cs" />
-    <Compile Include="PlayerToken.cs" />
-    <Compile Include="Point.cs" />
-    <Compile Include="Random.cs" />
-    <Compile Include="ResourceExtensions.cs" />
-    <Compile Include="ScoringMetric.cs" />
-    <Compile Include="SharedResources.Designer.cs">
-      <AutoGen>True</AutoGen>
+    <Compile Update="SharedResources.Designer.cs">
       <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
       <DependentUpon>SharedResources.resx</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="SharedResources.resx">
+    <EmbeddedResource Update="SharedResources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>SharedResources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <Compile Include="Size.cs" />
-    <Compile Include="SplayTreeDictionary.cs" />
-    <Compile Include="StrategyExtensions.cs" />
-    <AdditionalFiles Include="..\stylecop.json">
-      <Link>stylecop.json</Link>
-    </AdditionalFiles>
-    <Compile Include="Weighted.cs" />
-    <Compile Include="Weighted{T}.cs" />
+    <AdditionalFiles Include="..\stylecop.json" Link="stylecop.json" />
+    <AdditionalFiles Include="GameTheory.ruleset" />
   </ItemGroup>
   <ItemGroup>
-    <Analyzer Include="..\packages\StyleCop.Analyzers.1.0.2\analyzers\dotnet\cs\StyleCop.Analyzers.CodeFixes.dll" />
-    <Analyzer Include="..\packages\StyleCop.Analyzers.1.0.2\analyzers\dotnet\cs\StyleCop.Analyzers.dll" />
+    <PackageReference Include="FixMe" Version="1.0.0" PrivateAssets="All" />
+    <PackageReference Include="GitVersionTask" Version="4.0.0" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.6.3" PrivateAssets="All" />
+    <PackageReference Include="StyleCop.Analyzers" Version="1.1.118" PrivateAssets="All" />
+    <PackageReference Include="System.Collections.Immutable" Version="1.5.0" />
   </ItemGroup>
-  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
-  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
-  <Import Project="..\packages\FixMe.0.1.1\build\FixMe.targets" Condition="Exists('..\packages\FixMe.0.1.1\build\FixMe.targets')" />
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\packages\FixMe.0.1.1\build\FixMe.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\FixMe.0.1.1\build\FixMe.targets'))" />
-  </Target>
 </Project>
