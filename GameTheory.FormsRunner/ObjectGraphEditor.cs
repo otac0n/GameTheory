@@ -70,12 +70,7 @@ namespace GameTheory.FormsRunner
             var staticProperties = baseTypes.SelectMany(bt => bt.GetProperties(BindingFlags.Public | BindingFlags.Static).Where(p => p.CanRead));
             var readableStaticMembers = staticFields.Cast<MemberInfo>().Concat(staticProperties).ToList();
 
-            var propertiesTable = new TableLayoutPanel
-            {
-                AutoSize = true,
-                ColumnCount = 2,
-                RowCount = Math.Max(1, readableMembers.Count),
-            };
+            var propertiesTable = MakeTablePanel(Math.Max(1, readableMembers.Count), 2);
 
             propertiesTable.SuspendLayout();
 
@@ -110,10 +105,7 @@ namespace GameTheory.FormsRunner
                             {
                                 var range = Enumerable.Range(0, (int)v(countProperty, value));
 
-                                var flowPanel = new FlowLayoutPanel
-                                {
-                                    AutoSize = true,
-                                };
+                                var flowPanel = MakeFlowPanel();
 
                                 flowPanel.SuspendLayout();
 
@@ -168,12 +160,7 @@ namespace GameTheory.FormsRunner
                                             from y in Enumerable.Range(0, height)
                                             select new { x, y };
 
-                                var tablePanel = new TableLayoutPanel
-                                {
-                                    AutoSize = true,
-                                    ColumnCount = Math.Max(1, width),
-                                    RowCount = Math.Max(1, height),
-                                };
+                                var tablePanel = MakeTablePanel(Math.Max(1, height), Math.Max(1, width));
 
                                 tablePanel.SuspendLayout();
 
@@ -302,12 +289,7 @@ namespace GameTheory.FormsRunner
                                        select new { order = 1, selection = new InitializerSelection(staticProperty.Name, accessor, noParameters) };
                 var rootOptions = constructors.Concat(staticProperties).OrderBy(s => s.order).Select(s => s.selection).ToArray();
 
-                var propertiesTable = new TableLayoutPanel
-                {
-                    AutoSize = true,
-                    ColumnCount = 2,
-                    RowCount = 1,
-                };
+                var propertiesTable = MakeTablePanel(1, 2);
 
                 var constructorList = new ComboBox
                 {
@@ -410,12 +392,7 @@ namespace GameTheory.FormsRunner
                     constructorList.SelectedIndex = 0;
                 }
 
-                var control = new TableLayoutPanel
-                {
-                    AutoSize = true,
-                    ColumnCount = 1,
-                    RowCount = 2,
-                };
+                var control = MakeTablePanel(2, 1);
                 control.Controls.Add(constructorList, 0, 0);
                 control.Controls.Add(propertiesTable, 0, 1);
 
@@ -425,10 +402,24 @@ namespace GameTheory.FormsRunner
             }
         }
 
+        public static FlowLayoutPanel MakeFlowPanel() => new FlowLayoutPanel
+        {
+            AutoSize = true,
+            Margin = Padding.Empty,
+        };
+
         public static Label MakeLabel(string text) => new Label
         {
             Text = text,
             AutoSize = true,
+            Margin = Padding.Empty,
+        };
+
+        public static TableLayoutPanel MakeTablePanel(int rows, int columns) => new TableLayoutPanel
+        {
+            AutoSize = true,
+            RowCount = rows,
+            ColumnCount = columns,
         };
 
         private static string Extend(string path, string name) => string.IsNullOrEmpty(path) ? name : $"{path}.{name}";
@@ -512,11 +503,7 @@ namespace GameTheory.FormsRunner
                 var keyType = typeArguments[0];
                 var valueType = typeArguments[1];
 
-                var tablePanel = new TableLayoutPanel
-                {
-                    AutoSize = true,
-                    ColumnCount = 2,
-                };
+                var tablePanel = MakeTablePanel(1, 2);
 
                 tablePanel.SuspendLayout();
 
@@ -624,10 +611,7 @@ namespace GameTheory.FormsRunner
                     ? type.GetElementType()
                     : type.GetGenericArguments().Single();
 
-                var flowPanel = new FlowLayoutPanel
-                {
-                    AutoSize = true,
-                };
+                var flowPanel = MakeFlowPanel();
 
                 flowPanel.SuspendLayout();
 
@@ -689,10 +673,7 @@ namespace GameTheory.FormsRunner
 
             public override Control Create(string path, string name, Type type, object value, IReadOnlyList<Display> overrideDisplays)
             {
-                var flowPanel = new FlowLayoutPanel
-                {
-                    AutoSize = true,
-                };
+                var flowPanel = MakeFlowPanel();
 
                 flowPanel.SuspendLayout();
 
