@@ -5,18 +5,12 @@ namespace GameTheory.Catalogs
     using System;
     using System.Collections.Generic;
     using System.Collections.Immutable;
-    using System.Reflection;
 
     /// <summary>
     /// Provides enumeration for games in an assembly.
     /// </summary>
     public abstract class GameCatalog
     {
-        /// <summary>
-        /// Gets the default game catalog.
-        /// </summary>
-        public static readonly GameCatalog Default = new AssemblyGameCatalog(typeof(IGameState<>).Assembly);
-
         private readonly Lazy<ImmutableList<IGame>> availableGames;
 
         /// <summary>

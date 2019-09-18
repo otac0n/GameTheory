@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="..\SharedAssemblyInfo.props" />
+  <PropertyGroup>
+    <CodeAnalysisRuleSet>GameTheory.ConsoleRunner.Shared.ruleset</CodeAnalysisRuleSet>
+    <DebugType>Full</DebugType>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <TargetFrameworks>net462;netcoreapp2.0</TargetFrameworks>
+    <Description />
+    <PackageLicenseUrl>https://raw.github.com/otac0n/GameTheory/master/license.md</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/otac0n/GameTheory</PackageProjectUrl>
+    <PackageTags />
+  </PropertyGroup>
+  <ItemGroup>
+    <AdditionalFiles Include="..\stylecop.json" Link="stylecop.json" />
+    <AdditionalFiles Include="GameTheory.ConsoleRunner.Shared.ruleset" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\GameTheory\GameTheory.csproj" />
+  </ItemGroup>
+</Project>

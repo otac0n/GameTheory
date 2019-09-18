@@ -1,4 +1,4 @@
-﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Tests.Players
 {
@@ -7,7 +7,7 @@ namespace GameTheory.Tests.Players
     using System.Threading;
     using System.Threading.Tasks;
     using GameTheory.Games.TicTacToe;
-    using GameTheory.Players.MaximizingPlayers;
+    using GameTheory.Games.TicTacToe.Players.MaximizingPlayers;
     using NUnit.Framework;
 
     [TestFixture]

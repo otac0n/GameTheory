@@ -13,17 +13,12 @@ namespace GameTheory.Catalogs
     /// </summary>
     public sealed class PlayerCatalog
     {
-        /// <summary>
-        /// Gets the default game catalog.
-        /// </summary>
-        public static readonly PlayerCatalog Default = new PlayerCatalog(typeof(IGameState<>).GetTypeInfo().Assembly);
-
         private readonly ImmutableList<Assembly> assemblies;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PlayerCatalog"/> class.
         /// </summary>
-        /// <param name="assemblies">The assemblies to search for games</param>
+        /// <param name="assemblies">The assemblies to search for players.</param>
         public PlayerCatalog(params Assembly[] assemblies)
             : this((IEnumerable<Assembly>)assemblies)
         {
@@ -32,7 +27,7 @@ namespace GameTheory.Catalogs
         /// <summary>
         /// Initializes a new instance of the <see cref="PlayerCatalog"/> class.
         /// </summary>
-        /// <param name="assemblies">The assemblies to search for games</param>
+        /// <param name="assemblies">The assemblies to search for players.</param>
         public PlayerCatalog(IEnumerable<Assembly> assemblies)
         {
             this.assemblies = (assemblies ?? throw new ArgumentNullException(nameof(assemblies))).ToImmutableList();
