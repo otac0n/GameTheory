@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="..\SharedAssemblyInfo.props" />
+  <PropertyGroup>
+    <CodeAnalysisRuleSet>GameTheory.Games.Skull.ruleset</CodeAnalysisRuleSet>
+    <DebugType>Full</DebugType>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <TargetFrameworks>net462;netcoreapp2.0</TargetFrameworks>
+    <Description />
+    <PackageLicenseUrl>https://raw.github.com/otac0n/GameTheory/master/license.md</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/otac0n/GameTheory</PackageProjectUrl>
+    <PackageTags />
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Update="Resources.Designer.cs">
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <EmbeddedResource Update="Resources.resx">
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <Generator>PublicResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
+    <AdditionalFiles Include="..\stylecop.json" Link="stylecop.json" />
+    <AdditionalFiles Include="GameTheory.Games.Skull.ruleset" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Weave" Version="2.0.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\GameTheory.ConsoleRunner.Shared\GameTheory.ConsoleRunner.Shared.csproj" />
+    <ProjectReference Include="..\GameTheory\GameTheory.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <WeaveTemplate Include="Console\GameState.weave" />
+  </ItemGroup>
+</Project>

@@ -29,19 +29,19 @@ namespace GameTheory.FormsRunner
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.Button nextButton;
             System.Windows.Forms.Button cancelButton;
             System.Windows.Forms.TabPage gameTab;
             System.Windows.Forms.Label searchLabel;
             System.Windows.Forms.TabPage playersTab;
+            this.nextButton = new System.Windows.Forms.Button();
             this.searchResults = new System.Windows.Forms.ListView();
             this.searchBox = new System.Windows.Forms.TextBox();
+            this.playersTable = new System.Windows.Forms.TableLayoutPanel();
             this.configurationTab = new System.Windows.Forms.TabPage();
             this.wizardTabs = new System.Windows.Forms.TabControl();
             this.backButton = new System.Windows.Forms.Button();
             this.errorProvider = new System.Windows.Forms.ErrorProvider(this.components);
-            this.playersTable = new System.Windows.Forms.TableLayoutPanel();
-            nextButton = new System.Windows.Forms.Button();
+            this.finishButton = new System.Windows.Forms.Button();
             cancelButton = new System.Windows.Forms.Button();
             gameTab = new System.Windows.Forms.TabPage();
             searchLabel = new System.Windows.Forms.Label();
@@ -54,14 +54,14 @@ namespace GameTheory.FormsRunner
             // 
             // nextButton
             // 
-            nextButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            nextButton.Location = new System.Drawing.Point(284, 378);
-            nextButton.Name = "nextButton";
-            nextButton.Size = new System.Drawing.Size(75, 23);
-            nextButton.TabIndex = 1;
-            nextButton.Text = "&Next >";
-            nextButton.UseVisualStyleBackColor = true;
-            nextButton.Click += new System.EventHandler(this.NextButton_Click);
+            this.nextButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.nextButton.Location = new System.Drawing.Point(203, 378);
+            this.nextButton.Name = "nextButton";
+            this.nextButton.Size = new System.Drawing.Size(75, 23);
+            this.nextButton.TabIndex = 2;
+            this.nextButton.Text = "&Next >";
+            this.nextButton.UseVisualStyleBackColor = true;
+            this.nextButton.Click += new System.EventHandler(this.NextButton_Click);
             // 
             // cancelButton
             // 
@@ -71,7 +71,7 @@ namespace GameTheory.FormsRunner
             cancelButton.Margin = new System.Windows.Forms.Padding(12, 3, 3, 3);
             cancelButton.Name = "cancelButton";
             cancelButton.Size = new System.Drawing.Size(75, 23);
-            cancelButton.TabIndex = 2;
+            cancelButton.TabIndex = 4;
             cancelButton.Text = "&Cancel";
             cancelButton.UseVisualStyleBackColor = true;
             cancelButton.Click += new System.EventHandler(this.CancelButton_Click);
@@ -102,6 +102,7 @@ namespace GameTheory.FormsRunner
             this.searchResults.UseCompatibleStateImageBehavior = false;
             this.searchResults.View = System.Windows.Forms.View.List;
             this.searchResults.ItemSelectionChanged += new System.Windows.Forms.ListViewItemSelectionChangedEventHandler(this.SearchResults_ItemSelectionChanged);
+            this.searchResults.DoubleClick += new System.EventHandler(this.SearchResults_DoubleClick);
             // 
             // searchLabel
             // 
@@ -135,6 +136,19 @@ namespace GameTheory.FormsRunner
             playersTab.Text = "Players";
             playersTab.UseVisualStyleBackColor = true;
             // 
+            // playersTable
+            // 
+            this.playersTable.ColumnCount = 2;
+            this.playersTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.playersTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.playersTable.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.playersTable.Location = new System.Drawing.Point(3, 3);
+            this.playersTable.Name = "playersTable";
+            this.playersTable.RowCount = 1;
+            this.playersTable.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.playersTable.Size = new System.Drawing.Size(423, 328);
+            this.playersTable.TabIndex = 0;
+            // 
             // configurationTab
             // 
             this.configurationTab.Location = new System.Drawing.Point(4, 22);
@@ -163,10 +177,10 @@ namespace GameTheory.FormsRunner
             // backButton
             // 
             this.backButton.Enabled = false;
-            this.backButton.Location = new System.Drawing.Point(203, 378);
+            this.backButton.Location = new System.Drawing.Point(122, 378);
             this.backButton.Name = "backButton";
             this.backButton.Size = new System.Drawing.Size(75, 23);
-            this.backButton.TabIndex = 3;
+            this.backButton.TabIndex = 1;
             this.backButton.Text = "< &Back";
             this.backButton.UseVisualStyleBackColor = true;
             this.backButton.Click += new System.EventHandler(this.BackButton_Click);
@@ -175,30 +189,29 @@ namespace GameTheory.FormsRunner
             // 
             this.errorProvider.ContainerControl = this;
             // 
-            // playersTable
+            // finishButton
             // 
-            this.playersTable.ColumnCount = 2;
-            this.playersTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.playersTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.playersTable.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.playersTable.Location = new System.Drawing.Point(3, 3);
-            this.playersTable.Name = "playersTable";
-            this.playersTable.RowCount = 1;
-            this.playersTable.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.playersTable.Size = new System.Drawing.Size(423, 328);
-            this.playersTable.TabIndex = 0;
+            this.finishButton.Enabled = false;
+            this.finishButton.Location = new System.Drawing.Point(284, 378);
+            this.finishButton.Name = "finishButton";
+            this.finishButton.Size = new System.Drawing.Size(75, 23);
+            this.finishButton.TabIndex = 3;
+            this.finishButton.Text = "&Finish";
+            this.finishButton.UseVisualStyleBackColor = true;
+            this.finishButton.Click += new System.EventHandler(this.FinishButton_Click);
             // 
             // NewGameForm
             // 
-            this.AcceptButton = nextButton;
+            this.AcceptButton = this.finishButton;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = cancelButton;
             this.ClientSize = new System.Drawing.Size(461, 413);
+            this.Controls.Add(this.finishButton);
             this.Controls.Add(this.backButton);
             this.Controls.Add(this.wizardTabs);
             this.Controls.Add(cancelButton);
-            this.Controls.Add(nextButton);
+            this.Controls.Add(this.nextButton);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "NewGameForm";
@@ -225,5 +238,7 @@ namespace GameTheory.FormsRunner
         private System.Windows.Forms.TabPage configurationTab;
         private System.Windows.Forms.ErrorProvider errorProvider;
         private System.Windows.Forms.TableLayoutPanel playersTable;
+        private System.Windows.Forms.Button finishButton;
+        private System.Windows.Forms.Button nextButton;
     }
 }

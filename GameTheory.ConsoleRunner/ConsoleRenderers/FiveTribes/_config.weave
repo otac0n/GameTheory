@@ -1,6 +1,0 @@
-﻿@using System.Collections.Immutable
-@using System.Linq
-@using System.Text.RegularExpressions
-@using GameTheory.Games.FiveTribes
-@namespace GameTheory.ConsoleRunner.ConsoleRenderers.FiveTribes
-@static false

@@ -1,4 +1,4 @@
-﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.ConsoleRunner
 {
@@ -6,8 +6,8 @@ namespace GameTheory.ConsoleRunner
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-    using GameTheory.ConsoleRunner.ConsoleRenderers;
     using GameTheory.ConsoleRunner.Properties;
+    using GameTheory.ConsoleRunner.Shared;
 
     /// <summary>
     /// Implements a player who interacts with the game state via the processes console.
@@ -22,10 +22,11 @@ namespace GameTheory.ConsoleRunner
         /// Initializes a new instance of the <see cref="ConsolePlayer{TMove}"/> class.
         /// </summary>
         /// <param name="playerToken">The player token that represents the player.</param>
-        public ConsolePlayer(PlayerToken playerToken)
+        /// <param name="renderer">The console renderer to use.</param>
+        public ConsolePlayer(PlayerToken playerToken, IConsoleRenderer<TMove> renderer)
         {
             this.PlayerToken = playerToken;
-            this.renderer = ConsoleRenderer.Default<TMove>();
+            this.renderer = renderer;
         }
 
         /// <inheritdoc />
@@ -41,7 +42,7 @@ namespace GameTheory.ConsoleRunner
         /// <inheritdoc />
         public async Task<Maybe<TMove>> ChooseMove(IGameState<TMove> state, CancellationToken cancel)
         {
-            var playerColor = ConsoleInteraction.GetPlayerColor(state, this.PlayerToken);
+            var playerColor = Shared.ConsoleInteraction.GetPlayerColor(state, this.PlayerToken);
 
             await Task.Yield();
 
@@ -50,7 +51,7 @@ namespace GameTheory.ConsoleRunner
             {
                 return ConsoleInteraction.WithLock(() =>
                 {
-                    ConsoleInteraction.WithColor(playerColor, () =>
+                    Shared.ConsoleInteraction.WithColor(playerColor, () =>
                     {
                         Console.WriteLine(Resources.CurrentState);
                     });
@@ -62,12 +63,12 @@ namespace GameTheory.ConsoleRunner
                     var result = default(Maybe<TMove>);
                     var originalColor = Console.ForegroundColor;
 
-                    ConsoleInteraction.WithColor(playerColor, () =>
+                    Shared.ConsoleInteraction.WithColor(playerColor, () =>
                     {
                         cancel.ThrowIfCancellationRequested();
                         result = ConsoleInteraction.Choose(moves.ToArray(), cancel, m =>
                         {
-                            ConsoleInteraction.WithColor(originalColor, () =>
+                            Shared.ConsoleInteraction.WithColor(originalColor, () =>
                             {
                                 this.renderer.Show(state, m);
                             });

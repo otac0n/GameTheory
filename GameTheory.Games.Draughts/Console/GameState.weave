@@ -1,0 +1,12 @@
+@using System.Linq
+@using GameTheory.ConsoleRunner.Shared
+@namespace GameTheory.Games.Draughts.Console
+@static false
+@model GameState
+{{= BoxDrawing.DownAndRight }}{{each x in Enumerable.Range(0, model.Variant.Width)}}{{= BoxDrawing.Horizontal }}{{delimit}}{{= BoxDrawing.DownAndHorizontal }}{{/each}}{{= BoxDrawing.DownAndLeft }}
+{{each y in Enumerable.Range(0, model.Variant.Height)}}
+  {{= BoxDrawing.Vertical }}{{each x in Enumerable.Range(0, model.Variant.Width)}}{{= model.GetPieceAt(x, y)}}{{delimit}}{{= BoxDrawing.Vertical }}{{/each}}{{= BoxDrawing.Vertical }}
+{{delimit}}
+  {{= BoxDrawing.VerticalAndRight }}{{each x in Enumerable.Range(0, model.Variant.Width)}}{{= BoxDrawing.Horizontal }}{{delimit}}{{= BoxDrawing.VerticalAndHorizontal }}{{/each}}{{= BoxDrawing.VerticalAndLeft }}
+{{/each}}
+{{= BoxDrawing.UpAndRight }}{{each x in Enumerable.Range(0, model.Variant.Width)}}{{= BoxDrawing.Horizontal }}{{delimit}}{{= BoxDrawing.UpAndHorizontal }}{{/each}}{{= BoxDrawing.UpAndLeft }}

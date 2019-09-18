@@ -3,8 +3,10 @@
 namespace GameTheory.FormsRunner
 {
     using System;
+    using System.Collections.Generic;
     using System.ComponentModel;
     using System.IO;
+    using System.Linq;
     using System.Reflection;
     using System.Windows.Forms;
     using GameTheory.Catalogs;
@@ -14,19 +16,24 @@ namespace GameTheory.FormsRunner
     /// </summary>
     public static class Program
     {
+        private static readonly IReadOnlyList<Assembly> GameAssemblies =
+            (from file in Directory.EnumerateFiles(Environment.CurrentDirectory, "GameTheory.Games.*.dll")
+             select Assembly.LoadFrom(file)).ToList().AsReadOnly();
+
+        private static readonly IReadOnlyList<Assembly> PlayerAssemblies =
+            GameAssemblies.Concat(new[] { typeof(IGameState<>).Assembly }).ToList().AsReadOnly();
+
         /// <summary>
-        /// The shared static game catalog for the application.
+        /// Gets the shared static game catalog for the application.
         /// </summary>
-        public static readonly GameCatalog GameCatalog = new CompositeGameCatalog(
-            GameCatalog.Default,
+        public static GameCatalog GameCatalog { get; } = new CompositeGameCatalog(
+            new AssemblyGameCatalog(GameAssemblies),
             new Gdl.GdlGameCatalog(Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, "..", "..", ".."))));
 
         /// <summary>
-        /// The shared static player catalong for the application.
+        /// Gets the shared static player catalong for the application.
         /// </summary>
-        public static readonly PlayerCatalog PlayerCatalog = new PlayerCatalog(
-            Assembly.GetExecutingAssembly(),
-            typeof(IGameState<>).Assembly);
+        public static PlayerCatalog PlayerCatalog { get; } = new PlayerCatalog(PlayerAssemblies);
 
         /// <summary>
         /// The main entry point for the application.

@@ -11,6 +11,7 @@ namespace GameTheory.FormsRunner
     using System.Threading.Tasks;
     using System.Windows.Forms;
     using GameTheory.Catalogs;
+    using GameTheory.FormsRunner.Shared;
 
     public partial class NewGameForm : Form
     {
@@ -125,7 +126,10 @@ namespace GameTheory.FormsRunner
 
         protected virtual void OnPlayerInstancesChanged()
         {
-            this.PlayerInstancesChanged?.Invoke(this, new PlayerInstancesChangedEventArgs(this.PlayerInstances));
+            var playerInstances = this.PlayerInstances;
+            this.PlayerInstancesChanged?.Invoke(this, new PlayerInstancesChangedEventArgs(playerInstances));
+
+            this.finishButton.Enabled = playerInstances != null && playerInstances.All(p => p != null);
         }
 
         protected virtual void OnSelectedGameChanged()
@@ -310,13 +314,16 @@ namespace GameTheory.FormsRunner
             }
         }
 
-        private void CancelButton_Click(object sender, EventArgs e)
+        private void NextButton_Click(object sender, EventArgs e)
         {
-            this.DialogResult = DialogResult.Cancel;
-            this.Hide();
+            var ix = this.wizardTabs.SelectedIndex;
+            if (ix < this.wizardTabs.TabCount - 1)
+            {
+                this.wizardTabs.SelectedIndex = ix + 1;
+            }
         }
 
-        private void Finish()
+        private void FinishButton_Click(object sender, EventArgs e)
         {
             if (true)
             {
@@ -329,13 +336,15 @@ namespace GameTheory.FormsRunner
             }
         }
 
-        private void NewGameForm_FormClosing(object sender, FormClosingEventArgs e)
+        private void CancelButton_Click(object sender, EventArgs e)
         {
-            if (e.CloseReason == CloseReason.UserClosing)
-            {
-                e.Cancel = true;
-                this.CancelButton_Click(sender, e);
-            }
+            this.DialogResult = DialogResult.Cancel;
+            this.Hide();
+        }
+
+        private void SearchResults_DoubleClick(object sender, EventArgs e)
+        {
+            this.NextButton_Click(sender, e);
         }
 
         private void NewGameForm_Shown(object sender, EventArgs e)
@@ -344,16 +353,12 @@ namespace GameTheory.FormsRunner
             this.wizardTabs.SelectedIndex = 0;
         }
 
-        private void NextButton_Click(object sender, EventArgs e)
+        private void NewGameForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            var ix = this.wizardTabs.SelectedIndex;
-            if (ix < this.wizardTabs.TabCount - 1)
+            if (e.CloseReason == CloseReason.UserClosing)
             {
-                this.wizardTabs.SelectedIndex = ix + 1;
-            }
-            else
-            {
-                this.Finish();
+                e.Cancel = true;
+                this.CancelButton_Click(sender, e);
             }
         }
 
@@ -429,9 +434,8 @@ namespace GameTheory.FormsRunner
         private void WizardTabs_SelectedIndexChanged(object sender, EventArgs e)
         {
             var ix = this.wizardTabs.SelectedIndex;
-
-            // TODO: set "Finish" button text.
             this.backButton.Enabled = ix != 0;
+            this.nextButton.Enabled = ix != this.wizardTabs.TabCount - 1;
         }
 
         /// <summary>
