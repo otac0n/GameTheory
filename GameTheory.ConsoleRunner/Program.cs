@@ -12,6 +12,7 @@ namespace GameTheory.ConsoleRunner
     using GameTheory.Catalogs;
     using GameTheory.ConsoleRunner.Properties;
     using GameTheory.ConsoleRunner.Shared;
+    using GameTheory.ConsoleRunner.Shared.Catalogs;
 
     internal class Program
     {

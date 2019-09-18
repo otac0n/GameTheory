@@ -1,13 +1,12 @@
 // Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
-namespace GameTheory.Catalogs
+namespace GameTheory.ConsoleRunner.Shared.Catalogs
 {
     using System;
     using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Linq;
     using System.Reflection;
-    using GameTheory.ConsoleRunner.Shared;
 
     /// <summary>
     /// Provides enumeration for console renderers in an assembly.
