@@ -72,7 +72,6 @@
     <None Include="App.config" />
     <Compile Include="ConsoleInteraction.cs" />
     <Compile Include="ConsolePlayer.cs" />
-    <Compile Include="ConsoleRenderers.cs" />
     <CodeAnalysisDictionary Include="..\CustomDictionary.xml">
       <Link>CustomDictionary.xml</Link>
     </CodeAnalysisDictionary>

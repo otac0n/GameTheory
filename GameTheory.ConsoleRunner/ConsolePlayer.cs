@@ -22,10 +22,11 @@ namespace GameTheory.ConsoleRunner
         /// Initializes a new instance of the <see cref="ConsolePlayer{TMove}"/> class.
         /// </summary>
         /// <param name="playerToken">The player token that represents the player.</param>
-        public ConsolePlayer(PlayerToken playerToken)
+        /// <param name="renderer">The console renderer to use.</param>
+        public ConsolePlayer(PlayerToken playerToken, IConsoleRenderer<TMove> renderer)
         {
             this.PlayerToken = playerToken;
-            this.renderer = ConsoleRenderers.Default<TMove>();
+            this.renderer = renderer;
         }
 
         /// <inheritdoc />

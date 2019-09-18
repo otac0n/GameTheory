@@ -15,9 +15,15 @@ namespace GameTheory.ConsoleRunner
 
     internal class Program
     {
-        private static readonly IReadOnlyList<Assembly> Assemblies =
+        private static readonly IReadOnlyList<Assembly> GameAssemblies =
             (from file in Directory.EnumerateFiles(Environment.CurrentDirectory, "GameTheory.Games.*.dll")
              select Assembly.LoadFrom(file)).ToList().AsReadOnly();
+
+        private static readonly IReadOnlyList<Assembly> PlayerAssemblies =
+            GameAssemblies.Concat(new[] { typeof(IGameState<>).Assembly }).ToList().AsReadOnly();
+
+        private static readonly IReadOnlyList<Assembly> RendererAssemblies =
+            GameAssemblies.Concat(new[] { typeof(BaseConsoleRenderer<>).Assembly }).ToList().AsReadOnly();
 
         private static object ConstructType(Type type, Func<ParameterInfo, object> getParameter = null)
         {
@@ -136,7 +142,7 @@ namespace GameTheory.ConsoleRunner
             NativeMethods.SetConsoleFont();
             NativeMethods.Maximize();
 
-            var catalog = new AssemblyGameCatalog(Assemblies);
+            var catalog = new AssemblyGameCatalog(GameAssemblies);
             var game = ConsoleInteraction.Choose(catalog.AvailableGames);
             var gameType = game.GameStateType;
             var state = ConstructType(gameType);
@@ -153,9 +159,10 @@ namespace GameTheory.ConsoleRunner
             where TMove : IMove
         {
             Console.WriteLine(Resources.GamePlayerCount, string.Format(state.Players.Count == 1 ? Resources.SingularPlayer : Resources.PluralPlayers, state.Players.Count));
-            var catalog = new PlayerCatalog(Assemblies.Concat(new[] { Assembly.GetExecutingAssembly(), typeof(IGameState<>).Assembly, typeof(BaseConsoleRenderer<>).Assembly }));
+            var catalog = new PlayerCatalog(PlayerAssemblies);
             var players = catalog.FindPlayers(typeof(TMove));
-            var consoleRenderer = ConsoleRenderers.Default<TMove>();
+            var rendererCatalog = new ConsoleRendererCatalog(RendererAssemblies);
+            var consoleRenderer = rendererCatalog.CreateConsoleRenderer<TMove>();
             var font = consoleRenderer.GetType().GetCustomAttributes(inherit: true).OfType<ConsoleFontAttribute>().FirstOrDefault();
             if (font != null)
             {
