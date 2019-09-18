@@ -11,6 +11,7 @@ namespace GameTheory.FormsRunner
     using System.Threading.Tasks;
     using System.Windows.Forms;
     using GameTheory.Catalogs;
+    using GameTheory.FormsRunner.Shared;
 
     public partial class NewGameForm : Form
     {

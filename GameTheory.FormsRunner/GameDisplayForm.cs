@@ -7,20 +7,25 @@ namespace GameTheory.FormsRunner
     using System.Drawing;
     using System.Linq;
     using System.Windows.Forms;
+    using GameTheory.FormsRunner.Shared;
+    using GameTheory.FormsRunner.Shared.Catalogs;
 
     public partial class GameDisplayForm : Form
     {
-        private readonly IReadOnlyList<ObjectGraphEditor.Display> displays;
+        private readonly IReadOnlyList<Display> displays;
 
         public GameDisplayForm(IGameInfo gameInfo)
         {
             this.InitializeComponent();
             this.GameInfo = gameInfo;
             this.GameInfo.Move += this.GameInfo_Move;
-            this.displays = new List<ObjectGraphEditor.Display>
+            var type = this.GameInfo.Game.GameStateType;
+            var displays = new List<Display>
             {
                 new PlayerTokenDisplay(this.GameInfo),
             };
+            displays.AddRange(new DisplayCatalog(type.Assembly).GetDisplays(type));
+            this.displays = displays;
             this.RefreshDisplay();
         }
 
@@ -38,7 +43,7 @@ namespace GameTheory.FormsRunner
             this.splitContainer.Panel1.Controls.Add(control);
         }
 
-        private class PlayerTokenDisplay : ObjectGraphEditor.Display
+        private class PlayerTokenDisplay : Display
         {
             private IGameInfo gameInfo;
 
@@ -75,7 +80,7 @@ namespace GameTheory.FormsRunner
             public override bool CanDisplay(string path, string name, Type type, object value) =>
                 value is PlayerToken playerToken && this.gameInfo.PlayerTokens.Contains(playerToken);
 
-            public override Control Create(string path, string name, Type type, object value, IReadOnlyList<ObjectGraphEditor.Display> overrideDisplays)
+            public override Control Create(string path, string name, Type type, object value, IReadOnlyList<Display> overrideDisplays)
             {
                 var playerToken = (PlayerToken)value;
                 var label = ObjectGraphEditor.MakeLabel(this.gameInfo.PlayerNames[this.gameInfo.PlayerTokens.IndexOf(playerToken)]);

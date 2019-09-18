@@ -109,7 +109,6 @@
     <EmbeddedResource Include="NewGameForm.resx">
       <DependentUpon>NewGameForm.cs</DependentUpon>
     </EmbeddedResource>
-    <Compile Include="ObjectGraphEditor.cs" />
     <None Include="packages.config" />
     <Compile Include="Program.cs" />
     <AdditionalFiles Include="..\stylecop.json">
@@ -121,6 +120,10 @@
     <Analyzer Include="..\packages\StyleCop.Analyzers.1.1.118\analyzers\dotnet\cs\StyleCop.Analyzers.dll" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\GameTheory.FormsRunner.Shared\GameTheory.FormsRunner.Shared.csproj">
+      <Project>{716159d8-70af-4337-af39-82e322aa90a3}</Project>
+      <Name>GameTheory.FormsRunner.Shared</Name>
+    </ProjectReference>
     <ProjectReference Include="..\GameTheory\GameTheory.csproj">
       <Project>{3b3e3456-b950-44c1-b8a2-fe6c79c2232f}</Project>
       <Name>GameTheory</Name>
