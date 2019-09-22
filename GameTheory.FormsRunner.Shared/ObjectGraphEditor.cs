@@ -291,17 +291,19 @@ namespace GameTheory.FormsRunner.Shared
             }
             else
             {
+                var noParameters = new InitializerParameter[0];
+                var nullValues = new[] { new { order = 0, selection = new InitializerSelection("(null)", args => null, noParameters) } }.ToList();
+                nullValues.RemoveAll(_ => type.IsValueType);
                 var constructors = from constructor in type.GetConstructors()
                                    let parameters = constructor.GetParameters().Select(p => new InitializerParameter(p.Name, p.ParameterType, p.HasDefaultValue ? p.DefaultValue : null)).ToArray()
                                    let text = parameters.Length == 0 ? "Default Instance" : $"Specify {string.Join(", ", parameters.Select(p => p.Name))}"
                                    let accessor = new Func<object[], object>(args => constructor.Invoke(args))
-                                   select new { order = parameters.Length == 0 ? 0 : 2, selection = new InitializerSelection(text, accessor, parameters) };
-                var noParameters = new InitializerParameter[0];
+                                   select new { order = parameters.Length == 0 ? 1 : 3, selection = new InitializerSelection(text, accessor, parameters) };
                 var staticProperties = from staticProperty in type.GetProperties(BindingFlags.Public | BindingFlags.Static)
                                        where staticProperty.PropertyType == type
                                        let accessor = new Func<object[], object>(_ => staticProperty.GetValue(null))
-                                       select new { order = 1, selection = new InitializerSelection(staticProperty.Name, accessor, noParameters) };
-                var rootOptions = constructors.Concat(staticProperties).OrderBy(s => s.order).Select(s => s.selection).ToArray();
+                                       select new { order = 2, selection = new InitializerSelection(staticProperty.Name, accessor, noParameters) };
+                var rootOptions = nullValues.Concat(constructors).Concat(staticProperties).OrderBy(s => s.order).Select(s => s.selection).ToArray();
 
                 var propertiesTable = MakeTablePanel(1, 2);
 
@@ -403,7 +405,7 @@ namespace GameTheory.FormsRunner.Shared
                 constructorList.Items.AddRange(rootOptions);
                 if (constructorList.Items.Count > 0)
                 {
-                    constructorList.SelectedIndex = 0;
+                    constructorList.SelectedIndex = Math.Min(constructorList.Items.Count - 1, nullValues.Count);
                 }
 
                 var control = MakeTablePanel(2, 1);
