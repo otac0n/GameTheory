@@ -44,13 +44,13 @@ namespace GameTheory.Games.Chess
                 !Parser.TryParseShredderFen(position, ref index, out board, out activePlayer, out castling, out epCoordinate, out plyCountClock, out moveNumber)) ||
                 index != position.Length)
             {
-                throw new ArgumentException(nameof(position));
+                throw new ArgumentException("Invalid position.", nameof(position));
             }
 
             this.Players = ImmutableArray.Create(new PlayerToken(), new PlayerToken());
             this.Variant = Variant.Create(
-                width: board.GetLength(0),
-                height: board.GetLength(1));
+                width: board.GetLength(1),
+                height: board.GetLength(0));
             this.ActiveColor = Pieces.White;
             this.board = board.Cast<Pieces>().ToArray();
             this.PlyCountClock = plyCountClock;

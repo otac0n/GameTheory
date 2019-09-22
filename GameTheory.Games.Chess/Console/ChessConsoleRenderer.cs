@@ -18,7 +18,7 @@ namespace GameTheory.Games.Chess.Console
             var gameState = (GameState)state;
             var ranks = Enumerable.Range(0, gameState.Variant.Height);
             var files = Enumerable.Range(0, gameState.Variant.Width);
-            if (playerToken == null || state.Players.IndexOf(playerToken) == 0)
+            if (playerToken == null || state.Players.IndexOf(playerToken) <= 0)
             {
                 ranks = ranks.Reverse();
             }
