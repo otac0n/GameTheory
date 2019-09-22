@@ -271,6 +271,24 @@ namespace GameTheory.FormsRunner.Shared
                 set((int)control.Value, true);
                 return errorControl = control;
             }
+            else if (type.IsEnum)
+            {
+                var control = new ComboBox
+                {
+                    DropDownStyle = ComboBoxStyle.DropDownList,
+                };
+                control.Items.AddRange(Enum.GetValues(type).Cast<object>().ToArray());
+                control.SelectedItem = value;
+                PadControls(label, control, 10);
+                control.SelectedValueChanged += (_, a) =>
+                {
+                    setError(control, null);
+                    set(control.SelectedItem, true);
+                };
+
+                set(control.SelectedItem, true);
+                return errorControl = control;
+            }
             else
             {
                 var constructors = from constructor in type.GetConstructors()
