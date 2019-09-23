@@ -1,4 +1,4 @@
-﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Games.SevenDragons
 {
@@ -109,7 +109,7 @@ namespace GameTheory.Games.SevenDragons
         /// </summary>
         /// <param name="players">The number of players.</param>
         /// <param name="includeActions">A value that indicates whether or not acion cards are included.</param>
-        public GameState(int players, bool includeActions = true)
+        public GameState(int players = MinPlayers, bool includeActions = true)
             : this(null)
         {
             if (players < MinPlayers || players > MaxPlayers)
