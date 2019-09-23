@@ -42,7 +42,7 @@ namespace GameTheory.Games.SevenDragons.Forms
                     colorPositions[i] = (float)i / lastIndex;
                 }
 
-                return new LinearGradientBrush(rect, colors[0], colors[lastIndex], 1.0F)
+                return new LinearGradientBrush(rect, colors[0], colors[lastIndex], 45.0F)
                 {
                     InterpolationColors = new ColorBlend
                     {
