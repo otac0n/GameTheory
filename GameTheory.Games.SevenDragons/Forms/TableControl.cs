@@ -33,14 +33,14 @@ namespace GameTheory.Games.SevenDragons.Forms
             var nh = (extents.MaxY - extents.MinY + 1);
             var w = Math.Min(
                 this.ClientRectangle.Width / (nw + (nw - 1) * 0.1f),
-                this.ClientRectangle.Height / (nw + (nw - 1) * 0.1f) / 2);
+                this.ClientRectangle.Height / (nh + (nh - 1) * 0.05f));
             var h = 2 * w;
 
             var cellSpacing = w * 0.1f;
 
             for (var y = 0; y < nh; y++)
             {
-                for (var x = 0; x < nh; x++)
+                for (var x = 0; x < nw; x++)
                 {
                     if (this.Cards.TryGetValue(new GameTheory.Point(extents.MinX + x, extents.MinY + y), out var card))
                     {
