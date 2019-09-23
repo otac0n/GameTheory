@@ -43,7 +43,7 @@ namespace GameTheory.Games.Lotus
         /// Initializes a new instance of the <see cref="GameState"/> class.
         /// </summary>
         /// <param name="players">The number of players.</param>
-        public GameState(int players)
+        public GameState(int players = MinPlayers)
         {
             if (players < MinPlayers || players > MaxPlayers)
             {

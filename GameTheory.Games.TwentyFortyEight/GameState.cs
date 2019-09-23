@@ -70,7 +70,7 @@ namespace GameTheory.Games.TwentyFortyEight
         /// Initializes a new instance of the <see cref="GameState"/> class in the starting position.
         /// </summary>
         /// <param name="players">The number of players.</param>
-        public GameState(int players = 1)
+        public GameState(int players = MinPlayers)
             : this(Enumerable.Range(0, players).Select(i => new PlayerToken()).ToImmutableArray(), Turn.Computer, new byte[Size, Size])
         {
             if (players < MinPlayers || players > MaxPlayers)
