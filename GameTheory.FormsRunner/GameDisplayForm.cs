@@ -9,6 +9,7 @@ namespace GameTheory.FormsRunner
     using System.Windows.Forms;
     using GameTheory.FormsRunner.Shared;
     using GameTheory.FormsRunner.Shared.Catalogs;
+    using static FormsRunner.Shared.Controls;
 
     public partial class GameDisplayForm : Form
     {
@@ -38,9 +39,40 @@ namespace GameTheory.FormsRunner
 
         private void RefreshDisplay()
         {
-            var control = ObjectGraphEditor.MakeDisplay(null, this.GameInfo.Game.Name, this.GameInfo.Game.GameStateType, this.GameInfo.GameStates.Last(), this.displays);
-            this.splitContainer.Panel1.Controls.Clear(); // TODO: Dispose controls.
-            this.splitContainer.Panel1.Controls.Add(control);
+            Display.Update(
+                this.splitContainer.Panel1.Controls.Cast<Control>().SingleOrDefault(),
+                null,
+                null,
+                this.GameInfo.Game.GameStateType,
+                this.GameInfo.GameStates.Last(),
+                this.displays,
+                (oldControl, newControl) =>
+                {
+                    this.splitContainer.Panel1.Controls.Clear();
+                    oldControl?.Dispose();
+
+                    if (newControl != null)
+                    {
+                        this.splitContainer.Panel1.Controls.Add(newControl);
+                    }
+                });
+
+            Display.Update(
+                this.splitContainer.Panel2.Controls.Cast<Control>().SingleOrDefault(),
+                null,
+                null,
+                this.GameInfo.Moves,
+                this.displays,
+                (oldControl, newControl) =>
+                {
+                    this.splitContainer.Panel2.Controls.Clear();
+                    oldControl?.Dispose();
+
+                    if (newControl != null)
+                    {
+                        this.splitContainer.Panel2.Controls.Add(newControl);
+                    }
+                });
         }
 
         private class PlayerTokenDisplay : Display
@@ -80,10 +112,20 @@ namespace GameTheory.FormsRunner
             public override bool CanDisplay(string path, string name, Type type, object value) =>
                 value is PlayerToken playerToken && this.gameInfo.PlayerTokens.Contains(playerToken);
 
-            public override Control Create(string path, string name, Type type, object value, IReadOnlyList<Display> overrideDisplays)
+            public override Control Update(Control control, string path, string name, Type type, object value, IReadOnlyList<Display> displays)
             {
                 var playerToken = (PlayerToken)value;
-                var label = ObjectGraphEditor.MakeLabel(this.gameInfo.PlayerNames[this.gameInfo.PlayerTokens.IndexOf(playerToken)]);
+                var playerName = this.gameInfo.PlayerNames[this.gameInfo.PlayerTokens.IndexOf(playerToken)];
+
+                if (control is Label label && label.Tag == this)
+                {
+                    label.Text = playerName;
+                }
+                else
+                {
+                    label = MakeLabel(playerName);
+                }
+
                 label.ForeColor = GetPlayerColor(playerToken);
                 return label;
             }

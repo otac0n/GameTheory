@@ -55,15 +55,26 @@ namespace GameTheory.Games.SevenDragons.Forms
             [SevenDragons.Color.Silver] = _ => Brushes.Gainsboro,
         };
 
+        private Card card;
+
         public CardControl(Card card)
         {
-            this.Card = card;
+            this.card = card;
             this.BackColor = Color.Black;
             this.Width = 50;
             this.Height = 100;
         }
 
-        public Card Card { get; }
+        public Card Card
+        {
+            get => this.card;
+
+            set
+            {
+                this.card = value;
+                this.Invalidate();
+            }
+        }
 
         public static void RenderCard(Graphics graphics, Card card, Rectangle rectangle, Font font)
         {

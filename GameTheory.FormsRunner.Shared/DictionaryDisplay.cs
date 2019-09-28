@@ -6,8 +6,10 @@ namespace GameTheory.FormsRunner.Shared
     using System.Collections;
     using System.Collections.Generic;
     using System.Collections.Immutable;
+    using System.Linq;
     using System.Reflection;
     using System.Windows.Forms;
+    using static Controls;
 
     public class DictionaryDisplay : Display
     {
@@ -40,38 +42,86 @@ namespace GameTheory.FormsRunner.Shared
             return false;
         }
 
-        public override Control Create(string path, string name, Type type, object value, IReadOnlyList<Display> overrideDisplays)
+        public override Control Update(Control control, string path, string name, Type type, object value, IReadOnlyList<Display> displays)
         {
             var typeArguments = type.GetGenericArguments();
             var keyType = typeArguments[0];
             var valueType = typeArguments[1];
-
-            var tablePanel = ObjectGraphEditor.MakeTablePanel(1, 2);
-
-            tablePanel.SuspendLayout();
-
-            var keys = type.GetProperty("Keys", BindingFlags.Public | BindingFlags.Instance).GetValue(value);
+            var keysProperty = type.GetProperty("Keys", BindingFlags.Public | BindingFlags.Instance).GetValue(value);
             var valueProperty = type.GetProperty("Item", BindingFlags.Public | BindingFlags.Instance);
+            var keys = ((IEnumerable)keysProperty).Cast<object>().ToList();
 
-            var i = 0;
-            foreach (var key in (IEnumerable)keys)
+            if (control is TableLayoutPanel tablePanel && tablePanel.Tag == this && tablePanel.ColumnCount == 2)
             {
+                tablePanel.SuspendLayout();
+
+                for (var i = keys.Count; i < tablePanel.RowCount; i++)
+                {
+                    var keyControl = tablePanel.GetControlFromPosition(0, i);
+                    if (keyControl != null)
+                    {
+                        tablePanel.Controls.Remove(keyControl);
+                        keyControl.Dispose();
+                    }
+
+                    var valueControl = tablePanel.GetControlFromPosition(0, i);
+                    if (valueControl != null)
+                    {
+                        tablePanel.Controls.Remove(valueControl);
+                        valueControl.Dispose();
+                    }
+                }
+
+                tablePanel.RowCount = keys.Count;
+            }
+            else
+            {
+                tablePanel = MakeTablePanel(keys.Count, 2, tag: this);
+                tablePanel.SuspendLayout();
+            }
+
+            for (var i = 0; i < keys.Count; i++)
+            {
+                var key = keys[i];
                 var keyName = $"Keys[{i}]";
                 var valueName = $"[{key}]";
-                var keyControl = ObjectGraphEditor.MakeDisplay(
+
+                Update(
+                    tablePanel.GetControlFromPosition(0, i),
                     path + "." + keyName,
                     keyName,
                     keyType,
                     key,
-                    overrideDisplays);
-                var valueControl = ObjectGraphEditor.MakeDisplay(
+                    displays,
+                    (oldControl, newControl) =>
+                    {
+                        if (oldControl != null)
+                        {
+                            tablePanel.Controls.Remove(oldControl);
+                            oldControl.Dispose();
+                        }
+
+                        tablePanel.Controls.Add(newControl, 0, i);
+                    });
+
+                Update(
+                    tablePanel.GetControlFromPosition(1, i),
                     path + valueName,
                     valueName,
                     valueType,
                     valueProperty.GetValue(value, new[] { key }),
-                    overrideDisplays);
-                tablePanel.Controls.Add(keyControl, 0, i);
-                tablePanel.Controls.Add(valueControl, 1, i);
+                    displays,
+                    (oldControl, newControl) =>
+                    {
+                        if (oldControl != null)
+                        {
+                            tablePanel.Controls.Remove(oldControl);
+                            oldControl.Dispose();
+                        }
+
+                        tablePanel.Controls.Add(newControl, 1, i);
+                    });
+
                 i++;
             }
 

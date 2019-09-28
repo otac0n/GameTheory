@@ -8,6 +8,7 @@ namespace GameTheory.FormsRunner.Shared
     using System.Collections.Immutable;
     using System.Linq;
     using System.Windows.Forms;
+    using static Controls;
 
     public class ListDisplay : Display
     {
@@ -44,40 +45,59 @@ namespace GameTheory.FormsRunner.Shared
             return false;
         }
 
-        public override Control Create(string path, string name, Type type, object value, IReadOnlyList<Display> overrideDisplays)
+        public override Control Update(Control control, string path, string name, Type type, object value, IReadOnlyList<Display> displays)
         {
             var elementType = type.IsArray
                 ? type.GetElementType()
                 : type.GetGenericArguments().Single();
+            var values = ((IEnumerable)value).Cast<object>().ToList();
 
-            var flowPanel = ObjectGraphEditor.MakeFlowPanel();
-
-            flowPanel.SuspendLayout();
+            if (control is FlowLayoutPanel flowPanel && flowPanel.Tag == this)
+            {
+                flowPanel.SuspendLayout();
+                while (flowPanel.Controls.Count > values.Count)
+                {
+                    var oldControl = flowPanel.Controls[values.Count];
+                    flowPanel.Controls.RemoveAt(values.Count);
+                    oldControl.Dispose();
+                }
+            }
+            else
+            {
+                flowPanel = MakeFlowPanel(tag: this);
+                flowPanel.SuspendLayout();
+            }
 
             var showVertical = true;
-            var i = 0;
-            foreach (var item in (IEnumerable)value)
+            for (var i = 0; i < values.Count; i++)
             {
+                var item = values[i];
                 var itemName = $"[{i}]";
                 var itemPath = path + itemName;
 
                 showVertical = showVertical && this.CanDisplay(itemPath, itemName, elementType, item);
 
-                var itemControl = ObjectGraphEditor.MakeDisplay(
+                Update(
+                    flowPanel.Controls.Count > i ? flowPanel.Controls[i] : null,
                     itemPath,
                     itemName,
                     elementType,
                     item,
-                    overrideDisplays);
-                flowPanel.Controls.Add(itemControl);
-                i++;
+                    displays,
+                    (oldControl, newControl) =>
+                    {
+                        if (oldControl != null)
+                        {
+                            flowPanel.Controls.Remove(oldControl);
+                            oldControl.Dispose();
+                        }
+
+                        flowPanel.Controls.Add(newControl);
+                        flowPanel.Controls.SetChildIndex(newControl, i);
+                    });
             }
 
-            if (showVertical)
-            {
-                flowPanel.FlowDirection = FlowDirection.TopDown;
-            }
-
+            flowPanel.FlowDirection = showVertical ? FlowDirection.TopDown : FlowDirection.LeftToRight;
             flowPanel.ResumeLayout();
 
             return flowPanel;
