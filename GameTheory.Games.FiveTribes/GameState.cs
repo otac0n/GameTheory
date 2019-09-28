@@ -1,4 +1,4 @@
-﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Games.FiveTribes
 {
@@ -145,7 +145,7 @@ namespace GameTheory.Games.FiveTribes
         /// </summary>
         /// <param name="players">The number of players.</param>
         /// <param name="includeDhenim">Include the promo card, Dhenim, with the Djins?</param>
-        public GameState(int players, bool includeDhenim = false)
+        public GameState(int players = MinPlayers, bool includeDhenim = false)
             : this(null)
         {
             if (players < MinPlayers || players > MaxPlayers)

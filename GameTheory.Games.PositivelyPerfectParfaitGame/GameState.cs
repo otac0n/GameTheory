@@ -1,4 +1,4 @@
-﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Games.PositivelyPerfectParfaitGame
 {
@@ -38,7 +38,7 @@ namespace GameTheory.Games.PositivelyPerfectParfaitGame
         /// </summary>
         /// <param name="players">The number of players.</param>
         /// <param name="playOut">A value indicating whether all players are allowed to complete their parfaits.</param>
-        public GameState(int players, bool playOut = false)
+        public GameState(int players = MinPlayers, bool playOut = false)
         {
             if (players < MinPlayers || players > MaxPlayers)
             {
