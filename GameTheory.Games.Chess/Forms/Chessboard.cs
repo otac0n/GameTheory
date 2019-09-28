@@ -17,6 +17,7 @@ namespace GameTheory.Games.Chess.Forms
         {
             this.gameState = gameState;
             this.PlayerToken = playerToken;
+            this.DoubleBuffered = true;
             this.Width = 50 * gameState.Variant.Width;
             this.Height = 50 * gameState.Variant.Height;
         }

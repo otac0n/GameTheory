@@ -19,6 +19,7 @@ namespace GameTheory.Games.SevenDragons.Forms
             var extents = this.Cards.Keys.Aggregate(
                 new { MinX = int.MaxValue, MaxX = int.MinValue, MinY = int.MaxValue, MaxY = int.MinValue },
                 (value, key) => new { MinX = Math.Min(value.MinX, key.X), MaxX = Math.Max(value.MaxX, key.X), MinY = Math.Min(value.MinY, key.Y), MaxY = Math.Max(value.MaxY, key.Y) });
+            this.DoubleBuffered = true;
             this.Width = (extents.MaxX - extents.MinX + 1) * (50 + 5) - 5;
             this.Height = (extents.MaxY - extents.MinY + 1) * (100 + 5) - 5;
         }
