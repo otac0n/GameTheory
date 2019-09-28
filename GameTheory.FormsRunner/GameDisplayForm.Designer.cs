@@ -29,9 +29,7 @@
         private void InitializeComponent()
         {
             this.splitContainer = new System.Windows.Forms.SplitContainer();
-            this.eventList = new System.Windows.Forms.ListView();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).BeginInit();
-            this.splitContainer.Panel2.SuspendLayout();
             this.splitContainer.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -44,22 +42,9 @@
             // splitContainer.Panel1
             // 
             this.splitContainer.Panel1.AutoScroll = true;
-            // 
-            // splitContainer.Panel2
-            // 
-            this.splitContainer.Panel2.Controls.Add(this.eventList);
             this.splitContainer.Size = new System.Drawing.Size(800, 450);
             this.splitContainer.SplitterDistance = 514;
             this.splitContainer.TabIndex = 1;
-            // 
-            // eventList
-            // 
-            this.eventList.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.eventList.Location = new System.Drawing.Point(0, 0);
-            this.eventList.Name = "eventList";
-            this.eventList.Size = new System.Drawing.Size(282, 450);
-            this.eventList.TabIndex = 1;
-            this.eventList.UseCompatibleStateImageBehavior = false;
             // 
             // GameDisplayForm
             // 
@@ -69,7 +54,6 @@
             this.Controls.Add(this.splitContainer);
             this.Name = "GameDisplayForm";
             this.Text = "GameDisplayForm";
-            this.splitContainer.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).EndInit();
             this.splitContainer.ResumeLayout(false);
             this.ResumeLayout(false);
@@ -78,6 +62,5 @@
 
         #endregion
         private System.Windows.Forms.SplitContainer splitContainer;
-        private System.Windows.Forms.ListView eventList;
     }
 }

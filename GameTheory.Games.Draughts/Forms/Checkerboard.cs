@@ -9,15 +9,26 @@ namespace GameTheory.Games.Draughts.Forms
 
     public class Checkerboard : Control
     {
+        private GameState gameState;
+
         public Checkerboard(GameState gameState, PlayerToken playerToken = null)
         {
-            this.GameState = gameState;
+            this.gameState = gameState;
             this.PlayerToken = playerToken;
             this.Width = 50 * gameState.Variant.Width;
             this.Height = 50 * gameState.Variant.Height;
         }
 
-        public GameState GameState { get; }
+        public GameState GameState
+        {
+            get => this.gameState;
+
+            set
+            {
+                this.gameState = value;
+                this.Invalidate();
+            }
+        }
 
         public PlayerToken PlayerToken { get; }
 

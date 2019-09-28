@@ -11,9 +11,11 @@ namespace GameTheory.Games.SevenDragons.Forms
 
     public class TableControl : Control
     {
+        private ImmutableDictionary<GameTheory.Point, DragonCard> cards;
+
         public TableControl(ImmutableDictionary<GameTheory.Point, DragonCard> cards)
         {
-            this.Cards = cards;
+            this.cards = cards;
             var extents = this.Cards.Keys.Aggregate(
                 new { MinX = int.MaxValue, MaxX = int.MinValue, MinY = int.MaxValue, MaxY = int.MinValue },
                 (value, key) => new { MinX = Math.Min(value.MinX, key.X), MaxX = Math.Max(value.MaxX, key.X), MinY = Math.Min(value.MinY, key.Y), MaxY = Math.Max(value.MaxY, key.Y) });
@@ -21,7 +23,16 @@ namespace GameTheory.Games.SevenDragons.Forms
             this.Height = (extents.MaxY - extents.MinY + 1) * (100 + 5) - 5;
         }
 
-        public ImmutableDictionary<GameTheory.Point, DragonCard> Cards { get; }
+        public ImmutableDictionary<GameTheory.Point, DragonCard> Cards
+        {
+            get => this.cards;
+
+            set
+            {
+                this.cards = value;
+                this.Invalidate();
+            }
+        }
 
         protected override void OnPaint(PaintEventArgs e)
         {

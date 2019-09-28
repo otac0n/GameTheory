@@ -13,10 +13,20 @@ namespace GameTheory.Games.Draughts.Forms
         public override bool CanDisplay(string path, string name, Type type, object value) => type == typeof(GameState);
 
         /// <inheritdoc/>
-        public override Control Create(string path, string name, Type type, object value, IReadOnlyList<Display> overrideDisplays)
+        public override Control Update(Control control, string path, string name, Type type, object value, IReadOnlyList<Display> displays)
         {
             var gameState = (GameState)value;
-            return new Checkerboard(gameState, gameState.Players[0]);
+
+            if (control is Checkerboard checkerboard)
+            {
+                checkerboard.GameState = gameState;
+            }
+            else
+            {
+                checkerboard = new Checkerboard(gameState, gameState.Players[0]);
+            }
+
+            return checkerboard;
         }
     }
 }

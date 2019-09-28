@@ -10,15 +10,26 @@ namespace GameTheory.Games.Mancala.Forms
 
     public class Board : Control
     {
+        private GameState gameState;
+
         public Board(GameState gameState, PlayerToken playerToken = null)
         {
-            this.GameState = gameState;
+            this.gameState = gameState;
             this.PlayerToken = playerToken;
             this.Width = (gameState.BinsPerSide + 2) * (50 + 5) - 5;
             this.Height = 2 * (50 + 5) - 5;
-         }
+        }
 
-        public GameState GameState { get; }
+        public GameState GameState
+        {
+            get => this.gameState;
+
+            set
+            {
+                this.gameState = value;
+                this.Invalidate();
+            }
+        }
 
         public PlayerToken PlayerToken { get; }
 

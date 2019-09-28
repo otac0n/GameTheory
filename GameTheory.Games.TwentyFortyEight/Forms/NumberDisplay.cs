@@ -7,6 +7,7 @@ namespace GameTheory.Games.TwentyFortyEight.Forms
     using System.Drawing;
     using System.Windows.Forms;
     using GameTheory.FormsRunner.Shared;
+    using static FormsRunner.Shared.Controls;
 
     public class NumberDisplay : Display
     {
@@ -31,19 +32,28 @@ namespace GameTheory.Games.TwentyFortyEight.Forms
 
         public override bool CanDisplay(string path, string name, Type type, object value) => type == typeof(byte);
 
-        public override Control Create(string path, string name, Type type, object value, IReadOnlyList<Display> overrideDisplays)
+        public override Control Update(Control control, string path, string name, Type type, object value, IReadOnlyList<Display> displays)
         {
             var number = (byte)value;
             var display = number == 0 ? string.Empty : Math.Pow(2, number).ToString();
-            var label = ObjectGraphEditor.MakeLabel(display);
-            label.AutoSize = false;
-            label.Width = 50;
-            label.Height = 50;
-            label.Margin = new Padding(2);
+
+            if (control is Label label && label.Tag == this)
+            {
+                label.Text = display;
+            }
+            else
+            {
+                label = MakeLabel(display, tag: this);
+                label.AutoSize = false;
+                label.Width = 50;
+                label.Height = 50;
+                label.Margin = new Padding(2);
+                label.TextAlign = ContentAlignment.MiddleCenter;
+                label.Font = new Font(label.Font, FontStyle.Bold);
+            }
+
             label.ForeColor = DisplayColors[number, 0];
             label.BackColor = DisplayColors[number, 1];
-            label.TextAlign = ContentAlignment.MiddleCenter;
-            label.Font = new Font(label.Font, FontStyle.Bold);
             return label;
         }
     }
