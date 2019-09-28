@@ -17,7 +17,7 @@ namespace GameTheory.FormsRunner.Shared
 
         public override bool CanDisplay(string path, string name, Type type, object value) => value is null;
 
-        public override Control Update(Control originalDisplay, string path, string name, Type type, object value, IReadOnlyList<Display> displays) =>
+        protected override Control Update(Control originalDisplay, string path, string name, Type type, object value, IReadOnlyList<Display> displays) =>
             originalDisplay is Label label && label.Tag == this
                 ? originalDisplay
                 : MakeLabel("(null)", tag: this);

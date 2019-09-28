@@ -15,7 +15,7 @@ namespace GameTheory.Games.SevenDragons.Forms
         public override bool CanDisplay(string path, string name, Type type, object value) => type == typeof(ImmutableDictionary<Point, DragonCard>);
 
         /// <inheritdoc/>
-        public override Control Update(Control control, string path, string name, Type type, object value, IReadOnlyList<Display> displays)
+        protected override Control Update(Control control, string path, string name, Type type, object value, IReadOnlyList<Display> displays)
         {
             var table = (ImmutableDictionary<Point, DragonCard>)value;
 

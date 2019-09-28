@@ -24,26 +24,31 @@ namespace GameTheory.FormsRunner.Shared
 
         public static Control Update(Control control, string path, string name, Type type, object value, IReadOnlyList<Display> displays, Action<Control, Control> update)
         {
-            Control newControl = null;
             foreach (var display in displays == null ? Displays : displays.Concat(Displays))
             {
                 if (display.CanDisplay(path, name, type, value))
                 {
-                    newControl = display.Update(control, path, name, type, value, displays);
-                    break;
+                    return display.UpdateWithAction(control, path, name, type, value, displays, update);
                 }
             }
 
-            if (!object.ReferenceEquals(control, newControl))
+            return null;
+        }
+
+        public abstract bool CanDisplay(string path, string name, Type type, object value);
+
+        public Control UpdateWithAction(Control control, string path, string name, Type type, object value, IReadOnlyList<Display> displays, Action<Control, Control> update = null)
+        {
+            var newControl = this.Update(control, path, name, type, value, displays);
+
+            if (update != null && !object.ReferenceEquals(control, newControl))
             {
-                update?.Invoke(control, newControl);
+                update.Invoke(control, newControl);
             }
 
             return newControl;
         }
 
-        public abstract bool CanDisplay(string path, string name, Type type, object value);
-
-        public abstract Control Update(Control control, string path, string name, Type type, object value, IReadOnlyList<Display> displays);
+        protected abstract Control Update(Control control, string path, string name, Type type, object value, IReadOnlyList<Display> displays);
     }
 }

@@ -45,7 +45,7 @@ namespace GameTheory.FormsRunner.Shared
             return false;
         }
 
-        public override Control Update(Control control, string path, string name, Type type, object value, IReadOnlyList<Display> displays)
+        protected override Control Update(Control control, string path, string name, Type type, object value, IReadOnlyList<Display> displays)
         {
             var elementType = type.IsArray
                 ? type.GetElementType()
@@ -68,16 +68,13 @@ namespace GameTheory.FormsRunner.Shared
                 flowPanel.SuspendLayout();
             }
 
-            var showVertical = true;
             for (var i = 0; i < values.Count; i++)
             {
                 var item = values[i];
                 var itemName = $"[{i}]";
                 var itemPath = path + itemName;
 
-                showVertical = showVertical && this.CanDisplay(itemPath, itemName, elementType, item);
-
-                Update(
+                Display.Update(
                     flowPanel.Controls.Count > i ? flowPanel.Controls[i] : null,
                     itemPath,
                     itemName,
@@ -97,7 +94,6 @@ namespace GameTheory.FormsRunner.Shared
                     });
             }
 
-            flowPanel.FlowDirection = showVertical ? FlowDirection.TopDown : FlowDirection.LeftToRight;
             flowPanel.ResumeLayout();
 
             return flowPanel;

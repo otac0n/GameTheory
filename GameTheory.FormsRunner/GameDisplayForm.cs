@@ -70,6 +70,7 @@ namespace GameTheory.FormsRunner
 
                     if (newControl != null)
                     {
+                        ((FlowLayoutPanel)newControl).FlowDirection = FlowDirection.TopDown;
                         this.splitContainer.Panel2.Controls.Add(newControl);
                     }
                 });
@@ -112,7 +113,7 @@ namespace GameTheory.FormsRunner
             public override bool CanDisplay(string path, string name, Type type, object value) =>
                 value is PlayerToken playerToken && this.gameInfo.PlayerTokens.Contains(playerToken);
 
-            public override Control Update(Control control, string path, string name, Type type, object value, IReadOnlyList<Display> displays)
+            protected override Control Update(Control control, string path, string name, Type type, object value, IReadOnlyList<Display> displays)
             {
                 var playerToken = (PlayerToken)value;
                 var playerName = this.gameInfo.PlayerNames[this.gameInfo.PlayerTokens.IndexOf(playerToken)];

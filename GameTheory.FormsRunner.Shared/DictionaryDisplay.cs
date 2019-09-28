@@ -42,7 +42,7 @@ namespace GameTheory.FormsRunner.Shared
             return false;
         }
 
-        public override Control Update(Control control, string path, string name, Type type, object value, IReadOnlyList<Display> displays)
+        protected override Control Update(Control control, string path, string name, Type type, object value, IReadOnlyList<Display> displays)
         {
             var typeArguments = type.GetGenericArguments();
             var keyType = typeArguments[0];
@@ -86,7 +86,7 @@ namespace GameTheory.FormsRunner.Shared
                 var keyName = $"Keys[{i}]";
                 var valueName = $"[{key}]";
 
-                Update(
+                Display.Update(
                     tablePanel.GetControlFromPosition(0, i),
                     path + "." + keyName,
                     keyName,
@@ -104,7 +104,7 @@ namespace GameTheory.FormsRunner.Shared
                         tablePanel.Controls.Add(newControl, 0, i);
                     });
 
-                Update(
+                Display.Update(
                     tablePanel.GetControlFromPosition(1, i),
                     path + valueName,
                     valueName,

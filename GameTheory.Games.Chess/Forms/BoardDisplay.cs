@@ -16,7 +16,7 @@ namespace GameTheory.Games.Chess.Forms
         public override bool CanDisplay(string path, string name, Type type, object value) => type == typeof(GameState);
 
         /// <inheritdoc/>
-        public override Control Update(Control control, string path, string name, Type type, object value, IReadOnlyList<Display> displays)
+        protected override Control Update(Control control, string path, string name, Type type, object value, IReadOnlyList<Display> displays)
         {
             var gameState = (GameState)value;
 

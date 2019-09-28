@@ -32,7 +32,7 @@ namespace GameTheory.Games.TwentyFortyEight.Forms
 
         public override bool CanDisplay(string path, string name, Type type, object value) => type == typeof(byte);
 
-        public override Control Update(Control control, string path, string name, Type type, object value, IReadOnlyList<Display> displays)
+        protected override Control Update(Control control, string path, string name, Type type, object value, IReadOnlyList<Display> displays)
         {
             var number = (byte)value;
             var display = number == 0 ? string.Empty : Math.Pow(2, number).ToString();

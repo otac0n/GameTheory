@@ -47,7 +47,7 @@ namespace GameTheory.FormsRunner.Shared
 
         public override bool CanDisplay(string path, string name, Type type, object value) => value is object;
 
-        public override Control Update(Control control, string path, string name, Type type, object value, IReadOnlyList<Display> displays)
+        protected override Control Update(Control control, string path, string name, Type type, object value, IReadOnlyList<Display> displays)
         {
             IEnumerable<Type> baseTypes;
             if (type.IsInterface)
@@ -84,16 +84,52 @@ namespace GameTheory.FormsRunner.Shared
             var staticProperties = baseTypes.SelectMany(bt => bt.GetProperties(BindingFlags.Public | BindingFlags.Static).Where(p => p.CanRead));
             var readableStaticMembers = staticFields.Cast<MemberInfo>().Concat(staticProperties).ToList();
 
-            var propertiesTable = MakeTablePanel(Math.Max(1, readableMembers.Count), 2, tag: this);
+            var rowCount = Math.Max(1, readableMembers.Count);
 
-            propertiesTable.SuspendLayout();
+            if (control is TableLayoutPanel propertiesTable && propertiesTable.Tag == this && propertiesTable.ColumnCount == 2)
+            {
+                propertiesTable.SuspendLayout();
+
+                for (var i = rowCount; i < propertiesTable.RowCount; i++)
+                {
+                    var keyControl = propertiesTable.GetControlFromPosition(0, i);
+                    if (keyControl != null)
+                    {
+                        propertiesTable.Controls.Remove(keyControl);
+                        keyControl.Dispose();
+                    }
+
+                    var valueControl = propertiesTable.GetControlFromPosition(0, i);
+                    if (valueControl != null)
+                    {
+                        propertiesTable.Controls.Remove(valueControl);
+                        valueControl.Dispose();
+                    }
+                }
+
+                propertiesTable.RowCount = rowCount;
+            }
+            else
+            {
+                propertiesTable = MakeTablePanel(rowCount, 2, tag: this);
+                propertiesTable.SuspendLayout();
+            }
 
             for (var i = 0; i < readableMembers.Count; i++)
             {
                 var p = i;
                 var member = readableMembers[p];
-                var label = MakeLabel(member.Name);
-                propertiesTable.Controls.Add(label, 0, p);
+
+                var oldLabel = propertiesTable.GetControlFromPosition(0, p);
+                if (oldLabel is Label label && label.Tag == this)
+                {
+                    label.Text = member.Name;
+                }
+                else
+                {
+                    propertiesTable.Controls.Add(MakeLabel(member.Name, tag: this), 0, p);
+                    oldLabel?.Dispose();
+                }
 
                 Type memberType;
                 object memberValue;
@@ -117,28 +153,25 @@ namespace GameTheory.FormsRunner.Shared
                                 readableMembers.FirstOrDefault(y => y.Name == "Length" && MemberValueType(y) == typeof(int));
                             if (countProperty != null)
                             {
-                                var range = Enumerable.Range(0, (int)GetMemberValue(countProperty, value));
+                                var count = (int)GetMemberValue(countProperty, value);
+                                ListDisplay.Instance.UpdateWithAction(
+                                    propertiesTable.GetControlFromPosition(1, p),
+                                    ObjectGraphEditor.Extend(path, member.Name),
+                                    member.Name,
+                                    memberType,
+                                    Enumerable.Range(0, count).Select(argument => property.GetValue(value, new object[] { argument })).ToList(),
+                                    displays,
+                                    (oldControl, newControl) =>
+                                    {
+                                        if (oldControl != null)
+                                        {
+                                            propertiesTable.Controls.Remove(oldControl);
+                                            oldControl.Dispose();
+                                        }
 
-                                var flowPanel = MakeFlowPanel();
+                                        propertiesTable.Controls.Add(newControl, 1, p);
+                                    });
 
-                                flowPanel.SuspendLayout();
-
-                                foreach (var argument in range)
-                                {
-                                    var itemControl = Update(
-                                        null,
-                                        ObjectGraphEditor.Extend(path, member.Name) + $"[{argument}]",
-                                        member.Name,
-                                        memberType,
-                                        property.GetValue(value, new object[] { argument }),
-                                        displays,
-                                        (oldControl, newControl) => { });
-
-                                    flowPanel.Controls.Add(itemControl);
-                                }
-
-                                flowPanel.ResumeLayout();
-                                propertiesTable.Controls.Add(flowPanel, 1, p);
                                 continue;
                             }
                         }
@@ -182,7 +215,7 @@ namespace GameTheory.FormsRunner.Shared
 
                                 foreach (var pair in range)
                                 {
-                                    var itemControl = Update(
+                                    var itemControl = Display.Update(
                                         null,
                                         ObjectGraphEditor.Extend(path, member.Name) + $"[{pair.x}, {pair.y}]",
                                         member.Name,
@@ -195,6 +228,14 @@ namespace GameTheory.FormsRunner.Shared
                                 }
 
                                 tablePanel.ResumeLayout();
+
+                                var oldValueControl = propertiesTable.GetControlFromPosition(1, p);
+                                if (oldValueControl != null)
+                                {
+                                    propertiesTable.Controls.Remove(oldValueControl);
+                                    oldValueControl.Dispose();
+                                }
+
                                 propertiesTable.Controls.Add(tablePanel, 1, p);
                                 continue;
                             }
@@ -215,16 +256,23 @@ namespace GameTheory.FormsRunner.Shared
                     throw new NotImplementedException();
                 }
 
-                var innerControl = Display.Update(
-                    null,
+                Display.Update(
+                    propertiesTable.GetControlFromPosition(1, p),
                     ObjectGraphEditor.Extend(path, member.Name),
                     member.Name,
                     memberType,
                     memberValue,
                     displays,
-                    (oldControl, newControl) => { });
+                    (oldControl, newControl) =>
+                    {
+                        if (oldControl != null)
+                        {
+                            propertiesTable.Controls.Remove(oldControl);
+                            oldControl.Dispose();
+                        }
 
-                propertiesTable.Controls.Add(innerControl, 1, p);
+                        propertiesTable.Controls.Add(newControl, 1, p);
+                    });
             }
 
             propertiesTable.ResumeLayout();
