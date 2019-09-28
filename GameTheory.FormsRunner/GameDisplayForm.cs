@@ -124,7 +124,7 @@ namespace GameTheory.FormsRunner
                 }
                 else
                 {
-                    label = MakeLabel(playerName);
+                    label = MakeLabel(playerName, tag: this);
                 }
 
                 label.ForeColor = GetPlayerColor(playerToken);

@@ -19,10 +19,10 @@ namespace GameTheory.FormsRunner.Shared
             ObjectGraphDisplay.Instance,
         }.AsReadOnly();
 
-        public static Control Update<T>(Control control, string path, string name, T value, IReadOnlyList<Display> displays, Action<Control, Control> update) =>
+        public static Control Update<T>(Control control, string path, string name, T value, IReadOnlyList<Display> displays, Action<Control, Control> update = null) =>
             Update(control, path, name, typeof(T), value, displays, update);
 
-        public static Control Update(Control control, string path, string name, Type type, object value, IReadOnlyList<Display> displays, Action<Control, Control> update)
+        public static Control Update(Control control, string path, string name, Type type, object value, IReadOnlyList<Display> displays, Action<Control, Control> update = null)
         {
             foreach (var display in displays == null ? Displays : displays.Concat(Displays))
             {

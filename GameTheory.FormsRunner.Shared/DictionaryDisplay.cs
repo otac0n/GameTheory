@@ -64,7 +64,7 @@ namespace GameTheory.FormsRunner.Shared
                         keyControl.Dispose();
                     }
 
-                    var valueControl = tablePanel.GetControlFromPosition(0, i);
+                    var valueControl = tablePanel.GetControlFromPosition(1, i);
                     if (valueControl != null)
                     {
                         tablePanel.Controls.Remove(valueControl);
@@ -101,7 +101,10 @@ namespace GameTheory.FormsRunner.Shared
                             oldControl.Dispose();
                         }
 
-                        tablePanel.Controls.Add(newControl, 0, i);
+                        if (newControl != null)
+                        {
+                            tablePanel.Controls.Add(newControl, 0, i);
+                        }
                     });
 
                 Display.Update(
@@ -119,10 +122,11 @@ namespace GameTheory.FormsRunner.Shared
                             oldControl.Dispose();
                         }
 
-                        tablePanel.Controls.Add(newControl, 1, i);
+                        if (newControl != null)
+                        {
+                            tablePanel.Controls.Add(newControl, 1, i);
+                        }
                     });
-
-                i++;
             }
 
             tablePanel.ResumeLayout();

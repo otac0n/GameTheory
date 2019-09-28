@@ -56,8 +56,11 @@ namespace GameTheory.FormsRunner.Shared
                             oldControl.Dispose();
                         }
 
-                        flowPanel.Controls.Add(newControl);
-                        flowPanel.Controls.SetChildIndex(newControl, i);
+                        if (newControl != null)
+                        {
+                            flowPanel.Controls.Add(newControl);
+                            flowPanel.Controls.SetChildIndex(newControl, i);
+                        }
                     });
             }
 
