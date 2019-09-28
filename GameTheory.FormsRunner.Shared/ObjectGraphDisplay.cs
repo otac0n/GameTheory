@@ -3,6 +3,7 @@
 namespace GameTheory.FormsRunner.Shared
 {
     using System;
+    using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
@@ -11,13 +12,29 @@ namespace GameTheory.FormsRunner.Shared
 
     public class ObjectGraphDisplay : Display
     {
+        private static readonly ConcurrentDictionary<Type, MemberInfo[]> ReadableMemberCache = new ConcurrentDictionary<Type, MemberInfo[]>();
+
         private ObjectGraphDisplay()
         {
         }
 
         public static ObjectGraphDisplay Instance { get; } = new ObjectGraphDisplay();
 
-        private static Type MemberValueType(MemberInfo member)
+        private static bool GetMemberIsStatic(MemberInfo member)
+        {
+            switch (member)
+            {
+                case FieldInfo field:
+                    return field.IsStatic;
+
+                case PropertyInfo property:
+                    return property.GetAccessors(true)[0].IsStatic;
+            }
+
+            throw new NotImplementedException();
+        }
+
+        private static Type GetMemberValueType(MemberInfo member)
         {
             switch (member)
             {
@@ -28,7 +45,7 @@ namespace GameTheory.FormsRunner.Shared
                     return property.PropertyType;
             }
 
-            return null;
+            throw new NotImplementedException();
         }
 
         private static object GetMemberValue(MemberInfo member, object value)
@@ -42,49 +59,17 @@ namespace GameTheory.FormsRunner.Shared
                     return property.GetValue(property.GetMethod.IsStatic ? null : value);
             }
 
-            return null;
+            throw new NotImplementedException();
         }
 
         public override bool CanDisplay(string path, string name, Type type, object value) => value is object;
 
         protected override Control Update(Control control, string path, string name, Type type, object value, IReadOnlyList<Display> displays)
         {
-            IEnumerable<Type> baseTypes;
-            if (type.IsInterface)
-            {
-                var seen = new HashSet<Type>();
-
-                var queue = new Queue<Type>();
-                queue.Enqueue(type);
-
-                while (queue.Count > 0)
-                {
-                    var @interface = queue.Dequeue();
-                    if (seen.Add(@interface))
-                    {
-                        foreach (var subInterface in @interface.GetInterfaces())
-                        {
-                            queue.Enqueue(subInterface);
-                        }
-                    }
-                }
-
-                baseTypes = seen;
-            }
-            else
-            {
-                baseTypes = new[] { type };
-            }
-
-            var fields = baseTypes.SelectMany(bt => bt.GetFields(BindingFlags.Public | BindingFlags.Instance));
-            var properties = baseTypes.SelectMany(bt => bt.GetProperties(BindingFlags.Public | BindingFlags.Instance).Where(p => p.CanRead));
-            var readableMembers = fields.Cast<MemberInfo>().Concat(properties).ToList();
-
-            var staticFields = baseTypes.SelectMany(bt => bt.GetFields(BindingFlags.Public | BindingFlags.Static));
-            var staticProperties = baseTypes.SelectMany(bt => bt.GetProperties(BindingFlags.Public | BindingFlags.Static).Where(p => p.CanRead));
-            var readableStaticMembers = staticFields.Cast<MemberInfo>().Concat(staticProperties).ToList();
-
-            var rowCount = Math.Max(1, readableMembers.Count);
+            var readableMembers = GetReadableMembers(type).ToLookup(GetMemberIsStatic);
+            var staticMembers = readableMembers[true].ToList();
+            var instanceMembers = readableMembers[false].ToList();
+            var rowCount = Math.Max(1, instanceMembers.Count);
 
             if (control is TableLayoutPanel propertiesTable && propertiesTable.Tag == this && propertiesTable.ColumnCount == 2)
             {
@@ -99,7 +84,7 @@ namespace GameTheory.FormsRunner.Shared
                         keyControl.Dispose();
                     }
 
-                    var valueControl = propertiesTable.GetControlFromPosition(0, i);
+                    var valueControl = propertiesTable.GetControlFromPosition(1, i);
                     if (valueControl != null)
                     {
                         propertiesTable.Controls.Remove(valueControl);
@@ -115,10 +100,10 @@ namespace GameTheory.FormsRunner.Shared
                 propertiesTable.SuspendLayout();
             }
 
-            for (var i = 0; i < readableMembers.Count; i++)
+            for (var i = 0; i < instanceMembers.Count; i++)
             {
                 var p = i;
-                var member = readableMembers[p];
+                var member = instanceMembers[p];
 
                 var oldLabel = propertiesTable.GetControlFromPosition(0, p);
                 if (oldLabel is Label label && label.Tag == this)
@@ -131,137 +116,11 @@ namespace GameTheory.FormsRunner.Shared
                     oldLabel?.Dispose();
                 }
 
-                Type memberType;
-                object memberValue;
-                if (member is FieldInfo field)
-                {
-                    memberType = field.FieldType;
-                    memberValue = field.GetValue(value);
-                }
-                else if (member is PropertyInfo property)
-                {
-                    memberType = property.PropertyType;
-
-                    var indexParameters = property.GetIndexParameters();
-                    if (indexParameters.Length == 1)
-                    {
-                        var parameter = indexParameters.Single();
-                        if (parameter.Name == "index" && parameter.ParameterType == typeof(int))
-                        {
-                            var countProperty =
-                                readableMembers.FirstOrDefault(y => y.Name == "Count" && MemberValueType(y) == typeof(int)) ??
-                                readableMembers.FirstOrDefault(y => y.Name == "Length" && MemberValueType(y) == typeof(int));
-                            if (countProperty != null)
-                            {
-                                var count = (int)GetMemberValue(countProperty, value);
-                                ListDisplay.Instance.UpdateWithAction(
-                                    propertiesTable.GetControlFromPosition(1, p),
-                                    ObjectGraphEditor.Extend(path, member.Name),
-                                    member.Name,
-                                    memberType,
-                                    Enumerable.Range(0, count).Select(argument => property.GetValue(value, new object[] { argument })).ToList(),
-                                    displays,
-                                    (oldControl, newControl) =>
-                                    {
-                                        if (oldControl != null)
-                                        {
-                                            propertiesTable.Controls.Remove(oldControl);
-                                            oldControl.Dispose();
-                                        }
-
-                                        propertiesTable.Controls.Add(newControl, 1, p);
-                                    });
-
-                                continue;
-                            }
-                        }
-                    }
-                    else if (indexParameters.Length == 2)
-                    {
-                        var first = indexParameters[0];
-                        var second = indexParameters[1];
-                        if (first.Name == "x" && first.ParameterType == typeof(int) && second.Name == "y" && second.ParameterType == typeof(int))
-                        {
-                            var widthProperty =
-                                readableMembers.FirstOrDefault(y => y.Name == "Width" && MemberValueType(y) == typeof(int)) ??
-                                readableStaticMembers.FirstOrDefault(y => y.Name == "Width" && MemberValueType(y) == typeof(int));
-                            var heightProperty =
-                                readableMembers.FirstOrDefault(y => y.Name == "Height" && MemberValueType(y) == typeof(int)) ??
-                                readableStaticMembers.FirstOrDefault(y => y.Name == "Height" && MemberValueType(y) == typeof(int));
-
-                            if (widthProperty == null && heightProperty == null)
-                            {
-                                var sizeProperty =
-                                    readableMembers.FirstOrDefault(y => y.Name == "Size" && MemberValueType(y) == typeof(int)) ??
-                                    readableStaticMembers.FirstOrDefault(y => y.Name == "Size" && MemberValueType(y) == typeof(int));
-                                if (sizeProperty != null)
-                                {
-                                    widthProperty = sizeProperty;
-                                    heightProperty = sizeProperty;
-                                }
-                            }
-
-                            if (widthProperty != null && heightProperty != null)
-                            {
-                                var width = (int)GetMemberValue(widthProperty, value);
-                                var height = (int)GetMemberValue(heightProperty, value);
-                                var range = from x in Enumerable.Range(0, width)
-                                            from y in Enumerable.Range(0, height)
-                                            select new { x, y };
-
-                                var tablePanel = MakeTablePanel(Math.Max(1, height), Math.Max(1, width));
-
-                                tablePanel.SuspendLayout();
-
-                                foreach (var pair in range)
-                                {
-                                    var itemControl = Display.Update(
-                                        null,
-                                        ObjectGraphEditor.Extend(path, member.Name) + $"[{pair.x}, {pair.y}]",
-                                        member.Name,
-                                        memberType,
-                                        property.GetValue(value, new object[] { pair.x, pair.y }),
-                                        displays,
-                                        (oldControl, newControl) => { });
-
-                                    tablePanel.Controls.Add(itemControl);
-                                }
-
-                                tablePanel.ResumeLayout();
-
-                                var oldValueControl = propertiesTable.GetControlFromPosition(1, p);
-                                if (oldValueControl != null)
-                                {
-                                    propertiesTable.Controls.Remove(oldValueControl);
-                                    oldValueControl.Dispose();
-                                }
-
-                                propertiesTable.Controls.Add(tablePanel, 1, p);
-                                continue;
-                            }
-                        }
-                    }
-
-                    if (indexParameters.Length > 0)
-                    {
-                        memberValue = null; // !!!!!
-                    }
-                    else
-                    {
-                        memberValue = property.GetValue(value);
-                    }
-                }
-                else
-                {
-                    throw new NotImplementedException();
-                }
-
-                Display.Update(
+                MemberDisplay.Update(
                     propertiesTable.GetControlFromPosition(1, p),
                     ObjectGraphEditor.Extend(path, member.Name),
-                    member.Name,
-                    memberType,
-                    memberValue,
+                    member,
+                    value,
                     displays,
                     (oldControl, newControl) =>
                     {
@@ -271,13 +130,307 @@ namespace GameTheory.FormsRunner.Shared
                             oldControl.Dispose();
                         }
 
-                        propertiesTable.Controls.Add(newControl, 1, p);
+                        if (newControl != null)
+                        {
+                            propertiesTable.Controls.Add(newControl, 1, p);
+                        }
                     });
             }
 
             propertiesTable.ResumeLayout();
 
             return propertiesTable;
+        }
+
+        private static MemberInfo[] GetReadableMembers(Type type)
+        {
+            return ReadableMemberCache.GetOrAdd(type, t =>
+            {
+                IEnumerable<Type> baseTypes;
+                if (t.IsInterface)
+                {
+                    var seen = new HashSet<Type>();
+
+                    var queue = new Queue<Type>();
+                    queue.Enqueue(t);
+
+                    while (queue.Count > 0)
+                    {
+                        var @interface = queue.Dequeue();
+                        if (seen.Add(@interface))
+                        {
+                            foreach (var subInterface in @interface.GetInterfaces())
+                            {
+                                queue.Enqueue(subInterface);
+                            }
+                        }
+                    }
+
+                    baseTypes = seen;
+                }
+                else
+                {
+                    baseTypes = new[] { t };
+                }
+
+                var fields = baseTypes.SelectMany(bt => bt.GetFields(BindingFlags.Public | BindingFlags.Instance));
+                var properties = baseTypes.SelectMany(bt => bt.GetProperties(BindingFlags.Public | BindingFlags.Instance).Where(p => p.CanRead));
+
+                var staticFields = baseTypes.SelectMany(bt => bt.GetFields(BindingFlags.Public | BindingFlags.Static));
+                var staticProperties = baseTypes.SelectMany(bt => bt.GetProperties(BindingFlags.Public | BindingFlags.Static).Where(p => p.CanRead));
+                return fields.Cast<MemberInfo>().Concat(properties).Concat(staticFields).Concat(staticProperties).ToArray();
+            });
+        }
+
+        private abstract class MemberDisplay
+        {
+            private static readonly IList<MemberDisplay> MemberDisplays = new List<MemberDisplay>
+            {
+                FieldDisplay.Instance,
+                SimplePropertyDisplay.Instance,
+                ListItemDisplay.Instance,
+                MatrixItemDisplay.Instance,
+            }.AsReadOnly();
+
+            public static Control Update(Control control, string path, MemberInfo member, object value, IReadOnlyList<Display> displays, Action<Control, Control> update)
+            {
+                foreach (var display in MemberDisplays)
+                {
+                    if (display.CanDisplay(path, member, value))
+                    {
+                        return display.UpdateWithAction(control, path, member, value, displays, update);
+                    }
+                }
+
+                return null;
+            }
+
+            public abstract bool CanDisplay(string path, MemberInfo member, object value);
+
+            public Control UpdateWithAction(Control control, string path, MemberInfo member, object value, IReadOnlyList<Display> displays, Action<Control, Control> update = null)
+            {
+                var newControl = this.Update(control, path, member, value, displays);
+
+                if (update != null && !object.ReferenceEquals(control, newControl))
+                {
+                    update.Invoke(control, newControl);
+                }
+
+                return newControl;
+            }
+
+            protected abstract Control Update(Control control, string path, MemberInfo member, object value, IReadOnlyList<Display> displays);
+        }
+
+        private class FieldDisplay : MemberDisplay
+        {
+            private FieldDisplay()
+            {
+            }
+
+            public static FieldDisplay Instance { get; } = new FieldDisplay();
+
+            public override bool CanDisplay(string path, MemberInfo member, object value) => member is FieldInfo;
+
+            protected override Control Update(Control control, string path, MemberInfo member, object value, IReadOnlyList<Display> displays)
+            {
+                var field = (FieldInfo)member;
+                return Display.Update(
+                    control,
+                    path,
+                    member.Name,
+                    field.FieldType,
+                    field.GetValue(value),
+                    displays);
+            }
+        }
+
+        private class SimplePropertyDisplay : MemberDisplay
+        {
+            private SimplePropertyDisplay()
+            {
+            }
+
+            public static SimplePropertyDisplay Instance { get; } = new SimplePropertyDisplay();
+
+            public override bool CanDisplay(string path, MemberInfo member, object value) => member is PropertyInfo property && property.GetIndexParameters().Length == 0;
+
+            protected override Control Update(Control control, string path, MemberInfo member, object value, IReadOnlyList<Display> displays)
+            {
+                var property = (PropertyInfo)member;
+                return Display.Update(
+                    control,
+                    path,
+                    member.Name,
+                    property.PropertyType,
+                    property.GetValue(value),
+                    displays);
+            }
+        }
+
+        private class ListItemDisplay : MemberDisplay
+        {
+            private ListItemDisplay()
+            {
+            }
+
+            public static ListItemDisplay Instance { get; } = new ListItemDisplay();
+
+            public override bool CanDisplay(string path, MemberInfo member, object value)
+            {
+                if (!(member is PropertyInfo property && property.Name == "Item"))
+                {
+                    return false;
+                }
+
+                var parameters = property.GetIndexParameters();
+                if (parameters.Length != 1)
+                {
+                    return false;
+                }
+
+                var parameter = parameters[0];
+                if (parameter.Name != "index" || parameter.ParameterType != typeof(int))
+                {
+                    return false;
+                }
+
+                return GetReadableMembers(property.DeclaringType).Where(IsCount).Take(2).Count() == 1;
+            }
+
+            private static bool IsCount(MemberInfo member) =>
+                (member.Name == "Count" || member.Name == "Length") && GetMemberValueType(member) == typeof(int) && !GetMemberIsStatic(member);
+
+            protected override Control Update(Control control, string path, MemberInfo member, object value, IReadOnlyList<Display> displays)
+            {
+                var property = (PropertyInfo)member;
+                var countProperty = GetReadableMembers(property.DeclaringType).First(IsCount);
+                var count = (int)GetMemberValue(countProperty, value);
+                return ListDisplay.Instance.UpdateWithAction(
+                    control,
+                    path,
+                    member.Name,
+                    property.PropertyType,
+                    Enumerable.Range(0, count).Select(argument => property.GetValue(value, new object[] { argument })).ToList(),
+                    displays);
+            }
+        }
+
+        private class MatrixItemDisplay : MemberDisplay
+        {
+            private MatrixItemDisplay()
+            {
+            }
+
+            public static MatrixItemDisplay Instance { get; } = new MatrixItemDisplay();
+
+            public override bool CanDisplay(string path, MemberInfo member, object value)
+            {
+                if (!(member is PropertyInfo property && property.Name == "Item"))
+                {
+                    return false;
+                }
+
+                var parameters = property.GetIndexParameters();
+                if (parameters.Length != 2)
+                {
+                    return false;
+                }
+
+                var first = parameters[0];
+                var second = parameters[1];
+
+                if (!(first.Name == "x" && first.ParameterType == typeof(int) && second.Name == "y" && second.ParameterType == typeof(int)))
+                {
+                    return false;
+                }
+
+                var dimensions = GetDimensionMembers(GetReadableMembers(property.DeclaringType));
+                return dimensions.width != null && dimensions.height != null && GetMemberIsStatic(dimensions.width) == GetMemberIsStatic(dimensions.height);
+            }
+
+            private static (MemberInfo width, MemberInfo height) GetDimensionMembers(MemberInfo[] members)
+            {
+                var widthProperty = members.FirstOrDefault(member => member.Name == "Width" && GetMemberValueType(member) == typeof(int));
+                var heightProperty = members.FirstOrDefault(member => member.Name == "Height" && GetMemberValueType(member) == typeof(int));
+
+                if (widthProperty == null && heightProperty == null)
+                {
+                    var sizeProperty = members.FirstOrDefault(member => member.Name == "Size" && GetMemberValueType(member) == typeof(int));
+                    if (sizeProperty != null)
+                    {
+                        widthProperty = sizeProperty;
+                        heightProperty = sizeProperty;
+                    }
+                }
+
+                return (widthProperty, heightProperty);
+            }
+
+            protected override Control Update(Control control, string path, MemberInfo member, object value, IReadOnlyList<Display> displays)
+            {
+                var property = (PropertyInfo)member;
+                var dimensions = GetDimensionMembers(GetReadableMembers(property.DeclaringType));
+                var width = (int)GetMemberValue(dimensions.width, value);
+                var height = (int)GetMemberValue(dimensions.height, value);
+                var range = from x in Enumerable.Range(0, width)
+                            from y in Enumerable.Range(0, height)
+                            select new { x, y };
+
+                if (control is TableLayoutPanel tablePanel && tablePanel.Tag == this)
+                {
+                    tablePanel.SuspendLayout();
+
+                    for (var y = width < tablePanel.ColumnCount ? 0 : height; y < tablePanel.RowCount; y++)
+                    {
+                        for (var x = height < tablePanel.RowCount && y >= height ? 0 : width; x < tablePanel.ColumnCount; x++)
+                        {
+                            var oldControl = tablePanel.GetControlFromPosition(x, y);
+                            if (oldControl != null)
+                            {
+                                tablePanel.Controls.Remove(oldControl);
+                                oldControl.Dispose();
+                            }
+                        }
+                    }
+
+                    tablePanel.ColumnCount = width;
+                    tablePanel.RowCount = height;
+                }
+                else
+                {
+                    tablePanel = MakeTablePanel(Math.Max(1, height), Math.Max(1, width), tag: this);
+                    tablePanel.SuspendLayout();
+                }
+
+                foreach (var pair in range)
+                {
+                    Display.Update(
+                        tablePanel.GetControlFromPosition(pair.x, pair.y),
+                        path + $"[{pair.x}, {pair.y}]",
+                        member.Name,
+                        property.PropertyType,
+                        property.GetValue(value, new object[] { pair.x, pair.y }),
+                        displays,
+                        (oldControl, newControl) =>
+                        {
+                            if (oldControl != null)
+                            {
+                                tablePanel.Controls.Remove(oldControl);
+                                oldControl.Dispose();
+                            }
+
+                            if (newControl != null)
+                            {
+                                tablePanel.Controls.Add(newControl, pair.x, pair.y);
+                            }
+                        });
+                }
+
+                tablePanel.ResumeLayout();
+
+                return tablePanel;
+            }
         }
     }
 }
