@@ -12,6 +12,7 @@ namespace GameTheory.FormsRunner
     using System.Windows.Forms;
     using GameTheory.Catalogs;
     using GameTheory.FormsRunner.Shared;
+    using static Shared.Controls;
 
     public partial class NewGameForm : Form
     {
@@ -533,11 +534,7 @@ namespace GameTheory.FormsRunner
                 }
                 else
                 {
-                    label = new Label
-                    {
-                        AutoSize = true,
-                        Text = name,
-                    };
+                    label = MakeLabel(scope.Name, tag: this);
                     label.Margin = new Padding(label.Margin.Left, label.Margin.Top, label.Margin.Right, label.Margin.Bottom + 7);
                     set(this.playerToken, true);
                 }
