@@ -18,7 +18,7 @@ namespace GameTheory.Games.Chess
 
         private readonly Pieces[] board;
         private WeakReference<IReadOnlyList<Move>> allMovesCache;
-        private WeakReference<IReadOnlyList<Move>> availableMovesCache;
+        private WeakReference<Tuple<IReadOnlyList<Move>, bool>> availableMovesCache;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GameState"/> class.
@@ -142,12 +142,12 @@ namespace GameTheory.Games.Chess
         /// <summary>
         /// Gets a value indicating whether or not the active player is in checkmate.
         /// </summary>
-        public bool IsCheckmate => this.GetAvailableMoves().Count == 0 && this.IsCheck;
+        public bool IsCheckmate => this.GetAvailableMoves(out var isMate).Count == 0 && isMate && this.IsCheck;
 
         /// <summary>
         /// Gets a value indicating whether or not the active player is in stalemate.
         /// </summary>
-        public bool IsStalemate => this.GetAvailableMoves().Count == 0 && !this.IsCheck;
+        public bool IsStalemate => this.GetAvailableMoves(out var isMate).Count == 0 && isMate && !this.IsCheck;
 
         /// <summary>
         /// Gets the current move number.
@@ -291,7 +291,14 @@ namespace GameTheory.Games.Chess
         /// <inheritdoc/>
         public IReadOnlyList<Move> GetAvailableMoves()
         {
-            return CachingUtils.WeakRefernceCache(ref this.availableMovesCache, () => this.Variant.GenerateMoves(this));
+            return this.GetAvailableMoves(out var _);
+        }
+
+        private IReadOnlyList<Move> GetAvailableMoves(out bool isMate)
+        {
+            var tuple = CachingUtils.WeakRefernceCache(ref this.availableMovesCache, () => this.Variant.GenerateMoves(this));
+            isMate = tuple.Item2;
+            return tuple.Item1;
         }
 
         /// <inheritdoc/>
@@ -325,6 +332,10 @@ namespace GameTheory.Games.Chess
             if (this.IsCheckmate)
             {
                 return ImmutableList.Create(this.ActiveColor == Pieces.White ? this.Players[1] : this.Players[0]);
+            }
+            else if (this.IsStalemate)
+            {
+                return this.Players;
             }
 
             return ImmutableList<PlayerToken>.Empty;

@@ -1,6 +1,6 @@
 // Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
-namespace GameTheory.Games.Ergo.Players.MaximizingPlayers
+namespace GameTheory.Games.Ergo.Players
 {
     using GameTheory.Players.MaximizingPlayer;
 

@@ -211,6 +211,69 @@ namespace GameTheory.Games.Chess
         /// <returns>The corresponding index.</returns>
         public int GetIndexOf(int x, int y) => y * this.Width + x;
 
+        /// <summary>
+        /// Gets a value indicating whether or not the specified game state has insufficient material for checkmate.
+        /// </summary>
+        /// <param name="state">The <see cref="GameState"/> to inspect.</param>
+        /// <returns><c>true</c>, if the game is a draw due to insufficient material; <c>false</c>, otherwise.</returns>
+        public bool IsDrawingMaterial(GameState state)
+        {
+            var knights = 0;
+            var bishopsEven = 0;
+            var bishopsOdd = 0;
+            for (var i = 0; i < this.Size; i++)
+            {
+                var piece = state.Board[i];
+                var color = piece & (Pieces.White | Pieces.Black);
+                switch (piece ^ color)
+                {
+                    case Pieces.Pawn:
+                    case Pieces.Rook:
+                    case Pieces.Queen:
+                        return false;
+
+                    case Pieces.Knight:
+                        if (knights > 0 || bishopsEven > 0 || bishopsOdd > 0)
+                        {
+                            return false;
+                        }
+
+                        knights++;
+                        break;
+
+                    case Pieces.Bishop:
+                        if (knights > 0)
+                        {
+                            return false;
+                        }
+
+                        var point = this.GetCoordinates(i);
+                        if ((point.X + point.Y) % 2 == 0)
+                        {
+                            if (bishopsOdd > 0)
+                            {
+                                return false;
+                            }
+
+                            bishopsEven++;
+                        }
+                        else
+                        {
+                            if (bishopsEven > 0)
+                            {
+                                return false;
+                            }
+
+                            bishopsOdd++;
+                        }
+
+                        break;
+                }
+            }
+
+            return true;
+        }
+
         protected internal IReadOnlyList<Move> GenerateAllMoves(GameState state, bool onlyCaptures = false)
         {
             var builder = new List<Move>();
@@ -430,13 +493,8 @@ namespace GameTheory.Games.Chess
             return builder;
         }
 
-        protected internal IReadOnlyList<Move> GenerateMoves(GameState state)
+        protected internal Tuple<IReadOnlyList<Move>, bool> GenerateMoves(GameState state)
         {
-            if (state.PlyCountClock >= this.DrawingPlyCount)
-            {
-                return new Move[0];
-            }
-
             var allMoves = state.GenerateAllMoves();
             var moves = new List<Move>(allMoves.Count);
 
@@ -464,7 +522,14 @@ namespace GameTheory.Games.Chess
                 }
             }
 
-            return moves;
+            var isMate = moves.Count == 0;
+            var isOtherDraw = !isMate && (state.PlyCountClock >= this.DrawingPlyCount || this.IsDrawingMaterial(state));
+            if (isOtherDraw)
+            {
+                moves.Clear();
+            }
+
+            return Tuple.Create<IReadOnlyList<Move>, bool>(moves, isMate);
         }
     }
 }
