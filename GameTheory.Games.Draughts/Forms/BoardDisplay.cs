@@ -23,7 +23,7 @@ namespace GameTheory.Games.Draughts.Forms
             }
             else
             {
-                checkerboard = new Checkerboard(gameState, gameState.Players[0]);
+                checkerboard = new Checkerboard(gameState, scope.GetPropertyOrDefault(Scope.SharedProperties.PlayerToken, gameState.Players[0]));
             }
 
             return checkerboard;
