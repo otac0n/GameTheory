@@ -9,228 +9,171 @@ namespace GameTheory.FormsRunner.Shared
     using System.Windows.Forms;
     using static Controls;
 
-    public static class ObjectGraphEditor
+    public class ObjectGraphEditor : Editor
     {
+        private ObjectGraphEditor()
+        {
+        }
+
+        public static ObjectGraphEditor Instance { get; } = new ObjectGraphEditor();
 
         public delegate bool OverrideEditor(string path, string name, Type type, object value, out Control control, out Control errorControl, out Label label, Action<Control, string> setError, Action<object, bool> set);
 
-        public static Control MakeEditor(string path, string name, Type type, object value, out Control errorControl, out Label label, Action<Control, string> setError, Action<object, bool> set, OverrideEditor overrideEditor = null)
+        public override bool CanEdit(string path, string name, Type type, object value) => true;
+
+        protected override Control Update(Control control, string path, string name, Type type, object value, out Control errorControl, IReadOnlyList<Editor> editors, Action<Control, string> setError, Action<object, bool> set)
         {
-            if (overrideEditor != null && overrideEditor(path, name, type, value, out var overrideControl, out var overrideError, out var overrideLabel, setError, set))
+            var noParameters = new ParameterInfo[0];
+            var nullValues = new[] { new { order = 0, selection = new InitializerSelection("(null)", args => null, noParameters) } }.ToList();
+            nullValues.RemoveAll(_ => type.IsValueType);
+            var constructors = from constructor in type.GetConstructors()
+                                let parameters = constructor.GetParameters()
+                                let text = parameters.Length == 0 ? "Default Instance" : $"Specify {string.Join(", ", parameters.Select(p => p.Name))}"
+                                let accessor = new Func<object[], object>(args => constructor.Invoke(args))
+                                select new { order = parameters.Length == 0 ? 1 : 3, selection = new InitializerSelection(text, accessor, parameters) };
+            var staticProperties = from staticProperty in type.GetProperties(BindingFlags.Public | BindingFlags.Static)
+                                    where staticProperty.PropertyType == type
+                                    let accessor = new Func<object[], object>(_ => staticProperty.GetValue(null))
+                                    select new { order = 2, selection = new InitializerSelection(staticProperty.Name, accessor, noParameters) };
+            var rootOptions = nullValues.Concat(constructors).Concat(staticProperties).OrderBy(s => s.order).Select(s => s.selection).ToArray();
+
+            var propertiesTable = MakeTablePanel(1, 2);
+
+            var constructorList = new ComboBox
             {
-                errorControl = overrideError;
-                label = overrideLabel;
-                return overrideControl;
-            }
+                DisplayMember = "Name",
+                DropDownStyle = ComboBoxStyle.DropDownList,
+                Tag = this,
+            };
+            constructorList.AddMargin(right: ErrorIconPadding);
 
-            if (type == typeof(bool))
+            constructorList.SelectedIndexChanged += (_, a) =>
             {
-                label = null;
-                var control = new CheckBox
-                {
-                    AutoSize = true,
-                    Checked = value as bool? ?? default(bool),
-                    Text = name,
-                };
-                control.Margin = new Padding(control.Margin.Left, control.Margin.Top, control.Margin.Right + 32, control.Margin.Bottom);
-                control.CheckedChanged += (_, a) =>
-                {
-                    setError(control, null);
-                    set(control.Checked, true);
-                };
+                var constructor = constructorList.SelectedItem as InitializerSelection;
+                var parameterCount = constructor.Parameters.Length;
+                propertiesTable.SuspendLayout();
+                propertiesTable.Controls.Clear(); // TODO: Dispose controls.
+                propertiesTable.RowCount = Math.Max(1, parameterCount);
+                var parameters = new object[parameterCount];
+                var innerValid = new bool[parameterCount];
+                var disposeControls = new Control[parameterCount];
+                var errorControls = new Dictionary<string, Control>();
 
-                set(control.Checked, true);
-                return errorControl = control;
-            }
-
-            label = MakeLabel(name);
-
-            if (type == typeof(string))
-            {
-                var control = new TextBox
+                void Touch()
                 {
-                    Text = value as string ?? string.Empty,
-                };
-                PadControls(label, control, 5);
-                control.TextChanged += (_, a) =>
-                {
-                    setError(control, null);
-                    set(control.Text, true);
-                };
+                    setError(constructorList, null);
 
-                set(control.Text, true);
-                return errorControl = control;
-            }
-            else if (type == typeof(int))
-            {
-                var control = new NumericUpDown
-                {
-                    Value = value as int? ?? default(int),
-                };
-                PadControls(label, control, 5);
-                control.ValueChanged += (_, a) =>
-                {
-                    setError(control, null);
-                    set((int)control.Value, true);
-                };
-
-                set((int)control.Value, true);
-                return errorControl = control;
-            }
-            else if (type.IsEnum)
-            {
-                var control = new ComboBox
-                {
-                    DropDownStyle = ComboBoxStyle.DropDownList,
-                };
-                control.Items.AddRange(Enum.GetValues(type).Cast<object>().ToArray());
-                control.SelectedItem = value;
-                PadControls(label, control, 10);
-                control.SelectedValueChanged += (_, a) =>
-                {
-                    setError(control, null);
-                    set(control.SelectedItem, true);
-                };
-
-                set(control.SelectedItem, true);
-                return errorControl = control;
-            }
-            else
-            {
-                var noParameters = new ParameterInfo[0];
-                var nullValues = new[] { new { order = 0, selection = new InitializerSelection("(null)", args => null, noParameters) } }.ToList();
-                nullValues.RemoveAll(_ => type.IsValueType);
-                var constructors = from constructor in type.GetConstructors()
-                                   let parameters = constructor.GetParameters()
-                                   let text = parameters.Length == 0 ? "Default Instance" : $"Specify {string.Join(", ", parameters.Select(p => p.Name))}"
-                                   let accessor = new Func<object[], object>(args => constructor.Invoke(args))
-                                   select new { order = parameters.Length == 0 ? 1 : 3, selection = new InitializerSelection(text, accessor, parameters) };
-                var staticProperties = from staticProperty in type.GetProperties(BindingFlags.Public | BindingFlags.Static)
-                                       where staticProperty.PropertyType == type
-                                       let accessor = new Func<object[], object>(_ => staticProperty.GetValue(null))
-                                       select new { order = 2, selection = new InitializerSelection(staticProperty.Name, accessor, noParameters) };
-                var rootOptions = nullValues.Concat(constructors).Concat(staticProperties).OrderBy(s => s.order).Select(s => s.selection).ToArray();
-
-                var propertiesTable = MakeTablePanel(1, 2);
-
-                var constructorList = new ComboBox
-                {
-                    DisplayMember = "Name",
-                    DropDownStyle = ComboBoxStyle.DropDownList,
-                };
-                PadControls(label, constructorList, 10);
-
-                constructorList.SelectedIndexChanged += (_, a) =>
-                {
-                    var constructor = constructorList.SelectedItem as InitializerSelection;
-                    var parameterCount = constructor.Parameters.Length;
-                    propertiesTable.SuspendLayout();
-                    propertiesTable.Controls.Clear(); // TODO: Dispose controls.
-                    propertiesTable.RowCount = Math.Max(1, parameterCount);
-                    var parameters = new object[parameterCount];
-                    var innerValid = new bool[parameterCount];
-                    var disposeControls = new Control[parameterCount];
-                    var errorControls = new Dictionary<string, Control>();
-
-                    void Touch()
+                    object parameterValue = null;
+                    var valid = innerValid.All(v => v);
+                    if (valid)
                     {
-                        setError(constructorList, null);
-
-                        object parameterValue = null;
-                        var valid = innerValid.All(v => v);
-                        if (valid)
+                        try
                         {
-                            try
+                            parameterValue = constructor.Accessor(parameters);
+                            foreach (var innerErrorControl in errorControls.Values)
                             {
-                                parameterValue = constructor.Accessor(parameters);
-                                foreach (var innerErrorControl in errorControls.Values)
-                                {
-                                    setError(innerErrorControl, null);
-                                }
-                            }
-                            catch (TargetInvocationException ex)
-                            {
-                                valid = false;
-                                var inner = ex.InnerException;
-                                Control innerErrorControl = null;
-                                switch (inner)
-                                {
-                                    case ArgumentException argumentException:
-                                        errorControls.TryGetValue(argumentException.ParamName, out innerErrorControl);
-                                        break;
-
-                                    default:
-                                        break;
-                                }
-
-                                setError(innerErrorControl ?? constructorList, inner.Message);
+                                setError(innerErrorControl, null);
                             }
                         }
-
-                        set(parameterValue, valid);
-                    }
-
-                    for (var i = 0; i < parameterCount; i++)
-                    {
-                        var p = i; // Closure variable.
-                        var parameter = constructor.Parameters[p];
-                        var innerControl = MakeEditor(
-                            Extend(path, parameter.Name),
-                            parameter.Name,
-                            parameter.ParameterType,
-                            parameter.HasDefaultValue ? parameter.DefaultValue : null,
-                            out var innerErrorControl,
-                            out var innerLabel,
-                            setError,
-                            (innerValue, valid) =>
-                            {
-                                parameters[p] = innerValue;
-                                innerValid[p] = valid;
-                                if (i >= parameterCount)
-                                {
-                                    Touch();
-                                }
-                            },
-                            overrideEditor);
-
-                        if (innerLabel != null)
+                        catch (TargetInvocationException ex)
                         {
-                            propertiesTable.Controls.Add(innerLabel, 0, p);
-                        }
+                            valid = false;
+                            var inner = ex.InnerException;
+                            Control innerErrorControl = null;
+                            switch (inner)
+                            {
+                                case ArgumentException argumentException:
+                                    errorControls.TryGetValue(argumentException.ParamName, out innerErrorControl);
+                                    break;
 
-                        propertiesTable.Controls.Add(innerControl, 1, p);
-                        disposeControls[p] = innerControl;
-                        errorControls[parameter.Name] = innerErrorControl;
+                                default:
+                                    break;
+                            }
+
+                            setError(innerErrorControl ?? constructorList, inner.Message);
+                        }
                     }
 
-                    propertiesTable.ResumeLayout();
-
-                    Touch();
-                };
-
-                constructorList.Items.AddRange(rootOptions);
-                if (constructorList.Items.Count > 0)
-                {
-                    constructorList.SelectedIndex = Math.Min(constructorList.Items.Count - 1, nullValues.Count);
+                    set(parameterValue, valid);
                 }
 
-                var control = MakeTablePanel(2, 1);
-                control.Controls.Add(constructorList, 0, 0);
-                control.Controls.Add(propertiesTable, 0, 1);
+                for (var i = 0; i < parameterCount; i++)
+                {
+                    var p = i; // Closure variable.
+                    var parameter = constructor.Parameters[p];
 
-                // TODO: Dispose controls when control is disposed.
-                errorControl = constructorList;
-                return control;
+                    var innerControl = Editor.Update(
+                        null,
+                        Extend(path, parameter.Name),
+                        parameter.Name,
+                        parameter.ParameterType,
+                        parameter.HasDefaultValue ? parameter.DefaultValue : null,
+                        out var innerErrorControl,
+                        editors,
+                        setError,
+                        (innerValue, valid) =>
+                        {
+                            parameters[p] = innerValue;
+                            innerValid[p] = valid;
+                            if (i >= parameterCount)
+                            {
+                                Touch();
+                            }
+                        },
+                        (oldControl, newControl) =>
+                        {
+                            if (oldControl != null)
+                            {
+                                propertiesTable.Controls.Remove(oldControl);
+                                oldControl.Dispose();
+                            }
+
+                            if (newControl != null)
+                            {
+                                propertiesTable.Controls.Add(newControl, 1, p);
+                            }
+                        });
+
+                    if (!(innerControl is CheckBox))
+                    {
+                        var label = MakeLabel(parameter.Name, tag: this);
+
+                        switch (innerControl)
+                        {
+                            case ComboBox comboBox:
+                                label.AddMargin(top: 10);
+                                break;
+                            case TextBox textbox:
+                            case NumericUpDown numericUpDown:
+                                label.AddMargin(top: 5);
+                                break;
+                        }
+
+                        propertiesTable.Controls.Add(label, 0, p);
+                    }
+
+                    disposeControls[p] = innerControl;
+                    errorControls[parameter.Name] = innerErrorControl;
+                }
+
+                propertiesTable.ResumeLayout();
+
+                Touch();
+            };
+
+            constructorList.Items.AddRange(rootOptions);
+            if (constructorList.Items.Count > 0)
+            {
+                constructorList.SelectedIndex = Math.Min(constructorList.Items.Count - 1, nullValues.Count);
             }
-        }
 
-        public static string Extend(string path, string name) => string.IsNullOrEmpty(path) ? name : $"{path}.{name}";
+            var tablePanel = MakeTablePanel(2, 1);
+            tablePanel.Controls.Add(constructorList, 0, 0);
+            tablePanel.Controls.Add(propertiesTable, 0, 1);
 
-        private static void PadControls(Label label, Control control, int labelTop)
-        {
-            const int ErrorIconPadding = 32;
-            label.Margin = new Padding(label.Margin.Left, label.Margin.Top + labelTop, label.Margin.Right, label.Margin.Bottom);
-            control.Margin = new Padding(control.Margin.Left, control.Margin.Top, control.Margin.Right + ErrorIconPadding, control.Margin.Bottom);
+            // TODO: Dispose controls when tablePanel is disposed.
+            errorControl = constructorList;
+            return tablePanel;
         }
 
         private class InitializerSelection

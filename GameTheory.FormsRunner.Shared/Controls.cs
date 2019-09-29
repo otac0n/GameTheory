@@ -4,7 +4,7 @@ namespace GameTheory.FormsRunner.Shared
 {
     using System.Windows.Forms;
 
-    public class Controls
+    public static class Controls
     {
         public static FlowLayoutPanel MakeFlowPanel(object tag = null) => new FlowLayoutPanel
         {
@@ -29,5 +29,15 @@ namespace GameTheory.FormsRunner.Shared
             Margin = Padding.Empty,
             Tag = tag,
         };
+
+        public static Control AddMargin(this Control control, int left = 0, int top = 0, int right = 0, int bottom = 0)
+        {
+            control.Margin = new Padding(
+                control.Margin.Left + left,
+                control.Margin.Top + top,
+                control.Margin.Right + right,
+                control.Margin.Bottom + bottom);
+            return control;
+        }
     }
 }

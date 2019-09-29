@@ -102,7 +102,7 @@ namespace GameTheory.FormsRunner.Shared
 
             for (var i = 0; i < instanceMembers.Count; i++)
             {
-                var p = i;
+                var p = i; // Closure variable.
                 var member = instanceMembers[p];
 
                 var oldLabel = propertiesTable.GetControlFromPosition(0, p);
@@ -118,7 +118,7 @@ namespace GameTheory.FormsRunner.Shared
 
                 MemberDisplay.Update(
                     propertiesTable.GetControlFromPosition(1, p),
-                    ObjectGraphEditor.Extend(path, member.Name),
+                    Editor.Extend(path, member.Name),
                     member,
                     value,
                     displays,
