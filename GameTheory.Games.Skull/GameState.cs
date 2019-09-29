@@ -5,6 +5,7 @@ namespace GameTheory.Games.Skull
     using System;
     using System.Collections.Generic;
     using System.Collections.Immutable;
+    using System.ComponentModel.DataAnnotations;
     using System.Linq;
 
     /// <summary>
@@ -31,7 +32,7 @@ namespace GameTheory.Games.Skull
         /// Initializes a new instance of the <see cref="GameState"/> class.
         /// </summary>
         /// <param name="players">The number of players.</param>
-        public GameState(int players = MinPlayers)
+        public GameState([Range(MinPlayers, MaxPlayers)] int players = MinPlayers)
         {
             if (players < MinPlayers || players > MaxPlayers)
             {

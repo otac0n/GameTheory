@@ -171,6 +171,12 @@
   <data name="PluralPlayers" xml:space="preserve">
     <value>{0} players</value>
   </data>
+  <data name="Range" xml:space="preserve">
+    <value>[{0}-{1}]</value>
+  </data>
+  <data name="RangeWithDefault" xml:space="preserve">
+    <value>[{0}-{1}, default {2}]</value>
+  </data>
   <data name="SingleConstructor" xml:space="preserve">
     <value>Using only available constructor.</value>
   </data>

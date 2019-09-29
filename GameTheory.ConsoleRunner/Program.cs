@@ -4,6 +4,7 @@ namespace GameTheory.ConsoleRunner
 {
     using System;
     using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
     using System.Diagnostics;
     using System.IO;
     using System.Linq;
@@ -59,9 +60,26 @@ namespace GameTheory.ConsoleRunner
                 return ConstructType(parameter.ParameterType);
             }
 
+            var range = parameter.GetCustomAttribute<RangeAttribute>();
+            if (range != null && (!(range.Minimum is int) || parameter.ParameterType != typeof(int)))
+            {
+                range = null;
+            }
+
             if (parameter.HasDefaultValue)
             {
-                Console.Write(Resources.DefaultValue, parameter.DefaultValue);
+                if (range != null)
+                {
+                    Console.WriteLine(Resources.RangeWithDefault, range.Minimum, range.Maximum, parameter.DefaultValue);
+                }
+                else
+                {
+                    Console.Write(Resources.DefaultValue, parameter.DefaultValue);
+                }
+            }
+            else if (range != null)
+            {
+                Console.WriteLine(Resources.Range, range.Minimum, range.Maximum);
             }
 
             Console.WriteLine();
@@ -100,9 +118,16 @@ namespace GameTheory.ConsoleRunner
                 }
                 else if (parameter.ParameterType == typeof(int))
                 {
-                    if (int.TryParse(line, out int selection))
+                    if (int.TryParse(line, out var selection))
                     {
-                        return selection;
+                        if (range == null || ((int)range.Minimum <= selection && (int)range.Maximum >= selection))
+                        {
+                            return selection;
+                        }
+                        else
+                        {
+                            Console.WriteLine(range.FormatErrorMessage(parameter.Name));
+                        }
                     }
                     else
                     {

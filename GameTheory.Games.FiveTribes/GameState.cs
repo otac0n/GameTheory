@@ -5,6 +5,7 @@ namespace GameTheory.Games.FiveTribes
     using System;
     using System.Collections.Generic;
     using System.Collections.Immutable;
+    using System.ComponentModel.DataAnnotations;
     using System.Linq;
     using System.Threading;
     using GameTheory.Games.FiveTribes.Djinns;
@@ -145,7 +146,7 @@ namespace GameTheory.Games.FiveTribes
         /// </summary>
         /// <param name="players">The number of players.</param>
         /// <param name="includeDhenim">Include the promo card, Dhenim, with the Djins?</param>
-        public GameState(int players = MinPlayers, bool includeDhenim = false)
+        public GameState([Range(MinPlayers, MaxPlayers)] int players = MinPlayers, bool includeDhenim = false)
             : this(null)
         {
             if (players < MinPlayers || players > MaxPlayers)

@@ -35,6 +35,9 @@
     <ProjectReference Include="..\GameTheory\GameTheory.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+  </ItemGroup>
+  <ItemGroup>
     <WeaveTemplate Include="Console\GameState.weave" />
   </ItemGroup>
 </Project>
