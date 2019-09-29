@@ -97,11 +97,11 @@ namespace GameTheory.FormsRunner.Shared
             }
             else
             {
-                var noParameters = new InitializerParameter[0];
+                var noParameters = new ParameterInfo[0];
                 var nullValues = new[] { new { order = 0, selection = new InitializerSelection("(null)", args => null, noParameters) } }.ToList();
                 nullValues.RemoveAll(_ => type.IsValueType);
                 var constructors = from constructor in type.GetConstructors()
-                                   let parameters = constructor.GetParameters().Select(p => new InitializerParameter(p.Name, p.ParameterType, p.HasDefaultValue ? p.DefaultValue : null)).ToArray()
+                                   let parameters = constructor.GetParameters()
                                    let text = parameters.Length == 0 ? "Default Instance" : $"Specify {string.Join(", ", parameters.Select(p => p.Name))}"
                                    let accessor = new Func<object[], object>(args => constructor.Invoke(args))
                                    select new { order = parameters.Length == 0 ? 1 : 3, selection = new InitializerSelection(text, accessor, parameters) };
@@ -178,7 +178,7 @@ namespace GameTheory.FormsRunner.Shared
                             Extend(path, parameter.Name),
                             parameter.Name,
                             parameter.ParameterType,
-                            parameter.DefaultValue,
+                            parameter.HasDefaultValue ? parameter.DefaultValue : null,
                             out var innerErrorControl,
                             out var innerLabel,
                             setError,
@@ -233,25 +233,9 @@ namespace GameTheory.FormsRunner.Shared
             control.Margin = new Padding(control.Margin.Left, control.Margin.Top, control.Margin.Right + ErrorIconPadding, control.Margin.Bottom);
         }
 
-        private class InitializerParameter
-        {
-            public InitializerParameter(string name, Type parameterType, object defaultValue)
-            {
-                this.Name = name;
-                this.ParameterType = parameterType;
-                this.DefaultValue = defaultValue;
-            }
-
-            public object DefaultValue { get; }
-
-            public string Name { get; }
-
-            public Type ParameterType { get; }
-        }
-
         private class InitializerSelection
         {
-            public InitializerSelection(string name, Func<object[], object> accessor, InitializerParameter[] parameters)
+            public InitializerSelection(string name, Func<object[], object> accessor, ParameterInfo[] parameters)
             {
                 this.Name = name;
                 this.Accessor = accessor;
@@ -262,7 +246,7 @@ namespace GameTheory.FormsRunner.Shared
 
             public string Name { get; }
 
-            public InitializerParameter[] Parameters { get; }
+            public ParameterInfo[] Parameters { get; }
         }
     }
 }
