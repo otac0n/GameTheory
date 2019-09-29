@@ -326,6 +326,10 @@ namespace GameTheory.Games.Chess
             {
                 return ImmutableList.Create(this.ActiveColor == Pieces.White ? this.Players[1] : this.Players[0]);
             }
+            else if (this.IsStalemate)
+            {
+                return this.Players;
+            }
 
             return ImmutableList<PlayerToken>.Empty;
         }
