@@ -2,25 +2,51 @@
 
 namespace GameTheory.FormsRunner.Shared
 {
+    using System.Collections.Generic;
+    using System.Collections.Immutable;
+
     public class Scope
     {
-        public Scope(string path = "", string name = null)
+        public Scope(string path = "", string name = null, IDictionary<string, object> properties = null)
         {
             this.Path = path ?? string.Empty;
             this.Name = name;
+            this.Properties = properties?.ToImmutableDictionary();
         }
+
+        private Scope(Scope parent, string name)
+        {
+            this.Parent = parent;
+            this.Path = string.IsNullOrEmpty(this.Path)
+                ? name
+                : name.StartsWith("[")
+                    ? $"{this.Path}{name}"
+                    : $"{this.Path}.{name}";
+            this.Name = name;
+        }
+
+        public Scope Parent { get; }
 
         public string Path { get; }
 
         public string Name { get; }
 
-        public Scope Extend(string name) =>
-            new Scope(
-                string.IsNullOrEmpty(this.Path)
-                    ? name
-                    : name.StartsWith("[")
-                        ? $"{this.Path}{name}"
-                        : $"{this.Path}.{name}",
-                name);
+        public ImmutableDictionary<string, object> Properties { get; }
+
+        public Scope Extend(string name) => new Scope(this, name);
+
+        public T GetPropertyOrDefault<T>(string key, T @default = default)
+        {
+            if (this.Properties != null && this.Properties.TryGetValue(key, out var value) && value is T result)
+            {
+                return result;
+            }
+            else if (this.Parent != null)
+            {
+                return this.Parent.GetPropertyOrDefault(key, @default);
+            }
+
+            return @default;
+        }
     }
 }

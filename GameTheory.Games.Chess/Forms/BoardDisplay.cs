@@ -26,7 +26,7 @@ namespace GameTheory.Games.Chess.Forms
             }
             else
             {
-                chessboard = new Chessboard(gameState, gameState.Players[0]);
+                chessboard = new Chessboard(gameState, scope.GetPropertyOrDefault<PlayerToken>("playerToken", gameState.Players[0]));
             }
 
             return chessboard;
