@@ -151,7 +151,11 @@ namespace GameTheory.FormsRunner
                     out var errorControl,
                     null,
                     this.errorProvider.SetError,
-                    (value, valid) => this.StartingState = valid ? value : null,
+                    (value, valid) =>
+                    {
+                        (this.StartingState as IDisposable)?.Dispose();
+                        this.StartingState = valid ? value : null;
+                    },
                     (oldControl, newControl) =>
                     {
                         if (oldControl != null)
@@ -249,6 +253,7 @@ namespace GameTheory.FormsRunner
                             this.errorProvider.SetError,
                             (value, valid) =>
                             {
+                                (playerInstances[p] as IDisposable)?.Dispose();
                                 playersValid[p] = valid;
                                 players[p] = valid ? player : null;
                                 playerInstances[p] = valid ? value : null;

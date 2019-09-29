@@ -113,6 +113,7 @@ namespace GameTheory.FormsRunner.Shared
                         setError,
                         (innerValue, valid) =>
                         {
+                            (parameters[p] as IDisposable)?.Dispose();
                             parameters[p] = innerValue;
                             innerValid[p] = valid;
                             if (i >= parameterCount)
