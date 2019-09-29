@@ -52,7 +52,7 @@ namespace GameTheory.FormsRunner.Shared
                 var constructor = constructorList.SelectedItem as InitializerSelection;
                 var parameterCount = constructor.Parameters.Length;
                 propertiesTable.SuspendLayout();
-                propertiesTable.Controls.Clear(); // TODO: Dispose controls.
+                propertiesTable.Controls.DisposeAndClear();
                 propertiesTable.RowCount = Math.Max(1, parameterCount);
                 var parameters = new object[parameterCount];
                 var innerValid = new bool[parameterCount];

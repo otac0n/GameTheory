@@ -168,8 +168,7 @@ namespace GameTheory.FormsRunner
             }
             else
             {
-                // TODO: Dispose the controls.
-                this.configurationTab.Controls.Clear();
+                this.configurationTab.Controls.DisposeAndClear();
             }
         }
 
@@ -185,7 +184,7 @@ namespace GameTheory.FormsRunner
             var state = this.StartingState;
             this.StartingStateChanged?.Invoke(this, new StartingStateChangedEventArgs(state));
 
-            this.playersTable.Controls.Clear(); // TODO: Dispose controls.
+            this.playersTable.Controls.DisposeAndClear();
             if (state != null)
             {
                 var game = this.SelectedGame;

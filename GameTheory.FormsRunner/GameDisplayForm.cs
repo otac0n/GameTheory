@@ -48,8 +48,11 @@ namespace GameTheory.FormsRunner
                 this.displays,
                 (oldControl, newControl) =>
                 {
-                    this.splitContainer.Panel1.Controls.Clear();
-                    oldControl?.Dispose();
+                    if (oldControl != null)
+                    {
+                        this.splitContainer.Panel1.Controls.Remove(oldControl);
+                        oldControl.Dispose();
+                    }
 
                     if (newControl != null)
                     {
@@ -65,8 +68,11 @@ namespace GameTheory.FormsRunner
                 this.displays,
                 (oldControl, newControl) =>
                 {
-                    this.splitContainer.Panel2.Controls.Clear();
-                    oldControl?.Dispose();
+                    if (oldControl != null)
+                    {
+                        this.splitContainer.Panel2.Controls.Remove(oldControl);
+                        oldControl.Dispose();
+                    }
 
                     if (newControl != null)
                     {
