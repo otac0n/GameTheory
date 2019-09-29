@@ -55,10 +55,10 @@ namespace GameTheory.FormsRunner.Shared.Displays
             if (control is FlowLayoutPanel flowPanel && flowPanel.Tag == this)
             {
                 flowPanel.SuspendLayout();
-                while (flowPanel.Controls.Count > values.Count)
+                for (var i = flowPanel.Controls.Count - 1; i >= values.Count; i--)
                 {
-                    var oldControl = flowPanel.Controls[values.Count];
-                    flowPanel.Controls.RemoveAt(values.Count);
+                    var oldControl = flowPanel.Controls[i];
+                    flowPanel.Controls.RemoveAt(i);
                     oldControl.Dispose();
                 }
             }
