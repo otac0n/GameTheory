@@ -5,6 +5,7 @@ namespace GameTheory.Games.SevenDragons
     using System;
     using System.Collections.Generic;
     using System.Collections.Immutable;
+    using System.ComponentModel.DataAnnotations;
     using System.Linq;
     using System.Threading;
     using GameTheory.Games.SevenDragons.Cards;
@@ -109,7 +110,7 @@ namespace GameTheory.Games.SevenDragons
         /// </summary>
         /// <param name="players">The number of players.</param>
         /// <param name="includeActions">A value that indicates whether or not acion cards are included.</param>
-        public GameState(int players = MinPlayers, bool includeActions = true)
+        public GameState([Range(MinPlayers, MaxPlayers)] int players = MinPlayers, bool includeActions = true)
             : this(null)
         {
             if (players < MinPlayers || players > MaxPlayers)
