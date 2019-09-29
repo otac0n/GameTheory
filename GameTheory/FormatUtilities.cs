@@ -6,7 +6,6 @@ namespace GameTheory
     using System.Collections.Generic;
     using System.Globalization;
     using System.Linq;
-    using System.Reflection;
     using System.Resources;
     using System.Text.RegularExpressions;
 
@@ -30,12 +29,18 @@ namespace GameTheory
                 {
                     foreach (var subItem in enumerable)
                     {
-                        result.Add(subItem);
+                        if (subItem is object)
+                        {
+                            result.Add(subItem);
+                        }
                     }
                 }
                 else
                 {
-                    result.Add(item);
+                    if (item is object)
+                    {
+                        result.Add(item);
+                    }
                 }
             }
 
