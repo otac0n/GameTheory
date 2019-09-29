@@ -21,7 +21,7 @@ namespace GameTheory.FormsRunner
              select Assembly.LoadFrom(file)).ToList().AsReadOnly();
 
         private static readonly IReadOnlyList<Assembly> PlayerAssemblies =
-            GameAssemblies.Concat(new[] { typeof(IGameState<>).Assembly }).ToList().AsReadOnly();
+            GameAssemblies.Concat(new[] { typeof(IGameState<>).Assembly, typeof(Players.WinFormsPlayer<>).Assembly }).ToList().AsReadOnly();
 
         /// <summary>
         /// Gets the shared static game catalog for the application.

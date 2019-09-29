@@ -48,5 +48,10 @@ namespace GameTheory.FormsRunner.Shared
 
             return @default;
         }
+
+        public static class SharedProperties
+        {
+            public static readonly string PlayerToken = "PlayerToken";
+        }
     }
 }

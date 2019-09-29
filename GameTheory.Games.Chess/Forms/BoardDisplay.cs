@@ -4,9 +4,6 @@ namespace GameTheory.Games.Chess.Forms
 {
     using System;
     using System.Collections.Generic;
-    using System.Drawing;
-    using System.Drawing.Drawing2D;
-    using System.Drawing.Text;
     using System.Windows.Forms;
     using GameTheory.FormsRunner.Shared;
 
@@ -26,7 +23,7 @@ namespace GameTheory.Games.Chess.Forms
             }
             else
             {
-                chessboard = new Chessboard(gameState, scope.GetPropertyOrDefault<PlayerToken>("playerToken", gameState.Players[0]));
+                chessboard = new Chessboard(gameState, scope.GetPropertyOrDefault(Scope.SharedProperties.PlayerToken, gameState.Players[0]));
             }
 
             return chessboard;
