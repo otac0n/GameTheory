@@ -1,4 +1,4 @@
-﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory
 {
@@ -151,10 +151,15 @@ namespace GameTheory
                     {
                         var finishedTask = await Task.WhenAny(tasks);
                         tasks.Remove(finishedTask);
-                        if (finishedTask.Result.HasValue)
+
+                        if (!(cts.IsCancellationRequested || finishedTask.IsFaulted))
                         {
                             chosenMove = finishedTask.Result;
-                            break;
+
+                            if (chosenMove.HasValue)
+                            {
+                                break;
+                            }
                         }
                     }
 
@@ -169,10 +174,7 @@ namespace GameTheory
                         }
                         catch (AggregateException aggEx)
                         {
-                            aggEx.Handle(ex =>
-                            {
-                                return ex is OperationCanceledException;
-                            });
+                            aggEx.Handle(ex => ex is OperationCanceledException);
                         }
                     }
 
