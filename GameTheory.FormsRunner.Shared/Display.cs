@@ -20,27 +20,27 @@ namespace GameTheory.FormsRunner.Shared
             ObjectGraphDisplay.Instance,
         }.AsReadOnly();
 
-        public static Control Update<T>(Control control, string path, string name, T value, IReadOnlyList<Display> displays, Action<Control, Control> update = null) =>
-            Update(control, path, name, typeof(T), value, displays, update);
+        public static Control Update<T>(Control control, Scope scope, T value, IReadOnlyList<Display> displays, Action<Control, Control> update = null) =>
+            Update(control, scope, typeof(T), value, displays, update);
 
-        public static Control Update(Control control, string path, string name, Type type, object value, IReadOnlyList<Display> displays, Action<Control, Control> update = null)
+        public static Control Update(Control control, Scope scope, Type type, object value, IReadOnlyList<Display> displays, Action<Control, Control> update = null)
         {
             foreach (var display in displays == null ? Displays : displays.Concat(Displays))
             {
-                if (display.CanDisplay(path, name, type, value))
+                if (display.CanDisplay(scope, type, value))
                 {
-                    return display.UpdateWithAction(control, path, name, type, value, displays, update);
+                    return display.UpdateWithAction(control, scope, type, value, displays, update);
                 }
             }
 
             return null;
         }
 
-        public abstract bool CanDisplay(string path, string name, Type type, object value);
+        public abstract bool CanDisplay(Scope scope, Type type, object value);
 
-        public Control UpdateWithAction(Control control, string path, string name, Type type, object value, IReadOnlyList<Display> displays, Action<Control, Control> update = null)
+        public Control UpdateWithAction(Control control, Scope scope, Type type, object value, IReadOnlyList<Display> displays, Action<Control, Control> update = null)
         {
-            var newControl = this.Update(control, path, name, type, value, displays);
+            var newControl = this.Update(control, scope, type, value, displays);
 
             if (update != null && !object.ReferenceEquals(control, newControl))
             {
@@ -50,6 +50,6 @@ namespace GameTheory.FormsRunner.Shared
             return newControl;
         }
 
-        protected abstract Control Update(Control control, string path, string name, Type type, object value, IReadOnlyList<Display> displays);
+        protected abstract Control Update(Control control, Scope scope, Type type, object value, IReadOnlyList<Display> displays);
     }
 }

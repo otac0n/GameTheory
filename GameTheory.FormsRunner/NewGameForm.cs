@@ -144,8 +144,7 @@ namespace GameTheory.FormsRunner
             {
                 Editor.Update(
                     this.configurationTab.Controls.Cast<Control>().SingleOrDefault(),
-                    null,
-                    game.Name,
+                    new Scope(name: game.Name),
                     game.GameStateType,
                     this.StartingState,
                     out var errorControl,
@@ -244,8 +243,7 @@ namespace GameTheory.FormsRunner
 
                         var editor = Editor.Update(
                             null,
-                            null,
-                            player.Name,
+                            new Scope(name: player.Name),
                             player.PlayerType,
                             null, // TODO: Remember previously selected player?
                             out var errorControl,
@@ -525,9 +523,9 @@ namespace GameTheory.FormsRunner
                 this.playerToken = playerToken;
             }
 
-            public override bool CanEdit(string path, string name, Type type, object value) => type == typeof(PlayerToken);
+            public override bool CanEdit(Scope scope, Type type, object value) => type == typeof(PlayerToken);
 
-            protected override Control Update(Control control, string path, string name, Type type, object value, out Control errorControl, IReadOnlyList<Editor> editors, Action<Control, string> setError, Action<object, bool> set)
+            protected override Control Update(Control control, Scope scope, Type type, object value, out Control errorControl, IReadOnlyList<Editor> editors, Action<Control, string> setError, Action<object, bool> set)
             {
                 if (control is Label label && label.Tag == this)
                 {

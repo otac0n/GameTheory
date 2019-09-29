@@ -41,8 +41,7 @@ namespace GameTheory.FormsRunner
         {
             Display.Update(
                 this.splitContainer.Panel1.Controls.Cast<Control>().SingleOrDefault(),
-                null,
-                null,
+                new Scope(),
                 this.GameInfo.Game.GameStateType,
                 this.GameInfo.GameStates.Last(),
                 this.displays,
@@ -62,8 +61,7 @@ namespace GameTheory.FormsRunner
 
             Display.Update(
                 this.splitContainer.Panel2.Controls.Cast<Control>().SingleOrDefault(),
-                null,
-                null,
+                new Scope(),
                 this.GameInfo.Moves,
                 this.displays,
                 (oldControl, newControl) =>
@@ -116,10 +114,10 @@ namespace GameTheory.FormsRunner
                 return Color.FromArgb(r, g, b);
             }
 
-            public override bool CanDisplay(string path, string name, Type type, object value) =>
+            public override bool CanDisplay(Scope scope, Type type, object value) =>
                 value is PlayerToken playerToken && this.gameInfo.PlayerTokens.Contains(playerToken);
 
-            protected override Control Update(Control control, string path, string name, Type type, object value, IReadOnlyList<Display> displays)
+            protected override Control Update(Control control, Scope scope, Type type, object value, IReadOnlyList<Display> displays)
             {
                 var playerToken = (PlayerToken)value;
                 var playerName = this.gameInfo.PlayerNames[this.gameInfo.PlayerTokens.IndexOf(playerToken)];

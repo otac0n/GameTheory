@@ -14,9 +14,9 @@ namespace GameTheory.FormsRunner.Shared.Editors
 
         public static StringEditor Instance { get; } = new StringEditor();
 
-        public override bool CanEdit(string path, string name, Type type, object value) => type == typeof(string);
+        public override bool CanEdit(Scope scope, Type type, object value) => type == typeof(string);
 
-        protected override Control Update(Control control, string path, string name, Type type, object value, out Control errorControl, IReadOnlyList<Editor> editors, Action<Control, string> setError, Action<object, bool> set)
+        protected override Control Update(Control control, Scope scope, Type type, object value, out Control errorControl, IReadOnlyList<Editor> editors, Action<Control, string> setError, Action<object, bool> set)
         {
             var textBox = new TextBox
             {

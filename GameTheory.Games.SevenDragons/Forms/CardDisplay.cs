@@ -10,10 +10,10 @@ namespace GameTheory.Games.SevenDragons.Forms
     public class CardDisplay : Display
     {
         /// <inheritdoc/>
-        public override bool CanDisplay(string path, string name, Type type, object value) => typeof(Card).IsAssignableFrom(type);
+        public override bool CanDisplay(Scope scope, Type type, object value) => typeof(Card).IsAssignableFrom(type);
 
         /// <inheritdoc/>
-        protected override Control Update(Control control, string path, string name, Type type, object value, IReadOnlyList<Display> displays)
+        protected override Control Update(Control control, Scope scope, Type type, object value, IReadOnlyList<Display> displays)
         {
             var card = (Card)value;
 

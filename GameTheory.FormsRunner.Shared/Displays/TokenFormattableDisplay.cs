@@ -15,9 +15,9 @@ namespace GameTheory.FormsRunner.Shared.Displays
 
         public static TokenFormattableDisplay Instance { get; } = new TokenFormattableDisplay();
 
-        public override bool CanDisplay(string path, string name, Type type, object value) => value is ITokenFormattable;
+        public override bool CanDisplay(Scope scope, Type type, object value) => value is ITokenFormattable;
 
-        protected override Control Update(Control control, string path, string name, Type type, object value, IReadOnlyList<Display> displays)
+        protected override Control Update(Control control, Scope scope, Type type, object value, IReadOnlyList<Display> displays)
         {
             var tokens = (value as ITokenFormattable).FormatTokens;
             if (control is FlowLayoutPanel flowPanel && flowPanel.Tag == this)
@@ -43,8 +43,7 @@ namespace GameTheory.FormsRunner.Shared.Displays
 
                 Display.Update(
                     flowPanel.Controls.Count > i ? flowPanel.Controls[i] : null,
-                    path + "." + itemName,
-                    itemName,
+                    scope.Extend(itemName),
                     token is null ? typeof(object) : token.GetType(),
                     token,
                     displays,

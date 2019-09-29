@@ -62,9 +62,9 @@ namespace GameTheory.FormsRunner.Shared.Displays
             throw new NotImplementedException();
         }
 
-        public override bool CanDisplay(string path, string name, Type type, object value) => value is object;
+        public override bool CanDisplay(Scope scope, Type type, object value) => value is object;
 
-        protected override Control Update(Control control, string path, string name, Type type, object value, IReadOnlyList<Display> displays)
+        protected override Control Update(Control control, Scope scope, Type type, object value, IReadOnlyList<Display> displays)
         {
             var readableMembers = GetReadableMembers(type).ToLookup(GetMemberIsStatic);
             var staticMembers = readableMembers[true].ToList();
@@ -118,7 +118,7 @@ namespace GameTheory.FormsRunner.Shared.Displays
 
                 MemberDisplay.Update(
                     propertiesTable.GetControlFromPosition(1, p),
-                    Editor.Extend(path, member.Name),
+                    scope.Extend(member.Name),
                     member,
                     value,
                     displays,
@@ -192,24 +192,24 @@ namespace GameTheory.FormsRunner.Shared.Displays
                 MatrixItemDisplay.Instance,
             }.AsReadOnly();
 
-            public static Control Update(Control control, string path, MemberInfo member, object value, IReadOnlyList<Display> displays, Action<Control, Control> update)
+            public static Control Update(Control control, Scope scope, MemberInfo member, object value, IReadOnlyList<Display> displays, Action<Control, Control> update)
             {
                 foreach (var display in MemberDisplays)
                 {
-                    if (display.CanDisplay(path, member, value))
+                    if (display.CanDisplay(scope, member, value))
                     {
-                        return display.UpdateWithAction(control, path, member, value, displays, update);
+                        return display.UpdateWithAction(control, scope, member, value, displays, update);
                     }
                 }
 
                 return null;
             }
 
-            public abstract bool CanDisplay(string path, MemberInfo member, object value);
+            public abstract bool CanDisplay(Scope scope, MemberInfo member, object value);
 
-            public Control UpdateWithAction(Control control, string path, MemberInfo member, object value, IReadOnlyList<Display> displays, Action<Control, Control> update = null)
+            public Control UpdateWithAction(Control control, Scope scope, MemberInfo member, object value, IReadOnlyList<Display> displays, Action<Control, Control> update = null)
             {
-                var newControl = this.Update(control, path, member, value, displays);
+                var newControl = this.Update(control, scope, member, value, displays);
 
                 if (update != null && !object.ReferenceEquals(control, newControl))
                 {
@@ -219,7 +219,7 @@ namespace GameTheory.FormsRunner.Shared.Displays
                 return newControl;
             }
 
-            protected abstract Control Update(Control control, string path, MemberInfo member, object value, IReadOnlyList<Display> displays);
+            protected abstract Control Update(Control control, Scope scope, MemberInfo member, object value, IReadOnlyList<Display> displays);
         }
 
         private class FieldDisplay : MemberDisplay
@@ -230,15 +230,14 @@ namespace GameTheory.FormsRunner.Shared.Displays
 
             public static FieldDisplay Instance { get; } = new FieldDisplay();
 
-            public override bool CanDisplay(string path, MemberInfo member, object value) => member is FieldInfo;
+            public override bool CanDisplay(Scope scope, MemberInfo member, object value) => member is FieldInfo;
 
-            protected override Control Update(Control control, string path, MemberInfo member, object value, IReadOnlyList<Display> displays)
+            protected override Control Update(Control control, Scope scope, MemberInfo member, object value, IReadOnlyList<Display> displays)
             {
                 var field = (FieldInfo)member;
                 return Display.Update(
                     control,
-                    path,
-                    member.Name,
+                    scope,
                     field.FieldType,
                     field.GetValue(value),
                     displays);
@@ -253,15 +252,14 @@ namespace GameTheory.FormsRunner.Shared.Displays
 
             public static SimplePropertyDisplay Instance { get; } = new SimplePropertyDisplay();
 
-            public override bool CanDisplay(string path, MemberInfo member, object value) => member is PropertyInfo property && property.GetIndexParameters().Length == 0;
+            public override bool CanDisplay(Scope scope, MemberInfo member, object value) => member is PropertyInfo property && property.GetIndexParameters().Length == 0;
 
-            protected override Control Update(Control control, string path, MemberInfo member, object value, IReadOnlyList<Display> displays)
+            protected override Control Update(Control control, Scope scope, MemberInfo member, object value, IReadOnlyList<Display> displays)
             {
                 var property = (PropertyInfo)member;
                 return Display.Update(
                     control,
-                    path,
-                    member.Name,
+                    scope,
                     property.PropertyType,
                     property.GetValue(value),
                     displays);
@@ -276,7 +274,7 @@ namespace GameTheory.FormsRunner.Shared.Displays
 
             public static ListItemDisplay Instance { get; } = new ListItemDisplay();
 
-            public override bool CanDisplay(string path, MemberInfo member, object value)
+            public override bool CanDisplay(Scope scope, MemberInfo member, object value)
             {
                 if (!(member is PropertyInfo property && property.Name == "Item"))
                 {
@@ -301,15 +299,14 @@ namespace GameTheory.FormsRunner.Shared.Displays
             private static bool IsCount(MemberInfo member) =>
                 (member.Name == "Count" || member.Name == "Length") && GetMemberValueType(member) == typeof(int) && !GetMemberIsStatic(member);
 
-            protected override Control Update(Control control, string path, MemberInfo member, object value, IReadOnlyList<Display> displays)
+            protected override Control Update(Control control, Scope scope, MemberInfo member, object value, IReadOnlyList<Display> displays)
             {
                 var property = (PropertyInfo)member;
                 var countProperty = GetReadableMembers(property.DeclaringType).First(IsCount);
                 var count = (int)GetMemberValue(countProperty, value);
                 return ListDisplay.Instance.UpdateWithAction(
                     control,
-                    path,
-                    member.Name,
+                    scope,
                     property.PropertyType,
                     Enumerable.Range(0, count).Select(argument => property.GetValue(value, new object[] { argument })).ToList(),
                     displays);
@@ -324,7 +321,7 @@ namespace GameTheory.FormsRunner.Shared.Displays
 
             public static MatrixItemDisplay Instance { get; } = new MatrixItemDisplay();
 
-            public override bool CanDisplay(string path, MemberInfo member, object value)
+            public override bool CanDisplay(Scope scope, MemberInfo member, object value)
             {
                 if (!(member is PropertyInfo property && property.Name == "Item"))
                 {
@@ -367,7 +364,7 @@ namespace GameTheory.FormsRunner.Shared.Displays
                 return (widthProperty, heightProperty);
             }
 
-            protected override Control Update(Control control, string path, MemberInfo member, object value, IReadOnlyList<Display> displays)
+            protected override Control Update(Control control, Scope scope, MemberInfo member, object value, IReadOnlyList<Display> displays)
             {
                 var property = (PropertyInfo)member;
                 var dimensions = GetDimensionMembers(GetReadableMembers(property.DeclaringType));
@@ -407,8 +404,7 @@ namespace GameTheory.FormsRunner.Shared.Displays
                 {
                     Display.Update(
                         tablePanel.GetControlFromPosition(pair.x, pair.y),
-                        path + $"[{pair.x}, {pair.y}]",
-                        member.Name,
+                        scope.Extend($"[{pair.x}, {pair.y}]"),
                         property.PropertyType,
                         property.GetValue(value, new object[] { pair.x, pair.y }),
                         displays,

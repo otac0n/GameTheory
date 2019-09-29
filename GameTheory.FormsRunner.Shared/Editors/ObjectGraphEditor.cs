@@ -17,11 +17,11 @@ namespace GameTheory.FormsRunner.Shared.Editors
 
         public static ObjectGraphEditor Instance { get; } = new ObjectGraphEditor();
 
-        public delegate bool OverrideEditor(string path, string name, Type type, object value, out Control control, out Control errorControl, out Label label, Action<Control, string> setError, Action<object, bool> set);
+        public delegate bool OverrideEditor(Scope scope, Type type, object value, out Control control, out Control errorControl, out Label label, Action<Control, string> setError, Action<object, bool> set);
 
-        public override bool CanEdit(string path, string name, Type type, object value) => true;
+        public override bool CanEdit(Scope scope, Type type, object value) => true;
 
-        protected override Control Update(Control control, string path, string name, Type type, object value, out Control errorControl, IReadOnlyList<Editor> editors, Action<Control, string> setError, Action<object, bool> set)
+        protected override Control Update(Control control, Scope scope, Type type, object value, out Control errorControl, IReadOnlyList<Editor> editors, Action<Control, string> setError, Action<object, bool> set)
         {
             var noParameters = new ParameterInfo[0];
             var nullValues = new[] { new { order = 0, selection = new InitializerSelection("(null)", args => null, noParameters) } }.ToList();
@@ -104,8 +104,7 @@ namespace GameTheory.FormsRunner.Shared.Editors
 
                     var innerControl = Editor.Update(
                         null,
-                        Extend(path, parameter.Name),
-                        parameter.Name,
+                        scope.Extend(parameter.Name),
                         parameter.ParameterType,
                         parameter.HasDefaultValue ? parameter.DefaultValue : null,
                         out var innerErrorControl,

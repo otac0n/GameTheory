@@ -15,9 +15,9 @@ namespace GameTheory.FormsRunner.Shared.Editors
 
         public static EnumEditor Instance { get; } = new EnumEditor();
 
-        public override bool CanEdit(string path, string name, Type type, object value) => type.IsEnum;
+        public override bool CanEdit(Scope scope, Type type, object value) => type.IsEnum;
 
-        protected override Control Update(Control control, string path, string name, Type type, object value, out Control errorControl, IReadOnlyList<Editor> editors, Action<Control, string> setError, Action<object, bool> set)
+        protected override Control Update(Control control, Scope scope, Type type, object value, out Control errorControl, IReadOnlyList<Editor> editors, Action<Control, string> setError, Action<object, bool> set)
         {
             var values = Enum.GetValues(type).Cast<object>().ToArray();
             var comboBox = new ComboBox

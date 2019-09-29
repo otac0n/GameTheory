@@ -14,15 +14,15 @@ namespace GameTheory.FormsRunner.Shared.Editors
 
         public static BoolEditor Instance { get; } = new BoolEditor();
 
-        public override bool CanEdit(string path, string name, Type type, object value) => type == typeof(bool);
+        public override bool CanEdit(Scope scope, Type type, object value) => type == typeof(bool);
 
-        protected override Control Update(Control control, string path, string name, Type type, object value, out Control errorControl, IReadOnlyList<Editor> editors, Action<Control, string> setError, Action<object, bool> set)
+        protected override Control Update(Control control, Scope scope, Type type, object value, out Control errorControl, IReadOnlyList<Editor> editors, Action<Control, string> setError, Action<object, bool> set)
         {
             var checkBox = new CheckBox
             {
                 AutoSize = true,
                 Checked = value as bool? ?? default,
-                Text = name,
+                Text = scope.Name,
                 Tag = this,
             };
             checkBox.AddMargin(right: ErrorIconPadding);

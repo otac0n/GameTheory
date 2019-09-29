@@ -31,7 +31,7 @@ namespace GameTheory.FormsRunner.Shared.Displays
 
         public static DictionaryDisplay Instance { get; } = new DictionaryDisplay();
 
-        public override bool CanDisplay(string path, string name, Type type, object value)
+        public override bool CanDisplay(Scope scope, Type type, object value)
         {
             if (type.IsConstructedGenericType)
             {
@@ -42,7 +42,7 @@ namespace GameTheory.FormsRunner.Shared.Displays
             return false;
         }
 
-        protected override Control Update(Control control, string path, string name, Type type, object value, IReadOnlyList<Display> displays)
+        protected override Control Update(Control control, Scope scope, Type type, object value, IReadOnlyList<Display> displays)
         {
             var typeArguments = type.GetGenericArguments();
             var keyType = typeArguments[0];
@@ -88,8 +88,7 @@ namespace GameTheory.FormsRunner.Shared.Displays
 
                 Display.Update(
                     tablePanel.GetControlFromPosition(0, i),
-                    path + "." + keyName,
-                    keyName,
+                    scope.Extend(keyName),
                     keyType,
                     key,
                     displays,
@@ -109,8 +108,7 @@ namespace GameTheory.FormsRunner.Shared.Displays
 
                 Display.Update(
                     tablePanel.GetControlFromPosition(1, i),
-                    path + valueName,
-                    valueName,
+                    scope.Extend(valueName),
                     valueType,
                     valueProperty.GetValue(value, new[] { key }),
                     displays,

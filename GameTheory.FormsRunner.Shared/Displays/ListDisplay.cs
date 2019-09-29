@@ -29,7 +29,7 @@ namespace GameTheory.FormsRunner.Shared.Displays
 
         public static ListDisplay Instance { get; } = new ListDisplay();
 
-        public override bool CanDisplay(string path, string name, Type type, object value)
+        public override bool CanDisplay(Scope scope, Type type, object value)
         {
             if (type.IsArray)
             {
@@ -45,7 +45,7 @@ namespace GameTheory.FormsRunner.Shared.Displays
             return false;
         }
 
-        protected override Control Update(Control control, string path, string name, Type type, object value, IReadOnlyList<Display> displays)
+        protected override Control Update(Control control, Scope scope, Type type, object value, IReadOnlyList<Display> displays)
         {
             var elementType = type.IsArray
                 ? type.GetElementType()
@@ -72,12 +72,10 @@ namespace GameTheory.FormsRunner.Shared.Displays
             {
                 var item = values[i];
                 var itemName = $"[{i}]";
-                var itemPath = path + itemName;
 
                 Display.Update(
                     flowPanel.Controls.Count > i ? flowPanel.Controls[i] : null,
-                    itemPath,
-                    itemName,
+                    scope.Extend(itemName),
                     elementType,
                     item,
                     displays,
