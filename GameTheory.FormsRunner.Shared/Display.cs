@@ -6,6 +6,7 @@ namespace GameTheory.FormsRunner.Shared
     using System.Collections.Generic;
     using System.Linq;
     using System.Windows.Forms;
+    using GameTheory.FormsRunner.Shared.Displays;
 
     public abstract class Display
     {
