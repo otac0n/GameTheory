@@ -31,12 +31,13 @@ namespace GameTheory.Games.Chess.Players
         /// <inheritdoc/>
         protected override TimeSpan? MinThinkTime => this.minThinkTime;
 
-        private static double Score(PlayerState<Move> playerState)
+        internal static double Score(PlayerState<Move> playerState)
         {
             var state = (GameState)playerState.GameState;
             var playerColor = state.Players.IndexOf(playerState.PlayerToken) == 0
                 ? Pieces.White
                 : Pieces.Black;
+            var promotionRank = state.Variant.PromotionRank[playerColor];
 
             var score = 0.0;
 
@@ -45,7 +46,8 @@ namespace GameTheory.Games.Chess.Players
                 switch (state[i] ^ playerColor)
                 {
                     case Pieces.Pawn:
-                        score += 1;
+                        var dist = Math.Abs(state.Variant.GetCoordinates(i).Y - promotionRank);
+                        score += 2 - (dist / (state.Variant.Height - 3.0));
                         break;
 
                     case Pieces.Knight:

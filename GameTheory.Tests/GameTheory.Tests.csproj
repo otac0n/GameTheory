@@ -58,6 +58,7 @@
   <ItemGroup>
     <Compile Include="Games\Chess\GameStateTests.cs" />
     <Compile Include="Games\Chess\ParserTests.cs" />
+    <Compile Include="Games\Chess\PlayerTests.cs" />
     <Compile Include="Games\FiveTribesTests.cs" />
     <Compile Include="Games\MancalaTests.cs" />
     <Compile Include="Games\MatchingPenniesTests.cs" />
