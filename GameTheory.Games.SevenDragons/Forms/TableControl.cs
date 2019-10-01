@@ -15,12 +15,9 @@ namespace GameTheory.Games.SevenDragons.Forms
 
         public TableControl(ImmutableDictionary<GameTheory.Point, DragonCard> cards)
         {
-            this.cards = cards;
-            var extents = this.Cards.Keys.Aggregate(
-                new { MinX = int.MaxValue, MaxX = int.MinValue, MinY = int.MaxValue, MaxY = int.MinValue },
-                (value, key) => new { MinX = Math.Min(value.MinX, key.X), MaxX = Math.Max(value.MaxX, key.X), MinY = Math.Min(value.MinY, key.Y), MaxY = Math.Max(value.MaxY, key.Y) });
-            this.Width = (extents.MaxX - extents.MinX + 1) * (50 + 5) - 5;
-            this.Height = (extents.MaxY - extents.MinY + 1) * (100 + 5) - 5;
+            this.Cards = cards;
+            this.AutoSize = true;
+            this.DoubleBuffered = true;
         }
 
         public ImmutableDictionary<GameTheory.Point, DragonCard> Cards
@@ -30,18 +27,57 @@ namespace GameTheory.Games.SevenDragons.Forms
             set
             {
                 this.cards = value;
+
+                if (this.AutoSize)
+                {
+                    this.AutoResize();
+                }
+
                 this.Invalidate();
             }
         }
 
-        protected override void OnPaint(PaintEventArgs e)
+        public override bool AutoSize
         {
-            var extents = this.Cards.Keys.Aggregate(
+            get => base.AutoSize;
+            set
+            {
+                base.AutoSize = value;
+
+                if (value)
+                {
+                    this.AutoResize();
+                }
+            }
+        }
+
+        private void AutoResize()
+        {
+            var extents = GetExtents(this.Cards);
+            this.Width = extents.Width * (50 + 5) - 5;
+            this.Height = extents.Height * (100 + 5) - 5;
+        }
+
+        private static Rectangle GetExtents(ImmutableDictionary<GameTheory.Point, DragonCard> cards)
+        {
+            if (cards == null)
+            {
+                return Rectangle.Empty;
+            }
+
+            var extents = cards.Keys.Aggregate(
                 new { MinX = int.MaxValue, MaxX = int.MinValue, MinY = int.MaxValue, MaxY = int.MinValue },
                 (value, key) => new { MinX = Math.Min(value.MinX, key.X), MaxX = Math.Max(value.MaxX, key.X), MinY = Math.Min(value.MinY, key.Y), MaxY = Math.Max(value.MaxY, key.Y) });
 
-            var nw = (extents.MaxX - extents.MinX + 1);
-            var nh = (extents.MaxY - extents.MinY + 1);
+            return new Rectangle(extents.MinX, extents.MinY, extents.MaxX - extents.MinX + 1, extents.MaxY - extents.MinY + 1);
+        }
+
+        protected override void OnPaint(PaintEventArgs e)
+        {
+            var extents = GetExtents(this.Cards);
+
+            var nw = extents.Width;
+            var nh = extents.Height;
             var w = Math.Min(
                 this.ClientRectangle.Width / (nw + (nw - 1) * 0.1f),
                 this.ClientRectangle.Height / (nh + (nh - 1) * 0.05f));
@@ -53,7 +89,7 @@ namespace GameTheory.Games.SevenDragons.Forms
             {
                 for (var x = 0; x < nw; x++)
                 {
-                    if (this.Cards.TryGetValue(new GameTheory.Point(extents.MinX + x, extents.MinY + y), out var card))
+                    if (this.Cards.TryGetValue(new GameTheory.Point(extents.Left + x, extents.Top + y), out var card))
                     {
                         var rect = new RectangleF(x * (w + cellSpacing), y * (h + cellSpacing), w, h);
                         CardControl.RenderCard(e.Graphics, card, rect, this.Font);

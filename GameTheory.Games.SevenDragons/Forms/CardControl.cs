@@ -61,6 +61,7 @@ namespace GameTheory.Games.SevenDragons.Forms
         {
             this.card = card;
             this.BackColor = Color.Black;
+            this.DoubleBuffered = true;
             this.Width = 50;
             this.Height = 100;
         }

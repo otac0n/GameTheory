@@ -16,6 +16,7 @@ namespace GameTheory.Games.Mancala.Forms
         {
             this.gameState = gameState;
             this.PlayerToken = playerToken;
+            this.DoubleBuffered = true;
             this.Width = (gameState.BinsPerSide + 2) * (50 + 5) - 5;
             this.Height = 2 * (50 + 5) - 5;
         }

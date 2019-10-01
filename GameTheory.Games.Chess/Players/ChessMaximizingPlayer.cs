@@ -1,6 +1,6 @@
 // Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
-namespace GameTheory.Games.Chess.Players.MaximizingPlayers
+namespace GameTheory.Games.Chess.Players
 {
     using System;
     using GameTheory.Players.MaximizingPlayer;
@@ -31,12 +31,13 @@ namespace GameTheory.Games.Chess.Players.MaximizingPlayers
         /// <inheritdoc/>
         protected override TimeSpan? MinThinkTime => this.minThinkTime;
 
-        private static double Score(PlayerState<Move> playerState)
+        internal static double Score(PlayerState<Move> playerState)
         {
             var state = (GameState)playerState.GameState;
             var playerColor = state.Players.IndexOf(playerState.PlayerToken) == 0
                 ? Pieces.White
                 : Pieces.Black;
+            var promotionRank = state.Variant.PromotionRank[playerColor];
 
             var score = 0.0;
 
@@ -45,7 +46,8 @@ namespace GameTheory.Games.Chess.Players.MaximizingPlayers
                 switch (state[i] ^ playerColor)
                 {
                     case Pieces.Pawn:
-                        score += 1;
+                        var dist = Math.Abs(state.Variant.GetCoordinates(i).Y - promotionRank);
+                        score += 2 - (dist / (state.Variant.Height - 3.0));
                         break;
 
                     case Pieces.Knight:

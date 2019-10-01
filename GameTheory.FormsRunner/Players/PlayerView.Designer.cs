@@ -1,6 +1,6 @@
-﻿namespace GameTheory.FormsRunner
+﻿namespace GameTheory.FormsRunner.Players
 {
-    partial class GameDisplayForm
+    partial class PlayerView
     {
         /// <summary>
         /// Required designer variable.
@@ -48,16 +48,16 @@
             this.splitContainer.Panel2.AutoScroll = true;
             this.splitContainer.Size = new System.Drawing.Size(800, 450);
             this.splitContainer.SplitterDistance = 514;
-            this.splitContainer.TabIndex = 1;
+            this.splitContainer.TabIndex = 2;
             // 
-            // GameDisplayForm
+            // PlayerView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
             this.Controls.Add(this.splitContainer);
-            this.Name = "GameDisplayForm";
-            this.Text = "GameDisplayForm";
+            this.Name = "PlayerView";
+            this.Text = "PlayerView";
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).EndInit();
             this.splitContainer.ResumeLayout(false);
             this.ResumeLayout(false);
@@ -65,6 +65,7 @@
         }
 
         #endregion
+
         private System.Windows.Forms.SplitContainer splitContainer;
     }
 }

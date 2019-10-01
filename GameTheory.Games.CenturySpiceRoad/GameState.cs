@@ -1,10 +1,11 @@
-﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Games.CenturySpiceRoad
 {
     using System;
     using System.Collections.Generic;
     using System.Collections.Immutable;
+    using System.ComponentModel.DataAnnotations;
     using System.Linq;
     using GameTheory.Games.CenturySpiceRoad.MerchantCards;
 
@@ -136,7 +137,7 @@ namespace GameTheory.Games.CenturySpiceRoad
         /// Initializes a new instance of the <see cref="GameState"/> class.
         /// </summary>
         /// <param name="players">The number of players.</param>
-        public GameState(int players)
+        public GameState([Range(MinPlayers, MaxPlayers)] int players = MinPlayers)
         {
             if (players < MinPlayers || players > MaxPlayers)
             {

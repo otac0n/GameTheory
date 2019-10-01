@@ -2,16 +2,27 @@
 
 namespace GameTheory.FormsRunner.Shared
 {
+    using System.Linq;
     using System.Windows.Forms;
 
-    public class Controls
+    public static class Controls
     {
-        public static FlowLayoutPanel MakeFlowPanel(object tag = null) => new FlowLayoutPanel
+        public static FlowLayoutPanel MakeFlowPanel(object tag = null)
         {
-            AutoSize = true,
-            Margin = Padding.Empty,
-            Tag = tag,
-        };
+            var flowLayoutPanel = new FlowLayoutPanel
+            {
+                AutoSize = true,
+                Margin = Padding.Empty,
+                Tag = tag,
+            };
+
+            flowLayoutPanel.Disposed += (sender, args) =>
+            {
+                flowLayoutPanel.Controls.DisposeAndClear();
+            };
+
+            return flowLayoutPanel;
+        }
 
         public static Label MakeLabel(string text, object tag = null) => new Label
         {
@@ -21,13 +32,40 @@ namespace GameTheory.FormsRunner.Shared
             Tag = tag,
         };
 
-        public static TableLayoutPanel MakeTablePanel(int rows, int columns, object tag = null) => new TableLayoutPanel
+        public static TableLayoutPanel MakeTablePanel(int rows, int columns, object tag = null)
         {
-            AutoSize = true,
-            RowCount = rows,
-            ColumnCount = columns,
-            Margin = Padding.Empty,
-            Tag = tag,
-        };
+            var tableLayoutPanel = new TableLayoutPanel
+            {
+                AutoSize = true,
+                RowCount = rows,
+                ColumnCount = columns,
+                Margin = Padding.Empty,
+                Tag = tag,
+            };
+
+            tableLayoutPanel.Disposed += (sender, args) =>
+            {
+                tableLayoutPanel.Controls.DisposeAndClear();
+            };
+
+            return tableLayoutPanel;
+        }
+
+        public static Control AddMargin(this Control control, int left = 0, int top = 0, int right = 0, int bottom = 0)
+        {
+            control.Margin = new Padding(
+                control.Margin.Left + left,
+                control.Margin.Top + top,
+                control.Margin.Right + right,
+                control.Margin.Bottom + bottom);
+            return control;
+        }
+
+        public static void DisposeAndClear(this Control.ControlCollection controls)
+        {
+            var list = controls.Cast<Control>().ToList();
+            controls.Clear();
+            list.ForEach(c => c.Dispose());
+        }
     }
 }

@@ -5,6 +5,7 @@ namespace GameTheory.Games.TwentyFortyEight
     using System;
     using System.Collections.Generic;
     using System.Collections.Immutable;
+    using System.ComponentModel.DataAnnotations;
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using GameTheory.Games.TwentyFortyEight.Moves;
@@ -70,7 +71,7 @@ namespace GameTheory.Games.TwentyFortyEight
         /// Initializes a new instance of the <see cref="GameState"/> class in the starting position.
         /// </summary>
         /// <param name="players">The number of players.</param>
-        public GameState(int players = MinPlayers)
+        public GameState([Range(MinPlayers, MaxPlayers)] int players = MinPlayers)
             : this(Enumerable.Range(0, players).Select(i => new PlayerToken()).ToImmutableArray(), Turn.Computer, new byte[Size, Size])
         {
             if (players < MinPlayers || players > MaxPlayers)

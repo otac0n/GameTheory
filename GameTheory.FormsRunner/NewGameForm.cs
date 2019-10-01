@@ -12,6 +12,7 @@ namespace GameTheory.FormsRunner
     using System.Windows.Forms;
     using GameTheory.Catalogs;
     using GameTheory.FormsRunner.Shared;
+    using static Shared.Controls;
 
     public partial class NewGameForm : Form
     {
@@ -140,32 +141,38 @@ namespace GameTheory.FormsRunner
             var game = this.SelectedGame;
             this.SelectedGameChanged?.Invoke(this, new SelectedGameChangedEventArgs(game));
 
-            this.configurationTab.Controls.Clear(); // TODO: Dispose controls.
             if (game != null)
             {
-                var editor = ObjectGraphEditor.MakeEditor(null, game.Name, game.GameStateType, null, out var errorControl, out var label, this.errorProvider.SetError, (value, valid) =>
-                {
-                    this.StartingState = valid ? value : null;
-                });
-
-                if (label != null)
-                {
-                    var propertiesTable = new TableLayoutPanel
+                Editor.Update(
+                    this.configurationTab.Controls.Cast<Control>().SingleOrDefault(),
+                    new Scope(name: game.Name),
+                    game.GameStateType,
+                    this.StartingState,
+                    out var errorControl,
+                    null,
+                    this.errorProvider.SetError,
+                    (value, valid) =>
                     {
-                        AutoSize = true,
-                        ColumnCount = 2,
-                        RowCount = 1,
-                    };
-                    propertiesTable.Controls.Add(label, 0, 0);
-                    propertiesTable.Controls.Add(editor, 1, 0);
+                        (this.StartingState as IDisposable)?.Dispose();
+                        this.StartingState = valid ? value : null;
+                    },
+                    (oldControl, newControl) =>
+                    {
+                        if (oldControl != null)
+                        {
+                            this.configurationTab.Controls.Remove(oldControl);
+                            oldControl.Dispose();
+                        }
 
-                    // TODO: Dispose controls when propertiesTable is disposed.
-                    this.configurationTab.Controls.Add(propertiesTable);
-                }
-                else
-                {
-                    this.configurationTab.Controls.Add(editor);
-                }
+                        if (newControl != null)
+                        {
+                            this.configurationTab.Controls.Add(newControl);
+                        }
+                    });
+            }
+            else
+            {
+                this.configurationTab.Controls.DisposeAndClear();
             }
         }
 
@@ -181,7 +188,7 @@ namespace GameTheory.FormsRunner
             var state = this.StartingState;
             this.StartingStateChanged?.Invoke(this, new StartingStateChangedEventArgs(state));
 
-            this.playersTable.Controls.Clear(); // TODO: Dispose controls.
+            this.playersTable.Controls.DisposeAndClear();
             if (state != null)
             {
                 var game = this.SelectedGame;
@@ -235,47 +242,21 @@ namespace GameTheory.FormsRunner
                             this.playersTable.Controls.Remove(previous); // TODO: Dispose.
                         }
 
-                        var editor = ObjectGraphEditor.MakeEditor(
+                        var editor = Editor.Update(
                             null,
-                            player.Name,
+                            new Scope(name: player.Name),
                             player.PlayerType,
                             null, // TODO: Remember previously selected player?
                             out var errorControl,
-                            out var playerLabel,
+                            new[] { new PlayerTokenEditor(playerToken) },
                             this.errorProvider.SetError,
                             (value, valid) =>
                             {
+                                (playerInstances[p] as IDisposable)?.Dispose();
                                 playersValid[p] = valid;
                                 players[p] = valid ? player : null;
                                 playerInstances[p] = valid ? value : null;
                                 Touch();
-                            },
-                            (string innerPath, string innerName, Type type, object innerValue, out Control innerControl, out Control innerErrorControl, out Label innerLabel, Action<Control, string> setError, Action<object, bool> set) =>
-                            {
-                                if (type == typeof(PlayerToken))
-                                {
-                                    innerControl = new Label
-                                    {
-                                        AutoSize = true,
-                                        Text = name,
-                                    };
-                                    innerControl.Margin = new Padding(innerControl.Margin.Left, innerControl.Margin.Top, innerControl.Margin.Right, innerControl.Margin.Bottom + 7);
-                                    innerErrorControl = innerControl;
-                                    innerLabel = new Label
-                                    {
-                                        AutoSize = true,
-                                        Text = innerName,
-                                    };
-                                    set(playerToken, true);
-                                    return true;
-                                }
-                                else
-                                {
-                                    innerControl = null;
-                                    innerErrorControl = null;
-                                    innerLabel = null;
-                                    return false;
-                                }
                             });
 
                         this.playersTable.Controls.Add(editor, 1, p * 2 + 1);
@@ -532,6 +513,35 @@ namespace GameTheory.FormsRunner
             public IList<Player> Players { get; }
 
             public PlayerToken[] PlayerTokens { get; }
+        }
+
+        private class PlayerTokenEditor : Editor
+        {
+            private PlayerToken playerToken;
+
+            public PlayerTokenEditor(PlayerToken playerToken)
+            {
+                this.playerToken = playerToken;
+            }
+
+            public override bool CanEdit(Scope scope, Type type, object value) => type == typeof(PlayerToken);
+
+            protected override Control Update(Control control, Scope scope, Type type, object value, out Control errorControl, IReadOnlyList<Editor> editors, Action<Control, string> setError, Action<object, bool> set)
+            {
+                if (control is Label label && label.Tag == this)
+                {
+                    set(this.playerToken, true);
+                }
+                else
+                {
+                    label = MakeLabel(scope.Name, tag: this);
+                    label.Margin = new Padding(label.Margin.Left, label.Margin.Top, label.Margin.Right, label.Margin.Bottom + 7);
+                    set(this.playerToken, true);
+                }
+
+                errorControl = label;
+                return label;
+            }
         }
     }
 }

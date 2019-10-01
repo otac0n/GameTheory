@@ -17,6 +17,7 @@ namespace GameTheory.Games.Chess.Forms
         {
             this.gameState = gameState;
             this.PlayerToken = playerToken;
+            this.DoubleBuffered = true;
             this.Width = 50 * gameState.Variant.Width;
             this.Height = 50 * gameState.Variant.Height;
         }
@@ -53,15 +54,38 @@ namespace GameTheory.Games.Chess.Forms
             var w = this.GameState.Variant.Width;
             var h = this.GameState.Variant.Height;
 
+            float lerpX(float x) => x * this.ClientRectangle.Width / w + this.ClientRectangle.Left;
+            float lerpY(float y) => y * this.ClientRectangle.Height / h + this.ClientRectangle.Top;
+
+            var flip = this.PlayerToken == this.GameState.Players[1];
             for (var y = 0; y < h; y++)
             {
-                var fromY = (h - (y + 1)) * this.ClientRectangle.Height / (float)h + this.ClientRectangle.Top;
-                var toY = (h - y) * this.ClientRectangle.Height / (float)h + this.ClientRectangle.Top;
+                float fromY, toY;
+                if (flip)
+                {
+                    fromY = lerpY(y);
+                    toY = lerpY(y + 1);
+                }
+                else
+                {
+                    fromY = lerpY(h - (y + 1));
+                    toY = lerpY(h - y);
+                }
 
                 for (var x = 0; x < w; x++)
                 {
-                    var fromX = x * this.ClientRectangle.Width / (float)w + this.ClientRectangle.Left;
-                    var toX = (x + 1) * this.ClientRectangle.Width / (float)w + this.ClientRectangle.Left;
+                    float fromX, toX;
+                    if (flip)
+                    {
+                        fromX = lerpX(w - (x + 1));
+                        toX = lerpX(w - x);
+                    }
+                    else
+                    {
+                        fromX = lerpX(x);
+                        toX = lerpX(x + 1);
+                    }
+
                     var rect = new RectangleF(fromX, fromY, toX - fromX, toY - fromY);
 
                     if ((x + y) % 2 == 0)

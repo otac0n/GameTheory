@@ -7,7 +7,7 @@ namespace GameTheory.Tests.Players
     using System.Threading;
     using System.Threading.Tasks;
     using GameTheory.Games.TicTacToe;
-    using GameTheory.Games.TicTacToe.Players.MaximizingPlayers;
+    using GameTheory.Games.TicTacToe.Players;
     using NUnit.Framework;
 
     [TestFixture]

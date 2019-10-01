@@ -1,6 +1,6 @@
 // Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
-namespace GameTheory.FormsRunner.Shared
+namespace GameTheory.FormsRunner.Shared.Displays
 {
     using System;
     using System.Collections.Generic;
@@ -15,9 +15,9 @@ namespace GameTheory.FormsRunner.Shared
 
         public static PrimitiveDisplay Instance { get; } = new PrimitiveDisplay();
 
-        public override bool CanDisplay(string path, string name, Type type, object value) => type.IsPrimitive || type.IsEnum || type == typeof(string) || type == typeof(Guid);
+        public override bool CanDisplay(Scope scope, Type type, object value) => type.IsPrimitive || type.IsEnum || type == typeof(string) || type == typeof(Guid);
 
-        public override Control Update(Control originalDisplay, string path, string name, Type type, object value, IReadOnlyList<Display> displays)
+        protected override Control Update(Control originalDisplay, Scope scope, Type type, object value, IReadOnlyList<Display> displays)
         {
             if (originalDisplay is Label label && label.Tag == this)
             {

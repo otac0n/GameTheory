@@ -1,6 +1,6 @@
 // Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
-namespace GameTheory.FormsRunner.Shared
+namespace GameTheory.FormsRunner.Shared.Displays
 {
     using System;
     using System.Collections;
@@ -29,7 +29,7 @@ namespace GameTheory.FormsRunner.Shared
 
         public static ListDisplay Instance { get; } = new ListDisplay();
 
-        public override bool CanDisplay(string path, string name, Type type, object value)
+        public override bool CanDisplay(Scope scope, Type type, object value)
         {
             if (type.IsArray)
             {
@@ -45,7 +45,7 @@ namespace GameTheory.FormsRunner.Shared
             return false;
         }
 
-        public override Control Update(Control control, string path, string name, Type type, object value, IReadOnlyList<Display> displays)
+        protected override Control Update(Control control, Scope scope, Type type, object value, IReadOnlyList<Display> displays)
         {
             var elementType = type.IsArray
                 ? type.GetElementType()
@@ -55,10 +55,10 @@ namespace GameTheory.FormsRunner.Shared
             if (control is FlowLayoutPanel flowPanel && flowPanel.Tag == this)
             {
                 flowPanel.SuspendLayout();
-                while (flowPanel.Controls.Count > values.Count)
+                for (var i = flowPanel.Controls.Count - 1; i >= values.Count; i--)
                 {
-                    var oldControl = flowPanel.Controls[values.Count];
-                    flowPanel.Controls.RemoveAt(values.Count);
+                    var oldControl = flowPanel.Controls[i];
+                    flowPanel.Controls.RemoveAt(i);
                     oldControl.Dispose();
                 }
             }
@@ -68,19 +68,14 @@ namespace GameTheory.FormsRunner.Shared
                 flowPanel.SuspendLayout();
             }
 
-            var showVertical = true;
             for (var i = 0; i < values.Count; i++)
             {
                 var item = values[i];
                 var itemName = $"[{i}]";
-                var itemPath = path + itemName;
 
-                showVertical = showVertical && this.CanDisplay(itemPath, itemName, elementType, item);
-
-                Update(
+                Display.Update(
                     flowPanel.Controls.Count > i ? flowPanel.Controls[i] : null,
-                    itemPath,
-                    itemName,
+                    scope.Extend(itemName),
                     elementType,
                     item,
                     displays,
@@ -92,12 +87,14 @@ namespace GameTheory.FormsRunner.Shared
                             oldControl.Dispose();
                         }
 
-                        flowPanel.Controls.Add(newControl);
-                        flowPanel.Controls.SetChildIndex(newControl, i);
+                        if (newControl != null)
+                        {
+                            flowPanel.Controls.Add(newControl);
+                            flowPanel.Controls.SetChildIndex(newControl, i);
+                        }
                     });
             }
 
-            flowPanel.FlowDirection = showVertical ? FlowDirection.TopDown : FlowDirection.LeftToRight;
             flowPanel.ResumeLayout();
 
             return flowPanel;

@@ -5,6 +5,7 @@ namespace GameTheory.Games.Mancala
     using System;
     using System.Collections.Generic;
     using System.Collections.Immutable;
+    using System.ComponentModel.DataAnnotations;
     using System.Linq;
 
     /// <summary>
@@ -15,12 +16,41 @@ namespace GameTheory.Games.Mancala
         private readonly int[] board;
 
         /// <summary>
+        /// The maximum number of supported bins per side.
+        /// </summary>
+        public const int MaxBinsPerSide = 10;
+
+        /// <summary>
+        /// The minimum number of supported bins per side.
+        /// </summary>
+        public const int MinBinsPerSide = 1;
+
+        /// <summary>
+        /// The maximum number of supported initial stones per bin.
+        /// </summary>
+        public const int MaxInitialStonesPerBin = 10;
+
+        /// <summary>
+        /// The minimum number of supported initial stones per bin.
+        /// </summary>
+        public const int MinInitialStonesPerBin = 1;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="GameState"/> class.
         /// </summary>
         /// <param name="binsPerSide">The number of bins on each side of the board.</param>
         /// <param name="initialStonesPerBin">The number of stones initially in each bin.</param>
-        public GameState(int binsPerSide = 6, int initialStonesPerBin = 4)
+        public GameState([Range(MinBinsPerSide, MaxBinsPerSide)] int binsPerSide = 6, [Range(MinInitialStonesPerBin, MaxInitialStonesPerBin)] int initialStonesPerBin = 4)
         {
+            if (binsPerSide < MinBinsPerSide || binsPerSide > MaxBinsPerSide)
+            {
+                throw new ArgumentOutOfRangeException(nameof(binsPerSide));
+            }
+            else if (initialStonesPerBin < MinInitialStonesPerBin || initialStonesPerBin > MaxInitialStonesPerBin)
+            {
+                throw new ArgumentOutOfRangeException(nameof(initialStonesPerBin));
+            }
+
             this.Players = ImmutableArray.Create(new PlayerToken(), new PlayerToken());
             this.ActivePlayerIndex = 0;
             this.Phase = Phase.Play;

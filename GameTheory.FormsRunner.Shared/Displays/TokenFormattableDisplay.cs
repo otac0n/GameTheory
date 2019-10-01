@@ -1,6 +1,6 @@
 // Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
-namespace GameTheory.FormsRunner.Shared
+namespace GameTheory.FormsRunner.Shared.Displays
 {
     using System;
     using System.Collections.Generic;
@@ -15,9 +15,9 @@ namespace GameTheory.FormsRunner.Shared
 
         public static TokenFormattableDisplay Instance { get; } = new TokenFormattableDisplay();
 
-        public override bool CanDisplay(string path, string name, Type type, object value) => value is ITokenFormattable;
+        public override bool CanDisplay(Scope scope, Type type, object value) => value is ITokenFormattable;
 
-        public override Control Update(Control control, string path, string name, Type type, object value, IReadOnlyList<Display> displays)
+        protected override Control Update(Control control, Scope scope, Type type, object value, IReadOnlyList<Display> displays)
         {
             var tokens = (value as ITokenFormattable).FormatTokens;
             if (control is FlowLayoutPanel flowPanel && flowPanel.Tag == this)
@@ -41,10 +41,9 @@ namespace GameTheory.FormsRunner.Shared
                 var token = tokens[i];
                 var itemName = $"FormatTokens[{i}]";
 
-                Update(
+                Display.Update(
                     flowPanel.Controls.Count > i ? flowPanel.Controls[i] : null,
-                    path + "." + itemName,
-                    itemName,
+                    scope.Extend(itemName),
                     token is null ? typeof(object) : token.GetType(),
                     token,
                     displays,
@@ -56,8 +55,11 @@ namespace GameTheory.FormsRunner.Shared
                             oldControl.Dispose();
                         }
 
-                        flowPanel.Controls.Add(newControl);
-                        flowPanel.Controls.SetChildIndex(newControl, i);
+                        if (newControl != null)
+                        {
+                            flowPanel.Controls.Add(newControl);
+                            flowPanel.Controls.SetChildIndex(newControl, i);
+                        }
                     });
             }
 

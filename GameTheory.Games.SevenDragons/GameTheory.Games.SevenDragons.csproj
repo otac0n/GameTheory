@@ -30,6 +30,7 @@
     <ProjectReference Include="..\GameTheory\GameTheory.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
 </Project>

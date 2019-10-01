@@ -5,6 +5,7 @@ namespace GameTheory.Games.PositivelyPerfectParfaitGame
     using System;
     using System.Collections.Generic;
     using System.Collections.Immutable;
+    using System.ComponentModel.DataAnnotations;
     using System.Linq;
 
     /// <summary>
@@ -38,7 +39,7 @@ namespace GameTheory.Games.PositivelyPerfectParfaitGame
         /// </summary>
         /// <param name="players">The number of players.</param>
         /// <param name="playOut">A value indicating whether all players are allowed to complete their parfaits.</param>
-        public GameState(int players = MinPlayers, bool playOut = false)
+        public GameState([Range(MinPlayers, MaxPlayers)] int players = MinPlayers, bool playOut = false)
         {
             if (players < MinPlayers || players > MaxPlayers)
             {

@@ -4,19 +4,16 @@ namespace GameTheory.Games.Chess.Forms
 {
     using System;
     using System.Collections.Generic;
-    using System.Drawing;
-    using System.Drawing.Drawing2D;
-    using System.Drawing.Text;
     using System.Windows.Forms;
     using GameTheory.FormsRunner.Shared;
 
     public class BoardDisplay : Display
     {
         /// <inheritdoc/>
-        public override bool CanDisplay(string path, string name, Type type, object value) => type == typeof(GameState);
+        public override bool CanDisplay(Scope scope, Type type, object value) => type == typeof(GameState);
 
         /// <inheritdoc/>
-        public override Control Update(Control control, string path, string name, Type type, object value, IReadOnlyList<Display> displays)
+        protected override Control Update(Control control, Scope scope, Type type, object value, IReadOnlyList<Display> displays)
         {
             var gameState = (GameState)value;
 
@@ -26,7 +23,7 @@ namespace GameTheory.Games.Chess.Forms
             }
             else
             {
-                chessboard = new Chessboard(gameState, gameState.Players[0]);
+                chessboard = new Chessboard(gameState, scope.GetPropertyOrDefault(Scope.SharedProperties.PlayerToken, gameState.Players[0]));
             }
 
             return chessboard;

@@ -1,6 +1,6 @@
 // Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
-namespace GameTheory.FormsRunner.Shared
+namespace GameTheory.FormsRunner.Shared.Displays
 {
     using System;
     using System.Collections;
@@ -31,7 +31,7 @@ namespace GameTheory.FormsRunner.Shared
 
         public static DictionaryDisplay Instance { get; } = new DictionaryDisplay();
 
-        public override bool CanDisplay(string path, string name, Type type, object value)
+        public override bool CanDisplay(Scope scope, Type type, object value)
         {
             if (type.IsConstructedGenericType)
             {
@@ -42,7 +42,7 @@ namespace GameTheory.FormsRunner.Shared
             return false;
         }
 
-        public override Control Update(Control control, string path, string name, Type type, object value, IReadOnlyList<Display> displays)
+        protected override Control Update(Control control, Scope scope, Type type, object value, IReadOnlyList<Display> displays)
         {
             var typeArguments = type.GetGenericArguments();
             var keyType = typeArguments[0];
@@ -64,7 +64,7 @@ namespace GameTheory.FormsRunner.Shared
                         keyControl.Dispose();
                     }
 
-                    var valueControl = tablePanel.GetControlFromPosition(0, i);
+                    var valueControl = tablePanel.GetControlFromPosition(1, i);
                     if (valueControl != null)
                     {
                         tablePanel.Controls.Remove(valueControl);
@@ -86,10 +86,9 @@ namespace GameTheory.FormsRunner.Shared
                 var keyName = $"Keys[{i}]";
                 var valueName = $"[{key}]";
 
-                Update(
+                Display.Update(
                     tablePanel.GetControlFromPosition(0, i),
-                    path + "." + keyName,
-                    keyName,
+                    scope.Extend(keyName),
                     keyType,
                     key,
                     displays,
@@ -101,13 +100,15 @@ namespace GameTheory.FormsRunner.Shared
                             oldControl.Dispose();
                         }
 
-                        tablePanel.Controls.Add(newControl, 0, i);
+                        if (newControl != null)
+                        {
+                            tablePanel.Controls.Add(newControl, 0, i);
+                        }
                     });
 
-                Update(
+                Display.Update(
                     tablePanel.GetControlFromPosition(1, i),
-                    path + valueName,
-                    valueName,
+                    scope.Extend(valueName),
                     valueType,
                     valueProperty.GetValue(value, new[] { key }),
                     displays,
@@ -119,10 +120,11 @@ namespace GameTheory.FormsRunner.Shared
                             oldControl.Dispose();
                         }
 
-                        tablePanel.Controls.Add(newControl, 1, i);
+                        if (newControl != null)
+                        {
+                            tablePanel.Controls.Add(newControl, 1, i);
+                        }
                     });
-
-                i++;
             }
 
             tablePanel.ResumeLayout();
