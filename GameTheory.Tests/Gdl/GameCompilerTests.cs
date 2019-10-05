@@ -54,6 +54,7 @@ namespace GameTheory.Tests.Gdl
             [Values(
                 @"(role x) (goal x 100) (<= (next ?x) (does x ?x)) (legal x {0}) (<= terminal (true {0}))",
                 @"(role x) (goal x 100) (<= (next ?x) (does x ?x)) (legal x ({0})) (<= terminal (true ({0})))",
+                @"(role x) (goal x 100) (<= (next ?x) (does x ?x)) (legal x ({0} 1)) (<= terminal (true ({0} 1)))",
                 @"(role x) (goal x 100) (<= (next ?x) (does x ?x)) (legal x win) (<= terminal (true win)) {0}",
                 @"(role x) (goal x 100) (<= (next ?x) (does x ?x)) (legal x (win {0})) (<= terminal (true (win {0})))",
                 @"(role x) (goal x 100) (<= (next ?x) (does x ?x)) (legal x (win ?{0})) (<= terminal (true (win ?{0})))")]
@@ -107,6 +108,9 @@ namespace GameTheory.Tests.Gdl
         [TestCase(@"(role a) (goal a 100) (init win) (<= terminal (true win))")]
         [TestCase(@"(role a) (goal a 100) (<= (next ?x) (does a ?x)) terminal")]
         [TestCase(@"(role a) (goal a 100) (<= (next ?x) (does a ?x)) (legal a win) (<= terminal (true win))")]
+        [TestCase(@"(role a) (init (cell 1 1 a))")]
+        [TestCase(@"(role a) (init (cell 1 1 a)) (<= terminal (true (cell ?x ?y a)))")]
+        [TestCase(@"(role a) (goal a 100) (legal a a) (<= (next ?x) (does a ?x)) terminal")]
         public void Compile_WhenGivenASimpleGame_ReturnsAGameThatCanBePlayedToTheEnd(string game)
         {
             var result = new GameCompiler().Compile(game);
