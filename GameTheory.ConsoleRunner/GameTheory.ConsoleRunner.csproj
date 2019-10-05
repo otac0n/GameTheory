@@ -90,6 +90,10 @@
     <Analyzer Include="..\packages\StyleCop.Analyzers.1.1.118\analyzers\dotnet\cs\StyleCop.Analyzers.dll" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\GameTheory.Games.Nessos.Console\GameTheory.Games.Nessos.Console.csproj">
+      <Project>{b514bbfa-5456-4c7b-b941-98b6a2e890fe}</Project>
+      <Name>GameTheory.Games.Nessos.Console</Name>
+    </ProjectReference>
     <ProjectReference Include="..\GameTheory\GameTheory.csproj">
       <Project>{3b3e3456-b950-44c1-b8a2-fe6c79c2232f}</Project>
       <Name>GameTheory</Name>

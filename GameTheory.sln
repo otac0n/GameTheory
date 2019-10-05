@@ -44,6 +44,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameTheory.Games.Lotus", "G
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameTheory.Games.Mancala", "GameTheory.Games.Mancala\GameTheory.Games.Mancala.csproj", "{53732849-F5E8-4AEE-93A3-2839F14AD856}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameTheory.Games.Nessos", "GameTheory.Games.Nessos\GameTheory.Games.Nessos.csproj", "{C498FABF-25E4-4690-A541-D2FCE1D0C323}"
+EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameTheory.Games.PositivelyPerfectParfaitGame", "GameTheory.Games.PositivelyPerfectParfaitGame\GameTheory.Games.PositivelyPerfectParfaitGame.csproj", "{3CE3E90C-B698-458D-922D-0C2EEE8892CB}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameTheory.Games.SevenDragons", "GameTheory.Games.SevenDragons\GameTheory.Games.SevenDragons.csproj", "{D7A1DBEF-2C7B-4919-A322-D265BF3761F3}"
@@ -75,6 +77,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameTheory.Games.Lotus.Console", "GameTheory.Games.Lotus.Console\GameTheory.Games.Lotus.Console.csproj", "{25442DEF-9DC3-4324-9B53-18734213BD96}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameTheory.Games.Mancala.Console", "GameTheory.Games.Mancala.Console\GameTheory.Games.Mancala.Console.csproj", "{8417ECB7-2BB9-4460-A022-95F2806703A0}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameTheory.Games.Nessos.Console", "GameTheory.Games.Nessos.Console\GameTheory.Games.Nessos.Console.csproj", "{B514BBFA-5456-4C7B-B941-98B6A2E890FE}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameTheory.Games.PositivelyPerfectParfaitGame.Console", "GameTheory.Games.PositivelyPerfectParfaitGame.Console\GameTheory.Games.PositivelyPerfectParfaitGame.Console.csproj", "{1B238786-D920-4BA0-B6AE-944FA92C3165}"
 EndProject
@@ -138,6 +142,10 @@ Global
 		{53732849-F5E8-4AEE-93A3-2839F14AD856}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{53732849-F5E8-4AEE-93A3-2839F14AD856}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{53732849-F5E8-4AEE-93A3-2839F14AD856}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C498FABF-25E4-4690-A541-D2FCE1D0C323}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C498FABF-25E4-4690-A541-D2FCE1D0C323}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C498FABF-25E4-4690-A541-D2FCE1D0C323}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C498FABF-25E4-4690-A541-D2FCE1D0C323}.Release|Any CPU.Build.0 = Release|Any CPU
 		{3CE3E90C-B698-458D-922D-0C2EEE8892CB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{3CE3E90C-B698-458D-922D-0C2EEE8892CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3CE3E90C-B698-458D-922D-0C2EEE8892CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -202,6 +210,10 @@ Global
 		{8417ECB7-2BB9-4460-A022-95F2806703A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8417ECB7-2BB9-4460-A022-95F2806703A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8417ECB7-2BB9-4460-A022-95F2806703A0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B514BBFA-5456-4C7B-B941-98B6A2E890FE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B514BBFA-5456-4C7B-B941-98B6A2E890FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B514BBFA-5456-4C7B-B941-98B6A2E890FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B514BBFA-5456-4C7B-B941-98B6A2E890FE}.Release|Any CPU.Build.0 = Release|Any CPU
 		{1B238786-D920-4BA0-B6AE-944FA92C3165}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{1B238786-D920-4BA0-B6AE-944FA92C3165}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1B238786-D920-4BA0-B6AE-944FA92C3165}.Release|Any CPU.ActiveCfg = Release|Any CPU
