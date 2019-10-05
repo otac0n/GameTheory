@@ -327,10 +327,31 @@ namespace GameTheory.Gdl.Passes
                     : individualVariable;
         }
 
+        private class StringArrayEqualityComparer : IEqualityComparer<string[]>
+        {
+            private readonly StringComparer stringComparer;
+
+            public StringArrayEqualityComparer(StringComparer stringComparer)
+            {
+                this.stringComparer = stringComparer;
+            }
+
+            public bool Equals(string[] x, string[] y) =>
+                object.ReferenceEquals(x, y) || (!(x is null) && !(y is null) && x.Length == y.Length && Enumerable.Range(0, x.Length).All(i => this.stringComparer.Equals(x[i], y[i])));
+
+            public int GetHashCode(string[] obj) => obj is null ? 0 :
+                Enumerable.Range(0, obj.Length).Aggregate(HashUtilities.Seed, (hash, i) =>
+                {
+                    var str = obj[i];
+                    HashUtilities.Combine(ref hash, str is null ? 0 : this.stringComparer.GetHashCode());
+                    return hash;
+                });
+        }
+
         private class VariableNameWalker : SupportedExpressionsTreeWalker
         {
-            private readonly ImmutableDictionary<(Constant, int), ConstantInfo> expressionTypes;
             private readonly ImmutableDictionary<Sentence, ImmutableDictionary<IndividualVariable, VariableInfo>> containedVariables;
+            private readonly ImmutableDictionary<(Constant, int), ConstantInfo> expressionTypes;
             private readonly Dictionary<ExpressionWithArgumentsInfo, List<VariableInfo[]>> variableNames;
             private ImmutableDictionary<IndividualVariable, VariableInfo> variableTypes;
 
@@ -408,27 +429,6 @@ namespace GameTheory.Gdl.Passes
                         throw new NotImplementedException();
                 }
             }
-        }
-
-        private class StringArrayEqualityComparer : IEqualityComparer<string[]>
-        {
-            private readonly StringComparer stringComparer;
-
-            public StringArrayEqualityComparer(StringComparer stringComparer)
-            {
-                this.stringComparer = stringComparer;
-            }
-
-            public bool Equals(string[] x, string[] y) =>
-                object.ReferenceEquals(x, y) || (!(x is null) && !(y is null) && x.Length == y.Length && Enumerable.Range(0, x.Length).All(i => this.stringComparer.Equals(x[i], y[i])));
-
-            public int GetHashCode(string[] obj) => obj is null ? 0 :
-                Enumerable.Range(0, obj.Length).Aggregate(HashUtilities.Seed, (hash, i) =>
-                {
-                    var str = obj[i];
-                    HashUtilities.Combine(ref hash, str is null ? 0 : this.stringComparer.GetHashCode());
-                    return hash;
-                });
         }
     }
 }
