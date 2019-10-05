@@ -15,24 +15,37 @@ namespace GameTheory.Tests.Gdl
     [TestFixture]
     public class GameCompilerTests
     {
-        public static IEnumerable<string> Games =>
-            from m in Directory.EnumerateFiles(Path.GetFullPath(Path.Combine(Path.GetDirectoryName(typeof(GameCompilerTests).Assembly.Location), "../../..")), "METADATA", SearchOption.AllDirectories)
-            let metadata = JsonConvert.DeserializeObject<GameMetadata>(File.ReadAllText(m))
-            select Path.Combine(Path.GetDirectoryName(m), metadata.RuleSheet);
-
-        [TestCase(@"(role a) terminal")]
-        [TestCase(@"(role a) (goal a 100) terminal")]
-        [TestCase(@"(role a) (goal a 100) (init win) (<= terminal (true win))")]
-        [TestCase(@"(role a) (goal a 100) (<= (next ?x) (does a ?x)) terminal")]
-        [TestCase(@"(role a) (goal a 100) (<= (next ?x) (does a ?x)) (legal a win) (<= terminal (true win))")]
-        public void Compile_WhenGivenASimpleGame_ReturnsAGameThatCanBePlayedToTheEnd(string game)
+        private interface IGameManager
         {
-            var result = new GameCompiler().Compile(game);
+            object Run();
+        }
+
+        public static IEnumerable<string> Games =>
+            Directory.EnumerateFiles(Path.GetFullPath(Path.Combine(Path.GetDirectoryName(typeof(GameCompilerTests).Assembly.Location), "../../..")), "METADATA", SearchOption.AllDirectories);
+
+        [TestCaseSource(nameof(Games))]
+        public void Compile_WhenGivenAGameDefinition_ReturnsAFullyConstructedType(string game)
+        {
+            var gdl = LoadGameGdl(game, out var friendlyName);
+            var result = new GameCompiler().Compile(gdl, friendlyName);
 
             GetDebugInfo(result, out var types, out var names, out var dependencies, out var code);
 
             Assert.That(result.Errors.Where(e => !e.IsWarning), Is.Empty);
             Assert.That(result.Type, Is.Not.Null);
+        }
+
+        [TestCaseSource(nameof(Games))]
+        [Timeout(10000)]
+        public void Compile_WhenGivenAGameDefinition_ReturnsAGameThatCanBePlayedToTheEnd(string game)
+        {
+            var gdl = LoadGameGdl(game, out var friendlyName);
+            var result = new GameCompiler().Compile(gdl, friendlyName);
+
+            GetDebugInfo(result, out var types, out var names, out var dependencies, out var code);
+
+            Assume.That(result.Errors.Where(e => !e.IsWarning), Is.Empty);
+            Assume.That(result.Type, Is.Not.Null);
             RunGame(result);
         }
 
@@ -89,51 +102,20 @@ namespace GameTheory.Tests.Gdl
             RunGame(result);
         }
 
-        [TestCaseSource(nameof(Games))]
-        public void Compile_WhenGivenAGameDefinition_ReturnsAFullyConstructedType(string game)
+        [TestCase(@"(role a) terminal")]
+        [TestCase(@"(role a) (goal a 100) terminal")]
+        [TestCase(@"(role a) (goal a 100) (init win) (<= terminal (true win))")]
+        [TestCase(@"(role a) (goal a 100) (<= (next ?x) (does a ?x)) terminal")]
+        [TestCase(@"(role a) (goal a 100) (<= (next ?x) (does a ?x)) (legal a win) (<= terminal (true win))")]
+        public void Compile_WhenGivenASimpleGame_ReturnsAGameThatCanBePlayedToTheEnd(string game)
         {
-            var gdl = LoadAssemblyResource(game, out var friendlyName);
-            var result = new GameCompiler().Compile(gdl, friendlyName);
+            var result = new GameCompiler().Compile(game);
 
             GetDebugInfo(result, out var types, out var names, out var dependencies, out var code);
 
             Assert.That(result.Errors.Where(e => !e.IsWarning), Is.Empty);
             Assert.That(result.Type, Is.Not.Null);
-        }
-
-        [TestCaseSource(nameof(Games))]
-        [Timeout(10000)]
-        public void Compile_WhenGivenAGameDefinition_ReturnsAGameThatCanBePlayedToTheEnd(string game)
-        {
-            var gdl = LoadAssemblyResource(game, out var friendlyName);
-            var result = new GameCompiler().Compile(gdl, friendlyName);
-
-            GetDebugInfo(result, out var types, out var names, out var dependencies, out var code);
-
-            Assume.That(result.Errors.Where(e => !e.IsWarning), Is.Empty);
-            Assume.That(result.Type, Is.Not.Null);
             RunGame(result);
-        }
-
-        private static void RunGame(CompileResult result)
-        {
-            var stateType = result.Type;
-            var moveType = stateType.GetInterfaces().Single(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IGameState<>)).GetGenericArguments().Single();
-            var startingState = Activator.CreateInstance(stateType);
-            var manager = (IGameManager)Activator.CreateInstance(typeof(GameManager<>).MakeGenericType(moveType), startingState);
-            var endState = manager.Run();
-        }
-
-        private static string LoadAssemblyResource(string name, out string friendlyName)
-        {
-            var prefix = typeof(GameCompilerTests).Namespace + ".Games.";
-            friendlyName = name.Replace(prefix, prefix.Replace('.', '\\'));
-
-            using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(name))
-            using (var reader = new StreamReader(stream))
-            {
-                return reader.ReadToEnd();
-            }
         }
 
         private static void GetDebugInfo(CompileResult result, out string types, out string names, out string dependencies, out string code)
@@ -144,9 +126,21 @@ namespace GameTheory.Tests.Gdl
             code = result.Code;
         }
 
-        private interface IGameManager
+        private static string LoadGameGdl(string path, out string friendlyName)
         {
-            object Run();
+            var metadata = JsonConvert.DeserializeObject<GameMetadata>(File.ReadAllText(path));
+            var gdlPath = Path.Combine(Path.GetDirectoryName(path), metadata.RuleSheet);
+            friendlyName = metadata.GameName;
+            return File.ReadAllText(gdlPath);
+        }
+
+        private static void RunGame(CompileResult result)
+        {
+            var stateType = result.Type;
+            var moveType = stateType.GetInterfaces().Single(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IGameState<>)).GetGenericArguments().Single();
+            var startingState = Activator.CreateInstance(stateType);
+            var manager = (IGameManager)Activator.CreateInstance(typeof(GameManager<>).MakeGenericType(moveType), startingState);
+            var endState = manager.Run();
         }
 
         private class GameManager<TMove> : IGameManager
