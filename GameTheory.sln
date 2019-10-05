@@ -66,6 +66,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameTheory.FormsRunner.Shar
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameTheory.Gdl.Shared", "GameTheory.Gdl.Shared\GameTheory.Gdl.Shared.csproj", "{9759B3D1-3B3D-4CFD-8580-B4BB99AB3300}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameTheory.Gdl.Forms", "GameTheory.Gdl.Forms\GameTheory.Gdl.Forms.csproj", "{DC01B5FE-5324-48A3-A88E-12E1B43AEE53}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -160,6 +162,10 @@ Global
 		{9759B3D1-3B3D-4CFD-8580-B4BB99AB3300}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9759B3D1-3B3D-4CFD-8580-B4BB99AB3300}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9759B3D1-3B3D-4CFD-8580-B4BB99AB3300}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DC01B5FE-5324-48A3-A88E-12E1B43AEE53}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DC01B5FE-5324-48A3-A88E-12E1B43AEE53}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DC01B5FE-5324-48A3-A88E-12E1B43AEE53}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DC01B5FE-5324-48A3-A88E-12E1B43AEE53}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

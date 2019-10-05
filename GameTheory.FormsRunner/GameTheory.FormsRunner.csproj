@@ -202,6 +202,10 @@
       <Project>{e9225da4-7ebc-4915-93a5-d14df8aad0a3}</Project>
       <Name>GameTheory.Gdl</Name>
     </ProjectReference>
+    <ProjectReference Include="..\GameTheory.Gdl.Forms\GameTheory.Gdl.Forms.csproj">
+      <Project>{dc01b5fe-5324-48a3-a88e-12e1b43aee53}</Project>
+      <Name>GameTheory.Gdl.Forms</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\FixMe.1.0.0\build\FixMe.targets" Condition="Exists('..\packages\FixMe.1.0.0\build\FixMe.targets')" />
