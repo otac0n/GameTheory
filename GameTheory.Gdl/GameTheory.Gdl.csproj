@@ -17,6 +17,7 @@
     <PackageReference Include="System.CodeDom" Version="4.5.0" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\GameTheory.Gdl.Shared\GameTheory.Gdl.Shared.csproj" />
     <ProjectReference Include="..\GameTheory\GameTheory.csproj" />
   </ItemGroup>
   <ItemGroup>

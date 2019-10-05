@@ -71,6 +71,7 @@
       <HintPath>..\packages\System.Runtime.Extensions.4.3.1\lib\net462\System.Runtime.Extensions.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Games\Chess\GameStateTests.cs" />
@@ -179,6 +180,10 @@
     <ProjectReference Include="..\GameTheory.Gdl\GameTheory.Gdl.csproj">
       <Project>{e9225da4-7ebc-4915-93a5-d14df8aad0a3}</Project>
       <Name>GameTheory.Gdl</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\GameTheory.Gdl.Shared\GameTheory.Gdl.Shared.csproj">
+      <Project>{9759b3d1-3b3d-4cfd-8580-b4bb99ab3300}</Project>
+      <Name>GameTheory.Gdl.Shared</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
