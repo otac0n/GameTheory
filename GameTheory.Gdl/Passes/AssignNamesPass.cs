@@ -88,9 +88,12 @@ namespace GameTheory.Gdl.Passes
                 var relation = doesQueue.Dequeue();
                 if (seen.Add(relation))
                 {
-                    foreach (var dependency in dependencies[relation].dependencies)
+                    if (dependencies.TryGetValue(relation, out var value))
                     {
-                        doesQueue.Enqueue(dependency);
+                        foreach (var dependency in value.dependencies)
+                        {
+                            doesQueue.Enqueue(dependency);
+                        }
                     }
                 }
             }
