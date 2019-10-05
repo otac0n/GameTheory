@@ -16,7 +16,7 @@ namespace GameTheory.Tests.Gdl
     public class GameCompilerTests
     {
         public static IEnumerable<string> Games =>
-            from m in Directory.EnumerateFiles("../../..", "METADATA", SearchOption.AllDirectories)
+            from m in Directory.EnumerateFiles(Path.GetFullPath(Path.Combine(Path.GetDirectoryName(typeof(GameCompilerTests).Assembly.Location), "../../..")), "METADATA", SearchOption.AllDirectories)
             let metadata = JsonConvert.DeserializeObject<GameMetadata>(File.ReadAllText(m))
             select Path.Combine(Path.GetDirectoryName(m), metadata.RuleSheet);
 
