@@ -38,6 +38,7 @@ namespace GameTheory.Gdl.Passes
 
             var namespaceScope = new Scope<object>()
                 .Reserve(result.Name)
+                .Reserve("IXml")
                 .Add("GameState", ScopeFlags.Public, "GameState")
                 .Add("Move", ScopeFlags.Public, "Move", $"{result.Name} Move", "RoleMove")
                 .Add("ObjectComparer", ScopeFlags.Public, "ObjectComparer");
@@ -69,7 +70,8 @@ namespace GameTheory.Gdl.Passes
                 .Reserve("GetWinners")
                 .Reserve("Players")
                 .Reserve("MakeMove")
-                .Reserve("ToString");
+                .Reserve("ToString")
+                .Reserve("ToXml");
 
             var role = (RelationInfo)result.AssignedTypes.ExpressionTypes[KnownConstants.Role];
             var roles = ((EnumType)role.Arguments[0].ReturnType).Objects;

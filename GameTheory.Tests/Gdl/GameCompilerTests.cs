@@ -7,7 +7,11 @@ namespace GameTheory.Tests.Gdl
     using System.IO;
     using System.Linq;
     using System.Reflection;
+    using System.Text;
+    using System.Threading.Tasks;
+    using System.Xml;
     using GameTheory.Gdl;
+    using GameTheory.Gdl.Shared;
     using GameTheory.Players;
     using Newtonsoft.Json;
     using NUnit.Framework;
@@ -76,6 +80,7 @@ namespace GameTheory.Tests.Gdl
                 "GetValues",
                 "GetView",
                 "GetWinners",
+                "IXml",
                 "List",
                 "MakeMove",
                 "maxStates",
@@ -86,12 +91,16 @@ namespace GameTheory.Tests.Gdl
                 "Role",
                 "State",
                 "System",
+                "Task",
                 "ToString",
+                "ToXml",
                 "Value",
                 "var",
                 "Weighted",
                 "Where",
-                "winners")]
+                "winners",
+                "writer",
+                "XmlWriter")]
             string conflict)
         {
             var result = new GameCompiler().Compile(string.Format(game, conflict));
@@ -120,6 +129,33 @@ namespace GameTheory.Tests.Gdl
             Assert.That(result.Errors.Where(e => !e.IsWarning), Is.Empty);
             Assert.That(result.Type, Is.Not.Null);
             RunGame(result);
+        }
+
+        [TestCase(@"(role a) (init (cell 1 1 a)) (legal a x)", "<state><fact><relation>cell</relation><argument>1</argument><argument>1</argument><argument>A</argument></fact></state>")]
+        public async Task Compile_WhenGivenASimpleGame_ReturnsAGameThatCanBeSerializedToXml(string game, string xml)
+        {
+            var result = new GameCompiler().Compile(game);
+
+            GetDebugInfo(result, out var types, out var names, out var dependencies, out var code);
+
+            Assume.That(result.Errors.Where(e => !e.IsWarning), Is.Empty);
+            Assume.That(result.Type, Is.Not.Null);
+            var startingState = Activator.CreateInstance(result.Type);
+            Assume.That(startingState, Is.InstanceOf<IXml>());
+
+            var settings = new XmlWriterSettings
+            {
+                Async = true,
+                OmitXmlDeclaration = true,
+            };
+
+            var sb = new StringBuilder();
+            using (var writer = XmlWriter.Create(sb, settings))
+            {
+                await ((IXml)startingState).ToXml(writer);
+            }
+
+            Assert.That(sb.ToString(), Is.EqualTo(xml));
         }
 
         private static void GetDebugInfo(CompileResult result, out string types, out string names, out string dependencies, out string code)

@@ -7,6 +7,8 @@ namespace GameTheory.Gdl.Passes
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
+    using System.Xml;
+    using GameTheory.Gdl.Shared;
     using Microsoft.CodeDom.Providers.DotNetCompilerPlatform;
 
     internal class CompileGeneratedCodePass : CompilePass
@@ -36,7 +38,9 @@ namespace GameTheory.Gdl.Passes
                 options.ReferencedAssemblies.Add(typeof(ISet<>).Assembly.Location);
                 options.ReferencedAssemblies.Add(typeof(IReadOnlyCollection<>).Assembly.Location);
                 options.ReferencedAssemblies.Add(typeof(Enumerable).Assembly.Location);
+                options.ReferencedAssemblies.Add(typeof(XmlWriter).Assembly.Location);
                 options.ReferencedAssemblies.Add(typeof(IGameState<>).Assembly.Location);
+                options.ReferencedAssemblies.Add(typeof(IXml).Assembly.Location);
 
                 var results = compiler.CompileAssemblyFromSource(options, result.Code);
                 if (results.Errors.HasErrors)

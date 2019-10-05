@@ -329,7 +329,23 @@ namespace GameTheory.Gdl.Passes
                                 SyntaxHelper.IdentifierName("System"),
                                 SyntaxHelper.IdentifierName("Linq"))),
                         SyntaxFactory.UsingDirective(
-                            SyntaxHelper.IdentifierName("GameTheory")));
+                            SyntaxFactory.QualifiedName(
+                                SyntaxFactory.QualifiedName(
+                                    SyntaxHelper.IdentifierName("System"),
+                                    SyntaxHelper.IdentifierName("Threading")),
+                                SyntaxHelper.IdentifierName("Tasks"))),
+                        SyntaxFactory.UsingDirective(
+                            SyntaxFactory.QualifiedName(
+                                SyntaxHelper.IdentifierName("System"),
+                                SyntaxHelper.IdentifierName("Xml"))),
+                        SyntaxFactory.UsingDirective(
+                            SyntaxHelper.IdentifierName("GameTheory")),
+                        SyntaxFactory.UsingDirective(
+                            SyntaxFactory.QualifiedName(
+                                SyntaxFactory.QualifiedName(
+                                    SyntaxHelper.IdentifierName("GameTheory"),
+                                    SyntaxHelper.IdentifierName("Gdl")),
+                                SyntaxHelper.IdentifierName("Shared"))));
 
                 var move = this.CreateMoveTypeDeclaration(does.Arguments[1].ReturnType);
 
@@ -342,7 +358,9 @@ namespace GameTheory.Gdl.Passes
                             .AddTypeArgumentListArguments(
                                 SyntaxHelper.IdentifierName(this.result.NamespaceScope.GetPublic("Move")))),
                         SyntaxFactory.SimpleBaseType(
-                            SyntaxHelper.IdentifierName("ITokenFormattable")))
+                            SyntaxHelper.IdentifierName("ITokenFormattable")),
+                        SyntaxFactory.SimpleBaseType(
+                            SyntaxHelper.IdentifierName("IXml")))
                     .AddMembers(this.CreateGameStateConstructorDeclarations(init, stateType, role, moveType, noop))
                     .AddMembers(
                         this.CreateMakeMoveDeclaration(next, stateType, role, noop),
@@ -396,6 +414,60 @@ namespace GameTheory.Gdl.Passes
                 root = root.AddMembers(ns);
 
                 this.result.DeclarationSyntax = root.NormalizeWhitespace();
+            }
+
+            private static ExpressionStatementSyntax CreateToXmlStatements(ExpressionType type, ExpressionSyntax value, ExpressionSyntax writer)
+            {
+                switch (type)
+                {
+                    case FunctionType functionType:
+                        return SyntaxFactory.ExpressionStatement(
+                            SyntaxFactory.AwaitExpression(
+                                SyntaxFactory.InvocationExpression(
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        value,
+                                        SyntaxHelper.IdentifierName("ToXml")))
+                                        .AddArgumentListArguments(
+                                            SyntaxFactory.Argument(
+                                                writer))));
+
+                    case ObjectType objectType:
+                        return SyntaxFactory.ExpressionStatement(
+                            SyntaxFactory.AwaitExpression(
+                                SyntaxFactory.InvocationExpression(
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        writer,
+                                        SyntaxFactory.IdentifierName("WriteStringAsync")))
+                                    .AddArgumentListArguments(
+                                        SyntaxFactory.Argument(
+                                            SyntaxFactory.InvocationExpression(
+                                                value)))));
+
+                    case NumberRangeType numberRangeType:
+                    case EnumType enumType:
+                        return SyntaxFactory.ExpressionStatement(
+                            SyntaxFactory.AwaitExpression(
+                                SyntaxFactory.InvocationExpression(
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        writer,
+                                        SyntaxFactory.IdentifierName("WriteStringAsync")))
+                                    .AddArgumentListArguments(
+                                        SyntaxFactory.Argument(
+                                            SyntaxFactory.InvocationExpression(
+                                                SyntaxFactory.MemberAccessExpression(
+                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                    value,
+                                                    SyntaxFactory.IdentifierName("ToString")))))));
+
+                    case AnyType anyType:
+                    case UnionType unionType:
+                        break;
+                }
+
+                throw new NotSupportedException($"Could not enumerate the members of the type '{type}'");
             }
 
             private static ObjectCreationExpressionSyntax NewPlayerTokenExpression() =>
@@ -953,6 +1025,93 @@ namespace GameTheory.Gdl.Passes
                         .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken));
 
                 structElement = structElement.AddMembers(formatTokens, compareTo);
+
+                var toXmlBody = SyntaxFactory.Block(
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.AwaitExpression(
+                            SyntaxFactory.InvocationExpression(
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxHelper.IdentifierName("writer"),
+                                    SyntaxHelper.IdentifierName("WriteStartElementAsync")))
+                                .AddArgumentListArguments(
+                                    SyntaxFactory.Argument(
+                                        SyntaxFactory.LiteralExpression(
+                                            SyntaxKind.NullLiteralExpression)),
+                                    SyntaxFactory.Argument(
+                                        SyntaxFactory.LiteralExpression(
+                                            SyntaxKind.StringLiteralExpression,
+                                            SyntaxFactory.Literal("relation"))),
+                                    SyntaxFactory.Argument(
+                                        SyntaxFactory.LiteralExpression(
+                                            SyntaxKind.NullLiteralExpression))))),
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.AwaitExpression(
+                            SyntaxFactory.InvocationExpression(
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxHelper.IdentifierName("writer"),
+                                    SyntaxHelper.IdentifierName("WriteStringAsync")))
+                                .AddArgumentListArguments(
+                                    SyntaxFactory.Argument(
+                                        SyntaxHelper.LiteralExpression(functionInfo.Constant.Name))))),
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.AwaitExpression(
+                            SyntaxFactory.InvocationExpression(
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxHelper.IdentifierName("writer"),
+                                    SyntaxHelper.IdentifierName("WriteEndElementAsync"))))));
+                foreach (var arg in functionInfo.Arguments)
+                {
+                    toXmlBody = toXmlBody.AddStatements(
+                        SyntaxFactory.ExpressionStatement(
+                            SyntaxFactory.AwaitExpression(
+                                SyntaxFactory.InvocationExpression(
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxHelper.IdentifierName("writer"),
+                                        SyntaxHelper.IdentifierName("WriteStartElementAsync")))
+                                    .AddArgumentListArguments(
+                                        SyntaxFactory.Argument(
+                                            SyntaxFactory.LiteralExpression(
+                                                SyntaxKind.NullLiteralExpression)),
+                                        SyntaxFactory.Argument(
+                                            SyntaxFactory.LiteralExpression(
+                                                SyntaxKind.StringLiteralExpression,
+                                                SyntaxFactory.Literal("argument"))),
+                                        SyntaxFactory.Argument(
+                                            SyntaxFactory.LiteralExpression(
+                                                SyntaxKind.NullLiteralExpression))))),
+                        CreateToXmlStatements(
+                            arg.ReturnType,
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.ThisExpression(),
+                                SyntaxHelper.IdentifierName(functionInfo.Scope.GetPrivate(arg))),
+                            SyntaxHelper.IdentifierName("writer")),
+                        SyntaxFactory.ExpressionStatement(
+                            SyntaxFactory.AwaitExpression(
+                                SyntaxFactory.InvocationExpression(
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxHelper.IdentifierName("writer"),
+                                        SyntaxHelper.IdentifierName("WriteEndElementAsync"))))));
+                }
+
+                structElement = structElement.AddMembers(
+                    SyntaxFactory.MethodDeclaration(
+                        SyntaxHelper.IdentifierName("Task"),
+                        SyntaxFactory.Identifier("ToXml"))
+                        .AddModifiers(
+                            SyntaxFactory.Token(SyntaxKind.PublicKeyword),
+                            SyntaxFactory.Token(SyntaxKind.AsyncKeyword))
+                        .AddParameterListParameters(
+                            SyntaxFactory.Parameter(
+                                SyntaxFactory.Identifier("writer"))
+                                .WithType(
+                                    SyntaxHelper.IdentifierName("XmlWriter")))
+                        .WithBody(toXmlBody));
 
                 return SyntaxHelper.ReorderMembers(structElement);
             }
@@ -2295,6 +2454,30 @@ namespace GameTheory.Gdl.Passes
                                                     SyntaxFactory.ThisExpression(),
                                                     SyntaxHelper.IdentifierName("FlattenFormatTokens")))))))
                         .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken)),
+                    SyntaxFactory.MethodDeclaration(
+                        SyntaxHelper.IdentifierName("Task"),
+                        SyntaxFactory.Identifier("ToXml"))
+                        .AddModifiers(
+                            SyntaxFactory.Token(SyntaxKind.PublicKeyword))
+                        .AddParameterListParameters(
+                            SyntaxFactory.Parameter(
+                                SyntaxFactory.Identifier("writer"))
+                                .WithType(
+                                    SyntaxHelper.IdentifierName("XmlWriter")))
+                        .WithExpressionBody(
+                            SyntaxFactory.ArrowExpressionClause(
+                                SyntaxFactory.InvocationExpression(
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.MemberAccessExpression(
+                                            SyntaxKind.SimpleMemberAccessExpression,
+                                            SyntaxFactory.ThisExpression(),
+                                            SyntaxHelper.IdentifierName("state")),
+                                        SyntaxHelper.IdentifierName("ToXml")))
+                                    .AddArgumentListArguments(
+                                        SyntaxFactory.Argument(
+                                            SyntaxHelper.IdentifierName("writer")))))
+                        .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken)),
                 };
             }
 
@@ -2316,7 +2499,9 @@ namespace GameTheory.Gdl.Passes
                     .AddModifiers(SyntaxFactory.Token(SyntaxKind.PublicKeyword))
                     .AddBaseListTypes(
                         SyntaxFactory.SimpleBaseType(
-                            SyntaxHelper.IdentifierName("ITokenFormattable")));
+                            SyntaxHelper.IdentifierName("ITokenFormattable")),
+                        SyntaxFactory.SimpleBaseType(
+                            SyntaxHelper.IdentifierName("IXml")));
 
                 var constructor = SyntaxFactory.ConstructorDeclaration(classElement.Identifier)
                     .WithBody(SyntaxFactory.Block())
@@ -2577,6 +2762,92 @@ namespace GameTheory.Gdl.Passes
                             SyntaxHelper.IdentifierName("comp")));
 
                 classElement = classElement.AddMembers(constructor, formatTokens, add, compareTo, contains);
+
+                var toXmlBody = SyntaxFactory.Block(
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.AwaitExpression(
+                            SyntaxFactory.InvocationExpression(
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxHelper.IdentifierName("writer"),
+                                    SyntaxHelper.IdentifierName("WriteStartElementAsync")))
+                                .AddArgumentListArguments(
+                                    SyntaxFactory.Argument(
+                                        SyntaxFactory.LiteralExpression(
+                                            SyntaxKind.NullLiteralExpression)),
+                                    SyntaxFactory.Argument(
+                                        SyntaxFactory.LiteralExpression(
+                                            SyntaxKind.StringLiteralExpression,
+                                            SyntaxFactory.Literal("state"))),
+                                    SyntaxFactory.Argument(
+                                        SyntaxFactory.LiteralExpression(
+                                            SyntaxKind.NullLiteralExpression))))));
+
+                foreach (var obj in types)
+                {
+                    toXmlBody = toXmlBody.AddStatements(
+                        SyntaxFactory.ForEachStatement(
+                            SyntaxHelper.IdentifierName("var"),
+                            SyntaxFactory.Identifier("item"),
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.ThisExpression(),
+                                SyntaxHelper.IdentifierName(fieldNames.GetPrivate(obj.Key))),
+                            SyntaxFactory.Block(
+                                SyntaxFactory.ExpressionStatement(
+                                    SyntaxFactory.AwaitExpression(
+                                        SyntaxFactory.InvocationExpression(
+                                            SyntaxFactory.MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                SyntaxHelper.IdentifierName("writer"),
+                                                SyntaxHelper.IdentifierName("WriteStartElementAsync")))
+                                            .AddArgumentListArguments(
+                                                SyntaxFactory.Argument(
+                                                    SyntaxFactory.LiteralExpression(
+                                                        SyntaxKind.NullLiteralExpression)),
+                                                SyntaxFactory.Argument(
+                                                    SyntaxFactory.LiteralExpression(
+                                                        SyntaxKind.StringLiteralExpression,
+                                                        SyntaxFactory.Literal("fact"))),
+                                                SyntaxFactory.Argument(
+                                                    SyntaxFactory.LiteralExpression(
+                                                        SyntaxKind.NullLiteralExpression))))),
+                                CreateToXmlStatements(
+                                    obj.Key,
+                                    SyntaxFactory.IdentifierName("item"),
+                                    SyntaxHelper.IdentifierName("writer")),
+                                SyntaxFactory.ExpressionStatement(
+                                    SyntaxFactory.AwaitExpression(
+                                        SyntaxFactory.InvocationExpression(
+                                            SyntaxFactory.MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                SyntaxHelper.IdentifierName("writer"),
+                                                SyntaxHelper.IdentifierName("WriteEndElementAsync"))))))));
+                }
+
+                toXmlBody = toXmlBody.AddStatements(
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.AwaitExpression(
+                            SyntaxFactory.InvocationExpression(
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxHelper.IdentifierName("writer"),
+                                    SyntaxHelper.IdentifierName("WriteEndElementAsync"))))));
+
+                classElement = classElement.AddMembers(
+                    SyntaxFactory.MethodDeclaration(
+                        SyntaxHelper.IdentifierName("Task"),
+                        SyntaxFactory.Identifier("ToXml"))
+                        .AddModifiers(
+                            SyntaxFactory.Token(SyntaxKind.PublicKeyword),
+                            SyntaxFactory.Token(SyntaxKind.AsyncKeyword))
+                        .AddParameterListParameters(
+                            SyntaxFactory.Parameter(
+                                SyntaxFactory.Identifier("writer"))
+                                .WithType(
+                                    SyntaxHelper.IdentifierName("XmlWriter")))
+                        .WithBody(
+                            toXmlBody));
 
                 return SyntaxHelper.ReorderMembers(classElement);
             }
