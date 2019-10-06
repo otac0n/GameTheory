@@ -102,9 +102,9 @@
       <Project>{733c356a-ba71-406d-b49b-f67a0e647ce8}</Project>
       <Name>GameTheory.Games.CenturySpiceRoad</Name>
     </ProjectReference>
-    <ProjectReference Include="..\GameTheory.Games.Chess\GameTheory.Games.Chess.csproj">
-      <Project>{09437adf-6793-4252-b014-6ccaa5a10846}</Project>
-      <Name>GameTheory.Games.Chess</Name>
+    <ProjectReference Include="..\GameTheory.Games.Chess.Console\GameTheory.Games.Chess.Console.csproj">
+      <Project>{ecc600ad-d839-4a93-bc76-947df35fbfed}</Project>
+      <Name>GameTheory.Games.Chess.Console</Name>
     </ProjectReference>
     <ProjectReference Include="..\GameTheory.Games.Draughts\GameTheory.Games.Draughts.csproj">
       <Project>{5f47d85c-0deb-4dc3-86a9-7137db757a36}</Project>

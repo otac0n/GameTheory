@@ -25,7 +25,6 @@
     <AdditionalFiles Include="GameTheory.Games.Chess.ruleset" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\GameTheory.ConsoleRunner.Shared\GameTheory.ConsoleRunner.Shared.csproj" />
     <ProjectReference Include="..\GameTheory.FormsRunner.Shared\GameTheory.FormsRunner.Shared.csproj" />
     <ProjectReference Include="..\GameTheory\GameTheory.csproj" />
   </ItemGroup>
