@@ -1,0 +1,6 @@
+@using System.Linq
+@using GameTheory.ConsoleRunner.Shared
+@namespace GameTheory.Games.$game$.Console
+@static false
+@model GameState
+{{= model }}
