@@ -130,9 +130,9 @@
       <Project>{2b9f26b4-66f6-4fdd-b4bd-e2990f19bb97}</Project>
       <Name>GameTheory.Games.NormalFormGame</Name>
     </ProjectReference>
-    <ProjectReference Include="..\GameTheory.Games.PositivelyPerfectParfaitGame\GameTheory.Games.PositivelyPerfectParfaitGame.csproj">
-      <Project>{3ce3e90c-b698-458d-922d-0c2eee8892cb}</Project>
-      <Name>GameTheory.Games.PositivelyPerfectParfaitGame</Name>
+    <ProjectReference Include="..\GameTheory.Games.PositivelyPerfectParfaitGame.Console\GameTheory.Games.PositivelyPerfectParfaitGame.Console.csproj">
+      <Project>{1b238786-d920-4ba0-b6ae-944fa92c3165}</Project>
+      <Name>GameTheory.Games.PositivelyPerfectParfaitGame.Console</Name>
     </ProjectReference>
     <ProjectReference Include="..\GameTheory.Games.SevenDragons\GameTheory.Games.SevenDragons.csproj">
       <Project>{d7a1dbef-2c7b-4919-a322-d265bf3761f3}</Project>
