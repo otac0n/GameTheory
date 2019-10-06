@@ -150,9 +150,9 @@
       <Project>{108e7f3f-5026-4c7a-82be-545f98a5dc2c}</Project>
       <Name>GameTheory.Games.TicTacToe.Console</Name>
     </ProjectReference>
-    <ProjectReference Include="..\GameTheory.Games.TwentyFortyEight\GameTheory.Games.TwentyFortyEight.csproj">
-      <Project>{68ae3016-f59e-4e8b-a5a2-e1c59e1b7aef}</Project>
-      <Name>GameTheory.Games.TwentyFortyEight</Name>
+    <ProjectReference Include="..\GameTheory.Games.TwentyFortyEight.Console\GameTheory.Games.TwentyFortyEight.Console.csproj">
+      <Project>{1c1f0d6f-b9cd-46d9-a97d-ae86a3aef036}</Project>
+      <Name>GameTheory.Games.TwentyFortyEight.Console</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
