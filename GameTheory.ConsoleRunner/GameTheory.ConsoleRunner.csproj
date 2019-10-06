@@ -98,9 +98,9 @@
       <Project>{5f19cf02-4edc-4439-9375-1669519cf050}</Project>
       <Name>GameTheory.ConsoleRunner.Shared</Name>
     </ProjectReference>
-    <ProjectReference Include="..\GameTheory.Games.CenturySpiceRoad\GameTheory.Games.CenturySpiceRoad.csproj">
-      <Project>{733c356a-ba71-406d-b49b-f67a0e647ce8}</Project>
-      <Name>GameTheory.Games.CenturySpiceRoad</Name>
+    <ProjectReference Include="..\GameTheory.Games.CenturySpiceRoad.Console\GameTheory.Games.CenturySpiceRoad.Console.csproj">
+      <Project>{9883ee33-7865-4fa7-839a-54b61e3e0214}</Project>
+      <Name>GameTheory.Games.CenturySpiceRoad.Console</Name>
     </ProjectReference>
     <ProjectReference Include="..\GameTheory.Games.Chess.Console\GameTheory.Games.Chess.Console.csproj">
       <Project>{ecc600ad-d839-4a93-bc76-947df35fbfed}</Project>
