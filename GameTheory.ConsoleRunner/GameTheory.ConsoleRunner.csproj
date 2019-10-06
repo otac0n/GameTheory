@@ -138,9 +138,9 @@
       <Project>{5a8af090-887c-42af-8d8d-eb02783462a8}</Project>
       <Name>GameTheory.Games.SevenDragons.Console</Name>
     </ProjectReference>
-    <ProjectReference Include="..\GameTheory.Games.Skull\GameTheory.Games.Skull.csproj">
-      <Project>{c4d61137-39b9-4dc4-a294-b668739c7fe3}</Project>
-      <Name>GameTheory.Games.Skull</Name>
+    <ProjectReference Include="..\GameTheory.Games.Skull.Console\GameTheory.Games.Skull.Console.csproj">
+      <Project>{85aacc8c-0c86-4e73-b55b-cfaee3c77ebb}</Project>
+      <Name>GameTheory.Games.Skull.Console</Name>
     </ProjectReference>
     <ProjectReference Include="..\GameTheory.Games.Splendor\GameTheory.Games.Splendor.csproj">
       <Project>{263c9aba-8e2b-4220-9f22-46d09c7a8fed}</Project>
