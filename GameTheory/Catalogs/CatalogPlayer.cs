@@ -1,4 +1,4 @@
-﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Catalogs
 {
@@ -8,15 +8,15 @@ namespace GameTheory.Catalogs
     /// <summary>
     /// A convenience class for dealing with types implementing <see cref="IPlayer{TMove}"/>.
     /// </summary>
-    public class Player
+    public class CatalogPlayer : ICatalogPlayer
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="Player"/> class.
+        /// Initializes a new instance of the <see cref="CatalogPlayer"/> class.
         /// </summary>
         /// <param name="playerType">The type of the player.</param>
         /// <param name="moveType">The type used for moves.</param>
         /// <param name="name">The name of the player.</param>
-        public Player(Type playerType, Type moveType, string name = null)
+        public CatalogPlayer(Type playerType, Type moveType, string name = null)
         {
             this.PlayerType = playerType ?? throw new ArgumentNullException(nameof(playerType));
             this.MoveType = moveType ?? throw new ArgumentNullException(nameof(moveType));
@@ -25,19 +25,13 @@ namespace GameTheory.Catalogs
                 : name;
         }
 
-        /// <summary>
-        /// Gets the type used for moves.
-        /// </summary>
+        /// <inheritdoc/>
         public Type MoveType { get; }
 
-        /// <summary>
-        /// Gets the name of the player.
-        /// </summary>
+        /// <inheritdoc/>
         public string Name { get; }
 
-        /// <summary>
-        /// Gets the type of the player.
-        /// </summary>
+        /// <inheritdoc/>
         public Type PlayerType { get; }
 
         /// <inheritdoc />

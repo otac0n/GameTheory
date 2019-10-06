@@ -3,32 +3,30 @@
 namespace GameTheory.Catalogs
 {
     using System;
-    using System.Globalization;
     using System.Linq;
     using System.Reflection;
-    using System.Resources;
 
     /// <summary>
     /// A convenience class for dealing with types implementing <see cref="IGameState{TMove}"/>.
     /// </summary>
-    public sealed class Game : IGame
+    public sealed class CatalogGame : ICatalogGame
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="Game"/> class.
+        /// Initializes a new instance of the <see cref="CatalogGame"/> class.
         /// </summary>
-        /// <param name="gameType">The type of game to expose.</param>
-        public Game(Type gameType)
+        /// <param name="gameType">The type used as a game state.</param>
+        public CatalogGame(Type gameType)
             : this(gameType, GetMoveType(gameType))
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Game"/> class.
+        /// Initializes a new instance of the <see cref="CatalogGame"/> class.
         /// </summary>
-        /// <param name="gameStateType">The type of game to expose.</param>
-        /// <param name="moveType">The type of moves the game supports.</param>
+        /// <param name="gameStateType">The type used as a game state.</param>
+        /// <param name="moveType">The type type used for moves.</param>
         /// <param name="name">The name of the game.</param>
-        public Game(Type gameStateType, Type moveType, string name = null)
+        public CatalogGame(Type gameStateType, Type moveType, string name = null)
         {
             this.GameStateType = gameStateType ?? throw new ArgumentNullException(nameof(gameStateType));
             this.MoveType = moveType ?? throw new ArgumentNullException(nameof(moveType));

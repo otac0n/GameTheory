@@ -38,9 +38,9 @@ namespace GameTheory.Catalogs
         /// </summary>
         /// <param name="moveType">The type of moves to be played.</param>
         /// <returns>A collection of supported players.</returns>
-        public IList<Player> FindPlayers(Type moveType) => this.FindPlayersInternal(moveType).ToImmutableList();
+        public IList<ICatalogPlayer> FindPlayers(Type moveType) => this.FindPlayersInternal(moveType).ToImmutableList();
 
-        private IEnumerable<Player> FindPlayersInternal(Type moveType)
+        private IEnumerable<ICatalogPlayer> FindPlayersInternal(Type moveType)
         {
             var playerUnconstructed = typeof(IPlayer<>);
             var playerInterface = playerUnconstructed.MakeGenericType(moveType);
@@ -85,7 +85,7 @@ namespace GameTheory.Catalogs
                     constructedPlayers);
                 foreach (var playerType in playerTypes)
                 {
-                    yield return new Player(playerType, moveType);
+                    yield return new CatalogPlayer(playerType, moveType);
                 }
             }
         }

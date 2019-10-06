@@ -7,7 +7,7 @@ namespace GameTheory.Catalogs
     /// <summary>
     /// An interface representing a set of types implementing <see cref="IGameState{TMove}"/>.
     /// </summary>
-    public interface IGame
+    public interface ICatalogGame
     {
         /// <summary>
         /// Gets the type used as a game state.

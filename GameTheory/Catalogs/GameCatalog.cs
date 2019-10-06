@@ -11,25 +11,25 @@ namespace GameTheory.Catalogs
     /// </summary>
     public abstract class GameCatalog
     {
-        private readonly Lazy<ImmutableList<IGame>> availableGames;
+        private readonly Lazy<ImmutableList<ICatalogGame>> availableGames;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GameCatalog"/> class.
         /// </summary>
         public GameCatalog()
         {
-            this.availableGames = new Lazy<ImmutableList<IGame>>(() => this.GetGames().ToImmutableList(), isThreadSafe: true);
+            this.availableGames = new Lazy<ImmutableList<ICatalogGame>>(() => this.GetGames().ToImmutableList(), isThreadSafe: true);
         }
 
         /// <summary>
         /// Gets the available games in the catalog.
         /// </summary>
-        public IList<IGame> AvailableGames => this.availableGames.Value;
+        public IList<ICatalogGame> AvailableGames => this.availableGames.Value;
 
         /// <summary>
         /// Enumerates the games in this catalog.
         /// </summary>
         /// <returns>The enumerable collection of games in the catalog.</returns>
-        protected abstract IEnumerable<IGame> GetGames();
+        protected abstract IEnumerable<ICatalogGame> GetGames();
     }
 }

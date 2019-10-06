@@ -16,10 +16,10 @@ namespace GameTheory.FormsRunner
 
     public partial class NewGameForm : Form
     {
-        private Task<IGame[]> allGamesTask;
+        private Task<ICatalogGame[]> allGamesTask;
         private object[] playerInstances;
-        private Task<IGame[]> searchTask;
-        private Player[] selectedPlayers;
+        private Task<ICatalogGame[]> searchTask;
+        private ICatalogPlayer[] selectedPlayers;
         private object startingState;
 
         /// <summary>
@@ -76,19 +76,19 @@ namespace GameTheory.FormsRunner
         /// <summary>
         /// Gets the currently selected game.
         /// </summary>
-        public IGame SelectedGame
+        public ICatalogGame SelectedGame
         {
             get
             {
                 var selectedItems = this.searchResults.SelectedItems;
-                return selectedItems.Count == 1 ? selectedItems[0].Tag as IGame : null;
+                return selectedItems.Count == 1 ? selectedItems[0].Tag as ICatalogGame : null;
             }
         }
 
         /// <summary>
         /// Gets the currently selected players.
         /// </summary>
-        public Player[] SelectedPlayers
+        public ICatalogPlayer[] SelectedPlayers
         {
             get
             {
@@ -195,7 +195,7 @@ namespace GameTheory.FormsRunner
                 var playerOptions = (PlayerOptions)typeof(NewGameForm).GetMethod(nameof(CountPlayers), BindingFlags.Static | BindingFlags.NonPublic).MakeGenericMethod(game.MoveType).Invoke(null, new object[] { state });
                 var playerCount = playerOptions.Names.Length;
                 this.playersTable.RowCount = playerCount * 2;
-                var players = new Player[playerCount];
+                var players = new ICatalogPlayer[playerCount];
                 var playerInstances = new object[playerCount];
                 var playersValid = new bool[playerCount];
 
@@ -235,7 +235,7 @@ namespace GameTheory.FormsRunner
 
                     playersList.SelectedValueChanged += (_, a) =>
                     {
-                        var player = (Player)playersList.SelectedItem;
+                        var player = (ICatalogPlayer)playersList.SelectedItem;
                         var previous = this.playersTable.GetControlFromPosition(1, p * 2 + 1);
                         if (previous != null)
                         {
@@ -448,7 +448,7 @@ namespace GameTheory.FormsRunner
             /// Initializes a new instance of the <see cref="SelectedGameChangedEventArgs"/> class.
             /// </summary>
             /// <param name="game">The game that has been selected.</param>
-            public SelectedGameChangedEventArgs(IGame game)
+            public SelectedGameChangedEventArgs(ICatalogGame game)
             {
                 this.Game = game;
             }
@@ -456,7 +456,7 @@ namespace GameTheory.FormsRunner
             /// <summary>
             /// Gets the selected game.
             /// </summary>
-            public IGame Game { get; }
+            public ICatalogGame Game { get; }
         }
 
         /// <summary>
@@ -468,7 +468,7 @@ namespace GameTheory.FormsRunner
             /// Initializes a new instance of the <see cref="SelectedPlayersChangedEventArgs"/> class.
             /// </summary>
             /// <param name="players">The players chosen.</param>
-            public SelectedPlayersChangedEventArgs(Player[] players)
+            public SelectedPlayersChangedEventArgs(ICatalogPlayer[] players)
             {
                 this.Players = players;
             }
@@ -501,7 +501,7 @@ namespace GameTheory.FormsRunner
 
         private class PlayerOptions
         {
-            public PlayerOptions(string[] names, PlayerToken[] playerTokens, IList<Player> players)
+            public PlayerOptions(string[] names, PlayerToken[] playerTokens, IList<ICatalogPlayer> players)
             {
                 this.Names = names;
                 this.Players = players;
@@ -510,7 +510,7 @@ namespace GameTheory.FormsRunner
 
             public string[] Names { get; }
 
-            public IList<Player> Players { get; }
+            public IList<ICatalogPlayer> Players { get; }
 
             public PlayerToken[] PlayerTokens { get; }
         }

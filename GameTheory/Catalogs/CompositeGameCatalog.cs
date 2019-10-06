@@ -22,6 +22,6 @@ namespace GameTheory.Catalogs
         }
 
         /// <inheritdoc/>
-        protected override IEnumerable<IGame> GetGames() => this.catalogs.SelectMany(c => c.AvailableGames);
+        protected override IEnumerable<ICatalogGame> GetGames() => this.catalogs.SelectMany(c => c.AvailableGames);
     }
 }
