@@ -118,9 +118,9 @@
       <Project>{595a3644-d238-4eaf-9016-d659696068c9}</Project>
       <Name>GameTheory.Games.FiveTribes.Console</Name>
     </ProjectReference>
-    <ProjectReference Include="..\GameTheory.Games.Lotus\GameTheory.Games.Lotus.csproj">
-      <Project>{77a78fa3-d2fa-4b1c-b38d-e66d578f4211}</Project>
-      <Name>GameTheory.Games.Lotus</Name>
+    <ProjectReference Include="..\GameTheory.Games.Lotus.Console\GameTheory.Games.Lotus.Console.csproj">
+      <Project>{25442def-9dc3-4324-9b53-18734213bd96}</Project>
+      <Name>GameTheory.Games.Lotus.Console</Name>
     </ProjectReference>
     <ProjectReference Include="..\GameTheory.Games.Mancala\GameTheory.Games.Mancala.csproj">
       <Project>{53732849-f5e8-4aee-93a3-2839f14ad856}</Project>
