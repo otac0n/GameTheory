@@ -146,9 +146,9 @@
       <Project>{7a954fc3-086c-4644-8663-57a8393013ad}</Project>
       <Name>GameTheory.Games.Splendor.Console</Name>
     </ProjectReference>
-    <ProjectReference Include="..\GameTheory.Games.TicTacToe\GameTheory.Games.TicTacToe.csproj">
-      <Project>{f5b38959-a87d-432b-ae38-c2bcce50b836}</Project>
-      <Name>GameTheory.Games.TicTacToe</Name>
+    <ProjectReference Include="..\GameTheory.Games.TicTacToe.Console\GameTheory.Games.TicTacToe.Console.csproj">
+      <Project>{108e7f3f-5026-4c7a-82be-545f98a5dc2c}</Project>
+      <Name>GameTheory.Games.TicTacToe.Console</Name>
     </ProjectReference>
     <ProjectReference Include="..\GameTheory.Games.TwentyFortyEight\GameTheory.Games.TwentyFortyEight.csproj">
       <Project>{68ae3016-f59e-4e8b-a5a2-e1c59e1b7aef}</Project>
