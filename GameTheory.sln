@@ -74,6 +74,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameTheory.Games.FiveTribes
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameTheory.Games.Lotus.Console", "GameTheory.Games.Lotus.Console\GameTheory.Games.Lotus.Console.csproj", "{25442DEF-9DC3-4324-9B53-18734213BD96}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameTheory.Games.Mancala.Console", "GameTheory.Games.Mancala.Console\GameTheory.Games.Mancala.Console.csproj", "{8417ECB7-2BB9-4460-A022-95F2806703A0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -184,6 +186,10 @@ Global
 		{25442DEF-9DC3-4324-9B53-18734213BD96}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{25442DEF-9DC3-4324-9B53-18734213BD96}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{25442DEF-9DC3-4324-9B53-18734213BD96}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8417ECB7-2BB9-4460-A022-95F2806703A0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8417ECB7-2BB9-4460-A022-95F2806703A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8417ECB7-2BB9-4460-A022-95F2806703A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8417ECB7-2BB9-4460-A022-95F2806703A0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

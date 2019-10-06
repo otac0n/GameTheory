@@ -122,9 +122,9 @@
       <Project>{25442def-9dc3-4324-9b53-18734213bd96}</Project>
       <Name>GameTheory.Games.Lotus.Console</Name>
     </ProjectReference>
-    <ProjectReference Include="..\GameTheory.Games.Mancala\GameTheory.Games.Mancala.csproj">
-      <Project>{53732849-f5e8-4aee-93a3-2839f14ad856}</Project>
-      <Name>GameTheory.Games.Mancala</Name>
+    <ProjectReference Include="..\GameTheory.Games.Mancala.Console\GameTheory.Games.Mancala.Console.csproj">
+      <Project>{8417ecb7-2bb9-4460-a022-95f2806703a0}</Project>
+      <Name>GameTheory.Games.Mancala.Console</Name>
     </ProjectReference>
     <ProjectReference Include="..\GameTheory.Games.NormalFormGame\GameTheory.Games.NormalFormGame.csproj">
       <Project>{2b9f26b4-66f6-4fdd-b4bd-e2990f19bb97}</Project>
