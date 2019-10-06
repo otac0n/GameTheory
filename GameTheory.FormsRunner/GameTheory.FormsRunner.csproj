@@ -89,6 +89,7 @@
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
     <None Include="App.config" />
+    <Compile Include="FormsCatalogs.cs" />
     <Compile Include="GameDisplayForm.cs">
       <SubType>Form</SubType>
     </Compile>
