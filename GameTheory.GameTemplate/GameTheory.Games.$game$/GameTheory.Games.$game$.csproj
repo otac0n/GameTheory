@@ -27,4 +27,7 @@
   <ItemGroup>
     <ProjectReference Include="..\GameTheory\GameTheory.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+  </ItemGroup>
 </Project>
