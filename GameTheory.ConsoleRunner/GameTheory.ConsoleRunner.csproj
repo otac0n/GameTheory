@@ -106,9 +106,9 @@
       <Project>{ecc600ad-d839-4a93-bc76-947df35fbfed}</Project>
       <Name>GameTheory.Games.Chess.Console</Name>
     </ProjectReference>
-    <ProjectReference Include="..\GameTheory.Games.Draughts\GameTheory.Games.Draughts.csproj">
-      <Project>{5f47d85c-0deb-4dc3-86a9-7137db757a36}</Project>
-      <Name>GameTheory.Games.Draughts</Name>
+    <ProjectReference Include="..\GameTheory.Games.Draughts.Console\GameTheory.Games.Draughts.Console.csproj">
+      <Project>{575618b4-33eb-441b-88bd-422f13fb5d8d}</Project>
+      <Name>GameTheory.Games.Draughts.Console</Name>
     </ProjectReference>
     <ProjectReference Include="..\GameTheory.Games.Ergo\GameTheory.Games.Ergo.csproj">
       <Project>{b74e845c-958f-4cf0-b325-4c9daf85452d}</Project>

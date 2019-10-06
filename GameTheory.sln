@@ -66,6 +66,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameTheory.Games.CenturySpi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameTheory.Games.Chess.Console", "GameTheory.Games.Chess.Console\GameTheory.Games.Chess.Console.csproj", "{ECC600AD-D839-4A93-BC76-947DF35FBFED}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameTheory.Games.Draughts.Console", "GameTheory.Games.Draughts.Console\GameTheory.Games.Draughts.Console.csproj", "{575618B4-33EB-441B-88BD-422F13FB5D8D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -160,6 +162,10 @@ Global
 		{ECC600AD-D839-4A93-BC76-947DF35FBFED}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ECC600AD-D839-4A93-BC76-947DF35FBFED}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ECC600AD-D839-4A93-BC76-947DF35FBFED}.Release|Any CPU.Build.0 = Release|Any CPU
+		{575618B4-33EB-441B-88BD-422F13FB5D8D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{575618B4-33EB-441B-88BD-422F13FB5D8D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{575618B4-33EB-441B-88BD-422F13FB5D8D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{575618B4-33EB-441B-88BD-422F13FB5D8D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
