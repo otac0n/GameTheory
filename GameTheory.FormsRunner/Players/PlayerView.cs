@@ -155,6 +155,7 @@ namespace GameTheory.FormsRunner.Players
                     {
                         Text = "Choose",
                         Tag = this,
+                        Anchor = AnchorStyles.Left,
                     };
                     button.Click += (sender, args) => this.chooseMove(move);
                     flowPanel.Controls.Add(button);
@@ -176,6 +177,7 @@ namespace GameTheory.FormsRunner.Players
 
                         if (newControl != null)
                         {
+                            newControl.Anchor = AnchorStyles.Left;
                             flowPanel.Controls.Add(newControl);
                         }
                     });
