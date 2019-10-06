@@ -9,38 +9,32 @@ namespace GameTheory.Catalogs
     using System.Reflection;
 
     /// <summary>
-    /// Provides enumeration for players in an assembly.
+    /// Exposes the players available as exported types from a list of assemblies.
     /// </summary>
-    public sealed class PlayerCatalog
+    public class AssemblyPlayerCatalog : PlayerCatalogBase
     {
         private readonly ImmutableList<Assembly> assemblies;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="PlayerCatalog"/> class.
+        /// Initializes a new instance of the <see cref="AssemblyPlayerCatalog"/> class.
         /// </summary>
         /// <param name="assemblies">The assemblies to search for players.</param>
-        public PlayerCatalog(params Assembly[] assemblies)
+        public AssemblyPlayerCatalog(params Assembly[] assemblies)
             : this((IEnumerable<Assembly>)assemblies)
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="PlayerCatalog"/> class.
+        /// Initializes a new instance of the <see cref="AssemblyPlayerCatalog"/> class.
         /// </summary>
         /// <param name="assemblies">The assemblies to search for players.</param>
-        public PlayerCatalog(IEnumerable<Assembly> assemblies)
+        public AssemblyPlayerCatalog(IEnumerable<Assembly> assemblies)
         {
             this.assemblies = (assemblies ?? throw new ArgumentNullException(nameof(assemblies))).ToImmutableList();
         }
 
-        /// <summary>
-        /// Gets the list of players who are capable of playing the specified move type.
-        /// </summary>
-        /// <param name="moveType">The type of moves to be played.</param>
-        /// <returns>A collection of supported players.</returns>
-        public IList<ICatalogPlayer> FindPlayers(Type moveType) => this.FindPlayersInternal(moveType).ToImmutableList();
-
-        private IEnumerable<ICatalogPlayer> FindPlayersInternal(Type moveType)
+        /// <inheritdoc/>
+        protected override IEnumerable<ICatalogPlayer> GetPlayers(Type moveType)
         {
             var playerUnconstructed = typeof(IPlayer<>);
             var playerInterface = playerUnconstructed.MakeGenericType(moveType);

@@ -185,7 +185,7 @@ namespace GameTheory.ConsoleRunner
             where TMove : IMove
         {
             Console.WriteLine(Resources.GamePlayerCount, string.Format(state.Players.Count == 1 ? Resources.SingularPlayer : Resources.PluralPlayers, state.Players.Count));
-            var catalog = new PlayerCatalog(PlayerAssemblies);
+            var catalog = new AssemblyPlayerCatalog(PlayerAssemblies);
             var players = catalog.FindPlayers(typeof(TMove));
             var rendererCatalog = new ConsoleRendererCatalog(RendererAssemblies);
             var consoleRenderer = rendererCatalog.CreateConsoleRenderer<TMove>();
@@ -204,7 +204,7 @@ namespace GameTheory.ConsoleRunner
             {
                 consoleRenderer.Show(state, FormatUtilities.ParseStringFormat(Resources.ChoosePlayer, playerToken));
                 Console.WriteLine();
-                var player = ConsoleInteraction.Choose(players);
+                var player = ConsoleInteraction.Choose(players as IList<ICatalogPlayer> ?? players.ToList());
                 return (IPlayer<TMove>)ConstructType(player.PlayerType, p => p.Name == nameof(playerToken) && p.ParameterType == typeof(PlayerToken) ? playerToken : GetArgument(p));
             }
 

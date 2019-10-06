@@ -7,23 +7,21 @@ namespace GameTheory.Catalogs
     using System.Collections.Immutable;
 
     /// <summary>
-    /// Provides enumeration for games in an assembly.
+    /// Provides a base implementation for <see cref="IGameCatalog"/>.
     /// </summary>
-    public abstract class GameCatalog
+    public abstract class GameCatalogBase : IGameCatalog
     {
         private readonly Lazy<ImmutableList<ICatalogGame>> availableGames;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="GameCatalog"/> class.
+        /// Initializes a new instance of the <see cref="GameCatalogBase"/> class.
         /// </summary>
-        public GameCatalog()
+        public GameCatalogBase()
         {
             this.availableGames = new Lazy<ImmutableList<ICatalogGame>>(() => this.GetGames().ToImmutableList(), isThreadSafe: true);
         }
 
-        /// <summary>
-        /// Gets the available games in the catalog.
-        /// </summary>
+        /// <inheritdoc/>
         public IList<ICatalogGame> AvailableGames => this.availableGames.Value;
 
         /// <summary>

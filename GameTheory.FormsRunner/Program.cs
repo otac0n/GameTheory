@@ -26,12 +26,12 @@ namespace GameTheory.FormsRunner
         /// <summary>
         /// Gets the shared static game catalog for the application.
         /// </summary>
-        public static GameCatalog GameCatalog { get; } = new AssemblyGameCatalog(GameAssemblies);
+        public static IGameCatalog GameCatalog { get; } = new AssemblyGameCatalog(GameAssemblies);
 
         /// <summary>
         /// Gets the shared static player catalong for the application.
         /// </summary>
-        public static PlayerCatalog PlayerCatalog { get; } = new PlayerCatalog(PlayerAssemblies);
+        public static IPlayerCatalog PlayerCatalog { get; } = new AssemblyPlayerCatalog(PlayerAssemblies);
 
         /// <summary>
         /// The main entry point for the application.

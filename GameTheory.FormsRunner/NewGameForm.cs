@@ -501,7 +501,7 @@ namespace GameTheory.FormsRunner
 
         private class PlayerOptions
         {
-            public PlayerOptions(string[] names, PlayerToken[] playerTokens, IList<ICatalogPlayer> players)
+            public PlayerOptions(string[] names, PlayerToken[] playerTokens, IReadOnlyList<ICatalogPlayer> players)
             {
                 this.Names = names;
                 this.Players = players;
@@ -510,7 +510,7 @@ namespace GameTheory.FormsRunner
 
             public string[] Names { get; }
 
-            public IList<ICatalogPlayer> Players { get; }
+            public IReadOnlyList<ICatalogPlayer> Players { get; }
 
             public PlayerToken[] PlayerTokens { get; }
         }

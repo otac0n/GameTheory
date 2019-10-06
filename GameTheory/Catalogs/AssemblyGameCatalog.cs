@@ -11,7 +11,7 @@ namespace GameTheory.Catalogs
     /// <summary>
     /// Exposes the games available as exported types from a list of assemblies.
     /// </summary>
-    public class AssemblyGameCatalog : GameCatalog
+    public class AssemblyGameCatalog : GameCatalogBase
     {
         private readonly ImmutableList<Assembly> assemblies;
 

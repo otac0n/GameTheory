@@ -8,15 +8,15 @@ namespace GameTheory.Catalogs
     /// <summary>
     /// Represents a composite collection of games as a single collection.
     /// </summary>
-    public class CompositeGameCatalog : GameCatalog
+    public class CompositeGameCatalog : GameCatalogBase
     {
-        private readonly GameCatalog[] catalogs;
+        private readonly IGameCatalog[] catalogs;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CompositeGameCatalog"/> class.
         /// </summary>
         /// <param name="catalogs">The catalogs in this composite collection.</param>
-        public CompositeGameCatalog(params GameCatalog[] catalogs)
+        public CompositeGameCatalog(params IGameCatalog[] catalogs)
         {
             this.catalogs = catalogs.ToArray();
         }
