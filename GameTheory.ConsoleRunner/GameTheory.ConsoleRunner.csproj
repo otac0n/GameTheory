@@ -114,9 +114,9 @@
       <Project>{411516cd-5a50-45ba-8305-07120f9a2368}</Project>
       <Name>GameTheory.Games.Ergo.Console</Name>
     </ProjectReference>
-    <ProjectReference Include="..\GameTheory.Games.FiveTribes\GameTheory.Games.FiveTribes.csproj">
-      <Project>{0d176fb9-3e54-4500-97a8-fab80a0bf6f3}</Project>
-      <Name>GameTheory.Games.FiveTribes</Name>
+    <ProjectReference Include="..\GameTheory.Games.FiveTribes.Console\GameTheory.Games.FiveTribes.Console.csproj">
+      <Project>{595a3644-d238-4eaf-9016-d659696068c9}</Project>
+      <Name>GameTheory.Games.FiveTribes.Console</Name>
     </ProjectReference>
     <ProjectReference Include="..\GameTheory.Games.Lotus\GameTheory.Games.Lotus.csproj">
       <Project>{77a78fa3-d2fa-4b1c-b38d-e66d578f4211}</Project>

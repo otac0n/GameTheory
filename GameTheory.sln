@@ -70,6 +70,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameTheory.Games.Draughts.C
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameTheory.Games.Ergo.Console", "GameTheory.Games.Ergo.Console\GameTheory.Games.Ergo.Console.csproj", "{411516CD-5A50-45BA-8305-07120F9A2368}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameTheory.Games.FiveTribes.Console", "GameTheory.Games.FiveTribes.Console\GameTheory.Games.FiveTribes.Console.csproj", "{595A3644-D238-4EAF-9016-D659696068C9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -172,6 +174,10 @@ Global
 		{411516CD-5A50-45BA-8305-07120F9A2368}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{411516CD-5A50-45BA-8305-07120F9A2368}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{411516CD-5A50-45BA-8305-07120F9A2368}.Release|Any CPU.Build.0 = Release|Any CPU
+		{595A3644-D238-4EAF-9016-D659696068C9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{595A3644-D238-4EAF-9016-D659696068C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{595A3644-D238-4EAF-9016-D659696068C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{595A3644-D238-4EAF-9016-D659696068C9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
