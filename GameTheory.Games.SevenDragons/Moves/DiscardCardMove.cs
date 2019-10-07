@@ -1,4 +1,4 @@
-﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Games.SevenDragons.Moves
 {
@@ -21,14 +21,14 @@ namespace GameTheory.Games.SevenDragons.Moves
             this.HandIndex = handIndex;
         }
 
+        /// <inheritdoc />
+        public override IList<object> FormatTokens =>
+            FormatUtilities.ParseStringFormat(Resources.DiscardActionCard, this.GameState.Inventories[this.GameState.InventoryMap[this.GameState.ActivePlayer]].Hand[this.HandIndex]);
+
         /// <summary>
         /// Gets the index of the card being discarded.
         /// </summary>
         public int HandIndex { get; }
-
-        /// <inheritdoc />
-        public override IList<object> FormatTokens =>
-            FormatUtilities.ParseStringFormat(Resources.DiscardActionCard, this.GameState.Inventories[this.GameState.InventoryMap[this.GameState.ActivePlayer]].Hand[this.HandIndex]);
 
         /// <inheritdoc />
         public override int CompareTo(Move other)

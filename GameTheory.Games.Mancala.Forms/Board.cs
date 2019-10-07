@@ -21,6 +21,8 @@ namespace GameTheory.Games.Mancala.Forms
             this.Height = 2 * (50 + 5) - 5;
         }
 
+        public Color BinColor { get; set; } = Color.LightGray;
+
         public GameState GameState
         {
             get => this.gameState;
@@ -33,8 +35,6 @@ namespace GameTheory.Games.Mancala.Forms
         }
 
         public PlayerToken PlayerToken { get; }
-
-        public Color BinColor { get; set; } = Color.LightGray;
 
         protected override void OnPaint(PaintEventArgs e)
         {
@@ -62,7 +62,7 @@ namespace GameTheory.Games.Mancala.Forms
                     var y = isMancala ? 0 : 1 - i / (this.GameState.BinsPerSide + 1);
                     var x = i <= this.GameState.BinsPerSide ? i + 1 : (this.GameState.BinsPerSide + 1) * 2 - i - 1;
 
-                    var rect = new RectangleF(x * (w + cellSpacing), y *(w + cellSpacing), w, isMancala ? 2 * w + cellSpacing : w);
+                    var rect = new RectangleF(x * (w + cellSpacing), y * (w + cellSpacing), w, isMancala ? 2 * w + cellSpacing : w);
                     e.Graphics.FillRectangle(binBrush, rect);
                     e.Graphics.DrawString(this.GameState[i].ToString(), this.Font, textBrush, rect, stringFormat);
                 }

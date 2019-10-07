@@ -20,6 +20,12 @@ namespace GameTheory.Games.Draughts.Forms
             this.Height = 50 * gameState.Variant.Height;
         }
 
+        public Color BlackColor { get; set; } = Color.Black;
+
+        public Color BlackOutlineColor { get; set; } = Color.White;
+
+        public Color DarkColor { get; set; } = Color.DarkGray;
+
         public GameState GameState
         {
             get => this.gameState;
@@ -31,19 +37,13 @@ namespace GameTheory.Games.Draughts.Forms
             }
         }
 
+        public Color LightColor { get; set; } = Color.LightGray;
+
         public PlayerToken PlayerToken { get; }
 
         public Color RedColor { get; set; } = Color.Red;
 
         public Color RedOutlineColor { get; set; } = Color.Black;
-
-        public Color BlackColor { get; set; } = Color.Black;
-
-        public Color BlackOutlineColor { get; set; } = Color.White;
-
-        public Color DarkColor { get; set; } = Color.DarkGray;
-
-        public Color LightColor { get; set; } = Color.LightGray;
 
         protected override void OnPaint(PaintEventArgs e)
         {

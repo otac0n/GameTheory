@@ -295,13 +295,10 @@ namespace GameTheory.FormsRunner
             }
         }
 
-        private void NextButton_Click(object sender, EventArgs e)
+        private void CancelButton_Click(object sender, EventArgs e)
         {
-            var ix = this.wizardTabs.SelectedIndex;
-            if (ix < this.wizardTabs.TabCount - 1)
-            {
-                this.wizardTabs.SelectedIndex = ix + 1;
-            }
+            this.DialogResult = DialogResult.Cancel;
+            this.Hide();
         }
 
         private void FinishButton_Click(object sender, EventArgs e)
@@ -317,15 +314,13 @@ namespace GameTheory.FormsRunner
             }
         }
 
-        private void CancelButton_Click(object sender, EventArgs e)
+        private void NewGameForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            this.DialogResult = DialogResult.Cancel;
-            this.Hide();
-        }
-
-        private void SearchResults_DoubleClick(object sender, EventArgs e)
-        {
-            this.NextButton_Click(sender, e);
+            if (e.CloseReason == CloseReason.UserClosing)
+            {
+                e.Cancel = true;
+                this.CancelButton_Click(sender, e);
+            }
         }
 
         private void NewGameForm_Shown(object sender, EventArgs e)
@@ -334,12 +329,12 @@ namespace GameTheory.FormsRunner
             this.wizardTabs.SelectedIndex = 0;
         }
 
-        private void NewGameForm_FormClosing(object sender, FormClosingEventArgs e)
+        private void NextButton_Click(object sender, EventArgs e)
         {
-            if (e.CloseReason == CloseReason.UserClosing)
+            var ix = this.wizardTabs.SelectedIndex;
+            if (ix < this.wizardTabs.TabCount - 1)
             {
-                e.Cancel = true;
-                this.CancelButton_Click(sender, e);
+                this.wizardTabs.SelectedIndex = ix + 1;
             }
         }
 
@@ -405,6 +400,11 @@ namespace GameTheory.FormsRunner
         private void SearchBox_TextChanged(object sender, EventArgs e)
         {
             this.Search(this.searchBox.Text);
+        }
+
+        private void SearchResults_DoubleClick(object sender, EventArgs e)
+        {
+            this.NextButton_Click(sender, e);
         }
 
         private void SearchResults_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)

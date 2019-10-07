@@ -20,6 +20,21 @@ namespace GameTheory.Games.SevenDragons.Forms
             this.DoubleBuffered = true;
         }
 
+        public override bool AutoSize
+        {
+            get => base.AutoSize;
+
+            set
+            {
+                base.AutoSize = value;
+
+                if (value)
+                {
+                    this.AutoResize();
+                }
+            }
+        }
+
         public ImmutableDictionary<GameTheory.Point, DragonCard> Cards
         {
             get => this.cards;
@@ -35,41 +50,6 @@ namespace GameTheory.Games.SevenDragons.Forms
 
                 this.Invalidate();
             }
-        }
-
-        public override bool AutoSize
-        {
-            get => base.AutoSize;
-            set
-            {
-                base.AutoSize = value;
-
-                if (value)
-                {
-                    this.AutoResize();
-                }
-            }
-        }
-
-        private void AutoResize()
-        {
-            var extents = GetExtents(this.Cards);
-            this.Width = extents.Width * (50 + 5) - 5;
-            this.Height = extents.Height * (100 + 5) - 5;
-        }
-
-        private static Rectangle GetExtents(ImmutableDictionary<GameTheory.Point, DragonCard> cards)
-        {
-            if (cards == null)
-            {
-                return Rectangle.Empty;
-            }
-
-            var extents = cards.Keys.Aggregate(
-                new { MinX = int.MaxValue, MaxX = int.MinValue, MinY = int.MaxValue, MaxY = int.MinValue },
-                (value, key) => new { MinX = Math.Min(value.MinX, key.X), MaxX = Math.Max(value.MaxX, key.X), MinY = Math.Min(value.MinY, key.Y), MaxY = Math.Max(value.MaxY, key.Y) });
-
-            return new Rectangle(extents.MinX, extents.MinY, extents.MaxX - extents.MinX + 1, extents.MaxY - extents.MinY + 1);
         }
 
         protected override void OnPaint(PaintEventArgs e)
@@ -96,6 +76,27 @@ namespace GameTheory.Games.SevenDragons.Forms
                     }
                 }
             }
+        }
+
+        private static Rectangle GetExtents(ImmutableDictionary<GameTheory.Point, DragonCard> cards)
+        {
+            if (cards == null)
+            {
+                return Rectangle.Empty;
+            }
+
+            var extents = cards.Keys.Aggregate(
+                new { MinX = int.MaxValue, MaxX = int.MinValue, MinY = int.MaxValue, MaxY = int.MinValue },
+                (value, key) => new { MinX = Math.Min(value.MinX, key.X), MaxX = Math.Max(value.MaxX, key.X), MinY = Math.Min(value.MinY, key.Y), MaxY = Math.Max(value.MaxY, key.Y) });
+
+            return new Rectangle(extents.MinX, extents.MinY, extents.MaxX - extents.MinX + 1, extents.MaxY - extents.MinY + 1);
+        }
+
+        private void AutoResize()
+        {
+            var extents = GetExtents(this.Cards);
+            this.Width = extents.Width * (50 + 5) - 5;
+            this.Height = extents.Height * (100 + 5) - 5;
         }
     }
 }

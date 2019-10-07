@@ -13,6 +13,7 @@ namespace GameTheory.Games.SevenDragons.Forms
     public class CardControl : Control
     {
         private static readonly Color CardBackgroundColor = Color.Black;
+
         private static readonly Dictionary<SevenDragons.Color, Func<RectangleF, Brush>> ColorMap = new Dictionary<SevenDragons.Color, Func<RectangleF, Brush>>
         {
             [SevenDragons.Color.Black] = _ => Brushes.DimGray,

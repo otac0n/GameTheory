@@ -294,13 +294,6 @@ namespace GameTheory.Games.Chess
             return this.GetAvailableMoves(out var _);
         }
 
-        private IReadOnlyList<Move> GetAvailableMoves(out bool isMate)
-        {
-            var tuple = CachingUtils.WeakRefernceCache(ref this.availableMovesCache, () => this.Variant.GenerateMoves(this));
-            isMate = tuple.Item2;
-            return tuple.Item1;
-        }
-
         /// <inheritdoc/>
         public IEnumerable<IWeighted<IGameState<Move>>> GetOutcomes(Move move)
         {
@@ -378,6 +371,13 @@ namespace GameTheory.Games.Chess
                 moveNumber: activeColor != this.ActiveColor && activeColor == Pieces.White ? this.MoveNumber + 1 : this.MoveNumber,
                 enPassantIndex: enPassantIndex, // The en passant square is automatically reset.
                 castling: castling ?? this.Castling);
+        }
+
+        private IReadOnlyList<Move> GetAvailableMoves(out bool isMate)
+        {
+            var tuple = CachingUtils.WeakRefernceCache(ref this.availableMovesCache, () => this.Variant.GenerateMoves(this));
+            isMate = tuple.Item2;
+            return tuple.Item1;
         }
     }
 }

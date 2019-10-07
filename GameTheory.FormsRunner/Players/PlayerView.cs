@@ -34,9 +34,9 @@ namespace GameTheory.FormsRunner.Players
 
         public event EventHandler<MessageSentEventArgs> MessageSent;
 
-        public PlayerToken PlayerToken { get; }
-
         public object GameState { get; set; }
+
+        public PlayerToken PlayerToken { get; }
 
         internal Task<Maybe<TMove>> ChooseMove<TMove>(IGameState<TMove> state, CancellationToken cancel)
             where TMove : IMove
@@ -112,16 +112,6 @@ namespace GameTheory.FormsRunner.Players
         {
         }
 
-        private class MoveChoice
-        {
-            public MoveChoice(object move)
-            {
-                this.Move = move;
-            }
-
-            public object Move { get; }
-        }
-
         private class ChooseMoveDisplay : Display
         {
             private Action<object> chooseMove;
@@ -185,6 +175,16 @@ namespace GameTheory.FormsRunner.Players
 
                 return flowPanel;
             }
+        }
+
+        private class MoveChoice
+        {
+            public MoveChoice(object move)
+            {
+                this.Move = move;
+            }
+
+            public object Move { get; }
         }
     }
 }

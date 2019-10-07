@@ -11,8 +11,6 @@ namespace GameTheory.Games.TwentyFortyEight.Forms
 
     public class NumberDisplay : Display
     {
-        private static Color DarkColor = Color.FromArgb(0x77, 0x6e, 0x65);
-        private static Color LightColor = Color.FromArgb(0xf9, 0xf6, 0xf2);
         private static readonly Color[,] DisplayColors = new Color[,]
         {
             { DarkColor, Color.FromArgb((int)(238 * 0.35 + 0xbb * (1 - 0.35)), (int)(228 * 0.35 + 0xad * (1 - 0.35)), (int)(218 * 0.35 + 0xa0 * (1 - 0.35))) },
@@ -29,6 +27,9 @@ namespace GameTheory.Games.TwentyFortyEight.Forms
             { LightColor, Color.FromArgb(0xed, 0xc2, 0x2e) },
             { LightColor, Color.FromArgb(0x3c, 0x3a, 0x32) },
         };
+
+        private static Color DarkColor = Color.FromArgb(0x77, 0x6e, 0x65);
+        private static Color LightColor = Color.FromArgb(0xf9, 0xf6, 0xf2);
 
         public override bool CanDisplay(Scope scope, Type type, object value) => type == typeof(byte);
 

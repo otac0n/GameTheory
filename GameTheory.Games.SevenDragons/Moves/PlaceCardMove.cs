@@ -1,4 +1,4 @@
-﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Games.SevenDragons.Moves
 {
@@ -36,14 +36,14 @@ namespace GameTheory.Games.SevenDragons.Moves
         public int HandIndex { get; }
 
         /// <summary>
-        /// Gets the point to which the card will be played.
-        /// </summary>
-        public Point Point { get; }
-
-        /// <summary>
         /// Gets the orientation of the card being played.
         /// </summary>
         public DragonCard Orientation { get; }
+
+        /// <summary>
+        /// Gets the point to which the card will be played.
+        /// </summary>
+        public Point Point { get; }
 
         /// <inheritdoc />
         public override int CompareTo(Move other)

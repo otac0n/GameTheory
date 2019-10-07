@@ -43,32 +43,6 @@ namespace GameTheory.Games.Draughts
             (a, b) => a.CompareTo(b));
 
         /// <summary>
-        /// Gets a comparer that enforces the longest available capturing sequence, breaking ties with the sequence containing the most captured kings.
-        /// </summary>
-        public static IComparer<Move> LongestCaptureSequenceCapturingMostKings { get; } = MakeMaximizingComparer(
-            c => new
-            {
-                Pieces = 1,
-                Kings = (c.GameState.Board[c.CaptureIndex] & Pieces.Crowned) == Pieces.Crowned ? 1 : 0,
-            },
-            scores => new
-            {
-                Pieces = scores.Sum(s => s.Value.Pieces),
-                Kings = scores.Sum(s => s.Value.Kings),
-            },
-            (a, b) =>
-            {
-                int comp;
-                if ((comp = a.Pieces.CompareTo(b.Pieces)) != 0 ||
-                    (comp = a.Kings.CompareTo(b.Kings)) != 0)
-                {
-                    return comp;
-                }
-
-                return 0;
-            });
-
-        /// <summary>
         /// Gets a comparer that enforces the longest available capturing sequence, breaking ties with sequences using a king then the sequence containing the most captured kings.
         /// </summary>
         public static IComparer<Move> LongestCaptureSequenceByKingCapturingMostKings { get; } = MakeMaximizingComparer(
@@ -95,6 +69,32 @@ namespace GameTheory.Games.Draughts
                 }
 
                 // TODO: The sequence that captures a king first should have a higher priority.
+                return 0;
+            });
+
+        /// <summary>
+        /// Gets a comparer that enforces the longest available capturing sequence, breaking ties with the sequence containing the most captured kings.
+        /// </summary>
+        public static IComparer<Move> LongestCaptureSequenceCapturingMostKings { get; } = MakeMaximizingComparer(
+            c => new
+            {
+                Pieces = 1,
+                Kings = (c.GameState.Board[c.CaptureIndex] & Pieces.Crowned) == Pieces.Crowned ? 1 : 0,
+            },
+            scores => new
+            {
+                Pieces = scores.Sum(s => s.Value.Pieces),
+                Kings = scores.Sum(s => s.Value.Kings),
+            },
+            (a, b) =>
+            {
+                int comp;
+                if ((comp = a.Pieces.CompareTo(b.Pieces)) != 0 ||
+                    (comp = a.Kings.CompareTo(b.Kings)) != 0)
+                {
+                    return comp;
+                }
+
                 return 0;
             });
 

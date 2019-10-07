@@ -3,7 +3,6 @@
 namespace GameTheory.Games.TwentyFortyEight.Moves
 {
     using System.Collections.Generic;
-    using System.Collections.Immutable;
     using System.Diagnostics.CodeAnalysis;
     using System.Threading;
 

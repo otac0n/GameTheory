@@ -148,16 +148,22 @@ namespace GameTheory.Games.SevenDragons.Console
             {
                 case Color.Red:
                     return ConsoleColor.Red;
+
                 case Color.Gold:
                     return ConsoleColor.Yellow;
+
                 case Color.Blue:
                     return ConsoleColor.Blue;
+
                 case Color.Green:
                     return ConsoleColor.Green;
+
                 case Color.Black:
                     return ConsoleColor.DarkGray;
+
                 case Color.Silver:
                     return ConsoleColor.White;
+
                 case Color.Rainbow:
                 default:
                     return ConsoleColor.Magenta;

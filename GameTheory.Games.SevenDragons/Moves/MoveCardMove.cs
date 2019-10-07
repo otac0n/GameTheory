@@ -1,4 +1,4 @@
-﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Games.SevenDragons.Moves
 {
@@ -34,14 +34,14 @@ namespace GameTheory.Games.SevenDragons.Moves
         public Point FromPoint { get; }
 
         /// <summary>
-        /// Gets the point to which the card will be played.
-        /// </summary>
-        public Point ToPoint { get; }
-
-        /// <summary>
         /// Gets the orientation of the card being played.
         /// </summary>
         public DragonCard Orientation { get; }
+
+        /// <summary>
+        /// Gets the point to which the card will be played.
+        /// </summary>
+        public Point ToPoint { get; }
 
         /// <inheritdoc />
         public override int CompareTo(Move other)

@@ -70,58 +70,6 @@ namespace GameTheory
         }
 
         /// <summary>
-        /// Compares two sets of comparable elements.
-        /// </summary>
-        /// <typeparam name="TKey">The type of keys in each set.</typeparam>
-        /// <param name="left">The first set.</param>
-        /// <param name="right">The second set.</param>
-        /// <param name="comparer">An optional comparer to use when evaluating elements.</param>
-        /// <returns>A value indicating whether the sets are the same size and contain the same elements.</returns>
-        public static int CompareSets<TKey>(ISet<TKey> left, ISet<TKey> right, IComparer<TKey> comparer = null)
-            where TKey : IComparable<TKey>
-        {
-            if (object.ReferenceEquals(left, right))
-            {
-                return 0;
-            }
-
-            if (object.ReferenceEquals(left, null))
-            {
-                return -1;
-            }
-
-            if (object.ReferenceEquals(right, null))
-            {
-                return 1;
-            }
-
-            int comp;
-            if ((comp = left.Count.CompareTo(right.Count)) != 0)
-            {
-                return comp;
-            }
-
-            comparer = comparer ?? Comparer<TKey>.Default;
-
-            var otherKeys = new List<TKey>(right.Count);
-            otherKeys.AddRange(right);
-            otherKeys.Sort(comparer);
-
-            var i = 0;
-            foreach (var a in left.OrderBy(k => k, comparer))
-            {
-                var b = otherKeys[i++];
-
-                if ((comp = comparer.Compare(a, b)) != 0)
-                {
-                    return comp;
-                }
-            }
-
-            return comp;
-        }
-
-        /// <summary>
         /// Compares two dictionaries of comparable keys and elements.
         /// </summary>
         /// <typeparam name="TKey">The type of keys in each dictionary.</typeparam>
@@ -559,6 +507,58 @@ namespace GameTheory
             for (var i = 0; i < left.Count; i++)
             {
                 if ((comp = left[i].CompareTo(right[i])) != 0)
+                {
+                    return comp;
+                }
+            }
+
+            return comp;
+        }
+
+        /// <summary>
+        /// Compares two sets of comparable elements.
+        /// </summary>
+        /// <typeparam name="TKey">The type of keys in each set.</typeparam>
+        /// <param name="left">The first set.</param>
+        /// <param name="right">The second set.</param>
+        /// <param name="comparer">An optional comparer to use when evaluating elements.</param>
+        /// <returns>A value indicating whether the sets are the same size and contain the same elements.</returns>
+        public static int CompareSets<TKey>(ISet<TKey> left, ISet<TKey> right, IComparer<TKey> comparer = null)
+            where TKey : IComparable<TKey>
+        {
+            if (object.ReferenceEquals(left, right))
+            {
+                return 0;
+            }
+
+            if (object.ReferenceEquals(left, null))
+            {
+                return -1;
+            }
+
+            if (object.ReferenceEquals(right, null))
+            {
+                return 1;
+            }
+
+            int comp;
+            if ((comp = left.Count.CompareTo(right.Count)) != 0)
+            {
+                return comp;
+            }
+
+            comparer = comparer ?? Comparer<TKey>.Default;
+
+            var otherKeys = new List<TKey>(right.Count);
+            otherKeys.AddRange(right);
+            otherKeys.Sort(comparer);
+
+            var i = 0;
+            foreach (var a in left.OrderBy(k => k, comparer))
+            {
+                var b = otherKeys[i++];
+
+                if ((comp = comparer.Compare(a, b)) != 0)
                 {
                     return comp;
                 }

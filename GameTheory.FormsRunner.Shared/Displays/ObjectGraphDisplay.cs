@@ -20,48 +20,6 @@ namespace GameTheory.FormsRunner.Shared.Displays
 
         public static ObjectGraphDisplay Instance { get; } = new ObjectGraphDisplay();
 
-        private static bool GetMemberIsStatic(MemberInfo member)
-        {
-            switch (member)
-            {
-                case FieldInfo field:
-                    return field.IsStatic;
-
-                case PropertyInfo property:
-                    return property.GetAccessors(true)[0].IsStatic;
-            }
-
-            throw new NotImplementedException();
-        }
-
-        private static Type GetMemberValueType(MemberInfo member)
-        {
-            switch (member)
-            {
-                case FieldInfo field:
-                    return field.FieldType;
-
-                case PropertyInfo property:
-                    return property.PropertyType;
-            }
-
-            throw new NotImplementedException();
-        }
-
-        private static object GetMemberValue(MemberInfo member, object value)
-        {
-            switch (member)
-            {
-                case FieldInfo field:
-                    return field.GetValue(field.IsStatic ? null : value);
-
-                case PropertyInfo property:
-                    return property.GetValue(property.GetMethod.IsStatic ? null : value);
-            }
-
-            throw new NotImplementedException();
-        }
-
         public override bool CanDisplay(Scope scope, Type type, object value) => value is object;
 
         protected override Control Update(Control control, Scope scope, Type type, object value, IReadOnlyList<Display> displays)
@@ -142,6 +100,48 @@ namespace GameTheory.FormsRunner.Shared.Displays
             return propertiesTable;
         }
 
+        private static bool GetMemberIsStatic(MemberInfo member)
+        {
+            switch (member)
+            {
+                case FieldInfo field:
+                    return field.IsStatic;
+
+                case PropertyInfo property:
+                    return property.GetAccessors(true)[0].IsStatic;
+            }
+
+            throw new NotImplementedException();
+        }
+
+        private static object GetMemberValue(MemberInfo member, object value)
+        {
+            switch (member)
+            {
+                case FieldInfo field:
+                    return field.GetValue(field.IsStatic ? null : value);
+
+                case PropertyInfo property:
+                    return property.GetValue(property.GetMethod.IsStatic ? null : value);
+            }
+
+            throw new NotImplementedException();
+        }
+
+        private static Type GetMemberValueType(MemberInfo member)
+        {
+            switch (member)
+            {
+                case FieldInfo field:
+                    return field.FieldType;
+
+                case PropertyInfo property:
+                    return property.PropertyType;
+            }
+
+            throw new NotImplementedException();
+        }
+
         private static MemberInfo[] GetReadableMembers(Type type)
         {
             return ReadableMemberCache.GetOrAdd(type, t =>
@@ -182,46 +182,6 @@ namespace GameTheory.FormsRunner.Shared.Displays
             });
         }
 
-        private abstract class MemberDisplay
-        {
-            private static readonly IList<MemberDisplay> MemberDisplays = new List<MemberDisplay>
-            {
-                FieldDisplay.Instance,
-                SimplePropertyDisplay.Instance,
-                ListItemDisplay.Instance,
-                MatrixItemDisplay.Instance,
-            }.AsReadOnly();
-
-            public static Control Update(Control control, Scope scope, MemberInfo member, object value, IReadOnlyList<Display> displays, Action<Control, Control> update)
-            {
-                foreach (var display in MemberDisplays)
-                {
-                    if (display.CanDisplay(scope, member, value))
-                    {
-                        return display.UpdateWithAction(control, scope, member, value, displays, update);
-                    }
-                }
-
-                return null;
-            }
-
-            public abstract bool CanDisplay(Scope scope, MemberInfo member, object value);
-
-            public Control UpdateWithAction(Control control, Scope scope, MemberInfo member, object value, IReadOnlyList<Display> displays, Action<Control, Control> update = null)
-            {
-                var newControl = this.Update(control, scope, member, value, displays);
-
-                if (update != null && !object.ReferenceEquals(control, newControl))
-                {
-                    update.Invoke(control, newControl);
-                }
-
-                return newControl;
-            }
-
-            protected abstract Control Update(Control control, Scope scope, MemberInfo member, object value, IReadOnlyList<Display> displays);
-        }
-
         private class FieldDisplay : MemberDisplay
         {
             private FieldDisplay()
@@ -240,28 +200,6 @@ namespace GameTheory.FormsRunner.Shared.Displays
                     scope,
                     field.FieldType,
                     field.GetValue(value),
-                    displays);
-            }
-        }
-
-        private class SimplePropertyDisplay : MemberDisplay
-        {
-            private SimplePropertyDisplay()
-            {
-            }
-
-            public static SimplePropertyDisplay Instance { get; } = new SimplePropertyDisplay();
-
-            public override bool CanDisplay(Scope scope, MemberInfo member, object value) => member is PropertyInfo property && property.GetIndexParameters().Length == 0;
-
-            protected override Control Update(Control control, Scope scope, MemberInfo member, object value, IReadOnlyList<Display> displays)
-            {
-                var property = (PropertyInfo)member;
-                return Display.Update(
-                    control,
-                    scope,
-                    property.PropertyType,
-                    property.GetValue(value),
                     displays);
             }
         }
@@ -296,9 +234,6 @@ namespace GameTheory.FormsRunner.Shared.Displays
                 return GetReadableMembers(property.DeclaringType).Where(IsCount).Take(2).Count() == 1;
             }
 
-            private static bool IsCount(MemberInfo member) =>
-                (member.Name == "Count" || member.Name == "Length") && GetMemberValueType(member) == typeof(int) && !GetMemberIsStatic(member);
-
             protected override Control Update(Control control, Scope scope, MemberInfo member, object value, IReadOnlyList<Display> displays)
             {
                 var property = (PropertyInfo)member;
@@ -311,6 +246,9 @@ namespace GameTheory.FormsRunner.Shared.Displays
                     Enumerable.Range(0, count).Select(argument => property.GetValue(value, new object[] { argument })).ToList(),
                     displays);
             }
+
+            private static bool IsCount(MemberInfo member) =>
+                            (member.Name == "Count" || member.Name == "Length") && GetMemberValueType(member) == typeof(int) && !GetMemberIsStatic(member);
         }
 
         private class MatrixItemDisplay : MemberDisplay
@@ -344,24 +282,6 @@ namespace GameTheory.FormsRunner.Shared.Displays
 
                 var dimensions = GetDimensionMembers(GetReadableMembers(property.DeclaringType));
                 return dimensions.width != null && dimensions.height != null && GetMemberIsStatic(dimensions.width) == GetMemberIsStatic(dimensions.height);
-            }
-
-            private static (MemberInfo width, MemberInfo height) GetDimensionMembers(MemberInfo[] members)
-            {
-                var widthProperty = members.FirstOrDefault(member => member.Name == "Width" && GetMemberValueType(member) == typeof(int));
-                var heightProperty = members.FirstOrDefault(member => member.Name == "Height" && GetMemberValueType(member) == typeof(int));
-
-                if (widthProperty == null && heightProperty == null)
-                {
-                    var sizeProperty = members.FirstOrDefault(member => member.Name == "Size" && GetMemberValueType(member) == typeof(int));
-                    if (sizeProperty != null)
-                    {
-                        widthProperty = sizeProperty;
-                        heightProperty = sizeProperty;
-                    }
-                }
-
-                return (widthProperty, heightProperty);
             }
 
             protected override Control Update(Control control, Scope scope, MemberInfo member, object value, IReadOnlyList<Display> displays)
@@ -426,6 +346,86 @@ namespace GameTheory.FormsRunner.Shared.Displays
                 tablePanel.ResumeLayout();
 
                 return tablePanel;
+            }
+
+            private static (MemberInfo width, MemberInfo height) GetDimensionMembers(MemberInfo[] members)
+            {
+                var widthProperty = members.FirstOrDefault(member => member.Name == "Width" && GetMemberValueType(member) == typeof(int));
+                var heightProperty = members.FirstOrDefault(member => member.Name == "Height" && GetMemberValueType(member) == typeof(int));
+
+                if (widthProperty == null && heightProperty == null)
+                {
+                    var sizeProperty = members.FirstOrDefault(member => member.Name == "Size" && GetMemberValueType(member) == typeof(int));
+                    if (sizeProperty != null)
+                    {
+                        widthProperty = sizeProperty;
+                        heightProperty = sizeProperty;
+                    }
+                }
+
+                return (widthProperty, heightProperty);
+            }
+        }
+
+        private abstract class MemberDisplay
+        {
+            private static readonly IList<MemberDisplay> MemberDisplays = new List<MemberDisplay>
+            {
+                FieldDisplay.Instance,
+                SimplePropertyDisplay.Instance,
+                ListItemDisplay.Instance,
+                MatrixItemDisplay.Instance,
+            }.AsReadOnly();
+
+            public static Control Update(Control control, Scope scope, MemberInfo member, object value, IReadOnlyList<Display> displays, Action<Control, Control> update)
+            {
+                foreach (var display in MemberDisplays)
+                {
+                    if (display.CanDisplay(scope, member, value))
+                    {
+                        return display.UpdateWithAction(control, scope, member, value, displays, update);
+                    }
+                }
+
+                return null;
+            }
+
+            public abstract bool CanDisplay(Scope scope, MemberInfo member, object value);
+
+            public Control UpdateWithAction(Control control, Scope scope, MemberInfo member, object value, IReadOnlyList<Display> displays, Action<Control, Control> update = null)
+            {
+                var newControl = this.Update(control, scope, member, value, displays);
+
+                if (update != null && !object.ReferenceEquals(control, newControl))
+                {
+                    update.Invoke(control, newControl);
+                }
+
+                return newControl;
+            }
+
+            protected abstract Control Update(Control control, Scope scope, MemberInfo member, object value, IReadOnlyList<Display> displays);
+        }
+
+        private class SimplePropertyDisplay : MemberDisplay
+        {
+            private SimplePropertyDisplay()
+            {
+            }
+
+            public static SimplePropertyDisplay Instance { get; } = new SimplePropertyDisplay();
+
+            public override bool CanDisplay(Scope scope, MemberInfo member, object value) => member is PropertyInfo property && property.GetIndexParameters().Length == 0;
+
+            protected override Control Update(Control control, Scope scope, MemberInfo member, object value, IReadOnlyList<Display> displays)
+            {
+                var property = (PropertyInfo)member;
+                return Display.Update(
+                    control,
+                    scope,
+                    property.PropertyType,
+                    property.GetValue(value),
+                    displays);
             }
         }
     }

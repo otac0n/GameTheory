@@ -22,6 +22,10 @@ namespace GameTheory.Games.Chess.Forms
             this.Height = 50 * gameState.Variant.Height;
         }
 
+        public Color BlackColor { get; set; } = Color.Black;
+
+        public Color DarkColor { get; set; } = Color.FromArgb(0xb5, 0x88, 0x63);
+
         public GameState GameState
         {
             get => this.gameState;
@@ -33,15 +37,11 @@ namespace GameTheory.Games.Chess.Forms
             }
         }
 
+        public Color LightColor { get; set; } = Color.FromArgb(0xf0, 0xd9, 0xb5);
+
         public PlayerToken PlayerToken { get; }
 
         public Color WhiteColor { get; set; } = Color.White;
-
-        public Color BlackColor { get; set; } = Color.Black;
-
-        public Color DarkColor { get; set; } = Color.FromArgb(0xb5, 0x88, 0x63);
-
-        public Color LightColor { get; set; } = Color.FromArgb(0xf0, 0xd9, 0xb5);
 
         protected override void OnPaint(PaintEventArgs e)
         {
