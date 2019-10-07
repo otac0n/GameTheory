@@ -146,9 +146,9 @@
       <Project>{f4c540d1-63ec-4af8-b865-d6c14737a257}</Project>
       <Name>GameTheory.Games.Chess.Forms</Name>
     </ProjectReference>
-    <ProjectReference Include="..\GameTheory.Games.Draughts\GameTheory.Games.Draughts.csproj">
-      <Project>{5f47d85c-0deb-4dc3-86a9-7137db757a36}</Project>
-      <Name>GameTheory.Games.Draughts</Name>
+    <ProjectReference Include="..\GameTheory.Games.Draughts.Forms\GameTheory.Games.Draughts.Forms.csproj">
+      <Project>{f497f674-63b3-4df9-b88d-a379d443a2f8}</Project>
+      <Name>GameTheory.Games.Draughts.Forms</Name>
     </ProjectReference>
     <ProjectReference Include="..\GameTheory.Games.Ergo\GameTheory.Games.Ergo.csproj">
       <Project>{b74e845c-958f-4cf0-b325-4c9daf85452d}</Project>

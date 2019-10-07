@@ -70,6 +70,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameTheory.Games.Chess.Form
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameTheory.Games.Draughts.Console", "GameTheory.Games.Draughts.Console\GameTheory.Games.Draughts.Console.csproj", "{575618B4-33EB-441B-88BD-422F13FB5D8D}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameTheory.Games.Draughts.Forms", "GameTheory.Games.Draughts.Forms\GameTheory.Games.Draughts.Forms.csproj", "{F497F674-63B3-4DF9-B88D-A379D443A2F8}"
+EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameTheory.Games.Ergo.Console", "GameTheory.Games.Ergo.Console\GameTheory.Games.Ergo.Console.csproj", "{411516CD-5A50-45BA-8305-07120F9A2368}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameTheory.Games.FiveTribes.Console", "GameTheory.Games.FiveTribes.Console\GameTheory.Games.FiveTribes.Console.csproj", "{595A3644-D238-4EAF-9016-D659696068C9}"
@@ -192,6 +194,10 @@ Global
 		{575618B4-33EB-441B-88BD-422F13FB5D8D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{575618B4-33EB-441B-88BD-422F13FB5D8D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{575618B4-33EB-441B-88BD-422F13FB5D8D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F497F674-63B3-4DF9-B88D-A379D443A2F8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F497F674-63B3-4DF9-B88D-A379D443A2F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F497F674-63B3-4DF9-B88D-A379D443A2F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F497F674-63B3-4DF9-B88D-A379D443A2F8}.Release|Any CPU.Build.0 = Release|Any CPU
 		{411516CD-5A50-45BA-8305-07120F9A2368}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{411516CD-5A50-45BA-8305-07120F9A2368}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{411516CD-5A50-45BA-8305-07120F9A2368}.Release|Any CPU.ActiveCfg = Release|Any CPU
