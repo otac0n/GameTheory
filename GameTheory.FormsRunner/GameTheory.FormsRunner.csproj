@@ -174,9 +174,9 @@
       <Project>{3ce3e90c-b698-458d-922d-0c2eee8892cb}</Project>
       <Name>GameTheory.Games.PositivelyPerfectParfaitGame</Name>
     </ProjectReference>
-    <ProjectReference Include="..\GameTheory.Games.SevenDragons\GameTheory.Games.SevenDragons.csproj">
-      <Project>{d7a1dbef-2c7b-4919-a322-d265bf3761f3}</Project>
-      <Name>GameTheory.Games.SevenDragons</Name>
+    <ProjectReference Include="..\GameTheory.Games.SevenDragons.Forms\GameTheory.Games.SevenDragons.Forms.csproj">
+      <Project>{8c1c3fd5-1385-45fa-8193-c691045aa785}</Project>
+      <Name>GameTheory.Games.SevenDragons.Forms</Name>
     </ProjectReference>
     <ProjectReference Include="..\GameTheory.Games.Skull\GameTheory.Games.Skull.csproj">
       <Project>{c4d61137-39b9-4dc4-a294-b668739c7fe3}</Project>
