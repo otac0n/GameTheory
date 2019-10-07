@@ -248,7 +248,7 @@ namespace GameTheory.FormsRunner
                             player.PlayerType,
                             null, // TODO: Remember previously selected player?
                             out var errorControl,
-                            new[] { new PlayerTokenEditor(playerToken) },
+                            new Editor[] { new PlayerTokenEditor(playerToken), new CatalogGameEditor(game) },
                             this.errorProvider.SetError,
                             (value, valid) =>
                             {
@@ -499,6 +499,35 @@ namespace GameTheory.FormsRunner
             public object StartingState { get; }
         }
 
+        private class CatalogGameEditor : Editor
+        {
+            private ICatalogGame game;
+
+            public CatalogGameEditor(ICatalogGame game)
+            {
+                this.game = game;
+            }
+
+            public override bool CanEdit(Scope scope, Type type, object value) => type == typeof(ICatalogGame);
+
+            protected override Control Update(Control control, Scope scope, Type type, object value, out Control errorControl, IReadOnlyList<Editor> editors, Action<Control, string> setError, Action<object, bool> set)
+            {
+                if (control is Label label && label.Tag == this)
+                {
+                    set(this.game, true);
+                }
+                else
+                {
+                    label = MakeLabel(this.game.Name, tag: this);
+                    label.AddMargin(bottom: 7);
+                    set(this.game, true);
+                }
+
+                errorControl = label;
+                return label;
+            }
+        }
+
         private class PlayerOptions
         {
             public PlayerOptions(string[] names, PlayerToken[] playerTokens, IReadOnlyList<ICatalogPlayer> players)
@@ -535,7 +564,7 @@ namespace GameTheory.FormsRunner
                 else
                 {
                     label = MakeLabel(scope.Name, tag: this);
-                    label.Margin = new Padding(label.Margin.Left, label.Margin.Top, label.Margin.Right, label.Margin.Bottom + 7);
+                    label.AddMargin(bottom: 7);
                     set(this.playerToken, true);
                 }
 

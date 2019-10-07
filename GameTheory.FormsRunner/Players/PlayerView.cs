@@ -9,8 +9,8 @@ namespace GameTheory.FormsRunner.Players
     using System.Threading;
     using System.Threading.Tasks;
     using System.Windows.Forms;
+    using GameTheory.Catalogs;
     using GameTheory.FormsRunner.Shared;
-    using GameTheory.FormsRunner.Shared.Catalogs;
     using static Shared.Controls;
 
     public partial class PlayerView : Form
@@ -18,14 +18,13 @@ namespace GameTheory.FormsRunner.Players
         private readonly IReadOnlyList<Display> displays;
         private readonly Scope scope;
 
-        public PlayerView(PlayerToken playerToken, Type moveType)
+        public PlayerView(PlayerToken playerToken, ICatalogGame game)
         {
             this.InitializeComponent();
             this.Text = playerToken.ToString();
             this.PlayerToken = playerToken;
-            var type = typeof(IGameState<>).MakeGenericType(moveType);
             var displays = new List<Display>();
-            displays.AddRange(new DisplayCatalog(moveType.Assembly).GetDisplays(type));
+            displays.AddRange(Program.DisplayCatalog.FindDisplays(game.GameStateType).Select(d => (Display)Activator.CreateInstance(d)));
             this.displays = displays;
             this.scope = new Scope(properties: new Dictionary<string, object>
             {

@@ -6,12 +6,18 @@ namespace GameTheory.FormsRunner
     using System.ComponentModel;
     using System.Windows.Forms;
     using GameTheory.Catalogs;
+    using GameTheory.FormsRunner.Shared.Catalogs;
 
     /// <summary>
     /// Contains the main entry point for the application.
     /// </summary>
     public static class Program
     {
+        /// <summary>
+        /// Gets the shared static game catalog for the application.
+        /// </summary>
+        public static IDisplayCatalog DisplayCatalog { get; } = PluginLoader.LoadCatalogs<IDisplayCatalog>(d => new CompositeDisplayCatalog(d));
+
         /// <summary>
         /// Gets the shared static game catalog for the application.
         /// </summary>
