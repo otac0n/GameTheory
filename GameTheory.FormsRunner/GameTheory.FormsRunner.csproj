@@ -190,9 +190,9 @@
       <Project>{f5b38959-a87d-432b-ae38-c2bcce50b836}</Project>
       <Name>GameTheory.Games.TicTacToe</Name>
     </ProjectReference>
-    <ProjectReference Include="..\GameTheory.Games.TwentyFortyEight\GameTheory.Games.TwentyFortyEight.csproj">
-      <Project>{68ae3016-f59e-4e8b-a5a2-e1c59e1b7aef}</Project>
-      <Name>GameTheory.Games.TwentyFortyEight</Name>
+    <ProjectReference Include="..\GameTheory.Games.TwentyFortyEight.Forms\GameTheory.Games.TwentyFortyEight.Forms.csproj">
+      <Project>{f6f0820f-b79c-4a43-8845-8e9427c022df}</Project>
+      <Name>GameTheory.Games.TwentyFortyEight.Forms</Name>
     </ProjectReference>
     <ProjectReference Include="..\GameTheory.Gdl\GameTheory.Gdl.csproj">
       <Project>{e9225da4-7ebc-4915-93a5-d14df8aad0a3}</Project>

@@ -96,6 +96,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameTheory.Games.TicTacToe.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameTheory.Games.TwentyFortyEight.Console", "GameTheory.Games.TwentyFortyEight.Console\GameTheory.Games.TwentyFortyEight.Console.csproj", "{1C1F0D6F-B9CD-46D9-A97D-AE86A3AEF036}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameTheory.Games.TwentyFortyEight.Forms", "GameTheory.Games.TwentyFortyEight.Forms\GameTheory.Games.TwentyFortyEight.Forms.csproj", "{F6F0820F-B79C-4A43-8845-8E9427C022DF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -250,6 +252,10 @@ Global
 		{1C1F0D6F-B9CD-46D9-A97D-AE86A3AEF036}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1C1F0D6F-B9CD-46D9-A97D-AE86A3AEF036}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1C1F0D6F-B9CD-46D9-A97D-AE86A3AEF036}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F6F0820F-B79C-4A43-8845-8E9427C022DF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F6F0820F-B79C-4A43-8845-8E9427C022DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F6F0820F-B79C-4A43-8845-8E9427C022DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F6F0820F-B79C-4A43-8845-8E9427C022DF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
