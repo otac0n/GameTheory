@@ -13,17 +13,10 @@ namespace GameTheory.Games.Mancala
     /// </summary>
     public sealed class GameState : IGameState<Move>
     {
-        private readonly int[] board;
-
         /// <summary>
         /// The maximum number of supported bins per side.
         /// </summary>
         public const int MaxBinsPerSide = 10;
-
-        /// <summary>
-        /// The minimum number of supported bins per side.
-        /// </summary>
-        public const int MinBinsPerSide = 1;
 
         /// <summary>
         /// The maximum number of supported initial stones per bin.
@@ -31,9 +24,16 @@ namespace GameTheory.Games.Mancala
         public const int MaxInitialStonesPerBin = 10;
 
         /// <summary>
+        /// The minimum number of supported bins per side.
+        /// </summary>
+        public const int MinBinsPerSide = 1;
+
+        /// <summary>
         /// The minimum number of supported initial stones per bin.
         /// </summary>
         public const int MinInitialStonesPerBin = 1;
+
+        private readonly int[] board;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GameState"/> class.

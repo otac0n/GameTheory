@@ -3,48 +3,30 @@
 namespace GameTheory.FormsRunner
 {
     using System;
-    using System.Collections.Generic;
     using System.ComponentModel;
-    using System.IO;
-    using System.Linq;
-    using System.Reflection;
     using System.Windows.Forms;
     using GameTheory.Catalogs;
+    using GameTheory.FormsRunner.Shared.Catalogs;
 
     /// <summary>
     /// Contains the main entry point for the application.
     /// </summary>
     public static class Program
     {
-        private static readonly IReadOnlyList<Assembly> GameAssemblies =
-            (from file in Directory.EnumerateFiles(Environment.CurrentDirectory, "GameTheory.Games.*.dll")
-             select Assembly.LoadFrom(file)).ToList().AsReadOnly();
-
-        private static readonly IReadOnlyList<Assembly> PlayerAssemblies =
-            GameAssemblies.Concat(new[] { typeof(IGameState<>).Assembly, typeof(Players.WinFormsPlayer<>).Assembly }).ToList().AsReadOnly();
+        /// <summary>
+        /// Gets the shared static game catalog for the application.
+        /// </summary>
+        public static IDisplayCatalog DisplayCatalog { get; } = PluginLoader.LoadCatalogs<IDisplayCatalog>(d => new CompositeDisplayCatalog(d));
 
         /// <summary>
         /// Gets the shared static game catalog for the application.
         /// </summary>
-        public static GameCatalog GameCatalog { get; } = new CompositeGameCatalog(
-            new AssemblyGameCatalog(GameAssemblies),
-            new Gdl.GdlGameCatalog(Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, "..", "..", ".."))));
+        public static IGameCatalog GameCatalog { get; } = PluginLoader.LoadGameCatalogs();
 
         /// <summary>
         /// Gets the shared static player catalong for the application.
         /// </summary>
-        public static PlayerCatalog PlayerCatalog { get; } = new PlayerCatalog(PlayerAssemblies);
-
-        /// <summary>
-        /// The main entry point for the application.
-        /// </summary>
-        [STAThread]
-        public static void Main()
-        {
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new GameManagerForm());
-        }
+        public static IPlayerCatalog PlayerCatalog { get; } = PluginLoader.LoadPlayerCatalogs();
 
         /// <summary>
         /// Extension method allowing conditional invoke usage.
@@ -61,6 +43,17 @@ namespace GameTheory.FormsRunner
             {
                 action();
             }
+        }
+
+        /// <summary>
+        /// The main entry point for the application.
+        /// </summary>
+        [STAThread]
+        public static void Main()
+        {
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+            Application.Run(new GameManagerForm());
         }
     }
 }

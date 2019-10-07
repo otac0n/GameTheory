@@ -6,7 +6,6 @@ namespace GameTheory.ConsoleRunner
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using System.Diagnostics;
-    using System.IO;
     using System.Linq;
     using System.Reflection;
     using System.Text;
@@ -17,19 +16,20 @@ namespace GameTheory.ConsoleRunner
 
     internal class Program
     {
-        private static readonly IReadOnlyList<Assembly> GameAssemblies =
-            (from file in Directory.EnumerateFiles(Environment.CurrentDirectory, "GameTheory.Games.*.dll")
-             select Assembly.LoadFrom(file)).ToList().AsReadOnly();
+        /// <summary>
+        /// Gets the shared static player catalong for the application.
+        /// </summary>
+        public static IConsoleRendererCatalog ConsoleRendererCatalog { get; } = PluginLoader.LoadCatalogs<IConsoleRendererCatalog>(c => new CompositeConsoleRendererCatalog(c));
 
-        private static readonly GameCatalog GameCatalog = new CompositeGameCatalog(
-            new AssemblyGameCatalog(GameAssemblies),
-            new Gdl.GdlGameCatalog(Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, "..", "..", ".."))));
+        /// <summary>
+        /// Gets the shared static game catalog for the application.
+        /// </summary>
+        public static IGameCatalog GameCatalog { get; } = PluginLoader.LoadGameCatalogs();
 
-        private static readonly IReadOnlyList<Assembly> PlayerAssemblies =
-            GameAssemblies.Concat(new[] { typeof(IGameState<>).Assembly }).ToList().AsReadOnly();
-
-        private static readonly IReadOnlyList<Assembly> RendererAssemblies =
-            GameAssemblies.Concat(new[] { typeof(BaseConsoleRenderer<>).Assembly }).ToList().AsReadOnly();
+        /// <summary>
+        /// Gets the shared static player catalong for the application.
+        /// </summary>
+        public static IPlayerCatalog PlayerCatalog { get; } = PluginLoader.LoadPlayerCatalogs();
 
         private static object ConstructType(Type type, Func<ParameterInfo, object> getParameter = null)
         {
@@ -188,10 +188,12 @@ namespace GameTheory.ConsoleRunner
             where TMove : IMove
         {
             Console.WriteLine(Resources.GamePlayerCount, string.Format(state.Players.Count == 1 ? Resources.SingularPlayer : Resources.PluralPlayers, state.Players.Count));
-            var catalog = new PlayerCatalog(PlayerAssemblies);
-            var players = catalog.FindPlayers(typeof(TMove));
-            var rendererCatalog = new ConsoleRendererCatalog(RendererAssemblies);
-            var consoleRenderer = rendererCatalog.CreateConsoleRenderer<TMove>();
+            var players = PlayerCatalog.FindPlayers(typeof(TMove));
+            var rendererType = ConsoleRendererCatalog
+                .FindConsoleRenderers<TMove>()
+                .OrderBy(t => t.IsConstructedGenericType && t.GetGenericTypeDefinition() == typeof(ToStringConsoleRenderer<>))
+                .First();
+            var consoleRenderer = (IConsoleRenderer<TMove>)Activator.CreateInstance(rendererType);
             var font = consoleRenderer.GetType().GetCustomAttributes(inherit: true).OfType<ConsoleFontAttribute>().FirstOrDefault();
             if (font != null)
             {
@@ -207,7 +209,7 @@ namespace GameTheory.ConsoleRunner
             {
                 consoleRenderer.Show(state, FormatUtilities.ParseStringFormat(Resources.ChoosePlayer, playerToken));
                 Console.WriteLine();
-                var player = ConsoleInteraction.Choose(players);
+                var player = ConsoleInteraction.Choose(players as IList<ICatalogPlayer> ?? players.ToList());
                 return (IPlayer<TMove>)ConstructType(player.PlayerType, p => p.Name == nameof(playerToken) && p.ParameterType == typeof(PlayerToken) ? playerToken : GetArgument(p));
             }
 

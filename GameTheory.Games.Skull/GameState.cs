@@ -24,7 +24,7 @@ namespace GameTheory.Games.Skull
         public const int MinPlayers = 2;
 
         /// <summary>
-        /// Gets the number of completed challenes needed to win the game.
+        /// Gets the number of completed challenges needed to win the game.
         /// </summary>
         public static readonly int WinThreshold = 2;
 

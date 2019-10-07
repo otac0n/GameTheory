@@ -5,12 +5,13 @@ namespace GameTheory.FormsRunner
     using System;
     using System.Collections.Generic;
     using System.Windows.Forms;
+    using GameTheory.Catalogs;
 
     public interface IGameInfo
     {
         event EventHandler<EventArgs> Move;
 
-        Catalogs.IGame Game { get; }
+        ICatalogGame Game { get; }
 
         IReadOnlyList<object> GameStates { get; }
 
@@ -20,7 +21,7 @@ namespace GameTheory.FormsRunner
 
         IReadOnlyList<string> PlayerNames { get; }
 
-        IReadOnlyList<Catalogs.Player> Players { get; }
+        IReadOnlyList<ICatalogPlayer> Players { get; }
 
         IReadOnlyList<PlayerToken> PlayerTokens { get; }
 

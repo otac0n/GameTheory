@@ -16,10 +16,10 @@ namespace GameTheory.FormsRunner
 
     public partial class NewGameForm : Form
     {
-        private Task<IGame[]> allGamesTask;
+        private Task<ICatalogGame[]> allGamesTask;
         private object[] playerInstances;
-        private Task<IGame[]> searchTask;
-        private Player[] selectedPlayers;
+        private Task<ICatalogGame[]> searchTask;
+        private ICatalogPlayer[] selectedPlayers;
         private object startingState;
 
         /// <summary>
@@ -76,19 +76,19 @@ namespace GameTheory.FormsRunner
         /// <summary>
         /// Gets the currently selected game.
         /// </summary>
-        public IGame SelectedGame
+        public ICatalogGame SelectedGame
         {
             get
             {
                 var selectedItems = this.searchResults.SelectedItems;
-                return selectedItems.Count == 1 ? selectedItems[0].Tag as IGame : null;
+                return selectedItems.Count == 1 ? selectedItems[0].Tag as ICatalogGame : null;
             }
         }
 
         /// <summary>
         /// Gets the currently selected players.
         /// </summary>
-        public Player[] SelectedPlayers
+        public ICatalogPlayer[] SelectedPlayers
         {
             get
             {
@@ -195,7 +195,7 @@ namespace GameTheory.FormsRunner
                 var playerOptions = (PlayerOptions)typeof(NewGameForm).GetMethod(nameof(CountPlayers), BindingFlags.Static | BindingFlags.NonPublic).MakeGenericMethod(game.MoveType).Invoke(null, new object[] { state });
                 var playerCount = playerOptions.Names.Length;
                 this.playersTable.RowCount = playerCount * 2;
-                var players = new Player[playerCount];
+                var players = new ICatalogPlayer[playerCount];
                 var playerInstances = new object[playerCount];
                 var playersValid = new bool[playerCount];
 
@@ -235,7 +235,7 @@ namespace GameTheory.FormsRunner
 
                     playersList.SelectedValueChanged += (_, a) =>
                     {
-                        var player = (Player)playersList.SelectedItem;
+                        var player = (ICatalogPlayer)playersList.SelectedItem;
                         var previous = this.playersTable.GetControlFromPosition(1, p * 2 + 1);
                         if (previous != null)
                         {
@@ -248,7 +248,7 @@ namespace GameTheory.FormsRunner
                             player.PlayerType,
                             null, // TODO: Remember previously selected player?
                             out var errorControl,
-                            new[] { new PlayerTokenEditor(playerToken) },
+                            new Editor[] { new PlayerTokenEditor(playerToken), new CatalogGameEditor(game) },
                             this.errorProvider.SetError,
                             (value, valid) =>
                             {
@@ -295,13 +295,10 @@ namespace GameTheory.FormsRunner
             }
         }
 
-        private void NextButton_Click(object sender, EventArgs e)
+        private void CancelButton_Click(object sender, EventArgs e)
         {
-            var ix = this.wizardTabs.SelectedIndex;
-            if (ix < this.wizardTabs.TabCount - 1)
-            {
-                this.wizardTabs.SelectedIndex = ix + 1;
-            }
+            this.DialogResult = DialogResult.Cancel;
+            this.Hide();
         }
 
         private void FinishButton_Click(object sender, EventArgs e)
@@ -317,15 +314,13 @@ namespace GameTheory.FormsRunner
             }
         }
 
-        private void CancelButton_Click(object sender, EventArgs e)
+        private void NewGameForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            this.DialogResult = DialogResult.Cancel;
-            this.Hide();
-        }
-
-        private void SearchResults_DoubleClick(object sender, EventArgs e)
-        {
-            this.NextButton_Click(sender, e);
+            if (e.CloseReason == CloseReason.UserClosing)
+            {
+                e.Cancel = true;
+                this.CancelButton_Click(sender, e);
+            }
         }
 
         private void NewGameForm_Shown(object sender, EventArgs e)
@@ -334,12 +329,12 @@ namespace GameTheory.FormsRunner
             this.wizardTabs.SelectedIndex = 0;
         }
 
-        private void NewGameForm_FormClosing(object sender, FormClosingEventArgs e)
+        private void NextButton_Click(object sender, EventArgs e)
         {
-            if (e.CloseReason == CloseReason.UserClosing)
+            var ix = this.wizardTabs.SelectedIndex;
+            if (ix < this.wizardTabs.TabCount - 1)
             {
-                e.Cancel = true;
-                this.CancelButton_Click(sender, e);
+                this.wizardTabs.SelectedIndex = ix + 1;
             }
         }
 
@@ -407,6 +402,11 @@ namespace GameTheory.FormsRunner
             this.Search(this.searchBox.Text);
         }
 
+        private void SearchResults_DoubleClick(object sender, EventArgs e)
+        {
+            this.NextButton_Click(sender, e);
+        }
+
         private void SearchResults_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
         {
             this.OnSelectedGameChanged();
@@ -448,7 +448,7 @@ namespace GameTheory.FormsRunner
             /// Initializes a new instance of the <see cref="SelectedGameChangedEventArgs"/> class.
             /// </summary>
             /// <param name="game">The game that has been selected.</param>
-            public SelectedGameChangedEventArgs(IGame game)
+            public SelectedGameChangedEventArgs(ICatalogGame game)
             {
                 this.Game = game;
             }
@@ -456,7 +456,7 @@ namespace GameTheory.FormsRunner
             /// <summary>
             /// Gets the selected game.
             /// </summary>
-            public IGame Game { get; }
+            public ICatalogGame Game { get; }
         }
 
         /// <summary>
@@ -468,7 +468,7 @@ namespace GameTheory.FormsRunner
             /// Initializes a new instance of the <see cref="SelectedPlayersChangedEventArgs"/> class.
             /// </summary>
             /// <param name="players">The players chosen.</param>
-            public SelectedPlayersChangedEventArgs(Player[] players)
+            public SelectedPlayersChangedEventArgs(ICatalogPlayer[] players)
             {
                 this.Players = players;
             }
@@ -499,9 +499,38 @@ namespace GameTheory.FormsRunner
             public object StartingState { get; }
         }
 
+        private class CatalogGameEditor : Editor
+        {
+            private ICatalogGame game;
+
+            public CatalogGameEditor(ICatalogGame game)
+            {
+                this.game = game;
+            }
+
+            public override bool CanEdit(Scope scope, Type type, object value) => type == typeof(ICatalogGame);
+
+            protected override Control Update(Control control, Scope scope, Type type, object value, out Control errorControl, IReadOnlyList<Editor> editors, Action<Control, string> setError, Action<object, bool> set)
+            {
+                if (control is Label label && label.Tag == this)
+                {
+                    set(this.game, true);
+                }
+                else
+                {
+                    label = MakeLabel(this.game.Name, tag: this);
+                    label.AddMargin(bottom: 7);
+                    set(this.game, true);
+                }
+
+                errorControl = label;
+                return label;
+            }
+        }
+
         private class PlayerOptions
         {
-            public PlayerOptions(string[] names, PlayerToken[] playerTokens, IList<Player> players)
+            public PlayerOptions(string[] names, PlayerToken[] playerTokens, IReadOnlyList<ICatalogPlayer> players)
             {
                 this.Names = names;
                 this.Players = players;
@@ -510,7 +539,7 @@ namespace GameTheory.FormsRunner
 
             public string[] Names { get; }
 
-            public IList<Player> Players { get; }
+            public IReadOnlyList<ICatalogPlayer> Players { get; }
 
             public PlayerToken[] PlayerTokens { get; }
         }
@@ -535,7 +564,7 @@ namespace GameTheory.FormsRunner
                 else
                 {
                     label = MakeLabel(scope.Name, tag: this);
-                    label.Margin = new Padding(label.Margin.Left, label.Margin.Top, label.Margin.Right, label.Margin.Bottom + 7);
+                    label.AddMargin(bottom: 7);
                     set(this.playerToken, true);
                 }
 

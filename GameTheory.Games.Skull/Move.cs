@@ -14,7 +14,7 @@ namespace GameTheory.Games.Skull
         /// <summary>
         /// Initializes a new instance of the <see cref="Move"/> class.
         /// </summary>
-        /// <param name="state">The <see cref="Lotus.GameState"/> that this move is based on.</param>
+        /// <param name="state">The <see cref="Skull.GameState"/> that this move is based on.</param>
         protected Move(GameState state)
         {
             this.GameState = state ?? throw new ArgumentNullException(nameof(state));
@@ -24,7 +24,7 @@ namespace GameTheory.Games.Skull
         /// <summary>
         /// Initializes a new instance of the <see cref="Move"/> class.
         /// </summary>
-        /// <param name="state">The <see cref="Lotus.GameState"/> that this move is based on.</param>
+        /// <param name="state">The <see cref="Skull.GameState"/> that this move is based on.</param>
         /// <param name="player">The <see cref="PlayerToken">player</see> that may choose this move.</param>
         protected Move(GameState state, PlayerToken player)
         {

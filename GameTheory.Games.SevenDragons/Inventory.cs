@@ -1,4 +1,4 @@
-﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Games.SevenDragons
 {
@@ -22,14 +22,14 @@ namespace GameTheory.Games.SevenDragons
         }
 
         /// <summary>
-        /// Gets the cards in the player's hand.
-        /// </summary>
-        public ImmutableList<Card> Hand { get; }
-
-        /// <summary>
         /// Gets the player's goal.
         /// </summary>
         public Color Goal { get; }
+
+        /// <summary>
+        /// Gets the cards in the player's hand.
+        /// </summary>
+        public ImmutableList<Card> Hand { get; }
 
         /// <inheritdoc/>
         public int CompareTo(Inventory other)

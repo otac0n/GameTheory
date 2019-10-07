@@ -5,6 +5,7 @@ namespace GameTheory.FormsRunner.Players
     using System;
     using System.Threading;
     using System.Threading.Tasks;
+    using GameTheory.Catalogs;
 
     public class WinFormsPlayer<TMove> : IPlayer<TMove>
         where TMove : IMove
@@ -15,10 +16,11 @@ namespace GameTheory.FormsRunner.Players
         /// Initializes a new instance of the <see cref="WinFormsPlayer{TMove}"/> class.
         /// </summary>
         /// <param name="playerToken">The <see cref="PlayerToken"/> that represents the player.</param>
-        public WinFormsPlayer(PlayerToken playerToken)
+        /// <param name="game">The <see cref="ICatalogGame"/> that describes the game being played.</param>
+        public WinFormsPlayer(PlayerToken playerToken, ICatalogGame game)
         {
             this.PlayerToken = playerToken;
-            this.playerView = new PlayerView(playerToken, typeof(TMove));
+            this.playerView = new PlayerView(playerToken, game);
             this.playerView.MessageSent += this.MessageSent;
             this.playerView.Show();
         }

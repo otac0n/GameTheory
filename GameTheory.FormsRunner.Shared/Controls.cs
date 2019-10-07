@@ -7,6 +7,23 @@ namespace GameTheory.FormsRunner.Shared
 
     public static class Controls
     {
+        public static Control AddMargin(this Control control, int left = 0, int top = 0, int right = 0, int bottom = 0)
+        {
+            control.Margin = new Padding(
+                control.Margin.Left + left,
+                control.Margin.Top + top,
+                control.Margin.Right + right,
+                control.Margin.Bottom + bottom);
+            return control;
+        }
+
+        public static void DisposeAndClear(this Control.ControlCollection controls)
+        {
+            var list = controls.Cast<Control>().ToList();
+            controls.Clear();
+            list.ForEach(c => c.Dispose());
+        }
+
         public static FlowLayoutPanel MakeFlowPanel(object tag = null)
         {
             var flowLayoutPanel = new FlowLayoutPanel
@@ -49,23 +66,6 @@ namespace GameTheory.FormsRunner.Shared
             };
 
             return tableLayoutPanel;
-        }
-
-        public static Control AddMargin(this Control control, int left = 0, int top = 0, int right = 0, int bottom = 0)
-        {
-            control.Margin = new Padding(
-                control.Margin.Left + left,
-                control.Margin.Top + top,
-                control.Margin.Right + right,
-                control.Margin.Bottom + bottom);
-            return control;
-        }
-
-        public static void DisposeAndClear(this Control.ControlCollection controls)
-        {
-            var list = controls.Cast<Control>().ToList();
-            controls.Clear();
-            list.ForEach(c => c.Dispose());
         }
     }
 }

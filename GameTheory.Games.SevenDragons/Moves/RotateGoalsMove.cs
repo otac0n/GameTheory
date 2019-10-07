@@ -1,4 +1,4 @@
-﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Games.SevenDragons.Moves
 {
@@ -20,15 +20,15 @@ namespace GameTheory.Games.SevenDragons.Moves
             this.Direction = direction;
         }
 
-        /// <inheritdoc />
-        public override IList<object> FormatTokens => this.Direction == RotateDirection.AlongTurnOrder
-            ? new[] { Resources.RotateAlongTurnOrder }
-            : new[] { Resources.RotateOppositeTurnOrder };
-
         /// <summary>
         /// Gets the rotation direction.
         /// </summary>
         public RotateDirection Direction { get; }
+
+        /// <inheritdoc />
+        public override IList<object> FormatTokens => this.Direction == RotateDirection.AlongTurnOrder
+            ? new[] { Resources.RotateAlongTurnOrder }
+            : new[] { Resources.RotateOppositeTurnOrder };
 
         /// <inheritdoc />
         public override int CompareTo(Move other)

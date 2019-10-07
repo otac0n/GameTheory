@@ -8,7 +8,6 @@ namespace GameTheory.FormsRunner
     using System.Linq;
     using System.Windows.Forms;
     using GameTheory.FormsRunner.Shared;
-    using GameTheory.FormsRunner.Shared.Catalogs;
     using static FormsRunner.Shared.Controls;
 
     public partial class GameDisplayForm : Form
@@ -25,7 +24,7 @@ namespace GameTheory.FormsRunner
             {
                 new PlayerTokenDisplay(this.GameInfo),
             };
-            displays.AddRange(new DisplayCatalog(type.Assembly).GetDisplays(type));
+            displays.AddRange(Program.DisplayCatalog.FindDisplays(type).Select(d => (Display)Activator.CreateInstance(d)));
             this.displays = displays;
             this.RefreshDisplay();
         }

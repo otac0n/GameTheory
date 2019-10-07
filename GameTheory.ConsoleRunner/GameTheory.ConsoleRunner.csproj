@@ -76,6 +76,7 @@
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
     <None Include="App.config" />
+    <Compile Include="ConsoleCatalogs.cs" />
     <Compile Include="ConsoleInteraction.cs" />
     <Compile Include="ConsolePlayer.cs" />
     <CodeAnalysisDictionary Include="..\CustomDictionary.xml">
@@ -87,6 +88,7 @@
     <AdditionalFiles Include="..\stylecop.json">
       <Link>stylecop.json</Link>
     </AdditionalFiles>
+    <Compile Include="ToStringConsoleRenderer.cs" />
   </ItemGroup>
   <ItemGroup>
     <Analyzer Include="..\packages\StyleCop.Analyzers.1.1.118\analyzers\dotnet\cs\StyleCop.Analyzers.CodeFixes.dll" />
@@ -101,61 +103,61 @@
       <Project>{5f19cf02-4edc-4439-9375-1669519cf050}</Project>
       <Name>GameTheory.ConsoleRunner.Shared</Name>
     </ProjectReference>
-    <ProjectReference Include="..\GameTheory.Games.CenturySpiceRoad\GameTheory.Games.CenturySpiceRoad.csproj">
-      <Project>{733c356a-ba71-406d-b49b-f67a0e647ce8}</Project>
-      <Name>GameTheory.Games.CenturySpiceRoad</Name>
+    <ProjectReference Include="..\GameTheory.Games.CenturySpiceRoad.Console\GameTheory.Games.CenturySpiceRoad.Console.csproj">
+      <Project>{9883ee33-7865-4fa7-839a-54b61e3e0214}</Project>
+      <Name>GameTheory.Games.CenturySpiceRoad.Console</Name>
     </ProjectReference>
-    <ProjectReference Include="..\GameTheory.Games.Chess\GameTheory.Games.Chess.csproj">
-      <Project>{09437adf-6793-4252-b014-6ccaa5a10846}</Project>
-      <Name>GameTheory.Games.Chess</Name>
+    <ProjectReference Include="..\GameTheory.Games.Chess.Console\GameTheory.Games.Chess.Console.csproj">
+      <Project>{ecc600ad-d839-4a93-bc76-947df35fbfed}</Project>
+      <Name>GameTheory.Games.Chess.Console</Name>
     </ProjectReference>
-    <ProjectReference Include="..\GameTheory.Games.Draughts\GameTheory.Games.Draughts.csproj">
-      <Project>{5f47d85c-0deb-4dc3-86a9-7137db757a36}</Project>
-      <Name>GameTheory.Games.Draughts</Name>
+    <ProjectReference Include="..\GameTheory.Games.Draughts.Console\GameTheory.Games.Draughts.Console.csproj">
+      <Project>{575618b4-33eb-441b-88bd-422f13fb5d8d}</Project>
+      <Name>GameTheory.Games.Draughts.Console</Name>
     </ProjectReference>
-    <ProjectReference Include="..\GameTheory.Games.Ergo\GameTheory.Games.Ergo.csproj">
-      <Project>{b74e845c-958f-4cf0-b325-4c9daf85452d}</Project>
-      <Name>GameTheory.Games.Ergo</Name>
+    <ProjectReference Include="..\GameTheory.Games.Ergo.Console\GameTheory.Games.Ergo.Console.csproj">
+      <Project>{411516cd-5a50-45ba-8305-07120f9a2368}</Project>
+      <Name>GameTheory.Games.Ergo.Console</Name>
     </ProjectReference>
-    <ProjectReference Include="..\GameTheory.Games.FiveTribes\GameTheory.Games.FiveTribes.csproj">
-      <Project>{0d176fb9-3e54-4500-97a8-fab80a0bf6f3}</Project>
-      <Name>GameTheory.Games.FiveTribes</Name>
+    <ProjectReference Include="..\GameTheory.Games.FiveTribes.Console\GameTheory.Games.FiveTribes.Console.csproj">
+      <Project>{595a3644-d238-4eaf-9016-d659696068c9}</Project>
+      <Name>GameTheory.Games.FiveTribes.Console</Name>
     </ProjectReference>
-    <ProjectReference Include="..\GameTheory.Games.Lotus\GameTheory.Games.Lotus.csproj">
-      <Project>{77a78fa3-d2fa-4b1c-b38d-e66d578f4211}</Project>
-      <Name>GameTheory.Games.Lotus</Name>
+    <ProjectReference Include="..\GameTheory.Games.Lotus.Console\GameTheory.Games.Lotus.Console.csproj">
+      <Project>{25442def-9dc3-4324-9b53-18734213bd96}</Project>
+      <Name>GameTheory.Games.Lotus.Console</Name>
     </ProjectReference>
-    <ProjectReference Include="..\GameTheory.Games.Mancala\GameTheory.Games.Mancala.csproj">
-      <Project>{53732849-f5e8-4aee-93a3-2839f14ad856}</Project>
-      <Name>GameTheory.Games.Mancala</Name>
+    <ProjectReference Include="..\GameTheory.Games.Mancala.Console\GameTheory.Games.Mancala.Console.csproj">
+      <Project>{8417ecb7-2bb9-4460-a022-95f2806703a0}</Project>
+      <Name>GameTheory.Games.Mancala.Console</Name>
     </ProjectReference>
     <ProjectReference Include="..\GameTheory.Games.NormalFormGame\GameTheory.Games.NormalFormGame.csproj">
       <Project>{2b9f26b4-66f6-4fdd-b4bd-e2990f19bb97}</Project>
       <Name>GameTheory.Games.NormalFormGame</Name>
     </ProjectReference>
-    <ProjectReference Include="..\GameTheory.Games.PositivelyPerfectParfaitGame\GameTheory.Games.PositivelyPerfectParfaitGame.csproj">
-      <Project>{3ce3e90c-b698-458d-922d-0c2eee8892cb}</Project>
-      <Name>GameTheory.Games.PositivelyPerfectParfaitGame</Name>
+    <ProjectReference Include="..\GameTheory.Games.PositivelyPerfectParfaitGame.Console\GameTheory.Games.PositivelyPerfectParfaitGame.Console.csproj">
+      <Project>{1b238786-d920-4ba0-b6ae-944fa92c3165}</Project>
+      <Name>GameTheory.Games.PositivelyPerfectParfaitGame.Console</Name>
     </ProjectReference>
-    <ProjectReference Include="..\GameTheory.Games.SevenDragons\GameTheory.Games.SevenDragons.csproj">
-      <Project>{d7a1dbef-2c7b-4919-a322-d265bf3761f3}</Project>
-      <Name>GameTheory.Games.SevenDragons</Name>
+    <ProjectReference Include="..\GameTheory.Games.SevenDragons.Console\GameTheory.Games.SevenDragons.Console.csproj">
+      <Project>{5a8af090-887c-42af-8d8d-eb02783462a8}</Project>
+      <Name>GameTheory.Games.SevenDragons.Console</Name>
     </ProjectReference>
-    <ProjectReference Include="..\GameTheory.Games.Skull\GameTheory.Games.Skull.csproj">
-      <Project>{c4d61137-39b9-4dc4-a294-b668739c7fe3}</Project>
-      <Name>GameTheory.Games.Skull</Name>
+    <ProjectReference Include="..\GameTheory.Games.Skull.Console\GameTheory.Games.Skull.Console.csproj">
+      <Project>{85aacc8c-0c86-4e73-b55b-cfaee3c77ebb}</Project>
+      <Name>GameTheory.Games.Skull.Console</Name>
     </ProjectReference>
-    <ProjectReference Include="..\GameTheory.Games.Splendor\GameTheory.Games.Splendor.csproj">
-      <Project>{263c9aba-8e2b-4220-9f22-46d09c7a8fed}</Project>
-      <Name>GameTheory.Games.Splendor</Name>
+    <ProjectReference Include="..\GameTheory.Games.Splendor.Console\GameTheory.Games.Splendor.Console.csproj">
+      <Project>{7a954fc3-086c-4644-8663-57a8393013ad}</Project>
+      <Name>GameTheory.Games.Splendor.Console</Name>
     </ProjectReference>
-    <ProjectReference Include="..\GameTheory.Games.TicTacToe\GameTheory.Games.TicTacToe.csproj">
-      <Project>{f5b38959-a87d-432b-ae38-c2bcce50b836}</Project>
-      <Name>GameTheory.Games.TicTacToe</Name>
+    <ProjectReference Include="..\GameTheory.Games.TicTacToe.Console\GameTheory.Games.TicTacToe.Console.csproj">
+      <Project>{108e7f3f-5026-4c7a-82be-545f98a5dc2c}</Project>
+      <Name>GameTheory.Games.TicTacToe.Console</Name>
     </ProjectReference>
-    <ProjectReference Include="..\GameTheory.Games.TwentyFortyEight\GameTheory.Games.TwentyFortyEight.csproj">
-      <Project>{68ae3016-f59e-4e8b-a5a2-e1c59e1b7aef}</Project>
-      <Name>GameTheory.Games.TwentyFortyEight</Name>
+    <ProjectReference Include="..\GameTheory.Games.TwentyFortyEight.Console\GameTheory.Games.TwentyFortyEight.Console.csproj">
+      <Project>{1c1f0d6f-b9cd-46d9-a97d-ae86a3aef036}</Project>
+      <Name>GameTheory.Games.TwentyFortyEight.Console</Name>
     </ProjectReference>
     <ProjectReference Include="..\GameTheory.Gdl\GameTheory.Gdl.csproj">
       <Project>{e9225da4-7ebc-4915-93a5-d14df8aad0a3}</Project>

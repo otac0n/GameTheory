@@ -11,7 +11,7 @@ namespace GameTheory.Catalogs
     /// <summary>
     /// Exposes the games available as exported types from a list of assemblies.
     /// </summary>
-    public class AssemblyGameCatalog : GameCatalog
+    public class AssemblyGameCatalog : GameCatalogBase
     {
         private readonly ImmutableList<Assembly> assemblies;
 
@@ -34,15 +34,15 @@ namespace GameTheory.Catalogs
         }
 
         /// <inheritdoc/>
-        protected override IEnumerable<IGame> GetGames()
+        protected override IEnumerable<ICatalogGame> GetGames()
         {
             foreach (var assembly in this.assemblies)
             {
                 var games = (from t in assembly.ExportedTypes
                              where !t.GetTypeInfo().IsAbstract
-                             let m = Game.GetMoveType(t)
+                             let m = CatalogGame.GetMoveType(t)
                              where m != null
-                             select new Game(t, m)).ToArray();
+                             select new CatalogGame(t, m)).ToArray();
 
                 foreach (var g in games)
                 {

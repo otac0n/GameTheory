@@ -9,8 +9,8 @@ namespace GameTheory.FormsRunner.Players
     using System.Threading;
     using System.Threading.Tasks;
     using System.Windows.Forms;
+    using GameTheory.Catalogs;
     using GameTheory.FormsRunner.Shared;
-    using GameTheory.FormsRunner.Shared.Catalogs;
     using static Shared.Controls;
 
     public partial class PlayerView : Form
@@ -18,14 +18,13 @@ namespace GameTheory.FormsRunner.Players
         private readonly IReadOnlyList<Display> displays;
         private readonly Scope scope;
 
-        public PlayerView(PlayerToken playerToken, Type moveType)
+        public PlayerView(PlayerToken playerToken, ICatalogGame game)
         {
             this.InitializeComponent();
             this.Text = playerToken.ToString();
             this.PlayerToken = playerToken;
-            var type = typeof(IGameState<>).MakeGenericType(moveType);
             var displays = new List<Display>();
-            displays.AddRange(new DisplayCatalog(moveType.Assembly).GetDisplays(type));
+            displays.AddRange(Program.DisplayCatalog.FindDisplays(game.GameStateType).Select(d => (Display)Activator.CreateInstance(d)));
             this.displays = displays;
             this.scope = new Scope(properties: new Dictionary<string, object>
             {
@@ -35,9 +34,9 @@ namespace GameTheory.FormsRunner.Players
 
         public event EventHandler<MessageSentEventArgs> MessageSent;
 
-        public PlayerToken PlayerToken { get; }
-
         public object GameState { get; set; }
+
+        public PlayerToken PlayerToken { get; }
 
         internal Task<Maybe<TMove>> ChooseMove<TMove>(IGameState<TMove> state, CancellationToken cancel)
             where TMove : IMove
@@ -113,16 +112,6 @@ namespace GameTheory.FormsRunner.Players
         {
         }
 
-        private class MoveChoice
-        {
-            public MoveChoice(object move)
-            {
-                this.Move = move;
-            }
-
-            public object Move { get; }
-        }
-
         private class ChooseMoveDisplay : Display
         {
             private Action<object> chooseMove;
@@ -155,6 +144,7 @@ namespace GameTheory.FormsRunner.Players
                     {
                         Text = "Choose",
                         Tag = this,
+                        Anchor = AnchorStyles.Left,
                     };
                     button.Click += (sender, args) => this.chooseMove(move);
                     flowPanel.Controls.Add(button);
@@ -176,6 +166,7 @@ namespace GameTheory.FormsRunner.Players
 
                         if (newControl != null)
                         {
+                            newControl.Anchor = AnchorStyles.Left;
                             flowPanel.Controls.Add(newControl);
                         }
                     });
@@ -184,6 +175,16 @@ namespace GameTheory.FormsRunner.Players
 
                 return flowPanel;
             }
+        }
+
+        private class MoveChoice
+        {
+            public MoveChoice(object move)
+            {
+                this.Move = move;
+            }
+
+            public object Move { get; }
         }
     }
 }

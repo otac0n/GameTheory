@@ -2,7 +2,6 @@
 
 namespace GameTheory.Games.FiveTribes.Djinns
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
     using GameTheory.Games.FiveTribes.Moves;

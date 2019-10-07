@@ -8,7 +8,6 @@ namespace GameTheory.Players.MaximizingPlayer
     using System.Diagnostics;
     using System.Linq;
     using System.Threading;
-    using System.Threading.Tasks;
     using GameTheory.GameTree;
     using GameTheory.GameTree.Caches;
 

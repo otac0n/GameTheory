@@ -1,4 +1,4 @@
-﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Games.Lotus
 {
@@ -14,8 +14,8 @@ namespace GameTheory.Games.Lotus
         /// Initializes a new instance of the <see cref="PetalCard"/> class.
         /// </summary>
         /// <param name="flowerType">The kind of flower this petal belongs to.</param>
-        /// <param name="guardians">The owner of this card, or <c>null</c> if it is a wildflower card.</param>
-        /// <param name="owner">The number of guardians on this card.</param>
+        /// <param name="owner">The owner of this card, or <c>null</c> if it is a wildflower card.</param>
+        /// <param name="guardians">The number of guardians on this card.</param>
         public PetalCard(FlowerType flowerType, PlayerToken owner = null, int guardians = 0)
         {
             this.FlowerType = flowerType;

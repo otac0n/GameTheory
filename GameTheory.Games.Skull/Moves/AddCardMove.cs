@@ -1,4 +1,4 @@
-﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Games.Skull.Moves
 {
@@ -20,13 +20,13 @@ namespace GameTheory.Games.Skull.Moves
             this.Card = card;
         }
 
-        /// <inheritdoc />
-        public override IList<object> FormatTokens => FormatUtilities.ParseStringFormat(Resources.AddACard, this.Card);
-
         /// <summary>
         /// Gets the card to add.
         /// </summary>
         public Card Card { get; }
+
+        /// <inheritdoc />
+        public override IList<object> FormatTokens => FormatUtilities.ParseStringFormat(Resources.AddACard, this.Card);
 
         /// <inheritdoc />
         public override int CompareTo(Move other)

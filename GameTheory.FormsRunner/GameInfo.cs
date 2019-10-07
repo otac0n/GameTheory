@@ -7,6 +7,7 @@ namespace GameTheory.FormsRunner
     using System.Linq;
     using System.Threading.Tasks;
     using System.Windows.Forms;
+    using GameTheory.Catalogs;
 
     public class GameInfo<TMove> : IGameInfo
         where TMove : IMove
@@ -14,7 +15,7 @@ namespace GameTheory.FormsRunner
         private GameDisplayForm displayForm;
         private GameManagerForm parent;
 
-        public GameInfo(Catalogs.IGame game, Catalogs.Player[] players, IGameState<TMove> startingState, IPlayer<TMove>[] playerInstances, GameManagerForm parent)
+        public GameInfo(ICatalogGame game, ICatalogPlayer[] players, IGameState<TMove> startingState, IPlayer<TMove>[] playerInstances, GameManagerForm parent)
         {
             this.parent = parent;
             this.Game = game;
@@ -70,7 +71,7 @@ namespace GameTheory.FormsRunner
         /// <inheritdoc/>
         public event EventHandler<EventArgs> Move;
 
-        public Catalogs.IGame Game { get; }
+        public ICatalogGame Game { get; }
 
         public List<IGameState<TMove>> GameStates { get; }
 
@@ -88,7 +89,7 @@ namespace GameTheory.FormsRunner
 
         public IReadOnlyList<string> PlayerNames { get; }
 
-        public IReadOnlyList<Catalogs.Player> Players { get; }
+        public IReadOnlyList<ICatalogPlayer> Players { get; }
 
         public IReadOnlyList<PlayerToken> PlayerTokens { get; }
 

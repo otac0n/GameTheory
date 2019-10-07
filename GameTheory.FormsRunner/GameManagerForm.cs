@@ -3,10 +3,8 @@
 namespace GameTheory.FormsRunner
 {
     using System;
-    using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
-    using System.Threading.Tasks;
     using System.Windows.Forms;
     using GameTheory.Catalogs;
 
@@ -29,6 +27,14 @@ namespace GameTheory.FormsRunner
                 .SetValue(this.gamesList, true, null);
         }
 
+        private static GameInfo<TMove> PlayGame<TMove>(ICatalogGame game, ICatalogPlayer[] players, IGameState<TMove> startingState, object[] playerInstances, GameManagerForm parent)
+            where TMove : IMove
+        {
+            var gameInfo = new GameInfo<TMove>(game, players, startingState, playerInstances.Cast<IPlayer<TMove>>().ToArray(), parent);
+
+            return gameInfo;
+        }
+
         private void NewGameMenu_Click(object sender, System.EventArgs e)
         {
             if (this.newGameForm == null || this.newGameForm.IsDisposed)
@@ -48,16 +54,13 @@ namespace GameTheory.FormsRunner
             }
         }
 
-        private static GameInfo<TMove> PlayGame<TMove>(IGame game, Player[] players, IGameState<TMove> startingState, object[] playerInstances, GameManagerForm parent)
-            where TMove : IMove
+        private void QuitMenu_Click(object sender, System.EventArgs e)
         {
-            var gameInfo = new GameInfo<TMove>(game, players, startingState, playerInstances.Cast<IPlayer<TMove>>().ToArray(), parent);
-
-            return gameInfo;
+            this.Close();
         }
 
-        private IGameInfo StartGame(IGame game, Player[] players, object startingState, object[] playerInstances) =>
-            (IGameInfo)typeof(GameManagerForm).GetMethod(nameof(PlayGame), BindingFlags.Static | BindingFlags.NonPublic).MakeGenericMethod(game.MoveType).Invoke(null, new object[] { game, players, startingState, playerInstances, this });
+        private IGameInfo StartGame(ICatalogGame game, ICatalogPlayer[] players, object startingState, object[] playerInstances) =>
+                    (IGameInfo)typeof(GameManagerForm).GetMethod(nameof(PlayGame), BindingFlags.Static | BindingFlags.NonPublic).MakeGenericMethod(game.MoveType).Invoke(null, new object[] { game, players, startingState, playerInstances, this });
 
         private void ViewGameMenuItem_Click(object sender, EventArgs e)
         {
@@ -66,11 +69,6 @@ namespace GameTheory.FormsRunner
                 var gameInfo = gameRow.Tag as IGameInfo;
                 gameInfo?.Show();
             }
-        }
-
-        private void QuitMenu_Click(object sender, System.EventArgs e)
-        {
-            this.Close();
         }
     }
 }
