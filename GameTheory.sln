@@ -80,6 +80,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameTheory.Games.Lotus.Cons
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameTheory.Games.Mancala.Console", "GameTheory.Games.Mancala.Console\GameTheory.Games.Mancala.Console.csproj", "{8417ECB7-2BB9-4460-A022-95F2806703A0}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameTheory.Games.Mancala.Forms", "GameTheory.Games.Mancala.Forms\GameTheory.Games.Mancala.Forms.csproj", "{31630E20-4BC4-4FD9-8445-72FCDD54746E}"
+EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameTheory.Games.PositivelyPerfectParfaitGame.Console", "GameTheory.Games.PositivelyPerfectParfaitGame.Console\GameTheory.Games.PositivelyPerfectParfaitGame.Console.csproj", "{1B238786-D920-4BA0-B6AE-944FA92C3165}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameTheory.Games.SevenDragons.Console", "GameTheory.Games.SevenDragons.Console\GameTheory.Games.SevenDragons.Console.csproj", "{5A8AF090-887C-42AF-8D8D-EB02783462A8}"
@@ -214,6 +216,10 @@ Global
 		{8417ECB7-2BB9-4460-A022-95F2806703A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8417ECB7-2BB9-4460-A022-95F2806703A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8417ECB7-2BB9-4460-A022-95F2806703A0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{31630E20-4BC4-4FD9-8445-72FCDD54746E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{31630E20-4BC4-4FD9-8445-72FCDD54746E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{31630E20-4BC4-4FD9-8445-72FCDD54746E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{31630E20-4BC4-4FD9-8445-72FCDD54746E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{1B238786-D920-4BA0-B6AE-944FA92C3165}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{1B238786-D920-4BA0-B6AE-944FA92C3165}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1B238786-D920-4BA0-B6AE-944FA92C3165}.Release|Any CPU.ActiveCfg = Release|Any CPU
