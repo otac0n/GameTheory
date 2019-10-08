@@ -8,6 +8,7 @@ namespace GameTheory.Catalogs
     using System.IO;
     using System.Linq;
     using System.Reflection;
+    using CommonServiceLocator;
 
     /// <summary>
     /// Providse plugin capabilities.
@@ -20,12 +21,18 @@ namespace GameTheory.Catalogs
         /// <typeparam name="T">The type of catalogs to load.</typeparam>
         /// <param name="makeComposite">A function used to combine multiple catalogs into a single composite catalog.</param>
         /// <param name="path">The path to search. If <c>null</c>, <see cref="Environment.CurrentDirectory"/> will be used.</param>
+        /// <param name="serviceLocator">The service locator used to activate services.</param>
         /// <returns>The requested catalogs.</returns>
-        public static T LoadCatalogs<T>(Func<T[], T> makeComposite, string path = null)
+        public static T LoadCatalogs<T>(Func<T[], T> makeComposite, string path = null, IServiceLocator serviceLocator = null)
         {
             if (path == null)
             {
                 path = Environment.CurrentDirectory;
+            }
+
+            if (serviceLocator == null)
+            {
+                serviceLocator = ServiceLocator.Current;
             }
 
             var libraries = Enumerable.Concat(
@@ -75,12 +82,12 @@ namespace GameTheory.Catalogs
             {
                 try
                 {
-                    instances.Add((T)Activator.CreateInstance(catalog.ImplementationType));
+                    instances.Add((T)serviceLocator.GetInstance(catalog.ImplementationType));
                 }
-                catch
+                catch (ActivationException)
                 {
                     Debugger.Break();
-                    throw;
+                    continue;
                 }
             }
 
@@ -91,16 +98,18 @@ namespace GameTheory.Catalogs
         /// Loads game catalogs from the specified path.
         /// </summary>
         /// <param name="path">The path to search. If <c>null</c>, <see cref="Environment.CurrentDirectory"/> will be used.</param>
+        /// <param name="serviceLocator">The service locator used to activate services.</param>
         /// <returns>The requested catalogs.</returns>
-        public static IGameCatalog LoadGameCatalogs(string path = null) =>
-            LoadCatalogs<IGameCatalog>(c => new CompositeGameCatalog(c), path);
+        public static IGameCatalog LoadGameCatalogs(string path = null, IServiceLocator serviceLocator = null) =>
+            LoadCatalogs<IGameCatalog>(c => new CompositeGameCatalog(c), path, serviceLocator);
 
         /// <summary>
         /// Loads player catalogs from the specified path.
         /// </summary>
         /// <param name="path">The path to search. If <c>null</c>, <see cref="Environment.CurrentDirectory"/> will be used.</param>
+        /// <param name="serviceLocator">The service locator used to activate services.</param>
         /// <returns>The requested catalogs.</returns>
-        public static IPlayerCatalog LoadPlayerCatalogs(string path = null) =>
-            LoadCatalogs<IPlayerCatalog>(p => new CompositePlayerCatalog(p), path);
+        public static IPlayerCatalog LoadPlayerCatalogs(string path = null, IServiceLocator serviceLocator = null) =>
+            LoadCatalogs<IPlayerCatalog>(p => new CompositePlayerCatalog(p), path, serviceLocator);
     }
 }

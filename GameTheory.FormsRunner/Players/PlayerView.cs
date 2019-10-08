@@ -11,6 +11,7 @@ namespace GameTheory.FormsRunner.Players
     using System.Windows.Forms;
     using GameTheory.Catalogs;
     using GameTheory.FormsRunner.Shared;
+    using Unity;
     using static Shared.Controls;
 
     public partial class PlayerView : Form
@@ -21,10 +22,13 @@ namespace GameTheory.FormsRunner.Players
         public PlayerView(PlayerToken playerToken, ICatalogGame game)
         {
             this.InitializeComponent();
+            var container = new UnityContainer();
+            container.RegisterInstance(game);
+
             this.Text = playerToken.ToString();
             this.PlayerToken = playerToken;
             var displays = new List<Display>();
-            displays.AddRange(Program.DisplayCatalog.FindDisplays(game.GameStateType).Select(d => (Display)Activator.CreateInstance(d)));
+            displays.AddRange(Program.DisplayCatalog.FindDisplays(game.GameStateType).Select(d => (Display)container.Resolve(d)));
             this.displays = displays;
             this.scope = new Scope(properties: new Dictionary<string, object>
             {

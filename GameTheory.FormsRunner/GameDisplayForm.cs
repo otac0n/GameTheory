@@ -8,6 +8,7 @@ namespace GameTheory.FormsRunner
     using System.Linq;
     using System.Windows.Forms;
     using GameTheory.FormsRunner.Shared;
+    using Unity;
     using static FormsRunner.Shared.Controls;
 
     public partial class GameDisplayForm : Form
@@ -17,6 +18,9 @@ namespace GameTheory.FormsRunner
         public GameDisplayForm(IGameInfo gameInfo)
         {
             this.InitializeComponent();
+            var container = new UnityContainer();
+            container.RegisterInstance(gameInfo.Game);
+
             this.GameInfo = gameInfo;
             this.GameInfo.Move += this.GameInfo_Move;
             var type = this.GameInfo.Game.GameStateType;
@@ -24,7 +28,7 @@ namespace GameTheory.FormsRunner
             {
                 new PlayerTokenDisplay(this.GameInfo),
             };
-            displays.AddRange(Program.DisplayCatalog.FindDisplays(type).Select(d => (Display)Activator.CreateInstance(d)));
+            displays.AddRange(Program.DisplayCatalog.FindDisplays(type).Select(d => (Display)container.Resolve(d)));
             this.displays = displays;
             this.RefreshDisplay();
         }
