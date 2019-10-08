@@ -217,6 +217,48 @@ namespace GameTheory
         }
 
         /// <summary>
+        /// Deals an item from a collection.  If there are no items remaining, the default value is returned.
+        /// </summary>
+        /// <typeparam name="T">The type of items in the deck.</typeparam>
+        /// <param name="deck">The source of items being dealt.</param>
+        /// <param name="dealt">The resulting item or default if there were no items.</param>
+        /// <param name="instance">An instance of <see cref="System.Random"/> to use.</param>
+        /// <returns>The remaining deck.</returns>
+        public static EnumCollection<T> Deal<T>(this EnumCollection<T> deck, out T dealt, System.Random instance = null)
+            where T : struct
+        {
+            if (deck == null)
+            {
+                throw new ArgumentNullException(nameof(deck));
+            }
+
+            instance = instance ?? Instance;
+
+            if (deck.Count > 0)
+            {
+                var ix = instance.Next(deck.Count);
+
+                var value = 0;
+                foreach (var key in deck.Keys)
+                {
+                    value += deck[key];
+                    if (value >= ix)
+                    {
+                        dealt = key;
+                        return deck.Remove(key);
+                    }
+                }
+
+                throw new InvalidOperationException();
+            }
+            else
+            {
+                dealt = default(T);
+                return deck;
+            }
+        }
+
+        /// <summary>
         /// Selects a random element from a list.
         /// </summary>
         /// <typeparam name="T">The type of items in the list.</typeparam>
