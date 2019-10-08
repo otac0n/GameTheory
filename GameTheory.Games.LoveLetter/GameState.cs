@@ -1,4 +1,4 @@
-// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+// Copyright Â© John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Games.LoveLetter
 {
@@ -24,6 +24,19 @@ namespace GameTheory.Games.LoveLetter
         public const int MinPlayers = 2;
 
         /// <summary>
+        /// The starting deck.
+        /// </summary>
+        public static EnumCollection<Card> StartingDeck = EnumCollection<Card>.Empty
+            .Add(Card.Guard, 5)
+            .Add(Card.Priest, 2)
+            .Add(Card.Baron, 2)
+            .Add(Card.Handmaid, 2)
+            .Add(Card.Prince, 2)
+            .Add(Card.King, 1)
+            .Add(Card.Countess, 1)
+            .Add(Card.Princess, 1);
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="GameState"/> class in the starting position.
         /// </summary>
         /// <param name="players">The number of players.</param>
@@ -36,18 +49,81 @@ namespace GameTheory.Games.LoveLetter
 
             this.Players = Enumerable.Range(0, players).Select(i => new PlayerToken()).ToImmutableArray();
             this.ActivePlayer = this.Players[0];
+            this.Phase = Phase.Play;
+
+            var deck = StartingDeck;
+            deck = deck.Deal(out var hidden);
+            this.Hidden = hidden;
+
+            if (players < 3)
+            {
+                deck = deck.Deal(3, out var inaccessible);
+                this.Inaccessible = new EnumCollection<Card>(inaccessible);
+            }
+            else
+            {
+                this.Inaccessible = EnumCollection<Card>.Empty;
+            }
+
+            var inventories = ImmutableDictionary.CreateBuilder<PlayerToken, Inventory>();
+            foreach (var player in this.Players)
+            {
+                deck = deck.Deal(out var startingHand);
+                inventories.Add(
+                    player,
+                    new Inventory(
+                        ImmutableArray.Create<Card>(startingHand)));
+            }
+            this.Inventories = inventories.ToImmutable();
+
+            this.Deck = deck;
         }
 
-        private GameState(ImmutableArray<PlayerToken> players, PlayerToken activePlayer)
+        private GameState(
+            ImmutableArray<PlayerToken> players,
+            Card hidden,
+            EnumCollection<Card> inaccessible,
+            PlayerToken activePlayer,
+            Phase phase,
+            ImmutableDictionary<PlayerToken, Inventory> inventories)
         {
             this.Players = players;
+            this.Hidden = hidden;
+            this.Inaccessible = inaccessible;
             this.ActivePlayer = activePlayer;
+            this.Phase = phase;
+            this.Inventories = inventories;
         }
 
         /// <summary>
         /// Gets the <see cref="PlayerToken"/> representing the active player.
         /// </summary>
         public PlayerToken ActivePlayer { get; }
+
+        /// <summary>
+        /// Gets the deck.
+        /// </summary>
+        public EnumCollection<Card> Deck { get; }
+
+        /// <summary>
+        /// Gets hidden card.
+        /// </summary>
+        public Card Hidden { get; }
+
+        /// <summary>
+        /// Gets the inaccessible cards.
+        /// </summary>
+        public EnumCollection<Card> Inaccessible { get; }
+
+        /// <summary>
+        /// Gets the player inventories.
+        /// </summary>
+        public ImmutableDictionary<PlayerToken, Inventory> Inventories { get; }
+
+        /// <summary>
+        /// Gets the phase.
+        /// </summary>
+        public Phase Phase { get; }
 
         /// <summary>
         /// Gets the list of players.
@@ -74,7 +150,11 @@ namespace GameTheory.Games.LoveLetter
             int comp;
 
             if ((comp = this.ActivePlayer.CompareTo(state.ActivePlayer)) != 0 ||
-                (comp = CompareUtilities.CompareLists(this.Players, state.Players)) != 0)
+                (comp = this.Hidden.CompareTo(state.Hidden)) != 0 ||
+                (comp = this.Inaccessible.CompareTo(state.Inaccessible)) != 0 ||
+                (comp = CompareUtilities.CompareDictionaries(this.Inventories, state.Inventories)) != 0 ||
+                (comp = CompareUtilities.CompareLists(this.Players, state.Players)) != 0 ||
+                (comp = this.Deck.CompareTo(state.Deck)) != 0)
             {
                 return comp;
             }
@@ -99,7 +179,7 @@ namespace GameTheory.Games.LoveLetter
 
             for (var i = 0; i < this.Players.Length; i++)
             {
-                HashUtilities.Combine(ref hash, this.Players[i].GetHashCode());
+                HashUtilities.Combine(ref hash, this.Inventories[this.Players[i]].GetHashCode());
             }
 
             return hash;
