@@ -21,6 +21,9 @@
     <ProjectReference Include="..\GameTheory\GameTheory.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Games\**\*.*">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Compile Update="Resources.Designer.cs">
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>

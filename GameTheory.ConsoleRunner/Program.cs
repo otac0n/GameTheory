@@ -21,6 +21,10 @@ namespace GameTheory.ConsoleRunner
         static Program()
         {
             var container = new UnityContainer();
+            container.RegisterFactory(typeof(string), null, (c, type, key) =>
+            {
+                return Environment.CurrentDirectory;
+            });
             var serviceLocator = new UnityServiceLocator(container);
             ConsoleRendererCatalog = PluginLoader.LoadCatalogs<IConsoleRendererCatalog>(c => new CompositeConsoleRendererCatalog(c), serviceLocator: serviceLocator);
             GameCatalog = PluginLoader.LoadGameCatalogs(serviceLocator: serviceLocator);

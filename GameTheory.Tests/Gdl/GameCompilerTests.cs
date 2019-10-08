@@ -11,6 +11,7 @@ namespace GameTheory.Tests.Gdl
     using System.Threading.Tasks;
     using System.Xml;
     using GameTheory.Gdl;
+    using GameTheory.Gdl.Catalogs;
     using GameTheory.Gdl.Shared;
     using GameTheory.Players;
     using Newtonsoft.Json;

@@ -30,6 +30,7 @@
   <ItemGroup>
     <ProjectReference Include="..\GameTheory.FormsRunner.Shared\GameTheory.FormsRunner.Shared.csproj" />
     <ProjectReference Include="..\GameTheory.Gdl.Shared\GameTheory.Gdl.Shared.csproj" />
+    <ProjectReference Include="..\GameTheory.Gdl\GameTheory.Gdl.csproj" />
     <ProjectReference Include="..\GameTheory\GameTheory.csproj" />
   </ItemGroup>
 </Project>
