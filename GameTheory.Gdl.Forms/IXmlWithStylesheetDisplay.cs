@@ -5,8 +5,13 @@ namespace GameTheory.FormsRunner.Shared.Displays
     using System;
     using System.Collections.Generic;
     using System.IO;
+    using System.Linq;
+    using System.Text;
     using System.Windows.Forms;
     using System.Xml;
+    using System.Xml.Xsl;
+    using GameTheory.Catalogs;
+    using GameTheory.Gdl.Catalogs;
     using GameTheory.Gdl.Shared;
     using TheArtOfDev.HtmlRenderer.WinForms;
     using static Controls;
@@ -17,33 +22,60 @@ namespace GameTheory.FormsRunner.Shared.Displays
         {
             Async = true,
             OmitXmlDeclaration = true,
+            Indent = true,
         };
 
-        private IXmlWithStylesheetDisplay()
-        {
-        }
+        private GdlGame game;
+        private XslCompiledTransform transform;
 
-        public static IXmlWithStylesheetDisplay Instance { get; } = new IXmlWithStylesheetDisplay();
+        public IXmlWithStylesheetDisplay(ICatalogGame game)
+        {
+            this.game = game as GdlGame;
+
+            if (this.game != null)
+            {
+                var metadataStylesheet = this.game.Metadata.StyleSheet;
+                if (!string.IsNullOrEmpty(metadataStylesheet) && Path.GetExtension(metadataStylesheet).ToLowerInvariant() == ".xsl")
+                {
+                    // TODO: Use a prioritized list of xsl stylesheets.
+                }
+
+                var xsl = Directory.EnumerateFiles(Path.GetDirectoryName(this.game.MetadataPath), "*.xsl").FirstOrDefault();
+                if (xsl != null)
+                {
+                    var transform = new XslCompiledTransform();
+                    transform.Load(xsl);
+                    this.transform = transform;
+                }
+            }
+        }
 
         public override bool CanDisplay(Scope scope, Type type, object value) => typeof(IXml).IsAssignableFrom(type); // TODO: Only game state? Infer sub templates from XLS in compiler?
 
         protected override Control Update(Control originalDisplay, Scope scope, Type type, object value, IReadOnlyList<Display> displays)
         {
             string html;
-            var xml = ((IXml)value);
-            using (var stream = new MemoryStream())
+            var xml = (IXml)value;
+            using (var stream = new StringWriter())
             {
                 using (var writer = XmlWriter.Create(stream, Settings))
                 {
                     xml.ToXml(writer);
                 }
 
-                stream.Seek(0, SeekOrigin.Begin);
-
-                // TODO: Find XSLT.
-                using (var reader = new StreamReader(stream))
+                var xmlValue = stream.ToString();
+                using (var reader = XmlReader.Create(new StringReader(xmlValue)))
+                using (var sw = new StringWriter())
                 {
-                    html = reader.ReadToEnd();
+                    sw.WriteLine("<!--");
+                    sw.WriteLine(xmlValue);
+                    sw.WriteLine("-->");
+
+                    using (var writer = XmlWriter.Create(sw, Settings))
+                    {
+                        this.transform.Transform(reader, new XsltArgumentList(), writer);
+                        html = sw.ToString();
+                    }
                 }
             }
 
@@ -56,6 +88,8 @@ namespace GameTheory.FormsRunner.Shared.Displays
             {
                 return new HtmlPanel
                 {
+                    Dock = DockStyle.Fill,
+                    AutoScroll = true,
                     Text = html,
                     Tag = this,
                 };
