@@ -197,6 +197,38 @@ namespace GameTheory
         }
 
         /// <summary>
+        /// Compares two stacks of comparable elements.
+        /// </summary>
+        /// <typeparam name="T">The type of elements in each list.</typeparam>
+        /// <param name="left">The first list.</param>
+        /// <param name="right">The second list.</param>
+        /// <returns>A value indicating whether the lists are the same length and contain the same elements.</returns>
+        public static int CompareEnumStacks<T>(ImmutableStack<T> left, ImmutableStack<T> right)
+            where T : IComparable
+        {
+            if (left.IsEmpty)
+            {
+                return right.IsEmpty ? 0 : -1;
+            }
+            else if (right.IsEmpty)
+            {
+                return 1;
+            }
+
+            left = left.Pop(out var leftValue);
+            right = right.Pop(out var rightValue);
+
+            int comp;
+            var comparer = EnumComparer<T>.Default;
+            if ((comp = comparer.Compare(leftValue, rightValue)) != 0)
+            {
+                return comp;
+            }
+
+            return CompareEnumStacks(left, right);
+        }
+
+        /// <summary>
         /// Compares two dictionaries of comparable keys and elements.
         /// </summary>
         /// <typeparam name="TKey">The type of keys in each dictionary.</typeparam>
@@ -565,6 +597,45 @@ namespace GameTheory
             }
 
             return comp;
+        }
+
+        /// <summary>
+        /// Compares two stacks of comparable elements.
+        /// </summary>
+        /// <typeparam name="T">The type of elements in each list.</typeparam>
+        /// <param name="left">The first list.</param>
+        /// <param name="right">The second list.</param>
+        /// <returns>A value indicating whether the lists are the same length and contain the same elements.</returns>
+        public static int CompareStacks<T>(ImmutableStack<T> left, ImmutableStack<T> right)
+            where T : class, IComparable<T>
+        {
+            if (left.IsEmpty)
+            {
+                return right.IsEmpty ? 0 : -1;
+            }
+            else if (right.IsEmpty)
+            {
+                return 1;
+            }
+
+            left = left.Pop(out var leftValue);
+            right = right.Pop(out var rightValue);
+
+            if (!object.ReferenceEquals(leftValue, rightValue))
+            {
+                if (leftValue == null)
+                {
+                    return -1;
+                }
+
+                int comp;
+                if ((comp = leftValue.CompareTo(rightValue)) != 0)
+                {
+                    return comp;
+                }
+            }
+
+            return CompareStacks(left, right);
         }
 
         /// <summary>
