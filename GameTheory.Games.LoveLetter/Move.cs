@@ -88,8 +88,20 @@ namespace GameTheory.Games.LoveLetter
                 }
                 else
                 {
+                    var inventory = state.Inventory;
+                    foreach (var player in inventory.Keys)
+                    {
+                        if (inventory[player].HandRevealed)
+                        {
+                            inventory = inventory.SetItem(
+                                player,
+                                inventory[player].With(handRevealed: false));
+                        }
+                    }
+
                     state = state.With(
                         activePlayer: nextPlayer,
+                        inventory: inventory,
                         phase: Phase.Draw);
                 }
             }
@@ -136,5 +148,7 @@ namespace GameTheory.Games.LoveLetter
 
             return state;
         }
+
+        internal virtual IEnumerable<IWeighted<GameState>> GetOutcomes(GameState state) => throw new NotImplementedException();
     }
 }

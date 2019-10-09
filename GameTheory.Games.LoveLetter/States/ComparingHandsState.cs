@@ -15,6 +15,18 @@ namespace GameTheory.Games.LoveLetter.States
 
         public PlayerToken TargetPlayer { get; }
 
+        public override int CompareTo(InterstitialState other)
+        {
+            if (other is ComparingHandsState state)
+            {
+                return this.TargetPlayer.CompareTo(state.TargetPlayer);
+            }
+            else
+            {
+                return base.CompareTo(other);
+            }
+        }
+
         public override IEnumerable<Move> GenerateMoves(GameState state)
         {
             var inventory = state.Inventory;

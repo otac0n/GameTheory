@@ -1,11 +1,11 @@
 // Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
-namespace GameTheory.Games.LoveLetter.Actions
+namespace GameTheory.Games.LoveLetter.States
 {
     using System.Collections.Generic;
     using GameTheory.Games.LoveLetter.Moves;
 
-    internal class KingAction : InterstitialState
+    internal class KingActionState : InterstitialState
     {
         public override IEnumerable<Move> GenerateMoves(GameState state)
         {

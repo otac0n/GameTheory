@@ -9,6 +9,7 @@ namespace GameTheory.Games.LoveLetter
     using System.Linq;
     using System.Threading;
     using GameTheory.Games.LoveLetter.Moves;
+    using GameTheory.Games.LoveLetter.States;
 
     /// <summary>
     /// Represents the current state in a game of LoveLetter.
@@ -66,6 +67,7 @@ namespace GameTheory.Games.LoveLetter
             this.Phase = Phase.Draw;
             var inventory = this.Players.ToImmutableDictionary(p => p, p => new Inventory());
             DealNewRound(ref inventory, out var deck, out var hidden, out var inaccessible);
+            this.Inaccessible = inaccessible;
             this.Inventory = inventory;
             this.Hidden = hidden;
 
@@ -163,6 +165,19 @@ namespace GameTheory.Games.LoveLetter
                 return comp;
             }
 
+            if (this.interstitialState != state.interstitialState)
+            {
+                if (this.interstitialState == null)
+                {
+                    return -1;
+                }
+
+                if ((comp = this.interstitialState.CompareTo(state.interstitialState)) != 0)
+                {
+                    return comp;
+                }
+            }
+
             return 0;
         }
 
@@ -221,17 +236,97 @@ namespace GameTheory.Games.LoveLetter
         /// <inheritdoc />
         public IEnumerable<IWeighted<IGameState<Move>>> GetOutcomes(Move move)
         {
-            yield return Weighted.Create(this.MakeMove(move), 1);
+            if (move.IsDeterministic)
+            {
+                yield return Weighted.Create(this.MakeMove(move), 1);
+                yield break;
+            }
+
+            foreach (var outcome in move.GetOutcomes(this))
+            {
+                yield return outcome;
+            }
         }
 
         /// <inheritdoc />
         public IEnumerable<IGameState<Move>> GetView(PlayerToken playerToken, int maxStates)
         {
-            yield return this;
+            PlayerToken revealedPlayer = null;
+            switch (this.interstitialState)
+            {
+                case ComparingHandsState comparingHands:
+                    if (playerToken == this.ActivePlayer)
+                    {
+                        revealedPlayer = comparingHands.TargetPlayer;
+                    }
+                    else if (playerToken == comparingHands.TargetPlayer)
+                    {
+                        revealedPlayer = this.ActivePlayer;
+                    }
+
+                    break;
+
+                case LookAtHandState lookAtHand:
+                    if (playerToken == this.ActivePlayer)
+                    {
+                        revealedPlayer = lookAtHand.TargetPlayer;
+                    }
+
+                    break;
+            }
+
+            var newState = this;
+            if (revealedPlayer != null)
+            {
+                var inventory = this.Inventory;
+                newState = newState.With(
+                    keepInterstitial: true,
+                    inventory: inventory.SetItem(revealedPlayer, inventory[revealedPlayer].With(
+                        handRevealed: true)));
+            }
+
+            var shuffler = new GameShuffler<GameState>(newState);
+            if (this.Hidden != Card.None)
+            {
+                shuffler.Add(
+                    "Cards",
+                    this.Hidden,
+                    (state, value) => state.With(keepInterstitial: true, hidden: value));
+            }
+
+            shuffler.AddCollection(
+                "Cards",
+                this.Deck,
+                (state, value) => state.With(keepInterstitial: true, deck: new EnumCollection<Card>(value)));
+
+            foreach (var p in this.Players)
+            {
+                var player = p;
+                var inventory = this.Inventory[player];
+
+                if (p == playerToken || inventory.HandRevealed)
+                {
+                    continue;
+                }
+
+                shuffler.AddCollection(
+                    "Cards",
+                    inventory.Hand,
+                    (state, value) => state.With(
+                        keepInterstitial: true,
+                        inventory: state.Inventory.SetItem(player, state.Inventory[player].With(
+                            hand: value.ToImmutableArray()))));
+            }
+
+            return shuffler.Take(maxStates);
         }
 
         /// <inheritdoc />
-        public IReadOnlyCollection<PlayerToken> GetWinners() => ImmutableList<PlayerToken>.Empty;
+        public IReadOnlyCollection<PlayerToken> GetWinners()
+        {
+            var winThreshold = WinThresholds[this.Players.Length];
+            return this.Players.Where(p => this.Inventory[p].Tokens >= winThreshold).ToList();
+        }
 
         /// <inheritdoc />
         IGameState<Move> IGameState<Move>.MakeMove(Move move)
@@ -253,7 +348,15 @@ namespace GameTheory.Games.LoveLetter
 
             if (this.CompareTo(move.GameState) != 0)
             {
-                throw new ArgumentOutOfRangeException(nameof(move));
+                var equivalentMove = this.GetAvailableMoves().Where(m => m.CompareTo(move) == 0).FirstOrDefault();
+                if (equivalentMove != null)
+                {
+                    move = equivalentMove;
+                }
+                else
+                {
+                    throw new ArgumentOutOfRangeException(nameof(move));
+                }
             }
 
             return move.Apply(this);
@@ -290,6 +393,7 @@ namespace GameTheory.Games.LoveLetter
         }
 
         internal GameState With(
+            bool keepInterstitial = false,
             Card? hidden = null,
             EnumCollection<Card> inaccessible = null,
             PlayerToken activePlayer = null,
@@ -299,7 +403,7 @@ namespace GameTheory.Games.LoveLetter
         {
             return new GameState(
                 this.Players,
-                null,
+                keepInterstitial ? this.interstitialState : null,
                 hidden ?? this.Hidden,
                 inaccessible ?? this.Inaccessible,
                 activePlayer ?? this.ActivePlayer,

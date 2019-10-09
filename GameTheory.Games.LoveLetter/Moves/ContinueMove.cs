@@ -21,6 +21,24 @@ namespace GameTheory.Games.LoveLetter.Moves
         /// <inheritdoc />
         public override IList<object> FormatTokens => FormatUtilities.ParseStringFormat(Resources.Continue);
 
+        /// <inheritdoc />
+        public override int CompareTo(Move other)
+        {
+            if (object.ReferenceEquals(other, this))
+            {
+                return 0;
+            }
+
+            if (other is ContinueMove move)
+            {
+                return this.PlayerToken.CompareTo(move.PlayerToken);
+            }
+            else
+            {
+                return base.CompareTo(other);
+            }
+        }
+
         internal override GameState Apply(GameState state)
         {
             return base.Apply(state.WithInterstitialState(null));

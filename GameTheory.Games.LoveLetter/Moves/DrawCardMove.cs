@@ -2,7 +2,9 @@
 
 namespace GameTheory.Games.LoveLetter.Moves
 {
+    using System;
     using System.Collections.Generic;
+    using System.Linq;
 
     /// <summary>
     /// Represents a move to draw a card.
@@ -32,7 +34,7 @@ namespace GameTheory.Games.LoveLetter.Moves
         public override IList<object> FormatTokens => FormatUtilities.ParseStringFormat(Resources.DrawCard);
 
         /// <inheritdoc />
-        public override bool IsDeterministic => this.GameState.Deck.Count <= 1;
+        public override bool IsDeterministic => this.GameState.Deck.Keys.Count() <= 1;
 
         /// <inheritdoc />
         public override int CompareTo(Move other)
@@ -65,9 +67,19 @@ namespace GameTheory.Games.LoveLetter.Moves
             var activePlayer = this.PlayerToken;
             var activePlayerInventory = inventory[activePlayer];
             var hand = activePlayerInventory.Hand;
+            var hidden = state.Hidden;
 
-            deck = deck.Deal(out var dealt);
-            hand = hand.Add(dealt);
+            if (deck.Count > 0)
+            {
+                deck = deck.Deal(out var dealt);
+                hand = hand.Add(dealt);
+            }
+            else if (hidden != Card.None)
+            {
+                hand = hand.Add(state.Hidden);
+                hidden = Card.None;
+            }
+
             activePlayerInventory = activePlayerInventory.With(
                 hand: hand);
             inventory = inventory.SetItem(
@@ -75,10 +87,16 @@ namespace GameTheory.Games.LoveLetter.Moves
                 activePlayerInventory);
 
             state = state.With(
+                hidden: hidden,
                 inventory: inventory,
                 deck: deck);
 
             return base.Apply(state);
+        }
+
+        internal override IEnumerable<IWeighted<GameState>> GetOutcomes(GameState state)
+        {
+            throw new NotImplementedException();
         }
     }
 }

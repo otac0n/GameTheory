@@ -2,8 +2,8 @@
 
 namespace GameTheory.Games.LoveLetter.Moves
 {
-    using System;
     using System.Collections.Generic;
+    using GameTheory.Games.LoveLetter.States;
 
     /// <summary>
     /// Represents a move to choose a target player.
@@ -57,9 +57,7 @@ namespace GameTheory.Games.LoveLetter.Moves
 
         internal override GameState Apply(GameState state)
         {
-            // TODO: Choose a card.
-            // TODO: Force the victim to discard their hand if the named card is correct.
-            return base.Apply(state);
+            return state.WithInterstitialState(new ChoosingCardState(this.TargetPlayer));
         }
     }
 }

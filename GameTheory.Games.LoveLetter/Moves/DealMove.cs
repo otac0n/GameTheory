@@ -2,6 +2,7 @@
 
 namespace GameTheory.Games.LoveLetter.Moves
 {
+    using System;
     using System.Collections.Generic;
 
     /// <summary>
@@ -19,10 +20,28 @@ namespace GameTheory.Games.LoveLetter.Moves
         }
 
         /// <inheritdoc />
-        public override IList<object> FormatTokens => FormatUtilities.ParseStringFormat(Resources.RevealHand);
+        public override IList<object> FormatTokens => FormatUtilities.ParseStringFormat(Resources.Deal);
 
         /// <inheritdoc />
         public override bool IsDeterministic => false;
+
+        /// <inheritdoc />
+        public override int CompareTo(Move other)
+        {
+            if (object.ReferenceEquals(other, this))
+            {
+                return 0;
+            }
+
+            if (other is ContinueMove move)
+            {
+                return this.PlayerToken.CompareTo(move.PlayerToken);
+            }
+            else
+            {
+                return base.CompareTo(other);
+            }
+        }
 
         internal static IEnumerable<DealMove> GenerateMoves(GameState state)
         {
@@ -41,6 +60,11 @@ namespace GameTheory.Games.LoveLetter.Moves
                 deck: deck);
 
             return base.Apply(state);
+        }
+
+        internal override IEnumerable<IWeighted<GameState>> GetOutcomes(GameState state)
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -63,6 +63,15 @@ namespace GameTheory.Games.LoveLetter {
         /// <summary>
         ///   Looks up a localized string similar to Choose {0}.
         /// </summary>
+        public static string ChooseCard {
+            get {
+                return ResourceManager.GetString("ChooseCard", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Choose {0}.
+        /// </summary>
         public static string ChooseTarget {
             get {
                 return ResourceManager.GetString("ChooseTarget", resourceCulture);
@@ -84,6 +93,15 @@ namespace GameTheory.Games.LoveLetter {
         public static string Continue {
             get {
                 return ResourceManager.GetString("Continue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Deal a new round.
+        /// </summary>
+        public static string Deal {
+            get {
+                return ResourceManager.GetString("Deal", resourceCulture);
             }
         }
         

@@ -1,11 +1,11 @@
 // Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
-namespace GameTheory.Games.LoveLetter.Actions
+namespace GameTheory.Games.LoveLetter.States
 {
     using System.Collections.Generic;
     using GameTheory.Games.LoveLetter.Moves;
 
-    internal class BaronAction : InterstitialState
+    internal class GuardActionState : InterstitialState
     {
         public override IEnumerable<Move> GenerateMoves(GameState state)
         {
@@ -17,7 +17,7 @@ namespace GameTheory.Games.LoveLetter.Actions
                 if (player != activePlayer && otherInventory.Hand.Length > 0 && (otherInventory.Discards.IsEmpty || otherInventory.Discards.Peek() != Card.Handmaid))
                 {
                     anyTargets = true;
-                    yield return new CompareHandsMove(state, player);
+                    yield return new ChooseTargetMove(state, player);
                 }
             }
 

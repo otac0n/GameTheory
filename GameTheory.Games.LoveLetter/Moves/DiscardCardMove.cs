@@ -5,7 +5,7 @@ namespace GameTheory.Games.LoveLetter.Moves
     using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Linq;
-    using GameTheory.Games.LoveLetter.Actions;
+    using GameTheory.Games.LoveLetter.States;
 
     /// <summary>
     /// Represents a move to discard a card from the player's hand.
@@ -45,8 +45,7 @@ namespace GameTheory.Games.LoveLetter.Moves
 
                 if ((comp = this.PlayerToken.CompareTo(move.PlayerToken)) != 0 ||
                     (comp = this.CardIndex.CompareTo(move.CardIndex)) != 0 ||
-                    (comp = this.GameState.Inventory[this.PlayerToken].Hand[this.CardIndex].CompareTo(move.GameState.Inventory[move.PlayerToken].Hand[move.CardIndex])) != 0 ||
-                    (comp = CompareUtilities.CompareLists(this.GameState.Players, move.GameState.Players)) != 0)
+                    (comp = this.GameState.Inventory[this.PlayerToken].Hand[this.CardIndex].CompareTo(move.GameState.Inventory[move.PlayerToken].Hand[move.CardIndex])) != 0)
                 {
                     return comp;
                 }
@@ -79,7 +78,7 @@ namespace GameTheory.Games.LoveLetter.Moves
         {
             var inventory = state.Inventory;
 
-            var activePlayerInventory = inventory[state.ActivePlayer];
+            var activePlayerInventory = inventory[this.PlayerToken];
             var hand = activePlayerInventory.Hand;
             var discard = hand[this.CardIndex];
             var discards = activePlayerInventory.Discards.Push(discard);
@@ -89,23 +88,23 @@ namespace GameTheory.Games.LoveLetter.Moves
             switch (discard)
             {
                 case Card.Guard:
-                    interstitial = new GuardAction();
+                    interstitial = new GuardActionState();
                     break;
 
                 case Card.Priest:
-                    interstitial = new PriestAction();
+                    interstitial = new PriestActionState();
                     break;
 
                 case Card.Baron:
-                    interstitial = new BaronAction();
+                    interstitial = new BaronActionState();
                     break;
 
                 case Card.Prince:
-                    interstitial = new PrinceAction();
+                    interstitial = new PrinceActionState();
                     break;
 
                 case Card.King:
-                    interstitial = new KingAction();
+                    interstitial = new KingActionState();
                     break;
 
                 case Card.Princess:

@@ -5,20 +5,20 @@ namespace GameTheory.Games.LoveLetter.States
     using System.Collections.Generic;
     using GameTheory.Games.LoveLetter.Moves;
 
-    internal class RedrawState : InterstitialState
+    internal class ChoosingCardState : InterstitialState
     {
-        public RedrawState(PlayerToken playerToken)
+        public ChoosingCardState(PlayerToken targetPlayer)
         {
-            this.PlayerToken = playerToken;
+            this.TargetPlayer = targetPlayer;
         }
 
-        public PlayerToken PlayerToken { get; }
+        public PlayerToken TargetPlayer { get; }
 
         public override int CompareTo(InterstitialState other)
         {
-            if (other is RedrawState state)
+            if (other is ChoosingCardState state)
             {
-                return this.PlayerToken.CompareTo(state.PlayerToken);
+                return this.TargetPlayer.CompareTo(state.TargetPlayer);
             }
             else
             {
@@ -28,7 +28,13 @@ namespace GameTheory.Games.LoveLetter.States
 
         public override IEnumerable<Move> GenerateMoves(GameState state)
         {
-            yield return new DrawCardMove(state, this.PlayerToken);
+            foreach (var card in EnumUtilities<Card>.GetValues())
+            {
+                if (card > Card.Guard)
+                {
+                    yield return new ChooseCardMove(state, this.TargetPlayer, card);
+                }
+            }
         }
     }
 }

@@ -5,6 +5,11 @@ namespace GameTheory.Games.LoveLetter
     public enum Card : byte
     {
         /// <summary>
+        /// Not a card.
+        /// </summary>
+        None = 0,
+
+        /// <summary>
         /// The Guard card.
         /// </summary>
         Guard = 1,

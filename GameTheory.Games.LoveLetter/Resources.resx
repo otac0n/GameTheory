@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="ChooseCard" xml:space="preserve">
+    <value>Choose {0}</value>
+  </data>
   <data name="ChooseTarget" xml:space="preserve">
     <value>Choose {0}</value>
   </data>
@@ -125,6 +128,9 @@
   </data>
   <data name="Continue" xml:space="preserve">
     <value>Continue</value>
+  </data>
+  <data name="Deal" xml:space="preserve">
+    <value>Deal a new round</value>
   </data>
   <data name="DiscardCard" xml:space="preserve">
     <value>Discard {0}</value>
