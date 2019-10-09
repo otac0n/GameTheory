@@ -8,27 +8,61 @@ namespace GameTheory.Games.$game$
     /// <summary>
     /// Represents a move in $game$.
     /// </summary>
-    public sealed class Move : IMove
+    public abstract class Move : IMove, IComparable<Move>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="Move"/> class.
         /// </summary>
-        /// <param name="playerToken">The player who may make this move.</param>
-        public Move(PlayerToken playerToken)
+        /// <param name="state">The <see cref="$game$.GameState"/> that this move is based on.</param>
+        public Move(GameState state)
         {
-            this.PlayerToken = playerToken;
+            this.GameState = state ?? throw new ArgumentNullException(nameof(state));
+            this.PlayerToken = state.ActivePlayer;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Move"/> class.
+        /// </summary>
+        /// <param name="state">The <see cref="$game$.GameState"/> that this move is based on.</param>
+        /// <param name="player">The <see cref="PlayerToken">player</see> that may choose this move.</param>
+        protected Move(GameState state, PlayerToken player)
+        {
+            this.GameState = state ?? throw new ArgumentNullException(nameof(state));
+            this.PlayerToken = player;
         }
 
         /// <inheritdoc />
-        public IList<object> FormatTokens => throw new NotImplementedException();
+        public abstract IList<object> FormatTokens { get; }
 
         /// <inheritdoc />
-        public bool IsDeterministic => true;
+        public virtual bool IsDeterministic => true;
 
         /// <inheritdoc />
         public PlayerToken PlayerToken { get; }
 
+        internal GameState GameState { get; }
+
         /// <inheritdoc />
-        public override string ToString() => string.Concat(this.FlattenFormatTokens());
+        public virtual int CompareTo(Move other)
+        {
+            if (object.ReferenceEquals(this, other))
+            {
+                return 0;
+            }
+            else if (object.ReferenceEquals(other, null))
+            {
+                return 1;
+            }
+
+            return string.Compare(this.GetType().Name, other.GetType().Name, StringComparison.Ordinal);
+        }
+
+        /// <inheritdoc />
+        public sealed override string ToString() => string.Concat(this.FlattenFormatTokens());
+
+        internal virtual GameState Apply(GameState state)
+        {
+            return state;
+        }
     }
 }
