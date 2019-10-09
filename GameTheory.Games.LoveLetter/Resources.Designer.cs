@@ -106,6 +106,15 @@ namespace GameTheory.Games.LoveLetter {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Discard your hand.
+        /// </summary>
+        public static string DiscardOwnHand {
+            get {
+                return ResourceManager.GetString("DiscardOwnHand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Draw a card.
         /// </summary>
         public static string DrawCard {
@@ -129,6 +138,15 @@ namespace GameTheory.Games.LoveLetter {
         public static string Name {
             get {
                 return ResourceManager.GetString("Name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reveal your hand.
+        /// </summary>
+        public static string RevealHand {
+            get {
+                return ResourceManager.GetString("RevealHand", resourceCulture);
             }
         }
         

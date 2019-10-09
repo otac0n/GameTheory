@@ -5,7 +5,7 @@ namespace GameTheory.Games.LoveLetter.Moves
     using System.Collections.Generic;
 
     /// <summary>
-    /// Represents a move to draw a card.
+    /// Represents a move to continue from the current state.
     /// </summary>
     public sealed class ContinueMove : Move
     {

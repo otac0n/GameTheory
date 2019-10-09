@@ -26,6 +26,14 @@ namespace GameTheory.Games.LoveLetter
         public const int MinPlayers = 2;
 
         /// <summary>
+        /// The number of tokens required to win.
+        /// </summary>
+        public static readonly ImmutableDictionary<int, int> WinThresholds = ImmutableDictionary.Create<int, int>()
+            .Add(2, 7)
+            .Add(3, 5)
+            .Add(4, 4);
+
+        /// <summary>
         /// The starting deck.
         /// </summary>
         public static EnumCollection<Card> StartingDeck = EnumCollection<Card>.Empty
@@ -56,31 +64,10 @@ namespace GameTheory.Games.LoveLetter
             this.Players = Enumerable.Range(0, players).Select(i => new PlayerToken()).ToImmutableArray();
             this.ActivePlayer = this.Players[0];
             this.Phase = Phase.Draw;
-
-            var deck = StartingDeck;
-            deck = deck.Deal(out var hidden);
+            var inventory = this.Players.ToImmutableDictionary(p => p, p => new Inventory());
+            DealNewRound(ref inventory, out var deck, out var hidden, out var inaccessible);
+            this.Inventory = inventory;
             this.Hidden = hidden;
-
-            if (players < 3)
-            {
-                deck = deck.Deal(3, out var inaccessible);
-                this.Inaccessible = new EnumCollection<Card>(inaccessible);
-            }
-            else
-            {
-                this.Inaccessible = EnumCollection<Card>.Empty;
-            }
-
-            var inventory = ImmutableDictionary.CreateBuilder<PlayerToken, Inventory>();
-            foreach (var player in this.Players)
-            {
-                deck = deck.Deal(out var startingHand);
-                inventory.Add(
-                    player,
-                    new Inventory(
-                        ImmutableArray.Create<Card>(startingHand)));
-            }
-            this.Inventory = inventory.ToImmutable();
 
             this.Deck = deck;
         }
@@ -202,6 +189,14 @@ namespace GameTheory.Games.LoveLetter
                     case Phase.Discard:
                         moves.AddRange(DiscardCardMove.GenerateMoves(this));
                         break;
+
+                    case Phase.Reveal:
+                        moves.AddRange(RevealHandMove.GenerateMoves(this));
+                        break;
+
+                    case Phase.Deal:
+                        moves.AddRange(DealMove.GenerateMoves(this));
+                        break;
                 }
             }
 
@@ -262,6 +257,36 @@ namespace GameTheory.Games.LoveLetter
             }
 
             return move.Apply(this);
+        }
+
+        internal static void DealNewRound(ref ImmutableDictionary<PlayerToken, Inventory> inventory, out EnumCollection<Card> deck, out Card hidden, out EnumCollection<Card> inaccessible)
+        {
+            deck = StartingDeck;
+            deck = deck.Deal(out hidden);
+
+            if (inventory.Count == MinPlayers)
+            {
+                deck = deck.Deal(3, out var dealt);
+                inaccessible = new EnumCollection<Card>(dealt);
+            }
+            else
+            {
+                inaccessible = EnumCollection<Card>.Empty;
+            }
+
+            var inventoryBuilder = ImmutableDictionary.CreateBuilder<PlayerToken, Inventory>();
+            foreach (var player in inventory.Keys)
+            {
+                deck = deck.Deal(out var startingHand);
+                var playerInventory = new Inventory().With(
+                    hand: ImmutableArray.Create(startingHand),
+                    tokens: inventory[player].Tokens);
+                inventoryBuilder.Add(
+                    player,
+                    playerInventory);
+            }
+
+            inventory = inventoryBuilder.ToImmutable();
         }
 
         internal GameState With(

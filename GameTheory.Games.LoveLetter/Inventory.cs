@@ -13,9 +13,8 @@ namespace GameTheory.Games.LoveLetter
         /// <summary>
         /// Initializes a new instance of the <see cref="Inventory"/> class.
         /// </summary>
-        /// <param name="hand">The player's hand.</param>
-        public Inventory(ImmutableArray<Card> hand)
-            : this(hand, ImmutableStack<Card>.Empty, 0, false)
+        public Inventory()
+            : this(ImmutableArray<Card>.Empty, ImmutableStack<Card>.Empty, 0, false)
         {
         }
 

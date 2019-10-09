@@ -93,6 +93,46 @@ namespace GameTheory.Games.LoveLetter
                         phase: Phase.Draw);
                 }
             }
+            else if (state.Phase == Phase.Reveal)
+            {
+                if (!state.Inventory.Values.Any(inv => !inv.HandRevealed && inv.Hand.Length > 0))
+                {
+                    var inventory = state.Inventory;
+                    var winner = inventory
+                        .Where(s => s.Value.Hand.Length > 0)
+                        .OrderByDescending(s => s.Value.Hand.Max(c => (int)c))
+                        .ThenByDescending(s => s.Value.Discards.Sum(c => (int)c))
+                        .Select(s => s.Key)
+                        .First();
+
+                    var winnerInventory = inventory[winner];
+                    winnerInventory = winnerInventory.With(
+                        tokens: winnerInventory.Tokens + 1);
+
+                    inventory = inventory.SetItem(
+                        winner,
+                        winnerInventory);
+
+                    if (winnerInventory.Tokens >= GameState.WinThresholds[state.Players.Length])
+                    {
+                        state = state.With(
+                            inventory: inventory,
+                            phase: Phase.End);
+                    }
+                    else
+                    {
+                        state = state.With(
+                            activePlayer: winner,
+                            inventory: inventory,
+                            phase: Phase.Deal);
+                    }
+                }
+            }
+            else if (state.Phase == Phase.Deal)
+            {
+                state = state.With(
+                    phase: Phase.Draw);
+            }
 
             return state;
         }

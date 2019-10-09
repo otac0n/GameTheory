@@ -6,7 +6,7 @@ namespace GameTheory.Games.LoveLetter.Moves
     using System.Collections.Generic;
 
     /// <summary>
-    /// Represents a move to choose another player to compare hands with.
+    /// Represents a move to choose another player to trade hands with.
     /// </summary>
     public sealed class TradeHandsMove : Move
     {

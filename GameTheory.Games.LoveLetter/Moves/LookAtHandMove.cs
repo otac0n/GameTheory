@@ -4,6 +4,7 @@ namespace GameTheory.Games.LoveLetter.Moves
 {
     using System;
     using System.Collections.Generic;
+    using GameTheory.Games.LoveLetter.States;
 
     /// <summary>
     /// Represents a move to look at aonther player's hand.

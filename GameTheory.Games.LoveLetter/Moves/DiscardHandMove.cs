@@ -6,9 +6,10 @@ namespace GameTheory.Games.LoveLetter.Moves
     using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Linq;
+    using GameTheory.Games.LoveLetter.States;
 
     /// <summary>
-    /// Represents a move to choose another player to compare hands with.
+    /// Represents a move to discard a player's hand.
     /// </summary>
     public sealed class DiscardHandMove : Move
     {
@@ -16,15 +17,39 @@ namespace GameTheory.Games.LoveLetter.Moves
         /// Initializes a new instance of the <see cref="DiscardHandMove"/> class.
         /// </summary>
         /// <param name="state">The <see cref="GameState"/> that this move is based on.</param>
-        /// <param name="targetPlayer">The target player.</param>
-        public DiscardHandMove(GameState state, PlayerToken targetPlayer)
+        /// <param name="targetPlayer">The target player whose hand will be discarded.</param>
+        /// <param name="redraw">A value indicating whether or not the target player will redraw their hand.</param>
+        public DiscardHandMove(GameState state, PlayerToken targetPlayer, bool redraw)
             : base(state)
         {
             this.TargetPlayer = targetPlayer;
+            this.Redraw = redraw;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DiscardHandMove"/> class.
+        /// </summary>
+        /// <param name="state">The <see cref="GameState"/> that this move is based on.</param>
+        /// <param name="player">The player doing the discarding.</param>
+        /// <param name="targetPlayer">The target player whose hand will be discarded.</param>
+        /// <param name="redraw">A value indicating whether or not the target player will redraw their hand.</param>
+        public DiscardHandMove(GameState state, PlayerToken player, PlayerToken targetPlayer, bool redraw)
+            : base(state, player)
+        {
+            this.TargetPlayer = targetPlayer;
+            this.Redraw = redraw;
         }
 
         /// <inheritdoc />
-        public override IList<object> FormatTokens => FormatUtilities.ParseStringFormat(Resources.DiscardHand, this.TargetPlayer);
+        public override IList<object> FormatTokens =>
+            this.PlayerToken == this.TargetPlayer
+                ? FormatUtilities.ParseStringFormat(Resources.DiscardOwnHand)
+                : FormatUtilities.ParseStringFormat(Resources.DiscardHand, this.TargetPlayer);
+
+        /// <summary>
+        /// Gets a value indicating whether or not the target player will redraw their hand.
+        /// </summary>
+        public bool Redraw { get; }
 
         /// <summary>
         /// Gets the target player.
@@ -44,7 +69,8 @@ namespace GameTheory.Games.LoveLetter.Moves
                 int comp;
 
                 if ((comp = this.PlayerToken.CompareTo(move.PlayerToken)) != 0 ||
-                    (comp = this.TargetPlayer.CompareTo(move.TargetPlayer)) != 0)
+                    (comp = this.TargetPlayer.CompareTo(move.TargetPlayer)) != 0 ||
+                    (comp = this.Redraw.CompareTo(move.Redraw)) != 0)
                 {
                     return comp;
                 }
@@ -68,9 +94,9 @@ namespace GameTheory.Games.LoveLetter.Moves
             hand = ImmutableArray<Card>.Empty;
 
             InterstitialState interstitial = null;
-            if (discard != Card.Princess)
+            if (this.Redraw && discard != Card.Princess)
             {
-                // TODO: Allow them to redraw.
+                interstitial = new RedrawState(this.TargetPlayer);
             }
 
             targetInventory = targetInventory.With(

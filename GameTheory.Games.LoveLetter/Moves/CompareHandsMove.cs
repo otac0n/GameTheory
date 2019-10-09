@@ -3,6 +3,7 @@
 namespace GameTheory.Games.LoveLetter.Moves
 {
     using System.Collections.Generic;
+    using GameTheory.Games.LoveLetter.States;
 
     /// <summary>
     /// Represents a move to choose another player to compare hands with.
@@ -56,8 +57,7 @@ namespace GameTheory.Games.LoveLetter.Moves
 
         internal override GameState Apply(GameState state)
         {
-            // TODO: Set flags for displaying hands.
-            return state.WithInterstitialState(new PauseState());
+            return state.WithInterstitialState(new ComparingHandsState(this.TargetPlayer));
         }
     }
 }

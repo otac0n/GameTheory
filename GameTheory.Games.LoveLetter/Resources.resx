@@ -132,6 +132,9 @@
   <data name="DiscardHand" xml:space="preserve">
     <value>Discard {0}'s hand</value>
   </data>
+  <data name="DiscardOwnHand" xml:space="preserve">
+    <value>Discard your hand</value>
+  </data>
   <data name="DrawCard" xml:space="preserve">
     <value>Draw a card</value>
   </data>
@@ -140,6 +143,9 @@
   </data>
   <data name="Name" xml:space="preserve">
     <value>Love Letter</value>
+  </data>
+  <data name="RevealHand" xml:space="preserve">
+    <value>Reveal your hand</value>
   </data>
   <data name="TradeHands" xml:space="preserve">
     <value>Trade hands with {0}</value>

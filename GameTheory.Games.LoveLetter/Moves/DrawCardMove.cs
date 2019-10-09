@@ -18,6 +18,16 @@ namespace GameTheory.Games.LoveLetter.Moves
         {
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DrawCardMove"/> class.
+        /// </summary>
+        /// <param name="state">The <see cref="GameState"/> that this move is based on.</param>
+        /// <param name="player">The player drawing a card.</param>
+        public DrawCardMove(GameState state, PlayerToken player)
+            : base(state, player)
+        {
+        }
+
         /// <inheritdoc />
         public override IList<object> FormatTokens => FormatUtilities.ParseStringFormat(Resources.DrawCard);
 
@@ -52,7 +62,7 @@ namespace GameTheory.Games.LoveLetter.Moves
             var inventory = state.Inventory;
 
             var deck = state.Deck;
-            var activePlayer = state.ActivePlayer;
+            var activePlayer = this.PlayerToken;
             var activePlayerInventory = inventory[activePlayer];
             var hand = activePlayerInventory.Hand;
 

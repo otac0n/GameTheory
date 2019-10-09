@@ -61,12 +61,16 @@ namespace GameTheory.Games.LoveLetter.Moves
 
         internal static IEnumerable<DiscardCardMove> GenerateMoves(GameState state)
         {
-            var activePlayerInventory = state.Inventory[state.ActivePlayer];
+            var hand = state.Inventory[state.ActivePlayer].Hand;
             if (state.Phase == Phase.Discard)
             {
-                for (var i = 0; i < activePlayerInventory.Hand.Length; i++)
+                var containsCountess = hand.Contains(Card.Countess);
+                for (var i = 0; i < hand.Length; i++)
                 {
-                    yield return new DiscardCardMove(state, i);
+                    if (!containsCountess || (hand[i] != Card.King && hand[i] != Card.Prince))
+                    {
+                        yield return new DiscardCardMove(state, i);
+                    }
                 }
             }
         }

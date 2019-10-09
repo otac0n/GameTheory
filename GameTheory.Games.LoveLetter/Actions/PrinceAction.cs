@@ -15,7 +15,7 @@ namespace GameTheory.Games.LoveLetter.Actions
                 var otherInventory = state.Inventory[player];
                 if (player == activePlayer || (otherInventory.Hand.Length > 0 && (otherInventory.Discards.IsEmpty || otherInventory.Discards.Peek() != Card.Handmaid)))
                 {
-                    yield return new DiscardHandMove(state, player);
+                    yield return new DiscardHandMove(state, player, redraw: true);
                 }
             }
         }
