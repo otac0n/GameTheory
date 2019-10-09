@@ -400,7 +400,7 @@ namespace GameTheory.Games.SevenDragons
         }
 
         internal GameState With(
-                                    PlayerToken activePlayer = null,
+            PlayerToken activePlayer = null,
             Phase? phase = null,
             ImmutableList<Card> deck = null,
             ImmutableList<ActionCard> discardPile = null,
