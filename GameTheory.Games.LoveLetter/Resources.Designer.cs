@@ -61,11 +61,83 @@ namespace GameTheory.Games.LoveLetter {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Choose {0}.
+        /// </summary>
+        public static string ChooseTarget {
+            get {
+                return ResourceManager.GetString("ChooseTarget", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Compare hands with {0}.
+        /// </summary>
+        public static string CompareHands {
+            get {
+                return ResourceManager.GetString("CompareHands", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Continue.
+        /// </summary>
+        public static string Continue {
+            get {
+                return ResourceManager.GetString("Continue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Discard {0}.
+        /// </summary>
+        public static string DiscardCard {
+            get {
+                return ResourceManager.GetString("DiscardCard", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Discard {0}&apos;s hand.
+        /// </summary>
+        public static string DiscardHand {
+            get {
+                return ResourceManager.GetString("DiscardHand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Draw a card.
+        /// </summary>
+        public static string DrawCard {
+            get {
+                return ResourceManager.GetString("DrawCard", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Look at {0}&apos;s hand.
+        /// </summary>
+        public static string LookAtHand {
+            get {
+                return ResourceManager.GetString("LookAtHand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Love Letter.
         /// </summary>
         public static string Name {
             get {
                 return ResourceManager.GetString("Name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Trade hands with {0}.
+        /// </summary>
+        public static string TradeHands {
+            get {
+                return ResourceManager.GetString("TradeHands", resourceCulture);
             }
         }
     }

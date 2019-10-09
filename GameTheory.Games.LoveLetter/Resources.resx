@@ -117,7 +117,31 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="ChooseTarget" xml:space="preserve">
+    <value>Choose {0}</value>
+  </data>
+  <data name="CompareHands" xml:space="preserve">
+    <value>Compare hands with {0}</value>
+  </data>
+  <data name="Continue" xml:space="preserve">
+    <value>Continue</value>
+  </data>
+  <data name="DiscardCard" xml:space="preserve">
+    <value>Discard {0}</value>
+  </data>
+  <data name="DiscardHand" xml:space="preserve">
+    <value>Discard {0}'s hand</value>
+  </data>
+  <data name="DrawCard" xml:space="preserve">
+    <value>Draw a card</value>
+  </data>
+  <data name="LookAtHand" xml:space="preserve">
+    <value>Look at {0}'s hand</value>
+  </data>
   <data name="Name" xml:space="preserve">
     <value>Love Letter</value>
+  </data>
+  <data name="TradeHands" xml:space="preserve">
+    <value>Trade hands with {0}</value>
   </data>
 </root>

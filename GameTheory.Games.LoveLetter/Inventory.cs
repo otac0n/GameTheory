@@ -4,7 +4,6 @@ namespace GameTheory.Games.LoveLetter
 {
     using System;
     using System.Collections.Immutable;
-    using System.Linq;
 
     /// <summary>
     /// Represents a player's inventory.
@@ -16,8 +15,7 @@ namespace GameTheory.Games.LoveLetter
         /// </summary>
         /// <param name="hand">The player's hand.</param>
         public Inventory(ImmutableArray<Card> hand)
-            : this(hand, EnumCollection<Card>.Empty, 0, false)
-
+            : this(hand, ImmutableStack<Card>.Empty, 0, false)
         {
         }
 
@@ -28,7 +26,11 @@ namespace GameTheory.Games.LoveLetter
         /// <param name="discards">The player's discards.</param>
         /// <param name="tokens">The player's tokens of affection.</param>
         /// <param name="handRevealed">A value indicating whether or not the player's hand has been revealed.</param>
-        public Inventory(ImmutableArray<Card> hand, EnumCollection<Card> discards, int tokens, bool handRevealed)
+        public Inventory(
+            ImmutableArray<Card> hand,
+            ImmutableStack<Card> discards,
+            int tokens,
+            bool handRevealed)
         {
             this.Hand = hand;
             this.Discards = discards;
@@ -39,7 +41,7 @@ namespace GameTheory.Games.LoveLetter
         /// <summary>
         /// Gets the player's discards.
         /// </summary>
-        public EnumCollection<Card> Discards { get; }
+        public ImmutableStack<Card> Discards { get; }
 
         /// <summary>
         /// Gets the player's hand.
@@ -64,7 +66,7 @@ namespace GameTheory.Games.LoveLetter
             if ((comp = this.Tokens.CompareTo(other.Tokens)) != 0 ||
                 (comp = this.HandRevealed.CompareTo(other.HandRevealed)) != 0 ||
                 (comp = CompareUtilities.CompareEnumLists(this.Hand, other.Hand)) != 0 ||
-                (comp = this.Discards.CompareTo(other.Discards)) != 0)
+                (comp = CompareUtilities.CompareEnumStacks(this.Discards, other.Discards)) != 0)
             {
                 return comp;
             }
@@ -86,6 +88,19 @@ namespace GameTheory.Games.LoveLetter
             }
 
             return hash;
+        }
+
+        internal Inventory With(
+            ImmutableArray<Card>? hand = null,
+            ImmutableStack<Card> discards = null,
+            int? tokens = null,
+            bool? handRevealed = null)
+        {
+            return new Inventory(
+                hand ?? this.Hand,
+                discards ?? this.Discards,
+                tokens ?? this.Tokens,
+                handRevealed ?? this.HandRevealed);
         }
     }
 }

@@ -8,9 +8,9 @@ namespace GameTheory.Games.LoveLetter
     public enum Phase : byte
     {
         /// <summary>
-        /// The game is in play.
+        /// The active player must draw a card.
         /// </summary>
-        Play,
+        Draw,
 
         /// <summary>
         /// The active player must discard a card.

@@ -7,6 +7,8 @@ namespace GameTheory.Games.LoveLetter
     using System.Collections.Immutable;
     using System.ComponentModel.DataAnnotations;
     using System.Linq;
+    using System.Threading;
+    using GameTheory.Games.LoveLetter.Moves;
 
     /// <summary>
     /// Represents the current state in a game of LoveLetter.
@@ -36,6 +38,10 @@ namespace GameTheory.Games.LoveLetter
             .Add(Card.Countess, 1)
             .Add(Card.Princess, 1);
 
+        private InterstitialState interstitialState;
+
+        private Lazy<ImmutableList<Move>> subsequentMoves;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="GameState"/> class in the starting position.
         /// </summary>
@@ -49,7 +55,7 @@ namespace GameTheory.Games.LoveLetter
 
             this.Players = Enumerable.Range(0, players).Select(i => new PlayerToken()).ToImmutableArray();
             this.ActivePlayer = this.Players[0];
-            this.Phase = Phase.Play;
+            this.Phase = Phase.Draw;
 
             var deck = StartingDeck;
             deck = deck.Deal(out var hidden);
@@ -65,34 +71,44 @@ namespace GameTheory.Games.LoveLetter
                 this.Inaccessible = EnumCollection<Card>.Empty;
             }
 
-            var inventories = ImmutableDictionary.CreateBuilder<PlayerToken, Inventory>();
+            var inventory = ImmutableDictionary.CreateBuilder<PlayerToken, Inventory>();
             foreach (var player in this.Players)
             {
                 deck = deck.Deal(out var startingHand);
-                inventories.Add(
+                inventory.Add(
                     player,
                     new Inventory(
                         ImmutableArray.Create<Card>(startingHand)));
             }
-            this.Inventories = inventories.ToImmutable();
+            this.Inventory = inventory.ToImmutable();
 
             this.Deck = deck;
         }
 
         private GameState(
             ImmutableArray<PlayerToken> players,
+            InterstitialState interstitialState,
             Card hidden,
             EnumCollection<Card> inaccessible,
             PlayerToken activePlayer,
             Phase phase,
-            ImmutableDictionary<PlayerToken, Inventory> inventories)
+            ImmutableDictionary<PlayerToken, Inventory> inventory,
+            EnumCollection<Card> deck)
+            : this(interstitialState)
         {
             this.Players = players;
             this.Hidden = hidden;
             this.Inaccessible = inaccessible;
             this.ActivePlayer = activePlayer;
             this.Phase = phase;
-            this.Inventories = inventories;
+            this.Inventory = inventory;
+            this.Deck = deck;
+        }
+
+        private GameState(InterstitialState interstitialState)
+        {
+            this.interstitialState = interstitialState;
+            this.subsequentMoves = this.interstitialState == null ? null : new Lazy<ImmutableList<Move>>(() => this.interstitialState.GenerateMoves(this).ToImmutableList(), LazyThreadSafetyMode.ExecutionAndPublication);
         }
 
         /// <summary>
@@ -118,7 +134,7 @@ namespace GameTheory.Games.LoveLetter
         /// <summary>
         /// Gets the player inventories.
         /// </summary>
-        public ImmutableDictionary<PlayerToken, Inventory> Inventories { get; }
+        public ImmutableDictionary<PlayerToken, Inventory> Inventory { get; }
 
         /// <summary>
         /// Gets the phase.
@@ -150,9 +166,10 @@ namespace GameTheory.Games.LoveLetter
             int comp;
 
             if ((comp = this.ActivePlayer.CompareTo(state.ActivePlayer)) != 0 ||
+                (comp = EnumComparer<Phase>.Default.Compare(this.Phase, state.Phase)) != 0 ||
                 (comp = this.Hidden.CompareTo(state.Hidden)) != 0 ||
                 (comp = this.Inaccessible.CompareTo(state.Inaccessible)) != 0 ||
-                (comp = CompareUtilities.CompareDictionaries(this.Inventories, state.Inventories)) != 0 ||
+                (comp = CompareUtilities.CompareDictionaries(this.Inventory, state.Inventory)) != 0 ||
                 (comp = CompareUtilities.CompareLists(this.Players, state.Players)) != 0 ||
                 (comp = this.Deck.CompareTo(state.Deck)) != 0)
             {
@@ -168,7 +185,27 @@ namespace GameTheory.Games.LoveLetter
         /// <inheritdoc />
         public IReadOnlyList<Move> GetAvailableMoves()
         {
-            return ImmutableList<Move>.Empty;
+            var moves = new List<Move>();
+
+            if (this.interstitialState != null)
+            {
+                moves.AddRange(this.subsequentMoves.Value);
+            }
+            else
+            {
+                switch (this.Phase)
+                {
+                    case Phase.Draw:
+                        moves.AddRange(DrawCardMove.GenerateMoves(this));
+                        break;
+
+                    case Phase.Discard:
+                        moves.AddRange(DiscardCardMove.GenerateMoves(this));
+                        break;
+                }
+            }
+
+            return moves.ToImmutableList();
         }
 
         /// <inheritdoc/>
@@ -176,10 +213,11 @@ namespace GameTheory.Games.LoveLetter
         {
             var hash = HashUtilities.Seed;
             HashUtilities.Combine(ref hash, this.ActivePlayer.GetHashCode());
+            HashUtilities.Combine(ref hash, this.Phase.GetHashCode());
 
             for (var i = 0; i < this.Players.Length; i++)
             {
-                HashUtilities.Combine(ref hash, this.Inventories[this.Players[i]].GetHashCode());
+                HashUtilities.Combine(ref hash, this.Inventory[this.Players[i]].GetHashCode());
             }
 
             return hash;
@@ -201,14 +239,61 @@ namespace GameTheory.Games.LoveLetter
         public IReadOnlyCollection<PlayerToken> GetWinners() => ImmutableList<PlayerToken>.Empty;
 
         /// <inheritdoc />
-        public IGameState<Move> MakeMove(Move move)
+        IGameState<Move> IGameState<Move>.MakeMove(Move move)
+        {
+            return this.MakeMove(move);
+        }
+
+        /// <summary>
+        /// Applies the move to the current game state.
+        /// </summary>
+        /// <param name="move">The <see cref="Move"/> to apply.</param>
+        /// <returns>The updated <see cref="GameState"/>.</returns>
+        public GameState MakeMove(Move move)
         {
             if (move == null)
             {
                 throw new ArgumentNullException(nameof(move));
             }
 
-            throw new NotImplementedException();
+            if (this.CompareTo(move.GameState) != 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(move));
+            }
+
+            return move.Apply(this);
+        }
+
+        internal GameState With(
+            Card? hidden = null,
+            EnumCollection<Card> inaccessible = null,
+            PlayerToken activePlayer = null,
+            Phase? phase = null,
+            ImmutableDictionary<PlayerToken, Inventory> inventory = null,
+            EnumCollection<Card> deck = null)
+        {
+            return new GameState(
+                this.Players,
+                null,
+                hidden ?? this.Hidden,
+                inaccessible ?? this.Inaccessible,
+                activePlayer ?? this.ActivePlayer,
+                phase ?? this.Phase,
+                inventory ?? this.Inventory,
+                deck ?? this.Deck);
+        }
+
+        internal GameState WithInterstitialState(InterstitialState interstitialState)
+        {
+            return new GameState(
+                this.Players,
+                interstitialState,
+                this.Hidden,
+                this.Inaccessible,
+                this.ActivePlayer,
+                this.Phase,
+                this.Inventory,
+                this.Deck);
         }
     }
 }
