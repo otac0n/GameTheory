@@ -237,6 +237,19 @@ namespace GameTheory.Games.SevenDragons
                 return comp;
             }
 
+            if (this.interstitialState != state.interstitialState)
+            {
+                if (this.interstitialState == null)
+                {
+                    return -1;
+                }
+
+                if ((comp = this.interstitialState.CompareTo(state.interstitialState)) != 0)
+                {
+                    return comp;
+                }
+            }
+
             return 0;
         }
 
