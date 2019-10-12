@@ -70,6 +70,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameTheory.Games.Mancala.Co
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameTheory.Games.Mancala.Forms", "GameTheory.Games.Mancala.Forms\GameTheory.Games.Mancala.Forms.csproj", "{31630E20-4BC4-4FD9-8445-72FCDD54746E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameTheory.Games.Mancala.Tests", "GameTheory.Games.Mancala.Tests\GameTheory.Games.Mancala.Tests.csproj", "{BE1F2B55-6BA2-4C83-B1E7-4BD775CC7633}"
+EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameTheory.Games.NormalFormGame", "GameTheory.Games.NormalFormGame\GameTheory.Games.NormalFormGame.csproj", "{2B9F26B4-66F6-4FDD-B4BD-E2990F19BB97}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameTheory.Games.PositivelyPerfectParfaitGame", "GameTheory.Games.PositivelyPerfectParfaitGame\GameTheory.Games.PositivelyPerfectParfaitGame.csproj", "{3CE3E90C-B698-458D-922D-0C2EEE8892CB}"
@@ -206,6 +208,10 @@ Global
 		{31630E20-4BC4-4FD9-8445-72FCDD54746E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{31630E20-4BC4-4FD9-8445-72FCDD54746E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{31630E20-4BC4-4FD9-8445-72FCDD54746E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BE1F2B55-6BA2-4C83-B1E7-4BD775CC7633}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BE1F2B55-6BA2-4C83-B1E7-4BD775CC7633}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BE1F2B55-6BA2-4C83-B1E7-4BD775CC7633}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BE1F2B55-6BA2-4C83-B1E7-4BD775CC7633}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2B9F26B4-66F6-4FDD-B4BD-E2990F19BB97}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2B9F26B4-66F6-4FDD-B4BD-E2990F19BB97}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2B9F26B4-66F6-4FDD-B4BD-E2990F19BB97}.Release|Any CPU.ActiveCfg = Release|Any CPU
