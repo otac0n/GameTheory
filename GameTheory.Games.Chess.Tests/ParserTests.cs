@@ -1,11 +1,10 @@
 // Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
-namespace GameTheory.Tests.Games.Chess
+namespace GameTheory.Games.Chess.Tests
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using GameTheory.Games.Chess;
     using NUnit.Framework;
 
     [TestFixture]
