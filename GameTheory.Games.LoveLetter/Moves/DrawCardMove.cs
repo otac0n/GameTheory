@@ -2,7 +2,6 @@
 
 namespace GameTheory.Games.LoveLetter.Moves
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
 
@@ -96,7 +95,61 @@ namespace GameTheory.Games.LoveLetter.Moves
 
         internal override IEnumerable<IWeighted<GameState>> GetOutcomes(GameState state)
         {
-            throw new NotImplementedException();
+            if (state.Deck.Count > 0)
+            {
+                foreach (var dealt in state.Deck.Keys)
+                {
+                    var inventory = state.Inventory;
+
+                    var deck = state.Deck;
+                    var activePlayer = this.PlayerToken;
+                    var activePlayerInventory = inventory[activePlayer];
+                    var hand = activePlayerInventory.Hand;
+
+                    deck = deck.Remove(dealt);
+                    hand = hand.Add(dealt);
+
+                    activePlayerInventory = activePlayerInventory.With(
+                        hand: hand);
+                    inventory = inventory.SetItem(
+                        activePlayer,
+                        activePlayerInventory);
+
+                    var newState = state.With(
+                        inventory: inventory,
+                        deck: deck);
+
+                    yield return Weighted.Create(base.Apply(newState), state.Deck[dealt]);
+                }
+            }
+            else if (state.Hidden != Card.None)
+            {
+                var inventory = state.Inventory;
+
+                var activePlayer = this.PlayerToken;
+                var activePlayerInventory = inventory[activePlayer];
+                var hand = activePlayerInventory.Hand;
+                var hidden = state.Hidden;
+
+                hand = hand.Add(hidden);
+                hidden = Card.None;
+
+                activePlayerInventory = activePlayerInventory.With(
+                    hand: hand);
+                inventory = inventory.SetItem(
+                    activePlayer,
+                    activePlayerInventory);
+
+                var newState = state.With(
+                    hidden: hidden,
+                    inventory: inventory);
+
+                yield return Weighted.Create(base.Apply(newState), 1);
+            }
+            else
+            {
+                yield return Weighted.Create(base.Apply(state), 1);
+            }
         }
     }
 }

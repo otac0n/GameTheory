@@ -2,8 +2,8 @@
 
 namespace GameTheory.Games.LoveLetter.Moves
 {
-    using System;
     using System.Collections.Generic;
+    using System.Collections.Immutable;
 
     /// <summary>
     /// Represents a move to reveal a player's hand.
@@ -64,7 +64,44 @@ namespace GameTheory.Games.LoveLetter.Moves
 
         internal override IEnumerable<IWeighted<GameState>> GetOutcomes(GameState state)
         {
-            throw new NotImplementedException();
+            var inaccessibleCombinations = state.Players.Length == GameState.MinPlayers
+                ? new[] { Weighted.Create(EnumCollection<Card>.Empty, 1) }
+                : GameState.StartingDeck.WeightedCombinations(3);
+
+            foreach (var inaccessible in inaccessibleCombinations)
+            {
+                var accessibleDeck = GameState.StartingDeck.RemoveRange(inaccessible.Value);
+
+                var toDeal = state.Players.Length + 1;
+                foreach (var c in accessibleDeck.WeightedCombinations(toDeal))
+                {
+                    var combinationWeight = inaccessible.Weight * c.Weight;
+                    foreach (var p in c.Value.WeightedPermutations(toDeal))
+                    {
+                        var inventoryBuilder = ImmutableDictionary.CreateBuilder<PlayerToken, Inventory>();
+                        for (var i = 0; i < state.Players.Length; i++)
+                        {
+                            var player = state.Players[i];
+                            var playerInventory = new Inventory(
+                                hand: ImmutableArray.Create(p.Value[i]),
+                                tokens: state.Inventory[player].Tokens,
+                                discards: ImmutableStack<Card>.Empty,
+                                handRevealed: false);
+                            inventoryBuilder.Add(
+                                player,
+                                playerInventory);
+                        }
+
+                        var newState = state.With(
+                            hidden: p.Value.Last(),
+                            inaccessible: inaccessible,
+                            inventory: inventoryBuilder.ToImmutable(),
+                            deck: accessibleDeck.RemoveRange(p.Value));
+
+                        yield return Weighted.Create(base.Apply(state), combinationWeight * p.Weight);
+                    }
+                }
+            }
         }
     }
 }
