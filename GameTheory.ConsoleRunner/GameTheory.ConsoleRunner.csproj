@@ -122,6 +122,10 @@
       <Project>{25442def-9dc3-4324-9b53-18734213bd96}</Project>
       <Name>GameTheory.Games.Lotus.Console</Name>
     </ProjectReference>
+    <ProjectReference Include="..\GameTheory.Games.LoveLetter.Console\GameTheory.Games.LoveLetter.Console.csproj">
+      <Project>{5e3f519c-81bd-48d2-b182-36a88bf4c0fa}</Project>
+      <Name>GameTheory.Games.LoveLetter.Console</Name>
+    </ProjectReference>
     <ProjectReference Include="..\GameTheory.Games.Mancala.Console\GameTheory.Games.Mancala.Console.csproj">
       <Project>{8417ecb7-2bb9-4460-a022-95f2806703a0}</Project>
       <Name>GameTheory.Games.Mancala.Console</Name>

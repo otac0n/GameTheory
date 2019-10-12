@@ -162,6 +162,10 @@
       <Project>{77a78fa3-d2fa-4b1c-b38d-e66d578f4211}</Project>
       <Name>GameTheory.Games.Lotus</Name>
     </ProjectReference>
+    <ProjectReference Include="..\GameTheory.Games.LoveLetter.Forms\GameTheory.Games.LoveLetter.Forms.csproj">
+      <Project>{f749729e-dc66-4604-9851-f3df82787dd1}</Project>
+      <Name>GameTheory.Games.LoveLetter.Forms</Name>
+    </ProjectReference>
     <ProjectReference Include="..\GameTheory.Games.Mancala.Forms\GameTheory.Games.Mancala.Forms.csproj">
       <Project>{31630e20-4bc4-4fd9-8445-72fcdd54746e}</Project>
       <Name>GameTheory.Games.Mancala.Forms</Name>
