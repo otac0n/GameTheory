@@ -1,8 +1,9 @@
-﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Tests.Games
 {
     using GameTheory.Games.NormalFormGame.MatchingPennies;
+    using GameTheory.Testing;
     using NUnit.Framework;
 
     [TestFixture]

@@ -76,13 +76,10 @@
     <CodeAnalysisDictionary Include="..\CustomDictionary.xml">
       <Link>CustomDictionary.xml</Link>
     </CodeAnalysisDictionary>
-    <Compile Include="DuhPlayer.cs" />
-    <Compile Include="GameStateExtensions.cs" />
     <None Include="packages.config" />
     <Compile Include="PlayerTokenTests.cs" />
     <Compile Include="RandomTests.cs" />
     <Compile Include="SizeTests.cs" />
-    <Compile Include="StubGameState.cs" />
     <AdditionalFiles Include="..\stylecop.json">
       <Link>stylecop.json</Link>
     </AdditionalFiles>
@@ -151,6 +148,10 @@
     <ProjectReference Include="..\GameTheory.Games.TwentyFortyEight\GameTheory.Games.TwentyFortyEight.csproj">
       <Project>{68ae3016-f59e-4e8b-a5a2-e1c59e1b7aef}</Project>
       <Name>GameTheory.Games.TwentyFortyEight</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\GameTheory.Testing\GameTheory.Testing.csproj">
+      <Project>{8f3e7e82-c364-40a0-be1e-d165bf30e304}</Project>
+      <Name>GameTheory.Testing</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

@@ -12,6 +12,7 @@ namespace GameTheory.Tests.Games
     using GameTheory.Games.FiveTribes.Moves;
     using GameTheory.Games.FiveTribes.Tiles;
     using GameTheory.Players;
+    using GameTheory.Testing;
     using NUnit.Framework;
 
     [TestFixture]

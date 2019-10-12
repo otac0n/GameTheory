@@ -96,6 +96,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameTheory.Games.TwentyFort
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameTheory.Games.TwentyFortyEight.Forms", "GameTheory.Games.TwentyFortyEight.Forms\GameTheory.Games.TwentyFortyEight.Forms.csproj", "{F6F0820F-B79C-4A43-8845-8E9427C022DF}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameTheory.Testing", "GameTheory.Testing\GameTheory.Testing.csproj", "{8F3E7E82-C364-40A0-BE1E-D165BF30E304}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameTheory.Tests", "GameTheory.Tests\GameTheory.Tests.csproj", "{95EF578E-DAF2-4D88-9399-E05190C08634}"
 EndProject
 Global
@@ -252,6 +254,10 @@ Global
 		{F6F0820F-B79C-4A43-8845-8E9427C022DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F6F0820F-B79C-4A43-8845-8E9427C022DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F6F0820F-B79C-4A43-8845-8E9427C022DF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8F3E7E82-C364-40A0-BE1E-D165BF30E304}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8F3E7E82-C364-40A0-BE1E-D165BF30E304}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8F3E7E82-C364-40A0-BE1E-D165BF30E304}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8F3E7E82-C364-40A0-BE1E-D165BF30E304}.Release|Any CPU.Build.0 = Release|Any CPU
 		{95EF578E-DAF2-4D88-9399-E05190C08634}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{95EF578E-DAF2-4D88-9399-E05190C08634}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{95EF578E-DAF2-4D88-9399-E05190C08634}.Release|Any CPU.ActiveCfg = Release|Any CPU

@@ -5,6 +5,7 @@ namespace GameTheory.Tests.Games.Chess
     using System.Linq;
     using GameTheory.Games.Chess;
     using GameTheory.Games.Chess.Moves;
+    using GameTheory.Testing;
     using NUnit.Framework;
 
     public class GameStateTests
