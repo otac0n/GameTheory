@@ -381,9 +381,11 @@ namespace GameTheory.Games.LoveLetter
             foreach (var player in inventory.Keys)
             {
                 deck = deck.Deal(out var startingHand);
-                var playerInventory = new Inventory().With(
+                var playerInventory = new Inventory(
                     hand: ImmutableArray.Create(startingHand),
-                    tokens: inventory[player].Tokens);
+                    tokens: inventory[player].Tokens,
+                    discards: ImmutableStack<Card>.Empty,
+                    handRevealed: false);
                 inventoryBuilder.Add(
                     player,
                     playerInventory);

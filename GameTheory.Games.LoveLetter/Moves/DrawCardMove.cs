@@ -76,7 +76,7 @@ namespace GameTheory.Games.LoveLetter.Moves
             }
             else if (hidden != Card.None)
             {
-                hand = hand.Add(state.Hidden);
+                hand = hand.Add(hidden);
                 hidden = Card.None;
             }
 
