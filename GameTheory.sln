@@ -100,6 +100,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameTheory.Games.TicTacToe"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameTheory.Games.TicTacToe.Console", "GameTheory.Games.TicTacToe.Console\GameTheory.Games.TicTacToe.Console.csproj", "{108E7F3F-5026-4C7A-82BE-545F98A5DC2C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameTheory.Games.TicTacToe.Tests", "GameTheory.Games.TicTacToe.Tests\GameTheory.Games.TicTacToe.Tests.csproj", "{40276BC5-DFD7-4D2F-A619-74ABB48AE679}"
+EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameTheory.Games.TwentyFortyEight", "GameTheory.Games.TwentyFortyEight\GameTheory.Games.TwentyFortyEight.csproj", "{68AE3016-F59E-4E8B-A5A2-E1C59E1B7AEF}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameTheory.Games.TwentyFortyEight.Console", "GameTheory.Games.TwentyFortyEight.Console\GameTheory.Games.TwentyFortyEight.Console.csproj", "{1C1F0D6F-B9CD-46D9-A97D-AE86A3AEF036}"
@@ -272,6 +274,10 @@ Global
 		{108E7F3F-5026-4C7A-82BE-545F98A5DC2C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{108E7F3F-5026-4C7A-82BE-545F98A5DC2C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{108E7F3F-5026-4C7A-82BE-545F98A5DC2C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{40276BC5-DFD7-4D2F-A619-74ABB48AE679}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{40276BC5-DFD7-4D2F-A619-74ABB48AE679}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{40276BC5-DFD7-4D2F-A619-74ABB48AE679}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{40276BC5-DFD7-4D2F-A619-74ABB48AE679}.Release|Any CPU.Build.0 = Release|Any CPU
 		{68AE3016-F59E-4E8B-A5A2-E1C59E1B7AEF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{68AE3016-F59E-4E8B-A5A2-E1C59E1B7AEF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{68AE3016-F59E-4E8B-A5A2-E1C59E1B7AEF}.Release|Any CPU.ActiveCfg = Release|Any CPU
