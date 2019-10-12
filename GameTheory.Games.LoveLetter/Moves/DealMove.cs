@@ -4,6 +4,7 @@ namespace GameTheory.Games.LoveLetter.Moves
 {
     using System.Collections.Generic;
     using System.Collections.Immutable;
+    using System.Linq;
 
     /// <summary>
     /// Represents a move to reveal a player's hand.
@@ -94,7 +95,7 @@ namespace GameTheory.Games.LoveLetter.Moves
 
                         var newState = state.With(
                             hidden: p.Value.Last(),
-                            inaccessible: inaccessible,
+                            inaccessible: inaccessible.Value,
                             inventory: inventoryBuilder.ToImmutable(),
                             deck: accessibleDeck.RemoveRange(p.Value));
 
