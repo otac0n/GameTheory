@@ -5,11 +5,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{95EF578E-DAF2-4D88-9399-E05190C08634}</ProjectGuid>
+    <ProjectGuid>{BE1F2B55-6BA2-4C83-B1E7-4BD775CC7633}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>GameTheory.Tests</RootNamespace>
-    <AssemblyName>GameTheory.Tests</AssemblyName>
+    <RootNamespace>GameTheory.Games.Mancala.Tests</RootNamespace>
+    <AssemblyName>GameTheory.Games.Mancala.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
@@ -56,23 +56,14 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Players\DuhPlayerTests.cs" />
-    <Compile Include="Players\MaximizingPlayerTests.cs" />
-    <Compile Include="Players\RandomPlayerTests.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="..\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="Strategies\ImmediateWinStrategyTests.cs" />
-    <Compile Include="Strategies\NullStrategyTests.cs" />
     <CodeAnalysisDictionary Include="..\CustomDictionary.xml">
       <Link>CustomDictionary.xml</Link>
     </CodeAnalysisDictionary>
-    <Compile Include="EnumCollectionTests.cs" />
+    <Compile Include="MancalaTests.cs" />
     <None Include="packages.config" />
-    <Compile Include="PlayerTokenTests.cs" />
-    <Compile Include="RandomTests.cs" />
-    <Compile Include="SizeTests.cs" />
     <AdditionalFiles Include="..\stylecop.json">
       <Link>stylecop.json</Link>
     </AdditionalFiles>
@@ -86,9 +77,9 @@
       <Project>{3b3e3456-b950-44c1-b8a2-fe6c79c2232f}</Project>
       <Name>GameTheory</Name>
     </ProjectReference>
-    <ProjectReference Include="..\GameTheory.Games.TicTacToe\GameTheory.Games.TicTacToe.csproj">
-      <Project>{f5b38959-a87d-432b-ae38-c2bcce50b836}</Project>
-      <Name>GameTheory.Games.TicTacToe</Name>
+    <ProjectReference Include="..\GameTheory.Games.Mancala\GameTheory.Games.Mancala.csproj">
+      <Project>{53732849-f5e8-4aee-93a3-2839f14ad856}</Project>
+      <Name>GameTheory.Games.Mancala</Name>
     </ProjectReference>
     <ProjectReference Include="..\GameTheory.Testing\GameTheory.Testing.csproj">
       <Project>{8f3e7e82-c364-40a0-be1e-d165bf30e304}</Project>

@@ -1,17 +1,17 @@
 // Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
-namespace GameTheory.Tests.Games
+namespace GameTheory.Games.FiveTribes.Tests
 {
     using System;
     using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Linq;
     using System.Threading;
-    using GameTheory.Games.FiveTribes;
     using GameTheory.Games.FiveTribes.Djinns;
     using GameTheory.Games.FiveTribes.Moves;
     using GameTheory.Games.FiveTribes.Tiles;
     using GameTheory.Players;
+    using GameTheory.Testing;
     using NUnit.Framework;
 
     [TestFixture]

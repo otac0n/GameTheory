@@ -8,6 +8,7 @@ namespace GameTheory.Tests.Players
     using System.Threading.Tasks;
     using GameTheory.Games.TicTacToe;
     using GameTheory.Games.TicTacToe.Players;
+    using GameTheory.Testing;
     using NUnit.Framework;
 
     [TestFixture]

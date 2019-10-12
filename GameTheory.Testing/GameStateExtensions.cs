@@ -1,6 +1,6 @@
 // Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
-namespace GameTheory.Tests
+namespace GameTheory.Testing
 {
     using System;
     using System.Collections.Generic;
@@ -8,7 +8,7 @@ namespace GameTheory.Tests
     using System.Linq.Expressions;
     using GameTheory;
 
-    internal static class GameStateExtensions
+    public static class GameStateExtensions
     {
         public static IGameState<TMove> PlayAnyMove<TMove>(this IGameState<TMove> state, PlayerToken playerToken, Func<TMove, bool> filter, System.Random instance = null)
             where TMove : IMove

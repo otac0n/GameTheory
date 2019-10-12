@@ -3,7 +3,6 @@ using System;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-[assembly: Guid("2F927C2F-9B73-4231-9570-6E7EE5DA60C8")]
+[assembly: Guid("D1EAF83B-EAFD-499F-BF08-84B7B6B0E895")]
 [assembly: CLSCompliant(true)]
-[assembly: InternalsVisibleTo("GameTheory.Games.NormalFormGame.Tests")]
 [assembly: ComVisible(false)]

@@ -1,10 +1,10 @@
 // Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
-namespace GameTheory.Tests.Games.Chess
+namespace GameTheory.Games.Chess.Tests
 {
     using System.Linq;
-    using GameTheory.Games.Chess;
     using GameTheory.Games.Chess.Moves;
+    using GameTheory.Testing;
     using NUnit.Framework;
 
     public class GameStateTests
