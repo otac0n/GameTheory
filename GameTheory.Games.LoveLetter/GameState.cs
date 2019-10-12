@@ -302,7 +302,7 @@ namespace GameTheory.Games.LoveLetter
             foreach (var p in this.Players)
             {
                 var player = p;
-                var inventory = this.Inventory[player];
+                var inventory = newState.Inventory[player];
 
                 if (p == playerToken || inventory.HandRevealed)
                 {
