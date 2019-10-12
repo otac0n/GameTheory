@@ -5,11 +5,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{95EF578E-DAF2-4D88-9399-E05190C08634}</ProjectGuid>
+    <ProjectGuid>{B765AC84-8C62-4BF5-B5DE-637CCB70DF79}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>GameTheory.Tests</RootNamespace>
-    <AssemblyName>GameTheory.Tests</AssemblyName>
+    <RootNamespace>GameTheory.Games.FiveTribes.Tests</RootNamespace>
+    <AssemblyName>GameTheory.Games.FiveTribes.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
@@ -56,26 +56,14 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Games\MancalaTests.cs" />
-    <Compile Include="Games\MatchingPenniesTests.cs" />
-    <Compile Include="Games\SplendorTests.cs" />
-    <Compile Include="Games\TicTacToeTests.cs" />
-    <Compile Include="Players\DuhPlayerTests.cs" />
-    <Compile Include="Players\MaximizingPlayerTests.cs" />
-    <Compile Include="Players\RandomPlayerTests.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="..\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="Strategies\ImmediateWinStrategyTests.cs" />
-    <Compile Include="Strategies\NullStrategyTests.cs" />
     <CodeAnalysisDictionary Include="..\CustomDictionary.xml">
       <Link>CustomDictionary.xml</Link>
     </CodeAnalysisDictionary>
+    <Compile Include="FiveTribesTests.cs" />
     <None Include="packages.config" />
-    <Compile Include="PlayerTokenTests.cs" />
-    <Compile Include="RandomTests.cs" />
-    <Compile Include="SizeTests.cs" />
     <AdditionalFiles Include="..\stylecop.json">
       <Link>stylecop.json</Link>
     </AdditionalFiles>
@@ -89,53 +77,9 @@
       <Project>{3b3e3456-b950-44c1-b8a2-fe6c79c2232f}</Project>
       <Name>GameTheory</Name>
     </ProjectReference>
-    <ProjectReference Include="..\GameTheory.Games.CenturySpiceRoad\GameTheory.Games.CenturySpiceRoad.csproj">
-      <Project>{733c356a-ba71-406d-b49b-f67a0e647ce8}</Project>
-      <Name>GameTheory.Games.CenturySpiceRoad</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\GameTheory.Games.Draughts\GameTheory.Games.Draughts.csproj">
-      <Project>{5f47d85c-0deb-4dc3-86a9-7137db757a36}</Project>
-      <Name>GameTheory.Games.Draughts</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\GameTheory.Games.Ergo\GameTheory.Games.Ergo.csproj">
-      <Project>{b74e845c-958f-4cf0-b325-4c9daf85452d}</Project>
-      <Name>GameTheory.Games.Ergo</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\GameTheory.Games.Lotus\GameTheory.Games.Lotus.csproj">
-      <Project>{77a78fa3-d2fa-4b1c-b38d-e66d578f4211}</Project>
-      <Name>GameTheory.Games.Lotus</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\GameTheory.Games.Mancala\GameTheory.Games.Mancala.csproj">
-      <Project>{53732849-f5e8-4aee-93a3-2839f14ad856}</Project>
-      <Name>GameTheory.Games.Mancala</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\GameTheory.Games.NormalFormGame\GameTheory.Games.NormalFormGame.csproj">
-      <Project>{2b9f26b4-66f6-4fdd-b4bd-e2990f19bb97}</Project>
-      <Name>GameTheory.Games.NormalFormGame</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\GameTheory.Games.PositivelyPerfectParfaitGame\GameTheory.Games.PositivelyPerfectParfaitGame.csproj">
-      <Project>{3ce3e90c-b698-458d-922d-0c2eee8892cb}</Project>
-      <Name>GameTheory.Games.PositivelyPerfectParfaitGame</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\GameTheory.Games.SevenDragons\GameTheory.Games.SevenDragons.csproj">
-      <Project>{d7a1dbef-2c7b-4919-a322-d265bf3761f3}</Project>
-      <Name>GameTheory.Games.SevenDragons</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\GameTheory.Games.Skull\GameTheory.Games.Skull.csproj">
-      <Project>{c4d61137-39b9-4dc4-a294-b668739c7fe3}</Project>
-      <Name>GameTheory.Games.Skull</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\GameTheory.Games.Splendor\GameTheory.Games.Splendor.csproj">
-      <Project>{263c9aba-8e2b-4220-9f22-46d09c7a8fed}</Project>
-      <Name>GameTheory.Games.Splendor</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\GameTheory.Games.TicTacToe\GameTheory.Games.TicTacToe.csproj">
-      <Project>{f5b38959-a87d-432b-ae38-c2bcce50b836}</Project>
-      <Name>GameTheory.Games.TicTacToe</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\GameTheory.Games.TwentyFortyEight\GameTheory.Games.TwentyFortyEight.csproj">
-      <Project>{68ae3016-f59e-4e8b-a5a2-e1c59e1b7aef}</Project>
-      <Name>GameTheory.Games.TwentyFortyEight</Name>
+    <ProjectReference Include="..\GameTheory.Games.FiveTribes\GameTheory.Games.FiveTribes.csproj">
+      <Project>{0d176fb9-3e54-4500-97a8-fab80a0bf6f3}</Project>
+      <Name>GameTheory.Games.FiveTribes</Name>
     </ProjectReference>
     <ProjectReference Include="..\GameTheory.Testing\GameTheory.Testing.csproj">
       <Project>{8f3e7e82-c364-40a0-be1e-d165bf30e304}</Project>

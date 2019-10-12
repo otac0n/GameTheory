@@ -58,6 +58,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameTheory.Games.FiveTribes
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameTheory.Games.FiveTribes.Console", "GameTheory.Games.FiveTribes.Console\GameTheory.Games.FiveTribes.Console.csproj", "{595A3644-D238-4EAF-9016-D659696068C9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameTheory.Games.FiveTribes.Tests", "GameTheory.Games.FiveTribes.Tests\GameTheory.Games.FiveTribes.Tests.csproj", "{B765AC84-8C62-4BF5-B5DE-637CCB70DF79}"
+EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameTheory.Games.Lotus", "GameTheory.Games.Lotus\GameTheory.Games.Lotus.csproj", "{77A78FA3-D2FA-4B1C-B38D-E66D578F4211}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameTheory.Games.Lotus.Console", "GameTheory.Games.Lotus.Console\GameTheory.Games.Lotus.Console.csproj", "{25442DEF-9DC3-4324-9B53-18734213BD96}"
@@ -180,6 +182,10 @@ Global
 		{595A3644-D238-4EAF-9016-D659696068C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{595A3644-D238-4EAF-9016-D659696068C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{595A3644-D238-4EAF-9016-D659696068C9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B765AC84-8C62-4BF5-B5DE-637CCB70DF79}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B765AC84-8C62-4BF5-B5DE-637CCB70DF79}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B765AC84-8C62-4BF5-B5DE-637CCB70DF79}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B765AC84-8C62-4BF5-B5DE-637CCB70DF79}.Release|Any CPU.Build.0 = Release|Any CPU
 		{77A78FA3-D2FA-4B1C-B38D-E66D578F4211}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{77A78FA3-D2FA-4B1C-B38D-E66D578F4211}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{77A78FA3-D2FA-4B1C-B38D-E66D578F4211}.Release|Any CPU.ActiveCfg = Release|Any CPU
