@@ -92,6 +92,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameTheory.Games.Splendor",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameTheory.Games.Splendor.Console", "GameTheory.Games.Splendor.Console\GameTheory.Games.Splendor.Console.csproj", "{7A954FC3-086C-4644-8663-57A8393013AD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameTheory.Games.Splendor.Tests", "GameTheory.Games.Splendor.Tests\GameTheory.Games.Splendor.Tests.csproj", "{83F3466C-7715-4236-80CF-33704A6D4A22}"
+EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameTheory.Games.TicTacToe", "GameTheory.Games.TicTacToe\GameTheory.Games.TicTacToe.csproj", "{F5B38959-A87D-432B-AE38-C2BCCE50B836}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameTheory.Games.TicTacToe.Console", "GameTheory.Games.TicTacToe.Console\GameTheory.Games.TicTacToe.Console.csproj", "{108E7F3F-5026-4C7A-82BE-545F98A5DC2C}"
@@ -252,6 +254,10 @@ Global
 		{7A954FC3-086C-4644-8663-57A8393013AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7A954FC3-086C-4644-8663-57A8393013AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7A954FC3-086C-4644-8663-57A8393013AD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{83F3466C-7715-4236-80CF-33704A6D4A22}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{83F3466C-7715-4236-80CF-33704A6D4A22}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{83F3466C-7715-4236-80CF-33704A6D4A22}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{83F3466C-7715-4236-80CF-33704A6D4A22}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F5B38959-A87D-432B-AE38-C2BCCE50B836}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F5B38959-A87D-432B-AE38-C2BCCE50B836}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F5B38959-A87D-432B-AE38-C2BCCE50B836}.Release|Any CPU.ActiveCfg = Release|Any CPU
