@@ -48,7 +48,7 @@ namespace GameTheory.Games.LoveLetter.States
             }
             else
             {
-                yield return new ContinueMove(state);
+                yield return new ContinueMove(state, this.TargetPlayer);
             }
         }
     }

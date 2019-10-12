@@ -18,6 +18,16 @@ namespace GameTheory.Games.LoveLetter.Moves
         {
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ContinueMove"/> class.
+        /// </summary>
+        /// <param name="player">The player playing the move.</param>
+        /// <param name="state">The <see cref="GameState"/> that this move is based on.</param>
+        public ContinueMove(GameState state, PlayerToken player)
+            : base(state, player)
+        {
+        }
+
         /// <inheritdoc />
         public override IList<object> FormatTokens => FormatUtilities.ParseStringFormat(Resources.Continue);
 
