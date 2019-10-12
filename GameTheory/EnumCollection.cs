@@ -9,6 +9,7 @@ namespace GameTheory
     using System.Diagnostics.CodeAnalysis;
     using System.Globalization;
     using System.Linq;
+    using System.Numerics;
 
     /// <summary>
     /// Provides a compact collection of enumeration values.
@@ -257,7 +258,7 @@ namespace GameTheory
             var storage = new int[Capacity];
             var digitalSum = 0;
 
-            bool increment(int i)
+            bool Increment(int i)
             {
                 if (i >= Capacity)
                 {
@@ -271,13 +272,13 @@ namespace GameTheory
                 {
                     storage[i] = 0;
                     digitalSum -= digit;
-                    return increment(i + 1);
+                    return Increment(i + 1);
                 }
 
                 return false;
             }
 
-            while (!increment(0))
+            while (!Increment(0))
             {
                 if (includeSmaller || digitalSum == count)
                 {
@@ -332,6 +333,71 @@ namespace GameTheory
         IEnumerator IEnumerable.GetEnumerator()
         {
             return this.GetEnumerator();
+        }
+
+        /// <summary>
+        /// Gets an enumerable collection containing all permutations of the items in this collection.
+        /// </summary>
+        /// <param name="count">The size of the permutations.</param>
+        /// <returns>An enumerable collection of permutations.</returns>
+        public IEnumerable<TEnum[]> Permutations(int count)
+        {
+            if (count <= 0)
+            {
+                yield break;
+            }
+
+            if (count > this.count)
+            {
+                yield break;
+            }
+
+            var index = new int[count];
+            var sum = new int[Capacity];
+            var remaining = count;
+            for (var i = 0; i < Capacity && remaining > 0; i++)
+            {
+                for (var left = this.storage[i]; left > 0 && remaining > 0; left--)
+                {
+                    index[--remaining] = i;
+                    sum[i]++;
+                }
+            }
+
+            bool Increment(int i)
+            {
+                if (i >= count)
+                {
+                    return true;
+                }
+
+                do
+                {
+                    sum[index[i]]--;
+
+                    if (++index[i] >= Capacity)
+                    {
+                        sum[index[i] = 0]++;
+                        if (Increment(i + 1))
+                        {
+                            return true;
+                        }
+                    }
+                    else
+                    {
+                        sum[index[i]]++;
+                    }
+                }
+                while (sum[index[i]] > this.storage[index[i]]);
+
+                return false;
+            }
+
+            do
+            {
+                yield return Array.ConvertAll(index, i => AllKeys[i]);
+            }
+            while (!Increment(0));
         }
 
         /// <summary>
@@ -439,5 +505,83 @@ namespace GameTheory
 
         /// <inheritdoc />
         public override string ToString() => string.Concat(this.FlattenFormatTokens());
+
+        /// <summary>
+        /// Gets an enumerable collection containing all combinations of the items in this collection.
+        /// </summary>
+        /// <param name="count">The size of the combinations.</param>
+        /// <returns>An enumerable collection of weighted combinations.</returns>
+        public IEnumerable<Weighted<EnumCollection<TEnum>>> WeightedCombinations(int count)
+        {
+            foreach (var c in this.Combinations(count))
+            {
+                yield return Weighted.Create(c, (double)c.Keys.Aggregate((BigInteger)1, (p, x) => p * Combinatorics.Choose(this[x], c[x])));
+            }
+        }
+
+        /// <summary>
+        /// Gets an enumerable collection containing all permutations of the items in this collection.
+        /// </summary>
+        /// <param name="count">The size of the permutations.</param>
+        /// <returns>An enumerable collection of permutations.</returns>
+        public IEnumerable<Weighted<TEnum[]>> WeightedPermutations(int count)
+        {
+            if (count <= 0)
+            {
+                yield break;
+            }
+
+            if (count > this.count)
+            {
+                yield break;
+            }
+
+            var index = new int[count];
+            var sum = new int[Capacity];
+            var remaining = count;
+            for (var i = 0; i < Capacity && remaining > 0; i++)
+            {
+                for (var left = this.storage[i]; left > 0 && remaining > 0; left--)
+                {
+                    index[--remaining] = i;
+                    sum[i]++;
+                }
+            }
+
+            bool Increment(int i)
+            {
+                if (i >= count)
+                {
+                    return true;
+                }
+
+                do
+                {
+                    sum[index[i]]--;
+
+                    if (++index[i] >= Capacity)
+                    {
+                        sum[index[i] = 0]++;
+                        if (Increment(i + 1))
+                        {
+                            return true;
+                        }
+                    }
+                    else
+                    {
+                        sum[index[i]]++;
+                    }
+                }
+                while (sum[index[i]] > this.storage[index[i]]);
+
+                return false;
+            }
+
+            do
+            {
+                yield return Weighted.Create(Array.ConvertAll(index, i => AllKeys[i]), (double)Enumerable.Range(0, Capacity).Where(x => sum[x] > 0).Aggregate((BigInteger)1, (p, x) => p * Combinatorics.Permute(this.storage[x], sum[x])));
+            }
+            while (!Increment(0));
+        }
     }
 }

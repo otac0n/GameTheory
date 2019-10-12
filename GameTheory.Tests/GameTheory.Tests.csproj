@@ -68,6 +68,7 @@
     <CodeAnalysisDictionary Include="..\CustomDictionary.xml">
       <Link>CustomDictionary.xml</Link>
     </CodeAnalysisDictionary>
+    <Compile Include="EnumCollectionTests.cs" />
     <None Include="packages.config" />
     <Compile Include="PlayerTokenTests.cs" />
     <Compile Include="RandomTests.cs" />
