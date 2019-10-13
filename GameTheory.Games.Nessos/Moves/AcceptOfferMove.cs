@@ -18,6 +18,24 @@ namespace GameTheory.Games.Nessos.Moves
         /// <inheritdoc/>
         public override IList<object> FormatTokens => new[] { Resources.AcceptOffer };
 
+        /// <inheritdoc />
+        public override int CompareTo(Move other)
+        {
+            if (object.ReferenceEquals(other, this))
+            {
+                return 0;
+            }
+
+            if (other is AcceptOfferMove move)
+            {
+                return this.PlayerToken.CompareTo(move.PlayerToken);
+            }
+            else
+            {
+                return base.CompareTo(other);
+            }
+        }
+
         internal static IEnumerable<Move> GenerateMoves(GameState state)
         {
             if (state.OfferedCards.Count > 0)

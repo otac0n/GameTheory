@@ -28,6 +28,11 @@ namespace GameTheory.Games.Nessos.Moves
         /// <inheritdoc />
         public override int CompareTo(Move other)
         {
+            if (object.ReferenceEquals(other, this))
+            {
+                return 0;
+            }
+
             if (other is DrawCardMove)
             {
                 return this.PlayerToken.CompareTo(other.PlayerToken);
