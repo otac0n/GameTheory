@@ -13,6 +13,6 @@ namespace GameTheory.ConsoleRunner
         where TMove : IMove
     {
         /// <inheritdoc/>
-        public override void Show(IGameState<TMove> state, PlayerToken playerToken) => Console.WriteLine(state);
+        public override void Show(IGameState<TMove> state, PlayerToken playerToken = null) => Console.WriteLine(state);
     }
 }

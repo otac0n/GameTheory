@@ -3,4 +3,21 @@
 @namespace GameTheory.Games.LoveLetter.Console
 @static false
 @model GameState
-{{= model }}
+Deck: {{= model.Deck.Count }} remaining
+{{if model.Hidden != Card.None}}
+    Hidden: (hidden)
+{{/if}}
+Inaccessible: {{each card in model.Inaccessible}}{{= card}}{{delimit}} {{/each}}
+
+{{each player in model.Players}}
+    {{= player}}:
+        {{ var inventory = model.Inventory[player]; }}
+        {{if player == this.playerToken || inventory.HandRevealed}}
+            Hand: {{each card in inventory.Hand}}{{= card}}{{delimit}} {{/each}}
+        {{else}}
+            Hand: {{each card in inventory.Hand}}(hidden){{delimit}} {{/each}}
+        {{/if}}
+        Tokens: {{= inventory.Tokens}}
+{{delimit}}
+
+{{/each}}
