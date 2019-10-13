@@ -124,6 +124,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameTheory.Testing", "GameT
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameTheory.Tests", "GameTheory.Tests\GameTheory.Tests.csproj", "{95EF578E-DAF2-4D88-9399-E05190C08634}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameTheory.Games.Nessos.Forms", "GameTheory.Games.Nessos.Forms\GameTheory.Games.Nessos.Forms.csproj", "{ED68D5A8-2A7A-45F4-822F-A3C1F064B281}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -334,6 +336,10 @@ Global
 		{95EF578E-DAF2-4D88-9399-E05190C08634}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{95EF578E-DAF2-4D88-9399-E05190C08634}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{95EF578E-DAF2-4D88-9399-E05190C08634}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ED68D5A8-2A7A-45F4-822F-A3C1F064B281}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ED68D5A8-2A7A-45F4-822F-A3C1F064B281}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ED68D5A8-2A7A-45F4-822F-A3C1F064B281}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ED68D5A8-2A7A-45F4-822F-A3C1F064B281}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
