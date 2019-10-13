@@ -237,6 +237,19 @@ namespace GameTheory.Games.SevenDragons
                 return comp;
             }
 
+            if (this.interstitialState != state.interstitialState)
+            {
+                if (this.interstitialState == null)
+                {
+                    return -1;
+                }
+
+                if ((comp = this.interstitialState.CompareTo(state.interstitialState)) != 0)
+                {
+                    return comp;
+                }
+            }
+
             return 0;
         }
 
@@ -333,40 +346,6 @@ namespace GameTheory.Games.SevenDragons
             return move.Apply(this);
         }
 
-        internal GameState With(
-            PlayerToken activePlayer = null,
-            Phase? phase = null,
-            ImmutableList<Card> deck = null,
-            ImmutableList<ActionCard> discardPile = null,
-            ImmutableList<Inventory> inventories = null,
-            ImmutableDictionary<Point, DragonCard> table = null)
-        {
-            return new GameState(
-                this.Players,
-                this.InventoryMap,
-                null,
-                activePlayer ?? this.ActivePlayer,
-                phase ?? this.Phase,
-                deck ?? this.Deck,
-                discardPile ?? this.DiscardPile,
-                inventories ?? this.Inventories,
-                table ?? this.Table);
-        }
-
-        internal GameState WithInterstitialState(InterstitialState interstitialState)
-        {
-            return new GameState(
-                this.Players,
-                this.InventoryMap,
-                interstitialState,
-                this.ActivePlayer,
-                this.Phase,
-                this.Deck,
-                this.DiscardPile,
-                this.Inventories,
-                this.Table);
-        }
-
         internal IEnumerable<KeyValuePair<Color, List<List<Tuple<Point, Point>>>>> GetConnections()
         {
             var queue = new Queue<Tuple<Point, Point>>();
@@ -433,6 +412,63 @@ namespace GameTheory.Games.SevenDragons
             return adjacent;
         }
 
+        internal GameState With(
+            PlayerToken activePlayer = null,
+            Phase? phase = null,
+            ImmutableList<Card> deck = null,
+            ImmutableList<ActionCard> discardPile = null,
+            ImmutableList<Inventory> inventories = null,
+            ImmutableDictionary<Point, DragonCard> table = null)
+        {
+            return new GameState(
+                this.Players,
+                this.InventoryMap,
+                null,
+                activePlayer ?? this.ActivePlayer,
+                phase ?? this.Phase,
+                deck ?? this.Deck,
+                discardPile ?? this.DiscardPile,
+                inventories ?? this.Inventories,
+                table ?? this.Table);
+        }
+
+        internal GameState WithInterstitialState(InterstitialState interstitialState)
+        {
+            return new GameState(
+                this.Players,
+                this.InventoryMap,
+                interstitialState,
+                this.ActivePlayer,
+                this.Phase,
+                this.Deck,
+                this.DiscardPile,
+                this.Inventories,
+                this.Table);
+        }
+
+        private Color? GetColor(Tuple<Point, Point> key, Color rainbowColor)
+        {
+            if (!this.Table.TryGetValue(key.Item1, out var card))
+            {
+                return null;
+            }
+
+            var color = card.Colors[DragonCard.Grid.IndexOf(key.Item2)];
+            if (color == Color.Silver)
+            {
+                if (this.DiscardPile.Count > 0)
+                {
+                    color = this.DiscardPile[this.DiscardPile.Count - 1].Color;
+                }
+                else
+                {
+                    color = Color.Rainbow;
+                }
+            }
+
+            return color == Color.Rainbow ? rainbowColor : color;
+        }
+
         private void ReduceGroups(Dictionary<Tuple<Point, Point>, int> groups, Queue<Tuple<Point, Point>> queue, Color rainbowColor)
         {
             while (queue.Count > 0)
@@ -460,29 +496,6 @@ namespace GameTheory.Games.SevenDragons
                     }
                 }
             }
-        }
-
-        private Color? GetColor(Tuple<Point, Point> key, Color rainbowColor)
-        {
-            if (!this.Table.TryGetValue(key.Item1, out var card))
-            {
-                return null;
-            }
-
-            var color = card.Colors[DragonCard.Grid.IndexOf(key.Item2)];
-            if (color == Color.Silver)
-            {
-                if (this.DiscardPile.Count > 0)
-                {
-                    color = this.DiscardPile[this.DiscardPile.Count - 1].Color;
-                }
-                else
-                {
-                    color = Color.Rainbow;
-                }
-            }
-
-            return color == Color.Rainbow ? rainbowColor : color;
         }
     }
 }

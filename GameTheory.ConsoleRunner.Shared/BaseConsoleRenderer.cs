@@ -116,15 +116,6 @@ namespace GameTheory.ConsoleRunner.Shared
             }
 
             /// <inheritdoc />
-            public override void WriteLine(char[] buffer, int index, int count)
-            {
-                var sb = new StringBuilder(count + this.CoreNewLine.Length);
-                sb.Append(buffer, index, count);
-                sb.Append(this.CoreNewLine);
-                base.Write(sb.ToString());
-            }
-
-            /// <inheritdoc />
             public override void Write(string format, object arg0) => this.Write(format, new[] { arg0 });
 
             /// <inheritdoc />
@@ -174,6 +165,15 @@ namespace GameTheory.ConsoleRunner.Shared
 
             /// <inheritdoc />
             public override void Write(ulong value) => this.consoleRenderer.RenderToken(this.state, value);
+
+            /// <inheritdoc />
+            public override void WriteLine(char[] buffer, int index, int count)
+            {
+                var sb = new StringBuilder(count + this.CoreNewLine.Length);
+                sb.Append(buffer, index, count);
+                sb.Append(this.CoreNewLine);
+                base.Write(sb.ToString());
+            }
 
             /// <inheritdoc />
             public override void WriteLine(string format, object arg0) => this.WriteLine(format, new[] { arg0 });

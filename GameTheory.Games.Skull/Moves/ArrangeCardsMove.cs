@@ -1,4 +1,4 @@
-﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Games.Skull.Moves
 {
@@ -22,17 +22,22 @@ namespace GameTheory.Games.Skull.Moves
             this.Arrangement = arrangement;
         }
 
-        /// <inheritdoc />
-        public override IList<object> FormatTokens => FormatUtilities.ParseStringFormat(Resources.PresentCards, FormatUtilities.FormatList(this.Arrangement));
-
         /// <summary>
         /// Gets the arrangement the player will present.
         /// </summary>
         public ImmutableList<Card> Arrangement { get; }
 
         /// <inheritdoc />
+        public override IList<object> FormatTokens => FormatUtilities.ParseStringFormat(Resources.PresentCards, FormatUtilities.FormatList(this.Arrangement));
+
+        /// <inheritdoc />
         public override int CompareTo(Move other)
         {
+            if (object.ReferenceEquals(other, this))
+            {
+                return 0;
+            }
+
             if (other is ArrangeCardsMove move)
             {
                 int comp;

@@ -5,5 +5,5 @@ using System.Runtime.InteropServices;
 
 [assembly: Guid("7D0FB591-5E88-4BBF-8D15-EFBA26AA26D7")]
 [assembly: CLSCompliant(true)]
-[assembly: InternalsVisibleTo("GameTheory.Tests")]
+[assembly: InternalsVisibleTo("GameTheory.Games.FiveTribes.Tests")]
 [assembly: ComVisible(false)]

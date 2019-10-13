@@ -1,4 +1,4 @@
-﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Games.SevenDragons.Cards
 {
@@ -45,14 +45,14 @@ namespace GameTheory.Games.SevenDragons.Cards
         }
 
         /// <summary>
-        /// Gets the reversed form of this card.
-        /// </summary>
-        public DragonCard Reversed { get; }
-
-        /// <summary>
         /// Gets the colors on this card.
         /// </summary>
         public ImmutableList<Color> Colors { get; }
+
+        /// <summary>
+        /// Gets the reversed form of this card.
+        /// </summary>
+        public DragonCard Reversed { get; }
 
         /// <inheritdoc />
         public override int CompareTo(Card other)

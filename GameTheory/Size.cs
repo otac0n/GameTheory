@@ -1,4 +1,4 @@
-﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory
 {
@@ -13,8 +13,8 @@ namespace GameTheory
     [SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix", Justification = "The primary use case of the type doesn't warrant the collection suffix.")]
     public struct Size : IComparable<Size>, IEquatable<Size>, IReadOnlyList<Point>
     {
-        private int width;
         private int height;
+        private int width;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Size"/> struct.
@@ -27,18 +27,18 @@ namespace GameTheory
             this.height = height;
         }
 
-        /// <summary>
-        /// Gets the x-axis (horizontal) dimension of the size.
-        /// </summary>
-        public int Width => this.width;
+        /// <inheritdoc />
+        public int Count => this.width * this.height;
 
         /// <summary>
         /// Gets the y-axis (vertival) dimension of the size.
         /// </summary>
         public int Height => this.height;
 
-        /// <inheritdoc />
-        public int Count => this.width * this.height;
+        /// <summary>
+        /// Gets the x-axis (horizontal) dimension of the size.
+        /// </summary>
+        public int Width => this.width;
 
         /// <inheritdoc />
         public Point this[int index]

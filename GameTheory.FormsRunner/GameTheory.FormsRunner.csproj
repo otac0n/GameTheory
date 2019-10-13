@@ -39,6 +39,10 @@
     <DocumentationFile>bin\Release\GameTheory.FormsRunner.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="CommonServiceLocator, Version=2.0.4.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
+      <HintPath>..\packages\CommonServiceLocator.2.0.4\lib\net47\CommonServiceLocator.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
     <Reference Include="System.Collections.Immutable, Version=1.2.3.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
@@ -51,11 +55,32 @@
     <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Net.Http" />
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.4.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.4.5.2\lib\netstandard2.0\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Threading.Tasks.Extensions.4.5.2\lib\netstandard2.0\System.Threading.Tasks.Extensions.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
+    <Reference Include="Unity.Abstractions, Version=5.11.1.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
+      <HintPath>..\packages\Unity.Abstractions.5.11.1\lib\net47\Unity.Abstractions.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Unity.Container, Version=5.11.1.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
+      <HintPath>..\packages\Unity.Container.5.11.1\lib\net47\Unity.Container.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Unity.ServiceLocation, Version=5.11.1.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
+      <HintPath>..\packages\Unity.ServiceLocation.5.11.1\lib\net47\Unity.ServiceLocation.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Displays\PlayerTokenDisplay.cs" />
     <Compile Include="Players\PlayerView.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -146,13 +171,13 @@
       <Project>{733c356a-ba71-406d-b49b-f67a0e647ce8}</Project>
       <Name>GameTheory.Games.CenturySpiceRoad</Name>
     </ProjectReference>
-    <ProjectReference Include="..\GameTheory.Games.Chess\GameTheory.Games.Chess.csproj">
-      <Project>{09437adf-6793-4252-b014-6ccaa5a10846}</Project>
-      <Name>GameTheory.Games.Chess</Name>
+    <ProjectReference Include="..\GameTheory.Games.Chess.Forms\GameTheory.Games.Chess.Forms.csproj">
+      <Project>{f4c540d1-63ec-4af8-b865-d6c14737a257}</Project>
+      <Name>GameTheory.Games.Chess.Forms</Name>
     </ProjectReference>
-    <ProjectReference Include="..\GameTheory.Games.Draughts\GameTheory.Games.Draughts.csproj">
-      <Project>{5f47d85c-0deb-4dc3-86a9-7137db757a36}</Project>
-      <Name>GameTheory.Games.Draughts</Name>
+    <ProjectReference Include="..\GameTheory.Games.Draughts.Forms\GameTheory.Games.Draughts.Forms.csproj">
+      <Project>{f497f674-63b3-4df9-b88d-a379d443a2f8}</Project>
+      <Name>GameTheory.Games.Draughts.Forms</Name>
     </ProjectReference>
     <ProjectReference Include="..\GameTheory.Games.Ergo\GameTheory.Games.Ergo.csproj">
       <Project>{b74e845c-958f-4cf0-b325-4c9daf85452d}</Project>
@@ -166,9 +191,13 @@
       <Project>{77a78fa3-d2fa-4b1c-b38d-e66d578f4211}</Project>
       <Name>GameTheory.Games.Lotus</Name>
     </ProjectReference>
-    <ProjectReference Include="..\GameTheory.Games.Mancala\GameTheory.Games.Mancala.csproj">
-      <Project>{53732849-f5e8-4aee-93a3-2839f14ad856}</Project>
-      <Name>GameTheory.Games.Mancala</Name>
+    <ProjectReference Include="..\GameTheory.Games.LoveLetter.Forms\GameTheory.Games.LoveLetter.Forms.csproj">
+      <Project>{f749729e-dc66-4604-9851-f3df82787dd1}</Project>
+      <Name>GameTheory.Games.LoveLetter.Forms</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\GameTheory.Games.Mancala.Forms\GameTheory.Games.Mancala.Forms.csproj">
+      <Project>{31630e20-4bc4-4fd9-8445-72fcdd54746e}</Project>
+      <Name>GameTheory.Games.Mancala.Forms</Name>
     </ProjectReference>
     <ProjectReference Include="..\GameTheory.Games.NormalFormGame\GameTheory.Games.NormalFormGame.csproj">
       <Project>{2b9f26b4-66f6-4fdd-b4bd-e2990f19bb97}</Project>
@@ -178,9 +207,9 @@
       <Project>{3ce3e90c-b698-458d-922d-0c2eee8892cb}</Project>
       <Name>GameTheory.Games.PositivelyPerfectParfaitGame</Name>
     </ProjectReference>
-    <ProjectReference Include="..\GameTheory.Games.SevenDragons\GameTheory.Games.SevenDragons.csproj">
-      <Project>{d7a1dbef-2c7b-4919-a322-d265bf3761f3}</Project>
-      <Name>GameTheory.Games.SevenDragons</Name>
+    <ProjectReference Include="..\GameTheory.Games.SevenDragons.Forms\GameTheory.Games.SevenDragons.Forms.csproj">
+      <Project>{8c1c3fd5-1385-45fa-8193-c691045aa785}</Project>
+      <Name>GameTheory.Games.SevenDragons.Forms</Name>
     </ProjectReference>
     <ProjectReference Include="..\GameTheory.Games.Skull\GameTheory.Games.Skull.csproj">
       <Project>{c4d61137-39b9-4dc4-a294-b668739c7fe3}</Project>
@@ -194,9 +223,9 @@
       <Project>{f5b38959-a87d-432b-ae38-c2bcce50b836}</Project>
       <Name>GameTheory.Games.TicTacToe</Name>
     </ProjectReference>
-    <ProjectReference Include="..\GameTheory.Games.TwentyFortyEight\GameTheory.Games.TwentyFortyEight.csproj">
-      <Project>{68ae3016-f59e-4e8b-a5a2-e1c59e1b7aef}</Project>
-      <Name>GameTheory.Games.TwentyFortyEight</Name>
+    <ProjectReference Include="..\GameTheory.Games.TwentyFortyEight.Forms\GameTheory.Games.TwentyFortyEight.Forms.csproj">
+      <Project>{f6f0820f-b79c-4a43-8845-8e9427c022df}</Project>
+      <Name>GameTheory.Games.TwentyFortyEight.Forms</Name>
     </ProjectReference>
     <ProjectReference Include="..\GameTheory.Gdl\GameTheory.Gdl.csproj">
       <Project>{e9225da4-7ebc-4915-93a5-d14df8aad0a3}</Project>

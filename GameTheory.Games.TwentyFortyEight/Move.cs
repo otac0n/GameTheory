@@ -2,9 +2,7 @@
 
 namespace GameTheory.Games.TwentyFortyEight
 {
-    using System;
     using System.Collections.Generic;
-    using System.Collections.Immutable;
 
     /// <summary>
     /// Represents a move in 2048.

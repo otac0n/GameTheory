@@ -248,7 +248,7 @@ namespace GameTheory.FormsRunner
                             player.PlayerType,
                             null, // TODO: Remember previously selected player?
                             out var errorControl,
-                            new[] { new PlayerTokenEditor(playerToken) },
+                            new Editor[] { new PlayerTokenEditor(playerToken), new CatalogGameEditor(game) },
                             this.errorProvider.SetError,
                             (value, valid) =>
                             {
@@ -295,13 +295,10 @@ namespace GameTheory.FormsRunner
             }
         }
 
-        private void NextButton_Click(object sender, EventArgs e)
+        private void CancelButton_Click(object sender, EventArgs e)
         {
-            var ix = this.wizardTabs.SelectedIndex;
-            if (ix < this.wizardTabs.TabCount - 1)
-            {
-                this.wizardTabs.SelectedIndex = ix + 1;
-            }
+            this.DialogResult = DialogResult.Cancel;
+            this.Hide();
         }
 
         private void FinishButton_Click(object sender, EventArgs e)
@@ -317,15 +314,13 @@ namespace GameTheory.FormsRunner
             }
         }
 
-        private void CancelButton_Click(object sender, EventArgs e)
+        private void NewGameForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            this.DialogResult = DialogResult.Cancel;
-            this.Hide();
-        }
-
-        private void SearchResults_DoubleClick(object sender, EventArgs e)
-        {
-            this.NextButton_Click(sender, e);
+            if (e.CloseReason == CloseReason.UserClosing)
+            {
+                e.Cancel = true;
+                this.CancelButton_Click(sender, e);
+            }
         }
 
         private void NewGameForm_Shown(object sender, EventArgs e)
@@ -334,12 +329,12 @@ namespace GameTheory.FormsRunner
             this.wizardTabs.SelectedIndex = 0;
         }
 
-        private void NewGameForm_FormClosing(object sender, FormClosingEventArgs e)
+        private void NextButton_Click(object sender, EventArgs e)
         {
-            if (e.CloseReason == CloseReason.UserClosing)
+            var ix = this.wizardTabs.SelectedIndex;
+            if (ix < this.wizardTabs.TabCount - 1)
             {
-                e.Cancel = true;
-                this.CancelButton_Click(sender, e);
+                this.wizardTabs.SelectedIndex = ix + 1;
             }
         }
 
@@ -405,6 +400,11 @@ namespace GameTheory.FormsRunner
         private void SearchBox_TextChanged(object sender, EventArgs e)
         {
             this.Search(this.searchBox.Text);
+        }
+
+        private void SearchResults_DoubleClick(object sender, EventArgs e)
+        {
+            this.NextButton_Click(sender, e);
         }
 
         private void SearchResults_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
@@ -499,6 +499,35 @@ namespace GameTheory.FormsRunner
             public object StartingState { get; }
         }
 
+        private class CatalogGameEditor : Editor
+        {
+            private ICatalogGame game;
+
+            public CatalogGameEditor(ICatalogGame game)
+            {
+                this.game = game;
+            }
+
+            public override bool CanEdit(Scope scope, Type type, object value) => type == typeof(ICatalogGame);
+
+            protected override Control Update(Control control, Scope scope, Type type, object value, out Control errorControl, IReadOnlyList<Editor> editors, Action<Control, string> setError, Action<object, bool> set)
+            {
+                if (control is Label label && label.Tag == this)
+                {
+                    set(this.game, true);
+                }
+                else
+                {
+                    label = MakeLabel(this.game.Name, tag: this);
+                    label.AddMargin(bottom: 7);
+                    set(this.game, true);
+                }
+
+                errorControl = label;
+                return label;
+            }
+        }
+
         private class PlayerOptions
         {
             public PlayerOptions(string[] names, PlayerToken[] playerTokens, IReadOnlyList<ICatalogPlayer> players)
@@ -535,7 +564,7 @@ namespace GameTheory.FormsRunner
                 else
                 {
                     label = MakeLabel(scope.Name, tag: this);
-                    label.Margin = new Padding(label.Margin.Left, label.Margin.Top, label.Margin.Right, label.Margin.Bottom + 7);
+                    label.AddMargin(bottom: 7);
                     set(this.playerToken, true);
                 }
 

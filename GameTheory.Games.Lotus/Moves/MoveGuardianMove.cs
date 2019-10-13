@@ -2,7 +2,6 @@
 
 namespace GameTheory.Games.Lotus.Moves
 {
-    using System;
     using System.Collections.Generic;
 
     /// <summary>

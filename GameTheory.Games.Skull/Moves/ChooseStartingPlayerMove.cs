@@ -1,9 +1,8 @@
-﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Games.Skull.Moves
 {
     using System.Collections.Generic;
-    using System.Collections.Immutable;
 
     /// <summary>
     /// Represents a move to choose the next starting player.
@@ -32,6 +31,11 @@ namespace GameTheory.Games.Skull.Moves
         /// <inheritdoc />
         public override int CompareTo(Move other)
         {
+            if (object.ReferenceEquals(other, this))
+            {
+                return 0;
+            }
+
             if (other is ChooseStartingPlayerMove move)
             {
                 int comp;

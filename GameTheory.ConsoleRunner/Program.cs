@@ -6,7 +6,6 @@ namespace GameTheory.ConsoleRunner
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using System.Diagnostics;
-    using System.IO;
     using System.Linq;
     using System.Reflection;
     using System.Text;
@@ -14,23 +13,34 @@ namespace GameTheory.ConsoleRunner
     using GameTheory.ConsoleRunner.Properties;
     using GameTheory.ConsoleRunner.Shared;
     using GameTheory.ConsoleRunner.Shared.Catalogs;
+    using Unity;
+    using Unity.ServiceLocation;
 
     internal class Program
     {
+        static Program()
+        {
+            var container = new UnityContainer();
+            var serviceLocator = new UnityServiceLocator(container);
+            ConsoleRendererCatalog = PluginLoader.LoadCatalogs<IConsoleRendererCatalog>(c => new CompositeConsoleRendererCatalog(c), serviceLocator: serviceLocator);
+            GameCatalog = PluginLoader.LoadGameCatalogs(serviceLocator: serviceLocator);
+            PlayerCatalog = PluginLoader.LoadPlayerCatalogs(serviceLocator: serviceLocator);
+        }
+
         /// <summary>
         /// Gets the shared static player catalong for the application.
         /// </summary>
-        public static IConsoleRendererCatalog ConsoleRendererCatalog { get; } = PluginLoader.LoadCatalogs<IConsoleRendererCatalog>(c => new CompositeConsoleRendererCatalog(c));
+        public static IConsoleRendererCatalog ConsoleRendererCatalog { get; }
 
         /// <summary>
         /// Gets the shared static game catalog for the application.
         /// </summary>
-        public static IGameCatalog GameCatalog { get; } = PluginLoader.LoadGameCatalogs();
+        public static IGameCatalog GameCatalog { get; }
 
         /// <summary>
         /// Gets the shared static player catalong for the application.
         /// </summary>
-        public static IPlayerCatalog PlayerCatalog { get; } = PluginLoader.LoadPlayerCatalogs();
+        public static IPlayerCatalog PlayerCatalog { get; }
 
         private static object ConstructType(Type type, Func<ParameterInfo, object> getParameter = null)
         {

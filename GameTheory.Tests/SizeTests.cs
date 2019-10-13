@@ -1,4 +1,4 @@
-﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Tests
 {
@@ -11,6 +11,34 @@ namespace GameTheory.Tests
     {
         [Datapoints]
         public static readonly int[] Dimensions = new[] { 1, 2, 3, 4, 8 };
+
+        [Theory]
+        public void Count_Always_ReturnsTheSizeOfTheEnumerableCollection(int width, int height)
+        {
+            var size = new Size(width, height);
+            var points = size.ToList();
+
+            Assert.That(size.Count, Is.EqualTo(points.Count));
+        }
+
+        [Theory]
+        public void Indexer_WhenGivenAnIndexOutsideTheSize_ThrowsArgumentOutOfRangeException(int width, int height)
+        {
+            var size = new Size(width, height);
+
+            Assert.That(() => size[-1], Throws.InstanceOf<ArgumentOutOfRangeException>());
+            Assert.That(() => size[width * height], Throws.InstanceOf<ArgumentOutOfRangeException>());
+        }
+
+        [Theory]
+        public void Indexer_WhenGivenAnIndexWithinTheSize_ReturnsTheSpecifiedPoint(int width, int height)
+        {
+            var size = new Size(width, height);
+
+            var points = Enumerable.Range(0, width * height).Select(i => size[i]);
+
+            Assert.That(points, Is.EquivalentTo(size.ToList()));
+        }
 
         [Theory]
         public void IndexOf_WhenGivenAPointContainedInTheSize_ReturnsTheIndexOfThePoint(int width, int height)
@@ -32,34 +60,6 @@ namespace GameTheory.Tests
             var indexes = points.Select(p => size.IndexOf(p));
 
             Assert.That(indexes, Is.All.EqualTo(-1));
-        }
-
-        [Theory]
-        public void Indexer_WhenGivenAnIndexWithinTheSize_ReturnsTheSpecifiedPoint(int width, int height)
-        {
-            var size = new Size(width, height);
-
-            var points = Enumerable.Range(0, width * height).Select(i => size[i]);
-
-            Assert.That(points, Is.EquivalentTo(size.ToList()));
-        }
-
-        [Theory]
-        public void Indexer_WhenGivenAnIndexOutsideTheSize_ThrowsArgumentOutOfRangeException(int width, int height)
-        {
-            var size = new Size(width, height);
-
-            Assert.That(() => size[-1], Throws.InstanceOf<ArgumentOutOfRangeException>());
-            Assert.That(() => size[width * height], Throws.InstanceOf<ArgumentOutOfRangeException>());
-        }
-
-        [Theory]
-        public void Count_Always_ReturnsTheSizeOfTheEnumerableCollection(int width, int height)
-        {
-            var size = new Size(width, height);
-            var points = size.ToList();
-
-            Assert.That(size.Count, Is.EqualTo(points.Count));
         }
     }
 }

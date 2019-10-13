@@ -6,21 +6,43 @@ namespace GameTheory.FormsRunner
     using System.ComponentModel;
     using System.Windows.Forms;
     using GameTheory.Catalogs;
+    using GameTheory.FormsRunner.Shared.Catalogs;
+    using Unity;
+    using Unity.ServiceLocation;
 
     /// <summary>
     /// Contains the main entry point for the application.
     /// </summary>
     public static class Program
     {
+        static Program()
+        {
+            Container = new UnityContainer();
+            var serviceLocator = new UnityServiceLocator(Container);
+            DisplayCatalog = PluginLoader.LoadCatalogs<IDisplayCatalog>(d => new CompositeDisplayCatalog(d), serviceLocator: serviceLocator);
+            GameCatalog = PluginLoader.LoadGameCatalogs(serviceLocator: serviceLocator);
+            PlayerCatalog = PluginLoader.LoadPlayerCatalogs(serviceLocator: serviceLocator);
+        }
+
+        /// <summary>
+        /// Gets the shared container for the application.
+        /// </summary>
+        public static UnityContainer Container { get; }
+
         /// <summary>
         /// Gets the shared static game catalog for the application.
         /// </summary>
-        public static IGameCatalog GameCatalog { get; } = PluginLoader.LoadGameCatalogs();
+        public static IDisplayCatalog DisplayCatalog { get; }
+
+        /// <summary>
+        /// Gets the shared static game catalog for the application.
+        /// </summary>
+        public static IGameCatalog GameCatalog { get; }
 
         /// <summary>
         /// Gets the shared static player catalong for the application.
         /// </summary>
-        public static IPlayerCatalog PlayerCatalog { get; } = PluginLoader.LoadPlayerCatalogs();
+        public static IPlayerCatalog PlayerCatalog { get; }
 
         /// <summary>
         /// Extension method allowing conditional invoke usage.

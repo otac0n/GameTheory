@@ -25,11 +25,11 @@ namespace GameTheory.FormsRunner.Shared
             this.Name = name;
         }
 
+        public string Name { get; }
+
         public Scope Parent { get; }
 
         public string Path { get; }
-
-        public string Name { get; }
 
         public ImmutableDictionary<string, object> Properties { get; }
 

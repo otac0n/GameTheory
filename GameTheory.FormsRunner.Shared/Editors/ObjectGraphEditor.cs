@@ -15,9 +15,9 @@ namespace GameTheory.FormsRunner.Shared.Editors
         {
         }
 
-        public static ObjectGraphEditor Instance { get; } = new ObjectGraphEditor();
-
         public delegate bool OverrideEditor(Scope scope, Type type, object value, out Control control, out Control errorControl, out Label label, Action<Control, string> setError, Action<object, bool> set);
+
+        public static ObjectGraphEditor Instance { get; } = new ObjectGraphEditor();
 
         public override bool CanEdit(Scope scope, Type type, object value) => true;
 
@@ -27,14 +27,14 @@ namespace GameTheory.FormsRunner.Shared.Editors
             var nullValues = new[] { new { order = 0, selection = new InitializerSelection("(null)", args => null, noParameters) } }.ToList();
             nullValues.RemoveAll(_ => type.IsValueType);
             var constructors = from constructor in type.GetConstructors()
-                                let parameters = constructor.GetParameters()
-                                let text = parameters.Length == 0 ? "Default Instance" : $"Specify {string.Join(", ", parameters.Select(p => p.Name))}"
-                                let accessor = new Func<object[], object>(args => constructor.Invoke(args))
-                                select new { order = parameters.Length == 0 ? 1 : 3, selection = new InitializerSelection(text, accessor, parameters) };
+                               let parameters = constructor.GetParameters()
+                               let text = parameters.Length == 0 ? "Default Instance" : $"Specify {string.Join(", ", parameters.Select(p => p.Name))}"
+                               let accessor = new Func<object[], object>(args => constructor.Invoke(args))
+                               select new { order = parameters.Length == 0 ? 1 : 3, selection = new InitializerSelection(text, accessor, parameters) };
             var staticProperties = from staticProperty in type.GetProperties(BindingFlags.Public | BindingFlags.Static)
-                                    where staticProperty.PropertyType == type
-                                    let accessor = new Func<object[], object>(_ => staticProperty.GetValue(null))
-                                    select new { order = 2, selection = new InitializerSelection(staticProperty.Name, accessor, noParameters) };
+                                   where staticProperty.PropertyType == type
+                                   let accessor = new Func<object[], object>(_ => staticProperty.GetValue(null))
+                                   select new { order = 2, selection = new InitializerSelection(staticProperty.Name, accessor, noParameters) };
             var rootOptions = nullValues.Concat(constructors).Concat(staticProperties).OrderBy(s => s.order).Select(s => s.selection).ToArray();
 
             var propertiesTable = MakeTablePanel(1, 2);
@@ -143,6 +143,7 @@ namespace GameTheory.FormsRunner.Shared.Editors
                             case ComboBox comboBox:
                                 label.AddMargin(top: 10);
                                 break;
+
                             case TextBox textbox:
                             case NumericUpDown numericUpDown:
                                 label.AddMargin(top: 5);
