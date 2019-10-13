@@ -36,19 +36,25 @@ namespace GameTheory.Games.Nessos
         public const int HandLimit = 5;
 
         /// <summary>
+        /// The threshold of owned <see cref="Card.Charon"/> cards at which a player is elminated.
+        /// </summary>
+        public const int PlayerCharonLimit = 3;
+
+        /// <summary>
+        /// The threshold of owned <see cref="Card.Charon"/> cards at which the game ends.
+        /// </summary>
+        public const int TotalCharonLimit = 9;
+
+        /// <summary>
         /// Gets the number of points needed to win the game.
         /// </summary>
-        private static readonly ImmutableDictionary<int, int> PointThresholds = ImmutableDictionary.CreateRange(new Dictionary<int, int>
+        public static readonly ImmutableDictionary<int, int> PointThresholds = ImmutableDictionary.CreateRange(new Dictionary<int, int>
         {
             [3] = 40,
             [4] = 40,
             [5] = 35,
             [6] = 30,
         });
-
-        private InterstitialState interstitialState;
-
-        private Lazy<ImmutableList<Move>> subsequentMoves;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GameState"/> class in the starting position.
@@ -64,21 +70,27 @@ namespace GameTheory.Games.Nessos
             this.Players = Enumerable.Range(0, players).Select(i => new PlayerToken()).ToImmutableArray();
             this.FirstPlayer = this.Players[0];
             this.Phase = this.Phase;
-            this.Deck = MakeDeck(players);
+            var deck = MakeDeck(players);
             this.OfferedCards = ImmutableList<OfferedCard>.Empty;
-            this.Inventory = Enumerable.Range(0, players).ToImmutableDictionary(i => this.Players[i], i => new Inventory());
+            var inventoryBuilder = ImmutableDictionary.CreateBuilder<PlayerToken, Inventory>();
+            foreach (var player in this.Players)
+            {
+                deck = deck.Deal(HandLimit, out var startingHand);
+                inventoryBuilder.Add(player, new Inventory().With(
+                    hand: new EnumCollection<Card>(startingHand)));
+            }
+            this.Inventory = inventoryBuilder.ToImmutable();
+            this.Deck = deck;
         }
 
         private GameState(
             ImmutableArray<PlayerToken> players,
-            InterstitialState interstitialState,
             PlayerToken firstPlayer,
             Phase phase,
             EnumCollection<Card> deck,
             ImmutableList<OfferedCard> offeredCards,
             PlayerToken targetPlayer,
             ImmutableDictionary<PlayerToken, Inventory> inventory)
-            : this(interstitialState)
         {
             this.Players = players;
             this.FirstPlayer = firstPlayer;
@@ -87,12 +99,6 @@ namespace GameTheory.Games.Nessos
             this.OfferedCards = offeredCards;
             this.TargetPlayer = targetPlayer;
             this.Inventory = inventory;
-        }
-
-        private GameState(InterstitialState interstitialState)
-        {
-            this.interstitialState = interstitialState;
-            this.subsequentMoves = this.interstitialState == null ? null : new Lazy<ImmutableList<Move>>(() => this.interstitialState.GenerateMoves(this).ToImmutableList(), LazyThreadSafetyMode.ExecutionAndPublication);
         }
 
         /// <summary>
@@ -229,22 +235,17 @@ namespace GameTheory.Games.Nessos
         {
             var moves = new List<Move>();
 
-            if (this.interstitialState != null)
+            switch (this.Phase)
             {
-                moves.AddRange(this.subsequentMoves.Value);
-            }
-            else
-            {
-                switch (this.Phase)
-                {
-                    case Phase.Offer:
-                        moves.AddRange(OfferCardMove.GenerateMoves(this));
-                        break;
+                case Phase.Offer:
+                    moves.AddRange(AcceptOfferMove.GenerateMoves(this));
+                    moves.AddRange(RejectOfferMove.GenerateMoves(this));
+                    moves.AddRange(OfferCardMove.GenerateMoves(this));
+                    break;
 
-                    case Phase.Draw:
-                        moves.AddRange(DrawCardMove.GenerateMoves(this));
-                        break;
-                }
+                case Phase.Draw:
+                    moves.AddRange(DrawCardMove.GenerateMoves(this));
+                    break;
             }
 
             return moves.ToImmutableList();
@@ -306,10 +307,34 @@ namespace GameTheory.Games.Nessos
         /// <inheritdoc />
         public IReadOnlyCollection<PlayerToken> GetWinners()
         {
-            // TODO: Add other win conditions. Check phase.
+            if (this.Phase != Phase.End)
+            {
+                return Array.Empty<PlayerToken>();
+            }
 
-            var pointThreshold = PointThresholds[this.Players.Length];
-            return this.Players.Where(p => this.Inventory[p].Score >= pointThreshold).ToList();
+            return this.Players
+                .Where(p => this.Inventory[p].OwnedCards[Card.Charon] < PlayerCharonLimit)
+                .AllMaxBy(p => Score(this.Inventory[p].OwnedCards))
+                .AllMaxBy(p => this.Inventory[p].OwnedCards.Count);
+        }
+
+        public static int Score(EnumCollection<Card> ownedCards)
+        {
+            if (ownedCards[Card.Charon] >= PlayerCharonLimit)
+            {
+                return 0;
+            }
+
+            var satyrs = ownedCards[Card.Satyr];
+            var centaurs = ownedCards[Card.Centaur];
+            var nemeanLions = ownedCards[Card.NemeanLion];
+            var score = Math.Min(satyrs, Math.Min(centaurs, nemeanLions)) * 10;
+            foreach (var key in ownedCards.Keys)
+            {
+                score += ownedCards[key] * (int)key;
+            }
+
+            return score;
         }
 
         /// <inheritdoc />
@@ -337,7 +362,6 @@ namespace GameTheory.Games.Nessos
         }
 
         internal GameState With(
-            bool keepInterstitial = false,
             PlayerToken firstPlayer = null,
             Phase? phase = null,
             EnumCollection<Card> deck = null,
@@ -347,26 +371,12 @@ namespace GameTheory.Games.Nessos
         {
             return new GameState(
                 this.Players,
-                keepInterstitial ? this.interstitialState : null,
                 firstPlayer ?? this.FirstPlayer,
                 phase ?? this.Phase,
                 deck ?? this.Deck,
                 offeredCards ?? this.OfferedCards,
                 targetPlayer.HasValue ? targetPlayer.Value : this.TargetPlayer,
                 inventory ?? this.Inventory);
-        }
-
-        internal GameState WithInterstitialState(InterstitialState interstitialState)
-        {
-            return new GameState(
-                this.Players,
-                interstitialState,
-                this.FirstPlayer,
-                this.Phase,
-                this.Deck,
-                this.OfferedCards,
-                this.TargetPlayer,
-                this.Inventory);
         }
     }
 }

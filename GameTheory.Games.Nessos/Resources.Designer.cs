@@ -61,7 +61,16 @@ namespace GameTheory.Games.Nessos {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Draw a card..
+        ///   Looks up a localized string similar to Accept the offered cards.
+        /// </summary>
+        public static string AcceptOffer {
+            get {
+                return ResourceManager.GetString("AcceptOffer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Draw a card.
         /// </summary>
         public static string DrawCard {
             get {
@@ -75,6 +84,33 @@ namespace GameTheory.Games.Nessos {
         public static string Name {
             get {
                 return ResourceManager.GetString("Name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Offer {0} to {1}.
+        /// </summary>
+        public static string OfferCard {
+            get {
+                return ResourceManager.GetString("OfferCard", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Offer {0} to {1} and claim {2}.
+        /// </summary>
+        public static string OfferCardAs {
+            get {
+                return ResourceManager.GetString("OfferCardAs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reject the offered cards.
+        /// </summary>
+        public static string RejectOffer {
+            get {
+                return ResourceManager.GetString("RejectOffer", resourceCulture);
             }
         }
     }

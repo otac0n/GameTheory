@@ -117,10 +117,22 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AcceptOffer" xml:space="preserve">
+    <value>Accept the offered cards</value>
+  </data>
   <data name="DrawCard" xml:space="preserve">
-    <value>Draw a card.</value>
+    <value>Draw a card</value>
   </data>
   <data name="Name" xml:space="preserve">
     <value>Nessos</value>
+  </data>
+  <data name="OfferCard" xml:space="preserve">
+    <value>Offer {0} to {1}</value>
+  </data>
+  <data name="OfferCardAs" xml:space="preserve">
+    <value>Offer {0} to {1} and claim {2}</value>
+  </data>
+  <data name="RejectOffer" xml:space="preserve">
+    <value>Reject the offered cards</value>
   </data>
 </root>

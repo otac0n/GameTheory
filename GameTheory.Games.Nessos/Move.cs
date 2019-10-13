@@ -58,12 +58,54 @@ namespace GameTheory.Games.Nessos
 
             if (state.Phase == Phase.Draw)
             {
-                // TODO: Exclude players with 3 charons.
-                if (state.Deck.Count == 0 || state.Inventory.All(i => i.Value.Hand.Count >= GameState.HandLimit))
+                var pointThreshold = GameState.PointThresholds[state.Players.Length];
+                var endPhase = false;
+                var charons = 0;
+                var remainingPlayers = 0;
+                foreach (var player in state.Players)
+                {
+                    var inventory = state.Inventory[player];
+
+                    var playerCharons = inventory.OwnedCards[Card.Charon];
+                    charons += playerCharons;
+                    if (playerCharons < GameState.PlayerCharonLimit)
+                    {
+                        remainingPlayers++;
+
+                        if (GameState.Score(inventory.OwnedCards) >= pointThreshold)
+                        {
+                            endPhase = true;
+                            break;
+                        }
+                    }
+                    
+                    if (charons >= GameState.TotalCharonLimit)
+                    {
+                        endPhase = true;
+                        break;
+                    }
+                }
+
+                if (endPhase || remainingPlayers <= 1)
                 {
                     state = state.With(
-                        firstPlayer: state.GetNextPlayer(state.FirstPlayer),
-                        phase: Phase.Offer);
+                        phase: Phase.End);
+                }
+                else
+                {
+                    if (state.Deck.Count == 0 || state.Inventory.All(i => i.Value.Hand.Count >= GameState.HandLimit))
+                    {
+                        var firstPlayer = state.FirstPlayer;
+                        do
+                        {
+                            firstPlayer = state.GetNextPlayer(firstPlayer);
+                        }
+                        while (firstPlayer != state.FirstPlayer && state.Inventory[firstPlayer].OwnedCards[Card.Charon] >= GameState.PlayerCharonLimit);
+
+                        state = state.With(
+                            firstPlayer: firstPlayer,
+                            phase: Phase.Offer);
+                    }
                 }
             }
 

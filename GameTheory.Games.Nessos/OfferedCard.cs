@@ -12,7 +12,7 @@ namespace GameTheory.Games.Nessos
     /// <summary>
     /// Represents the card or cards being offered from one player to another.
     /// </summary>
-    public sealed class OfferedCard : IComparable<OfferedCard>, ITokenFormattable
+    public sealed class OfferedCard : IComparable<OfferedCard>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="OfferedCard"/> class.
@@ -26,8 +26,6 @@ namespace GameTheory.Games.Nessos
             this.ClaimedCard = claimedCard;
             this.SourcePlayer = sourcePlayer;
         }
-
-        public IList<object> FormatTokens => throw new NotImplementedException();
 
         /// <summary>
         /// Gets the player offering a new card.

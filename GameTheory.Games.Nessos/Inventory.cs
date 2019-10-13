@@ -37,8 +37,6 @@ namespace GameTheory.Games.Nessos
         /// </summary>
         public EnumCollection<Card> OwnedCards { get; }
 
-        public int Score { get; }
-
         /// <inheritdoc/>
         public int CompareTo(Inventory other)
         {

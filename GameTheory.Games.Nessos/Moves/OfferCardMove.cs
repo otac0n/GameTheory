@@ -43,7 +43,36 @@ namespace GameTheory.Games.Nessos.Moves
         /// </summary>
         public Card ClaimedCard { get; }
 
-        public override IList<object> FormatTokens => throw new NotImplementedException();
+        public override IList<object> FormatTokens => this.ClaimedCard == this.ActualCard
+            ? FormatUtilities.ParseStringFormat(Resources.OfferCard, this.ActualCard, this.TargetPlayer)
+            : FormatUtilities.ParseStringFormat(Resources.OfferCardAs, this.ActualCard, this.TargetPlayer, this.ClaimedCard);
+
+        public override int CompareTo(Move other)
+        {
+            if (object.ReferenceEquals(other, this))
+            {
+                return 0;
+            }
+
+            if (other is OfferCardMove move)
+            {
+                int comp;
+
+                if ((comp = this.PlayerToken.CompareTo(move.PlayerToken)) != 0 ||
+                    (comp = this.TargetPlayer.CompareTo(move.TargetPlayer)) != 0 ||
+                    (comp = EnumComparer<Card>.Default.Compare(this.ActualCard, move.ActualCard)) != 0 ||
+                    (comp = EnumComparer<Card>.Default.Compare(this.ClaimedCard, move.ClaimedCard)) != 0)
+                {
+                    return comp;
+                }
+
+                return 0;
+            }
+            else
+            {
+                return base.CompareTo(other);
+            }
+        }
 
         internal static IEnumerable<OfferCardMove> GenerateMoves(GameState state)
         {
@@ -54,7 +83,9 @@ namespace GameTheory.Games.Nessos.Moves
                 var hand = playerInventory.Hand;
                 foreach (var target in state.Players)
                 {
-                    if (target != state.FirstPlayer && !state.OfferedCards.Any(o => target == o.SourcePlayer))
+                    if (target != activePlayer &&
+                        state.Inventory[target].OwnedCards[Card.Charon] < GameState.PlayerCharonLimit &&
+                        !state.OfferedCards.Any(o => target == o.SourcePlayer))
                     {
                         foreach (var card in hand.Keys)
                         {
