@@ -11,7 +11,7 @@ namespace GameTheory.Games.LoveLetter.Console
     public class LoveLetterConsoleRenderer : BaseConsoleRenderer<Move>
     {
         /// <inheritdoc/>
-        public override void Show(IGameState<Move> state, PlayerToken playerToken = null) => this.Show((GameState)state);
+        public override void Show(IGameState<Move> state, PlayerToken playerToken = null) => new Templates(playerToken).RenderGameState((GameState)state, this.MakeRenderTokenWriter(state));
 
         /// <inheritdoc/>
         protected override void RenderToken(IGameState<Move> state, object token)
@@ -23,7 +23,5 @@ namespace GameTheory.Games.LoveLetter.Console
 
             base.RenderToken(state, token);
         }
-
-        private void Show(GameState state) => new Templates().RenderGameState(state, this.MakeRenderTokenWriter(state));
     }
 }
