@@ -10,6 +10,7 @@ namespace GameTheory.FormsRunner.Players
     using System.Threading.Tasks;
     using System.Windows.Forms;
     using GameTheory.Catalogs;
+    using GameTheory.FormsRunner.Displays;
     using GameTheory.FormsRunner.Shared;
     using Unity;
     using static Shared.Controls;
@@ -27,7 +28,10 @@ namespace GameTheory.FormsRunner.Players
 
             this.Text = playerToken.ToString();
             this.PlayerToken = playerToken;
-            var displays = new List<Display>();
+            var displays = new List<Display>
+            {
+                new PlayerTokenDisplay(game),
+            };
             displays.AddRange(Program.DisplayCatalog.FindDisplays(game.GameStateType).Select(d => (Display)container.Resolve(d)));
             this.displays = displays;
             this.scope = new Scope(properties: new Dictionary<string, object>

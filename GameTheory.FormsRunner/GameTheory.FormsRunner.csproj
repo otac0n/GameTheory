@@ -80,6 +80,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Displays\PlayerTokenDisplay.cs" />
     <Compile Include="Players\PlayerView.cs">
       <SubType>Form</SubType>
     </Compile>
