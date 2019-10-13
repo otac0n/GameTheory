@@ -224,7 +224,8 @@ namespace GameTheory.Games.Nessos
 
             int comp;
 
-            if ((comp = this.FirstPlayer.CompareTo(state.FirstPlayer)) != 0 ||
+            if ((comp = EnumComparer<Phase>.Default.Compare(this.Phase, state.Phase)) != 0 ||
+                (comp = this.FirstPlayer.CompareTo(state.FirstPlayer)) != 0 ||
                 (comp = CompareUtilities.CompareLists(this.Players, state.Players)) != 0)
             {
                 return comp;
@@ -238,6 +239,19 @@ namespace GameTheory.Games.Nessos
                     {
                         return comp;
                     }
+                }
+            }
+
+            if (this.TargetPlayer != state.TargetPlayer)
+            {
+                if (this.TargetPlayer == null)
+                {
+                    return -1;
+                }
+
+                if ((comp = this.TargetPlayer.CompareTo(state.TargetPlayer)) != 0)
+                {
+                    return comp;
                 }
             }
 
