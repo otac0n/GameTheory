@@ -23,6 +23,9 @@ namespace GameTheory.Games.Nessos.Moves
         public override IList<object> FormatTokens => new object[] { Resources.DrawCard };
 
         /// <inheritdoc />
+        public override bool IsDeterministic => this.GameState.Deck.Count <= 1;
+
+        /// <inheritdoc />
         public override int CompareTo(Move other)
         {
             if (other is DrawCardMove)
@@ -70,6 +73,25 @@ namespace GameTheory.Games.Nessos.Moves
                 deck: deck);
 
             return base.Apply(state);
+        }
+
+        internal override IEnumerable<IWeighted<GameState>> GetOutcomes(GameState state)
+        {
+            foreach (var dealt in state.Deck.Keys)
+            {
+                var playerInventory = state.Inventory[this.PlayerToken];
+
+                playerInventory = playerInventory.With(
+                    hand: playerInventory.Hand.Add(dealt));
+
+                var newState = state.With(
+                    inventory: state.Inventory.SetItem(
+                        this.PlayerToken,
+                        playerInventory),
+                    deck: state.Deck.Remove(dealt));
+
+                yield return Weighted.Create(base.Apply(newState), state.Deck[dealt]);
+            }
         }
     }
 }

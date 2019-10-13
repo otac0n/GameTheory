@@ -26,7 +26,7 @@ namespace GameTheory.Games.Nessos
         public abstract IList<object> FormatTokens { get; }
 
         /// <inheritdoc />
-        public bool IsDeterministic => true;
+        public virtual bool IsDeterministic => true;
 
         /// <inheritdoc />
         public PlayerToken PlayerToken { get; }
@@ -110,5 +110,7 @@ namespace GameTheory.Games.Nessos
 
             return state;
         }
+
+        internal virtual IEnumerable<IWeighted<GameState>> GetOutcomes(GameState state) => throw new NotImplementedException();
     }
 }

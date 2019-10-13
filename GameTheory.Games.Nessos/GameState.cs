@@ -299,7 +299,16 @@ namespace GameTheory.Games.Nessos
         /// <inheritdoc />
         public IEnumerable<IWeighted<IGameState<Move>>> GetOutcomes(Move move)
         {
-            yield return Weighted.Create(this.MakeMove(move), 1);
+            if (move.IsDeterministic)
+            {
+                yield return Weighted.Create(this.MakeMove(move), 1);
+                yield break;
+            }
+
+            foreach (var outcome in move.GetOutcomes(this))
+            {
+                yield return outcome;
+            }
         }
 
         /// <inheritdoc />
