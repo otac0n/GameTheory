@@ -3,11 +3,6 @@
 namespace GameTheory.Games.Nessos
 {
     using System;
-    using System.Collections.Generic;
-    using System.Collections.Immutable;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
 
 
     /// <summary>
@@ -20,13 +15,13 @@ namespace GameTheory.Games.Nessos
         /// </summary>
         public Inventory()
         {
-            this.OwnedCards = ImmutableList<Card>.Empty;
-            this.Hand = ImmutableList<Card>.Empty;
+            this.OwnedCards = EnumCollection<Card>.Empty;
+            this.Hand = EnumCollection<Card>.Empty;
         }
 
         private Inventory(
-            ImmutableList<Card> ownedCards,
-            ImmutableList<Card> hand)
+            EnumCollection<Card> ownedCards,
+            EnumCollection<Card> hand)
         {
             this.OwnedCards = ownedCards;
             this.Hand = hand;
@@ -35,12 +30,12 @@ namespace GameTheory.Games.Nessos
          /// <summary>
         /// Gets the player's hand.
         /// </summary>
-        public ImmutableList<Card> Hand { get; }
+        public EnumCollection<Card> Hand { get; }
 
         /// <summary>
         /// Gets the player's stack of played cards.
         /// </summary>
-        public ImmutableList<Card> OwnedCards { get; }
+        public EnumCollection<Card> OwnedCards { get; }
 
         public int Score { get; }
 
@@ -58,8 +53,8 @@ namespace GameTheory.Games.Nessos
 
             int comp;
 
-            if ((comp = CompareUtilities.CompareLists(this.Hand, other.Hand)) != 0 ||
-                (comp = CompareUtilities.CompareLists(this.OwnedCards, other.OwnedCards)) != 0)
+            if ((comp = this.Hand.CompareTo(other.Hand)) != 0 ||
+                (comp = this.OwnedCards.CompareTo(other.OwnedCards)) != 0)
             {
                 return comp;
             }
@@ -68,8 +63,8 @@ namespace GameTheory.Games.Nessos
         }
 
         internal Inventory With(
-            ImmutableList<Card> ownedCards = null,
-            ImmutableList<Card> hand = null)
+            EnumCollection<Card> ownedCards = null,
+            EnumCollection<Card> hand = null)
         {
             return new Inventory(
                 ownedCards: ownedCards ?? this.OwnedCards,

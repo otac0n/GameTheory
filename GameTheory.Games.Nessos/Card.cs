@@ -1,63 +1,29 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Games.Nessos
 {
-    using System;
-    using System.Collections.Generic;
-
-    /// <summary>
-    /// Represents an Amphora card in Nessos.
-    /// </summary>
-    public class Card : IComparable<Card>, ITokenFormattable
+    public enum Card : byte
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Card"/> class.
-        /// </summary>
-        /// <param name="name">The name of the Amphora card.</param>
-        /// <param name="value">The number of points granted by this card.</param>
-        public Card(string name, int value = 0)
-        {
-            this.Name = name;
-            this.Value = value;
-        }
+        Charon = 0,
 
-        /// <summary>
-        /// Gets the name of the Amphora card.
-        /// </summary>
-        public string Name { get; }
-        
-        /// <summary>
-        /// Gets the value of this card.
-        /// </summary>
-        public int Value { get; }
+        Satyr = 1,
 
-        public IList<object> FormatTokens => throw new NotImplementedException();
+        Centaur = 2,
 
-        /// <inheritdoc/>
-        public int CompareTo(Card other)
-        {
-            if (object.ReferenceEquals(other, this))
-            {
-                return 0;
-            }
-            else if (object.ReferenceEquals(other, null))
-            {
-                return 1;
-            }
+        NemeanLion = 3,
 
-            int comp;
+        Minotaur = 4,
 
-            if ((comp = this.Name.CompareTo(other.Name)) != 0 ||
-                (comp = this.Value.CompareTo(other.Value)) != 0)
-            {
-                return comp;
-            }
+        Griffin = 5,
 
-            return 0;
-        }
+        Phoenix = 6,
+
+        Pegasus = 7,
+
+        Cerberus = 8,
+
+        LerneanHydra = 9,
+
+        Medusa = 10,
     }
 }

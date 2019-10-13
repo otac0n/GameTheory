@@ -9,7 +9,7 @@ namespace GameTheory.Games.Nessos
     /// <summary>
     /// Represents a move in Nessos.
     /// </summary>
-    public class Move : IMove, IComparable<Move>
+    public abstract class Move : IMove, IComparable<Move>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="Move"/> class.
@@ -22,7 +22,7 @@ namespace GameTheory.Games.Nessos
         }
 
         /// <inheritdoc />
-        public IList<object> FormatTokens => throw new NotImplementedException();
+        public abstract IList<object> FormatTokens { get; }
 
         /// <inheritdoc />
         public bool IsDeterministic => true;
