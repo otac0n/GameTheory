@@ -25,7 +25,7 @@ namespace GameTheory
 
         static EnumCollection()
         {
-            Capacity = EnumUtilities<TEnum>.GetValues().Select(x => Convert.ToInt32(x, CultureInfo.InvariantCulture)).Max() + 1;
+            Capacity = EnumUtilities<TEnum>.Values.Select(x => Convert.ToInt32(x, CultureInfo.InvariantCulture)).Max() + 1;
             AllKeys = Enumerable.Range(0, Capacity).Select(i => (TEnum)Enum.ToObject(typeof(TEnum), i)).ToArray();
             Empty = new EnumCollection<TEnum>(new TEnum[0]);
         }

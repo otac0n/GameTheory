@@ -28,7 +28,7 @@ namespace GameTheory.Games.LoveLetter.States
 
         public override IEnumerable<Move> GenerateMoves(GameState state)
         {
-            foreach (var card in EnumUtilities<Card>.GetValues())
+            foreach (var card in EnumUtilities<Card>.Values)
             {
                 if (card > Card.Guard)
                 {
