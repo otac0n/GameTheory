@@ -39,20 +39,25 @@ namespace GameTheory.Games.Nessos.Moves
         {
             if (state.Deck.Count > 0)
             {
-                foreach (var player in state.Players)
+                var player = state.FirstPlayer;
+                do
                 {
-                    if (state.Inventory[player].Hand.Count < GameState.HandLimit)
+                    var inventory = state.Inventory[player];
+                    if (inventory.Hand.Count < GameState.HandLimit && inventory.OwnedCards[Card.Charon] < GameState.PlayerCharonLimit)
                     {
                         yield return new DrawCardMove(state, player);
+                        yield break;
                     }
+
+                    player = state.GetNextPlayer(player);
                 }
+                while (player != state.FirstPlayer);
             }
         }
 
         internal override GameState Apply(GameState state)
         {
             var playerInventory = state.Inventory[this.PlayerToken];
-
 
             var deck = state.Deck.Deal(out var dealt);
             playerInventory = playerInventory.With(

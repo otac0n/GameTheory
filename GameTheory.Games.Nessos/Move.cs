@@ -78,7 +78,7 @@ namespace GameTheory.Games.Nessos
                             break;
                         }
                     }
-                    
+
                     if (charons >= GameState.TotalCharonLimit)
                     {
                         endPhase = true;
@@ -93,7 +93,7 @@ namespace GameTheory.Games.Nessos
                 }
                 else
                 {
-                    if (state.Deck.Count == 0 || state.Inventory.All(i => i.Value.Hand.Count >= GameState.HandLimit))
+                    if (state.Deck.Count == 0 || state.Inventory.All(i => i.Value.OwnedCards[Card.Charon] >= GameState.PlayerCharonLimit || i.Value.Hand.Count >= GameState.HandLimit))
                     {
                         var firstPlayer = state.FirstPlayer;
                         do
@@ -108,7 +108,6 @@ namespace GameTheory.Games.Nessos
                     }
                 }
             }
-
 
             return state;
         }
