@@ -37,6 +37,7 @@ namespace GameTheory.Games.Nessos
         /// </summary>
         public PlayerToken SourcePlayer { get; }
 
+        /// <inheritdoc/>
         public int CompareTo(OfferedCard other)
         {
             if (object.ReferenceEquals(other, this))

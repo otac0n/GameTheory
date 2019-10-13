@@ -15,6 +15,7 @@ namespace GameTheory.Games.Nessos.Moves
         {
         }
 
+        /// <inheritdoc/>
         public override IList<object> FormatTokens => new[] { Resources.AcceptOffer };
 
         internal static IEnumerable<Move> GenerateMoves(GameState state)

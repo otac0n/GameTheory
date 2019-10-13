@@ -36,6 +36,7 @@ namespace GameTheory.Games.Nessos.Moves
         /// </summary>
         public Card ClaimedCard { get; }
 
+        /// <inheritdoc/>
         public override IList<object> FormatTokens => this.ClaimedCard == this.ActualCard
             ? FormatUtilities.ParseStringFormat(Resources.OfferCard, this.ActualCard, this.TargetPlayer)
             : FormatUtilities.ParseStringFormat(Resources.OfferCardAs, this.ActualCard, this.TargetPlayer, this.ClaimedCard);
@@ -45,6 +46,7 @@ namespace GameTheory.Games.Nessos.Moves
         /// </summary>
         public PlayerToken TargetPlayer { get; }
 
+        /// <inheritdoc/>
         public override int CompareTo(Move other)
         {
             if (object.ReferenceEquals(other, this))
