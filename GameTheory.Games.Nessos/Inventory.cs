@@ -4,7 +4,6 @@ namespace GameTheory.Games.Nessos
 {
     using System;
 
-
     /// <summary>
     /// Represents a player's inventory.
     /// </summary>
@@ -27,7 +26,7 @@ namespace GameTheory.Games.Nessos
             this.Hand = hand;
         }
 
-         /// <summary>
+        /// <summary>
         /// Gets the player's hand.
         /// </summary>
         public EnumCollection<Card> Hand { get; }

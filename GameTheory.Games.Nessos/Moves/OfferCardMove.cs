@@ -2,9 +2,7 @@
 
 namespace GameTheory.Games.Nessos.Moves
 {
-    using System;
     using System.Collections.Generic;
-    using System.Collections.Immutable;
     using System.Linq;
 
     /// <summary>
@@ -29,11 +27,6 @@ namespace GameTheory.Games.Nessos.Moves
         }
 
         /// <summary>
-        /// Get the player being offered a card or cards.
-        /// </summary>
-        public PlayerToken TargetPlayer { get; }
-
-        /// <summary>
         /// Get the card being offered.
         /// </summary>
         public Card ActualCard { get; }
@@ -46,6 +39,11 @@ namespace GameTheory.Games.Nessos.Moves
         public override IList<object> FormatTokens => this.ClaimedCard == this.ActualCard
             ? FormatUtilities.ParseStringFormat(Resources.OfferCard, this.ActualCard, this.TargetPlayer)
             : FormatUtilities.ParseStringFormat(Resources.OfferCardAs, this.ActualCard, this.TargetPlayer, this.ClaimedCard);
+
+        /// <summary>
+        /// Get the player being offered a card or cards.
+        /// </summary>
+        public PlayerToken TargetPlayer { get; }
 
         public override int CompareTo(Move other)
         {
@@ -129,4 +127,3 @@ namespace GameTheory.Games.Nessos.Moves
         }
     }
 }
-

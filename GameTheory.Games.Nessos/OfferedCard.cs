@@ -3,11 +3,6 @@
 namespace GameTheory.Games.Nessos
 {
     using System;
-    using System.Collections.Generic;
-    using System.Collections.Immutable;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
 
     /// <summary>
     /// Represents the card or cards being offered from one player to another.
@@ -28,11 +23,6 @@ namespace GameTheory.Games.Nessos
         }
 
         /// <summary>
-        /// Gets the player offering a new card.
-        /// </summary>
-        public PlayerToken SourcePlayer { get; }
-
-        /// <summary>
         /// Get the card being offered.
         /// </summary>
         public Card ActualCard { get; }
@@ -41,6 +31,11 @@ namespace GameTheory.Games.Nessos
         /// Get the card being claimed.
         /// </summary>
         public Card ClaimedCard { get; }
+
+        /// <summary>
+        /// Gets the player offering a new card.
+        /// </summary>
+        public PlayerToken SourcePlayer { get; }
 
         public int CompareTo(OfferedCard other)
         {

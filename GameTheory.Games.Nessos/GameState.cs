@@ -7,7 +7,6 @@ namespace GameTheory.Games.Nessos
     using System.Collections.Immutable;
     using System.ComponentModel.DataAnnotations;
     using System.Linq;
-    using System.Threading;
     using GameTheory.Games.Nessos.Moves;
 
     /// <summary>
@@ -15,6 +14,16 @@ namespace GameTheory.Games.Nessos
     /// </summary>
     public sealed class GameState : IGameState<Move>
     {
+        /// <summary>
+        /// The maximum number of cards in hand.
+        /// </summary>
+        public const int HandLimit = 5;
+
+        /// <summary>
+        /// The maximum number of offered cards.
+        /// </summary>
+        public const int MaxOfferedCards = 3;
+
         /// <summary>
         /// The maximum number of supported players.
         /// </summary>
@@ -24,16 +33,6 @@ namespace GameTheory.Games.Nessos
         /// The minimum number of supported players.
         /// </summary>
         public const int MinPlayers = 3;
-
-        /// <summary>
-        /// The maximum number of offered cards.
-        /// </summary>
-        public const int MaxOfferedCards = 3;
-
-        /// <summary>
-        /// The maximum number of cards in hand.
-        /// </summary>
-        public const int HandLimit = 5;
 
         /// <summary>
         /// The threshold of owned <see cref="Card.Charon"/> cards at which a player is elminated.
@@ -102,6 +101,11 @@ namespace GameTheory.Games.Nessos
         }
 
         /// <summary>
+        /// Gets the Amphora <see cref="Deck"/> for the game.
+        /// </summary>
+        public EnumCollection<Card> Deck { get; }
+
+        /// <summary>
         /// Gets the <see cref="PlayerToken"/> representing the first player.
         /// </summary>
         public PlayerToken FirstPlayer { get; }
@@ -110,6 +114,11 @@ namespace GameTheory.Games.Nessos
         /// Gets the inventory of all players.
         /// </summary>
         public ImmutableDictionary<PlayerToken, Inventory> Inventory { get; }
+
+        /// <summary>
+        /// Gets the list of offered cards.
+        /// </summary>
+        public ImmutableList<OfferedCard> OfferedCards { get; }
 
         /// <summary>
         /// Gets the current phase of the game.
@@ -123,53 +132,6 @@ namespace GameTheory.Games.Nessos
 
         /// <inheritdoc />
         IReadOnlyList<PlayerToken> IGameState<Move>.Players => this.Players;
-
-        /// <inheritdoc/>
-        public int CompareTo(IGameState<Move> other)
-        {
-            if (object.ReferenceEquals(other, this))
-            {
-                return 0;
-            }
-
-            var state = other as GameState;
-            if (object.ReferenceEquals(state, null))
-            {
-                return 1;
-            }
-
-            int comp;
-
-            if ((comp = this.FirstPlayer.CompareTo(state.FirstPlayer)) != 0 ||
-                (comp = CompareUtilities.CompareLists(this.Players, state.Players)) != 0)
-            {
-                return comp;
-            }
-
-
-            if (this.Inventory != state.Inventory)
-            {
-                foreach (var player in this.Players)
-                {
-                    if ((comp = this.Inventory[player].CompareTo(state.Inventory[player])) != 0)
-                    {
-                        return comp;
-                    }
-                }
-            }
-
-            return 0;
-        }
-
-        /// <summary>
-        /// Gets the Amphora <see cref="Deck"/> for the game.
-        /// </summary>
-        public EnumCollection<Card> Deck { get; }
-
-        /// <summary>
-        /// Gets the list of offered cards.
-        /// </summary>
-        public ImmutableList<OfferedCard> OfferedCards { get; }
 
         /// <summary>
         /// Gets the current target of the offered cards.
@@ -220,11 +182,66 @@ namespace GameTheory.Games.Nessos
                         .Add(Card.Pegasus, 4)
                         .Add(Card.Cerberus, 4)
                         .Add(Card.LerneanHydra, 4)
-                        .Add(Card.Medusa, 4);;
+                        .Add(Card.Medusa, 4);
 
                 default:
                     throw new InvalidOperationException();
             }
+        }
+
+        public static int Score(EnumCollection<Card> ownedCards)
+        {
+            if (ownedCards[Card.Charon] >= PlayerCharonLimit)
+            {
+                return 0;
+            }
+
+            var satyrs = ownedCards[Card.Satyr];
+            var centaurs = ownedCards[Card.Centaur];
+            var nemeanLions = ownedCards[Card.NemeanLion];
+            var score = Math.Min(satyrs, Math.Min(centaurs, nemeanLions)) * 10;
+            foreach (var key in ownedCards.Keys)
+            {
+                score += ownedCards[key] * (int)key;
+            }
+
+            return score;
+        }
+
+        /// <inheritdoc/>
+        public int CompareTo(IGameState<Move> other)
+        {
+            if (object.ReferenceEquals(other, this))
+            {
+                return 0;
+            }
+
+            var state = other as GameState;
+            if (object.ReferenceEquals(state, null))
+            {
+                return 1;
+            }
+
+            int comp;
+
+            if ((comp = this.FirstPlayer.CompareTo(state.FirstPlayer)) != 0 ||
+                (comp = CompareUtilities.CompareLists(this.Players, state.Players)) != 0)
+            {
+                return comp;
+            }
+
+            if (this.Inventory != state.Inventory)
+            {
+                foreach (var player in this.Players)
+                {
+                    if ((comp = this.Inventory[player].CompareTo(state.Inventory[player])) != 0)
+                    {
+                        return comp;
+                    }
+                }
+            }
+
+            return 0;
         }
 
         /// <inheritdoc/>
@@ -316,25 +333,6 @@ namespace GameTheory.Games.Nessos
                 .Where(p => this.Inventory[p].OwnedCards[Card.Charon] < PlayerCharonLimit)
                 .AllMaxBy(p => Score(this.Inventory[p].OwnedCards))
                 .AllMaxBy(p => this.Inventory[p].OwnedCards.Count);
-        }
-
-        public static int Score(EnumCollection<Card> ownedCards)
-        {
-            if (ownedCards[Card.Charon] >= PlayerCharonLimit)
-            {
-                return 0;
-            }
-
-            var satyrs = ownedCards[Card.Satyr];
-            var centaurs = ownedCards[Card.Centaur];
-            var nemeanLions = ownedCards[Card.NemeanLion];
-            var score = Math.Min(satyrs, Math.Min(centaurs, nemeanLions)) * 10;
-            foreach (var key in ownedCards.Keys)
-            {
-                score += ownedCards[key] * (int)key;
-            }
-
-            return score;
         }
 
         /// <inheritdoc />

@@ -1,9 +1,6 @@
-using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GameTheory.Games.Nessos.Moves
 {
@@ -14,7 +11,7 @@ namespace GameTheory.Games.Nessos.Moves
         /// </summary>
         /// <param name="state">The <see cref="GameState"/> that this move is based on.</param>
         public AcceptOfferMove(GameState state)
-            :base (state, state.TargetPlayer)
+            : base(state, state.TargetPlayer)
         {
         }
 
