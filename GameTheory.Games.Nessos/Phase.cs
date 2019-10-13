@@ -8,12 +8,12 @@ namespace GameTheory.Games.Nessos
     public enum Phase
     {
         /// <summary>
-        /// The game is in play.
+        /// Players make, accept, or reject offerings.
         /// </summary>
-        Play,
+        Offer,
 
         /// <summary>
-        /// The players must draw up to their hand limit before play can continue.
+        /// Players must draw up to their hand limit before play can continue.
         /// </summary>
         Draw,
 

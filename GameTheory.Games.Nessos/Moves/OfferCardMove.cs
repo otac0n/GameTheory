@@ -16,11 +16,12 @@ namespace GameTheory.Games.Nessos.Moves
         /// Initializes a new instance of the <see cref="OfferCardMove"/> class.
         /// </summary>
         /// <param name="state">The <see cref="GameState"/> that this move is based on.</param>
+        /// <param name="player">The <see cref="PlayerToken">player</see> that may choose this move.</param>
         /// <param name="targetPlayer">The player being offered a card or cards.</param>
         /// <param name="actualCard">The card being offered.</param>
         /// <param name="claimedCard">The card being claimed.</param>
-        public OfferCardMove(GameState state, PlayerToken targetPlayer, Card actualCard, Card claimedCard)
-            : base(state)
+        public OfferCardMove(GameState state, PlayerToken player, PlayerToken targetPlayer, Card actualCard, Card claimedCard)
+            : base(state, player)
         {
             this.TargetPlayer = targetPlayer;
             this.ActualCard = actualCard;
@@ -48,11 +49,12 @@ namespace GameTheory.Games.Nessos.Moves
         {
             if (state.OfferedCards.Count < GameState.MaxOfferedCards)
             {
-                var playerInventory = state.Inventory[state.ActivePlayer];
+                var activePlayer = state.TargetPlayer ?? state.FirstPlayer;
+                var playerInventory = state.Inventory[activePlayer];
                 var hand = playerInventory.Hand;
                 foreach (var target in state.Players)
                 {
-                    if (target != state.ActivePlayer && !state.OfferedCards.Any(o => target == o.SourcePlayer))
+                    if (target != state.FirstPlayer && !state.OfferedCards.Any(o => target == o.SourcePlayer))
                     {
                         foreach (var card in hand.Keys)
                         {
@@ -60,12 +62,12 @@ namespace GameTheory.Games.Nessos.Moves
                             {
                                 foreach (var claimedCard in EnumUtilities<Card>.Values)
                                 {
-                                    yield return new OfferCardMove(state, target, card, claimedCard);
+                                    yield return new OfferCardMove(state, activePlayer, target, card, claimedCard);
                                 }
                             }
                             else
                             {
-                                yield return new OfferCardMove(state, target, card, card);
+                                yield return new OfferCardMove(state, activePlayer, target, card, card);
                             }
                         }
                     }
@@ -75,20 +77,21 @@ namespace GameTheory.Games.Nessos.Moves
 
         internal override GameState Apply(GameState state)
         {
-            var playerInventory = state.Inventory[this.PlayerToken];
+            var activePlayer = this.PlayerToken;
+            var playerInventory = state.Inventory[activePlayer];
             var actualCard = this.ActualCard;
             var claimedCard = this.ClaimedCard;
             var hand = playerInventory.Hand.Remove(actualCard);
-            var offeredCards = state.OfferedCards.Add(new OfferedCard(actualCard, claimedCard, state.ActivePlayer));
-
+            var offeredCards = state.OfferedCards.Add(new OfferedCard(actualCard, claimedCard, activePlayer));
 
             playerInventory = playerInventory.With(
                 hand: hand);
 
             state = state.With(
                 inventory: state.Inventory.SetItem(
-                    this.PlayerToken,
+                    activePlayer,
                     playerInventory),
+                targetPlayer: this.TargetPlayer,
                 offeredCards: offeredCards);
 
             return base.Apply(state);

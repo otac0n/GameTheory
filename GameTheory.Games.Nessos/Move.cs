@@ -5,6 +5,7 @@ namespace GameTheory.Games.Nessos
     using System;
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
+    using System.Linq;
 
     /// <summary>
     /// Represents a move in Nessos.
@@ -15,10 +16,11 @@ namespace GameTheory.Games.Nessos
         /// Initializes a new instance of the <see cref="Move"/> class.
         /// </summary>
         /// <param name="state">The <see cref="Nessos.GameState"/> that this move is based on.</param>
-        protected Move(GameState state)
+        /// <param name="player">The <see cref="PlayerToken">player</see> that may choose this move.</param>
+        protected Move(GameState state, PlayerToken player)
         {
             this.GameState = state ?? throw new ArgumentNullException(nameof(state));
-            this.PlayerToken = state.ActivePlayer;
+            this.PlayerToken = player;
         }
 
         /// <inheritdoc />
@@ -52,9 +54,20 @@ namespace GameTheory.Games.Nessos
 
         internal virtual GameState Apply(GameState state)
         {
-            var activePlayer = state.ActivePlayer;
+            var activePlayer = state.FirstPlayer;
 
-            var phase = state.Phase;
+            if (state.Phase == Phase.Draw)
+            {
+                // TODO: Exclude players with 3 charons.
+                if (state.Deck.Count == 0 || state.Inventory.All(i => i.Value.Hand.Count >= GameState.HandLimit))
+                {
+                    state = state.With(
+                        firstPlayer: state.GetNextPlayer(state.FirstPlayer),
+                        phase: Phase.Offer);
+                }
+            }
+
+
             return state;
         }
     }

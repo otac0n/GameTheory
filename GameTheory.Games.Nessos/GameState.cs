@@ -7,6 +7,8 @@ namespace GameTheory.Games.Nessos
     using System.Collections.Immutable;
     using System.ComponentModel.DataAnnotations;
     using System.Linq;
+    using System.Threading;
+    using GameTheory.Games.Nessos.Moves;
 
     /// <summary>
     /// Represents the current state in a game of Nessos.
@@ -29,15 +31,24 @@ namespace GameTheory.Games.Nessos
         public const int MaxOfferedCards = 3;
 
         /// <summary>
+        /// The maximum number of cards in hand.
+        /// </summary>
+        public const int HandLimit = 5;
+
+        /// <summary>
         /// Gets the number of points needed to win the game.
         /// </summary>
-        private static readonly ImmutableDictionary<int, int> PointThreshold = ImmutableDictionary.CreateRange(new Dictionary<int, int>
+        private static readonly ImmutableDictionary<int, int> PointThresholds = ImmutableDictionary.CreateRange(new Dictionary<int, int>
         {
             [3] = 40,
             [4] = 40,
             [5] = 35,
             [6] = 30,
         });
+
+        private InterstitialState interstitialState;
+
+        private Lazy<ImmutableList<Move>> subsequentMoves;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GameState"/> class in the starting position.
@@ -51,8 +62,7 @@ namespace GameTheory.Games.Nessos
             }
 
             this.Players = Enumerable.Range(0, players).Select(i => new PlayerToken()).ToImmutableArray();
-            this.ActivePlayer = this.Players[0];
-            this.FirstPlayerIndex = 0;
+            this.FirstPlayer = this.Players[0];
             this.Phase = this.Phase;
             this.Deck = MakeDeck(players);
             this.OfferedCards = ImmutableList<OfferedCard>.Empty;
@@ -61,17 +71,17 @@ namespace GameTheory.Games.Nessos
 
         private GameState(
             ImmutableArray<PlayerToken> players,
-            PlayerToken activePlayer,
-            int firstPlayerIndex,
+            InterstitialState interstitialState,
+            PlayerToken firstPlayer,
             Phase phase,
             EnumCollection<Card> deck,
             ImmutableList<OfferedCard> offeredCards,
             PlayerToken targetPlayer,
             ImmutableDictionary<PlayerToken, Inventory> inventory)
+            : this(interstitialState)
         {
             this.Players = players;
-            this.ActivePlayer = activePlayer;
-            this.FirstPlayerIndex = firstPlayerIndex;
+            this.FirstPlayer = firstPlayer;
             this.Phase = phase;
             this.Deck = deck;
             this.OfferedCards = offeredCards;
@@ -79,15 +89,16 @@ namespace GameTheory.Games.Nessos
             this.Inventory = inventory;
         }
 
-        /// <summary>
-        /// Gets the <see cref="PlayerToken"/> representing the active player.
-        /// </summary>
-        public PlayerToken ActivePlayer { get; }
+        private GameState(InterstitialState interstitialState)
+        {
+            this.interstitialState = interstitialState;
+            this.subsequentMoves = this.interstitialState == null ? null : new Lazy<ImmutableList<Move>>(() => this.interstitialState.GenerateMoves(this).ToImmutableList(), LazyThreadSafetyMode.ExecutionAndPublication);
+        }
 
         /// <summary>
-        /// Gets the index of the first player.
+        /// Gets the <see cref="PlayerToken"/> representing the first player.
         /// </summary>
-        public int FirstPlayerIndex { get; }
+        public PlayerToken FirstPlayer { get; }
 
         /// <summary>
         /// Gets the inventory of all players.
@@ -123,7 +134,7 @@ namespace GameTheory.Games.Nessos
 
             int comp;
 
-            if ((comp = this.ActivePlayer.CompareTo(state.ActivePlayer)) != 0 ||
+            if ((comp = this.FirstPlayer.CompareTo(state.FirstPlayer)) != 0 ||
                 (comp = CompareUtilities.CompareLists(this.Players, state.Players)) != 0)
             {
                 return comp;
@@ -216,14 +227,34 @@ namespace GameTheory.Games.Nessos
         /// <inheritdoc />
         public IReadOnlyList<Move> GetAvailableMoves()
         {
-            return ImmutableList<Move>.Empty;
+            var moves = new List<Move>();
+
+            if (this.interstitialState != null)
+            {
+                moves.AddRange(this.subsequentMoves.Value);
+            }
+            else
+            {
+                switch (this.Phase)
+                {
+                    case Phase.Offer:
+                        moves.AddRange(OfferCardMove.GenerateMoves(this));
+                        break;
+
+                    case Phase.Draw:
+                        moves.AddRange(DrawCardMove.GenerateMoves(this));
+                        break;
+                }
+            }
+
+            return moves.ToImmutableList();
         }
 
         /// <inheritdoc/>
         public override int GetHashCode()
         {
             var hash = HashUtilities.Seed;
-            HashUtilities.Combine(ref hash, this.ActivePlayer.GetHashCode());
+            HashUtilities.Combine(ref hash, this.FirstPlayer.GetHashCode());
 
             for (var i = 0; i < this.Players.Length; i++)
             {
@@ -273,7 +304,13 @@ namespace GameTheory.Games.Nessos
         }
 
         /// <inheritdoc />
-        public IReadOnlyCollection<PlayerToken> GetWinners() => ImmutableList<PlayerToken>.Empty;
+        public IReadOnlyCollection<PlayerToken> GetWinners()
+        {
+            // TODO: Add other win conditions. Check phase.
+
+            var pointThreshold = PointThresholds[this.Players.Length];
+            return this.Players.Where(p => this.Inventory[p].Score >= pointThreshold).ToList();
+        }
 
         /// <inheritdoc />
         public IGameState<Move> MakeMove(Move move)
@@ -300,23 +337,36 @@ namespace GameTheory.Games.Nessos
         }
 
         internal GameState With(
-            PlayerToken activePlayer = null,
-            int? firstPlayerIndex = null,
+            bool keepInterstitial = false,
+            PlayerToken firstPlayer = null,
             Phase? phase = null,
             EnumCollection<Card> deck = null,
             ImmutableList<OfferedCard> offeredCards = null,
-            PlayerToken targetPlayer = null,
+            Maybe<PlayerToken> targetPlayer = default,
             ImmutableDictionary<PlayerToken, Inventory> inventory = null)
         {
             return new GameState(
                 this.Players,
-                activePlayer ?? this.ActivePlayer,
-                firstPlayerIndex ?? this.FirstPlayerIndex,
+                keepInterstitial ? this.interstitialState : null,
+                firstPlayer ?? this.FirstPlayer,
                 phase ?? this.Phase,
                 deck ?? this.Deck,
                 offeredCards ?? this.OfferedCards,
-                targetPlayer ?? this.TargetPlayer,
+                targetPlayer.HasValue ? targetPlayer.Value : this.TargetPlayer,
                 inventory ?? this.Inventory);
+        }
+
+        internal GameState WithInterstitialState(InterstitialState interstitialState)
+        {
+            return new GameState(
+                this.Players,
+                interstitialState,
+                this.FirstPlayer,
+                this.Phase,
+                this.Deck,
+                this.OfferedCards,
+                this.TargetPlayer,
+                this.Inventory);
         }
     }
 }

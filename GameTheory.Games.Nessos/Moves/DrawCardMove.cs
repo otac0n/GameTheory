@@ -13,8 +13,9 @@ namespace GameTheory.Games.Nessos.Moves
         /// Initializes a new instance of the <see cref="DrawCardMove"/> class.
         /// </summary>
         /// <param name="state">The <see cref="GameState"/> that this move is based on.</param>
-        public DrawCardMove(GameState state)
-            : base(state)
+        /// <param name="player">The <see cref="PlayerToken">player</see> that may choose this move.</param>
+        public DrawCardMove(GameState state, PlayerToken player)
+            : base(state, player)
         {
         }
 
@@ -38,7 +39,13 @@ namespace GameTheory.Games.Nessos.Moves
         {
             if (state.Deck.Count > 0)
             {
-                yield return new DrawCardMove(state);
+                foreach (var player in state.Players)
+                {
+                    if (state.Inventory[player].Hand.Count < GameState.HandLimit)
+                    {
+                        yield return new DrawCardMove(state, player);
+                    }
+                }
             }
         }
 
