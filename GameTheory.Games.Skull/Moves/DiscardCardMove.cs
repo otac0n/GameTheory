@@ -23,7 +23,7 @@ namespace GameTheory.Games.Skull.Moves
         }
 
         /// <summary>
-        /// Gets the index of the presented card to remove.
+        /// Gets the presented card to remove.
         /// </summary>
         public Card Card { get; }
 
@@ -33,6 +33,11 @@ namespace GameTheory.Games.Skull.Moves
         /// <inheritdoc />
         public override int CompareTo(Move other)
         {
+            if (object.ReferenceEquals(other, this))
+            {
+                return 0;
+            }
+
             if (other is DiscardCardMove move)
             {
                 int comp;

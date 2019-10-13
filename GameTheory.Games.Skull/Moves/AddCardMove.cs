@@ -31,6 +31,11 @@ namespace GameTheory.Games.Skull.Moves
         /// <inheritdoc />
         public override int CompareTo(Move other)
         {
+            if (object.ReferenceEquals(other, this))
+            {
+                return 0;
+            }
+
             if (other is AddCardMove move)
             {
                 int comp;

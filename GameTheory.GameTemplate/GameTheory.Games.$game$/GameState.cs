@@ -121,14 +121,29 @@ namespace GameTheory.Games.$game$
         public IReadOnlyCollection<PlayerToken> GetWinners() => ImmutableList<PlayerToken>.Empty;
 
         /// <inheritdoc />
-        public IGameState<Move> MakeMove(Move move)
+        IGameState<Move> IGameState<Move>.MakeMove(Move move)
+        {
+            return this.MakeMove(move);
+        }
+
+        /// <summary>
+        /// Applies the move to the current game state.
+        /// </summary>
+        /// <param name="move">The <see cref="Move"/> to apply.</param>
+        /// <returns>The updated <see cref="GameState"/>.</returns>
+        public GameState MakeMove(Move move)
         {
             if (move == null)
             {
                 throw new ArgumentNullException(nameof(move));
             }
 
-            throw new NotImplementedException();
+            if (this.CompareTo(move.GameState) != 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(move));
+            }
+
+            return move.Apply(this);
         }
     }
 }
