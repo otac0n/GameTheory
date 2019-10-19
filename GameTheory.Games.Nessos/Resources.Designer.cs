@@ -70,6 +70,105 @@ namespace GameTheory.Games.Nessos {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Centaur.
+        /// </summary>
+        public static string Card_Centaur {
+            get {
+                return ResourceManager.GetString("Card_Centaur", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cerberus.
+        /// </summary>
+        public static string Card_Cerberus {
+            get {
+                return ResourceManager.GetString("Card_Cerberus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Charon.
+        /// </summary>
+        public static string Card_Charon {
+            get {
+                return ResourceManager.GetString("Card_Charon", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Griffin.
+        /// </summary>
+        public static string Card_Griffin {
+            get {
+                return ResourceManager.GetString("Card_Griffin", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Lernean Hydra.
+        /// </summary>
+        public static string Card_LerneanHydra {
+            get {
+                return ResourceManager.GetString("Card_LerneanHydra", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Medusa.
+        /// </summary>
+        public static string Card_Medusa {
+            get {
+                return ResourceManager.GetString("Card_Medusa", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Minotaur.
+        /// </summary>
+        public static string Card_Minotaur {
+            get {
+                return ResourceManager.GetString("Card_Minotaur", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Nemean Lion.
+        /// </summary>
+        public static string Card_NemeanLion {
+            get {
+                return ResourceManager.GetString("Card_NemeanLion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Pegasus.
+        /// </summary>
+        public static string Card_Pegasus {
+            get {
+                return ResourceManager.GetString("Card_Pegasus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Phoenix.
+        /// </summary>
+        public static string Card_Phoenix {
+            get {
+                return ResourceManager.GetString("Card_Phoenix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Satyr.
+        /// </summary>
+        public static string Card_Satyr {
+            get {
+                return ResourceManager.GetString("Card_Satyr", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Draw a card.
         /// </summary>
         public static string DrawCard {

@@ -120,6 +120,39 @@
   <data name="AcceptOffer" xml:space="preserve">
     <value>Accept the offered cards</value>
   </data>
+  <data name="Card_Centaur" xml:space="preserve">
+    <value>Centaur</value>
+  </data>
+  <data name="Card_Cerberus" xml:space="preserve">
+    <value>Cerberus</value>
+  </data>
+  <data name="Card_Charon" xml:space="preserve">
+    <value>Charon</value>
+  </data>
+  <data name="Card_Griffin" xml:space="preserve">
+    <value>Griffin</value>
+  </data>
+  <data name="Card_LerneanHydra" xml:space="preserve">
+    <value>Lernean Hydra</value>
+  </data>
+  <data name="Card_Medusa" xml:space="preserve">
+    <value>Medusa</value>
+  </data>
+  <data name="Card_Minotaur" xml:space="preserve">
+    <value>Minotaur</value>
+  </data>
+  <data name="Card_NemeanLion" xml:space="preserve">
+    <value>Nemean Lion</value>
+  </data>
+  <data name="Card_Pegasus" xml:space="preserve">
+    <value>Pegasus</value>
+  </data>
+  <data name="Card_Phoenix" xml:space="preserve">
+    <value>Phoenix</value>
+  </data>
+  <data name="Card_Satyr" xml:space="preserve">
+    <value>Satyr</value>
+  </data>
   <data name="DrawCard" xml:space="preserve">
     <value>Draw a card</value>
   </data>

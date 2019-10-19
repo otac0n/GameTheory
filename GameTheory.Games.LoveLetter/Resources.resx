@@ -117,6 +117,30 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Card_Baron" xml:space="preserve">
+    <value>Baron</value>
+  </data>
+  <data name="Card_Countess" xml:space="preserve">
+    <value>Countess</value>
+  </data>
+  <data name="Card_Guard" xml:space="preserve">
+    <value>Guard</value>
+  </data>
+  <data name="Card_Handmaid" xml:space="preserve">
+    <value>Handmaid</value>
+  </data>
+  <data name="Card_King" xml:space="preserve">
+    <value>King</value>
+  </data>
+  <data name="Card_Priest" xml:space="preserve">
+    <value>Priest</value>
+  </data>
+  <data name="Card_Prince" xml:space="preserve">
+    <value>Prince</value>
+  </data>
+  <data name="Card_Princess" xml:space="preserve">
+    <value>Princess</value>
+  </data>
   <data name="ChooseCard" xml:space="preserve">
     <value>Choose {0}</value>
   </data>

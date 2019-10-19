@@ -10,7 +10,6 @@ namespace GameTheory.Games.Nessos.Forms
 
     public class CardControl : Control
     {
-        private static readonly HatchBrush CardReverseBrush = new HatchBrush(HatchStyle.Trellis, Color.Gold, Color.Black);
         private static readonly Dictionary<Card, HatchBrush> CardBrush = new Dictionary<Card, HatchBrush>
         {
             [Card.Satyr] = new HatchBrush(HatchStyle.Weave, Color.Firebrick, Color.Goldenrod),
@@ -26,6 +25,7 @@ namespace GameTheory.Games.Nessos.Forms
             [Card.Charon] = new HatchBrush(HatchStyle.Wave, Color.DarkKhaki, Color.DarkSeaGreen),
         };
 
+        private static readonly HatchBrush CardReverseBrush = new HatchBrush(HatchStyle.Trellis, Color.Gold, Color.Black);
         private Card card;
 
         public CardControl(Card card, bool showReverse)
@@ -73,7 +73,7 @@ namespace GameTheory.Games.Nessos.Forms
             using (var cardNameFormat = new StringFormat() { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center })
             {
                 textPath.AddString(((int)card).ToString(), font.FontFamily, (int)font.Style, font.Size * 2, rectangle, cardValueFormat);
-                textPath.AddString(card.ToString(), font.FontFamily, (int)font.Style, font.Size, rectangle, cardNameFormat);
+                textPath.AddString(Resources.ResourceManager.GetEnumString(card), font.FontFamily, (int)font.Style, font.Size, rectangle, cardNameFormat);
                 graphics.DrawPath(textPen, textPath);
                 graphics.FillPath(Brushes.Black, textPath);
             }

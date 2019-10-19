@@ -61,6 +61,78 @@ namespace GameTheory.Games.LoveLetter {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Baron.
+        /// </summary>
+        public static string Card_Baron {
+            get {
+                return ResourceManager.GetString("Card_Baron", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Countess.
+        /// </summary>
+        public static string Card_Countess {
+            get {
+                return ResourceManager.GetString("Card_Countess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Guard.
+        /// </summary>
+        public static string Card_Guard {
+            get {
+                return ResourceManager.GetString("Card_Guard", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Handmaid.
+        /// </summary>
+        public static string Card_Handmaid {
+            get {
+                return ResourceManager.GetString("Card_Handmaid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to King.
+        /// </summary>
+        public static string Card_King {
+            get {
+                return ResourceManager.GetString("Card_King", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Priest.
+        /// </summary>
+        public static string Card_Priest {
+            get {
+                return ResourceManager.GetString("Card_Priest", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Prince.
+        /// </summary>
+        public static string Card_Prince {
+            get {
+                return ResourceManager.GetString("Card_Prince", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Princess.
+        /// </summary>
+        public static string Card_Princess {
+            get {
+                return ResourceManager.GetString("Card_Princess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Choose {0}.
         /// </summary>
         public static string ChooseCard {

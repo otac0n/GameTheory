@@ -70,7 +70,7 @@ namespace GameTheory.Games.LoveLetter.Forms
             using (var cardNameFormat = new StringFormat() { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center })
             {
                 textPath.AddString(((int)card).ToString(), font.FontFamily, (int)font.Style, font.Size * 2, rectangle, cardValueFormat);
-                textPath.AddString(card.ToString(), font.FontFamily, (int)font.Style, font.Size, rectangle, cardNameFormat);
+                textPath.AddString(Resources.ResourceManager.GetEnumString(card), font.FontFamily, (int)font.Style, font.Size, rectangle, cardNameFormat);
                 graphics.DrawPath(textPen, textPath);
                 graphics.FillPath(Brushes.Black, textPath);
             }
