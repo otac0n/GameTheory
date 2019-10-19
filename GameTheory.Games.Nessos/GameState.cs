@@ -321,7 +321,8 @@ namespace GameTheory.Games.Nessos
                 group,
                 this.Deck,
                 (state, value) => state.With(
-                    deck: new EnumCollection<Card>(value)));
+                    deck: new EnumCollection<Card>(value)),
+                id: "Deck");
 
             foreach (var p in this.Players)
             {
@@ -338,7 +339,8 @@ namespace GameTheory.Games.Nessos
                     (state, value) => state.With(
                         inventory: state.Inventory.SetItem(
                             player,
-                            state.Inventory[player].With(hand: new EnumCollection<Card>(value)))));
+                            state.Inventory[player].With(hand: new EnumCollection<Card>(value)))),
+                    id: player);
             }
 
             for (var i = 0; i < this.OfferedCards.Count; i++)
@@ -351,8 +353,13 @@ namespace GameTheory.Games.Nessos
                         offeredCards: state.OfferedCards.SetItem(
                             o,
                             state.OfferedCards[o].With(
-                                actualCard: value))));
+                                actualCard: value))),
+                    id: this.OfferedCards[o]);
             }
+
+            shuffler.AddConstraint<Card>(
+                group,
+                (id, index, value) => value == Card.Charon || (id is OfferedCard offered ? value == offered.ClaimedCard : true));
 
             return shuffler.Take(maxStates);
         }
