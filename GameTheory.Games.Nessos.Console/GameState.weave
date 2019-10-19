@@ -1,0 +1,26 @@
+@using System.Linq
+@using GameTheory.ConsoleRunner.Shared
+@namespace GameTheory.Games.Nessos.Console
+@static false
+@model GameState
+Deck: {{= model.Deck.Count }} remaining
+
+{{each player in model.Players}}
+    {{= player}}:
+        {{ var inventory = model.Inventory[player]; }}
+        {{if player == this.playerToken}}
+            Hand: {{each card in inventory.Hand}}{{= card}}{{delimit}} {{/each}}
+        {{else}}
+            Hand: {{each card in inventory.Hand}}(hidden){{delimit}} {{/each}}
+        {{/if}}
+        Owned: {{= inventory.OwnedCards}}
+{{delimit}}
+
+{{/each}}
+{{if model.OfferedCards.Count > 0}}
+
+    Offered Cards:
+        {{each offeredCard in model.OfferedCards}}
+            {{= offeredCard.ClaimedCard}} from {{= offeredCard.SourcePlayer}}
+        {{/each}}
+{{/if}}
