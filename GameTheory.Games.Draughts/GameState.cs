@@ -7,6 +7,7 @@ namespace GameTheory.Games.Draughts
     using System.Collections.Immutable;
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
+    using GameTheory.Comparers;
     using GameTheory.Games.Draughts.Moves;
 
     /// <summary>
@@ -117,7 +118,7 @@ namespace GameTheory.Games.Draughts
                 (comp = this.LastCapturingIndex.CompareTo(state.LastCapturingIndex)) != 0 ||
                 (comp = this.OpponentMayRemovePiece.CompareTo(state.OpponentMayRemovePiece)) != 0 ||
                 (comp = CompareUtilities.CompareEnumLists(this.Board, state.Board)) != 0 ||
-                (comp = CompareUtilities.CompareValueLists(this.MaxMovePieceIndexes, state.MaxMovePieceIndexes)) != 0 ||
+                (comp = ValueListComparer<int>.Compare(this.MaxMovePieceIndexes, state.MaxMovePieceIndexes)) != 0 ||
                 (comp = CompareUtilities.CompareLists(this.Players, state.Players)) != 0)
             {
                 return comp;
