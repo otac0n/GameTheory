@@ -7,6 +7,7 @@ namespace GameTheory.Games.Mancala
     using System.Collections.Immutable;
     using System.ComponentModel.DataAnnotations;
     using System.Linq;
+    using GameTheory.Comparers;
 
     /// <summary>
     /// Represents the current state in a game of Mancala.
@@ -134,7 +135,7 @@ namespace GameTheory.Games.Mancala
             int comp;
 
             if ((comp = CompareUtilities.CompareLists(this.Players, state.Players)) != 0 ||
-                (comp = CompareUtilities.CompareValueLists(this.board, state.board)) != 0)
+                (comp = ValueListComparer<int>.Compare(this.board, state.board)) != 0)
             {
                 return comp;
             }
@@ -171,12 +172,7 @@ namespace GameTheory.Games.Mancala
         {
             var hash = HashUtilities.Seed;
             HashUtilities.Combine(ref hash, this.ActivePlayerIndex);
-
-            for (var i = 0; i < this.board.Length; i++)
-            {
-                HashUtilities.Combine(ref hash, this.board[i]);
-            }
-
+            HashUtilities.Combine(ref hash, ValueListComparer<int>.GetHashCode(this.board));
             return hash;
         }
 
