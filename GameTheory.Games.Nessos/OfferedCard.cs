@@ -60,5 +60,16 @@ namespace GameTheory.Games.Nessos
 
             return 0;
         }
+
+        internal OfferedCard With(
+            Card? actualCard = null,
+            Card? claimedCard = null,
+            PlayerToken sourcePlayer = null)
+        {
+            return new OfferedCard(
+                actualCard ?? this.ActualCard,
+                claimedCard ?? this.ClaimedCard,
+                sourcePlayer ?? this.SourcePlayer);
+        }
     }
 }

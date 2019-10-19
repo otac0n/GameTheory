@@ -341,6 +341,19 @@ namespace GameTheory.Games.Nessos
                             state.Inventory[player].With(hand: new EnumCollection<Card>(value)))));
             }
 
+            for (var i = 0; i < this.OfferedCards.Count; i++)
+            {
+                var o = i;
+                shuffler.Add(
+                    group,
+                    this.OfferedCards[o].ActualCard,
+                    (state, value) => state.With(
+                        offeredCards: state.OfferedCards.SetItem(
+                            o,
+                            state.OfferedCards[o].With(
+                                actualCard: value))));
+            }
+
             return shuffler.Take(maxStates);
         }
 
