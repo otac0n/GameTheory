@@ -74,7 +74,7 @@ namespace GameTheory.FormsRunner.Shared.Displays
                     oldLabel?.Dispose();
                 }
 
-                MemberDisplay.Update(
+                MemberDisplay.FindAndUpdate(
                     propertiesTable.GetControlFromPosition(1, p),
                     scope,
                     member,
@@ -420,13 +420,13 @@ namespace GameTheory.FormsRunner.Shared.Displays
                 MatrixItemDisplay.Instance,
             }.AsReadOnly();
 
-            public static Control Update(Control control, Scope scope, MemberInfo member, object obj, IReadOnlyList<Display> displays, Action<Control, Control> update)
+            public static Control FindAndUpdate(Control control, Scope scope, MemberInfo member, object obj, IReadOnlyList<Display> displays, Action<Control, Control> update)
             {
                 foreach (var display in MemberDisplays)
                 {
                     if (display.CanDisplay(scope, member, obj))
                     {
-                        return display.UpdateWithAction(control, scope, member, obj, displays, update);
+                        return display.Update(control, scope, member, obj, displays, update);
                     }
                 }
 
@@ -435,7 +435,7 @@ namespace GameTheory.FormsRunner.Shared.Displays
 
             public abstract bool CanDisplay(Scope scope, MemberInfo member, object obj);
 
-            public Control UpdateWithAction(Control control, Scope scope, MemberInfo member, object obj, IReadOnlyList<Display> displays, Action<Control, Control> update = null)
+            public Control Update(Control control, Scope scope, MemberInfo member, object obj, IReadOnlyList<Display> displays, Action<Control, Control> update = null)
             {
                 var newControl = this.Update(control, scope, member, obj, displays);
 
