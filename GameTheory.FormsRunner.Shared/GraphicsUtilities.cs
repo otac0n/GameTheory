@@ -5,6 +5,7 @@ namespace GameTheory.FormsRunner.Shared
     using System;
     using System.Drawing;
     using System.Drawing.Drawing2D;
+    using System.Drawing.Imaging;
     using System.Drawing.Text;
 
     /// <summary>
@@ -31,6 +32,27 @@ namespace GameTheory.FormsRunner.Shared
         /// <param name="stringFormat">The string format to use.</param>
         public static void AddString(this GraphicsPath textPath, string text, Font font, Graphics graphics, RectangleF rectangle, StringFormat stringFormat) =>
             textPath.AddString(text, font.FontFamily, (int)font.Style, graphics.DpiY * font.SizeInPoints / PointsPerInch, rectangle, stringFormat);
+
+        /// <summary>
+        /// Draws an impage with semitransparency applied.
+        /// </summary>
+        /// <param name="graphics">The graphics to draw the image to.</param>
+        /// <param name="image">The image to draw.</param>
+        /// <param name="rectangle">The layout rectangle.</param>
+        /// <param name="alpha">The alpha value to use. This value will be multiplied with any existing alpha values from the source image.</param>
+        public static void DrawImageTransparent(this Graphics graphics, Image image, RectangleF rectangle, float alpha)
+        {
+            var attr = new ImageAttributes();
+            attr.SetColorMatrix(new ColorMatrix(new float[][]
+            {
+                    new float[] { 1, 0, 0, 0, 0 },
+                    new float[] { 0, 1, 0, 0, 0 },
+                    new float[] { 0, 0, 1, 0, 0 },
+                    new float[] { 0, 0, 0, alpha, 0 },
+                    new float[] { 0, 0, 0, 0, 1 },
+            }));
+            graphics.DrawImage(image, new[] { rectangle.Location, new PointF(rectangle.Right, rectangle.Top), new PointF(rectangle.Left, rectangle.Bottom) }, new RectangleF(Point.Empty, image.Size), GraphicsUnit.Pixel, attr);
+        }
 
         /// <summary>
         /// Executes an action with the specified graphics configured for high quaility rendering.

@@ -9,6 +9,24 @@ namespace GameTheory.Games.Nessos.Forms
 
     public class CardDisplay : Display
     {
+        private readonly bool showAsUncertain;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CardDisplay"/> class.
+        /// </summary>
+        public CardDisplay()
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CardDisplay"/> class.
+        /// </summary>
+        /// <param name="showAsUncertain">A value indicating whehter or not the cards shoule be show as uncertain.</param>
+        public CardDisplay(bool showAsUncertain)
+        {
+            this.showAsUncertain = showAsUncertain;
+        }
+
         /// <inheritdoc/>
         public override bool CanDisplay(Scope scope, Type type, object value) => typeof(Card).IsAssignableFrom(type);
 
@@ -22,10 +40,11 @@ namespace GameTheory.Games.Nessos.Forms
             {
                 cardControl.Card = card;
                 cardControl.ShowReverse = showReverse;
+                cardControl.ShowAsUncertain = this.showAsUncertain;
             }
             else
             {
-                cardControl = new CardControl(card, showReverse);
+                cardControl = new CardControl(card, showReverse, this.showAsUncertain);
             }
 
             return cardControl;
