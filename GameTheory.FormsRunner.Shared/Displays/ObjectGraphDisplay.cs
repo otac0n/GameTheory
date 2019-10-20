@@ -324,7 +324,7 @@ namespace GameTheory.FormsRunner.Shared.Displays
                 {
                     Display.Update(
                         tablePanel.GetControlFromPosition(pair.x, pair.y),
-                        scope.Extend($"[{pair.x}, {pair.y}]"),
+                        scope.Extend($"[{pair.x}, {pair.y}]", new Dictionary<string, object> { [Scope.SharedProperties.Key] = new object[] { pair.x, pair.y } }),
                         property.PropertyType,
                         property.GetValue(value, new object[] { pair.x, pair.y }),
                         displays,

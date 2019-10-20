@@ -88,7 +88,7 @@ namespace GameTheory.FormsRunner.Shared.Displays
 
                 Display.Update(
                     tablePanel.GetControlFromPosition(0, i),
-                    scope.Extend(keyName),
+                    scope.Extend(keyName, new Dictionary<string, object> { [Scope.SharedProperties.Key] = i }),
                     keyType,
                     key,
                     displays,
@@ -108,7 +108,7 @@ namespace GameTheory.FormsRunner.Shared.Displays
 
                 Display.Update(
                     tablePanel.GetControlFromPosition(1, i),
-                    scope.Extend(valueName),
+                    scope.Extend(valueName, new Dictionary<string, object> { [Scope.SharedProperties.Key] = key }),
                     valueType,
                     valueProperty.GetValue(value, new[] { key }),
                     displays,

@@ -14,7 +14,7 @@ namespace GameTheory.FormsRunner.Shared
             this.Properties = properties?.ToImmutableDictionary();
         }
 
-        private Scope(Scope parent, string name)
+        private Scope(Scope parent, string name, IDictionary<string, object> properties)
         {
             this.Parent = parent;
             this.Path = string.IsNullOrEmpty(this.Path)
@@ -23,6 +23,7 @@ namespace GameTheory.FormsRunner.Shared
                     ? $"{this.Path}{name}"
                     : $"{this.Path}.{name}";
             this.Name = name;
+            this.Properties = properties?.ToImmutableDictionary();
         }
 
         public string Name { get; }
@@ -33,7 +34,7 @@ namespace GameTheory.FormsRunner.Shared
 
         public ImmutableDictionary<string, object> Properties { get; }
 
-        public Scope Extend(string name) => new Scope(this, name);
+        public Scope Extend(string name, IDictionary<string, object> properties = null) => new Scope(this, name, properties);
 
         public T GetPropertyOrDefault<T>(string key, T @default = default)
         {
@@ -51,6 +52,7 @@ namespace GameTheory.FormsRunner.Shared
 
         public static class SharedProperties
         {
+            public static readonly string Key = "Key";
             public static readonly string PlayerToken = "PlayerToken";
         }
     }
