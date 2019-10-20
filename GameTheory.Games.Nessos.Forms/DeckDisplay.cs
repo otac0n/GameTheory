@@ -6,19 +6,18 @@ namespace GameTheory.Games.Nessos.Forms
     using System.Collections.Generic;
     using System.Windows.Forms;
     using GameTheory.FormsRunner.Shared;
+    using GameTheory.FormsRunner.Shared.Displays;
     using static FormsRunner.Shared.Controls;
 
-    public class OfferedCardDisplay : Display
+    public class DeckDisplay : Display
     {
-        private CardDisplay cardDisplay = new CardDisplay(showAsUncertain: true);
-
         /// <inheritdoc/>
-        public override bool CanDisplay(Scope scope, Type type, object value) => typeof(OfferedCard).IsAssignableFrom(type);
+        public override bool CanDisplay(Scope scope, Type type, object value) => scope.Name == nameof(GameState.Deck) && typeof(EnumCollection<Card>).IsAssignableFrom(type);
 
         /// <inheritdoc/>
         protected override Control Update(Control control, Scope scope, Type type, object value, IReadOnlyList<Display> displays)
         {
-            var offeredCard = (OfferedCard)value;
+            var deck = (EnumCollection<Card>)value;
 
             if (control is FlowLayoutPanel flowPanel && flowPanel.Tag == this && flowPanel.Controls.Count <= 2)
             {
@@ -27,15 +26,15 @@ namespace GameTheory.Games.Nessos.Forms
             else
             {
                 flowPanel = MakeFlowPanel(tag: this);
-                flowPanel.FlowDirection = FlowDirection.TopDown;
+                flowPanel.FlowDirection = FlowDirection.LeftToRight;
                 flowPanel.SuspendLayout();
             }
 
-            Display.FindAndUpdate(
+            PrimitiveDisplay.Instance.Update(
                 flowPanel.Controls.Count > 0 ? flowPanel.Controls[0] : null,
-                scope.Extend(nameof(OfferedCard.SourcePlayer)),
-                typeof(PlayerToken),
-                offeredCard.SourcePlayer,
+                scope.Extend(nameof(deck.Count)),
+                typeof(string),
+                $"{deck.Count} {SharedResources.Times}",
                 displays,
                 (oldControl, newControl) =>
                 {
@@ -52,11 +51,12 @@ namespace GameTheory.Games.Nessos.Forms
                     }
                 });
 
-            CardDisplay.Uncertain.Update(
+            var cardDisplay = deck.Count == 0 ? CardDisplay.Uncertain : CardDisplay.Default;
+            cardDisplay.Update(
                 flowPanel.Controls.Count > 1 ? flowPanel.Controls[1] : null,
-                scope.Extend(nameof(OfferedCard.ClaimedCard)),
+                scope.Extend("Top"),
                 typeof(Card),
-                offeredCard.ClaimedCard,
+                default(Card),
                 displays,
                 (oldControl, newControl) =>
                 {

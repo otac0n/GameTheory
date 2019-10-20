@@ -9,6 +9,9 @@ namespace GameTheory.Games.Nessos.Forms
 
     public class CardDisplay : Display
     {
+        public static readonly CardDisplay Default = new CardDisplay();
+        public static readonly CardDisplay Uncertain = new CardDisplay(showAsUncertain: true);
+
         private readonly bool showAsUncertain;
 
         /// <summary>
@@ -53,7 +56,6 @@ namespace GameTheory.Games.Nessos.Forms
         private static bool ShowReverse(Scope scope)
         {
             var parentScope = scope.Parent;
-
             switch (parentScope.Name)
             {
                 case nameof(GameState.Deck):
