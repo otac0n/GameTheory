@@ -73,7 +73,7 @@ namespace GameTheory.FormsRunner.Shared.Displays
                 var item = values[i];
                 var itemName = $"[{i}]";
 
-                Display.Update(
+                Display.FindAndUpdate(
                     flowPanel.Controls.Count > i ? flowPanel.Controls[i] : null,
                     scope.Extend(itemName, new Dictionary<string, object> { [Scope.SharedProperties.Key] = i }),
                     elementType,

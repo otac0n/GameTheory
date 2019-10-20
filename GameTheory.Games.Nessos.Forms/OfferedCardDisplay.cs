@@ -31,7 +31,7 @@ namespace GameTheory.Games.Nessos.Forms
                 flowPanel.SuspendLayout();
             }
 
-            Display.Update(
+            Display.FindAndUpdate(
                 flowPanel.Controls.Count > 0 ? flowPanel.Controls[0] : null,
                 scope.Extend(nameof(OfferedCard.SourcePlayer)),
                 typeof(PlayerToken),
@@ -52,7 +52,7 @@ namespace GameTheory.Games.Nessos.Forms
                     }
                 });
 
-            this.cardDisplay.UpdateWithAction(
+            this.cardDisplay.Update(
                 flowPanel.Controls.Count > 1 ? flowPanel.Controls[1] : null,
                 scope.Extend(nameof(OfferedCard.ClaimedCard)),
                 typeof(Card),

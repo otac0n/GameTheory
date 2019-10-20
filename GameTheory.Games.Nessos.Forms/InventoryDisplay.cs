@@ -34,7 +34,7 @@ namespace GameTheory.Games.Nessos.Forms
                 tablePanel.Controls.Add(MakeLabel("Hand"), 0, 1);
             }
 
-            ListDisplay.Instance.UpdateWithAction(
+            ListDisplay.Instance.Update(
                 tablePanel.GetControlFromPosition(1, 0),
                 scope.Extend(nameof(inventory.OwnedCards)),
                 typeof(EnumCollection<Card>),
@@ -54,7 +54,7 @@ namespace GameTheory.Games.Nessos.Forms
                     }
                 });
 
-            ListDisplay.Instance.UpdateWithAction(
+            ListDisplay.Instance.Update(
                 tablePanel.GetControlFromPosition(1, 1),
                 scope.Extend(nameof(inventory.Hand)),
                 typeof(EnumCollection<Card>),

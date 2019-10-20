@@ -41,7 +41,7 @@ namespace GameTheory.FormsRunner
 
         private void RefreshDisplay()
         {
-            Display.Update(
+            Display.FindAndUpdate(
                 this.splitContainer.Panel1.Controls.Cast<Control>().SingleOrDefault(),
                 new Scope(),
                 this.GameInfo.Game.GameStateType,
@@ -61,7 +61,7 @@ namespace GameTheory.FormsRunner
                     }
                 });
 
-            Display.Update(
+            Display.FindAndUpdate(
                 this.splitContainer.Panel2.Controls.Cast<Control>().SingleOrDefault(),
                 new Scope(),
                 this.GameInfo.Moves,

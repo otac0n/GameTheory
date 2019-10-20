@@ -41,7 +41,7 @@ namespace GameTheory.FormsRunner.Shared.Displays
                 var token = tokens[i];
                 var itemName = $"FormatTokens[{i}]";
 
-                Display.Update(
+                Display.FindAndUpdate(
                     flowPanel.Controls.Count > i ? flowPanel.Controls[i] : null,
                     scope.Extend(itemName),
                     token is null ? typeof(object) : token.GetType(),

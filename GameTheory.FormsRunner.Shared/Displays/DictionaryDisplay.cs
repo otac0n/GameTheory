@@ -86,7 +86,7 @@ namespace GameTheory.FormsRunner.Shared.Displays
                 var keyName = $"Keys[{i}]";
                 var valueName = $"[{key}]";
 
-                Display.Update(
+                Display.FindAndUpdate(
                     tablePanel.GetControlFromPosition(0, i),
                     scope.Extend(keyName, new Dictionary<string, object> { [Scope.SharedProperties.Key] = i }),
                     keyType,
@@ -106,7 +106,7 @@ namespace GameTheory.FormsRunner.Shared.Displays
                         }
                     });
 
-                Display.Update(
+                Display.FindAndUpdate(
                     tablePanel.GetControlFromPosition(1, i),
                     scope.Extend(valueName, new Dictionary<string, object> { [Scope.SharedProperties.Key] = key }),
                     valueType,

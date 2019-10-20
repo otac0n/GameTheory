@@ -195,7 +195,7 @@ namespace GameTheory.FormsRunner.Shared.Displays
             protected override Control Update(Control control, Scope scope, MemberInfo member, object value, IReadOnlyList<Display> displays)
             {
                 var field = (FieldInfo)member;
-                return Display.Update(
+                return Display.FindAndUpdate(
                     control,
                     scope,
                     field.FieldType,
@@ -239,7 +239,7 @@ namespace GameTheory.FormsRunner.Shared.Displays
                 var property = (PropertyInfo)member;
                 var countProperty = GetReadableMembers(property.DeclaringType).First(IsCount);
                 var count = (int)GetMemberValue(countProperty, value);
-                return ListDisplay.Instance.UpdateWithAction(
+                return ListDisplay.Instance.Update(
                     control,
                     scope,
                     property.PropertyType,
@@ -322,7 +322,7 @@ namespace GameTheory.FormsRunner.Shared.Displays
 
                 foreach (var pair in range)
                 {
-                    Display.Update(
+                    Display.FindAndUpdate(
                         tablePanel.GetControlFromPosition(pair.x, pair.y),
                         scope.Extend($"[{pair.x}, {pair.y}]", new Dictionary<string, object> { [Scope.SharedProperties.Key] = new object[] { pair.x, pair.y } }),
                         property.PropertyType,
@@ -420,7 +420,7 @@ namespace GameTheory.FormsRunner.Shared.Displays
             protected override Control Update(Control control, Scope scope, MemberInfo member, object value, IReadOnlyList<Display> displays)
             {
                 var property = (PropertyInfo)member;
-                return Display.Update(
+                return Display.FindAndUpdate(
                     control,
                     scope,
                     property.PropertyType,

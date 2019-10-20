@@ -67,7 +67,7 @@ namespace GameTheory.FormsRunner.Players
             {
                 this.GameState = state;
 
-                Display.Update(
+                Display.FindAndUpdate(
                     this.splitContainer.Panel1.Controls.Cast<Control>().SingleOrDefault(),
                     this.scope,
                     state.GetType(),
@@ -87,7 +87,7 @@ namespace GameTheory.FormsRunner.Players
                         }
                     });
 
-                Display.Update(
+                Display.FindAndUpdate(
                     this.splitContainer.Panel2.Controls.Cast<Control>().SingleOrDefault(),
                     this.scope,
                     state.GetAvailableMoves(this.PlayerToken).Select(m => new MoveChoice(m)).ToList(),
@@ -158,7 +158,7 @@ namespace GameTheory.FormsRunner.Players
                     flowPanel.Controls.Add(button);
                 }
 
-                Display.Update(
+                Display.FindAndUpdate(
                     flowPanel.Controls.Count > 1 ? flowPanel.Controls[1] : null,
                     scope,
                     move.GetType(),
