@@ -7,6 +7,7 @@ namespace GameTheory.Games.Nessos.Forms
     using System.Drawing.Drawing2D;
     using System.Drawing.Text;
     using System.Windows.Forms;
+    using GameTheory.FormsRunner.Shared;
 
     public class CardControl : Control
     {
@@ -36,7 +37,7 @@ namespace GameTheory.Games.Nessos.Forms
             this.DoubleBuffered = true;
             this.Width = 50;
             this.Height = 100;
-            this.Font = new Font(this.Font.FontFamily, 10.0f);
+            this.Font = new Font(this.Font.FontFamily, 8.0f);
         }
 
         public Card Card
@@ -59,24 +60,23 @@ namespace GameTheory.Games.Nessos.Forms
 
         public static void RenderCard(Graphics graphics, Card card, bool showReverse, RectangleF rectangle, Font font)
         {
-            graphics.InterpolationMode = InterpolationMode.High;
-            graphics.SmoothingMode = SmoothingMode.HighQuality;
-            graphics.TextRenderingHint = TextRenderingHint.AntiAlias;
-
-            var brush = showReverse ? CardReverseBrush : CardBrush[card];
-            graphics.FillRectangle(brush, rectangle);
-            graphics.DrawRectangle(new Pen(Color.Black), rectangle.X, rectangle.Y, rectangle.Width - 1, rectangle.Height - 1);
-
-            using (var textPath = new GraphicsPath())
-            using (var textPen = new Pen(Color.White, 2) { LineJoin = LineJoin.Round })
-            using (var cardValueFormat = new StringFormat() { Alignment = StringAlignment.Near, LineAlignment = StringAlignment.Near, })
-            using (var cardNameFormat = new StringFormat() { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center })
+            graphics.HighQuality(() =>
             {
-                textPath.AddString(((int)card).ToString(), font.FontFamily, (int)font.Style, font.Size * 2, rectangle, cardValueFormat);
-                textPath.AddString(Resources.ResourceManager.GetEnumString(card), font.FontFamily, (int)font.Style, font.Size, rectangle, cardNameFormat);
-                graphics.DrawPath(textPen, textPath);
-                graphics.FillPath(Brushes.Black, textPath);
-            }
+                var brush = showReverse ? CardReverseBrush : CardBrush[card];
+                graphics.FillRectangle(brush, rectangle);
+                graphics.DrawRectangle(new Pen(Color.Black), rectangle.X, rectangle.Y, rectangle.Width - 1, rectangle.Height - 1);
+
+                using (var textPath = new GraphicsPath())
+                using (var textPen = new Pen(Color.White, 3) { LineJoin = LineJoin.Round })
+                using (var cardValueFormat = new StringFormat { Alignment = StringAlignment.Near, LineAlignment = StringAlignment.Near, })
+                using (var cardNameFormat = new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center })
+                {
+                    var number = ((int)card).ToString();
+                    var name = Resources.ResourceManager.GetEnumString(card);
+                    graphics.OutlineString(number, new Font(font.FontFamily, font.Size * 2, font.Style, GraphicsUnit.Point), Brushes.Black, textPen, rectangle, cardValueFormat);
+                    graphics.OutlineString(name, font, Brushes.Black, textPen, rectangle, cardNameFormat);
+                }
+            });
         }
 
         protected override void OnPaint(PaintEventArgs e)
