@@ -43,7 +43,7 @@ namespace GameTheory.FormsRunner.Shared.Displays
 
                 Display.FindAndUpdate(
                     flowPanel.Controls.Count > i ? flowPanel.Controls[i] : null,
-                    scope.Extend(itemName),
+                    scope.Extend(itemName, token),
                     token is null ? typeof(object) : token.GetType(),
                     token,
                     displays,

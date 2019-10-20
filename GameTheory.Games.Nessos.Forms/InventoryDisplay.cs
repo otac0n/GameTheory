@@ -36,7 +36,7 @@ namespace GameTheory.Games.Nessos.Forms
 
             ListDisplay.Instance.Update(
                 tablePanel.GetControlFromPosition(1, 0),
-                scope.Extend(nameof(inventory.OwnedCards)),
+                scope.Extend(nameof(inventory.OwnedCards), ownedCards),
                 typeof(EnumCollection<Card>),
                 ownedCards,
                 displays,
@@ -56,7 +56,7 @@ namespace GameTheory.Games.Nessos.Forms
 
             ListDisplay.Instance.Update(
                 tablePanel.GetControlFromPosition(1, 1),
-                scope.Extend(nameof(inventory.Hand)),
+                scope.Extend(nameof(inventory.Hand), hand),
                 typeof(EnumCollection<Card>),
                 hand,
                 displays,

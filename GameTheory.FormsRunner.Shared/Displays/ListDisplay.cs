@@ -75,7 +75,7 @@ namespace GameTheory.FormsRunner.Shared.Displays
 
                 Display.FindAndUpdate(
                     flowPanel.Controls.Count > i ? flowPanel.Controls[i] : null,
-                    scope.Extend(itemName, new Dictionary<string, object> { [Scope.SharedProperties.Key] = i }),
+                    scope.Extend(itemName, item, new Dictionary<string, object> { [Scope.SharedProperties.Key] = i }),
                     elementType,
                     item,
                     displays,

@@ -32,7 +32,7 @@ namespace GameTheory.Games.Nessos.Forms
 
             PrimitiveDisplay.Instance.Update(
                 flowPanel.Controls.Count > 0 ? flowPanel.Controls[0] : null,
-                scope.Extend(nameof(deck.Count)),
+                scope.Extend(nameof(deck.Count), deck.Count),
                 typeof(string),
                 $"{deck.Count} {SharedResources.Times}",
                 displays,
@@ -54,7 +54,7 @@ namespace GameTheory.Games.Nessos.Forms
             var cardDisplay = deck.Count == 0 ? CardDisplay.Uncertain : CardDisplay.Default;
             cardDisplay.Update(
                 flowPanel.Controls.Count > 1 ? flowPanel.Controls[1] : null,
-                scope.Extend("Top"),
+                scope.Extend("Top", null),
                 typeof(Card),
                 default(Card),
                 displays,

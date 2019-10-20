@@ -18,6 +18,7 @@ namespace GameTheory.FormsRunner
     {
         private Task<ICatalogGame[]> allGamesTask;
         private object[] playerInstances;
+        private Scope scope;
         private Task<ICatalogGame[]> searchTask;
         private ICatalogPlayer[] selectedPlayers;
         private object startingState;
@@ -28,6 +29,7 @@ namespace GameTheory.FormsRunner
         public NewGameForm()
         {
             this.InitializeComponent();
+            this.scope = new Scope(string.Empty, this);
 
             this.allGamesTask = Task.Factory.StartNew(() => Program.GameCatalog.AvailableGames.OrderBy(k => k.Name, StringComparer.CurrentCultureIgnoreCase).ToArray());
             this.Search(string.Empty);
@@ -145,7 +147,7 @@ namespace GameTheory.FormsRunner
             {
                 Editor.Update(
                     this.configurationTab.Controls.Cast<Control>().SingleOrDefault(),
-                    new Scope(name: game.Name),
+                    this.scope.Extend(game.Name, this.StartingState),
                     game.GameStateType,
                     this.StartingState,
                     out var errorControl,
@@ -244,7 +246,7 @@ namespace GameTheory.FormsRunner
 
                         var editor = Editor.Update(
                             null,
-                            new Scope(name: player.Name),
+                            this.scope.Extend(player.Name, null),
                             player.PlayerType,
                             null, // TODO: Remember previously selected player?
                             out var errorControl,

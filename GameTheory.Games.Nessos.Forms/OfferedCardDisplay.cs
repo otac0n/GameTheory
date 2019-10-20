@@ -33,7 +33,7 @@ namespace GameTheory.Games.Nessos.Forms
 
             Display.FindAndUpdate(
                 flowPanel.Controls.Count > 0 ? flowPanel.Controls[0] : null,
-                scope.Extend(nameof(OfferedCard.SourcePlayer)),
+                scope.Extend(nameof(offeredCard.SourcePlayer), offeredCard.SourcePlayer),
                 typeof(PlayerToken),
                 offeredCard.SourcePlayer,
                 displays,
@@ -54,7 +54,7 @@ namespace GameTheory.Games.Nessos.Forms
 
             CardDisplay.Uncertain.Update(
                 flowPanel.Controls.Count > 1 ? flowPanel.Controls[1] : null,
-                scope.Extend(nameof(OfferedCard.ClaimedCard)),
+                scope.Extend(nameof(offeredCard.ClaimedCard), offeredCard.ClaimedCard),
                 typeof(Card),
                 offeredCard.ClaimedCard,
                 displays,

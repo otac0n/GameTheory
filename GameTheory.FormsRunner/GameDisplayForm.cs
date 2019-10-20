@@ -13,6 +13,7 @@ namespace GameTheory.FormsRunner
     public partial class GameDisplayForm : Form
     {
         private readonly IReadOnlyList<Display> displays;
+        private readonly Scope scope;
 
         public GameDisplayForm(IGameInfo gameInfo)
         {
@@ -29,6 +30,7 @@ namespace GameTheory.FormsRunner
             };
             displays.AddRange(Program.DisplayCatalog.FindDisplays(type).Select(d => (Display)container.Resolve(d)));
             this.displays = displays;
+            this.scope = new Scope(string.Empty, this);
             this.RefreshDisplay();
         }
 
@@ -41,11 +43,12 @@ namespace GameTheory.FormsRunner
 
         private void RefreshDisplay()
         {
+            var gameState = this.GameInfo.GameStates.Last();
             Display.FindAndUpdate(
                 this.splitContainer.Panel1.Controls.Cast<Control>().SingleOrDefault(),
-                new Scope(),
+                this.scope.Extend("GameState", gameState),
                 this.GameInfo.Game.GameStateType,
-                this.GameInfo.GameStates.Last(),
+                gameState,
                 this.displays,
                 (oldControl, newControl) =>
                 {
@@ -63,7 +66,7 @@ namespace GameTheory.FormsRunner
 
             Display.FindAndUpdate(
                 this.splitContainer.Panel2.Controls.Cast<Control>().SingleOrDefault(),
-                new Scope(),
+                this.scope.Extend("Moves", this.GameInfo.Moves),
                 this.GameInfo.Moves,
                 this.displays,
                 (oldControl, newControl) =>

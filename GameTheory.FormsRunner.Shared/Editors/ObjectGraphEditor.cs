@@ -102,11 +102,12 @@ namespace GameTheory.FormsRunner.Shared.Editors
                     var p = i; // Closure variable.
                     var parameter = constructor.Parameters[p];
 
+                    var item = parameter.HasDefaultValue ? parameter.DefaultValue : null;
                     var innerControl = Editor.Update(
                         null,
-                        scope.Extend(parameter.Name),
+                        scope.Extend(parameter.Name, item),
                         parameter.ParameterType,
-                        parameter.HasDefaultValue ? parameter.DefaultValue : null,
+                        item,
                         out var innerErrorControl,
                         editors,
                         setError,
