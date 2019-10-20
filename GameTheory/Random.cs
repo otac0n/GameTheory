@@ -449,18 +449,26 @@ namespace GameTheory
         /// <returns>A new list containing the original items in a new order.</returns>
         public static List<T> Shuffle<T>(this IEnumerable<T> source, System.Random instance = null)
         {
+            var copy = source.ToList();
+            copy.ShuffleInPlace(instance);
+            return copy;
+        }
+
+        /// <summary>
+        /// Shuffles a collection in place.
+        /// </summary>
+        /// <typeparam name="T">The type of elements in the collection.</typeparam>
+        /// <param name="source">The items to shuffle.</param>
+        /// <param name="instance">An instance of <see cref="System.Random"/> to use.</param>
+        public static void ShuffleInPlace<T>(this IList<T> source, System.Random instance = null)
+        {
             instance = instance ?? Instance;
 
-            var copy = source.ToList();
-            for (var i = copy.Count - 1; i >= 1; i--)
+            for (var i = source.Count - 1; i >= 1; i--)
             {
                 var j = instance.Next(i + 1);
-                var swap = copy[j];
-                copy[j] = copy[i];
-                copy[i] = swap;
+                (source[i], source[j]) = (source[j], source[i]);
             }
-
-            return copy;
         }
     }
 }

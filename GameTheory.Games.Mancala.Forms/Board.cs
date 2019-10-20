@@ -7,6 +7,7 @@ namespace GameTheory.Games.Mancala.Forms
     using System.Drawing.Drawing2D;
     using System.Drawing.Text;
     using System.Windows.Forms;
+    using GameTheory.FormsRunner.Shared;
 
     public class Board : Control
     {
@@ -38,35 +39,34 @@ namespace GameTheory.Games.Mancala.Forms
 
         protected override void OnPaint(PaintEventArgs e)
         {
-            e.Graphics.InterpolationMode = InterpolationMode.High;
-            e.Graphics.SmoothingMode = SmoothingMode.HighQuality;
-            e.Graphics.TextRenderingHint = TextRenderingHint.AntiAlias;
-
-            e.Graphics.FillRectangle(new SolidBrush(this.BackColor), this.ClientRectangle);
-
-            var nw = this.GameState.BinsPerSide + 2;
-            var nh = 2;
-            var w = Math.Min(
-                this.ClientRectangle.Width / (nw + (nw - 1) * 0.1f),
-                this.ClientRectangle.Height / (nh + (nh - 1) * 0.1f));
-
-            var cellSpacing = w * 0.1f;
-
-            using (var binBrush = new SolidBrush(this.BinColor))
-            using (var textBrush = new SolidBrush(this.ForeColor))
-            using (var stringFormat = new StringFormat() { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center })
+            e.Graphics.HighQuality(() =>
             {
-                for (var i = 0; i < (this.GameState.BinsPerSide + 1) * 2; i++)
-                {
-                    var isMancala = i == this.GameState.BinsPerSide || i == this.GameState.BinsPerSide + (this.GameState.BinsPerSide + 1);
-                    var y = isMancala ? 0 : 1 - i / (this.GameState.BinsPerSide + 1);
-                    var x = i <= this.GameState.BinsPerSide ? i + 1 : (this.GameState.BinsPerSide + 1) * 2 - i - 1;
+                e.Graphics.FillRectangle(new SolidBrush(this.BackColor), this.ClientRectangle);
 
-                    var rect = new RectangleF(x * (w + cellSpacing), y * (w + cellSpacing), w, isMancala ? 2 * w + cellSpacing : w);
-                    e.Graphics.FillRectangle(binBrush, rect);
-                    e.Graphics.DrawString(this.GameState[i].ToString(), this.Font, textBrush, rect, stringFormat);
+                var nw = this.GameState.BinsPerSide + 2;
+                var nh = 2;
+                var w = Math.Min(
+                    this.ClientRectangle.Width / (nw + (nw - 1) * 0.1f),
+                    this.ClientRectangle.Height / (nh + (nh - 1) * 0.1f));
+
+                var cellSpacing = w * 0.1f;
+
+                using (var binBrush = new SolidBrush(this.BinColor))
+                using (var textBrush = new SolidBrush(this.ForeColor))
+                using (var stringFormat = new StringFormat() { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center })
+                {
+                    for (var i = 0; i < (this.GameState.BinsPerSide + 1) * 2; i++)
+                    {
+                        var isMancala = i == this.GameState.BinsPerSide || i == this.GameState.BinsPerSide + (this.GameState.BinsPerSide + 1);
+                        var y = isMancala ? 0 : 1 - i / (this.GameState.BinsPerSide + 1);
+                        var x = i <= this.GameState.BinsPerSide ? i + 1 : (this.GameState.BinsPerSide + 1) * 2 - i - 1;
+
+                        var rect = new RectangleF(x * (w + cellSpacing), y * (w + cellSpacing), w, isMancala ? 2 * w + cellSpacing : w);
+                        e.Graphics.FillRectangle(binBrush, rect);
+                        e.Graphics.DrawString(this.GameState[i].ToString(), this.Font, textBrush, rect, stringFormat);
+                    }
                 }
-            }
+            });
         }
     }
 }

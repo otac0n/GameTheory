@@ -1,4 +1,4 @@
-﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Games.Lotus.Moves
 {
@@ -6,6 +6,7 @@ namespace GameTheory.Games.Lotus.Moves
     using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Linq;
+    using GameTheory.Comparers;
 
     /// <summary>
     /// Represents a move to exchange cards from the player deck.
@@ -40,7 +41,7 @@ namespace GameTheory.Games.Lotus.Moves
                 int comp;
 
                 if ((comp = this.PlayerToken.CompareTo(other.PlayerToken)) != 0 ||
-                    (comp = CompareUtilities.CompareValueLists(this.CardIndexes, move.CardIndexes)) != 0 ||
+                    (comp = ValueListComparer<int>.Compare(this.CardIndexes, move.CardIndexes)) != 0 ||
                     (comp = CompareUtilities.CompareLists(this.GameState.Inventory[this.PlayerToken].Hand, move.GameState.Inventory[move.PlayerToken].Hand)) != 0)
                 {
                     return comp;

@@ -56,7 +56,7 @@ namespace GameTheory.Games.Lotus.Moves
         {
             foreach (var player in state.ChoosingPlayers.Take(1))
             {
-                foreach (var specialPower in EnumUtilities<SpecialPowers>.GetValues())
+                foreach (var specialPower in EnumUtilities<SpecialPowers>.Values)
                 {
                     if (specialPower != SpecialPowers.None && (state.Inventory[player].SpecialPowers & specialPower) != specialPower)
                     {

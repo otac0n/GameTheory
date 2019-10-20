@@ -2,6 +2,7 @@
 
 namespace GameTheory.Games.Mancala.Players
 {
+    using System;
     using GameTheory.GameTree;
     using GameTheory.GameTree.Caches;
     using GameTheory.Players.MaximizingPlayer;
@@ -14,16 +15,23 @@ namespace GameTheory.Games.Mancala.Players
         private static readonly IGameStateScoringMetric<Move, double> Metric =
             ScoringMetric.Create<Move>(Score);
 
+        private TimeSpan minThinkTime;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="MancalaMaximizingPlayer"/> class.
         /// </summary>
         /// <param name="playerToken">The token that represents the player.</param>
         /// <param name="minPly">The minimum number of ply to think ahead.</param>
+        /// <param name="thinkSeconds">The minimum number of seconds to think.</param>
         /// <param name="misereMode">A value indicating whether or not to play misère.</param>
-        public MancalaMaximizingPlayer(PlayerToken playerToken, int minPly = 9, bool misereMode = false)
+        public MancalaMaximizingPlayer(PlayerToken playerToken, int minPly = 9, int thinkSeconds = 2, bool misereMode = false)
             : base(playerToken, ResultScoringMetric.Create(Metric, misereMode), minPly)
         {
+            this.minThinkTime = TimeSpan.FromSeconds(Math.Max(1, thinkSeconds) - 0.1);
         }
+
+        /// <inheritdoc />
+        protected override TimeSpan? MinThinkTime => this.minThinkTime;
 
         /// <inheritdoc />
         protected override IGameStateCache<Move, ResultScore<double>> MakeCache() => new NullCache<Move, ResultScore<double>>();

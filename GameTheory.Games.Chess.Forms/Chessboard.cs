@@ -6,6 +6,7 @@ namespace GameTheory.Games.Chess.Forms
     using System.Drawing.Drawing2D;
     using System.Drawing.Text;
     using System.Windows.Forms;
+    using GameTheory.FormsRunner.Shared;
 
     public class Chessboard : Control
     {
@@ -20,6 +21,7 @@ namespace GameTheory.Games.Chess.Forms
             this.DoubleBuffered = true;
             this.Width = 50 * gameState.Variant.Width;
             this.Height = 50 * gameState.Variant.Height;
+            this.Font = new Font(this.Font.FontFamily, 50 * 0.75f, FontStyle.Regular, GraphicsUnit.Pixel);
         }
 
         public Color BlackColor { get; set; } = Color.Black;
@@ -45,93 +47,92 @@ namespace GameTheory.Games.Chess.Forms
 
         protected override void OnPaint(PaintEventArgs e)
         {
-            e.Graphics.InterpolationMode = InterpolationMode.High;
-            e.Graphics.SmoothingMode = SmoothingMode.HighQuality;
-            e.Graphics.TextRenderingHint = TextRenderingHint.AntiAlias;
-
-            e.Graphics.FillRectangle(new SolidBrush(this.LightColor), this.ClientRectangle);
-
-            var w = this.GameState.Variant.Width;
-            var h = this.GameState.Variant.Height;
-
-            float lerpX(float x) => x * this.ClientRectangle.Width / w + this.ClientRectangle.Left;
-            float lerpY(float y) => y * this.ClientRectangle.Height / h + this.ClientRectangle.Top;
-
-            var flip = this.PlayerToken == this.GameState.Players[1];
-            for (var y = 0; y < h; y++)
+            e.Graphics.HighQuality(() =>
             {
-                float fromY, toY;
-                if (flip)
-                {
-                    fromY = lerpY(y);
-                    toY = lerpY(y + 1);
-                }
-                else
-                {
-                    fromY = lerpY(h - (y + 1));
-                    toY = lerpY(h - y);
-                }
+                e.Graphics.FillRectangle(new SolidBrush(this.LightColor), this.ClientRectangle);
 
-                for (var x = 0; x < w; x++)
+                var w = this.GameState.Variant.Width;
+                var h = this.GameState.Variant.Height;
+
+                float lerpX(float x) => x * this.ClientRectangle.Width / w + this.ClientRectangle.Left;
+                float lerpY(float y) => y * this.ClientRectangle.Height / h + this.ClientRectangle.Top;
+
+                var flip = this.PlayerToken == this.GameState.Players[1];
+                for (var y = 0; y < h; y++)
                 {
-                    float fromX, toX;
+                    float fromY, toY;
                     if (flip)
                     {
-                        fromX = lerpX(w - (x + 1));
-                        toX = lerpX(w - x);
+                        fromY = lerpY(y);
+                        toY = lerpY(y + 1);
                     }
                     else
                     {
-                        fromX = lerpX(x);
-                        toX = lerpX(x + 1);
+                        fromY = lerpY(h - (y + 1));
+                        toY = lerpY(h - y);
                     }
 
-                    var rect = new RectangleF(fromX, fromY, toX - fromX, toY - fromY);
+                    for (var x = 0; x < w; x++)
+                    {
+                        float fromX, toX;
+                        if (flip)
+                        {
+                            fromX = lerpX(w - (x + 1));
+                            toX = lerpX(w - x);
+                        }
+                        else
+                        {
+                            fromX = lerpX(x);
+                            toX = lerpX(x + 1);
+                        }
 
-                    if ((x + y) % 2 == 0)
-                    {
-                        e.Graphics.FillRectangle(new SolidBrush(this.DarkColor), rect);
-                    }
+                        var rect = new RectangleF(fromX, fromY, toX - fromX, toY - fromY);
 
-                    var piece = this.GameState.GetPieceAt(x, y);
-                    if (piece == Pieces.None)
-                    {
-                        continue;
-                    }
+                        if ((x + y) % 2 == 0)
+                        {
+                            e.Graphics.FillRectangle(new SolidBrush(this.DarkColor), rect);
+                        }
 
-                    Color color, outline;
-                    if ((piece & Pieces.White) == Pieces.White)
-                    {
-                        piece = (piece ^ Pieces.White) | Pieces.Black;
-                        color = this.WhiteColor;
-                        outline = this.BlackColor;
-                    }
-                    else if ((piece & Pieces.Black) == Pieces.Black)
-                    {
-                        color = this.BlackColor;
-                        outline = this.WhiteColor;
-                    }
-                    else
-                    {
-                        color = Color.LightGray;
-                        outline = Color.DarkGray;
-                    }
+                        var piece = this.GameState.GetPieceAt(x, y);
+                        if (piece == Pieces.None)
+                        {
+                            continue;
+                        }
 
-                    var text = this.NotationSystem.Format(piece);
-                    using (var path = new GraphicsPath())
-                    using (var pen = new Pen(outline, 2) { LineJoin = LineJoin.Round })
-                    using (var brush = new SolidBrush(color))
-                    {
-                        path.AddString(text, this.Font.FontFamily, (int)this.Font.Style, rect.Height * 0.75f, rect, StringFormat.GenericTypographic);
-                        var bounds = path.GetBounds();
-                        var matrix = new Matrix();
-                        matrix.Translate((rect.Width - bounds.Width) / 2 - bounds.Left + rect.Left, (rect.Height - bounds.Height) / 2 - bounds.Top + rect.Top);
-                        path.Transform(matrix);
-                        e.Graphics.DrawPath(pen, path);
-                        e.Graphics.FillPath(brush, path);
+                        Color color, outline;
+                        if ((piece & Pieces.White) == Pieces.White)
+                        {
+                            piece = (piece ^ Pieces.White) | Pieces.Black;
+                            color = this.WhiteColor;
+                            outline = this.BlackColor;
+                        }
+                        else if ((piece & Pieces.Black) == Pieces.Black)
+                        {
+                            color = this.BlackColor;
+                            outline = this.WhiteColor;
+                        }
+                        else
+                        {
+                            color = Color.LightGray;
+                            outline = Color.DarkGray;
+                        }
+
+                        var text = this.NotationSystem.Format(piece);
+                        using (var path = new GraphicsPath())
+                        using (var pen = new Pen(outline, 2) { LineJoin = LineJoin.Round })
+                        using (var brush = new SolidBrush(color))
+                        {
+                            path.AddString(text, this.Font, e.Graphics, rect, StringFormat.GenericTypographic);
+                            var bounds = path.GetBounds();
+                            var matrix = new Matrix();
+                            matrix.Translate((rect.Width - bounds.Width) / 2 - bounds.Left + rect.Left, (rect.Height - bounds.Height) / 2 - bounds.Top + rect.Top);
+                            path.Transform(matrix);
+                            e.Graphics.DrawPath(pen, path);
+                            e.Graphics.FillPath(brush, path);
+                        }
                     }
                 }
-            }
+            });
         }
     }
 }

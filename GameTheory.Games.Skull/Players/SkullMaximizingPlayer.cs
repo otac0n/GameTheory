@@ -2,6 +2,7 @@
 
 namespace GameTheory.Games.Skull.Players
 {
+    using System;
     using GameTheory.Players.MaximizingPlayer;
 
     /// <summary>
@@ -12,19 +13,26 @@ namespace GameTheory.Games.Skull.Players
         private static readonly IGameStateScoringMetric<Move, double> Metric =
             ScoringMetric.Create<Move>(Score);
 
+        private TimeSpan minThinkTime;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="SkullMaximizingPlayer"/> class.
         /// </summary>
         /// <param name="playerToken">The token that represents the player.</param>
         /// <param name="minPly">The minimum number of ply to think ahead.</param>
+        /// <param name="thinkSeconds">The minimum number of seconds to think.</param>
         /// <param name="misereMode">A value indicating whether or not to play misère.</param>
-        public SkullMaximizingPlayer(PlayerToken playerToken, int minPly = 9, bool misereMode = false)
+        public SkullMaximizingPlayer(PlayerToken playerToken, int minPly = 9, int thinkSeconds = 5, bool misereMode = false)
             : base(playerToken, ResultScoringMetric.Create(Metric, misereMode), minPly)
         {
+            this.minThinkTime = TimeSpan.FromSeconds(Math.Max(1, thinkSeconds) - 0.1);
         }
 
         /// <inheritdoc />
         protected override int InitialSamples => 100;
+
+        /// <inheritdoc />
+        protected override TimeSpan? MinThinkTime => this.minThinkTime;
 
         private static double Score(PlayerState<Move> playerState)
         {

@@ -70,7 +70,7 @@ namespace GameTheory.Games.Lotus
 
             if (state.Phase == Phase.Play)
             {
-                foreach (var flowerType in EnumUtilities<FlowerType>.GetValues())
+                foreach (var flowerType in EnumUtilities<FlowerType>.Values)
                 {
                     var flower = state.Field[flowerType];
                     if (flower.Petals.Count == (int)flowerType)
@@ -119,7 +119,7 @@ namespace GameTheory.Games.Lotus
                 {
                     if (activePlayerInventory.Deck.Count == 0)
                     {
-                        foreach (var flowerType in EnumUtilities<FlowerType>.GetValues())
+                        foreach (var flowerType in EnumUtilities<FlowerType>.Values)
                         {
                             var inventory = state.Inventory;
                             var flower = state.Field[flowerType];

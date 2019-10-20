@@ -7,6 +7,7 @@ namespace GameTheory.Games.Chess
     using System.Collections.Immutable;
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
+    using GameTheory.Comparers;
     using GameTheory.Games.Chess.Moves;
 
     /// <summary>
@@ -280,7 +281,7 @@ namespace GameTheory.Games.Chess
                 (comp = this.EnPassantIndex.CompareTo(state.EnPassantIndex)) != 0 ||
                 (comp = CompareUtilities.CompareEnumLists(this.board, state.board)) != 0 ||
                 (comp = CompareUtilities.CompareLists(this.Players, state.Players)) != 0 ||
-                (comp = CompareUtilities.CompareValueLists(this.Castling, state.Castling)) != 0)
+                (comp = ValueListComparer<int>.Compare(this.Castling, state.Castling)) != 0)
             {
                 return comp;
             }
