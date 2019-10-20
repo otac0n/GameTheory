@@ -18,9 +18,11 @@ namespace GameTheory.FormsRunner.Shared.Displays
             typeof(IList<>),
             typeof(IReadOnlyList<>),
             typeof(IReadOnlyCollection<>),
+            typeof(ImmutableArray<>),
             typeof(ImmutableList<>),
             typeof(IImmutableList<>),
-            typeof(ImmutableArray<>),
+            typeof(ImmutableStack<>),
+            typeof(IImmutableStack<>),
         };
 
         private ListDisplay()
