@@ -2,6 +2,7 @@
 
 namespace GameTheory.Games.TicTacToe.Players
 {
+    using System;
     using GameTheory.Players.MaximizingPlayer;
 
     /// <summary>
@@ -12,15 +13,22 @@ namespace GameTheory.Games.TicTacToe.Players
         private static readonly IGameStateScoringMetric<Move, double> Metric =
             ScoringMetric.Create((PlayerState<Move> s) => 0);
 
+        private TimeSpan minThinkTime;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="TicTacToeMaximizingPlayer"/> class.
         /// </summary>
         /// <param name="playerToken">The token that represents the player.</param>
         /// <param name="minPly">The minimum number of ply to think ahead.</param>
+        /// <param name="thinkSeconds">The minimum number of seconds to think.</param>
         /// <param name="misereMode">A value indicating whether or not to play misère.</param>
-        public TicTacToeMaximizingPlayer(PlayerToken playerToken, int minPly = 6, bool misereMode = false)
+        public TicTacToeMaximizingPlayer(PlayerToken playerToken, int minPly = 6, int thinkSeconds = 2, bool misereMode = false)
             : base(playerToken, ResultScoringMetric.Create(Metric, misereMode), minPly)
         {
+            this.minThinkTime = TimeSpan.FromSeconds(Math.Max(1, thinkSeconds) - 0.1);
         }
+
+        /// <inheritdoc />
+        protected override TimeSpan? MinThinkTime => this.minThinkTime;
     }
 }

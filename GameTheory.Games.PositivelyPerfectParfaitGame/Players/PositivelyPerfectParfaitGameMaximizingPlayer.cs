@@ -15,16 +15,23 @@ namespace GameTheory.Games.PositivelyPerfectParfaitGame.Players
         private static readonly IGameStateScoringMetric<Move, double> Metric =
             ScoringMetric.Create((PlayerState<Move> s) => ((GameState)s.GameState).Parfaits[s.PlayerToken].Flavors.Keys.Count());
 
+        private TimeSpan minThinkTime;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="PositivelyPerfectParfaitGameMaximizingPlayer"/> class.
         /// </summary>
         /// <param name="playerToken">The token that represents the player.</param>
         /// <param name="minPly">The minimum number of ply to think ahead.</param>
+        /// <param name="thinkSeconds">The minimum number of seconds to think.</param>
         /// <param name="misereMode">A value indicating whether or not to play misère.</param>
-        public PositivelyPerfectParfaitGameMaximizingPlayer(PlayerToken playerToken, int minPly = 8, bool misereMode = false)
+        public PositivelyPerfectParfaitGameMaximizingPlayer(PlayerToken playerToken, int minPly = 8, int thinkSeconds = 5, bool misereMode = false)
             : base(playerToken, ResultScoringMetric.Create(Metric, misereMode), minPly)
         {
+            this.minThinkTime = TimeSpan.FromSeconds(Math.Max(1, thinkSeconds) - 0.1);
         }
+
+        /// <inheritdoc />
+        protected override TimeSpan? MinThinkTime => this.minThinkTime;
 
         /// <inheritdoc/>
         protected override ResultScore<double> GetLead(IDictionary<PlayerToken, ResultScore<double>> score, IGameState<Move> state, PlayerToken player)
