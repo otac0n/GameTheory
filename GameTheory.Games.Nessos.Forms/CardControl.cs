@@ -5,7 +5,6 @@ namespace GameTheory.Games.Nessos.Forms
     using System.Collections.Generic;
     using System.Drawing;
     using System.Drawing.Drawing2D;
-    using System.Drawing.Text;
     using System.Windows.Forms;
     using GameTheory.FormsRunner.Shared;
 
@@ -28,11 +27,12 @@ namespace GameTheory.Games.Nessos.Forms
 
         private static readonly HatchBrush CardReverseBrush = new HatchBrush(HatchStyle.Trellis, Color.Gold, Color.Black);
         private Card card;
+        private bool showReverse;
 
         public CardControl(Card card, bool showReverse)
         {
             this.card = card;
-            this.ShowReverse = showReverse;
+            this.showReverse = showReverse;
             this.BackColor = Color.Black;
             this.DoubleBuffered = true;
             this.Width = 50;
@@ -51,7 +51,16 @@ namespace GameTheory.Games.Nessos.Forms
             }
         }
 
-        public bool ShowReverse { get; }
+        public bool ShowReverse
+        {
+            get => this.showReverse;
+
+            set
+            {
+                this.showReverse = value;
+                this.Invalidate();
+            }
+        }
 
         public static void RenderCard(Graphics graphics, Card card, bool showReverse, Rectangle rectangle, Font font)
         {

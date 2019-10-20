@@ -19,7 +19,6 @@ namespace GameTheory.Games.Nessos.Forms
         {
             var inventory = (Inventory)value;
 
-            var player = scope.GetPropertyOrDefault<PlayerToken>(Scope.SharedProperties.PlayerToken, null);
             var ownedCards = inventory.OwnedCards;
             var hand = inventory.Hand;
 
