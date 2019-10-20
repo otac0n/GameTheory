@@ -8,7 +8,7 @@ namespace GameTheory.Games.FiveTribes.Console
     /// <summary>
     /// Provides a console renderer for the game of <see cref="GameState">FiveTribes</see>.
     /// </summary>
-    public class FiveTribesConsoleRenderer : BaseConsoleRenderer<Move>
+    public class FiveTribesConsoleRenderer : ConsoleRendererBase<Move>
     {
         /// <inheritdoc />
         public override void Show(IGameState<Move> state, PlayerToken playerToken = null) => this.Show((GameState)state);

@@ -8,7 +8,7 @@ namespace GameTheory.Games.Splendor.Console
     /// <summary>
     /// Provides a console renderer for the game of <see cref="GameState">Splendor</see>.
     /// </summary>
-    public class SplendorConsoleRenderer : BaseConsoleRenderer<Move>
+    public class SplendorConsoleRenderer : ConsoleRendererBase<Move>
     {
         /// <inheritdoc />
         public override void Show(IGameState<Move> state, PlayerToken playerToken = null) => new Templates(playerToken).RenderGameState((GameState)state, this.MakeRenderTokenWriter(state));

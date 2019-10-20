@@ -10,7 +10,7 @@ namespace GameTheory.Games.Chess.Console
     /// Provides a console renderer for the game of <see cref="GameState">Chess</see>.
     /// </summary>
     [ConsoleFont("Consolas", 8, 18)]
-    public class ChessConsoleRenderer : BaseConsoleRenderer<Move>
+    public class ChessConsoleRenderer : ConsoleRendererBase<Move>
     {
         /// <inheritdoc/>
         public override void Show(IGameState<Move> state, PlayerToken playerToken = null)

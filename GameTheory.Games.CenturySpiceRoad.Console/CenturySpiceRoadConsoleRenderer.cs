@@ -8,7 +8,7 @@ namespace GameTheory.Games.CenturySpiceRoad.Console
     /// <summary>
     /// Provides a console renderer for the game of <see cref="GameState">CenturySpiceRoad</see>.
     /// </summary>
-    public class CenturySpiceRoadConsoleRenderer : BaseConsoleRenderer<Move>
+    public class CenturySpiceRoadConsoleRenderer : ConsoleRendererBase<Move>
     {
         /// <inheritdoc />
         public override void Show(IGameState<Move> state, PlayerToken playerToken = null) => new Templates(playerToken).RenderGameState((GameState)state, this.MakeRenderTokenWriter(state));

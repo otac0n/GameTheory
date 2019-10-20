@@ -8,7 +8,7 @@ namespace GameTheory.Games.Nessos.Console
     /// <summary>
     /// Provides a console renderer for the game of <see cref="GameState">Nessos</see>.
     /// </summary>
-    public class NessosConsoleRenderer : BaseConsoleRenderer<Move>
+    public class NessosConsoleRenderer : ConsoleRendererBase<Move>
     {
         /// <inheritdoc/>
         public override void Show(IGameState<Move> state, PlayerToken playerToken = null) => new Templates(playerToken).RenderGameState((GameState)state, this.MakeRenderTokenWriter(state));

@@ -7,7 +7,7 @@ namespace GameTheory.Games.Mancala.Console
     /// <summary>
     /// Provides a console renderer for the game of <see cref="GameState">Mancala</see>.
     /// </summary>
-    public class MancalaConsoleRenderer : BaseConsoleRenderer<Move>
+    public class MancalaConsoleRenderer : ConsoleRendererBase<Move>
     {
         /// <inheritdoc/>
         public override void Show(IGameState<Move> state, PlayerToken playerToken = null) => this.Show((GameState)state);
