@@ -5,7 +5,6 @@ namespace GameTheory.Games.LoveLetter.Forms
     using System.Collections.Generic;
     using System.Drawing;
     using System.Drawing.Drawing2D;
-    using System.Drawing.Text;
     using System.Windows.Forms;
     using GameTheory.FormsRunner.Shared;
 
@@ -25,12 +24,12 @@ namespace GameTheory.Games.LoveLetter.Forms
         };
 
         private Card card;
+        private bool showReverse;
 
         public CardControl(Card card, bool showReverse)
         {
             this.card = card;
-            this.ShowReverse = showReverse;
-            this.BackColor = Color.Black;
+            this.showReverse = showReverse;
             this.DoubleBuffered = true;
             this.Width = 50;
             this.Height = 100;
@@ -43,12 +42,27 @@ namespace GameTheory.Games.LoveLetter.Forms
 
             set
             {
-                this.card = value;
-                this.Invalidate();
+                if (this.card != value)
+                {
+                    this.card = value;
+                    this.Invalidate();
+                }
             }
         }
 
-        public bool ShowReverse { get; }
+        public bool ShowReverse
+        {
+            get => this.showReverse;
+
+            set
+            {
+                if (this.showReverse != value)
+                {
+                    this.showReverse = value;
+                    this.Invalidate();
+                }
+            }
+        }
 
         public static void RenderCard(Graphics graphics, Card card, bool showReverse, Rectangle rectangle, Font font)
         {
@@ -59,19 +73,28 @@ namespace GameTheory.Games.LoveLetter.Forms
         {
             graphics.HighQuality(() =>
             {
-                var brush = CardBrush[showReverse ? Card.None : card];
-                graphics.FillRectangle(brush, rectangle);
-                graphics.DrawRectangle(new Pen(Color.Black), rectangle.X, rectangle.Y, rectangle.Width - 1, rectangle.Height - 1);
-
-                using (var textPath = new GraphicsPath())
-                using (var textPen = new Pen(Color.White, 3) { LineJoin = LineJoin.Round })
-                using (var cardValueFormat = new StringFormat { Alignment = StringAlignment.Near, LineAlignment = StringAlignment.Near, })
-                using (var cardNameFormat = new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center })
+                if (showReverse || card == Card.None)
                 {
-                    var number = ((int)card).ToString();
-                    var name = Resources.ResourceManager.GetEnumString(card);
-                    graphics.OutlineString(number, new Font(font.FontFamily, font.Size * 2, font.Style, GraphicsUnit.Point), Brushes.Black, textPen, rectangle, cardValueFormat);
-                    graphics.OutlineString(name, font, Brushes.Black, textPen, rectangle, cardNameFormat);
+                    var brush = CardBrush[Card.None];
+                    graphics.FillRectangle(brush, rectangle);
+                    graphics.DrawRectangle(new Pen(Color.Black), rectangle.X, rectangle.Y, rectangle.Width - 1, rectangle.Height - 1);
+                }
+                else
+                {
+                    var brush = CardBrush[card];
+                    graphics.FillRectangle(brush, rectangle);
+                    graphics.DrawRectangle(new Pen(Color.Black), rectangle.X, rectangle.Y, rectangle.Width - 1, rectangle.Height - 1);
+
+                    using (var textPath = new GraphicsPath())
+                    using (var textPen = new Pen(Color.White, 3) { LineJoin = LineJoin.Round })
+                    using (var cardValueFormat = new StringFormat { Alignment = StringAlignment.Near, LineAlignment = StringAlignment.Near, })
+                    using (var cardNameFormat = new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center })
+                    {
+                        var number = ((int)card).ToString();
+                        var name = Resources.ResourceManager.GetEnumString(card);
+                        graphics.OutlineString(number, new Font(font.FontFamily, font.Size * 2, font.Style, GraphicsUnit.Point), Brushes.Black, textPen, rectangle, cardValueFormat);
+                        graphics.OutlineString(name, font, Brushes.Black, textPen, rectangle, cardNameFormat);
+                    }
                 }
             });
         }
