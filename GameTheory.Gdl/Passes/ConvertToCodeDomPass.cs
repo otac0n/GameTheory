@@ -416,60 +416,6 @@ namespace GameTheory.Gdl.Passes
                 this.result.DeclarationSyntax = root.NormalizeWhitespace();
             }
 
-            private static ExpressionStatementSyntax CreateToXmlStatements(ExpressionType type, ExpressionSyntax value, ExpressionSyntax writer)
-            {
-                switch (type)
-                {
-                    case FunctionType functionType:
-                        return SyntaxFactory.ExpressionStatement(
-                            SyntaxFactory.AwaitExpression(
-                                SyntaxFactory.InvocationExpression(
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        value,
-                                        SyntaxHelper.IdentifierName("ToXml")))
-                                        .AddArgumentListArguments(
-                                            SyntaxFactory.Argument(
-                                                writer))));
-
-                    case ObjectType objectType:
-                        return SyntaxFactory.ExpressionStatement(
-                            SyntaxFactory.AwaitExpression(
-                                SyntaxFactory.InvocationExpression(
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        writer,
-                                        SyntaxFactory.IdentifierName("WriteStringAsync")))
-                                    .AddArgumentListArguments(
-                                        SyntaxFactory.Argument(
-                                            SyntaxFactory.InvocationExpression(
-                                                value)))));
-
-                    case NumberRangeType numberRangeType:
-                    case EnumType enumType:
-                        return SyntaxFactory.ExpressionStatement(
-                            SyntaxFactory.AwaitExpression(
-                                SyntaxFactory.InvocationExpression(
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        writer,
-                                        SyntaxFactory.IdentifierName("WriteStringAsync")))
-                                    .AddArgumentListArguments(
-                                        SyntaxFactory.Argument(
-                                            SyntaxFactory.InvocationExpression(
-                                                SyntaxFactory.MemberAccessExpression(
-                                                    SyntaxKind.SimpleMemberAccessExpression,
-                                                    value,
-                                                    SyntaxFactory.IdentifierName("ToString")))))));
-
-                    case AnyType anyType:
-                    case UnionType unionType:
-                        break;
-                }
-
-                throw new NotSupportedException($"Could not enumerate the members of the type '{type}'");
-            }
-
             private static ObjectCreationExpressionSyntax NewPlayerTokenExpression() =>
                 SyntaxFactory.ObjectCreationExpression(SyntaxHelper.IdentifierName("PlayerToken"))
                     .WithArgumentList(SyntaxFactory.ArgumentList());
@@ -834,6 +780,56 @@ namespace GameTheory.Gdl.Passes
                                 SyntaxHelper.IdentifierName("move"))));
             }
 
+            private ClassDeclarationSyntax CreateEnumLookupDeclaration(IList<EnumType> enumTypes)
+            {
+                var lookupElement = SyntaxFactory.ClassDeclaration(this.result.NamespaceScope.GetPublic("NameLookup"))
+                    .AddModifiers(SyntaxFactory.Token(SyntaxKind.PublicKeyword), SyntaxFactory.Token(SyntaxKind.StaticKeyword));
+
+                foreach (var enumType in enumTypes)
+                {
+                    var switchStatement = SyntaxFactory.SwitchStatement(
+                        SyntaxFactory.IdentifierName("value"))
+                            .WithOpenParenToken(SyntaxFactory.Token(SyntaxKind.OpenParenToken))
+                            .WithCloseParenToken(SyntaxFactory.Token(SyntaxKind.CloseParenToken));
+
+                    foreach (var obj in enumType.Objects)
+                    {
+                        switchStatement = switchStatement
+                            .AddSections(
+                                SyntaxFactory.SwitchSection()
+                                    .AddLabels(
+                                        SyntaxFactory.CaseSwitchLabel(
+                                            SyntaxFactory.MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                SyntaxFactory.IdentifierName(this.result.NamespaceScope.GetPublic(enumType)),
+                                                SyntaxFactory.IdentifierName(enumType.Scope.GetPublic(obj)))))
+                                    .AddStatements(
+                                        SyntaxFactory.ReturnStatement(
+                                            SyntaxHelper.LiteralExpression(obj.Constant.Name))));
+                    }
+
+                    switchStatement = switchStatement
+                        .AddSections(
+                            SyntaxFactory.SwitchSection()
+                                .AddLabels(SyntaxFactory.DefaultSwitchLabel())
+                                .AddStatements(SyntaxFactory.ReturnStatement(SyntaxHelper.Null)));
+
+                    var enumElement = SyntaxFactory.MethodDeclaration(SyntaxHelper.StringType, SyntaxFactory.Identifier("GetName"))
+                        .AddModifiers(SyntaxFactory.Token(SyntaxKind.PublicKeyword), SyntaxFactory.Token(SyntaxKind.StaticKeyword))
+                        .AddParameterListParameters(
+                            SyntaxFactory.Parameter(
+                                SyntaxFactory.Identifier("value"))
+                                .WithType(
+                                    SyntaxFactory.IdentifierName(this.result.NamespaceScope.GetPublic(enumType))))
+                        .AddBodyStatements(switchStatement);
+
+                    lookupElement = lookupElement
+                        .AddMembers(enumElement);
+                }
+
+                return lookupElement;
+            }
+
             private EnumDeclarationSyntax CreateEnumTypeDeclaration(EnumType enumType)
             {
                 var enumElement = SyntaxFactory.EnumDeclaration(this.result.NamespaceScope.GetPublic(enumType))
@@ -1083,7 +1079,7 @@ namespace GameTheory.Gdl.Passes
                                         SyntaxFactory.Argument(
                                             SyntaxFactory.LiteralExpression(
                                                 SyntaxKind.NullLiteralExpression))))),
-                        CreateToXmlStatements(
+                        this.CreateToXmlStatements(
                             arg.ReturnType,
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
@@ -2241,22 +2237,39 @@ namespace GameTheory.Gdl.Passes
                 }
             }
 
-            private MemberDeclarationSyntax[] CreatePublicTypeDeclarations(IEnumerable<ExpressionType> renderedTypes) => renderedTypes.Select(type =>
+            private MemberDeclarationSyntax[] CreatePublicTypeDeclarations(IEnumerable<ExpressionType> renderedTypes)
             {
-                switch (type)
+                var enumTypes = new List<EnumType>();
+                var result = new List<MemberDeclarationSyntax>();
+                foreach (var type in renderedTypes)
                 {
-                    case EnumType enumType:
-                        return (MemberDeclarationSyntax)this.CreateEnumTypeDeclaration(enumType);
+                    switch (type)
+                    {
+                        case EnumType enumType:
+                            enumTypes.Add(enumType);
+                            result.Add(this.CreateEnumTypeDeclaration(enumType));
+                            break;
 
-                    case FunctionType functionType:
-                        return (MemberDeclarationSyntax)this.CreateFunctionTypeDeclaration(functionType);
+                        case FunctionType functionType:
+                            result.Add(this.CreateFunctionTypeDeclaration(functionType));
+                            break;
 
-                    case StateType stateType:
-                        return (MemberDeclarationSyntax)this.CreateStateTypeDeclaration(stateType);
+                        case StateType stateType:
+                            result.Add(this.CreateStateTypeDeclaration(stateType));
+                            break;
+
+                        default:
+                            throw new InvalidOperationException();
+                    }
                 }
 
-                throw new InvalidOperationException();
-            }).ToArray();
+                if (enumTypes.Count > 0)
+                {
+                    result.Add(this.CreateEnumLookupDeclaration(enumTypes));
+                }
+
+                return result.ToArray();
+            }
 
             private MemberDeclarationSyntax[] CreateSharedGameStateDeclarations()
             {
@@ -2812,7 +2825,7 @@ namespace GameTheory.Gdl.Passes
                                                 SyntaxFactory.Argument(
                                                     SyntaxFactory.LiteralExpression(
                                                         SyntaxKind.NullLiteralExpression))))),
-                                CreateToXmlStatements(
+                                this.CreateToXmlStatements(
                                     obj.Key,
                                     SyntaxFactory.IdentifierName("item"),
                                     SyntaxHelper.IdentifierName("writer")),
@@ -2850,6 +2863,77 @@ namespace GameTheory.Gdl.Passes
                             toXmlBody));
 
                 return SyntaxHelper.ReorderMembers(classElement);
+            }
+
+            private ExpressionStatementSyntax CreateToXmlStatements(ExpressionType type, ExpressionSyntax value, ExpressionSyntax writer)
+            {
+                switch (type)
+                {
+                    case FunctionType functionType:
+                        return SyntaxFactory.ExpressionStatement(
+                            SyntaxFactory.AwaitExpression(
+                                SyntaxFactory.InvocationExpression(
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        value,
+                                        SyntaxHelper.IdentifierName("ToXml")))
+                                        .AddArgumentListArguments(
+                                            SyntaxFactory.Argument(
+                                                writer))));
+
+                    case ObjectType objectType:
+                        return SyntaxFactory.ExpressionStatement(
+                            SyntaxFactory.AwaitExpression(
+                                SyntaxFactory.InvocationExpression(
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        writer,
+                                        SyntaxFactory.IdentifierName("WriteStringAsync")))
+                                    .AddArgumentListArguments(
+                                        SyntaxFactory.Argument(
+                                            SyntaxFactory.InvocationExpression(
+                                                value)))));
+
+                    case NumberRangeType numberRangeType:
+                        return SyntaxFactory.ExpressionStatement(
+                            SyntaxFactory.AwaitExpression(
+                                SyntaxFactory.InvocationExpression(
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        writer,
+                                        SyntaxFactory.IdentifierName("WriteStringAsync")))
+                                    .AddArgumentListArguments(
+                                        SyntaxFactory.Argument(
+                                            SyntaxFactory.InvocationExpression(
+                                                SyntaxFactory.MemberAccessExpression(
+                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                    value,
+                                                    SyntaxFactory.IdentifierName("ToString")))))));
+
+                    case EnumType enumType:
+                        return SyntaxFactory.ExpressionStatement(
+                            SyntaxFactory.AwaitExpression(
+                                SyntaxFactory.InvocationExpression(
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        writer,
+                                        SyntaxFactory.IdentifierName("WriteStringAsync")))
+                                    .AddArgumentListArguments(
+                                        SyntaxFactory.Argument(
+                                            SyntaxFactory.InvocationExpression(
+                                                SyntaxFactory.MemberAccessExpression(
+                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                    SyntaxFactory.IdentifierName(this.result.NamespaceScope.GetPublic("NameLookup")),
+                                                    SyntaxFactory.IdentifierName("GetName")))
+                                                .AddArgumentListArguments(
+                                                    SyntaxFactory.Argument(value))))));
+
+                    case AnyType anyType:
+                    case UnionType unionType:
+                        break;
+                }
+
+                throw new NotSupportedException($"Could not enumerate the members of the type '{type}'");
             }
 
             private MemberDeclarationSyntax CreateTrueRelationDeclaration(RelationInfo @true) =>

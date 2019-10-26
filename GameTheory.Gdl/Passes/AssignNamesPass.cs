@@ -39,6 +39,7 @@ namespace GameTheory.Gdl.Passes
             var namespaceScope = new Scope<object>()
                 .Reserve(result.Name)
                 .Reserve("IXml")
+                .Add("NameLookup", ScopeFlags.Public, "NameLookup")
                 .Add("GameState", ScopeFlags.Public, "GameState")
                 .Add("Move", ScopeFlags.Public, "Move", $"{result.Name} Move", "RoleMove")
                 .Add("ObjectComparer", ScopeFlags.Public, "ObjectComparer");

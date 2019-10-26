@@ -132,7 +132,7 @@ namespace GameTheory.Tests.Gdl
             RunGame(result);
         }
 
-        [TestCase(@"(role a) (init (cell 1 1 a)) (legal a x)", "<state><fact><relation>cell</relation><argument>1</argument><argument>1</argument><argument>A</argument></fact></state>")]
+        [TestCase(@"(role a) (init (cell 1 1 a)) (legal a x)", "<state><fact><relation>cell</relation><argument>1</argument><argument>1</argument><argument>a</argument></fact></state>")]
         public async Task Compile_WhenGivenASimpleGame_ReturnsAGameThatCanBeSerializedToXml(string game, string xml)
         {
             var result = new GameCompiler().Compile(game);
