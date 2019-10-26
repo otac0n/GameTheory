@@ -2,8 +2,12 @@
   "gameName": "mastermind",
   "rulesheet": "mastermind.gdl",
   "description": "mastermind.txt",
-  "sourceUri": "http://ggpserver.general-game-playing.de/ggpserver/public/download_gdl.jsp?name=mastermind",
+  "sourceUri": "http://ggpserver.general-game-playing.de/ggpserver/public/view_game.jsp?name=mastermind",
   "uploadedBy": "stephan",
   "gdlVersion": "v2",
-  "seesXml": "(<= (sees_xml random ?s)\r\n    (true ?s)\r\n)\r\n\r\n(<= (sees_xml player (set 1 ?c1))\r\n    (true (playerset ?c1 ?c2 ?c3 ?c4))\r\n    (true (set 1 ?c1))\r\n)\r\n(<= (sees_xml player (set 2 ?c2))\r\n    (true (playerset ?c1 ?c2 ?c3 ?c4))\r\n    (true (set 2 ?c2))\r\n)\r\n(<= (sees_xml player (set 3 ?c3))\r\n    (true (playerset ?c1 ?c2 ?c3 ?c4))\r\n    (true (set 3 ?c3))\r\n)\r\n(<= (sees_xml player (set 4 ?c4))\r\n    (true (playerset ?c1 ?c2 ?c3 ?c4))\r\n    (true (set 4 ?c4))\r\n)\r\n(<= (sees_xml player (playerset ?c1 ?c2 ?c3 ?c4))\r\n    (true (playerset ?c1 ?c2 ?c3 ?c4))\r\n)\r\n(<= (sees_xml player (guess ?s))\r\n    (true (guess ?s))\r\n)\r\n(<= (sees_xml (cell ?c ?r ?t))\r\n    (true (cell ?c ?r ?t))\r\n)"
+  "seesXml": "(<= (sees_xml random ?s)\r\n    (true ?s)\r\n)\r\n\r\n(<= (sees_xml player (set 1 ?c1))\r\n    (true (playerset ?c1 ?c2 ?c3 ?c4))\r\n    (true (set 1 ?c1))\r\n)\r\n(<= (sees_xml player (set 2 ?c2))\r\n    (true (playerset ?c1 ?c2 ?c3 ?c4))\r\n    (true (set 2 ?c2))\r\n)\r\n(<= (sees_xml player (set 3 ?c3))\r\n    (true (playerset ?c1 ?c2 ?c3 ?c4))\r\n    (true (set 3 ?c3))\r\n)\r\n(<= (sees_xml player (set 4 ?c4))\r\n    (true (playerset ?c1 ?c2 ?c3 ?c4))\r\n    (true (set 4 ?c4))\r\n)\r\n(<= (sees_xml player (playerset ?c1 ?c2 ?c3 ?c4))\r\n    (true (playerset ?c1 ?c2 ?c3 ?c4))\r\n)\r\n(<= (sees_xml player (guess ?s))\r\n    (true (guess ?s))\r\n)\r\n(<= (sees_xml (cell ?c ?r ?t))\r\n    (true (cell ?c ?r ?t))\r\n)",
+  "sources": {
+    "mastermind.gdl": "http://ggpserver.general-game-playing.de/ggpserver/public/download_gdl.jsp?name=mastermind",
+    "mastermind.txt": "http://ggpserver.general-game-playing.de/ggpserver/public/view_game.jsp?name=mastermind#description"
+  }
 }

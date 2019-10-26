@@ -2,8 +2,12 @@
   "gameName": "backgammon",
   "rulesheet": "backgammon.gdl",
   "description": "backgammon.txt",
-  "sourceUri": "http://ggpserver.general-game-playing.de/ggpserver/public/download_gdl.jsp?name=backgammon",
+  "sourceUri": "http://ggpserver.general-game-playing.de/ggpserver/public/view_game.jsp?name=backgammon",
   "uploadedBy": "stephan",
   "gdlVersion": "v2",
-  "seesXml": "(<= (sees_xml random ?t) (true ?t))\r\n(<= (sees_xml ?p ?t) (role ?p) (distinct ?p random) (true ?t))"
+  "seesXml": "(<= (sees_xml random ?t) (true ?t))\r\n(<= (sees_xml ?p ?t) (role ?p) (distinct ?p random) (true ?t))",
+  "sources": {
+    "backgammon.gdl": "http://ggpserver.general-game-playing.de/ggpserver/public/download_gdl.jsp?name=backgammon",
+    "backgammon.txt": "http://ggpserver.general-game-playing.de/ggpserver/public/view_game.jsp?name=backgammon#description"
+  }
 }

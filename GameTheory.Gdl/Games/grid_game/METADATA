@@ -1,8 +1,27 @@
 {
   "gameName": "grid_game",
   "rulesheet": "grid_game.gdl",
-  "sourceUri": "http://ggpserver.general-game-playing.de/ggpserver/public/download_gdl.jsp?name=grid_game",
+  "stylesheet": "stylesheets/chess_like/chess_like_automatic.xsl",
+  "sourceUri": "http://ggpserver.general-game-playing.de/ggpserver/public/view_game.jsp?name=grid_game",
   "uploadedBy": "Manju",
   "gdlVersion": "v1",
-  "seesXml": "(<= (sees_xml random ?t) (true_p ?t))\r\n(<= (sees_xml ?p ?t) (role ?p) (distinct ?p random) (true_p ?t))\r\n\r\n(<= (true_p (control ?p))\r\n    (true (control ?p)))\r\n(<= (true_p (step ?s))\r\n    (true (step ?s)))\r\n(<= (true_p (cell ?x ?y b))\r\n    (true (cell ?x ?y))\r\n    (not (true (isat playerx ?x ?y)))\r\n    (not (true (isat playery ?x ?y)))\r\n    (or (distinct ?x 4) (distinct ?y 7))\r\n    )\r\n(<= (true_p (cell ?x ?y x))\r\n    (true (isat playerx ?x ?y))\r\n    (or (distinct ?x 4) (distinct ?y 7))\r\n    )\r\n(<= (true_p (cell ?x ?y o))\r\n    (true (isat playery ?x ?y))\r\n    (or (distinct ?x 4) (distinct ?y 7))\r\n    )\r\n(<= (true_p (cell 4 7 green))\r\n    )"
+  "seesXml": "(<= (sees_xml random ?t) (true_p ?t))\r\n(<= (sees_xml ?p ?t) (role ?p) (distinct ?p random) (true_p ?t))\r\n\r\n(<= (true_p (control ?p))\r\n    (true (control ?p)))\r\n(<= (true_p (step ?s))\r\n    (true (step ?s)))\r\n(<= (true_p (cell ?x ?y b))\r\n    (true (cell ?x ?y))\r\n    (not (true (isat playerx ?x ?y)))\r\n    (not (true (isat playery ?x ?y)))\r\n    (or (distinct ?x 4) (distinct ?y 7))\r\n    )\r\n(<= (true_p (cell ?x ?y x))\r\n    (true (isat playerx ?x ?y))\r\n    (or (distinct ?x 4) (distinct ?y 7))\r\n    )\r\n(<= (true_p (cell ?x ?y o))\r\n    (true (isat playery ?x ?y))\r\n    (or (distinct ?x 4) (distinct ?y 7))\r\n    )\r\n(<= (true_p (cell 4 7 green))\r\n    )",
+  "sources": {
+    "grid_game.gdl": "http://ggpserver.general-game-playing.de/ggpserver/public/download_gdl.jsp?name=grid_game",
+    "stylesheets/LICENSE": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/LICENSE",
+    "stylesheets/chess_like/chess_like_automatic.xsl": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/chess_like/chess_like_automatic.xsl",
+    "stylesheets/generic/template.xsl": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/generic/template.xsl",
+    "stylesheets/generic/chess_board.xsl": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/generic/chess_board.xsl",
+    "stylesheets/generic/sitespecific.xsl": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/generic/sitespecific.xsl",
+    "stylesheets/generic/title.xsl": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/generic/title.xsl",
+    "stylesheets/generic/header.xsl": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/generic/header.xsl",
+    "stylesheets/generic/footer.xsl": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/generic/footer.xsl",
+    "stylesheets/generic/history.xsl": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/generic/history.xsl",
+    "stylesheets/generic/playerInfo.xsl": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/generic/playerInfo.xsl",
+    "stylesheets/generic/playClock.xsl": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/generic/playClock.xsl",
+    "stylesheets/generic/state.xsl": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/generic/state.xsl",
+    "stylesheets/generic/board.xsl": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/generic/board.xsl",
+    "stylesheets/generic/chess_board_play_link.xsl": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/generic/chess_board_play_link.xsl",
+    "stylesheets/generic/variables.xsl": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/generic/variables.xsl"
+  }
 }

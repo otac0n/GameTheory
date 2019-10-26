@@ -2,8 +2,12 @@
   "gameName": "battlebrushes",
   "rulesheet": "battlebrushes.gdl",
   "description": "battlebrushes.txt",
-  "sourceUri": "http://ggpserver.general-game-playing.de/ggpserver/public/download_gdl.jsp?name=battlebrushes",
+  "sourceUri": "http://ggpserver.general-game-playing.de/ggpserver/public/view_game.jsp?name=battlebrushes",
   "uploadedBy": "stephan",
   "gdlVersion": "v1",
-  "seesXml": "(<= (sees_xml random ?t) (true ?t))\r\n(<= (sees_xml ?p ?t) (role ?p) (distinct ?p random) (true ?t))"
+  "seesXml": "(<= (sees_xml random ?t) (true ?t))\r\n(<= (sees_xml ?p ?t) (role ?p) (distinct ?p random) (true ?t))",
+  "sources": {
+    "battlebrushes.gdl": "http://ggpserver.general-game-playing.de/ggpserver/public/download_gdl.jsp?name=battlebrushes",
+    "battlebrushes.txt": "http://ggpserver.general-game-playing.de/ggpserver/public/view_game.jsp?name=battlebrushes#description"
+  }
 }

@@ -1,8 +1,24 @@
 {
   "gameName": "eeeeeeeeeeeeeeeeeeeeeeee",
   "rulesheet": "eeeeeeeeeeeeeeeeeeeeeeee.gdl",
-  "sourceUri": "http://ggpserver.general-game-playing.de/ggpserver/public/download_gdl.jsp?name=eeeeeeeeeeeeeeeeeeeeeeee",
+  "stylesheet": "stylesheets/generic/generic.xsl",
+  "sourceUri": "http://ggpserver.general-game-playing.de/ggpserver/public/view_game.jsp?name=eeeeeeeeeeeeeeeeeeeeeeee",
   "uploadedBy": "simserver",
   "gdlVersion": "v2",
-  "seesXml": "(<= (sees_xml player1 (card player1Card ?Player1Card))\r\n\t(true (card player1Card ?Player1Card))\r\n)\r\n(<= (sees_xml player1 (card player2Card 0))\r\n\t(true (card player2Card ?SomeValue))\r\n)\r\n\r\n(<= (sees_xml player2 (card player1Card 0))\r\n\t(true (card player1Card ?SomeValue))\r\n)\r\n(<= (sees_xml player2 (card player2Card ?Player2Card))\r\n\t(true (card player2Card ?Player2Card))\r\n)\r\n\r\n(<= (sees_xml ?Player (card talonCard1 0))\r\n\t(true (card talonCard1 ?SomeValue))\r\n)\r\n(<= (sees_xml ?Player (card talonCard2 0))\r\n\t(true (card talonCard2 ?SomeValue))\r\n)\r\n\r\n(<= (sees_xml ?Player (card trickCard1 ?TrickCard1))\r\n\t(true (card trickCard1 ?TrickCard1))\r\n)\r\n(<= (sees_xml ?Player (card trickCard2 ?TrickCard2))\r\n\t(true (card trickCard2 ?TrickCard2))\r\n)"
+  "seesXml": "(<= (sees_xml player1 (card player1Card ?Player1Card))\r\n\t(true (card player1Card ?Player1Card))\r\n)\r\n(<= (sees_xml player1 (card player2Card 0))\r\n\t(true (card player2Card ?SomeValue))\r\n)\r\n\r\n(<= (sees_xml player2 (card player1Card 0))\r\n\t(true (card player1Card ?SomeValue))\r\n)\r\n(<= (sees_xml player2 (card player2Card ?Player2Card))\r\n\t(true (card player2Card ?Player2Card))\r\n)\r\n\r\n(<= (sees_xml ?Player (card talonCard1 0))\r\n\t(true (card talonCard1 ?SomeValue))\r\n)\r\n(<= (sees_xml ?Player (card talonCard2 0))\r\n\t(true (card talonCard2 ?SomeValue))\r\n)\r\n\r\n(<= (sees_xml ?Player (card trickCard1 ?TrickCard1))\r\n\t(true (card trickCard1 ?TrickCard1))\r\n)\r\n(<= (sees_xml ?Player (card trickCard2 ?TrickCard2))\r\n\t(true (card trickCard2 ?TrickCard2))\r\n)",
+  "sources": {
+    "eeeeeeeeeeeeeeeeeeeeeeee.gdl": "http://ggpserver.general-game-playing.de/ggpserver/public/download_gdl.jsp?name=eeeeeeeeeeeeeeeeeeeeeeee",
+    "stylesheets/LICENSE": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/LICENSE",
+    "stylesheets/generic/generic.xsl": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/generic/generic.xsl",
+    "stylesheets/generic/template.xsl": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/generic/template.xsl",
+    "stylesheets/generic/state.xsl": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/generic/state.xsl",
+    "stylesheets/generic/sitespecific.xsl": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/generic/sitespecific.xsl",
+    "stylesheets/generic/title.xsl": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/generic/title.xsl",
+    "stylesheets/generic/header.xsl": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/generic/header.xsl",
+    "stylesheets/generic/footer.xsl": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/generic/footer.xsl",
+    "stylesheets/generic/history.xsl": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/generic/history.xsl",
+    "stylesheets/generic/playerInfo.xsl": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/generic/playerInfo.xsl",
+    "stylesheets/generic/playClock.xsl": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/generic/playClock.xsl",
+    "stylesheets/generic/variables.xsl": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/generic/variables.xsl"
+  }
 }

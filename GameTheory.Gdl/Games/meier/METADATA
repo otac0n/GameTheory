@@ -1,8 +1,25 @@
 {
   "gameName": "meier",
   "rulesheet": "meier.gdl",
-  "sourceUri": "http://ggpserver.general-game-playing.de/ggpserver/public/download_gdl.jsp?name=meier",
+  "stylesheet": "stylesheets/meier/meier.xsl",
+  "sourceUri": "http://ggpserver.general-game-playing.de/ggpserver/public/view_game.jsp?name=meier",
   "uploadedBy": "stephan",
   "gdlVersion": "v2",
-  "seesXml": "; personal infos\r\n\r\n(<= (sees_xml ?p (has_dice ?p ?x ?y))\r\n\t(true (has_dice ?p ?x ?y))\r\n)\r\n\r\n; random must have complete information, including players dice\r\n(<= (sees_xml random (has_dice ?p ?x ?y)) \r\n\t(true (has_dice ?p ?x ?y))\r\n)\r\n\r\n\r\n; phases\r\n\r\n(<= (sees_xml ?p (rolling_for ?q))\r\n\t(role ?p)\r\n\t(true (rolling_for ?q))\r\n)\r\n\r\n(<= (sees_xml ?p (claiming ?q))\r\n\t(role ?p)\r\n\t(true (claiming ?q))\r\n)\r\n\r\n(<= (sees_xml ?p (guessing ?q))\r\n\t(role ?p)\r\n\t(true (guessing ?q))\r\n)\r\n\r\n(<= (sees_xml ?p (game_over ?q))\r\n\t(role ?p)\r\n\t(true (game_over ?q))\r\n)\r\n\r\n\r\n; general infos\r\n\r\n(<= (sees_xml ?p (previous_claimed_values ?x ?y))\r\n\t(role ?p)\r\n\t(true (previous_claimed_values ?x ?y))\r\n\t(distinct ?x 0)\r\n)"
+  "seesXml": "; personal infos\r\n\r\n(<= (sees_xml ?p (has_dice ?p ?x ?y))\r\n\t(true (has_dice ?p ?x ?y))\r\n)\r\n\r\n; random must have complete information, including players dice\r\n(<= (sees_xml random (has_dice ?p ?x ?y)) \r\n\t(true (has_dice ?p ?x ?y))\r\n)\r\n\r\n\r\n; phases\r\n\r\n(<= (sees_xml ?p (rolling_for ?q))\r\n\t(role ?p)\r\n\t(true (rolling_for ?q))\r\n)\r\n\r\n(<= (sees_xml ?p (claiming ?q))\r\n\t(role ?p)\r\n\t(true (claiming ?q))\r\n)\r\n\r\n(<= (sees_xml ?p (guessing ?q))\r\n\t(role ?p)\r\n\t(true (guessing ?q))\r\n)\r\n\r\n(<= (sees_xml ?p (game_over ?q))\r\n\t(role ?p)\r\n\t(true (game_over ?q))\r\n)\r\n\r\n\r\n; general infos\r\n\r\n(<= (sees_xml ?p (previous_claimed_values ?x ?y))\r\n\t(role ?p)\r\n\t(true (previous_claimed_values ?x ?y))\r\n\t(distinct ?x 0)\r\n)",
+  "sources": {
+    "meier.gdl": "http://ggpserver.general-game-playing.de/ggpserver/public/download_gdl.jsp?name=meier",
+    "stylesheets/LICENSE": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/LICENSE",
+    "stylesheets/meier/meier.xsl": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/meier/meier.xsl",
+    "stylesheets/generic/template.xsl": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/generic/template.xsl",
+    "stylesheets/generic/state.xsl": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/generic/state.xsl",
+    "stylesheets/generic/dice.xsl": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/generic/dice.xsl",
+    "stylesheets/generic/sitespecific.xsl": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/generic/sitespecific.xsl",
+    "stylesheets/generic/title.xsl": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/generic/title.xsl",
+    "stylesheets/generic/header.xsl": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/generic/header.xsl",
+    "stylesheets/generic/footer.xsl": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/generic/footer.xsl",
+    "stylesheets/generic/history.xsl": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/generic/history.xsl",
+    "stylesheets/generic/playerInfo.xsl": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/generic/playerInfo.xsl",
+    "stylesheets/generic/playClock.xsl": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/generic/playClock.xsl",
+    "stylesheets/generic/variables.xsl": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/generic/variables.xsl"
+  }
 }

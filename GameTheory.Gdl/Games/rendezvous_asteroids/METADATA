@@ -2,8 +2,12 @@
   "gameName": "rendezvous_asteroids",
   "rulesheet": "rendezvous_asteroids.gdl",
   "description": "rendezvous_asteroids.txt",
-  "sourceUri": "http://ggpserver.general-game-playing.de/ggpserver/public/download_gdl.jsp?name=rendezvous_asteroids",
+  "sourceUri": "http://ggpserver.general-game-playing.de/ggpserver/public/view_game.jsp?name=rendezvous_asteroids",
   "uploadedBy": "stephan",
   "gdlVersion": "v1",
-  "seesXml": "(<= (sees_xml random ?t) (true ?t))\r\n(<= (sees_xml ?p ?t) (role ?p) (distinct ?p random) (true ?t))"
+  "seesXml": "(<= (sees_xml random ?t) (true ?t))\r\n(<= (sees_xml ?p ?t) (role ?p) (distinct ?p random) (true ?t))",
+  "sources": {
+    "rendezvous_asteroids.gdl": "http://ggpserver.general-game-playing.de/ggpserver/public/download_gdl.jsp?name=rendezvous_asteroids",
+    "rendezvous_asteroids.txt": "http://ggpserver.general-game-playing.de/ggpserver/public/view_game.jsp?name=rendezvous_asteroids#description"
+  }
 }

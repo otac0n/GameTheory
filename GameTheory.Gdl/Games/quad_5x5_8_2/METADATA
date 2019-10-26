@@ -1,8 +1,27 @@
 {
   "gameName": "quad_5x5_8_2",
   "rulesheet": "quad_5x5_8_2.gdl",
-  "sourceUri": "http://ggpserver.general-game-playing.de/ggpserver/public/download_gdl.jsp?name=quad_5x5_8_2",
+  "stylesheet": "stylesheets/quad/quad.xsl",
+  "sourceUri": "http://ggpserver.general-game-playing.de/ggpserver/public/view_game.jsp?name=quad_5x5_8_2",
   "uploadedBy": "stephan",
   "gdlVersion": "v1",
-  "seesXml": "(<= (sees_xml random ?t) (true ?t))\n(<= (sees_xml ?p ?t) (role ?p) (distinct ?p random) (true ?t))"
+  "seesXml": "(<= (sees_xml random ?t) (true ?t))\n(<= (sees_xml ?p ?t) (role ?p) (distinct ?p random) (true ?t))",
+  "sources": {
+    "quad_5x5_8_2.gdl": "http://ggpserver.general-game-playing.de/ggpserver/public/download_gdl.jsp?name=quad_5x5_8_2",
+    "stylesheets/LICENSE": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/LICENSE",
+    "stylesheets/quad/quad.xsl": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/quad/quad.xsl",
+    "stylesheets/generic/template.xsl": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/generic/template.xsl",
+    "stylesheets/generic/chess_board.xsl": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/generic/chess_board.xsl",
+    "stylesheets/generic/sitespecific.xsl": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/generic/sitespecific.xsl",
+    "stylesheets/generic/title.xsl": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/generic/title.xsl",
+    "stylesheets/generic/header.xsl": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/generic/header.xsl",
+    "stylesheets/generic/footer.xsl": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/generic/footer.xsl",
+    "stylesheets/generic/history.xsl": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/generic/history.xsl",
+    "stylesheets/generic/playerInfo.xsl": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/generic/playerInfo.xsl",
+    "stylesheets/generic/playClock.xsl": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/generic/playClock.xsl",
+    "stylesheets/generic/state.xsl": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/generic/state.xsl",
+    "stylesheets/generic/board.xsl": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/generic/board.xsl",
+    "stylesheets/generic/chess_board_play_link.xsl": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/generic/chess_board_play_link.xsl",
+    "stylesheets/generic/variables.xsl": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/generic/variables.xsl"
+  }
 }

@@ -1,8 +1,27 @@
 {
   "gameName": "racetrackcorridor",
   "rulesheet": "racetrackcorridor.gdl",
-  "sourceUri": "http://ggpserver.general-game-playing.de/ggpserver/public/download_gdl.jsp?name=racetrackcorridor",
+  "stylesheet": "stylesheets/racetrackcorridor/racetrackcorridor.xsl",
+  "sourceUri": "http://ggpserver.general-game-playing.de/ggpserver/public/view_game.jsp?name=racetrackcorridor",
   "uploadedBy": "admin",
   "gdlVersion": "v1",
-  "seesXml": "(<= (sees_xml random ?t) (sees_term ?t))\r\n(<= (sees_xml ?p ?t) (role ?p) (distinct ?p random) (sees_term ?t))\r\n\r\n; transform cell/4 into wlane/3 and blane/3 so it is identified as two boards\r\n(<= (sees_term (wlane ?y ?x ?c))\r\n  (true (cell wlane ?y ?x ?c))\r\n)\r\n(<= (sees_term (blane ?y ?x ?c))\r\n  (true (cell blane ?y ?x ?c))\r\n)\r\n(<= (sees_term ?f)\r\n  (true ?f)\r\n)"
+  "seesXml": "(<= (sees_xml random ?t) (sees_term ?t))\r\n(<= (sees_xml ?p ?t) (role ?p) (distinct ?p random) (sees_term ?t))\r\n\r\n; transform cell/4 into wlane/3 and blane/3 so it is identified as two boards\r\n(<= (sees_term (wlane ?y ?x ?c))\r\n  (true (cell wlane ?y ?x ?c))\r\n)\r\n(<= (sees_term (blane ?y ?x ?c))\r\n  (true (cell blane ?y ?x ?c))\r\n)\r\n(<= (sees_term ?f)\r\n  (true ?f)\r\n)",
+  "sources": {
+    "racetrackcorridor.gdl": "http://ggpserver.general-game-playing.de/ggpserver/public/download_gdl.jsp?name=racetrackcorridor",
+    "stylesheets/LICENSE": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/LICENSE",
+    "stylesheets/racetrackcorridor/racetrackcorridor.xsl": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/racetrackcorridor/racetrackcorridor.xsl",
+    "stylesheets/generic/template.xsl": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/generic/template.xsl",
+    "stylesheets/generic/chess_board.xsl": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/generic/chess_board.xsl",
+    "stylesheets/generic/state.xsl": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/generic/state.xsl",
+    "stylesheets/generic/sitespecific.xsl": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/generic/sitespecific.xsl",
+    "stylesheets/generic/title.xsl": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/generic/title.xsl",
+    "stylesheets/generic/header.xsl": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/generic/header.xsl",
+    "stylesheets/generic/footer.xsl": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/generic/footer.xsl",
+    "stylesheets/generic/history.xsl": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/generic/history.xsl",
+    "stylesheets/generic/playerInfo.xsl": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/generic/playerInfo.xsl",
+    "stylesheets/generic/playClock.xsl": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/generic/playClock.xsl",
+    "stylesheets/generic/board.xsl": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/generic/board.xsl",
+    "stylesheets/generic/chess_board_play_link.xsl": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/generic/chess_board_play_link.xsl",
+    "stylesheets/generic/variables.xsl": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/generic/variables.xsl"
+  }
 }

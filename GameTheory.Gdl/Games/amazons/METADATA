@@ -2,8 +2,12 @@
   "gameName": "amazons",
   "rulesheet": "amazons.gdl",
   "description": "amazons.txt",
-  "sourceUri": "http://ggpserver.general-game-playing.de/ggpserver/public/download_gdl.jsp?name=amazons",
+  "sourceUri": "http://ggpserver.general-game-playing.de/ggpserver/public/view_game.jsp?name=amazons",
   "uploadedBy": "stephan",
   "gdlVersion": "v1",
-  "seesXml": "(<= (translate_fluent (cellholds ?x ?y white) (cellholds ?x ?y whitequeen))\r\n    (cell ?x ?y)\r\n)\r\n(<= (translate_fluent (cellholds ?x ?y black) (cellholds ?x ?y blackqueen))\r\n    (cell ?x ?y)\r\n)\r\n(<= (translate_fluent (cellholds ?x ?y arrow) (cellholds ?x ?y redsquare))\r\n    (cell ?x ?y)\r\n)\r\n(<= (translate_fluent (control ?r) (control ?r))\r\n    (role ?r)\r\n)\r\n\r\n(<= (sees_xml random ?t1) (true ?t) (translate_fluent ?t ?t1))\r\n(<= (sees_xml ?p ?t1) (role ?p) (distinct ?p random) (true ?t) (translate_fluent ?t ?t1))"
+  "seesXml": "(<= (translate_fluent (cellholds ?x ?y white) (cellholds ?x ?y whitequeen))\r\n    (cell ?x ?y)\r\n)\r\n(<= (translate_fluent (cellholds ?x ?y black) (cellholds ?x ?y blackqueen))\r\n    (cell ?x ?y)\r\n)\r\n(<= (translate_fluent (cellholds ?x ?y arrow) (cellholds ?x ?y redsquare))\r\n    (cell ?x ?y)\r\n)\r\n(<= (translate_fluent (control ?r) (control ?r))\r\n    (role ?r)\r\n)\r\n\r\n(<= (sees_xml random ?t1) (true ?t) (translate_fluent ?t ?t1))\r\n(<= (sees_xml ?p ?t1) (role ?p) (distinct ?p random) (true ?t) (translate_fluent ?t ?t1))",
+  "sources": {
+    "amazons.gdl": "http://ggpserver.general-game-playing.de/ggpserver/public/download_gdl.jsp?name=amazons",
+    "amazons.txt": "http://ggpserver.general-game-playing.de/ggpserver/public/view_game.jsp?name=amazons#description"
+  }
 }

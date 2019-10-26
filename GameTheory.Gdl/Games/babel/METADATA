@@ -2,8 +2,12 @@
   "gameName": "babel",
   "rulesheet": "babel.gdl",
   "description": "babel.txt",
-  "sourceUri": "http://ggpserver.general-game-playing.de/ggpserver/public/download_gdl.jsp?name=babel",
+  "sourceUri": "http://ggpserver.general-game-playing.de/ggpserver/public/view_game.jsp?name=babel",
   "uploadedBy": "stephan",
   "gdlVersion": "v1",
-  "seesXml": "(<= (sees_xml random ?t) (true ?t))\r\n(<= (sees_xml ?p ?t) (role ?p) (distinct ?p random) (true ?t))"
+  "seesXml": "(<= (sees_xml random ?t) (true ?t))\r\n(<= (sees_xml ?p ?t) (role ?p) (distinct ?p random) (true ?t))",
+  "sources": {
+    "babel.gdl": "http://ggpserver.general-game-playing.de/ggpserver/public/download_gdl.jsp?name=babel",
+    "babel.txt": "http://ggpserver.general-game-playing.de/ggpserver/public/view_game.jsp?name=babel#description"
+  }
 }

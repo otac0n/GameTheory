@@ -1,8 +1,24 @@
 {
   "gameName": "mastermind448",
   "rulesheet": "mastermind448.gdl",
-  "sourceUri": "http://ggpserver.general-game-playing.de/ggpserver/public/download_gdl.jsp?name=mastermind448",
+  "stylesheet": "stylesheets/generic/generic.xsl",
+  "sourceUri": "http://ggpserver.general-game-playing.de/ggpserver/public/view_game.jsp?name=mastermind448",
   "uploadedBy": "stephan",
   "gdlVersion": "v2",
-  "seesXml": "; random sees everything\r\n(<= (sees_xml random ?t) (true ?t))\r\n; player sees step-counter, setup-phase, etc.\r\n(<= (sees_xml player (guess ?g)) (true (guess ?g)))\r\n(<= (sees_xml player setup) (true setup))\r\n(<= (sees_xml player won) (true won))\r\n; player sees correct guesses\r\n(<= (sees_xml player (set 1 ?c1))\r\n    (true (playerset ?c1 ?c2 ?c3 ?c4))\r\n    (true (set 1 ?c1)))\r\n(<= (sees_xml player (set 2 ?c2))\r\n    (true (playerset ?c1 ?c2 ?c3 ?c4))\r\n    (true (set 2 ?c2)))\r\n(<= (sees_xml player (set 3 ?c3))\r\n    (true (playerset ?c1 ?c2 ?c3 ?c4))\r\n    (true (set 3 ?c3)))\r\n(<= (sees_xml player (set 4 ?c4))\r\n    (true (playerset ?c1 ?c2 ?c3 ?c4))\r\n    (true (set 4 ?c4)))\r\n; player sees his own guess\r\n(<= (sees_xml player (playerset ?c1 ?c2 ?c3 ?c4))\r\n    (true (playerset ?c1 ?c2 ?c3 ?c4)))\r\n; player sees all markers if the time is up\r\n(<= (sees_xml player (set ?n ?c))\r\n    (true (guess 13))\r\n    (true (set ?n ?c2)))"
+  "seesXml": "; random sees everything\r\n(<= (sees_xml random ?t) (true ?t))\r\n; player sees step-counter, setup-phase, etc.\r\n(<= (sees_xml player (guess ?g)) (true (guess ?g)))\r\n(<= (sees_xml player setup) (true setup))\r\n(<= (sees_xml player won) (true won))\r\n; player sees correct guesses\r\n(<= (sees_xml player (set 1 ?c1))\r\n    (true (playerset ?c1 ?c2 ?c3 ?c4))\r\n    (true (set 1 ?c1)))\r\n(<= (sees_xml player (set 2 ?c2))\r\n    (true (playerset ?c1 ?c2 ?c3 ?c4))\r\n    (true (set 2 ?c2)))\r\n(<= (sees_xml player (set 3 ?c3))\r\n    (true (playerset ?c1 ?c2 ?c3 ?c4))\r\n    (true (set 3 ?c3)))\r\n(<= (sees_xml player (set 4 ?c4))\r\n    (true (playerset ?c1 ?c2 ?c3 ?c4))\r\n    (true (set 4 ?c4)))\r\n; player sees his own guess\r\n(<= (sees_xml player (playerset ?c1 ?c2 ?c3 ?c4))\r\n    (true (playerset ?c1 ?c2 ?c3 ?c4)))\r\n; player sees all markers if the time is up\r\n(<= (sees_xml player (set ?n ?c))\r\n    (true (guess 13))\r\n    (true (set ?n ?c2)))",
+  "sources": {
+    "mastermind448.gdl": "http://ggpserver.general-game-playing.de/ggpserver/public/download_gdl.jsp?name=mastermind448",
+    "stylesheets/LICENSE": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/LICENSE",
+    "stylesheets/generic/generic.xsl": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/generic/generic.xsl",
+    "stylesheets/generic/template.xsl": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/generic/template.xsl",
+    "stylesheets/generic/state.xsl": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/generic/state.xsl",
+    "stylesheets/generic/sitespecific.xsl": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/generic/sitespecific.xsl",
+    "stylesheets/generic/title.xsl": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/generic/title.xsl",
+    "stylesheets/generic/header.xsl": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/generic/header.xsl",
+    "stylesheets/generic/footer.xsl": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/generic/footer.xsl",
+    "stylesheets/generic/history.xsl": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/generic/history.xsl",
+    "stylesheets/generic/playerInfo.xsl": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/generic/playerInfo.xsl",
+    "stylesheets/generic/playClock.xsl": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/generic/playClock.xsl",
+    "stylesheets/generic/variables.xsl": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/generic/variables.xsl"
+  }
 }
