@@ -8,7 +8,7 @@ namespace GameTheory.Games.LoveLetter.Console
     /// <summary>
     /// Provides a console renderer for the game of <see cref="GameState">LoveLetter</see>.
     /// </summary>
-    public class LoveLetterConsoleRenderer : BaseConsoleRenderer<Move>
+    public class LoveLetterConsoleRenderer : ConsoleRendererBase<Move>
     {
         /// <inheritdoc/>
         public override void Show(IGameState<Move> state, PlayerToken playerToken = null) => new Templates(playerToken).RenderGameState((GameState)state, this.MakeRenderTokenWriter(state));

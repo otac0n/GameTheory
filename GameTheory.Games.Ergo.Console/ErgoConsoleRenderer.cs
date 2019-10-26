@@ -9,7 +9,7 @@ namespace GameTheory.Games.Ergo.Console
     /// <summary>
     /// Provides a console renderer for the game of <see cref="GameState">Splendor</see>.
     /// </summary>
-    public class ErgoConsoleRenderer : BaseConsoleRenderer<Move>
+    public class ErgoConsoleRenderer : ConsoleRendererBase<Move>
     {
         /// <inheritdoc />
         public override void Show(IGameState<Move> state, PlayerToken playerToken = null) => new Templates(playerToken).RenderGameState((GameState)state, this.MakeRenderTokenWriter(state));

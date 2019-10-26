@@ -8,7 +8,7 @@ namespace GameTheory.Games.Lotus.Console
     /// <summary>
     /// Provides a console renderer for the game of <see cref="GameState">Splendor</see>.
     /// </summary>
-    public class LotusConsoleRenderer : BaseConsoleRenderer<Move>
+    public class LotusConsoleRenderer : ConsoleRendererBase<Move>
     {
         /// <inheritdoc />
         public override void Show(IGameState<Move> state, PlayerToken playerToken = null) => new Templates(playerToken).RenderGameState((GameState)state, this.MakeRenderTokenWriter(state));

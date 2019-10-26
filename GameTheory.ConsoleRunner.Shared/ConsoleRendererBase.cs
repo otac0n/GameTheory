@@ -11,7 +11,7 @@ namespace GameTheory.ConsoleRunner.Shared
     /// Provides basic rendering for more complex console renderers.
     /// </summary>
     /// <typeparam name="TMove">The type of moves in the game state.</typeparam>
-    public abstract class BaseConsoleRenderer<TMove> : IConsoleRenderer<TMove>
+    public abstract class ConsoleRendererBase<TMove> : IConsoleRenderer<TMove>
         where TMove : IMove
     {
         /// <inheritdoc/>
@@ -92,10 +92,10 @@ namespace GameTheory.ConsoleRunner.Shared
 
         private class ConsoleWriter : TextWriter
         {
-            private readonly BaseConsoleRenderer<TMove> consoleRenderer;
+            private readonly ConsoleRendererBase<TMove> consoleRenderer;
             private readonly IGameState<TMove> state;
 
-            public ConsoleWriter(BaseConsoleRenderer<TMove> consoleRenderer, IGameState<TMove> state)
+            public ConsoleWriter(ConsoleRendererBase<TMove> consoleRenderer, IGameState<TMove> state)
             {
                 this.consoleRenderer = consoleRenderer;
                 this.state = state;

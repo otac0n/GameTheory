@@ -34,7 +34,7 @@ namespace GameTheory.FormsRunner.Players
             };
             displays.AddRange(Program.DisplayCatalog.FindDisplays(game.GameStateType).Select(d => (Display)container.Resolve(d)));
             this.displays = displays;
-            this.scope = new Scope(properties: new Dictionary<string, object>
+            this.scope = new Scope(string.Empty, this, properties: new Dictionary<string, object>
             {
                 [Scope.SharedProperties.PlayerToken] = this.PlayerToken,
             });
@@ -67,9 +67,9 @@ namespace GameTheory.FormsRunner.Players
             {
                 this.GameState = state;
 
-                Display.Update(
+                Display.FindAndUpdate(
                     this.splitContainer.Panel1.Controls.Cast<Control>().SingleOrDefault(),
-                    this.scope,
+                    this.scope.Extend(nameof(this.GameState), state),
                     state.GetType(),
                     state,
                     this.displays,
@@ -87,10 +87,11 @@ namespace GameTheory.FormsRunner.Players
                         }
                     });
 
-                Display.Update(
+                var moves = state.GetAvailableMoves(this.PlayerToken).Select(m => new MoveChoice(m)).ToList();
+                Display.FindAndUpdate(
                     this.splitContainer.Panel2.Controls.Cast<Control>().SingleOrDefault(),
-                    this.scope,
-                    state.GetAvailableMoves(this.PlayerToken).Select(m => new MoveChoice(m)).ToList(),
+                    this.scope.Extend("Moves", moves),
+                    moves,
                     new[] { new ChooseMoveDisplay(m => tcs.TrySetResult(new Maybe<TMove>((TMove)m))) }.Concat(this.displays).ToList(),
                     (oldControl, newControl) =>
                     {
@@ -158,7 +159,7 @@ namespace GameTheory.FormsRunner.Players
                     flowPanel.Controls.Add(button);
                 }
 
-                Display.Update(
+                Display.FindAndUpdate(
                     flowPanel.Controls.Count > 1 ? flowPanel.Controls[1] : null,
                     scope,
                     move.GetType(),

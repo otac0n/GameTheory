@@ -9,7 +9,7 @@ namespace GameTheory.ConsoleRunner
     /// Provides a default console renderer for types that override the <see cref="object.ToString"/> method.
     /// </summary>
     /// <typeparam name="TMove">The type of moves in the game state.</typeparam>
-    public class ToStringConsoleRenderer<TMove> : BaseConsoleRenderer<TMove>
+    public class ToStringConsoleRenderer<TMove> : ConsoleRendererBase<TMove>
         where TMove : IMove
     {
         /// <inheritdoc/>

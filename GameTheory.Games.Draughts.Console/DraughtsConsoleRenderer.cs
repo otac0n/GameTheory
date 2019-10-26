@@ -8,7 +8,7 @@ namespace GameTheory.Games.Draughts.Console
     /// <summary>
     /// Provides a console renderer for the game of <see cref="GameState">Draughts</see>.
     /// </summary>
-    public class DraughtsConsoleRenderer : BaseConsoleRenderer<Move>
+    public class DraughtsConsoleRenderer : ConsoleRendererBase<Move>
     {
         /// <inheritdoc/>
         public override void Show(IGameState<Move> state, PlayerToken playerToken = null) => this.Show((GameState)state);

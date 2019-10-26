@@ -10,7 +10,7 @@ namespace GameTheory.Games.SevenDragons.Console
     /// <summary>
     /// Provides a console renderer for the game of <see cref="GameState">Seven Dragons</see>.
     /// </summary>
-    public class SevenDragonsConsoleRenderer : BaseConsoleRenderer<Move>
+    public class SevenDragonsConsoleRenderer : ConsoleRendererBase<Move>
     {
         /// <inheritdoc />
         public override void Show(IGameState<Move> state, PlayerToken playerToken = null)

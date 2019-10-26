@@ -83,12 +83,13 @@ namespace GameTheory.FormsRunner.Shared.Displays
             for (var i = 0; i < keys.Count; i++)
             {
                 var key = keys[i];
+                var innerValue = valueProperty.GetValue(value, new[] { key });
                 var keyName = $"Keys[{i}]";
                 var valueName = $"[{key}]";
 
-                Display.Update(
+                Display.FindAndUpdate(
                     tablePanel.GetControlFromPosition(0, i),
-                    scope.Extend(keyName),
+                    scope.Extend(keyName, key, new Dictionary<string, object> { [Scope.SharedProperties.Key] = i }),
                     keyType,
                     key,
                     displays,
@@ -106,11 +107,11 @@ namespace GameTheory.FormsRunner.Shared.Displays
                         }
                     });
 
-                Display.Update(
+                Display.FindAndUpdate(
                     tablePanel.GetControlFromPosition(1, i),
-                    scope.Extend(valueName),
+                    scope.Extend(valueName, innerValue, new Dictionary<string, object> { [Scope.SharedProperties.Key] = key }),
                     valueType,
-                    valueProperty.GetValue(value, new[] { key }),
+                    innerValue,
                     displays,
                     (oldControl, newControl) =>
                     {

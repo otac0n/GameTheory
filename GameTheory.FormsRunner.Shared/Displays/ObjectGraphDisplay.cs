@@ -74,9 +74,9 @@ namespace GameTheory.FormsRunner.Shared.Displays
                     oldLabel?.Dispose();
                 }
 
-                MemberDisplay.Update(
+                MemberDisplay.FindAndUpdate(
                     propertiesTable.GetControlFromPosition(1, p),
-                    scope.Extend(member.Name),
+                    scope,
                     member,
                     value,
                     displays,
@@ -190,16 +190,17 @@ namespace GameTheory.FormsRunner.Shared.Displays
 
             public static FieldDisplay Instance { get; } = new FieldDisplay();
 
-            public override bool CanDisplay(Scope scope, MemberInfo member, object value) => member is FieldInfo;
+            public override bool CanDisplay(Scope scope, MemberInfo member, object obj) => member is FieldInfo;
 
-            protected override Control Update(Control control, Scope scope, MemberInfo member, object value, IReadOnlyList<Display> displays)
+            protected override Control Update(Control control, Scope scope, MemberInfo member, object obj, IReadOnlyList<Display> displays)
             {
                 var field = (FieldInfo)member;
-                return Display.Update(
+                var value = field.GetValue(obj);
+                return Display.FindAndUpdate(
                     control,
-                    scope,
+                    scope.Extend(member.Name, value),
                     field.FieldType,
-                    field.GetValue(value),
+                    value,
                     displays);
             }
         }
@@ -212,7 +213,7 @@ namespace GameTheory.FormsRunner.Shared.Displays
 
             public static ListItemDisplay Instance { get; } = new ListItemDisplay();
 
-            public override bool CanDisplay(Scope scope, MemberInfo member, object value)
+            public override bool CanDisplay(Scope scope, MemberInfo member, object obj)
             {
                 if (!(member is PropertyInfo property && property.Name == "Item"))
                 {
@@ -234,17 +235,58 @@ namespace GameTheory.FormsRunner.Shared.Displays
                 return GetReadableMembers(property.DeclaringType).Where(IsCount).Take(2).Count() == 1;
             }
 
-            protected override Control Update(Control control, Scope scope, MemberInfo member, object value, IReadOnlyList<Display> displays)
+            protected override Control Update(Control control, Scope scope, MemberInfo member, object obj, IReadOnlyList<Display> displays)
             {
                 var property = (PropertyInfo)member;
                 var countProperty = GetReadableMembers(property.DeclaringType).First(IsCount);
-                var count = (int)GetMemberValue(countProperty, value);
-                return ListDisplay.Instance.UpdateWithAction(
-                    control,
-                    scope,
-                    property.PropertyType,
-                    Enumerable.Range(0, count).Select(argument => property.GetValue(value, new object[] { argument })).ToList(),
-                    displays);
+                var count = (int)GetMemberValue(countProperty, obj);
+                var values = Enumerable.Range(0, count).Select(argument => property.GetValue(obj, new object[] { argument })).ToList();
+
+                if (control is FlowLayoutPanel flowPanel && flowPanel.Tag == this)
+                {
+                    flowPanel.SuspendLayout();
+                    for (var i = flowPanel.Controls.Count - 1; i >= values.Count; i--)
+                    {
+                        var oldControl = flowPanel.Controls[i];
+                        flowPanel.Controls.RemoveAt(i);
+                        oldControl.Dispose();
+                    }
+                }
+                else
+                {
+                    flowPanel = MakeFlowPanel(tag: this);
+                    flowPanel.SuspendLayout();
+                }
+
+                for (var i = 0; i < values.Count; i++)
+                {
+                    var item = values[i];
+
+                    Display.FindAndUpdate(
+                        flowPanel.Controls.Count > i ? flowPanel.Controls[i] : null,
+                        scope.Extend($"{member.Name}[{i}]", item, new Dictionary<string, object> { [Scope.SharedProperties.Key] = i }),
+                        property.PropertyType,
+                        item,
+                        displays,
+                        (oldControl, newControl) =>
+                        {
+                            if (oldControl != null)
+                            {
+                                flowPanel.Controls.Remove(oldControl);
+                                oldControl.Dispose();
+                            }
+
+                            if (newControl != null)
+                            {
+                                flowPanel.Controls.Add(newControl);
+                                flowPanel.Controls.SetChildIndex(newControl, i);
+                            }
+                        });
+                }
+
+                flowPanel.ResumeLayout();
+
+                return flowPanel;
             }
 
             private static bool IsCount(MemberInfo member) =>
@@ -259,7 +301,7 @@ namespace GameTheory.FormsRunner.Shared.Displays
 
             public static MatrixItemDisplay Instance { get; } = new MatrixItemDisplay();
 
-            public override bool CanDisplay(Scope scope, MemberInfo member, object value)
+            public override bool CanDisplay(Scope scope, MemberInfo member, object obj)
             {
                 if (!(member is PropertyInfo property && property.Name == "Item"))
                 {
@@ -284,12 +326,12 @@ namespace GameTheory.FormsRunner.Shared.Displays
                 return dimensions.width != null && dimensions.height != null && GetMemberIsStatic(dimensions.width) == GetMemberIsStatic(dimensions.height);
             }
 
-            protected override Control Update(Control control, Scope scope, MemberInfo member, object value, IReadOnlyList<Display> displays)
+            protected override Control Update(Control control, Scope scope, MemberInfo member, object obj, IReadOnlyList<Display> displays)
             {
                 var property = (PropertyInfo)member;
                 var dimensions = GetDimensionMembers(GetReadableMembers(property.DeclaringType));
-                var width = (int)GetMemberValue(dimensions.width, value);
-                var height = (int)GetMemberValue(dimensions.height, value);
+                var width = (int)GetMemberValue(dimensions.width, obj);
+                var height = (int)GetMemberValue(dimensions.height, obj);
                 var range = from x in Enumerable.Range(0, width)
                             from y in Enumerable.Range(0, height)
                             select new { x, y };
@@ -322,11 +364,12 @@ namespace GameTheory.FormsRunner.Shared.Displays
 
                 foreach (var pair in range)
                 {
-                    Display.Update(
+                    var value = property.GetValue(obj, new object[] { pair.x, pair.y });
+                    Display.FindAndUpdate(
                         tablePanel.GetControlFromPosition(pair.x, pair.y),
-                        scope.Extend($"[{pair.x}, {pair.y}]"),
+                        scope.Extend($"{member.Name}[{pair.x}, {pair.y}]", value, new Dictionary<string, object> { [Scope.SharedProperties.Key] = new object[] { pair.x, pair.y } }),
                         property.PropertyType,
-                        property.GetValue(value, new object[] { pair.x, pair.y }),
+                        value,
                         displays,
                         (oldControl, newControl) =>
                         {
@@ -377,24 +420,24 @@ namespace GameTheory.FormsRunner.Shared.Displays
                 MatrixItemDisplay.Instance,
             }.AsReadOnly();
 
-            public static Control Update(Control control, Scope scope, MemberInfo member, object value, IReadOnlyList<Display> displays, Action<Control, Control> update)
+            public static Control FindAndUpdate(Control control, Scope scope, MemberInfo member, object obj, IReadOnlyList<Display> displays, Action<Control, Control> update)
             {
                 foreach (var display in MemberDisplays)
                 {
-                    if (display.CanDisplay(scope, member, value))
+                    if (display.CanDisplay(scope, member, obj))
                     {
-                        return display.UpdateWithAction(control, scope, member, value, displays, update);
+                        return display.Update(control, scope, member, obj, displays, update);
                     }
                 }
 
                 return null;
             }
 
-            public abstract bool CanDisplay(Scope scope, MemberInfo member, object value);
+            public abstract bool CanDisplay(Scope scope, MemberInfo member, object obj);
 
-            public Control UpdateWithAction(Control control, Scope scope, MemberInfo member, object value, IReadOnlyList<Display> displays, Action<Control, Control> update = null)
+            public Control Update(Control control, Scope scope, MemberInfo member, object obj, IReadOnlyList<Display> displays, Action<Control, Control> update = null)
             {
-                var newControl = this.Update(control, scope, member, value, displays);
+                var newControl = this.Update(control, scope, member, obj, displays);
 
                 if (update != null && !object.ReferenceEquals(control, newControl))
                 {
@@ -404,7 +447,7 @@ namespace GameTheory.FormsRunner.Shared.Displays
                 return newControl;
             }
 
-            protected abstract Control Update(Control control, Scope scope, MemberInfo member, object value, IReadOnlyList<Display> displays);
+            protected abstract Control Update(Control control, Scope scope, MemberInfo member, object obj, IReadOnlyList<Display> displays);
         }
 
         private class SimplePropertyDisplay : MemberDisplay
@@ -415,16 +458,17 @@ namespace GameTheory.FormsRunner.Shared.Displays
 
             public static SimplePropertyDisplay Instance { get; } = new SimplePropertyDisplay();
 
-            public override bool CanDisplay(Scope scope, MemberInfo member, object value) => member is PropertyInfo property && property.GetIndexParameters().Length == 0;
+            public override bool CanDisplay(Scope scope, MemberInfo member, object obj) => member is PropertyInfo property && property.GetIndexParameters().Length == 0;
 
-            protected override Control Update(Control control, Scope scope, MemberInfo member, object value, IReadOnlyList<Display> displays)
+            protected override Control Update(Control control, Scope scope, MemberInfo member, object obj, IReadOnlyList<Display> displays)
             {
                 var property = (PropertyInfo)member;
-                return Display.Update(
+                var value = property.GetValue(obj);
+                return Display.FindAndUpdate(
                     control,
-                    scope,
+                    scope.Extend(member.Name, value),
                     property.PropertyType,
-                    property.GetValue(value),
+                    value,
                     displays);
             }
         }

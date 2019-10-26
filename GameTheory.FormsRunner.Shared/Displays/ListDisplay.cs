@@ -18,9 +18,11 @@ namespace GameTheory.FormsRunner.Shared.Displays
             typeof(IList<>),
             typeof(IReadOnlyList<>),
             typeof(IReadOnlyCollection<>),
+            typeof(ImmutableArray<>),
             typeof(ImmutableList<>),
             typeof(IImmutableList<>),
-            typeof(ImmutableArray<>),
+            typeof(ImmutableStack<>),
+            typeof(IImmutableStack<>),
         };
 
         private ListDisplay()
@@ -73,9 +75,9 @@ namespace GameTheory.FormsRunner.Shared.Displays
                 var item = values[i];
                 var itemName = $"[{i}]";
 
-                Display.Update(
+                Display.FindAndUpdate(
                     flowPanel.Controls.Count > i ? flowPanel.Controls[i] : null,
-                    scope.Extend(itemName),
+                    scope.Extend(itemName, item, new Dictionary<string, object> { [Scope.SharedProperties.Key] = i }),
                     elementType,
                     item,
                     displays,
