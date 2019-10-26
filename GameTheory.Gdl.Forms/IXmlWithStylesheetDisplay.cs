@@ -6,15 +6,14 @@ namespace GameTheory.FormsRunner.Shared.Displays
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
-    using System.Text;
     using System.Windows.Forms;
     using System.Xml;
+    using System.Xml.Linq;
     using System.Xml.Xsl;
     using GameTheory.Catalogs;
     using GameTheory.Gdl.Catalogs;
     using GameTheory.Gdl.Shared;
     using TheArtOfDev.HtmlRenderer.WinForms;
-    using static Controls;
 
     public class IXmlWithStylesheetDisplay : Display
     {
@@ -35,17 +34,22 @@ namespace GameTheory.FormsRunner.Shared.Displays
             if (this.game != null)
             {
                 var metadataStylesheet = this.game.Metadata.StyleSheet;
-                if (!string.IsNullOrEmpty(metadataStylesheet) && Path.GetExtension(metadataStylesheet).ToLowerInvariant() == ".xsl")
+                if (!string.IsNullOrEmpty(metadataStylesheet) && Path.GetExtension(metadataStylesheet).ToUpperInvariant() == ".XSL")
                 {
                     // TODO: Use a prioritized list of xsl stylesheets.
-                }
-
-                var xsl = Directory.EnumerateFiles(Path.GetDirectoryName(this.game.MetadataPath), "*.xsl").FirstOrDefault();
-                if (xsl != null)
-                {
-                    var transform = new XslCompiledTransform();
-                    transform.Load(xsl);
-                    this.transform = transform;
+                    try
+                    {
+                        using (var reader = XmlReader.Create(Path.Combine(Path.GetDirectoryName(this.game.MetadataPath), metadataStylesheet), new XmlReaderSettings()))
+                        {
+                            var transform = new XslCompiledTransform();
+                            transform.Load(reader);
+                            this.transform = transform;
+                        }
+                    }
+                    catch
+                    {
+                        throw;
+                    }
                 }
             }
         }
@@ -74,8 +78,14 @@ namespace GameTheory.FormsRunner.Shared.Displays
                     using (var writer = XmlWriter.Create(sw, Settings))
                     {
                         this.transform.Transform(reader, new XsltArgumentList(), writer);
-                        html = sw.ToString();
                     }
+
+                    var doc = XDocument.Parse(sw.ToString());
+                    foreach (var img in doc.Descendants("img"))
+                    {
+                    }
+
+                    html = doc.ToString();
                 }
             }
 
