@@ -3,5 +3,10 @@
   "rulesheet": "worsemultiplehunterbig.kif",
   "stylesheet": "worsemultiplehunterbig.js",
   "description": "worsemultiplehunterbig.txt",
-  "sourceUri": "http://ggp.stanford.edu/ggp/games/worsemultiplehunterbig/"
+  "sourceUri": "http://ggp.stanford.edu/ggp/games/worsemultiplehunterbig/",
+  "sources": {
+    "worsemultiplehunterbig.js": "http://ggp.stanford.edu/ggp/games/worsemultiplehunterbig/worsemultiplehunterbig.js",
+    "worsemultiplehunterbig.kif": "http://ggp.stanford.edu/ggp/games/worsemultiplehunterbig/worsemultiplehunterbig.kif",
+    "worsemultiplehunterbig.txt": "http://ggp.stanford.edu/ggp/games/worsemultiplehunterbig/worsemultiplehunterbig.txt"
+  }
 }

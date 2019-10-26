@@ -1,0 +1,12 @@
+{
+  "gameName": "leafymcfallface88",
+  "rulesheet": "leafymcfallface.kif",
+  "stylesheet": "leafymcfallface.js",
+  "description": "leafymcfallface.txt",
+  "sourceUri": "http://ggp.stanford.edu/ggp/games/leafymcfallface88/",
+  "sources": {
+    "leafymcfallface.js": "http://ggp.stanford.edu/ggp/games/leafymcfallface88/leafymcfallface.js",
+    "leafymcfallface.kif": "http://ggp.stanford.edu/ggp/games/leafymcfallface88/leafymcfallface.kif",
+    "leafymcfallface.txt": "http://ggp.stanford.edu/ggp/games/leafymcfallface88/leafymcfallface.txt"
+  }
+}

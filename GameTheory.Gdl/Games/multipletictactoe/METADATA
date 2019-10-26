@@ -4,5 +4,10 @@
   "stylesheet": "multipletictactoe.js",
   "description": "multipletictactoe.txt",
   "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=multipletictactoe",
-  "curator": "genesereth@stanford.edu"
+  "curator": "genesereth@stanford.edu",
+  "sources": {
+    "multipletictactoe.js": "http://ggp.stanford.edu/ggp/games/multipletictactoe/multipletictactoe.js",
+    "multipletictactoe.kif": "http://ggp.stanford.edu/ggp/games/multipletictactoe/multipletictactoe.kif",
+    "multipletictactoe.txt": "http://ggp.stanford.edu/ggp/games/multipletictactoe/multipletictactoe.txt"
+  }
 }

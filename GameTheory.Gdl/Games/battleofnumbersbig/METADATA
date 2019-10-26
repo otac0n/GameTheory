@@ -3,5 +3,12 @@
   "rulesheet": "battleofnumbersbig.kif",
   "stylesheet": "battleofnumbersbig.js",
   "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=battleofnumbersbig",
-  "curator": "bhz@stanford.edu"
+  "curator": "bhz@stanford.edu",
+  "sources": {
+    "battleofnumbers.js": "http://ggp.stanford.edu/ggp/games/battleofnumbersbig/battleofnumbers.js",
+    "battleofnumbers.kif": "http://ggp.stanford.edu/ggp/games/battleofnumbersbig/battleofnumbers.kif",
+    "battleofnumbers.txt": "http://ggp.stanford.edu/ggp/games/battleofnumbersbig/battleofnumbers.txt",
+    "battleofnumbersbig.js": "http://ggp.stanford.edu/ggp/games/battleofnumbersbig/battleofnumbersbig.js",
+    "battleofnumbersbig.kif": "http://ggp.stanford.edu/ggp/games/battleofnumbersbig/battleofnumbersbig.kif"
+  }
 }

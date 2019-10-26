@@ -3,5 +3,10 @@
   "rulesheet": "mnk.kif",
   "stylesheet": "mnk.js",
   "description": "mnk.txt",
-  "sourceUri": "http://ggp.stanford.edu/ggp/games/mnk/"
+  "sourceUri": "http://ggp.stanford.edu/ggp/games/mnk/",
+  "sources": {
+    "mnk.js": "http://ggp.stanford.edu/ggp/games/mnk/mnk.js",
+    "mnk.kif": "http://ggp.stanford.edu/ggp/games/mnk/mnk.kif",
+    "mnk.txt": "http://ggp.stanford.edu/ggp/games/mnk/mnk.txt"
+  }
 }

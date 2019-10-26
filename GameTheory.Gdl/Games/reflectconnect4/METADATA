@@ -2,5 +2,11 @@
   "gameName": "reflectconnect4",
   "rulesheet": "reflectconnect4.kif",
   "stylesheet": "reflectconnect4.js",
-  "sourceUri": "http://ggp.stanford.edu/ggp/games/reflectconnect4/"
+  "sourceUri": "http://ggp.stanford.edu/ggp/games/reflectconnect4/",
+  "sources": {
+    "blue.png": "http://ggp.stanford.edu/ggp/games/reflectconnect4/blue.png",
+    "red.png": "http://ggp.stanford.edu/ggp/games/reflectconnect4/red.png",
+    "reflectconnect4.js": "http://ggp.stanford.edu/ggp/games/reflectconnect4/reflectconnect4.js",
+    "reflectconnect4.kif": "http://ggp.stanford.edu/ggp/games/reflectconnect4/reflectconnect4.kif"
+  }
 }

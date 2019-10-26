@@ -4,5 +4,10 @@
   "stylesheet": "jointbuttonsandlights.js",
   "description": "jointbuttonsandlights.txt",
   "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=jointbuttonsandlights",
-  "curator": "genesereth@stanford.edu"
+  "curator": "genesereth@stanford.edu",
+  "sources": {
+    "jointbuttonsandlights.js": "http://ggp.stanford.edu/ggp/games/jointbuttonsandlights/jointbuttonsandlights.js",
+    "jointbuttonsandlights.kif": "http://ggp.stanford.edu/ggp/games/jointbuttonsandlights/jointbuttonsandlights.kif",
+    "jointbuttonsandlights.txt": "http://ggp.stanford.edu/ggp/games/jointbuttonsandlights/jointbuttonsandlights.txt"
+  }
 }

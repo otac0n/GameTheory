@@ -3,5 +3,10 @@
   "rulesheet": "alquerquezero.kif",
   "stylesheet": "alquerquezero.js",
   "description": "alquerquezero.txt",
-  "sourceUri": "http://ggp.stanford.edu/ggp/games/alquerquezero/"
+  "sourceUri": "http://ggp.stanford.edu/ggp/games/alquerquezero/",
+  "sources": {
+    "alquerquezero.js": "http://ggp.stanford.edu/ggp/games/alquerquezero/alquerquezero.js",
+    "alquerquezero.kif": "http://ggp.stanford.edu/ggp/games/alquerquezero/alquerquezero.kif",
+    "alquerquezero.txt": "http://ggp.stanford.edu/ggp/games/alquerquezero/alquerquezero.txt"
+  }
 }

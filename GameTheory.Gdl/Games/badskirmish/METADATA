@@ -4,5 +4,24 @@
   "stylesheet": "badskirmish.js",
   "description": "badskirmish.txt",
   "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=badskirmish",
-  "curator": "genesereth@stanford.edu"
+  "curator": "genesereth@stanford.edu",
+  "sources": {
+    "Black_Bishop.png": "http://ggp.stanford.edu/ggp/games/badskirmish/Black_Bishop.png",
+    "Black_King.png": "http://ggp.stanford.edu/ggp/games/badskirmish/Black_King.png",
+    "Black_Knight.png": "http://ggp.stanford.edu/ggp/games/badskirmish/Black_Knight.png",
+    "Black_Pawn.png": "http://ggp.stanford.edu/ggp/games/badskirmish/Black_Pawn.png",
+    "Black_Queen.png": "http://ggp.stanford.edu/ggp/games/badskirmish/Black_Queen.png",
+    "Black_Rook.png": "http://ggp.stanford.edu/ggp/games/badskirmish/Black_Rook.png",
+    "White_Bishop.png": "http://ggp.stanford.edu/ggp/games/badskirmish/White_Bishop.png",
+    "White_King.png": "http://ggp.stanford.edu/ggp/games/badskirmish/White_King.png",
+    "White_Knight.png": "http://ggp.stanford.edu/ggp/games/badskirmish/White_Knight.png",
+    "White_Pawn.png": "http://ggp.stanford.edu/ggp/games/badskirmish/White_Pawn.png",
+    "White_Queen.png": "http://ggp.stanford.edu/ggp/games/badskirmish/White_Queen.png",
+    "White_Rook.png": "http://ggp.stanford.edu/ggp/games/badskirmish/White_Rook.png",
+    "badskirmish.js": "http://ggp.stanford.edu/ggp/games/badskirmish/badskirmish.js",
+    "badskirmish.kif": "http://ggp.stanford.edu/ggp/games/badskirmish/badskirmish.kif",
+    "badskirmish.txt": "http://ggp.stanford.edu/ggp/games/badskirmish/badskirmish.txt",
+    "manager.kif": "http://ggp.stanford.edu/ggp/games/badskirmish/manager.kif",
+    "player.kif": "http://ggp.stanford.edu/ggp/games/badskirmish/player.kif"
+  }
 }

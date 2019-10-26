@@ -3,5 +3,10 @@
   "rulesheet": "prisonersdilemma.kif",
   "stylesheet": "prisonersdilemma.js",
   "description": "prisonersdilemma.txt",
-  "sourceUri": "http://ggp.stanford.edu/ggp/games/prisonersdilemma/"
+  "sourceUri": "http://ggp.stanford.edu/ggp/games/prisonersdilemma/",
+  "sources": {
+    "prisonersdilemma.js": "http://ggp.stanford.edu/ggp/games/prisonersdilemma/prisonersdilemma.js",
+    "prisonersdilemma.kif": "http://ggp.stanford.edu/ggp/games/prisonersdilemma/prisonersdilemma.kif",
+    "prisonersdilemma.txt": "http://ggp.stanford.edu/ggp/games/prisonersdilemma/prisonersdilemma.txt"
+  }
 }

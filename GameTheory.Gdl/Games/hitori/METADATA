@@ -3,5 +3,10 @@
   "rulesheet": "hitori.kif",
   "stylesheet": "hitori.js",
   "description": "hitori.txt",
-  "sourceUri": "http://ggp.stanford.edu/ggp/games/hitori/"
+  "sourceUri": "http://ggp.stanford.edu/ggp/games/hitori/",
+  "sources": {
+    "hitori.js": "http://ggp.stanford.edu/ggp/games/hitori/hitori.js",
+    "hitori.kif": "http://ggp.stanford.edu/ggp/games/hitori/hitori.kif",
+    "hitori.txt": "http://ggp.stanford.edu/ggp/games/hitori/hitori.txt"
+  }
 }

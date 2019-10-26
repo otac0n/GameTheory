@@ -4,5 +4,12 @@
   "stylesheet": "buttonsandlights.js",
   "description": "buttonsandlights.txt",
   "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=buttonsandlights",
-  "curator": "genesereth@stanford.edu"
+  "curator": "genesereth@stanford.edu",
+  "sources": {
+    "GREEN.JPG": "http://ggp.stanford.edu/ggp/games/buttonsandlights/GREEN.JPG",
+    "RED.JPG": "http://ggp.stanford.edu/ggp/games/buttonsandlights/RED.JPG",
+    "buttonsandlights.js": "http://ggp.stanford.edu/ggp/games/buttonsandlights/buttonsandlights.js",
+    "buttonsandlights.kif": "http://ggp.stanford.edu/ggp/games/buttonsandlights/buttonsandlights.kif",
+    "buttonsandlights.txt": "http://ggp.stanford.edu/ggp/games/buttonsandlights/buttonsandlights.txt"
+  }
 }

@@ -2,5 +2,9 @@
   "gameName": "supertttsuicide",
   "rulesheet": "supertttsuicide.kif",
   "stylesheet": "supertttsuicide.js",
-  "sourceUri": "http://ggp.stanford.edu/ggp/games/supertttsuicide/"
+  "sourceUri": "http://ggp.stanford.edu/ggp/games/supertttsuicide/",
+  "sources": {
+    "supertttsuicide.js": "http://ggp.stanford.edu/ggp/games/supertttsuicide/supertttsuicide.js",
+    "supertttsuicide.kif": "http://ggp.stanford.edu/ggp/games/supertttsuicide/supertttsuicide.kif"
+  }
 }

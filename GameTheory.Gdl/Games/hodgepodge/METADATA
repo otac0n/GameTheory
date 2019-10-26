@@ -3,5 +3,10 @@
   "rulesheet": "hodgepodge.kif",
   "stylesheet": "hodgepodge.js",
   "description": "hodgepodge.txt",
-  "sourceUri": "http://ggp.stanford.edu/ggp/games/hodgepodge/"
+  "sourceUri": "http://ggp.stanford.edu/ggp/games/hodgepodge/",
+  "sources": {
+    "hodgepodge.js": "http://ggp.stanford.edu/ggp/games/hodgepodge/hodgepodge.js",
+    "hodgepodge.kif": "http://ggp.stanford.edu/ggp/games/hodgepodge/hodgepodge.kif",
+    "hodgepodge.txt": "http://ggp.stanford.edu/ggp/games/hodgepodge/hodgepodge.txt"
+  }
 }

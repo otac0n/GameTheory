@@ -4,5 +4,10 @@
   "stylesheet": "bestbuttonsandlights.js",
   "description": "bestbuttonsandlights.txt",
   "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=bestbuttonsandlights",
-  "curator": "genesereth@stanford.edu"
+  "curator": "genesereth@stanford.edu",
+  "sources": {
+    "bestbuttonsandlights.js": "http://ggp.stanford.edu/ggp/games/bestbuttonsandlights/bestbuttonsandlights.js",
+    "bestbuttonsandlights.kif": "http://ggp.stanford.edu/ggp/games/bestbuttonsandlights/bestbuttonsandlights.kif",
+    "bestbuttonsandlights.txt": "http://ggp.stanford.edu/ggp/games/bestbuttonsandlights/bestbuttonsandlights.txt"
+  }
 }

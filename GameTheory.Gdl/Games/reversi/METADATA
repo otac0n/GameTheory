@@ -4,5 +4,12 @@
   "stylesheet": "reversi.js",
   "description": "reversi.txt",
   "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=reversi",
-  "curator": "genesereth@stanford.edu"
+  "curator": "genesereth@stanford.edu",
+  "sources": {
+    "blue.png": "http://ggp.stanford.edu/ggp/games/reversi/blue.png",
+    "red.png": "http://ggp.stanford.edu/ggp/games/reversi/red.png",
+    "reversi.js": "http://ggp.stanford.edu/ggp/games/reversi/reversi.js",
+    "reversi.kif": "http://ggp.stanford.edu/ggp/games/reversi/reversi.kif",
+    "reversi.txt": "http://ggp.stanford.edu/ggp/games/reversi/reversi.txt"
+  }
 }

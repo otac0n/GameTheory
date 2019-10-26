@@ -3,5 +3,12 @@
   "rulesheet": "player.kif",
   "stylesheet": "badhex.js",
   "description": "badhex.txt",
-  "sourceUri": "http://ggp.stanford.edu/ggp/games/badhex/"
+  "sourceUri": "http://ggp.stanford.edu/ggp/games/badhex/",
+  "sources": {
+    "badhex.js": "http://ggp.stanford.edu/ggp/games/badhex/badhex.js",
+    "badhex.txt": "http://ggp.stanford.edu/ggp/games/badhex/badhex.txt",
+    "hex11x11.js": "http://ggp.stanford.edu/ggp/games/badhex/hex11x11.js",
+    "manager.kif": "http://ggp.stanford.edu/ggp/games/badhex/manager.kif",
+    "player.kif": "http://ggp.stanford.edu/ggp/games/badhex/player.kif"
+  }
 }

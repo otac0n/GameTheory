@@ -4,5 +4,10 @@
   "stylesheet": "tictactoe7.js",
   "description": "tictactoe7.txt",
   "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=tictactoe7",
-  "curator": "genesereth@stanford.edu"
+  "curator": "genesereth@stanford.edu",
+  "sources": {
+    "tictactoe7.js": "http://ggp.stanford.edu/ggp/games/tictactoe7/tictactoe7.js",
+    "tictactoe7.kif": "http://ggp.stanford.edu/ggp/games/tictactoe7/tictactoe7.kif",
+    "tictactoe7.txt": "http://ggp.stanford.edu/ggp/games/tictactoe7/tictactoe7.txt"
+  }
 }

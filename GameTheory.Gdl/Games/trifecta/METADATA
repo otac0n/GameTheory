@@ -4,5 +4,10 @@
   "stylesheet": "trifecta.js",
   "description": "trifecta.txt",
   "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=trifecta",
-  "curator": "abhijeet@stanford.edu"
+  "curator": "abhijeet@stanford.edu",
+  "sources": {
+    "trifecta.js": "http://ggp.stanford.edu/ggp/games/trifecta/trifecta.js",
+    "trifecta.kif": "http://ggp.stanford.edu/ggp/games/trifecta/trifecta.kif",
+    "trifecta.txt": "http://ggp.stanford.edu/ggp/games/trifecta/trifecta.txt"
+  }
 }

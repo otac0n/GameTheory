@@ -6,5 +6,10 @@
   "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=knightstour",
   "curator": "genesereth@stanford.edu",
   "gdlVersion": "v1",
-  "seesXml": "(<= (sees_xml random ?t) (true ?t))\n(<= (sees_xml ?p ?t) (role ?p) (distinct ?p random) (true ?t))"
+  "seesXml": "(<= (sees_xml random ?t) (true ?t))\n(<= (sees_xml ?p ?t) (role ?p) (distinct ?p random) (true ?t))",
+  "sources": {
+    "knightstour.js": "http://ggp.stanford.edu/ggp/games/knightstour/knightstour.js",
+    "knightstour.kif": "http://ggp.stanford.edu/ggp/games/knightstour/knightstour.kif",
+    "knightstour.txt": "http://ggp.stanford.edu/ggp/games/knightstour/knightstour.txt"
+  }
 }

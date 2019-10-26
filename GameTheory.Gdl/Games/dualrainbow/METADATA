@@ -4,5 +4,10 @@
   "stylesheet": "dualrainbow.js",
   "description": "dualrainbow.txt",
   "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=dualrainbow",
-  "curator": "genesereth@stanford.edu"
+  "curator": "genesereth@stanford.edu",
+  "sources": {
+    "dualrainbow.js": "http://ggp.stanford.edu/ggp/games/dualrainbow/dualrainbow.js",
+    "dualrainbow.kif": "http://ggp.stanford.edu/ggp/games/dualrainbow/dualrainbow.kif",
+    "dualrainbow.txt": "http://ggp.stanford.edu/ggp/games/dualrainbow/dualrainbow.txt"
+  }
 }

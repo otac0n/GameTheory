@@ -3,5 +3,10 @@
   "rulesheet": "konozero.kif",
   "stylesheet": "konozero.js",
   "description": "konozero.txt",
-  "sourceUri": "http://ggp.stanford.edu/ggp/games/konozero/"
+  "sourceUri": "http://ggp.stanford.edu/ggp/games/konozero/",
+  "sources": {
+    "konozero.js": "http://ggp.stanford.edu/ggp/games/konozero/konozero.js",
+    "konozero.kif": "http://ggp.stanford.edu/ggp/games/konozero/konozero.kif",
+    "konozero.txt": "http://ggp.stanford.edu/ggp/games/konozero/konozero.txt"
+  }
 }

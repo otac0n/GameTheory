@@ -4,5 +4,10 @@
   "stylesheet": "duikoshi.js",
   "description": "duikoshi.txt",
   "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=duikoshi",
-  "curator": "genesereth@stanford.edu"
+  "curator": "genesereth@stanford.edu",
+  "sources": {
+    "duikoshi.js": "http://ggp.stanford.edu/ggp/games/duikoshi/duikoshi.js",
+    "duikoshi.kif": "http://ggp.stanford.edu/ggp/games/duikoshi/duikoshi.kif",
+    "duikoshi.txt": "http://ggp.stanford.edu/ggp/games/duikoshi/duikoshi.txt"
+  }
 }

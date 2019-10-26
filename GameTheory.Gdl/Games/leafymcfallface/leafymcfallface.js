@@ -3,7 +3,7 @@ function renderstate (state)
   table.setAttribute('cellspacing','0');
   table.setAttribute('bgcolor','white');
   table.setAttribute('border','10');
-  for (var i = 0; i < 8; i++)
+  for (var i = 0; i < 9; i++)
     makerow(table,i,state);
   return table}
 

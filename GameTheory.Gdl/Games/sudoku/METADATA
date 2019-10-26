@@ -4,5 +4,10 @@
   "stylesheet": "sudoku.js",
   "description": "sudoku.txt",
   "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=sudoku",
-  "curator": "genesereth@stanford.edu"
+  "curator": "genesereth@stanford.edu",
+  "sources": {
+    "sudoku.js": "http://ggp.stanford.edu/ggp/games/sudoku/sudoku.js",
+    "sudoku.kif": "http://ggp.stanford.edu/ggp/games/sudoku/sudoku.kif",
+    "sudoku.txt": "http://ggp.stanford.edu/ggp/games/sudoku/sudoku.txt"
+  }
 }

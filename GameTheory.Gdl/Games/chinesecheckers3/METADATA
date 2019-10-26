@@ -6,5 +6,17 @@
   "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=chinesecheckers3",
   "curator": "genesereth@stanford.edu",
   "gdlVersion": "v1",
-  "seesXml": "(<= (sees_xml random ?t) (true ?t))\n(<= (sees_xml ?p ?t) (role ?p) (distinct ?p random) (true ?t))"
+  "seesXml": "(<= (sees_xml random ?t) (true ?t))\n(<= (sees_xml ?p ?t) (role ?p) (distinct ?p random) (true ?t))",
+  "sources": {
+    "black.png": "http://ggp.stanford.edu/ggp/games/chinesecheckers3/black.png",
+    "blue.png": "http://ggp.stanford.edu/ggp/games/chinesecheckers3/blue.png",
+    "chinesecheckers3fair.js": "http://ggp.stanford.edu/ggp/games/chinesecheckers3/chinesecheckers3fair.js",
+    "chinesecheckers3fair.kif": "http://ggp.stanford.edu/ggp/games/chinesecheckers3/chinesecheckers3fair.kif",
+    "chinesecheckers3fair.txt": "http://ggp.stanford.edu/ggp/games/chinesecheckers3/chinesecheckers3fair.txt",
+    "green.png": "http://ggp.stanford.edu/ggp/games/chinesecheckers3/green.png",
+    "magenta.png": "http://ggp.stanford.edu/ggp/games/chinesecheckers3/magenta.png",
+    "red.png": "http://ggp.stanford.edu/ggp/games/chinesecheckers3/red.png",
+    "teal.png": "http://ggp.stanford.edu/ggp/games/chinesecheckers3/teal.png",
+    "yellow.png": "http://ggp.stanford.edu/ggp/games/chinesecheckers3/yellow.png"
+  }
 }

@@ -6,5 +6,13 @@
   "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=chinesecheckers2",
   "curator": "genesereth@stanford.edu",
   "gdlVersion": "v1",
-  "seesXml": "(<= (sees_xml random ?t) (true ?t))\n(<= (sees_xml ?p ?t) (role ?p) (distinct ?p random) (true ?t))"
+  "seesXml": "(<= (sees_xml random ?t) (true ?t))\n(<= (sees_xml ?p ?t) (role ?p) (distinct ?p random) (true ?t))",
+  "sources": {
+    "black.png": "http://ggp.stanford.edu/ggp/games/chinesecheckers2/black.png",
+    "chinesecheckers2.js": "http://ggp.stanford.edu/ggp/games/chinesecheckers2/chinesecheckers2.js",
+    "chinesecheckers2.kif": "http://ggp.stanford.edu/ggp/games/chinesecheckers2/chinesecheckers2.kif",
+    "chinesecheckers2.txt": "http://ggp.stanford.edu/ggp/games/chinesecheckers2/chinesecheckers2.txt",
+    "red.png": "http://ggp.stanford.edu/ggp/games/chinesecheckers2/red.png",
+    "teal.png": "http://ggp.stanford.edu/ggp/games/chinesecheckers2/teal.png"
+  }
 }

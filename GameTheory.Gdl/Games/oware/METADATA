@@ -2,5 +2,9 @@
   "gameName": "oware",
   "rulesheet": "oware.kif",
   "stylesheet": "oware.js",
-  "sourceUri": "http://ggp.stanford.edu/ggp/games/oware/"
+  "sourceUri": "http://ggp.stanford.edu/ggp/games/oware/",
+  "sources": {
+    "oware.js": "http://ggp.stanford.edu/ggp/games/oware/oware.js",
+    "oware.kif": "http://ggp.stanford.edu/ggp/games/oware/oware.kif"
+  }
 }

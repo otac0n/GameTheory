@@ -3,5 +3,10 @@
   "rulesheet": "hexforfour.kif",
   "stylesheet": "hexforfour.js",
   "description": "hexforfour.txt",
-  "sourceUri": "http://ggp.stanford.edu/ggp/games/hexforfour/"
+  "sourceUri": "http://ggp.stanford.edu/ggp/games/hexforfour/",
+  "sources": {
+    "hexforfour.js": "http://ggp.stanford.edu/ggp/games/hexforfour/hexforfour.js",
+    "hexforfour.kif": "http://ggp.stanford.edu/ggp/games/hexforfour/hexforfour.kif",
+    "hexforfour.txt": "http://ggp.stanford.edu/ggp/games/hexforfour/hexforfour.txt"
+  }
 }

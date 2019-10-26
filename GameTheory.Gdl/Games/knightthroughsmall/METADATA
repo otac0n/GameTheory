@@ -3,5 +3,12 @@
   "rulesheet": "knightthroughsmall.kif",
   "stylesheet": "knightthroughsmall.js",
   "description": "knightthroughsmall.txt",
-  "sourceUri": "http://ggp.stanford.edu/ggp/games/knightthroughsmall/"
+  "sourceUri": "http://ggp.stanford.edu/ggp/games/knightthroughsmall/",
+  "sources": {
+    "black.png": "http://ggp.stanford.edu/ggp/games/knightthroughsmall/black.png",
+    "knightthroughsmall.js": "http://ggp.stanford.edu/ggp/games/knightthroughsmall/knightthroughsmall.js",
+    "knightthroughsmall.kif": "http://ggp.stanford.edu/ggp/games/knightthroughsmall/knightthroughsmall.kif",
+    "knightthroughsmall.txt": "http://ggp.stanford.edu/ggp/games/knightthroughsmall/knightthroughsmall.txt",
+    "white.png": "http://ggp.stanford.edu/ggp/games/knightthroughsmall/white.png"
+  }
 }

@@ -3,5 +3,10 @@
   "rulesheet": "multiplehunter.kif",
   "stylesheet": "multiplehunter.js",
   "description": "multiplehunter.txt",
-  "sourceUri": "http://ggp.stanford.edu/ggp/games/multiplehunter/"
+  "sourceUri": "http://ggp.stanford.edu/ggp/games/multiplehunter/",
+  "sources": {
+    "multiplehunter.js": "http://ggp.stanford.edu/ggp/games/multiplehunter/multiplehunter.js",
+    "multiplehunter.kif": "http://ggp.stanford.edu/ggp/games/multiplehunter/multiplehunter.kif",
+    "multiplehunter.txt": "http://ggp.stanford.edu/ggp/games/multiplehunter/multiplehunter.txt"
+  }
 }

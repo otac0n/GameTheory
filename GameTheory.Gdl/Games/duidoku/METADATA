@@ -4,5 +4,10 @@
   "stylesheet": "duidoku.js",
   "description": "duidoku.txt",
   "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=duidoku",
-  "curator": "genesereth@stanford.edu"
+  "curator": "genesereth@stanford.edu",
+  "sources": {
+    "duidoku.js": "http://ggp.stanford.edu/ggp/games/duidoku/duidoku.js",
+    "duidoku.kif": "http://ggp.stanford.edu/ggp/games/duidoku/duidoku.kif",
+    "duidoku.txt": "http://ggp.stanford.edu/ggp/games/duidoku/duidoku.txt"
+  }
 }

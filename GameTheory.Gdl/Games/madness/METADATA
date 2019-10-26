@@ -4,5 +4,10 @@
   "stylesheet": "madness.js",
   "description": "madness.txt",
   "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=madness",
-  "curator": "genesereth@stanford.edu"
+  "curator": "genesereth@stanford.edu",
+  "sources": {
+    "madness.js": "http://ggp.stanford.edu/ggp/games/madness/madness.js",
+    "madness.kif": "http://ggp.stanford.edu/ggp/games/madness/madness.kif",
+    "madness.txt": "http://ggp.stanford.edu/ggp/games/madness/madness.txt"
+  }
 }

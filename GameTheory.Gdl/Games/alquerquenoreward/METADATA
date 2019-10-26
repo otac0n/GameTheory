@@ -3,5 +3,10 @@
   "rulesheet": "alquerquenoreward.kif",
   "stylesheet": "alquerquenoreward.js",
   "description": "alquerquenoreward.txt",
-  "sourceUri": "http://ggp.stanford.edu/ggp/games/alquerquenoreward/"
+  "sourceUri": "http://ggp.stanford.edu/ggp/games/alquerquenoreward/",
+  "sources": {
+    "alquerquenoreward.js": "http://ggp.stanford.edu/ggp/games/alquerquenoreward/alquerquenoreward.js",
+    "alquerquenoreward.kif": "http://ggp.stanford.edu/ggp/games/alquerquenoreward/alquerquenoreward.kif",
+    "alquerquenoreward.txt": "http://ggp.stanford.edu/ggp/games/alquerquenoreward/alquerquenoreward.txt"
+  }
 }

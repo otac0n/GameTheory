@@ -3,5 +3,12 @@
   "rulesheet": "lightboardfixed.kif",
   "stylesheet": "lightboardfixed.js",
   "description": "lightboardfixed.txt",
-  "sourceUri": "http://ggp.stanford.edu/ggp/games/lightboardfixed/"
+  "sourceUri": "http://ggp.stanford.edu/ggp/games/lightboardfixed/",
+  "sources": {
+    "GREEN.JPG": "http://ggp.stanford.edu/ggp/games/lightboardfixed/GREEN.JPG",
+    "RED.JPG": "http://ggp.stanford.edu/ggp/games/lightboardfixed/RED.JPG",
+    "lightboardfixed.js": "http://ggp.stanford.edu/ggp/games/lightboardfixed/lightboardfixed.js",
+    "lightboardfixed.kif": "http://ggp.stanford.edu/ggp/games/lightboardfixed/lightboardfixed.kif",
+    "lightboardfixed.txt": "http://ggp.stanford.edu/ggp/games/lightboardfixed/lightboardfixed.txt"
+  }
 }

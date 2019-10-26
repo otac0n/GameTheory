@@ -1,5 +1,8 @@
 {
   "gameName": "pearls",
   "rulesheet": "pearls.kif",
-  "sourceUri": "http://ggp.stanford.edu/ggp/games/pearls/"
+  "sourceUri": "http://ggp.stanford.edu/ggp/games/pearls/",
+  "sources": {
+    "pearls.kif": "http://ggp.stanford.edu/ggp/games/pearls/pearls.kif"
+  }
 }

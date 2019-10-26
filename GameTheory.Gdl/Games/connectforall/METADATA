@@ -2,5 +2,15 @@
   "gameName": "connectforall",
   "rulesheet": "connectforall.kif",
   "stylesheet": "connectforall.js",
-  "sourceUri": "http://ggp.stanford.edu/ggp/games/connectforall/"
+  "sourceUri": "http://ggp.stanford.edu/ggp/games/connectforall/",
+  "sources": {
+    "Black_Knight.png": "http://ggp.stanford.edu/ggp/games/connectforall/Black_Knight.png",
+    "Black_Pawn.png": "http://ggp.stanford.edu/ggp/games/connectforall/Black_Pawn.png",
+    "Red_Knight.png": "http://ggp.stanford.edu/ggp/games/connectforall/Red_Knight.png",
+    "Red_Pawn.png": "http://ggp.stanford.edu/ggp/games/connectforall/Red_Pawn.png",
+    "black.png": "http://ggp.stanford.edu/ggp/games/connectforall/black.png",
+    "connectforall.js": "http://ggp.stanford.edu/ggp/games/connectforall/connectforall.js",
+    "connectforall.kif": "http://ggp.stanford.edu/ggp/games/connectforall/connectforall.kif",
+    "red.png": "http://ggp.stanford.edu/ggp/games/connectforall/red.png"
+  }
 }

@@ -4,5 +4,10 @@
   "stylesheet": "rainbow.js",
   "description": "rainbow.txt",
   "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=rainbow",
-  "curator": "genesereth@stanford.edu"
+  "curator": "genesereth@stanford.edu",
+  "sources": {
+    "rainbow.js": "http://ggp.stanford.edu/ggp/games/rainbow/rainbow.js",
+    "rainbow.kif": "http://ggp.stanford.edu/ggp/games/rainbow/rainbow.kif",
+    "rainbow.txt": "http://ggp.stanford.edu/ggp/games/rainbow/rainbow.txt"
+  }
 }

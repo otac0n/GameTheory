@@ -1,9 +1,19 @@
 {
   "gameName": "Fire Sheep",
   "rulesheet": "firesheep.kif",
+  "stylesheet": "firesheep.xsl",
   "description": "firesheep.txt",
   "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=firesheep",
   "curator": "ptr.pham@gmail.com",
   "gdlVersion": "v1",
-  "seesXml": "(<= (sees_xml random ?t) (true ?t))\r\n(<= (sees_xml ?p ?t) (role ?p) (distinct ?p random) (true ?t))"
+  "seesXml": "(<= (sees_xml random ?t) (true ?t))\r\n(<= (sees_xml ?p ?t) (role ?p) (distinct ?p random) (true ?t))",
+  "sources": {
+    "firesheep.kif": "http://ggp.stanford.edu/ggp/games/firesheep/firesheep.kif",
+    "firesheep.txt": "http://ggp.stanford.edu/ggp/games/firesheep/firesheep.txt",
+    "firesheep.xsl": "http://ggp.stanford.edu/ggp/games/firesheep/firesheep.xsl",
+    "sheep_down.png": "http://ggp.stanford.edu/ggp/games/firesheep/sheep_down.png",
+    "sheep_left.png": "http://ggp.stanford.edu/ggp/games/firesheep/sheep_left.png",
+    "sheep_right.png": "http://ggp.stanford.edu/ggp/games/firesheep/sheep_right.png",
+    "sheep_up.png": "http://ggp.stanford.edu/ggp/games/firesheep/sheep_up.png"
+  }
 }

@@ -4,5 +4,10 @@
   "stylesheet": "multiplehunterbig.js",
   "description": "multiplehunterbig.txt",
   "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=multiplehunterbig",
-  "curator": "bhz@stanford.edu"
+  "curator": "bhz@stanford.edu",
+  "sources": {
+    "multiplehunterbig.js": "http://ggp.stanford.edu/ggp/games/multiplehunterbig/multiplehunterbig.js",
+    "multiplehunterbig.kif": "http://ggp.stanford.edu/ggp/games/multiplehunterbig/multiplehunterbig.kif",
+    "multiplehunterbig.txt": "http://ggp.stanford.edu/ggp/games/multiplehunterbig/multiplehunterbig.txt"
+  }
 }

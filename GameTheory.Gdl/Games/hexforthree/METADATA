@@ -4,5 +4,10 @@
   "stylesheet": "hexforthree.js",
   "description": "hexforthree.txt",
   "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=hexforthree",
-  "curator": "genesereth@stanford.edu"
+  "curator": "genesereth@stanford.edu",
+  "sources": {
+    "hexforthree.js": "http://ggp.stanford.edu/ggp/games/hexforthree/hexforthree.js",
+    "hexforthree.kif": "http://ggp.stanford.edu/ggp/games/hexforthree/hexforthree.kif",
+    "hexforthree.txt": "http://ggp.stanford.edu/ggp/games/hexforthree/hexforthree.txt"
+  }
 }

@@ -4,5 +4,10 @@
   "stylesheet": "hunter.js",
   "description": "hunter.txt",
   "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=hunter",
-  "curator": "genesereth@stanford.edu"
+  "curator": "genesereth@stanford.edu",
+  "sources": {
+    "hunter.js": "http://ggp.stanford.edu/ggp/games/hunter/hunter.js",
+    "hunter.kif": "http://ggp.stanford.edu/ggp/games/hunter/hunter.kif",
+    "hunter.txt": "http://ggp.stanford.edu/ggp/games/hunter/hunter.txt"
+  }
 }

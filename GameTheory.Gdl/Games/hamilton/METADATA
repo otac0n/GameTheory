@@ -4,5 +4,10 @@
   "stylesheet": "hamilton.js",
   "description": "hamilton.txt",
   "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=hamilton",
-  "curator": "genesereth@stanford.edu"
+  "curator": "genesereth@stanford.edu",
+  "sources": {
+    "hamilton.js": "http://ggp.stanford.edu/ggp/games/hamilton/hamilton.js",
+    "hamilton.kif": "http://ggp.stanford.edu/ggp/games/hamilton/hamilton.kif",
+    "hamilton.txt": "http://ggp.stanford.edu/ggp/games/hamilton/hamilton.txt"
+  }
 }

@@ -3,5 +3,10 @@
   "rulesheet": "ttt4d.kif",
   "stylesheet": "ttt4d.js",
   "description": "ttt4d.txt",
-  "sourceUri": "http://ggp.stanford.edu/ggp/games/ttt4d/"
+  "sourceUri": "http://ggp.stanford.edu/ggp/games/ttt4d/",
+  "sources": {
+    "ttt4d.js": "http://ggp.stanford.edu/ggp/games/ttt4d/ttt4d.js",
+    "ttt4d.kif": "http://ggp.stanford.edu/ggp/games/ttt4d/ttt4d.kif",
+    "ttt4d.txt": "http://ggp.stanford.edu/ggp/games/ttt4d/ttt4d.txt"
+  }
 }

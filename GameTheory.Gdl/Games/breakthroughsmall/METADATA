@@ -4,5 +4,10 @@
   "stylesheet": "breakthroughsmall.js",
   "description": "breakthroughsmall.txt",
   "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=breakthroughsmall",
-  "curator": "genesereth@stanford.edu"
+  "curator": "genesereth@stanford.edu",
+  "sources": {
+    "breakthroughsmall.js": "http://ggp.stanford.edu/ggp/games/breakthroughsmall/breakthroughsmall.js",
+    "breakthroughsmall.kif": "http://ggp.stanford.edu/ggp/games/breakthroughsmall/breakthroughsmall.kif",
+    "breakthroughsmall.txt": "http://ggp.stanford.edu/ggp/games/breakthroughsmall/breakthroughsmall.txt"
+  }
 }

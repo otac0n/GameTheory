@@ -1,9 +1,20 @@
 {
   "gameName": "Pilgrimage",
   "rulesheet": "pilgrimage.kif",
+  "stylesheet": "pilgrimage.xsl",
   "description": "pilgrimage.txt",
   "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=pilgrimage",
   "curator": "ptr.pham@gmail.com",
   "gdlVersion": "v1",
-  "seesXml": "(<= (sees_xml random ?t) (true ?t))\r\n(<= (sees_xml ?p ?t) (role ?p) (distinct ?p random) (true ?t))"
+  "seesXml": "(<= (sees_xml random ?t) (true ?t))\r\n(<= (sees_xml ?p ?t) (role ?p) (distinct ?p random) (true ?t))",
+  "sources": {
+    "Black_Bishop.png": "http://ggp.stanford.edu/ggp/games/pilgrimage/Black_Bishop.png",
+    "blue.png": "http://ggp.stanford.edu/ggp/games/pilgrimage/blue.png",
+    "blue_bishop.png": "http://ggp.stanford.edu/ggp/games/pilgrimage/blue_bishop.png",
+    "pilgrimage.kif": "http://ggp.stanford.edu/ggp/games/pilgrimage/pilgrimage.kif",
+    "pilgrimage.txt": "http://ggp.stanford.edu/ggp/games/pilgrimage/pilgrimage.txt",
+    "pilgrimage.xsl": "http://ggp.stanford.edu/ggp/games/pilgrimage/pilgrimage.xsl",
+    "red.png": "http://ggp.stanford.edu/ggp/games/pilgrimage/red.png",
+    "red_bishop.png": "http://ggp.stanford.edu/ggp/games/pilgrimage/red_bishop.png"
+  }
 }

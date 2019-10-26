@@ -6,5 +6,12 @@
   "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=connectfour",
   "curator": "genesereth@stanford.edu",
   "gdlVersion": "v1",
-  "seesXml": "(<= (sees_xml random ?t) (true ?t))\n(<= (sees_xml ?p ?t) (role ?p) (distinct ?p random) (true ?t))"
+  "seesXml": "(<= (sees_xml random ?t) (true ?t))\n(<= (sees_xml ?p ?t) (role ?p) (distinct ?p random) (true ?t))",
+  "sources": {
+    "blue.png": "http://ggp.stanford.edu/ggp/games/connectfour/blue.png",
+    "connectfour.js": "http://ggp.stanford.edu/ggp/games/connectfour/connectfour.js",
+    "connectfour.kif": "http://ggp.stanford.edu/ggp/games/connectfour/connectfour.kif",
+    "connectfour.txt": "http://ggp.stanford.edu/ggp/games/connectfour/connectfour.txt",
+    "red.png": "http://ggp.stanford.edu/ggp/games/connectfour/red.png"
+  }
 }

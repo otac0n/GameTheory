@@ -4,5 +4,10 @@
   "stylesheet": "bestsukoshi.js",
   "description": "bestsukoshi.txt",
   "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=bestsukoshi",
-  "curator": "genesereth@stanford.edu"
+  "curator": "genesereth@stanford.edu",
+  "sources": {
+    "bestsukoshi.js": "http://ggp.stanford.edu/ggp/games/bestsukoshi/bestsukoshi.js",
+    "bestsukoshi.kif": "http://ggp.stanford.edu/ggp/games/bestsukoshi/bestsukoshi.kif",
+    "bestsukoshi.txt": "http://ggp.stanford.edu/ggp/games/bestsukoshi/bestsukoshi.txt"
+  }
 }

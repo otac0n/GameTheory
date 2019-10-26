@@ -3,5 +3,18 @@
   "rulesheet": "ttcc4short.kif",
   "stylesheet": "ttcc4short.js",
   "description": "ttcc4short.txt",
-  "sourceUri": "http://ggp.stanford.edu/ggp/games/ttcc4short/"
+  "sourceUri": "http://ggp.stanford.edu/ggp/games/ttcc4short/",
+  "sources": {
+    "blackchecker.png": "http://ggp.stanford.edu/ggp/games/ttcc4short/blackchecker.png",
+    "blackdisk.png": "http://ggp.stanford.edu/ggp/games/ttcc4short/blackdisk.png",
+    "blackknight.png": "http://ggp.stanford.edu/ggp/games/ttcc4short/blackknight.png",
+    "blackpawn.png": "http://ggp.stanford.edu/ggp/games/ttcc4short/blackpawn.png",
+    "ttcc4short.js": "http://ggp.stanford.edu/ggp/games/ttcc4short/ttcc4short.js",
+    "ttcc4short.kif": "http://ggp.stanford.edu/ggp/games/ttcc4short/ttcc4short.kif",
+    "ttcc4short.txt": "http://ggp.stanford.edu/ggp/games/ttcc4short/ttcc4short.txt",
+    "whitechecker.png": "http://ggp.stanford.edu/ggp/games/ttcc4short/whitechecker.png",
+    "whitedisk.png": "http://ggp.stanford.edu/ggp/games/ttcc4short/whitedisk.png",
+    "whiteknight.png": "http://ggp.stanford.edu/ggp/games/ttcc4short/whiteknight.png",
+    "whitepawn.png": "http://ggp.stanford.edu/ggp/games/ttcc4short/whitepawn.png"
+  }
 }

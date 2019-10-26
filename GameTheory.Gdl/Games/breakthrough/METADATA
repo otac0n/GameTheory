@@ -6,5 +6,10 @@
   "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=breakthrough",
   "curator": "genesereth@stanford.edu",
   "gdlVersion": "v1",
-  "seesXml": "(<= (sees_xml random ?t) (true ?t))\r\n(<= (sees_xml ?p ?t) (role ?p) (distinct ?p random) (true ?t))"
+  "seesXml": "(<= (sees_xml random ?t) (true ?t))\r\n(<= (sees_xml ?p ?t) (role ?p) (distinct ?p random) (true ?t))",
+  "sources": {
+    "breakthrough.js": "http://ggp.stanford.edu/ggp/games/breakthrough/breakthrough.js",
+    "breakthrough.kif": "http://ggp.stanford.edu/ggp/games/breakthrough/breakthrough.kif",
+    "breakthrough.txt": "http://ggp.stanford.edu/ggp/games/breakthrough/breakthrough.txt"
+  }
 }

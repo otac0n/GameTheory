@@ -4,5 +4,18 @@
   "stylesheet": "ttcc4.js",
   "description": "ttcc4.txt",
   "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=ttcc4",
-  "curator": "genesereth@stanford.edu"
+  "curator": "genesereth@stanford.edu",
+  "sources": {
+    "blackchecker.png": "http://ggp.stanford.edu/ggp/games/ttcc4/blackchecker.png",
+    "blackdisk.png": "http://ggp.stanford.edu/ggp/games/ttcc4/blackdisk.png",
+    "blackknight.png": "http://ggp.stanford.edu/ggp/games/ttcc4/blackknight.png",
+    "blackpawn.png": "http://ggp.stanford.edu/ggp/games/ttcc4/blackpawn.png",
+    "ttcc4.js": "http://ggp.stanford.edu/ggp/games/ttcc4/ttcc4.js",
+    "ttcc4.kif": "http://ggp.stanford.edu/ggp/games/ttcc4/ttcc4.kif",
+    "ttcc4.txt": "http://ggp.stanford.edu/ggp/games/ttcc4/ttcc4.txt",
+    "whitechecker.png": "http://ggp.stanford.edu/ggp/games/ttcc4/whitechecker.png",
+    "whitedisk.png": "http://ggp.stanford.edu/ggp/games/ttcc4/whitedisk.png",
+    "whiteknight.png": "http://ggp.stanford.edu/ggp/games/ttcc4/whiteknight.png",
+    "whitepawn.png": "http://ggp.stanford.edu/ggp/games/ttcc4/whitepawn.png"
+  }
 }

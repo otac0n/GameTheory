@@ -3,5 +3,10 @@
   "rulesheet": "capturetheflag.kif",
   "stylesheet": "capturetheflag.js",
   "description": "capturetheflag.txt",
-  "sourceUri": "http://ggp.stanford.edu/ggp/games/capturetheflag/"
+  "sourceUri": "http://ggp.stanford.edu/ggp/games/capturetheflag/",
+  "sources": {
+    "capturetheflag.js": "http://ggp.stanford.edu/ggp/games/capturetheflag/capturetheflag.js",
+    "capturetheflag.kif": "http://ggp.stanford.edu/ggp/games/capturetheflag/capturetheflag.kif",
+    "capturetheflag.txt": "http://ggp.stanford.edu/ggp/games/capturetheflag/capturetheflag.txt"
+  }
 }

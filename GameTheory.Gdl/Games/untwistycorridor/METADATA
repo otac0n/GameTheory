@@ -3,5 +3,9 @@
   "rulesheet": "untwistycorridor.kif",
   "description": "untwistycorridor.txt",
   "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=untwistycorridor",
-  "curator": "genesereth@stanford.edu"
+  "curator": "genesereth@stanford.edu",
+  "sources": {
+    "untwistycorridor.kif": "http://ggp.stanford.edu/ggp/games/untwistycorridor/untwistycorridor.kif",
+    "untwistycorridor.txt": "http://ggp.stanford.edu/ggp/games/untwistycorridor/untwistycorridor.txt"
+  }
 }

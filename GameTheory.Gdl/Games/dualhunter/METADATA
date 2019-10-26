@@ -4,5 +4,10 @@
   "stylesheet": "dualhunter.js",
   "description": "dualhunter.txt",
   "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=dualhunter",
-  "curator": "genesereth@stanford.edu"
+  "curator": "genesereth@stanford.edu",
+  "sources": {
+    "dualhunter.js": "http://ggp.stanford.edu/ggp/games/dualhunter/dualhunter.js",
+    "dualhunter.kif": "http://ggp.stanford.edu/ggp/games/dualhunter/dualhunter.kif",
+    "dualhunter.txt": "http://ggp.stanford.edu/ggp/games/dualhunter/dualhunter.txt"
+  }
 }

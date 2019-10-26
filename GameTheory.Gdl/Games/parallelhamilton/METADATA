@@ -3,5 +3,10 @@
   "rulesheet": "parallelhamilton.kif",
   "stylesheet": "parallelhamilton.js",
   "description": "parallelhamilton.txt",
-  "sourceUri": "http://ggp.stanford.edu/ggp/games/parallelhamilton/"
+  "sourceUri": "http://ggp.stanford.edu/ggp/games/parallelhamilton/",
+  "sources": {
+    "parallelhamilton.js": "http://ggp.stanford.edu/ggp/games/parallelhamilton/parallelhamilton.js",
+    "parallelhamilton.kif": "http://ggp.stanford.edu/ggp/games/parallelhamilton/parallelhamilton.kif",
+    "parallelhamilton.txt": "http://ggp.stanford.edu/ggp/games/parallelhamilton/parallelhamilton.txt"
+  }
 }

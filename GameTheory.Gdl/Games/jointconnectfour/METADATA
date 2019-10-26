@@ -4,5 +4,12 @@
   "stylesheet": "jointconnectfour.js",
   "description": "jointconnectfour.txt",
   "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=jointconnectfour",
-  "curator": "ptr.pham@gmail.com"
+  "curator": "ptr.pham@gmail.com",
+  "sources": {
+    "blue.png": "http://ggp.stanford.edu/ggp/games/jointconnectfour/blue.png",
+    "jointconnectfour.js": "http://ggp.stanford.edu/ggp/games/jointconnectfour/jointconnectfour.js",
+    "jointconnectfour.kif": "http://ggp.stanford.edu/ggp/games/jointconnectfour/jointconnectfour.kif",
+    "jointconnectfour.txt": "http://ggp.stanford.edu/ggp/games/jointconnectfour/jointconnectfour.txt",
+    "red.png": "http://ggp.stanford.edu/ggp/games/jointconnectfour/red.png"
+  }
 }

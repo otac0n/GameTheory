@@ -3,5 +3,10 @@
   "rulesheet": "avoidadjacent.kif",
   "stylesheet": "avoidadjacent.js",
   "description": "avoidadjacent.txt",
-  "sourceUri": "http://ggp.stanford.edu/ggp/games/avoidadjacent/"
+  "sourceUri": "http://ggp.stanford.edu/ggp/games/avoidadjacent/",
+  "sources": {
+    "avoidadjacent.js": "http://ggp.stanford.edu/ggp/games/avoidadjacent/avoidadjacent.js",
+    "avoidadjacent.kif": "http://ggp.stanford.edu/ggp/games/avoidadjacent/avoidadjacent.kif",
+    "avoidadjacent.txt": "http://ggp.stanford.edu/ggp/games/avoidadjacent/avoidadjacent.txt"
+  }
 }

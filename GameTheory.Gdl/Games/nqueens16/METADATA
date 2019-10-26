@@ -2,5 +2,10 @@
   "gameName": "nqueens16",
   "rulesheet": "nqueens16.kif",
   "stylesheet": "nqueens16.js",
-  "sourceUri": "http://ggp.stanford.edu/ggp/games/nqueens16/"
+  "sourceUri": "http://ggp.stanford.edu/ggp/games/nqueens16/",
+  "sources": {
+    "White_Queen.png": "http://ggp.stanford.edu/ggp/games/nqueens16/White_Queen.png",
+    "nqueens16.js": "http://ggp.stanford.edu/ggp/games/nqueens16/nqueens16.js",
+    "nqueens16.kif": "http://ggp.stanford.edu/ggp/games/nqueens16/nqueens16.kif"
+  }
 }

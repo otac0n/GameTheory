@@ -4,5 +4,10 @@
   "stylesheet": "knightstourduo.js",
   "description": "knightstourduo.txt",
   "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=knightstourduo",
-  "curator": "chuchro3@stanford.edu"
+  "curator": "chuchro3@stanford.edu",
+  "sources": {
+    "knightstourduo.js": "http://ggp.stanford.edu/ggp/games/knightstourduo/knightstourduo.js",
+    "knightstourduo.kif": "http://ggp.stanford.edu/ggp/games/knightstourduo/knightstourduo.kif",
+    "knightstourduo.txt": "http://ggp.stanford.edu/ggp/games/knightstourduo/knightstourduo.txt"
+  }
 }

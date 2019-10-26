@@ -4,5 +4,12 @@
   "stylesheet": "badtictactoe.js",
   "description": "badtictactoe.txt",
   "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=badtictactoe",
-  "curator": "genesereth@stanford.edu"
+  "curator": "genesereth@stanford.edu",
+  "sources": {
+    "badtictactoe.js": "http://ggp.stanford.edu/ggp/games/badtictactoe/badtictactoe.js",
+    "badtictactoe.kif": "http://ggp.stanford.edu/ggp/games/badtictactoe/badtictactoe.kif",
+    "badtictactoe.txt": "http://ggp.stanford.edu/ggp/games/badtictactoe/badtictactoe.txt",
+    "manager.kif": "http://ggp.stanford.edu/ggp/games/badtictactoe/manager.kif",
+    "player.kif": "http://ggp.stanford.edu/ggp/games/badtictactoe/player.kif"
+  }
 }

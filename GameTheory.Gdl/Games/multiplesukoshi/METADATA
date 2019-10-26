@@ -4,5 +4,10 @@
   "stylesheet": "multiplesukoshi.js",
   "description": "multiplesukoshi.txt",
   "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=multiplesukoshi",
-  "curator": "genesereth@stanford.edu"
+  "curator": "genesereth@stanford.edu",
+  "sources": {
+    "multiplesukoshi.js": "http://ggp.stanford.edu/ggp/games/multiplesukoshi/multiplesukoshi.js",
+    "multiplesukoshi.kif": "http://ggp.stanford.edu/ggp/games/multiplesukoshi/multiplesukoshi.kif",
+    "multiplesukoshi.txt": "http://ggp.stanford.edu/ggp/games/multiplesukoshi/multiplesukoshi.txt"
+  }
 }

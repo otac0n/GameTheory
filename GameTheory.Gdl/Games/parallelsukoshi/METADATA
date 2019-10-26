@@ -3,5 +3,10 @@
   "rulesheet": "parallelsukoshi.kif",
   "stylesheet": "parallelsukoshi.js",
   "description": "parallelsukoshi.txt",
-  "sourceUri": "http://ggp.stanford.edu/ggp/games/parallelsukoshi/"
+  "sourceUri": "http://ggp.stanford.edu/ggp/games/parallelsukoshi/",
+  "sources": {
+    "parallelsukoshi.js": "http://ggp.stanford.edu/ggp/games/parallelsukoshi/parallelsukoshi.js",
+    "parallelsukoshi.kif": "http://ggp.stanford.edu/ggp/games/parallelsukoshi/parallelsukoshi.kif",
+    "parallelsukoshi.txt": "http://ggp.stanford.edu/ggp/games/parallelsukoshi/parallelsukoshi.txt"
+  }
 }
