@@ -1,13 +1,13 @@
 {
   "gameName": "Best Sukoshi",
-  "rulesheet": "bestsukoshi.kif",
+  "rulesheet": "bestsukoshi.gdl",
   "stylesheet": "bestsukoshi.js",
   "description": "bestsukoshi.txt",
   "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=bestsukoshi",
   "curator": "genesereth@stanford.edu",
   "sources": {
+    "bestsukoshi.gdl": "http://ggp.stanford.edu/ggp/games/bestsukoshi/bestsukoshi.kif",
     "bestsukoshi.js": "http://ggp.stanford.edu/ggp/games/bestsukoshi/bestsukoshi.js",
-    "bestsukoshi.kif": "http://ggp.stanford.edu/ggp/games/bestsukoshi/bestsukoshi.kif",
     "bestsukoshi.txt": "http://ggp.stanford.edu/ggp/games/bestsukoshi/bestsukoshi.txt"
   }
 }

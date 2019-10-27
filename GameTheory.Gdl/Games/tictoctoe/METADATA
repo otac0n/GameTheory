@@ -1,13 +1,13 @@
 {
   "gameName": "Toc Toc Toe",
-  "rulesheet": "tictoctoe.kif",
+  "rulesheet": "tictoctoe.gdl",
   "stylesheet": "tictoctoe.js",
   "description": "tictoctoe.txt",
   "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=tictoctoe",
   "curator": "genesereth@stanford.edu",
   "sources": {
+    "tictoctoe.gdl": "http://ggp.stanford.edu/ggp/games/tictoctoe/tictoctoe.kif",
     "tictoctoe.js": "http://ggp.stanford.edu/ggp/games/tictoctoe/tictoctoe.js",
-    "tictoctoe.kif": "http://ggp.stanford.edu/ggp/games/tictoctoe/tictoctoe.kif",
     "tictoctoe.txt": "http://ggp.stanford.edu/ggp/games/tictoctoe/tictoctoe.txt"
   }
 }

@@ -1,12 +1,12 @@
 {
   "gameName": "ttt4d",
-  "rulesheet": "ttt4d.kif",
+  "rulesheet": "ttt4d.gdl",
   "stylesheet": "ttt4d.js",
   "description": "ttt4d.txt",
   "sourceUri": "http://ggp.stanford.edu/ggp/games/ttt4d/",
   "sources": {
+    "ttt4d.gdl": "http://ggp.stanford.edu/ggp/games/ttt4d/ttt4d.kif",
     "ttt4d.js": "http://ggp.stanford.edu/ggp/games/ttt4d/ttt4d.js",
-    "ttt4d.kif": "http://ggp.stanford.edu/ggp/games/ttt4d/ttt4d.kif",
     "ttt4d.txt": "http://ggp.stanford.edu/ggp/games/ttt4d/ttt4d.txt"
   }
 }

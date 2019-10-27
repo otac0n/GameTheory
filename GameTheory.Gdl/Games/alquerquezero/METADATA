@@ -1,12 +1,12 @@
 {
   "gameName": "alquerquezero",
-  "rulesheet": "alquerquezero.kif",
+  "rulesheet": "alquerquezero.gdl",
   "stylesheet": "alquerquezero.js",
   "description": "alquerquezero.txt",
   "sourceUri": "http://ggp.stanford.edu/ggp/games/alquerquezero/",
   "sources": {
+    "alquerquezero.gdl": "http://ggp.stanford.edu/ggp/games/alquerquezero/alquerquezero.kif",
     "alquerquezero.js": "http://ggp.stanford.edu/ggp/games/alquerquezero/alquerquezero.js",
-    "alquerquezero.kif": "http://ggp.stanford.edu/ggp/games/alquerquezero/alquerquezero.kif",
     "alquerquezero.txt": "http://ggp.stanford.edu/ggp/games/alquerquezero/alquerquezero.txt"
   }
 }

@@ -1,6 +1,6 @@
 {
   "gameName": "Farming Quandries",
-  "rulesheet": "farmingquandries.kif",
+  "rulesheet": "farmingquandries.gdl",
   "stylesheet": "farmingquandries.xsl",
   "description": "farmingquandries.txt",
   "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=farmingquandries",
@@ -8,7 +8,7 @@
   "gdlVersion": "v1",
   "seesXml": "(<= (sees_xml random ?t) (true ?t))\r\n(<= (sees_xml ?p ?t) (role ?p) (distinct ?p random) (true ?t))",
   "sources": {
-    "farmingquandries.kif": "http://ggp.stanford.edu/ggp/games/farmingquandries/farmingquandries.kif",
+    "farmingquandries.gdl": "http://ggp.stanford.edu/ggp/games/farmingquandries/farmingquandries.kif",
     "farmingquandries.txt": "http://ggp.stanford.edu/ggp/games/farmingquandries/farmingquandries.txt",
     "farmingquandries.xsl": "http://ggp.stanford.edu/ggp/games/farmingquandries/farmingquandries.xsl"
   }

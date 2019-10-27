@@ -1,13 +1,13 @@
 {
   "gameName": "Horseshoe",
-  "rulesheet": "horseshoe.kif",
+  "rulesheet": "horseshoe.gdl",
   "stylesheet": "horseshoe.js",
   "description": "horseshoe.txt",
   "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=horseshoe",
   "curator": "genesereth@stanford.edu",
   "sources": {
+    "horseshoe.gdl": "http://ggp.stanford.edu/ggp/games/horseshoe/horseshoe.kif",
     "horseshoe.js": "http://ggp.stanford.edu/ggp/games/horseshoe/horseshoe.js",
-    "horseshoe.kif": "http://ggp.stanford.edu/ggp/games/horseshoe/horseshoe.kif",
     "horseshoe.txt": "http://ggp.stanford.edu/ggp/games/horseshoe/horseshoe.txt"
   }
 }

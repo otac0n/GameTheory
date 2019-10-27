@@ -1,8 +1,8 @@
 {
   "gameName": "lightson",
-  "rulesheet": "lightson.kif",
+  "rulesheet": "lightson.gdl",
   "sourceUri": "http://ggp.stanford.edu/ggp/games/lightson/",
   "sources": {
-    "lightson.kif": "http://ggp.stanford.edu/ggp/games/lightson/lightson.kif"
+    "lightson.gdl": "http://ggp.stanford.edu/ggp/games/lightson/lightson.kif"
   }
 }

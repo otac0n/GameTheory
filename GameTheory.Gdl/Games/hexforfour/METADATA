@@ -1,12 +1,12 @@
 {
   "gameName": "hexforfour",
-  "rulesheet": "hexforfour.kif",
+  "rulesheet": "hexforfour.gdl",
   "stylesheet": "hexforfour.js",
   "description": "hexforfour.txt",
   "sourceUri": "http://ggp.stanford.edu/ggp/games/hexforfour/",
   "sources": {
+    "hexforfour.gdl": "http://ggp.stanford.edu/ggp/games/hexforfour/hexforfour.kif",
     "hexforfour.js": "http://ggp.stanford.edu/ggp/games/hexforfour/hexforfour.js",
-    "hexforfour.kif": "http://ggp.stanford.edu/ggp/games/hexforfour/hexforfour.kif",
     "hexforfour.txt": "http://ggp.stanford.edu/ggp/games/hexforfour/hexforfour.txt"
   }
 }

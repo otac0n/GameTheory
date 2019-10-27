@@ -1,13 +1,13 @@
 {
   "gameName": "Leafy McFall Face",
-  "rulesheet": "leafymcfallface.kif",
+  "rulesheet": "leafymcfallface.gdl",
   "stylesheet": "leafymcfallface.js",
   "description": "leafymcfallface.txt",
   "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=leafymcfallface",
   "curator": "bhz@stanford.edu",
   "sources": {
+    "leafymcfallface.gdl": "http://ggp.stanford.edu/ggp/games/leafymcfallface/leafymcfallface.kif",
     "leafymcfallface.js": "http://ggp.stanford.edu/ggp/games/leafymcfallface/leafymcfallface.js",
-    "leafymcfallface.kif": "http://ggp.stanford.edu/ggp/games/leafymcfallface/leafymcfallface.kif",
     "leafymcfallface.txt": "http://ggp.stanford.edu/ggp/games/leafymcfallface/leafymcfallface.txt"
   }
 }

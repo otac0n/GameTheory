@@ -1,6 +1,6 @@
 {
   "gameName": "Connect Four",
-  "rulesheet": "connectfour.kif",
+  "rulesheet": "connectfour.gdl",
   "stylesheet": "connectfour.js",
   "description": "connectfour.txt",
   "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=connectfour",
@@ -9,8 +9,8 @@
   "seesXml": "(<= (sees_xml random ?t) (true ?t))\n(<= (sees_xml ?p ?t) (role ?p) (distinct ?p random) (true ?t))",
   "sources": {
     "blue.png": "http://ggp.stanford.edu/ggp/games/connectfour/blue.png",
+    "connectfour.gdl": "http://ggp.stanford.edu/ggp/games/connectfour/connectfour.kif",
     "connectfour.js": "http://ggp.stanford.edu/ggp/games/connectfour/connectfour.js",
-    "connectfour.kif": "http://ggp.stanford.edu/ggp/games/connectfour/connectfour.kif",
     "connectfour.txt": "http://ggp.stanford.edu/ggp/games/connectfour/connectfour.txt",
     "red.png": "http://ggp.stanford.edu/ggp/games/connectfour/red.png"
   }

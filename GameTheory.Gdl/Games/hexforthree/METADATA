@@ -1,13 +1,13 @@
 {
   "gameName": "Hex For Three",
-  "rulesheet": "hexforthree.kif",
+  "rulesheet": "hexforthree.gdl",
   "stylesheet": "hexforthree.js",
   "description": "hexforthree.txt",
   "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=hexforthree",
   "curator": "genesereth@stanford.edu",
   "sources": {
+    "hexforthree.gdl": "http://ggp.stanford.edu/ggp/games/hexforthree/hexforthree.kif",
     "hexforthree.js": "http://ggp.stanford.edu/ggp/games/hexforthree/hexforthree.js",
-    "hexforthree.kif": "http://ggp.stanford.edu/ggp/games/hexforthree/hexforthree.kif",
     "hexforthree.txt": "http://ggp.stanford.edu/ggp/games/hexforthree/hexforthree.txt"
   }
 }

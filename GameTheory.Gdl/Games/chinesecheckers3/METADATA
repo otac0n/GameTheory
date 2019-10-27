@@ -1,6 +1,6 @@
 {
   "gameName": "Chinese Checkers 3",
-  "rulesheet": "chinesecheckers3fair.kif",
+  "rulesheet": "chinesecheckers3fair.gdl",
   "stylesheet": "chinesecheckers3fair.js",
   "description": "chinesecheckers3fair.txt",
   "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=chinesecheckers3",
@@ -10,8 +10,8 @@
   "sources": {
     "black.png": "http://ggp.stanford.edu/ggp/games/chinesecheckers3/black.png",
     "blue.png": "http://ggp.stanford.edu/ggp/games/chinesecheckers3/blue.png",
+    "chinesecheckers3fair.gdl": "http://ggp.stanford.edu/ggp/games/chinesecheckers3/chinesecheckers3fair.kif",
     "chinesecheckers3fair.js": "http://ggp.stanford.edu/ggp/games/chinesecheckers3/chinesecheckers3fair.js",
-    "chinesecheckers3fair.kif": "http://ggp.stanford.edu/ggp/games/chinesecheckers3/chinesecheckers3fair.kif",
     "chinesecheckers3fair.txt": "http://ggp.stanford.edu/ggp/games/chinesecheckers3/chinesecheckers3fair.txt",
     "green.png": "http://ggp.stanford.edu/ggp/games/chinesecheckers3/green.png",
     "magenta.png": "http://ggp.stanford.edu/ggp/games/chinesecheckers3/magenta.png",

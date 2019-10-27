@@ -1,12 +1,12 @@
 {
   "gameName": "multiplehunter",
-  "rulesheet": "multiplehunter.kif",
+  "rulesheet": "multiplehunter.gdl",
   "stylesheet": "multiplehunter.js",
   "description": "multiplehunter.txt",
   "sourceUri": "http://ggp.stanford.edu/ggp/games/multiplehunter/",
   "sources": {
+    "multiplehunter.gdl": "http://ggp.stanford.edu/ggp/games/multiplehunter/multiplehunter.kif",
     "multiplehunter.js": "http://ggp.stanford.edu/ggp/games/multiplehunter/multiplehunter.js",
-    "multiplehunter.kif": "http://ggp.stanford.edu/ggp/games/multiplehunter/multiplehunter.kif",
     "multiplehunter.txt": "http://ggp.stanford.edu/ggp/games/multiplehunter/multiplehunter.txt"
   }
 }

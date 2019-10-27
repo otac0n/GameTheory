@@ -1,6 +1,6 @@
 {
   "gameName": "Skirmish Zero",
-  "rulesheet": "skirmishzero.kif",
+  "rulesheet": "skirmishzero.gdl",
   "stylesheet": "skirmishzero.js",
   "description": "skirmishzero.txt",
   "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=skirmishzero",
@@ -12,14 +12,14 @@
     "Black_Pawn.png": "http://ggp.stanford.edu/ggp/games/skirmishzero/Black_Pawn.png",
     "Black_Queen.png": "http://ggp.stanford.edu/ggp/games/skirmishzero/Black_Queen.png",
     "Black_Rook.png": "http://ggp.stanford.edu/ggp/games/skirmishzero/Black_Rook.png",
+    "skirmishzero.gdl": "http://ggp.stanford.edu/ggp/games/skirmishzero/skirmishzero.kif",
+    "skirmishzero.js": "http://ggp.stanford.edu/ggp/games/skirmishzero/skirmishzero.js",
+    "skirmishzero.txt": "http://ggp.stanford.edu/ggp/games/skirmishzero/skirmishzero.txt",
     "White_Bishop.png": "http://ggp.stanford.edu/ggp/games/skirmishzero/White_Bishop.png",
     "White_King.png": "http://ggp.stanford.edu/ggp/games/skirmishzero/White_King.png",
     "White_Knight.png": "http://ggp.stanford.edu/ggp/games/skirmishzero/White_Knight.png",
     "White_Pawn.png": "http://ggp.stanford.edu/ggp/games/skirmishzero/White_Pawn.png",
     "White_Queen.png": "http://ggp.stanford.edu/ggp/games/skirmishzero/White_Queen.png",
-    "White_Rook.png": "http://ggp.stanford.edu/ggp/games/skirmishzero/White_Rook.png",
-    "skirmishzero.js": "http://ggp.stanford.edu/ggp/games/skirmishzero/skirmishzero.js",
-    "skirmishzero.kif": "http://ggp.stanford.edu/ggp/games/skirmishzero/skirmishzero.kif",
-    "skirmishzero.txt": "http://ggp.stanford.edu/ggp/games/skirmishzero/skirmishzero.txt"
+    "White_Rook.png": "http://ggp.stanford.edu/ggp/games/skirmishzero/White_Rook.png"
   }
 }

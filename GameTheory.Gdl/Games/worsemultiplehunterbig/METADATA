@@ -1,12 +1,12 @@
 {
   "gameName": "worsemultiplehunterbig",
-  "rulesheet": "worsemultiplehunterbig.kif",
+  "rulesheet": "worsemultiplehunterbig.gdl",
   "stylesheet": "worsemultiplehunterbig.js",
   "description": "worsemultiplehunterbig.txt",
   "sourceUri": "http://ggp.stanford.edu/ggp/games/worsemultiplehunterbig/",
   "sources": {
+    "worsemultiplehunterbig.gdl": "http://ggp.stanford.edu/ggp/games/worsemultiplehunterbig/worsemultiplehunterbig.kif",
     "worsemultiplehunterbig.js": "http://ggp.stanford.edu/ggp/games/worsemultiplehunterbig/worsemultiplehunterbig.js",
-    "worsemultiplehunterbig.kif": "http://ggp.stanford.edu/ggp/games/worsemultiplehunterbig/worsemultiplehunterbig.kif",
     "worsemultiplehunterbig.txt": "http://ggp.stanford.edu/ggp/games/worsemultiplehunterbig/worsemultiplehunterbig.txt"
   }
 }

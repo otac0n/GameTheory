@@ -1,14 +1,14 @@
 {
   "gameName": "Pentago",
-  "rulesheet": "pentago.kif",
+  "rulesheet": "pentago.gdl",
   "stylesheet": "pentago.xsl",
   "description": "pentago.txt",
   "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=pentago",
   "curator": "genesereth@stanford.edu",
   "sources": {
     "black.png": "http://ggp.stanford.edu/ggp/games/pentago/black.png",
+    "pentago.gdl": "http://ggp.stanford.edu/ggp/games/pentago/pentago.kif",
     "pentago.js": "http://ggp.stanford.edu/ggp/games/pentago/pentago.js",
-    "pentago.kif": "http://ggp.stanford.edu/ggp/games/pentago/pentago.kif",
     "pentago.txt": "http://ggp.stanford.edu/ggp/games/pentago/pentago.txt",
     "pentago.xsl": "http://ggp.stanford.edu/ggp/games/pentago/pentago.xsl",
     "red.png": "http://ggp.stanford.edu/ggp/games/pentago/red.png"

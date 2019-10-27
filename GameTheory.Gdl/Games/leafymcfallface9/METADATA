@@ -1,12 +1,12 @@
 {
   "gameName": "leafymcfallface9",
-  "rulesheet": "leafymcfallface9.kif",
+  "rulesheet": "leafymcfallface9.gdl",
   "stylesheet": "leafymcfallface9.js",
   "description": "leafymcfallface9.txt",
   "sourceUri": "http://ggp.stanford.edu/ggp/games/leafymcfallface9/",
   "sources": {
+    "leafymcfallface9.gdl": "http://ggp.stanford.edu/ggp/games/leafymcfallface9/leafymcfallface9.kif",
     "leafymcfallface9.js": "http://ggp.stanford.edu/ggp/games/leafymcfallface9/leafymcfallface9.js",
-    "leafymcfallface9.kif": "http://ggp.stanford.edu/ggp/games/leafymcfallface9/leafymcfallface9.kif",
     "leafymcfallface9.txt": "http://ggp.stanford.edu/ggp/games/leafymcfallface9/leafymcfallface9.txt"
   }
 }

@@ -1,13 +1,13 @@
 {
   "gameName": "Hunter Big",
-  "rulesheet": "hunterbig.kif",
+  "rulesheet": "hunterbig.gdl",
   "stylesheet": "hunterbig.js",
   "description": "hunterbig.txt",
   "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=hunterbig",
   "curator": "bhz@stanford.edu",
   "sources": {
+    "hunterbig.gdl": "http://ggp.stanford.edu/ggp/games/hunterbig/hunterbig.kif",
     "hunterbig.js": "http://ggp.stanford.edu/ggp/games/hunterbig/hunterbig.js",
-    "hunterbig.kif": "http://ggp.stanford.edu/ggp/games/hunterbig/hunterbig.kif",
     "hunterbig.txt": "http://ggp.stanford.edu/ggp/games/hunterbig/hunterbig.txt"
   }
 }

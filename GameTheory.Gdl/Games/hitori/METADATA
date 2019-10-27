@@ -1,12 +1,12 @@
 {
   "gameName": "hitori",
-  "rulesheet": "hitori.kif",
+  "rulesheet": "hitori.gdl",
   "stylesheet": "hitori.js",
   "description": "hitori.txt",
   "sourceUri": "http://ggp.stanford.edu/ggp/games/hitori/",
   "sources": {
+    "hitori.gdl": "http://ggp.stanford.edu/ggp/games/hitori/hitori.kif",
     "hitori.js": "http://ggp.stanford.edu/ggp/games/hitori/hitori.js",
-    "hitori.kif": "http://ggp.stanford.edu/ggp/games/hitori/hitori.kif",
     "hitori.txt": "http://ggp.stanford.edu/ggp/games/hitori/hitori.txt"
   }
 }

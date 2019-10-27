@@ -1,14 +1,14 @@
 {
   "gameName": "lightboardfixed",
-  "rulesheet": "lightboardfixed.kif",
+  "rulesheet": "lightboardfixed.gdl",
   "stylesheet": "lightboardfixed.js",
   "description": "lightboardfixed.txt",
   "sourceUri": "http://ggp.stanford.edu/ggp/games/lightboardfixed/",
   "sources": {
     "GREEN.JPG": "http://ggp.stanford.edu/ggp/games/lightboardfixed/GREEN.JPG",
-    "RED.JPG": "http://ggp.stanford.edu/ggp/games/lightboardfixed/RED.JPG",
+    "lightboardfixed.gdl": "http://ggp.stanford.edu/ggp/games/lightboardfixed/lightboardfixed.kif",
     "lightboardfixed.js": "http://ggp.stanford.edu/ggp/games/lightboardfixed/lightboardfixed.js",
-    "lightboardfixed.kif": "http://ggp.stanford.edu/ggp/games/lightboardfixed/lightboardfixed.kif",
-    "lightboardfixed.txt": "http://ggp.stanford.edu/ggp/games/lightboardfixed/lightboardfixed.txt"
+    "lightboardfixed.txt": "http://ggp.stanford.edu/ggp/games/lightboardfixed/lightboardfixed.txt",
+    "RED.JPG": "http://ggp.stanford.edu/ggp/games/lightboardfixed/RED.JPG"
   }
 }

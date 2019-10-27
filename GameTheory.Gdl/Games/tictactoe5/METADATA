@@ -1,13 +1,13 @@
 {
   "gameName": "Tic Tac Toe 5",
-  "rulesheet": "tictactoe5.kif",
+  "rulesheet": "tictactoe5.gdl",
   "stylesheet": "tictactoe5.js",
   "description": "tictactoe5.txt",
   "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=tictactoe5",
   "curator": "genesereth@stanford.edu",
   "sources": {
+    "tictactoe5.gdl": "http://ggp.stanford.edu/ggp/games/tictactoe5/tictactoe5.kif",
     "tictactoe5.js": "http://ggp.stanford.edu/ggp/games/tictactoe5/tictactoe5.js",
-    "tictactoe5.kif": "http://ggp.stanford.edu/ggp/games/tictactoe5/tictactoe5.kif",
     "tictactoe5.txt": "http://ggp.stanford.edu/ggp/games/tictactoe5/tictactoe5.txt"
   }
 }

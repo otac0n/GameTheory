@@ -1,13 +1,13 @@
 {
   "gameName": "Leafy McFall Face 8x9",
-  "rulesheet": "leafymcfallface89.kif",
+  "rulesheet": "leafymcfallface89.gdl",
   "stylesheet": "leafymcfallface89.js",
   "description": "leafymcfallface89.txt",
   "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=leafymcfallface89",
   "curator": "bhz@stanford.edu",
   "sources": {
+    "leafymcfallface89.gdl": "http://ggp.stanford.edu/ggp/games/leafymcfallface89/leafymcfallface89.kif",
     "leafymcfallface89.js": "http://ggp.stanford.edu/ggp/games/leafymcfallface89/leafymcfallface89.js",
-    "leafymcfallface89.kif": "http://ggp.stanford.edu/ggp/games/leafymcfallface89/leafymcfallface89.kif",
     "leafymcfallface89.txt": "http://ggp.stanford.edu/ggp/games/leafymcfallface89/leafymcfallface89.txt"
   }
 }

@@ -1,15 +1,15 @@
 {
   "gameName": "Lightboard",
-  "rulesheet": "lightboard.kif",
+  "rulesheet": "lightboard.gdl",
   "stylesheet": "lightboard.js",
   "description": "lightboard.txt",
   "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=lightboard",
   "curator": "genesereth@stanford.edu",
   "sources": {
     "GREEN.JPG": "http://ggp.stanford.edu/ggp/games/lightboard/GREEN.JPG",
-    "RED.JPG": "http://ggp.stanford.edu/ggp/games/lightboard/RED.JPG",
+    "lightboard.gdl": "http://ggp.stanford.edu/ggp/games/lightboard/lightboard.kif",
     "lightboard.js": "http://ggp.stanford.edu/ggp/games/lightboard/lightboard.js",
-    "lightboard.kif": "http://ggp.stanford.edu/ggp/games/lightboard/lightboard.kif",
-    "lightboard.txt": "http://ggp.stanford.edu/ggp/games/lightboard/lightboard.txt"
+    "lightboard.txt": "http://ggp.stanford.edu/ggp/games/lightboard/lightboard.txt",
+    "RED.JPG": "http://ggp.stanford.edu/ggp/games/lightboard/RED.JPG"
   }
 }

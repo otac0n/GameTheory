@@ -1,13 +1,13 @@
 {
   "gameName": "connectfoursuicide",
-  "rulesheet": "connectfoursuicide.kif",
+  "rulesheet": "connectfoursuicide.gdl",
   "stylesheet": "connectfoursuicide.js",
   "description": "connectfoursuicide.txt",
   "sourceUri": "http://ggp.stanford.edu/ggp/games/connectfoursuicide/",
   "sources": {
     "blue.png": "http://ggp.stanford.edu/ggp/games/connectfoursuicide/blue.png",
+    "connectfoursuicide.gdl": "http://ggp.stanford.edu/ggp/games/connectfoursuicide/connectfoursuicide.kif",
     "connectfoursuicide.js": "http://ggp.stanford.edu/ggp/games/connectfoursuicide/connectfoursuicide.js",
-    "connectfoursuicide.kif": "http://ggp.stanford.edu/ggp/games/connectfoursuicide/connectfoursuicide.kif",
     "connectfoursuicide.txt": "http://ggp.stanford.edu/ggp/games/connectfoursuicide/connectfoursuicide.txt",
     "red.png": "http://ggp.stanford.edu/ggp/games/connectfoursuicide/red.png"
   }

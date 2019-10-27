@@ -1,13 +1,13 @@
 {
   "gameName": "Nine Board Tic Tac Toe",
-  "rulesheet": "nineboardtictactoe.kif",
+  "rulesheet": "nineboardtictactoe.gdl",
   "stylesheet": "nineboardtictactoe.js",
   "description": "nineboardtictactoe.txt",
   "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=nineboardtictactoe",
   "curator": "sam.schreiber@gmail.com",
   "sources": {
+    "nineboardtictactoe.gdl": "http://ggp.stanford.edu/ggp/games/nineboardtictactoe/nineboardtictactoe.kif",
     "nineboardtictactoe.js": "http://ggp.stanford.edu/ggp/games/nineboardtictactoe/nineboardtictactoe.js",
-    "nineboardtictactoe.kif": "http://ggp.stanford.edu/ggp/games/nineboardtictactoe/nineboardtictactoe.kif",
     "nineboardtictactoe.txt": "http://ggp.stanford.edu/ggp/games/nineboardtictactoe/nineboardtictactoe.txt"
   }
 }

@@ -1,6 +1,6 @@
 {
   "gameName": "Chinook",
-  "rulesheet": "chinook.kif",
+  "rulesheet": "chinook.gdl",
   "stylesheet": "chinook.xsl",
   "description": "chinook.txt",
   "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=chinook",
@@ -8,8 +8,8 @@
   "sources": {
     "blue.png": "http://ggp.stanford.edu/ggp/games/chinook/blue.png",
     "bpawn.gif": "http://ggp.stanford.edu/ggp/games/chinook/bpawn.gif",
+    "chinook.gdl": "http://ggp.stanford.edu/ggp/games/chinook/chinook.kif",
     "chinook.js": "http://ggp.stanford.edu/ggp/games/chinook/chinook.js",
-    "chinook.kif": "http://ggp.stanford.edu/ggp/games/chinook/chinook.kif",
     "chinook.txt": "http://ggp.stanford.edu/ggp/games/chinook/chinook.txt",
     "chinook.xsl": "http://ggp.stanford.edu/ggp/games/chinook/chinook.xsl",
     "red.png": "http://ggp.stanford.edu/ggp/games/chinook/red.png",

@@ -1,13 +1,13 @@
 {
   "gameName": "Hex",
-  "rulesheet": "hex.kif",
+  "rulesheet": "hex.gdl",
   "stylesheet": "hex.js",
   "description": "hex.txt",
   "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=hex",
   "curator": "genesereth@stanford.edu",
   "sources": {
+    "hex.gdl": "http://ggp.stanford.edu/ggp/games/hex/hex.kif",
     "hex.js": "http://ggp.stanford.edu/ggp/games/hex/hex.js",
-    "hex.kif": "http://ggp.stanford.edu/ggp/games/hex/hex.kif",
     "hex.txt": "http://ggp.stanford.edu/ggp/games/hex/hex.txt",
     "hex11x11.js": "http://ggp.stanford.edu/ggp/games/hex/hex11x11.js"
   }

@@ -1,13 +1,13 @@
 {
   "gameName": "Best Buttons and Lights",
-  "rulesheet": "bestbuttonsandlights.kif",
+  "rulesheet": "bestbuttonsandlights.gdl",
   "stylesheet": "bestbuttonsandlights.js",
   "description": "bestbuttonsandlights.txt",
   "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=bestbuttonsandlights",
   "curator": "genesereth@stanford.edu",
   "sources": {
+    "bestbuttonsandlights.gdl": "http://ggp.stanford.edu/ggp/games/bestbuttonsandlights/bestbuttonsandlights.kif",
     "bestbuttonsandlights.js": "http://ggp.stanford.edu/ggp/games/bestbuttonsandlights/bestbuttonsandlights.js",
-    "bestbuttonsandlights.kif": "http://ggp.stanford.edu/ggp/games/bestbuttonsandlights/bestbuttonsandlights.kif",
     "bestbuttonsandlights.txt": "http://ggp.stanford.edu/ggp/games/bestbuttonsandlights/bestbuttonsandlights.txt"
   }
 }

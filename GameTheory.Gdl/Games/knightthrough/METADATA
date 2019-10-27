@@ -1,6 +1,6 @@
 {
   "gameName": "Knight Through",
-  "rulesheet": "knightthrough.kif",
+  "rulesheet": "knightthrough.gdl",
   "stylesheet": "knightthrough.js",
   "description": "knightthrough.txt",
   "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=knightthrough",
@@ -9,8 +9,8 @@
   "seesXml": "(<= (sees_xml random ?t) (true ?t))\n(<= (sees_xml ?p ?t) (role ?p) (distinct ?p random) (true ?t))",
   "sources": {
     "black.png": "http://ggp.stanford.edu/ggp/games/knightthrough/black.png",
+    "knightthrough.gdl": "http://ggp.stanford.edu/ggp/games/knightthrough/knightthrough.kif",
     "knightthrough.js": "http://ggp.stanford.edu/ggp/games/knightthrough/knightthrough.js",
-    "knightthrough.kif": "http://ggp.stanford.edu/ggp/games/knightthrough/knightthrough.kif",
     "knightthrough.txt": "http://ggp.stanford.edu/ggp/games/knightthrough/knightthrough.txt",
     "white.png": "http://ggp.stanford.edu/ggp/games/knightthrough/white.png"
   }

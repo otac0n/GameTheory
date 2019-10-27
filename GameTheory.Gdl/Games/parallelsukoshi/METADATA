@@ -1,12 +1,12 @@
 {
   "gameName": "parallelsukoshi",
-  "rulesheet": "parallelsukoshi.kif",
+  "rulesheet": "parallelsukoshi.gdl",
   "stylesheet": "parallelsukoshi.js",
   "description": "parallelsukoshi.txt",
   "sourceUri": "http://ggp.stanford.edu/ggp/games/parallelsukoshi/",
   "sources": {
+    "parallelsukoshi.gdl": "http://ggp.stanford.edu/ggp/games/parallelsukoshi/parallelsukoshi.kif",
     "parallelsukoshi.js": "http://ggp.stanford.edu/ggp/games/parallelsukoshi/parallelsukoshi.js",
-    "parallelsukoshi.kif": "http://ggp.stanford.edu/ggp/games/parallelsukoshi/parallelsukoshi.kif",
     "parallelsukoshi.txt": "http://ggp.stanford.edu/ggp/games/parallelsukoshi/parallelsukoshi.txt"
   }
 }

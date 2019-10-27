@@ -1,12 +1,12 @@
 {
   "gameName": "avoidadjacent",
-  "rulesheet": "avoidadjacent.kif",
+  "rulesheet": "avoidadjacent.gdl",
   "stylesheet": "avoidadjacent.js",
   "description": "avoidadjacent.txt",
   "sourceUri": "http://ggp.stanford.edu/ggp/games/avoidadjacent/",
   "sources": {
+    "avoidadjacent.gdl": "http://ggp.stanford.edu/ggp/games/avoidadjacent/avoidadjacent.kif",
     "avoidadjacent.js": "http://ggp.stanford.edu/ggp/games/avoidadjacent/avoidadjacent.js",
-    "avoidadjacent.kif": "http://ggp.stanford.edu/ggp/games/avoidadjacent/avoidadjacent.kif",
     "avoidadjacent.txt": "http://ggp.stanford.edu/ggp/games/avoidadjacent/avoidadjacent.txt"
   }
 }

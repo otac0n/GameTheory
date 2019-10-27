@@ -1,13 +1,13 @@
 {
   "gameName": "Three Puzzle",
-  "rulesheet": "threepuzzle.kif",
+  "rulesheet": "threepuzzle.gdl",
   "stylesheet": "threepuzzle.js",
   "description": "threepuzzle.txt",
   "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=threepuzzle",
   "curator": "genesereth@stanford.edu",
   "sources": {
+    "threepuzzle.gdl": "http://ggp.stanford.edu/ggp/games/threepuzzle/threepuzzle.kif",
     "threepuzzle.js": "http://ggp.stanford.edu/ggp/games/threepuzzle/threepuzzle.js",
-    "threepuzzle.kif": "http://ggp.stanford.edu/ggp/games/threepuzzle/threepuzzle.kif",
     "threepuzzle.txt": "http://ggp.stanford.edu/ggp/games/threepuzzle/threepuzzle.txt"
   }
 }

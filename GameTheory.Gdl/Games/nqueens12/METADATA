@@ -1,11 +1,11 @@
 {
   "gameName": "nqueens12",
-  "rulesheet": "nqueens12.kif",
+  "rulesheet": "nqueens12.gdl",
   "stylesheet": "nqueens12.js",
   "sourceUri": "http://ggp.stanford.edu/ggp/games/nqueens12/",
   "sources": {
-    "White_Queen.png": "http://ggp.stanford.edu/ggp/games/nqueens12/White_Queen.png",
+    "nqueens12.gdl": "http://ggp.stanford.edu/ggp/games/nqueens12/nqueens12.kif",
     "nqueens12.js": "http://ggp.stanford.edu/ggp/games/nqueens12/nqueens12.js",
-    "nqueens12.kif": "http://ggp.stanford.edu/ggp/games/nqueens12/nqueens12.kif"
+    "White_Queen.png": "http://ggp.stanford.edu/ggp/games/nqueens12/White_Queen.png"
   }
 }

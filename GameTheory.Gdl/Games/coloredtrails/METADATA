@@ -1,8 +1,8 @@
 {
   "gameName": "coloredtrails",
-  "rulesheet": "coloredtrails.kif",
+  "rulesheet": "coloredtrails.gdl",
   "sourceUri": "http://ggp.stanford.edu/ggp/games/coloredtrails/",
   "sources": {
-    "coloredtrails.kif": "http://ggp.stanford.edu/ggp/games/coloredtrails/coloredtrails.kif"
+    "coloredtrails.gdl": "http://ggp.stanford.edu/ggp/games/coloredtrails/coloredtrails.kif"
   }
 }

@@ -1,13 +1,13 @@
 {
   "gameName": "Rainbow",
-  "rulesheet": "rainbow.kif",
+  "rulesheet": "rainbow.gdl",
   "stylesheet": "rainbow.js",
   "description": "rainbow.txt",
   "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=rainbow",
   "curator": "genesereth@stanford.edu",
   "sources": {
+    "rainbow.gdl": "http://ggp.stanford.edu/ggp/games/rainbow/rainbow.kif",
     "rainbow.js": "http://ggp.stanford.edu/ggp/games/rainbow/rainbow.js",
-    "rainbow.kif": "http://ggp.stanford.edu/ggp/games/rainbow/rainbow.kif",
     "rainbow.txt": "http://ggp.stanford.edu/ggp/games/rainbow/rainbow.txt"
   }
 }

@@ -1,6 +1,6 @@
 {
   "gameName": "Tic Tic Toe",
-  "rulesheet": "tictictoe.kif",
+  "rulesheet": "tictictoe.gdl",
   "stylesheet": "tictictoe.js",
   "description": "tictictoe.txt",
   "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=tictictoe",
@@ -8,8 +8,8 @@
   "gdlVersion": "v1",
   "seesXml": "(<= (sees_xml random ?t) (true ?t))\n(<= (sees_xml ?p ?t) (role ?p) (distinct ?p random) (true ?t))",
   "sources": {
+    "tictictoe.gdl": "http://ggp.stanford.edu/ggp/games/tictictoe/tictictoe.kif",
     "tictictoe.js": "http://ggp.stanford.edu/ggp/games/tictictoe/tictictoe.js",
-    "tictictoe.kif": "http://ggp.stanford.edu/ggp/games/tictictoe/tictictoe.kif",
     "tictictoe.txt": "http://ggp.stanford.edu/ggp/games/tictictoe/tictictoe.txt"
   }
 }

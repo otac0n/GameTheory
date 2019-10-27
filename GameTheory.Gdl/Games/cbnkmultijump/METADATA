@@ -1,12 +1,12 @@
 {
   "gameName": "cbnkmultijump",
-  "rulesheet": "cbnkmultijump.kif",
+  "rulesheet": "cbnkmultijump.gdl",
   "stylesheet": "cbnkmultijump.js",
   "description": "cbnkmultijump.txt",
   "sourceUri": "http://ggp.stanford.edu/ggp/games/cbnkmultijump/",
   "sources": {
+    "cbnkmultijump.gdl": "http://ggp.stanford.edu/ggp/games/cbnkmultijump/cbnkmultijump.kif",
     "cbnkmultijump.js": "http://ggp.stanford.edu/ggp/games/cbnkmultijump/cbnkmultijump.js",
-    "cbnkmultijump.kif": "http://ggp.stanford.edu/ggp/games/cbnkmultijump/cbnkmultijump.kif",
     "cbnkmultijump.txt": "http://ggp.stanford.edu/ggp/games/cbnkmultijump/cbnkmultijump.txt"
   }
 }

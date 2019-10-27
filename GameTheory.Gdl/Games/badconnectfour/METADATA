@@ -1,17 +1,17 @@
 {
   "gameName": "Bad Connect Four",
-  "rulesheet": "badconnectfour.kif",
+  "rulesheet": "badconnectfour.gdl",
   "stylesheet": "badconnectfour.js",
   "description": "badconnectfour.txt",
   "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=badconnectfour",
   "curator": "genesereth@stanford.edu",
   "sources": {
+    "badconnectfour.gdl": "http://ggp.stanford.edu/ggp/games/badconnectfour/badconnectfour.kif",
     "badconnectfour.js": "http://ggp.stanford.edu/ggp/games/badconnectfour/badconnectfour.js",
-    "badconnectfour.kif": "http://ggp.stanford.edu/ggp/games/badconnectfour/badconnectfour.kif",
     "badconnectfour.txt": "http://ggp.stanford.edu/ggp/games/badconnectfour/badconnectfour.txt",
     "blue.png": "http://ggp.stanford.edu/ggp/games/badconnectfour/blue.png",
-    "manager.kif": "http://ggp.stanford.edu/ggp/games/badconnectfour/manager.kif",
-    "player.kif": "http://ggp.stanford.edu/ggp/games/badconnectfour/player.kif",
+    "manager.gdl": "http://ggp.stanford.edu/ggp/games/badconnectfour/manager.kif",
+    "player.gdl": "http://ggp.stanford.edu/ggp/games/badconnectfour/player.kif",
     "red.png": "http://ggp.stanford.edu/ggp/games/badconnectfour/red.png"
   }
 }

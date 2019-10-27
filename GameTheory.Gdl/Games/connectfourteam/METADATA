@@ -1,14 +1,14 @@
 {
   "gameName": "Connect Four Team",
-  "rulesheet": "connectfourteam.kif",
+  "rulesheet": "connectfourteam.gdl",
   "stylesheet": "connectfourteam.js",
   "description": "connectfourteam.txt",
   "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=connectfourteam",
   "curator": "chuchro3@stanford.edu",
   "sources": {
     "blue.png": "http://ggp.stanford.edu/ggp/games/connectfourteam/blue.png",
+    "connectfourteam.gdl": "http://ggp.stanford.edu/ggp/games/connectfourteam/connectfourteam.kif",
     "connectfourteam.js": "http://ggp.stanford.edu/ggp/games/connectfourteam/connectfourteam.js",
-    "connectfourteam.kif": "http://ggp.stanford.edu/ggp/games/connectfourteam/connectfourteam.kif",
     "connectfourteam.txt": "http://ggp.stanford.edu/ggp/games/connectfourteam/connectfourteam.txt",
     "cyan.png": "http://ggp.stanford.edu/ggp/games/connectfourteam/cyan.png",
     "orange.png": "http://ggp.stanford.edu/ggp/games/connectfourteam/orange.png",

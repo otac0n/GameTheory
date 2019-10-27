@@ -1,11 +1,11 @@
 {
   "gameName": "Joint Sukoshi",
-  "rulesheet": "jointsukoshi.kif",
+  "rulesheet": "jointsukoshi.gdl",
   "stylesheet": "jointsukoshi.js",
   "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=jointsukoshi",
   "curator": "genesereth@stanford.edu",
   "sources": {
-    "jointsukoshi.js": "http://ggp.stanford.edu/ggp/games/jointsukoshi/jointsukoshi.js",
-    "jointsukoshi.kif": "http://ggp.stanford.edu/ggp/games/jointsukoshi/jointsukoshi.kif"
+    "jointsukoshi.gdl": "http://ggp.stanford.edu/ggp/games/jointsukoshi/jointsukoshi.kif",
+    "jointsukoshi.js": "http://ggp.stanford.edu/ggp/games/jointsukoshi/jointsukoshi.js"
   }
 }

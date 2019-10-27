@@ -1,13 +1,13 @@
 {
   "gameName": "Freeforall",
-  "rulesheet": "freeforall.kif",
+  "rulesheet": "freeforall.gdl",
   "stylesheet": "freeforall.js",
   "description": "freeforall.txt",
   "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=freeforall",
   "curator": "genesereth@stanford.edu",
   "sources": {
+    "freeforall.gdl": "http://ggp.stanford.edu/ggp/games/freeforall/freeforall.kif",
     "freeforall.js": "http://ggp.stanford.edu/ggp/games/freeforall/freeforall.js",
-    "freeforall.kif": "http://ggp.stanford.edu/ggp/games/freeforall/freeforall.kif",
     "freeforall.txt": "http://ggp.stanford.edu/ggp/games/freeforall/freeforall.txt"
   }
 }

@@ -1,6 +1,6 @@
 {
   "gameName": "Pilgrimage",
-  "rulesheet": "pilgrimage.kif",
+  "rulesheet": "pilgrimage.gdl",
   "stylesheet": "pilgrimage.xsl",
   "description": "pilgrimage.txt",
   "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=pilgrimage",
@@ -11,7 +11,7 @@
     "Black_Bishop.png": "http://ggp.stanford.edu/ggp/games/pilgrimage/Black_Bishop.png",
     "blue.png": "http://ggp.stanford.edu/ggp/games/pilgrimage/blue.png",
     "blue_bishop.png": "http://ggp.stanford.edu/ggp/games/pilgrimage/blue_bishop.png",
-    "pilgrimage.kif": "http://ggp.stanford.edu/ggp/games/pilgrimage/pilgrimage.kif",
+    "pilgrimage.gdl": "http://ggp.stanford.edu/ggp/games/pilgrimage/pilgrimage.kif",
     "pilgrimage.txt": "http://ggp.stanford.edu/ggp/games/pilgrimage/pilgrimage.txt",
     "pilgrimage.xsl": "http://ggp.stanford.edu/ggp/games/pilgrimage/pilgrimage.xsl",
     "red.png": "http://ggp.stanford.edu/ggp/games/pilgrimage/red.png",

@@ -1,13 +1,13 @@
 {
   "gameName": "Duidoku",
-  "rulesheet": "duidoku.kif",
+  "rulesheet": "duidoku.gdl",
   "stylesheet": "duidoku.js",
   "description": "duidoku.txt",
   "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=duidoku",
   "curator": "genesereth@stanford.edu",
   "sources": {
+    "duidoku.gdl": "http://ggp.stanford.edu/ggp/games/duidoku/duidoku.kif",
     "duidoku.js": "http://ggp.stanford.edu/ggp/games/duidoku/duidoku.js",
-    "duidoku.kif": "http://ggp.stanford.edu/ggp/games/duidoku/duidoku.kif",
     "duidoku.txt": "http://ggp.stanford.edu/ggp/games/duidoku/duidoku.txt"
   }
 }

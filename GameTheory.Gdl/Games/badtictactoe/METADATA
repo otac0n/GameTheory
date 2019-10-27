@@ -1,15 +1,15 @@
 {
   "gameName": "Bad Tic Tac Toe",
-  "rulesheet": "badtictactoe.kif",
+  "rulesheet": "badtictactoe.gdl",
   "stylesheet": "badtictactoe.js",
   "description": "badtictactoe.txt",
   "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=badtictactoe",
   "curator": "genesereth@stanford.edu",
   "sources": {
+    "badtictactoe.gdl": "http://ggp.stanford.edu/ggp/games/badtictactoe/badtictactoe.kif",
     "badtictactoe.js": "http://ggp.stanford.edu/ggp/games/badtictactoe/badtictactoe.js",
-    "badtictactoe.kif": "http://ggp.stanford.edu/ggp/games/badtictactoe/badtictactoe.kif",
     "badtictactoe.txt": "http://ggp.stanford.edu/ggp/games/badtictactoe/badtictactoe.txt",
-    "manager.kif": "http://ggp.stanford.edu/ggp/games/badtictactoe/manager.kif",
-    "player.kif": "http://ggp.stanford.edu/ggp/games/badtictactoe/player.kif"
+    "manager.gdl": "http://ggp.stanford.edu/ggp/games/badtictactoe/manager.kif",
+    "player.gdl": "http://ggp.stanford.edu/ggp/games/badtictactoe/player.kif"
   }
 }

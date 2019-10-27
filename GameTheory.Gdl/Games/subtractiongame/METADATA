@@ -1,10 +1,10 @@
 {
   "gameName": "subtractiongame",
-  "rulesheet": "subtractiongame.kif",
+  "rulesheet": "subtractiongame.gdl",
   "description": "subtractiongame.txt",
   "sourceUri": "http://ggp.stanford.edu/ggp/games/subtractiongame/",
   "sources": {
-    "subtractiongame.kif": "http://ggp.stanford.edu/ggp/games/subtractiongame/subtractiongame.kif",
+    "subtractiongame.gdl": "http://ggp.stanford.edu/ggp/games/subtractiongame/subtractiongame.kif",
     "subtractiongame.txt": "http://ggp.stanford.edu/ggp/games/subtractiongame/subtractiongame.txt"
   }
 }

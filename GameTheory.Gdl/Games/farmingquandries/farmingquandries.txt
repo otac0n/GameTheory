@@ -1,3 +1,1 @@
 The board begins as an empty, unclaimed 4x4 grid. Players' actions influence columns and rows of the board. A player claims unclaimed tiles by using the "plow" action. Players can use the "sow" action to sow plowed tiles that belong to them. The "water" action will convert sown tiles to ripe tiles. Finally, if a player uses the "harvest" action on a row or column that contains three or more ripe tiles that belong to him, he gets 10 points. Each of the standard actions can only be performed in a certain season (winter, spring, summer, fall respectively). In addition, every two years, players obtain a "burn" action which clears an entire row or column. Ripe tiles revert to unclaimed tiles in winter, but other tile states persist.
-
-by: Peter Pham

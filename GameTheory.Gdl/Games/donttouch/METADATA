@@ -1,13 +1,13 @@
 {
   "gameName": "Dont Touch",
-  "rulesheet": "donttouch.kif",
+  "rulesheet": "donttouch.gdl",
   "stylesheet": "donttouch.js",
   "description": "donttouch.txt",
   "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=donttouch",
   "curator": "bhz@stanford.edu",
   "sources": {
+    "donttouch.gdl": "http://ggp.stanford.edu/ggp/games/donttouch/donttouch.kif",
     "donttouch.js": "http://ggp.stanford.edu/ggp/games/donttouch/donttouch.js",
-    "donttouch.kif": "http://ggp.stanford.edu/ggp/games/donttouch/donttouch.kif",
     "donttouch.txt": "http://ggp.stanford.edu/ggp/games/donttouch/donttouch.txt"
   }
 }

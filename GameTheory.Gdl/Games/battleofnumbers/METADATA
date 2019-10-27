@@ -1,13 +1,13 @@
 {
   "gameName": "Battle of Numbers",
-  "rulesheet": "battleofnumbers.kif",
+  "rulesheet": "battleofnumbers.gdl",
   "stylesheet": "battleofnumbers.js",
   "description": "battleofnumbers.txt",
   "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=battleofnumbers",
   "curator": "dustinsfink@gmail.com",
   "sources": {
+    "battleofnumbers.gdl": "http://ggp.stanford.edu/ggp/games/battleofnumbers/battleofnumbers.kif",
     "battleofnumbers.js": "http://ggp.stanford.edu/ggp/games/battleofnumbers/battleofnumbers.js",
-    "battleofnumbers.kif": "http://ggp.stanford.edu/ggp/games/battleofnumbers/battleofnumbers.kif",
     "battleofnumbers.txt": "http://ggp.stanford.edu/ggp/games/battleofnumbers/battleofnumbers.txt"
   }
 }

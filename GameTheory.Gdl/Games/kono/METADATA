@@ -1,13 +1,13 @@
 {
   "gameName": "Kono",
-  "rulesheet": "kono.kif",
+  "rulesheet": "kono.gdl",
   "stylesheet": "kono.js",
   "description": "kono.txt",
   "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=kono",
   "curator": "genesereth@stanford.edu",
   "sources": {
+    "kono.gdl": "http://ggp.stanford.edu/ggp/games/kono/kono.kif",
     "kono.js": "http://ggp.stanford.edu/ggp/games/kono/kono.js",
-    "kono.kif": "http://ggp.stanford.edu/ggp/games/kono/kono.kif",
     "kono.txt": "http://ggp.stanford.edu/ggp/games/kono/kono.txt"
   }
 }

@@ -1,12 +1,12 @@
 {
   "gameName": "mnk",
-  "rulesheet": "mnk.kif",
+  "rulesheet": "mnk.gdl",
   "stylesheet": "mnk.js",
   "description": "mnk.txt",
   "sourceUri": "http://ggp.stanford.edu/ggp/games/mnk/",
   "sources": {
+    "mnk.gdl": "http://ggp.stanford.edu/ggp/games/mnk/mnk.kif",
     "mnk.js": "http://ggp.stanford.edu/ggp/games/mnk/mnk.js",
-    "mnk.kif": "http://ggp.stanford.edu/ggp/games/mnk/mnk.kif",
     "mnk.txt": "http://ggp.stanford.edu/ggp/games/mnk/mnk.txt"
   }
 }

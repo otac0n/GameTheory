@@ -1,12 +1,12 @@
 {
   "gameName": "capturetheflag",
-  "rulesheet": "capturetheflag.kif",
+  "rulesheet": "capturetheflag.gdl",
   "stylesheet": "capturetheflag.js",
   "description": "capturetheflag.txt",
   "sourceUri": "http://ggp.stanford.edu/ggp/games/capturetheflag/",
   "sources": {
+    "capturetheflag.gdl": "http://ggp.stanford.edu/ggp/games/capturetheflag/capturetheflag.kif",
     "capturetheflag.js": "http://ggp.stanford.edu/ggp/games/capturetheflag/capturetheflag.js",
-    "capturetheflag.kif": "http://ggp.stanford.edu/ggp/games/capturetheflag/capturetheflag.kif",
     "capturetheflag.txt": "http://ggp.stanford.edu/ggp/games/capturetheflag/capturetheflag.txt"
   }
 }

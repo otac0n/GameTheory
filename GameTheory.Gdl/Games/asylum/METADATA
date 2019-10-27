@@ -1,26 +1,26 @@
 {
   "gameName": "Asylum",
-  "rulesheet": "asylum.kif",
+  "rulesheet": "asylum.gdl",
   "stylesheet": "asylum.js",
   "description": "asylum.txt",
   "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=asylum",
   "curator": "genesereth@stanford.edu",
   "sources": {
+    "asylum.gdl": "http://ggp.stanford.edu/ggp/games/asylum/asylum.kif",
+    "asylum.js": "http://ggp.stanford.edu/ggp/games/asylum/asylum.js",
+    "asylum.txt": "http://ggp.stanford.edu/ggp/games/asylum/asylum.txt",
     "Black_Bishop.png": "http://ggp.stanford.edu/ggp/games/asylum/Black_Bishop.png",
     "Black_King.png": "http://ggp.stanford.edu/ggp/games/asylum/Black_King.png",
     "Black_Knight.png": "http://ggp.stanford.edu/ggp/games/asylum/Black_Knight.png",
     "Black_Pawn.png": "http://ggp.stanford.edu/ggp/games/asylum/Black_Pawn.png",
     "Black_Queen.png": "http://ggp.stanford.edu/ggp/games/asylum/Black_Queen.png",
     "Black_Rook.png": "http://ggp.stanford.edu/ggp/games/asylum/Black_Rook.png",
+    "manager.js": "http://ggp.stanford.edu/ggp/games/asylum/manager.js",
     "White_Bishop.png": "http://ggp.stanford.edu/ggp/games/asylum/White_Bishop.png",
     "White_King.png": "http://ggp.stanford.edu/ggp/games/asylum/White_King.png",
     "White_Knight.png": "http://ggp.stanford.edu/ggp/games/asylum/White_Knight.png",
     "White_Pawn.png": "http://ggp.stanford.edu/ggp/games/asylum/White_Pawn.png",
     "White_Queen.png": "http://ggp.stanford.edu/ggp/games/asylum/White_Queen.png",
-    "White_Rook.png": "http://ggp.stanford.edu/ggp/games/asylum/White_Rook.png",
-    "asylum.js": "http://ggp.stanford.edu/ggp/games/asylum/asylum.js",
-    "asylum.kif": "http://ggp.stanford.edu/ggp/games/asylum/asylum.kif",
-    "asylum.txt": "http://ggp.stanford.edu/ggp/games/asylum/asylum.txt",
-    "manager.js": "http://ggp.stanford.edu/ggp/games/asylum/manager.js"
+    "White_Rook.png": "http://ggp.stanford.edu/ggp/games/asylum/White_Rook.png"
   }
 }

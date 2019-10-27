@@ -1,13 +1,13 @@
 {
   "gameName": "Majorities",
-  "rulesheet": "majorities.kif",
+  "rulesheet": "majorities.gdl",
   "stylesheet": "majorities.js",
   "description": "majorities.txt",
   "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=majorities",
   "curator": "genesereth@stanford.edu",
   "sources": {
+    "majorities.gdl": "http://ggp.stanford.edu/ggp/games/majorities/majorities.kif",
     "majorities.js": "http://ggp.stanford.edu/ggp/games/majorities/majorities.js",
-    "majorities.kif": "http://ggp.stanford.edu/ggp/games/majorities/majorities.kif",
     "majorities.txt": "http://ggp.stanford.edu/ggp/games/majorities/majorities.txt"
   }
 }

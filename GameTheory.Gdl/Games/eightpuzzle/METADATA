@@ -1,13 +1,13 @@
 {
   "gameName": "Eight Puzzle",
-  "rulesheet": "eightpuzzle.kif",
+  "rulesheet": "eightpuzzle.gdl",
   "stylesheet": "eightpuzzle.js",
   "description": "eightpuzzle.txt",
   "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=eightpuzzle",
   "curator": "genesereth@stanford.edu",
   "sources": {
+    "eightpuzzle.gdl": "http://ggp.stanford.edu/ggp/games/eightpuzzle/eightpuzzle.kif",
     "eightpuzzle.js": "http://ggp.stanford.edu/ggp/games/eightpuzzle/eightpuzzle.js",
-    "eightpuzzle.kif": "http://ggp.stanford.edu/ggp/games/eightpuzzle/eightpuzzle.kif",
     "eightpuzzle.txt": "http://ggp.stanford.edu/ggp/games/eightpuzzle/eightpuzzle.txt"
   }
 }

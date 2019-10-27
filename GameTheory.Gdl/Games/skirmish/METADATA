@@ -1,6 +1,6 @@
 {
   "gameName": "Skirmish",
-  "rulesheet": "skirmish.kif",
+  "rulesheet": "skirmish.gdl",
   "stylesheet": "skirmish.js",
   "description": "skirmish.txt",
   "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=skirmish",
@@ -14,14 +14,14 @@
     "Black_Pawn.png": "http://ggp.stanford.edu/ggp/games/skirmish/Black_Pawn.png",
     "Black_Queen.png": "http://ggp.stanford.edu/ggp/games/skirmish/Black_Queen.png",
     "Black_Rook.png": "http://ggp.stanford.edu/ggp/games/skirmish/Black_Rook.png",
+    "skirmish.gdl": "http://ggp.stanford.edu/ggp/games/skirmish/skirmish.kif",
+    "skirmish.js": "http://ggp.stanford.edu/ggp/games/skirmish/skirmish.js",
+    "skirmish.txt": "http://ggp.stanford.edu/ggp/games/skirmish/skirmish.txt",
     "White_Bishop.png": "http://ggp.stanford.edu/ggp/games/skirmish/White_Bishop.png",
     "White_King.png": "http://ggp.stanford.edu/ggp/games/skirmish/White_King.png",
     "White_Knight.png": "http://ggp.stanford.edu/ggp/games/skirmish/White_Knight.png",
     "White_Pawn.png": "http://ggp.stanford.edu/ggp/games/skirmish/White_Pawn.png",
     "White_Queen.png": "http://ggp.stanford.edu/ggp/games/skirmish/White_Queen.png",
-    "White_Rook.png": "http://ggp.stanford.edu/ggp/games/skirmish/White_Rook.png",
-    "skirmish.js": "http://ggp.stanford.edu/ggp/games/skirmish/skirmish.js",
-    "skirmish.kif": "http://ggp.stanford.edu/ggp/games/skirmish/skirmish.kif",
-    "skirmish.txt": "http://ggp.stanford.edu/ggp/games/skirmish/skirmish.txt"
+    "White_Rook.png": "http://ggp.stanford.edu/ggp/games/skirmish/White_Rook.png"
   }
 }

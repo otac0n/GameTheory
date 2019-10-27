@@ -1,14 +1,14 @@
 {
   "gameName": "reversibig",
-  "rulesheet": "reversibig.kif",
+  "rulesheet": "reversibig.gdl",
   "stylesheet": "reversibig.js",
   "description": "reversibig.txt",
   "sourceUri": "http://ggp.stanford.edu/ggp/games/reversibig/",
   "sources": {
     "blue.png": "http://ggp.stanford.edu/ggp/games/reversibig/blue.png",
     "red.png": "http://ggp.stanford.edu/ggp/games/reversibig/red.png",
+    "reversibig.gdl": "http://ggp.stanford.edu/ggp/games/reversibig/reversibig.kif",
     "reversibig.js": "http://ggp.stanford.edu/ggp/games/reversibig/reversibig.js",
-    "reversibig.kif": "http://ggp.stanford.edu/ggp/games/reversibig/reversibig.kif",
     "reversibig.txt": "http://ggp.stanford.edu/ggp/games/reversibig/reversibig.txt"
   }
 }

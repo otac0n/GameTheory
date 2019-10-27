@@ -1,10 +1,10 @@
 {
   "gameName": "superttt",
-  "rulesheet": "superttt.kif",
+  "rulesheet": "superttt.gdl",
   "stylesheet": "superttt.js",
   "sourceUri": "http://ggp.stanford.edu/ggp/games/superttt/",
   "sources": {
-    "superttt.js": "http://ggp.stanford.edu/ggp/games/superttt/superttt.js",
-    "superttt.kif": "http://ggp.stanford.edu/ggp/games/superttt/superttt.kif"
+    "superttt.gdl": "http://ggp.stanford.edu/ggp/games/superttt/superttt.kif",
+    "superttt.js": "http://ggp.stanford.edu/ggp/games/superttt/superttt.js"
   }
 }

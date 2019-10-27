@@ -1,12 +1,12 @@
 {
   "gameName": "candydilemma",
-  "rulesheet": "candydilemma.kif",
+  "rulesheet": "candydilemma.gdl",
   "stylesheet": "candydilemma.js",
   "description": "candydilemma.txt",
   "sourceUri": "http://ggp.stanford.edu/ggp/games/candydilemma/",
   "sources": {
+    "candydilemma.gdl": "http://ggp.stanford.edu/ggp/games/candydilemma/candydilemma.kif",
     "candydilemma.js": "http://ggp.stanford.edu/ggp/games/candydilemma/candydilemma.js",
-    "candydilemma.kif": "http://ggp.stanford.edu/ggp/games/candydilemma/candydilemma.kif",
     "candydilemma.txt": "http://ggp.stanford.edu/ggp/games/candydilemma/candydilemma.txt"
   }
 }

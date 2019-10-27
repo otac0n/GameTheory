@@ -1,13 +1,13 @@
 {
   "gameName": "Dual Hamilton",
-  "rulesheet": "dualhamilton.kif",
+  "rulesheet": "dualhamilton.gdl",
   "stylesheet": "dualhamilton.js",
   "description": "dualhamilton.txt",
   "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=dualhamilton",
   "curator": "genesereth@stanford.edu",
   "sources": {
+    "dualhamilton.gdl": "http://ggp.stanford.edu/ggp/games/dualhamilton/dualhamilton.kif",
     "dualhamilton.js": "http://ggp.stanford.edu/ggp/games/dualhamilton/dualhamilton.js",
-    "dualhamilton.kif": "http://ggp.stanford.edu/ggp/games/dualhamilton/dualhamilton.kif",
     "dualhamilton.txt": "http://ggp.stanford.edu/ggp/games/dualhamilton/dualhamilton.txt"
   }
 }

@@ -1,10 +1,10 @@
 {
   "gameName": "seethelight",
-  "rulesheet": "seethelight.kif",
+  "rulesheet": "seethelight.gdl",
   "description": "seethelight.txt",
   "sourceUri": "http://ggp.stanford.edu/ggp/games/seethelight/",
   "sources": {
-    "seethelight.kif": "http://ggp.stanford.edu/ggp/games/seethelight/seethelight.kif",
+    "seethelight.gdl": "http://ggp.stanford.edu/ggp/games/seethelight/seethelight.kif",
     "seethelight.txt": "http://ggp.stanford.edu/ggp/games/seethelight/seethelight.txt"
   }
 }

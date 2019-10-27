@@ -1,13 +1,13 @@
 {
   "gameName": "connectfour3p",
-  "rulesheet": "connectfour3p.kif",
+  "rulesheet": "connectfour3p.gdl",
   "stylesheet": "connectfour3p.js",
   "description": "connectfour3p.txt",
   "sourceUri": "http://ggp.stanford.edu/ggp/games/connectfour3p/",
   "sources": {
     "blue.jpg": "http://ggp.stanford.edu/ggp/games/connectfour3p/blue.jpg",
+    "connectfour3p.gdl": "http://ggp.stanford.edu/ggp/games/connectfour3p/connectfour3p.kif",
     "connectfour3p.js": "http://ggp.stanford.edu/ggp/games/connectfour3p/connectfour3p.js",
-    "connectfour3p.kif": "http://ggp.stanford.edu/ggp/games/connectfour3p/connectfour3p.kif",
     "connectfour3p.txt": "http://ggp.stanford.edu/ggp/games/connectfour3p/connectfour3p.txt",
     "red.jpg": "http://ggp.stanford.edu/ggp/games/connectfour3p/red.jpg",
     "yellow.png": "http://ggp.stanford.edu/ggp/games/connectfour3p/yellow.png"

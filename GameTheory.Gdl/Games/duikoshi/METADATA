@@ -1,13 +1,13 @@
 {
   "gameName": "Duikoshi",
-  "rulesheet": "duikoshi.kif",
+  "rulesheet": "duikoshi.gdl",
   "stylesheet": "duikoshi.js",
   "description": "duikoshi.txt",
   "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=duikoshi",
   "curator": "genesereth@stanford.edu",
   "sources": {
+    "duikoshi.gdl": "http://ggp.stanford.edu/ggp/games/duikoshi/duikoshi.kif",
     "duikoshi.js": "http://ggp.stanford.edu/ggp/games/duikoshi/duikoshi.js",
-    "duikoshi.kif": "http://ggp.stanford.edu/ggp/games/duikoshi/duikoshi.kif",
     "duikoshi.txt": "http://ggp.stanford.edu/ggp/games/duikoshi/duikoshi.txt"
   }
 }

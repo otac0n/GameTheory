@@ -8,8 +8,8 @@
   "gdlVersion": "v1",
   "seesXml": "(<= (sees_xml random ?t) (true ?t))\n(<= (sees_xml ?p ?t) (role ?p) (distinct ?p random) (true ?t))",
   "sources": {
-    "tictactoe.js": "http://ggp.stanford.edu/ggp/games/tictactoe/tictactoe.js",
     "tictactoe.gdl": "http://ggp.stanford.edu/ggp/games/tictactoe/tictactoe.kif",
+    "tictactoe.js": "http://ggp.stanford.edu/ggp/games/tictactoe/tictactoe.js",
     "tictactoe.txt": "http://ggp.stanford.edu/ggp/games/tictactoe/tictactoe.txt"
   }
 }

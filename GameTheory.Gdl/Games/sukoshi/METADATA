@@ -1,13 +1,13 @@
 {
   "gameName": "Sukoshi",
-  "rulesheet": "sukoshi.kif",
+  "rulesheet": "sukoshi.gdl",
   "stylesheet": "sukoshi.js",
   "description": "sukoshi.txt",
   "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=sukoshi",
   "curator": "genesereth@stanford.edu",
   "sources": {
+    "sukoshi.gdl": "http://ggp.stanford.edu/ggp/games/sukoshi/sukoshi.kif",
     "sukoshi.js": "http://ggp.stanford.edu/ggp/games/sukoshi/sukoshi.js",
-    "sukoshi.kif": "http://ggp.stanford.edu/ggp/games/sukoshi/sukoshi.kif",
     "sukoshi.txt": "http://ggp.stanford.edu/ggp/games/sukoshi/sukoshi.txt"
   }
 }

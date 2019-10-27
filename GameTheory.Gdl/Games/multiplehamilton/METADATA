@@ -1,13 +1,13 @@
 {
   "gameName": "Multiple Hamilton",
-  "rulesheet": "multiplehamilton.kif",
+  "rulesheet": "multiplehamilton.gdl",
   "stylesheet": "multiplehamilton.js",
   "description": "multiplehamilton.txt",
   "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=multiplehamilton",
   "curator": "genesereth@stanford.edu",
   "sources": {
+    "multiplehamilton.gdl": "http://ggp.stanford.edu/ggp/games/multiplehamilton/multiplehamilton.kif",
     "multiplehamilton.js": "http://ggp.stanford.edu/ggp/games/multiplehamilton/multiplehamilton.js",
-    "multiplehamilton.kif": "http://ggp.stanford.edu/ggp/games/multiplehamilton/multiplehamilton.kif",
     "multiplehamilton.txt": "http://ggp.stanford.edu/ggp/games/multiplehamilton/multiplehamilton.txt"
   }
 }

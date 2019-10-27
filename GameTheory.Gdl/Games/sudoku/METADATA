@@ -1,13 +1,13 @@
 {
   "gameName": "Sudoku",
-  "rulesheet": "sudoku.kif",
+  "rulesheet": "sudoku.gdl",
   "stylesheet": "sudoku.js",
   "description": "sudoku.txt",
   "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=sudoku",
   "curator": "genesereth@stanford.edu",
   "sources": {
+    "sudoku.gdl": "http://ggp.stanford.edu/ggp/games/sudoku/sudoku.kif",
     "sudoku.js": "http://ggp.stanford.edu/ggp/games/sudoku/sudoku.js",
-    "sudoku.kif": "http://ggp.stanford.edu/ggp/games/sudoku/sudoku.kif",
     "sudoku.txt": "http://ggp.stanford.edu/ggp/games/sudoku/sudoku.txt"
   }
 }

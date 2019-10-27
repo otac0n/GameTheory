@@ -1,14 +1,14 @@
 {
   "gameName": "Best Knights Tour",
-  "rulesheet": "bestknightstour.kif",
+  "rulesheet": "bestknightstour.gdl",
   "stylesheet": "bestknightstour.js",
   "description": "bestknightstour.txt",
   "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=bestknightstour",
   "curator": "genesereth@stanford.edu",
   "sources": {
-    "White_Knight.png": "http://ggp.stanford.edu/ggp/games/bestknightstour/White_Knight.png",
+    "bestknightstour.gdl": "http://ggp.stanford.edu/ggp/games/bestknightstour/bestknightstour.kif",
     "bestknightstour.js": "http://ggp.stanford.edu/ggp/games/bestknightstour/bestknightstour.js",
-    "bestknightstour.kif": "http://ggp.stanford.edu/ggp/games/bestknightstour/bestknightstour.kif",
-    "bestknightstour.txt": "http://ggp.stanford.edu/ggp/games/bestknightstour/bestknightstour.txt"
+    "bestknightstour.txt": "http://ggp.stanford.edu/ggp/games/bestknightstour/bestknightstour.txt",
+    "White_Knight.png": "http://ggp.stanford.edu/ggp/games/bestknightstour/White_Knight.png"
   }
 }

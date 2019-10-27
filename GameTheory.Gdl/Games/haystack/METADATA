@@ -1,8 +1,8 @@
 {
   "gameName": "haystack",
-  "rulesheet": "haystack.kif",
+  "rulesheet": "haystack.gdl",
   "sourceUri": "http://ggp.stanford.edu/ggp/games/haystack/",
   "sources": {
-    "haystack.kif": "http://ggp.stanford.edu/ggp/games/haystack/haystack.kif"
+    "haystack.gdl": "http://ggp.stanford.edu/ggp/games/haystack/haystack.kif"
   }
 }

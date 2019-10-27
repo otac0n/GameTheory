@@ -1,13 +1,13 @@
 {
   "gameName": "Alquerque",
-  "rulesheet": "alquerque.kif",
+  "rulesheet": "alquerque.gdl",
   "stylesheet": "alquerque.js",
   "description": "alquerque.txt",
   "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=alquerque",
   "curator": "genesereth@stanford.edu",
   "sources": {
+    "alquerque.gdl": "http://ggp.stanford.edu/ggp/games/alquerque/alquerque.kif",
     "alquerque.js": "http://ggp.stanford.edu/ggp/games/alquerque/alquerque.js",
-    "alquerque.kif": "http://ggp.stanford.edu/ggp/games/alquerque/alquerque.kif",
     "alquerque.txt": "http://ggp.stanford.edu/ggp/games/alquerque/alquerque.txt"
   }
 }
