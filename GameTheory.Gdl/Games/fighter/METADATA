@@ -1,6 +1,7 @@
 {
   "gameName": "fighter",
   "rulesheet": "fighter.gdl",
+  "stylesheet": "stylesheets/streetfight/streetfight.xsl",
   "description": "fighter.txt",
   "sourceUri": "http://ggpserver.general-game-playing.de/ggpserver/public/view_game.jsp?name=fighter",
   "uploadedBy": "stephan",
@@ -8,6 +9,21 @@
   "seesXml": "(<= (sees_xml random ?t) (true ?t))\r\n(<= (sees_xml ?p ?t) (role ?p) (distinct ?p random) (true ?t))",
   "sources": {
     "fighter.gdl": "http://ggpserver.general-game-playing.de/ggpserver/public/download_gdl.jsp?name=fighter",
-    "fighter.txt": "http://ggpserver.general-game-playing.de/ggpserver/public/view_game.jsp?name=fighter#description"
+    "fighter.txt": "http://ggpserver.general-game-playing.de/ggpserver/public/view_game.jsp?name=fighter#description",
+    "stylesheets/LICENSE": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/LICENSE",
+    "stylesheets/streetfight/streetfight.xsl": "http://ggpserver.general-game-playing.de/ggpserver/stylesheets/streetfight/streetfight.xsl",
+    "stylesheets/generic/template.xsl": "http://ggpserver.general-game-playing.de/ggpserver/stylesheets/generic/template.xsl",
+    "stylesheets/generic/state.xsl": "http://ggpserver.general-game-playing.de/ggpserver/stylesheets/generic/state.xsl",
+    "stylesheets/generic/sitespecific.xsl": "http://ggpserver.general-game-playing.de/ggpserver/stylesheets/generic/sitespecific.xsl",
+    "stylesheets/generic/title.xsl": "http://ggpserver.general-game-playing.de/ggpserver/stylesheets/generic/title.xsl",
+    "stylesheets/generic/navigation.xsl": "http://ggpserver.general-game-playing.de/ggpserver/stylesheets/generic/navigation.xsl",
+    "stylesheets/generic/header.xsl": "http://ggpserver.general-game-playing.de/ggpserver/stylesheets/generic/header.xsl",
+    "stylesheets/generic/play_header.xsl": "http://ggpserver.general-game-playing.de/ggpserver/stylesheets/generic/play_header.xsl",
+    "stylesheets/generic/footer.xsl": "http://ggpserver.general-game-playing.de/ggpserver/stylesheets/generic/footer.xsl",
+    "stylesheets/generic/history.xsl": "http://ggpserver.general-game-playing.de/ggpserver/stylesheets/generic/history.xsl",
+    "stylesheets/generic/playerInfo.xsl": "http://ggpserver.general-game-playing.de/ggpserver/stylesheets/generic/playerInfo.xsl",
+    "stylesheets/generic/playClock.xsl": "http://ggpserver.general-game-playing.de/ggpserver/stylesheets/generic/playClock.xsl",
+    "stylesheets/generic/legalMoves.xsl": "http://ggpserver.general-game-playing.de/ggpserver/stylesheets/generic/legalMoves.xsl",
+    "stylesheets/generic/variables.xsl": "http://ggpserver.general-game-playing.de/ggpserver/stylesheets/generic/variables.xsl"
   }
 }

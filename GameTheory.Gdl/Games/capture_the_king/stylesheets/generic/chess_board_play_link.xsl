@@ -217,14 +217,23 @@
 			<xsl:choose>
 				<xsl:when test="$type='MARK' or $type='DEST'">green</xsl:when>
 				<xsl:when test="$type='SOURCE'">red</xsl:when>
-				<xsl:when test="$type='CHOSENMOVE'">white</xsl:when>
+				<xsl:when test="$type='CHOSENMOVE'">blue</xsl:when>
 			</xsl:choose>
 		</xsl:variable>
+		<!-- 
 		<xsl:variable name="opacity">
 			<xsl:choose>
-				<xsl:when test="$type='MARK' or $type='SOURCE'">0.3</xsl:when>
+				<xsl:when test="$type='MARK' or $type='SOURCE'">0.15</xsl:when>
 				<xsl:when test="$type='DEST'">0.0</xsl:when>
 				<xsl:when test="$type='CHOSENMOVE'">0.6</xsl:when>
+			</xsl:choose>
+		</xsl:variable>
+		-->
+		<xsl:variable name="style">
+			<xsl:choose>
+				<xsl:when test="$type='MARK' or $type='SOURCE'">dashed</xsl:when>
+				<xsl:when test="$type='DEST'">none</xsl:when>
+				<xsl:when test="$type='CHOSENMOVE'">solid</xsl:when>
 			</xsl:choose>
 		</xsl:variable>
 		<div class="chesscellcontent">
@@ -232,9 +241,14 @@
 			<xsl:attribute name="style">
 				left: <xsl:value-of select="$xPosCell"/>px;
 				top: <xsl:value-of select="$yPosCell"/>px;
-			 	background-color: <xsl:value-of select="$color"/>;
-			 	opacity: <xsl:value-of select="$opacity"/>;
+				outline-width: 2px;
+				outline-style: <xsl:value-of select="$style"/>;
+				outline-color: <xsl:value-of select="$color"/>;
 			</xsl:attribute>
+			 	<!--
+			 		background-color: <xsl:value-of select="$color"/>;
+			 		opacity: <xsl:value-of select="$opacity"/>;
+			 	 -->
 				<!--  position: absolute;
 			 	width: <xsl:value-of select="$CellWidth - 2 * $BorderWidth"/>px;
 			 	height: <xsl:value-of select="$CellHeight - 2 * $BorderWidth"/>px;
@@ -268,9 +282,11 @@
 				*/
 				function highlightChessBoardCell(board, x, y, highlight) {
 					if (highlight) {
-						document.getElementById("chess_cell_link_"+board+"_"+x+"_"+y).style.opacity = 0.3;
+						// document.getElementById("chess_cell_link_"+board+"_"+x+"_"+y).style.opacity = 0.15;
+						document.getElementById("chess_cell_link_"+board+"_"+x+"_"+y).style.outlineStyle = "dashed";
 					} else {
-						document.getElementById("chess_cell_link_"+board+"_"+x+"_"+y).style.opacity = 0.0;
+						// document.getElementById("chess_cell_link_"+board+"_"+x+"_"+y).style.opacity = 0.0;
+						document.getElementById("chess_cell_link_"+board+"_"+x+"_"+y).style.outlineStyle = "none";
 					}
 				};
 			]]>

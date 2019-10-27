@@ -9,16 +9,19 @@
   "sources": {
     "blocks.gdl": "http://ggpserver.general-game-playing.de/ggpserver/public/download_gdl.jsp?name=blocks",
     "stylesheets/LICENSE": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/LICENSE",
-    "stylesheets/blocksworld/blocksworld.xsl": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/blocksworld/blocksworld.xsl",
-    "stylesheets/generic/template.xsl": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/generic/template.xsl",
-    "stylesheets/generic/state.xsl": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/generic/state.xsl",
-    "stylesheets/generic/sitespecific.xsl": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/generic/sitespecific.xsl",
-    "stylesheets/generic/title.xsl": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/generic/title.xsl",
-    "stylesheets/generic/header.xsl": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/generic/header.xsl",
-    "stylesheets/generic/footer.xsl": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/generic/footer.xsl",
-    "stylesheets/generic/history.xsl": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/generic/history.xsl",
-    "stylesheets/generic/playerInfo.xsl": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/generic/playerInfo.xsl",
-    "stylesheets/generic/playClock.xsl": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/generic/playClock.xsl",
-    "stylesheets/generic/variables.xsl": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/generic/variables.xsl"
+    "stylesheets/blocksworld/blocksworld.xsl": "http://ggpserver.general-game-playing.de/ggpserver/stylesheets/blocksworld/blocksworld.xsl",
+    "stylesheets/generic/template.xsl": "http://ggpserver.general-game-playing.de/ggpserver/stylesheets/generic/template.xsl",
+    "stylesheets/generic/state.xsl": "http://ggpserver.general-game-playing.de/ggpserver/stylesheets/generic/state.xsl",
+    "stylesheets/generic/sitespecific.xsl": "http://ggpserver.general-game-playing.de/ggpserver/stylesheets/generic/sitespecific.xsl",
+    "stylesheets/generic/title.xsl": "http://ggpserver.general-game-playing.de/ggpserver/stylesheets/generic/title.xsl",
+    "stylesheets/generic/header.xsl": "http://ggpserver.general-game-playing.de/ggpserver/stylesheets/generic/header.xsl",
+    "stylesheets/generic/footer.xsl": "http://ggpserver.general-game-playing.de/ggpserver/stylesheets/generic/footer.xsl",
+    "stylesheets/generic/history.xsl": "http://ggpserver.general-game-playing.de/ggpserver/stylesheets/generic/history.xsl",
+    "stylesheets/generic/playerInfo.xsl": "http://ggpserver.general-game-playing.de/ggpserver/stylesheets/generic/playerInfo.xsl",
+    "stylesheets/generic/playClock.xsl": "http://ggpserver.general-game-playing.de/ggpserver/stylesheets/generic/playClock.xsl",
+    "stylesheets/generic/variables.xsl": "http://ggpserver.general-game-playing.de/ggpserver/stylesheets/generic/variables.xsl",
+    "stylesheets/generic/navigation.xsl": "http://ggpserver.general-game-playing.de/ggpserver/stylesheets/generic/navigation.xsl",
+    "stylesheets/generic/play_header.xsl": "http://ggpserver.general-game-playing.de/ggpserver/stylesheets/generic/play_header.xsl",
+    "stylesheets/generic/legalMoves.xsl": "http://ggpserver.general-game-playing.de/ggpserver/stylesheets/generic/legalMoves.xsl"
   }
 }

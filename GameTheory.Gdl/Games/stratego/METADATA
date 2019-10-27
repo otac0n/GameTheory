@@ -1,6 +1,7 @@
 {
   "gameName": "stratego",
   "rulesheet": "stratego.gdl",
+  "stylesheet": "stylesheets/stratego/stratego.xsl",
   "description": "stratego.txt",
   "sourceUri": "http://ggpserver.general-game-playing.de/ggpserver/public/view_game.jsp?name=stratego",
   "uploadedBy": "stephan",
@@ -8,6 +9,21 @@
   "seesXml": "(<= (sees_xml random ?t) (true ?t))\r\n(<= (sees_xml red (cell ?x ?y ?p)) (true (cell ?x ?y ?p)) (true (occupied ?x ?y red)))\r\n(<= (sees_xml blue (cell ?x ?y ?p)) (true (cell ?x ?y ?p)) (true (occupied ?x ?y blue)))\r\n(<= (sees_xml ?r (occupied ?x ?y ?r2)) (role ?r) (true (occupied ?x ?y ?r2)))\r\n(<= (sees_xml ?r (step ?n)) (role ?r) (true (step ?n)))\r\n(<= (sees_xml ?r (cell ?x ?y b)) (role ?r) (true (cell ?x ?y b)))",
   "sources": {
     "stratego.gdl": "http://ggpserver.general-game-playing.de/ggpserver/public/download_gdl.jsp?name=stratego",
-    "stratego.txt": "http://ggpserver.general-game-playing.de/ggpserver/public/view_game.jsp?name=stratego#description"
+    "stratego.txt": "http://ggpserver.general-game-playing.de/ggpserver/public/view_game.jsp?name=stratego#description",
+    "stylesheets/LICENSE": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/LICENSE",
+    "stylesheets/stratego/stratego.xsl": "http://ggpserver.general-game-playing.de/ggpserver/stylesheets/stratego/stratego.xsl",
+    "stylesheets/generic/template.xsl": "http://ggpserver.general-game-playing.de/ggpserver/stylesheets/generic/template.xsl",
+    "stylesheets/generic/state.xsl": "http://ggpserver.general-game-playing.de/ggpserver/stylesheets/generic/state.xsl",
+    "stylesheets/generic/sitespecific.xsl": "http://ggpserver.general-game-playing.de/ggpserver/stylesheets/generic/sitespecific.xsl",
+    "stylesheets/generic/title.xsl": "http://ggpserver.general-game-playing.de/ggpserver/stylesheets/generic/title.xsl",
+    "stylesheets/generic/navigation.xsl": "http://ggpserver.general-game-playing.de/ggpserver/stylesheets/generic/navigation.xsl",
+    "stylesheets/generic/header.xsl": "http://ggpserver.general-game-playing.de/ggpserver/stylesheets/generic/header.xsl",
+    "stylesheets/generic/play_header.xsl": "http://ggpserver.general-game-playing.de/ggpserver/stylesheets/generic/play_header.xsl",
+    "stylesheets/generic/footer.xsl": "http://ggpserver.general-game-playing.de/ggpserver/stylesheets/generic/footer.xsl",
+    "stylesheets/generic/history.xsl": "http://ggpserver.general-game-playing.de/ggpserver/stylesheets/generic/history.xsl",
+    "stylesheets/generic/playerInfo.xsl": "http://ggpserver.general-game-playing.de/ggpserver/stylesheets/generic/playerInfo.xsl",
+    "stylesheets/generic/playClock.xsl": "http://ggpserver.general-game-playing.de/ggpserver/stylesheets/generic/playClock.xsl",
+    "stylesheets/generic/legalMoves.xsl": "http://ggpserver.general-game-playing.de/ggpserver/stylesheets/generic/legalMoves.xsl",
+    "stylesheets/generic/variables.xsl": "http://ggpserver.general-game-playing.de/ggpserver/stylesheets/generic/variables.xsl"
   }
 }

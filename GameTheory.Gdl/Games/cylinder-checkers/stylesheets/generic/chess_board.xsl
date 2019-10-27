@@ -353,6 +353,7 @@
 							<xsl:when test="$content='9'">x9</xsl:when>
 							<xsl:when test="$content='X'">xx</xsl:when>
 							<xsl:when test="$content='O'">xo</xsl:when>
+							<xsl:when test="$content='REDSQUARE'">RR</xsl:when>
 							<xsl:otherwise>
 								<xsl:choose>
 									<xsl:when test="contains($content, 'KNIGHT')">n</xsl:when>

@@ -1,6 +1,7 @@
 {
   "gameName": "amazons",
   "rulesheet": "amazons.gdl",
+  "stylesheet": "stylesheets/chess_like/chess_like_10x10.xsl",
   "description": "amazons.txt",
   "sourceUri": "http://ggpserver.general-game-playing.de/ggpserver/public/view_game.jsp?name=amazons",
   "uploadedBy": "stephan",
@@ -8,6 +9,24 @@
   "seesXml": "(<= (translate_fluent (cellholds ?x ?y white) (cellholds ?x ?y whitequeen))\r\n    (cell ?x ?y)\r\n)\r\n(<= (translate_fluent (cellholds ?x ?y black) (cellholds ?x ?y blackqueen))\r\n    (cell ?x ?y)\r\n)\r\n(<= (translate_fluent (cellholds ?x ?y arrow) (cellholds ?x ?y redsquare))\r\n    (cell ?x ?y)\r\n)\r\n(<= (translate_fluent (control ?r) (control ?r))\r\n    (role ?r)\r\n)\r\n\r\n(<= (sees_xml random ?t1) (true ?t) (translate_fluent ?t ?t1))\r\n(<= (sees_xml ?p ?t1) (role ?p) (distinct ?p random) (true ?t) (translate_fluent ?t ?t1))",
   "sources": {
     "amazons.gdl": "http://ggpserver.general-game-playing.de/ggpserver/public/download_gdl.jsp?name=amazons",
-    "amazons.txt": "http://ggpserver.general-game-playing.de/ggpserver/public/view_game.jsp?name=amazons#description"
+    "amazons.txt": "http://ggpserver.general-game-playing.de/ggpserver/public/view_game.jsp?name=amazons#description",
+    "stylesheets/LICENSE": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/LICENSE",
+    "stylesheets/chess_like/chess_like_10x10.xsl": "http://ggpserver.general-game-playing.de/ggpserver/stylesheets/chess_like/chess_like_10x10.xsl",
+    "stylesheets/generic/template.xsl": "http://ggpserver.general-game-playing.de/ggpserver/stylesheets/generic/template.xsl",
+    "stylesheets/generic/chess_board.xsl": "http://ggpserver.general-game-playing.de/ggpserver/stylesheets/generic/chess_board.xsl",
+    "stylesheets/generic/sitespecific.xsl": "http://ggpserver.general-game-playing.de/ggpserver/stylesheets/generic/sitespecific.xsl",
+    "stylesheets/generic/title.xsl": "http://ggpserver.general-game-playing.de/ggpserver/stylesheets/generic/title.xsl",
+    "stylesheets/generic/navigation.xsl": "http://ggpserver.general-game-playing.de/ggpserver/stylesheets/generic/navigation.xsl",
+    "stylesheets/generic/header.xsl": "http://ggpserver.general-game-playing.de/ggpserver/stylesheets/generic/header.xsl",
+    "stylesheets/generic/play_header.xsl": "http://ggpserver.general-game-playing.de/ggpserver/stylesheets/generic/play_header.xsl",
+    "stylesheets/generic/footer.xsl": "http://ggpserver.general-game-playing.de/ggpserver/stylesheets/generic/footer.xsl",
+    "stylesheets/generic/history.xsl": "http://ggpserver.general-game-playing.de/ggpserver/stylesheets/generic/history.xsl",
+    "stylesheets/generic/playerInfo.xsl": "http://ggpserver.general-game-playing.de/ggpserver/stylesheets/generic/playerInfo.xsl",
+    "stylesheets/generic/playClock.xsl": "http://ggpserver.general-game-playing.de/ggpserver/stylesheets/generic/playClock.xsl",
+    "stylesheets/generic/state.xsl": "http://ggpserver.general-game-playing.de/ggpserver/stylesheets/generic/state.xsl",
+    "stylesheets/generic/legalMoves.xsl": "http://ggpserver.general-game-playing.de/ggpserver/stylesheets/generic/legalMoves.xsl",
+    "stylesheets/generic/variables.xsl": "http://ggpserver.general-game-playing.de/ggpserver/stylesheets/generic/variables.xsl",
+    "stylesheets/generic/board.xsl": "http://ggpserver.general-game-playing.de/ggpserver/stylesheets/generic/board.xsl",
+    "stylesheets/generic/chess_board_play_link.xsl": "http://ggpserver.general-game-playing.de/ggpserver/stylesheets/generic/chess_board_play_link.xsl"
   }
 }

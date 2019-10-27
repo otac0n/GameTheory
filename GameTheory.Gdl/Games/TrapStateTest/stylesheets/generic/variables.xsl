@@ -13,4 +13,6 @@
 
 	<xsl:variable name="role" select="/match/sight-of"/>
 
+	<xsl:variable name="gdlVersion" select="/match/gdl-version"/>
+
 </xsl:stylesheet>
