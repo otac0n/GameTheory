@@ -6,8 +6,8 @@
   "sourceUri": "http://ggpserver.general-game-playing.de/ggpserver/public/view_game.jsp?name=wargame02",
   "uploadedBy": "stephan",
   "gdlVersion": "v1",
-  "seesXml": "(<= (sees_xml random ?t) (true ?t))\r\n(<= (sees_xml ?p ?t) (role ?p) (distinct ?p random) (true ?t))",
   "sources": {
+    "sees_xml.gdl": "http://ggpserver.general-game-playing.de/ggpserver/public/view_game.jsp?name=wargame02#sees_xml",
     "wargame02.gdl": "http://ggpserver.general-game-playing.de/ggpserver/public/download_gdl.jsp?name=wargame02",
     "wargame02.txt": "http://ggpserver.general-game-playing.de/ggpserver/public/view_game.jsp?name=wargame02#description",
     "stylesheets/LICENSE": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/LICENSE",

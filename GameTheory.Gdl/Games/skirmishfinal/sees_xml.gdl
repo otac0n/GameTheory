@@ -1,0 +1,8 @@
+(<= (sees_xml random ?t) (sees_xml1 ?t))
+(<= (sees_xml ?p ?t) (role ?p) (distinct ?p random) (sees_xml1 ?t))
+
+(<= (sees_xml1 ?f) (true ?f))
+; show cells that are off limit as red circle
+(<= (sees_xml1 (location ?x ?y red))
+    (true (cellofflimits ?x ?y))
+)

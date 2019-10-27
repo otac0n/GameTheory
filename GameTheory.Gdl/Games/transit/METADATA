@@ -6,8 +6,8 @@
   "sourceUri": "http://ggpserver.general-game-playing.de/ggpserver/public/view_game.jsp?name=transit",
   "uploadedBy": "stephan",
   "gdlVersion": "v2",
-  "seesXml": "(<= (sees_xml ?r (location ?r ?x ?y))\r\n    (true (location ?r ?x ?y))\r\n)\r\n(<= (sees_xml ?r1 (location ?r2 ?x ?y))\r\n    (role ?r2)\r\n    (true (location ?r2 ?x ?y))\r\n    (true (location ?r1 ?x ?y))\r\n    (distinct ?r1 ?r2))\r\n(<= (sees_xml patrol (location transit ?x 8))\r\n    (true (location transit ?x 8)))\r\n(<= (sees_xml ?r (control ?r2))\r\n    (role ?r)\r\n    (true (control ?r2))\r\n)\r\n(<= (sees_xml ?r (step ?s))\r\n    (role ?r)\r\n    (true (step ?s))\r\n)",
   "sources": {
+    "sees_xml.gdl": "http://ggpserver.general-game-playing.de/ggpserver/public/view_game.jsp?name=transit#sees_xml",
     "transit.gdl": "http://ggpserver.general-game-playing.de/ggpserver/public/download_gdl.jsp?name=transit",
     "transit.txt": "http://ggpserver.general-game-playing.de/ggpserver/public/view_game.jsp?name=transit#description",
     "stylesheets/LICENSE": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/LICENSE",

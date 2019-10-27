@@ -6,8 +6,8 @@
   "sourceUri": "http://ggpserver.general-game-playing.de/ggpserver/public/view_game.jsp?name=Street_Fighter_Ko",
   "uploadedBy": "Francois23",
   "gdlVersion": "v1",
-  "seesXml": "(<= (sees_xml random ?t) (true ?t))\r\n(<= (sees_xml ?p ?t) (role ?p) (distinct ?p random) (true ?t))",
   "sources": {
+    "sees_xml.gdl": "http://ggpserver.general-game-playing.de/ggpserver/public/view_game.jsp?name=Street_Fighter_Ko#sees_xml",
     "Street_Fighter_Ko.gdl": "http://ggpserver.general-game-playing.de/ggpserver/public/download_gdl.jsp?name=Street_Fighter_Ko",
     "Street_Fighter_Ko.txt": "http://ggpserver.general-game-playing.de/ggpserver/public/view_game.jsp?name=Street_Fighter_Ko#description",
     "stylesheets/LICENSE": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/LICENSE",

@@ -5,9 +5,9 @@
   "sourceUri": "http://ggpserver.general-game-playing.de/ggpserver/public/view_game.jsp?name=guess6",
   "uploadedBy": "baum",
   "gdlVersion": "v2",
-  "seesXml": ";;;;;;;;;;;;;;;;;;;; sees predicates ;;;;;;;;;;;;;;;;;;;;;;;;;;\r\n\r\n(<= (sees player (result ?n))\r\n\t(does random (rollDice ?n))\r\n)",
   "sources": {
     "guess6.gdl": "http://ggpserver.general-game-playing.de/ggpserver/public/download_gdl.jsp?name=guess6",
+    "sees_xml.gdl": "http://ggpserver.general-game-playing.de/ggpserver/public/view_game.jsp?name=guess6#sees_xml",
     "stylesheets/LICENSE": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/LICENSE",
     "stylesheets/generic/footer.xsl": "http://ggpserver.general-game-playing.de/ggpserver/stylesheets/generic/footer.xsl",
     "stylesheets/generic/generic.xsl": "http://ggpserver.general-game-playing.de/ggpserver/stylesheets/generic/generic.xsl",

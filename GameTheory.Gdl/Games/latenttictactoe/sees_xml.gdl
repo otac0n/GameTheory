@@ -1,0 +1,6 @@
+(<= (sees_xml random ?t) (true ?t))
+(<= (sees_xml xplayer (cell ?x ?y ?c)) (true (cell ?x ?y ?c)) (true (deniedx ?x ?y x)))
+(<= (sees_xml xplayer (cell ?x ?y b)) (true (deniedx ?x ?y b)))
+(<= (sees_xml oplayer (cell ?x ?y ?c)) (true (cell ?x ?y ?c)) (true (deniedo ?x ?y x)))
+(<= (sees_xml oplayer (cell ?x ?y b)) (true (deniedo ?x ?y b)))
+(<= (sees_xml ?p (control ?who)) (role ?p) (distinct ?p random) (true (control ?who)))

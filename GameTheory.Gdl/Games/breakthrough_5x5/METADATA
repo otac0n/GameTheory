@@ -6,10 +6,10 @@
   "sourceUri": "http://ggpserver.general-game-playing.de/ggpserver/public/view_game.jsp?name=breakthrough_5x5",
   "uploadedBy": "stephan",
   "gdlVersion": "v1",
-  "seesXml": "(<= (sees_xml random ?t) (true ?t))\r\n(<= (sees_xml ?p ?t) (role ?p) (distinct ?p random) (true ?t))\r\n\r\n(<= (sees_xml random (cell ?x ?y b)) (cellEmpty ?x ?y))\r\n(<= (sees_xml ?p (cell ?x ?y b)) (role ?p) (distinct ?p random) (cellEmpty ?x ?y))",
   "sources": {
     "breakthrough_5x5.gdl": "http://ggpserver.general-game-playing.de/ggpserver/public/download_gdl.jsp?name=breakthrough_5x5",
     "breakthrough_5x5.txt": "http://ggpserver.general-game-playing.de/ggpserver/public/view_game.jsp?name=breakthrough_5x5#description",
+    "sees_xml.gdl": "http://ggpserver.general-game-playing.de/ggpserver/public/view_game.jsp?name=breakthrough_5x5#sees_xml",
     "stylesheets/LICENSE": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/LICENSE",
     "stylesheets/chess_like/chess_like_automatic.xsl": "http://ggpserver.general-game-playing.de/ggpserver/stylesheets/chess_like/chess_like_automatic.xsl",
     "stylesheets/generic/board.xsl": "http://ggpserver.general-game-playing.de/ggpserver/stylesheets/generic/board.xsl",

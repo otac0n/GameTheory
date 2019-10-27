@@ -1,0 +1,19 @@
+(<= (sees_xml random ?t) (sees_xml1 ?t))
+(<= (sees_xml ?p ?t) (role ?p) (distinct ?p random) (sees_xml1 ?t))
+
+(<= (sees_xml1 (cell ?x ?y b))
+    (index ?x)
+    (index ?y)
+    (not (cellnotblank ?x ?y)))
+
+(<= (sees_xml1 (cell ?x ?y ?p))
+    (true (cell ?x ?y ?p ?s)))
+
+(<= (cellnotblank ?x ?y)
+    (true (cell ?x ?y ?c ?s)))
+
+(<= (sees_xml1 (control ?p))
+    (true (control ?p)))
+
+(<= (sees_xml1 (step ?s))
+    (true (step ?s)))

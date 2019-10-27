@@ -1,0 +1,16 @@
+(<= (sees_xml random ?t) (sees_xml1 ?t))
+(<= (sees_xml ?p ?t) (role ?p) (distinct ?p random) (sees_xml1 ?t))
+
+; keep these fluents
+(<= (sees_xml1 (cell ?x ?y ?c)) (true (cell ?x ?y ?c)))
+(<= (sees_xml1 (control ?p)) (true (control ?p)))
+(<= (sees_xml1 (ticscores ?x ?y)) (true (ticscores ?x ?y)))
+
+; rename the cell contents of the blocker cells
+(<= (sees_xml1 (cellb ?x ?y x)) (true (cellb ?x ?y xcplayer)))
+(<= (sees_xml1 (cellb ?x ?y o)) (true (cellb ?x ?y blk)))
+(<= (sees_xml1 (cellb ?x ?y b)) (true (cellb ?x ?y b)))
+(<= (sees_xml1 (cellb 0 ?y x)) (true (cellb ?x ?y ?c)))
+(<= (sees_xml1 (cellb 5 ?y x)) (true (cellb ?x ?y ?c)))
+(<= (sees_xml1 (cellb ?x 0 o)) (true (cellb ?x ?y ?c)))
+(<= (sees_xml1 (cellb ?x 5 o)) (true (cellb ?x ?y ?c)))

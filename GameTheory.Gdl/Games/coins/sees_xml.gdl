@@ -1,0 +1,8 @@
+(<= (sees_xml random ?t) (sees_xml1 ?t))
+(<= (sees_xml ?p ?t) (role ?p) (distinct ?p random) (sees_xml1 ?t))
+
+; transform cell into a board with only one row
+(<= (sees_xml1 (cell ?x 1 b)) (true (cell ?x zerocoins)))
+(<= (sees_xml1 (cell ?x 1 1)) (true (cell ?x onecoin)))
+(<= (sees_xml1 (cell ?x 1 2)) (true (cell ?x twocoins)))
+(<= (sees_xml1 (step ?s)) (true (step ?s)))

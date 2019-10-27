@@ -1,0 +1,8 @@
+(<= (sees_xml random ?t) (sees_xml1 ?t))
+(<= (sees_xml ?p ?t) (role ?p) (distinct ?p random) (sees_xml1 ?t))
+
+; transform the cells such that the normal chess stylesheet understands them
+(<= (sees_xml1 (cell ?x ?y b)) (true (cell ?x ?y b)))
+(<= (sees_xml1 (cell ?x ?y red)) (true (cell ?x ?y r)))
+(<= (sees_xml1 (cell ?x ?y white)) (true (cell ?x ?y w)))
+(<= (sees_xml1 (control ?p)) (true (control ?p)))

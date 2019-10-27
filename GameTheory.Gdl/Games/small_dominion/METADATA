@@ -6,8 +6,8 @@
   "sourceUri": "http://ggpserver.general-game-playing.de/ggpserver/public/view_game.jsp?name=small_dominion",
   "uploadedBy": "stephan",
   "gdlVersion": "v2",
-  "seesXml": "(<= (sees_xml random ?t) (true ?t))\r\n(<= (sees_xml ?p ?t) (role ?p) (distinct ?p random) (true ?t))",
   "sources": {
+    "sees_xml.gdl": "http://ggpserver.general-game-playing.de/ggpserver/public/view_game.jsp?name=small_dominion#sees_xml",
     "small_dominion.gdl": "http://ggpserver.general-game-playing.de/ggpserver/public/download_gdl.jsp?name=small_dominion",
     "small_dominion.txt": "http://ggpserver.general-game-playing.de/ggpserver/public/view_game.jsp?name=small_dominion#description",
     "stylesheets/LICENSE": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/LICENSE",

@@ -5,9 +5,9 @@
   "sourceUri": "http://ggpserver.general-game-playing.de/ggpserver/public/view_game.jsp?name=battle",
   "uploadedBy": "admin",
   "gdlVersion": "v1",
-  "seesXml": "(<= (sees_xml random ?t) (true ?t))\n(<= (sees_xml ?p ?t) (role ?p) (distinct ?p random) (true ?t))",
   "sources": {
     "battle.gdl": "http://ggpserver.general-game-playing.de/ggpserver/public/download_gdl.jsp?name=battle",
+    "sees_xml.gdl": "http://ggpserver.general-game-playing.de/ggpserver/public/view_game.jsp?name=battle#sees_xml",
     "stylesheets/LICENSE": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/LICENSE",
     "stylesheets/battle/battle.xsl": "http://ggpserver.general-game-playing.de/ggpserver/stylesheets/battle/battle.xsl",
     "stylesheets/generic/board.xsl": "http://ggpserver.general-game-playing.de/ggpserver/stylesheets/generic/board.xsl",

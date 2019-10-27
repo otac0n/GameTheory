@@ -1,0 +1,6 @@
+(<= (sees_xml random ?t) (true ?t))
+
+(<= (sees_xml candidate (closed ?d)) (true (closed ?d)))
+(<= (sees_xml candidate (chosen ?d)) (true (chosen ?d)))
+(<= (sees_xml candidate (step ?s)) (true (step ?s)))
+(<= (sees_xml candidate (car ?d)) (true (step 4)) (true (car ?d)))

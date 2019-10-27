@@ -5,9 +5,9 @@
   "sourceUri": "http://ggpserver.general-game-playing.de/ggpserver/public/view_game.jsp?name=ad_game_2x2",
   "uploadedBy": "admin",
   "gdlVersion": "v1",
-  "seesXml": "(<= (sees_xml random ?t) (true ?t))\n(<= (sees_xml ?p ?t) (role ?p) (distinct ?p random) (true ?t))",
   "sources": {
     "ad_game_2x2.gdl": "http://ggpserver.general-game-playing.de/ggpserver/public/download_gdl.jsp?name=ad_game_2x2",
+    "sees_xml.gdl": "http://ggpserver.general-game-playing.de/ggpserver/public/view_game.jsp?name=ad_game_2x2#sees_xml",
     "stylesheets/LICENSE": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/LICENSE",
     "stylesheets/chess_like/chess_like_automatic.xsl": "http://ggpserver.general-game-playing.de/ggpserver/stylesheets/chess_like/chess_like_automatic.xsl",
     "stylesheets/generic/board.xsl": "http://ggpserver.general-game-playing.de/ggpserver/stylesheets/generic/board.xsl",

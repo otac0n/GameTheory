@@ -5,9 +5,9 @@
   "sourceUri": "http://ggpserver.general-game-playing.de/ggpserver/public/view_game.jsp?name=racetrackcorridor",
   "uploadedBy": "admin",
   "gdlVersion": "v1",
-  "seesXml": "(<= (sees_xml random ?t) (sees_term ?t))\r\n(<= (sees_xml ?p ?t) (role ?p) (distinct ?p random) (sees_term ?t))\r\n\r\n; transform cell/4 into wlane/3 and blane/3 so it is identified as two boards\r\n(<= (sees_term (wlane ?y ?x ?c))\r\n  (true (cell wlane ?y ?x ?c))\r\n)\r\n(<= (sees_term (blane ?y ?x ?c))\r\n  (true (cell blane ?y ?x ?c))\r\n)\r\n(<= (sees_term ?f)\r\n  (true ?f)\r\n)",
   "sources": {
     "racetrackcorridor.gdl": "http://ggpserver.general-game-playing.de/ggpserver/public/download_gdl.jsp?name=racetrackcorridor",
+    "sees_xml.gdl": "http://ggpserver.general-game-playing.de/ggpserver/public/view_game.jsp?name=racetrackcorridor#sees_xml",
     "stylesheets/LICENSE": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/LICENSE",
     "stylesheets/generic/board.xsl": "http://ggpserver.general-game-playing.de/ggpserver/stylesheets/generic/board.xsl",
     "stylesheets/generic/chess_board.xsl": "http://ggpserver.general-game-playing.de/ggpserver/stylesheets/generic/chess_board.xsl",

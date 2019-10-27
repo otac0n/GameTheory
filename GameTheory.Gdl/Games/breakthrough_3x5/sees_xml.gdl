@@ -1,0 +1,5 @@
+(<= (sees_xml random ?t) (true ?t))
+(<= (sees_xml ?p ?t) (role ?p) (distinct ?p random) (true ?t))
+
+(<= (sees_xml random (cell ?x ?y b)) (cellEmpty ?x ?y))
+(<= (sees_xml ?p (cell ?x ?y b)) (role ?p) (distinct ?p random) (cellEmpty ?x ?y))

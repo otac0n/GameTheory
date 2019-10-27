@@ -1,0 +1,5 @@
+;;;;;;;;;;;;;;;;;;;; sees predicates ;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(<= (sees player (result ?n))
+	(does random (rollDice ?n))
+)

@@ -5,9 +5,9 @@
   "sourceUri": "http://ggpserver.general-game-playing.de/ggpserver/public/view_game.jsp?name=latenttictactoe",
   "uploadedBy": "stephan",
   "gdlVersion": "v2",
-  "seesXml": "(<= (sees_xml random ?t) (true ?t))\r\n(<= (sees_xml xplayer (cell ?x ?y ?c)) (true (cell ?x ?y ?c)) (true (deniedx ?x ?y x)))\r\n(<= (sees_xml xplayer (cell ?x ?y b)) (true (deniedx ?x ?y b)))\r\n(<= (sees_xml oplayer (cell ?x ?y ?c)) (true (cell ?x ?y ?c)) (true (deniedo ?x ?y x)))\r\n(<= (sees_xml oplayer (cell ?x ?y b)) (true (deniedo ?x ?y b)))\r\n(<= (sees_xml ?p (control ?who)) (role ?p) (distinct ?p random) (true (control ?who)))",
   "sources": {
     "latenttictactoe.gdl": "http://ggpserver.general-game-playing.de/ggpserver/public/download_gdl.jsp?name=latenttictactoe",
+    "sees_xml.gdl": "http://ggpserver.general-game-playing.de/ggpserver/public/view_game.jsp?name=latenttictactoe#sees_xml",
     "stylesheets/LICENSE": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/LICENSE",
     "stylesheets/chess_like/chess_like_automatic.xsl": "http://ggpserver.general-game-playing.de/ggpserver/stylesheets/chess_like/chess_like_automatic.xsl",
     "stylesheets/generic/board.xsl": "http://ggpserver.general-game-playing.de/ggpserver/stylesheets/generic/board.xsl",

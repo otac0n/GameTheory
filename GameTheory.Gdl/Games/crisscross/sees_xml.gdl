@@ -1,0 +1,41 @@
+(<= (sees_xml random ?t) (sees_xml1 ?t))
+(<= (sees_xml ?p ?t) (role ?p) (distinct ?p random) (sees_xml1 ?t))
+
+; transform the cells such that the normal chess stylesheet understands them
+(<= (sees_xml1 (cell ?x ?y ?c2))
+    (true (cell ?loc ?c))
+    (map_cell_content ?c ?c2)
+    (cell_to_pair ?loc ?x ?y))
+
+; keep all other fluents
+(<= (sees_xml1 ?f)
+    (true ?f)
+    (not (is_cell_fluent ?f)))
+(<= (is_cell_fluent (cell ?x ?c))
+    (true (cell ?x ?c)))
+
+; map cell locations to a pair of coordinates
+(cell_to_pair a3 a 3)
+(cell_to_pair a4 a 4)
+(cell_to_pair b3 b 3)
+(cell_to_pair b4 b 4)
+(cell_to_pair c1 c 1)
+(cell_to_pair c2 c 2)
+(cell_to_pair c3 c 3)
+(cell_to_pair c4 c 4)
+(cell_to_pair c5 c 5)
+(cell_to_pair c6 c 6)
+(cell_to_pair d1 d 1)
+(cell_to_pair d2 d 2)
+(cell_to_pair d3 d 3)
+(cell_to_pair d4 d 4)
+(cell_to_pair d5 d 5)
+(cell_to_pair d6 d 6)
+(cell_to_pair e3 e 3)
+(cell_to_pair e4 e 4)
+(cell_to_pair f3 f 3)
+(cell_to_pair f4 f 4)
+
+(map_cell_content red red)
+(map_cell_content teal teal)
+(map_cell_content blank o)

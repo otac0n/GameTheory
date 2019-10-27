@@ -1,0 +1,2 @@
+(<= (sees_xml random ?t) (true ?t))
+(<= (sees_xml ?p ?t) (role ?p) (distinct ?p random) (true ?t))

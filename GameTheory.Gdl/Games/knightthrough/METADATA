@@ -6,7 +6,6 @@
   "sourceUri": "http://ggp.stanford.edu/arena/inspectgame?id=knightthrough",
   "curator": "genesereth@stanford.edu",
   "gdlVersion": "v1",
-  "seesXml": "(<= (sees_xml random ?t) (true ?t))\n(<= (sees_xml ?p ?t) (role ?p) (distinct ?p random) (true ?t))",
   "sources": {
     "black.png": "http://ggp.stanford.edu/ggp/games/knightthrough/black.png",
     "knightthrough.gdl": "http://ggp.stanford.edu/ggp/games/knightthrough/knightthrough.kif",

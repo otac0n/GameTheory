@@ -6,10 +6,10 @@
   "sourceUri": "http://ggpserver.general-game-playing.de/ggpserver/public/view_game.jsp?name=frogs_and_toads",
   "uploadedBy": "stephan",
   "gdlVersion": "v1",
-  "seesXml": "(<= (sees_xml random ?t) (true ?t))\r\n(<= (sees_xml ?p ?t) (role ?p) (distinct ?p random) (true ?t))",
   "sources": {
     "frogs_and_toads.gdl": "http://ggpserver.general-game-playing.de/ggpserver/public/download_gdl.jsp?name=frogs_and_toads",
     "frogs_and_toads.txt": "http://ggpserver.general-game-playing.de/ggpserver/public/view_game.jsp?name=frogs_and_toads#description",
+    "sees_xml.gdl": "http://ggpserver.general-game-playing.de/ggpserver/public/view_game.jsp?name=frogs_and_toads#sees_xml",
     "stylesheets/LICENSE": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/LICENSE",
     "stylesheets/frogs_and_toads/frogs_and_toads.xsl": "http://ggpserver.general-game-playing.de/ggpserver/stylesheets/frogs_and_toads/frogs_and_toads.xsl",
     "stylesheets/generic/board.xsl": "http://ggpserver.general-game-playing.de/ggpserver/stylesheets/generic/board.xsl",

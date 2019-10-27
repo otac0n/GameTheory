@@ -6,10 +6,10 @@
   "sourceUri": "http://ggpserver.general-game-playing.de/ggpserver/public/view_game.jsp?name=cube_2x2x2",
   "uploadedBy": "stephan",
   "gdlVersion": "v1",
-  "seesXml": "(<= (sees_xml random ?t) (true ?t))\r\n(<= (sees_xml ?p ?t) (role ?p) (distinct ?p random) (true ?t))",
   "sources": {
     "cube_2x2x2.gdl": "http://ggpserver.general-game-playing.de/ggpserver/public/download_gdl.jsp?name=cube_2x2x2",
     "cube_2x2x2.txt": "http://ggpserver.general-game-playing.de/ggpserver/public/view_game.jsp?name=cube_2x2x2#description",
+    "sees_xml.gdl": "http://ggpserver.general-game-playing.de/ggpserver/public/view_game.jsp?name=cube_2x2x2#sees_xml",
     "stylesheets/LICENSE": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/LICENSE",
     "stylesheets/generic/footer.xsl": "http://ggpserver.general-game-playing.de/ggpserver/stylesheets/generic/footer.xsl",
     "stylesheets/generic/generic.xsl": "http://ggpserver.general-game-playing.de/ggpserver/stylesheets/generic/generic.xsl",

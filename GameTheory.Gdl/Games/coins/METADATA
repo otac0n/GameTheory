@@ -5,9 +5,9 @@
   "sourceUri": "http://ggpserver.general-game-playing.de/ggpserver/public/view_game.jsp?name=coins",
   "uploadedBy": "admin",
   "gdlVersion": "v1",
-  "seesXml": "(<= (sees_xml random ?t) (sees_xml1 ?t))\r\n(<= (sees_xml ?p ?t) (role ?p) (distinct ?p random) (sees_xml1 ?t))\r\n\r\n; transform cell into a board with only one row\r\n(<= (sees_xml1 (cell ?x 1 b)) (true (cell ?x zerocoins)))\r\n(<= (sees_xml1 (cell ?x 1 1)) (true (cell ?x onecoin)))\r\n(<= (sees_xml1 (cell ?x 1 2)) (true (cell ?x twocoins)))\r\n(<= (sees_xml1 (step ?s)) (true (step ?s)))",
   "sources": {
     "coins.gdl": "http://ggpserver.general-game-playing.de/ggpserver/public/download_gdl.jsp?name=coins",
+    "sees_xml.gdl": "http://ggpserver.general-game-playing.de/ggpserver/public/view_game.jsp?name=coins#sees_xml",
     "stylesheets/LICENSE": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/LICENSE",
     "stylesheets/chess_like/chess_like_automatic.xsl": "http://ggpserver.general-game-playing.de/ggpserver/stylesheets/chess_like/chess_like_automatic.xsl",
     "stylesheets/generic/board.xsl": "http://ggpserver.general-game-playing.de/ggpserver/stylesheets/generic/board.xsl",

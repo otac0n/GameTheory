@@ -1,0 +1,26 @@
+; random sees everything
+(<= (sees_xml random ?t) (true ?t))
+; player sees step-counter, setup-phase, etc.
+(<= (sees_xml player (guess ?g)) (true (guess ?g)))
+(<= (sees_xml player setup) (true setup))
+(<= (sees_xml player won) (true won))
+; player sees correct guesses
+(<= (sees_xml player (set 1 ?c1))
+    (true (playerset ?c1 ?c2 ?c3 ?c4))
+    (true (set 1 ?c1)))
+(<= (sees_xml player (set 2 ?c2))
+    (true (playerset ?c1 ?c2 ?c3 ?c4))
+    (true (set 2 ?c2)))
+(<= (sees_xml player (set 3 ?c3))
+    (true (playerset ?c1 ?c2 ?c3 ?c4))
+    (true (set 3 ?c3)))
+(<= (sees_xml player (set 4 ?c4))
+    (true (playerset ?c1 ?c2 ?c3 ?c4))
+    (true (set 4 ?c4)))
+; player sees his own guess
+(<= (sees_xml player (playerset ?c1 ?c2 ?c3 ?c4))
+    (true (playerset ?c1 ?c2 ?c3 ?c4)))
+; player sees all markers if the time is up
+(<= (sees_xml player (set ?n ?c))
+    (true (guess 13))
+    (true (set ?n ?c2)))

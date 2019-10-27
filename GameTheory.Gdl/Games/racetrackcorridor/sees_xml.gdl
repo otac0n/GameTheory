@@ -1,0 +1,13 @@
+(<= (sees_xml random ?t) (sees_term ?t))
+(<= (sees_xml ?p ?t) (role ?p) (distinct ?p random) (sees_term ?t))
+
+; transform cell/4 into wlane/3 and blane/3 so it is identified as two boards
+(<= (sees_term (wlane ?y ?x ?c))
+  (true (cell wlane ?y ?x ?c))
+)
+(<= (sees_term (blane ?y ?x ?c))
+  (true (cell blane ?y ?x ?c))
+)
+(<= (sees_term ?f)
+  (true ?f)
+)

@@ -1,0 +1,6 @@
+(<= (sees_xml random ?t) (true ?t))
+(<= (sees_xml red (cell ?x ?y ?p)) (true (cell ?x ?y ?p)) (true (occupied ?x ?y red)))
+(<= (sees_xml blue (cell ?x ?y ?p)) (true (cell ?x ?y ?p)) (true (occupied ?x ?y blue)))
+(<= (sees_xml ?r (occupied ?x ?y ?r2)) (role ?r) (true (occupied ?x ?y ?r2)))
+(<= (sees_xml ?r (step ?n)) (role ?r) (true (step ?n)))
+(<= (sees_xml ?r (cell ?x ?y b)) (role ?r) (true (cell ?x ?y b)))

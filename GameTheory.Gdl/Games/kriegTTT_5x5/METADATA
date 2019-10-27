@@ -6,10 +6,10 @@
   "sourceUri": "http://ggpserver.general-game-playing.de/ggpserver/public/view_game.jsp?name=kriegTTT_5x5",
   "uploadedBy": "stephan",
   "gdlVersion": "v2",
-  "seesXml": "(role_or_random random)\r\n(<= (role_or_random ?p)\r\n    (role ?p))\r\n\r\n(<= (sees_xml ?p (cell ?x ?y x))\r\n    (role_or_random ?p)\r\n    (distinct ?p oplayer)\r\n    (true (cell ?x ?y xplayer)))\r\n(<= (sees_xml ?p (cell ?x ?y o))\r\n    (role_or_random ?p)\r\n    (distinct ?p xplayer)\r\n    (true (cell ?x ?y oplayer)))\r\n(<= (sees_xml ?p (cell ?x ?y b))\r\n    (role_or_random ?p)\r\n    (true (cell ?x ?y b)))\r\n(<= (sees_xml ?p (step ?x))\r\n    (role_or_random ?p)\r\n    (true (step ?x)))\r\n(<= (sees_xml ?p (tried ?p ?m ?n))\r\n    (role_or_random ?p)\r\n    (true (tried ?p ?m ?n)))",
   "sources": {
     "kriegTTT_5x5.gdl": "http://ggpserver.general-game-playing.de/ggpserver/public/download_gdl.jsp?name=kriegTTT_5x5",
     "kriegTTT_5x5.txt": "http://ggpserver.general-game-playing.de/ggpserver/public/view_game.jsp?name=kriegTTT_5x5#description",
+    "sees_xml.gdl": "http://ggpserver.general-game-playing.de/ggpserver/public/view_game.jsp?name=kriegTTT_5x5#sees_xml",
     "stylesheets/LICENSE": "https://sourceforge.net/projects/ggpserver/files/stylesheets/stylesheets-r481.zip#stylesheets/LICENSE",
     "stylesheets/chess_like/chess_like_automatic.xsl": "http://ggpserver.general-game-playing.de/ggpserver/stylesheets/chess_like/chess_like_automatic.xsl",
     "stylesheets/generic/board.xsl": "http://ggpserver.general-game-playing.de/ggpserver/stylesheets/generic/board.xsl",
