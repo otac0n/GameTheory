@@ -25,6 +25,7 @@
     <AdditionalFiles Include="GameTheory.Gdl.Forms.ruleset" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="HtmlAgilityPack" Version="1.11.16" />
     <PackageReference Include="HtmlRenderer.WinForms" Version="1.5.1-beta1" />
   </ItemGroup>
   <ItemGroup>

@@ -14,6 +14,9 @@ namespace GameTheory.FormsRunner.Shared.Displays
     using GameTheory.Gdl.Catalogs;
     using GameTheory.Gdl.Shared;
     using TheArtOfDev.HtmlRenderer.WinForms;
+    using HtmlAgilityPack;
+    using HtmlDocument = HtmlAgilityPack.HtmlDocument;
+    using Newtonsoft.Json.Linq;
 
     public class IXmlWithStylesheetDisplay : Display
     {
@@ -36,7 +39,6 @@ namespace GameTheory.FormsRunner.Shared.Displays
                 var metadataStylesheet = this.game.Metadata.StyleSheet;
                 if (!string.IsNullOrEmpty(metadataStylesheet) && Path.GetExtension(metadataStylesheet).ToUpperInvariant() == ".XSL")
                 {
-                    // TODO: Use a prioritized list of xsl stylesheets.
                     try
                     {
                         using (var reader = XmlReader.Create(Path.Combine(Path.GetDirectoryName(this.game.MetadataPath), metadataStylesheet), new XmlReaderSettings()))
@@ -80,12 +82,27 @@ namespace GameTheory.FormsRunner.Shared.Displays
                         this.transform.Transform(reader, new XsltArgumentList(), writer);
                     }
 
-                    var doc = XDocument.Parse(sw.ToString());
-                    foreach (var img in doc.Descendants("img"))
+                    var doc = new HtmlDocument();
+                    doc.LoadHtml(sw.ToString());
+
+                    var sources = (JObject)this.game.Metadata.Extensions["sources"];
+                    var sourceLookup = sources.Properties().ToLookup(p => (string)p.Value, p => p.Name, StringComparer.InvariantCultureIgnoreCase);
+                    var sourceRoot = new Uri((string)sources[this.game.Metadata.StyleSheet]);
+                    var metadataRoot = new Uri(Path.GetDirectoryName(this.game.MetadataPath) + Path.DirectorySeparatorChar, UriKind.Absolute);
+
+                    var images = doc.DocumentNode.SelectNodes("//img[@src]");
+                    var links = doc.DocumentNode.SelectNodes("//a[@href]");
+                    var all = Enumerable.Concat(
+                        (images ?? Enumerable.Empty<HtmlNode>()).Select(image => image.Attributes["src"]),
+                        (links ?? Enumerable.Empty<HtmlNode>()).Select(link => link.Attributes["href"]));
+                    foreach (var attr in all)
                     {
+                        var url = new Uri(sourceRoot, attr.DeEntitizeValue);
+                        var source = sourceLookup[url.ToString()].FirstOrDefault();
+                        attr.Value = HtmlEntity.Entitize(new Uri(metadataRoot, source).ToString());
                     }
 
-                    html = doc.ToString();
+                    html = doc.DocumentNode.OuterHtml;
                 }
             }
 
