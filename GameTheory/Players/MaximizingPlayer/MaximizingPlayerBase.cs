@@ -206,7 +206,7 @@ namespace GameTheory.Players.MaximizingPlayer
                 combinedScore[player] = this.scoringMetric.Combine(playerScore);
             }
 
-            var depth = fullyDetermined ? mainlines.Max(m => m.Value.Depth) : mainlines.Where(m => !m.Value.FullyDetermined).Min(m => m.Value.Depth);
+            var depth = fullyDetermined ? mainlines.Max(m => m.Value.Depth) : mainlines.Where(m => !(m.Value?.FullyDetermined ?? false)).Min(m => m.Value?.Depth ?? 0);
             return new Mainline<TMove, TScore>(combinedScore, maxMainline.GameState, maxMainline.PlayerToken, maxMainline.Strategies, depth, fullyDetermined);
         }
 
