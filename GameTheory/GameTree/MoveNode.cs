@@ -17,8 +17,8 @@ namespace GameTheory.GameTree
         {
             this.Move = move;
             this.Outcomes = move.IsDeterministic
-                ? new[] { new Weighted<StateNode<TMove, TScore>>(tree.GetOrAdd(state.MakeMove(move)), 1) }
-                : state.GetOutcomes(move).Select(o => new Weighted<StateNode<TMove, TScore>>(tree.GetOrAdd(o.Value), o.Weight)).ToArray();
+                ? new[] { Weighted.Create(tree.GetOrAdd(state.MakeMove(move)), 1) }
+                : state.GetOutcomes(move).Select(o => Weighted.Create(tree.GetOrAdd(o.Value), o.Weight)).ToArray();
         }
 
         /// <summary>

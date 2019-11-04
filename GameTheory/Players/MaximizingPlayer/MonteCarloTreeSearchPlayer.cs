@@ -186,7 +186,7 @@ namespace GameTheory.Players.MaximizingPlayer
 
             var move = moves.Pick();
             var moveNode = node[move];
-            var outcome = moveNode.Outcomes.Pick().Value;
+            var outcome = moveNode.Outcomes.Pick();
 
             this.Playout(outcome);
 
@@ -220,13 +220,13 @@ namespace GameTheory.Players.MaximizingPlayer
                 {
                     move = node.Mainline.Strategies.Peek().Pick();
                     moveNode = node[move];
-                    outcome = moveNode.Outcomes.Pick().Value;
+                    outcome = moveNode.Outcomes.Pick();
                 }
                 else
                 {
                     move = moves.Pick();
                     moveNode = node[move];
-                    outcome = moveNode.Outcomes.Pick().Value;
+                    outcome = moveNode.Outcomes.Pick();
                 }
 
                 if (outcome.Mainline?.FullyDetermined ?? false)
@@ -234,7 +234,7 @@ namespace GameTheory.Players.MaximizingPlayer
                     var remainingOutcomes = moveNode.Outcomes.Where(o => !(o.Value.Mainline?.FullyDetermined ?? false)).ToList();
                     if (remainingOutcomes.Count > 0)
                     {
-                        outcome = remainingOutcomes.Pick().Value;
+                        outcome = remainingOutcomes.Pick();
                     }
                     else
                     {
@@ -244,7 +244,7 @@ namespace GameTheory.Players.MaximizingPlayer
                             move = remainingMoves.Pick();
                             moveNode = node[move];
                             remainingOutcomes = moveNode.Outcomes.Where(o => !(o.Value.Mainline?.FullyDetermined ?? false)).ToList();
-                            outcome = remainingOutcomes.Pick().Value;
+                            outcome = remainingOutcomes.Pick();
                         }
                         else
                         {
