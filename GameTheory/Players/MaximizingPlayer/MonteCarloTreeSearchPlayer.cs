@@ -11,18 +11,19 @@ namespace GameTheory.Players.MaximizingPlayer
     using GameTheory.GameTree;
     using GameTheory.GameTree.Caches;
 
-    public class MonteCarloTreeSearchPlayer<TMove> : MaximizingPlayerBase<TMove, ResultScore<byte>>
-        where TMove : IMove
+    public class MonteCarloTreeSearchPlayer<TMove> : MaximizingPlayerBase<TMove, WinCount>
+            where TMove : IMove
     {
         private readonly TimeSpan thinkTime;
 
         public MonteCarloTreeSearchPlayer(PlayerToken playerToken, int thinkSeconds = 5)
-            : base(playerToken, new ResultScoringMetric<TMove, byte>(ScoringMetric.Null<PlayerState<TMove>>()))
+            : base(playerToken, new WinCountScoringMetric<TMove>())
         {
             this.thinkTime = TimeSpan.FromSeconds(Math.Max(1, thinkSeconds));
         }
 
-        protected override Mainline<TMove, ResultScore<byte>> GetMove(List<IGameState<TMove>> states, bool ponder, CancellationToken cancel)
+        /// <inheritdoc/>
+        protected override Mainline<TMove, WinCount> GetMove(List<IGameState<TMove>> states, bool ponder, CancellationToken cancel)
         {
             var nodes = states.Select(this.gameTree.GetOrAdd).ToList();
 
@@ -51,41 +52,78 @@ namespace GameTheory.Players.MaximizingPlayer
         }
 
         /// <inheritdoc />
-        protected override IGameStateCache<TMove, ResultScore<byte>> MakeCache() => new DictionaryCache<TMove, ResultScore<byte>>();
+        protected override IGameStateCache<TMove, WinCount> MakeCache() => new DictionaryCache<TMove, WinCount>();
 
-        private Mainline<TMove, ResultScore<byte>> GetMaximizingMoves(PlayerToken player, IList<Mainline<TMove, ResultScore<byte>>> moveScores)
+        private Mainline<TMove, WinCount> GetMaximizingMoves(PlayerToken player, IList<Mainline<TMove, WinCount>> moveScores)
         {
-            var maxLead = default(Maybe<ResultScore<byte>>);
             var fullyDetermined = true;
-            var unvisited = 0;
-            var maxMainlines = new List<Mainline<TMove, ResultScore<byte>>>();
+            IDictionary<PlayerToken, WinCount> totalScores = null;
+            var scoresAllocated = false;
 
             for (var m = 0; m < moveScores.Count; m++)
             {
                 var mainline = moveScores[m];
-                if (mainline == null)
+                if (mainline != null)
                 {
-                    unvisited++;
-                    fullyDetermined = false;
+                    if (totalScores == null)
+                    {
+                        totalScores = mainline.Scores;
+                    }
+                    else
+                    {
+                        if (!scoresAllocated)
+                        {
+                            totalScores = new Dictionary<PlayerToken, WinCount>(totalScores);
+                            scoresAllocated = true;
+                        }
+
+                        var scores = mainline.Scores;
+                        foreach (var p in scores.Keys)
+                        {
+                            var score = scores[p];
+                            totalScores[p] = totalScores.TryGetValue(p, out var totalScore)
+                                ? new WinCount(totalScore.Wins + score.Wins, totalScore.Simulations + score.Simulations)
+                                : score;
+                        }
+                    }
+
+                    if (fullyDetermined)
+                    {
+                        fullyDetermined = mainline.FullyDetermined;
+                    }
                 }
                 else
                 {
-                    fullyDetermined &= mainline.FullyDetermined;
+                    fullyDetermined = false;
+                }
+            }
 
-                    if (!maxLead.HasValue)
+            Debug.Assert(totalScores != null, "At least one move must be scored.");
+
+            var logOfTotalSimulations = Math.Log(totalScores[player].Simulations);
+            double? maxScore = default;
+            var maxMainlines = new List<Mainline<TMove, WinCount>>();
+
+            for (var m = 0; m < moveScores.Count; m++)
+            {
+                var mainline = moveScores[m];
+                if (mainline != null)
+                {
+                    var score = mainline.Scores[player];
+                    var moveScore = score.Ratio;
+                    if (!maxScore.HasValue)
                     {
-                        maxLead = this.GetLead(mainline, player);
+                        maxScore = moveScore;
                         maxMainlines.Add(mainline);
                     }
                     else
                     {
-                        var lead = this.GetLead(mainline, player);
-                        var comp = this.scoringMetric.Compare(lead, maxLead.Value);
+                        var comp = moveScore.CompareTo(maxScore.Value);
                         if (comp >= 0)
                         {
                             if (comp > 0)
                             {
-                                maxLead = lead;
+                                maxScore = moveScore;
                                 maxMainlines.Clear();
                             }
 
@@ -95,39 +133,16 @@ namespace GameTheory.Players.MaximizingPlayer
                 }
             }
 
-            if (unvisited == moveScores.Count)
-            {
-                throw new InvalidOperationException();
-            }
-
             var sourceMainline = maxMainlines.Pick();
-            var scores = sourceMainline.Scores;
-            if (unvisited > 0)
-            {
-                var players = sourceMainline.GameState.Players;
-                var winHorizonPly = 1000; // TODO: Max? Max + 1?
-                var combinedScore = new Dictionary<PlayerToken, ResultScore<byte>>();
-                var playerScore = new Weighted<ResultScore<byte>>[2];
-                foreach (var p in players)
-                {
-                    playerScore[0] = Weighted.Create(scores[p], moveScores.Count - unvisited);
-                    playerScore[1] = Weighted.Create(new ResultScore<byte>(Result.None, winHorizonPly, 1, 0), unvisited);
-
-                    combinedScore[p] = this.scoringMetric.Combine(playerScore);
-                }
-
-                scores = combinedScore;
-            }
-
             var maxMoves = maxMainlines.SelectMany(m => m.Strategies.Peek()).ToImmutableArray();
             var depth = fullyDetermined ? moveScores.Max(m => m.Depth) : moveScores.Where(m => !(m?.FullyDetermined ?? false)).Min(m => m?.Depth ?? 0);
-            return new Mainline<TMove, ResultScore<byte>>(scores, sourceMainline.GameState, sourceMainline.PlayerToken, sourceMainline.Strategies.Pop().Push(maxMoves), depth, fullyDetermined);
+            return new Mainline<TMove, WinCount>(totalScores, sourceMainline.GameState, sourceMainline.PlayerToken, sourceMainline.Strategies.Pop().Push(maxMoves), depth, fullyDetermined);
         }
 
-        private void Maximize(StateNode<TMove, ResultScore<byte>> node)
+        private void Maximize(StateNode<TMove, WinCount> node)
         {
             var allMoves = node.Moves;
-            var mainlines = new List<Mainline<TMove, ResultScore<byte>>>(allMoves.Length);
+            var mainlines = new Mainline<TMove, WinCount>[allMoves.Length];
             for (var m = 0; m < allMoves.Length; m++)
             {
                 var move = allMoves[m];
@@ -135,7 +150,7 @@ namespace GameTheory.Players.MaximizingPlayer
 
                 // Expectimax.
                 var outcomes = moveNode.Outcomes;
-                var weightedOutcomes = new List<Weighted<Mainline<TMove, ResultScore<byte>>>>();
+                var weightedOutcomes = new List<Weighted<Mainline<TMove, WinCount>>>();
                 foreach (var outcome in outcomes)
                 {
                     var mainline = outcome.Value.Mainline;
@@ -144,24 +159,25 @@ namespace GameTheory.Players.MaximizingPlayer
                         var strategy = ImmutableArray.Create<IWeighted<TMove>>(Weighted.Create(move, 1));
 
                         mainline = mainline.Extend(move.PlayerToken, strategy, this.scoreExtender);
-                    }
 
-                    weightedOutcomes.Add(Weighted.Create(mainline, outcome.Weight));
+                        weightedOutcomes.Add(Weighted.Create(mainline, outcome.Weight));
+                    }
                 }
 
-                mainlines.Add(this.CombineOutcomes(node.State, weightedOutcomes));
+                if (weightedOutcomes.Count > 0)
+                {
+                    mainlines[m] = this.CombineOutcomes(node.State, weightedOutcomes);
+                }
             }
 
             var playerLeads = (from pm in allMoves.Select((m, i) => new { Move = m, Mainline = mainlines[i] })
                                group pm.Mainline by pm.Move.PlayerToken into g
                                let playerToken = g.Key
                                let mainline = this.GetMaximizingMoves(playerToken, g.ToList())
-                               let lead = this.GetLead(mainline, playerToken)
                                select new
                                {
                                    Mainline = mainline,
                                    PlayerToken = playerToken,
-                                   Lead = lead,
                                }).ToList();
 
             // TODO: Apply simultaneous move rules.
@@ -169,7 +185,7 @@ namespace GameTheory.Players.MaximizingPlayer
             node.Mainline = playerLeads.Single().Mainline;
         }
 
-        private void Playout(StateNode<TMove, ResultScore<byte>> node)
+        private void Playout(StateNode<TMove, WinCount> node)
         {
             if (node.Mainline?.FullyDetermined ?? false)
             {
@@ -180,7 +196,7 @@ namespace GameTheory.Players.MaximizingPlayer
             IList<TMove> moves = node.Moves;
             if (moves.Count == 0)
             {
-                node.Mainline = new Mainline<TMove, ResultScore<byte>>(this.scoringMetric.Score(state), state, null, ImmutableStack<IReadOnlyList<IWeighted<TMove>>>.Empty, depth: 0, fullyDetermined: true);
+                node.Mainline = new Mainline<TMove, WinCount>(this.scoringMetric.Score(state), state, null, ImmutableStack<IReadOnlyList<IWeighted<TMove>>>.Empty, depth: 0, fullyDetermined: true);
                 return;
             }
 
@@ -193,7 +209,7 @@ namespace GameTheory.Players.MaximizingPlayer
             this.Maximize(node);
         }
 
-        private void Walk(StateNode<TMove, ResultScore<byte>> node)
+        private void Walk(StateNode<TMove, WinCount> node)
         {
             if (node.Mainline == null)
             {
@@ -212,45 +228,35 @@ namespace GameTheory.Players.MaximizingPlayer
                     return;
                 }
 
-                TMove move;
-                MoveNode<TMove, ResultScore<byte>> moveNode;
-                StateNode<TMove, ResultScore<byte>> outcome;
+                var totalSimulations = moves.Sum(m => node[m].Score.Simulations);
+                var logOfTotalSimulations = Math.Log(totalSimulations);
 
-                if (!node.Mainline.Strategies.IsEmpty && GameTheory.Random.Instance.NextDouble() < 0.9)
+                var selection = moves.AllMaxBy(m =>
                 {
-                    move = node.Mainline.Strategies.Peek().Pick();
-                    moveNode = node[move];
-                    outcome = moveNode.Outcomes.Pick();
-                }
-                else
-                {
-                    move = moves.Pick();
-                    moveNode = node[move];
-                    outcome = moveNode.Outcomes.Pick();
-                }
+                    var moveNode = node[m];
+                    if (moveNode.Outcomes.All(o => o.Value.Mainline?.FullyDetermined == true))
+                    {
+                        return double.NegativeInfinity;
+                    }
 
-                if (outcome.Mainline?.FullyDetermined ?? false)
+                    var score = node[m].Score;
+                    if (score.Simulations == 0)
+                    {
+                        return double.PositiveInfinity;
+                    }
+
+                    return score.Ratio + Math.Sqrt(2 * logOfTotalSimulations / score.Simulations);
+                }).Pick();
+
+                var selectionNode = node[selection];
+                var outcome = selectionNode.Outcomes.Pick();
+
+                if (outcome.Mainline?.FullyDetermined == true)
                 {
-                    var remainingOutcomes = moveNode.Outcomes.Where(o => !(o.Value.Mainline?.FullyDetermined ?? false)).ToList();
+                    var remainingOutcomes = selectionNode.Outcomes.Where(o => o.Value.Mainline?.FullyDetermined != true).ToList();
                     if (remainingOutcomes.Count > 0)
                     {
                         outcome = remainingOutcomes.Pick();
-                    }
-                    else
-                    {
-                        var remainingMoves = moves.Where(m => node[m].Outcomes.Any(o => !(o.Value.Mainline?.FullyDetermined ?? false))).ToList();
-                        if (remainingMoves.Count > 0)
-                        {
-                            move = remainingMoves.Pick();
-                            moveNode = node[move];
-                            remainingOutcomes = moveNode.Outcomes.Where(o => !(o.Value.Mainline?.FullyDetermined ?? false)).ToList();
-                            outcome = remainingOutcomes.Pick();
-                        }
-                        else
-                        {
-                            this.Maximize(node);
-                            return;
-                        }
                     }
                 }
 
