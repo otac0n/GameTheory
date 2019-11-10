@@ -1,4 +1,4 @@
-﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Players
 {
@@ -13,15 +13,13 @@ namespace GameTheory.Players
     public sealed class RandomPlayer<TMove> : IPlayer<TMove>
         where TMove : IMove
     {
-        private readonly PlayerToken playerToken;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="RandomPlayer{TMove}"/> class.
         /// </summary>
         /// <param name="playerToken">The token that represents the player.</param>
         public RandomPlayer(PlayerToken playerToken)
         {
-            this.playerToken = playerToken;
+            this.PlayerToken = playerToken;
         }
 
         /// <inheritdoc />
@@ -32,7 +30,7 @@ namespace GameTheory.Players
         }
 
         /// <inheritdoc />
-        public PlayerToken PlayerToken => this.playerToken;
+        public PlayerToken PlayerToken { get; }
 
         /// <inheritdoc />
         public async Task<Maybe<TMove>> ChooseMove(IGameState<TMove> state, CancellationToken cancel)
@@ -42,7 +40,7 @@ namespace GameTheory.Players
             var chosenMove = default(TMove);
             var count = 0;
 
-            foreach (var move in state.GetAvailableMoves(this.playerToken))
+            foreach (var move in state.GetAvailableMoves(this.PlayerToken))
             {
                 var max = count + 1;
 
