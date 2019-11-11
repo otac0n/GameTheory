@@ -223,7 +223,7 @@ namespace GameTheory.ConsoleRunner
             {
                 consoleRenderer.Show(state, FormatUtilities.ParseStringFormat(Resources.ChoosePlayer, playerToken));
                 Console.WriteLine();
-                var player = ConsoleInteraction.Choose(players as IList<ICatalogPlayer> ?? players.ToList());
+                var player = ConsoleInteraction.Choose(players as IList<ICatalogPlayer> ?? players.ToList(), render: p => Console.Write(p.Name));
                 return (IPlayer<TGameState, TMove>)ConstructType(player.PlayerType, p =>
                     p.Name == nameof(playerToken) && p.ParameterType == typeof(PlayerToken) ? playerToken :
                     typeof(IConsoleRenderer<TGameState, TMove>).IsAssignableFrom(p.ParameterType) ? consoleRenderer :
