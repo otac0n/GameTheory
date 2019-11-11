@@ -12,16 +12,18 @@ namespace GameTheory.ConsoleRunner.Shared.Catalogs
     public abstract class ConsoleRendererCatalogBase : IConsoleRendererCatalog
     {
         /// <inheritdoc/>
-        public IReadOnlyList<Type> FindConsoleRenderers<TMove>()
-            where TMove : IMove => this.FindConsoleRenderers(typeof(TMove));
+        public IReadOnlyList<Type> FindConsoleRenderers<TGameState, TMove>()
+            where TGameState : IGameState<TMove>
+            where TMove : IMove =>
+            this.FindConsoleRenderers(typeof(TGameState), typeof(TMove));
 
         /// <inheritdoc/>
-        public IReadOnlyList<Type> FindConsoleRenderers(Type moveType) => this.GetConsoleRenderers(moveType).ToImmutableList();
+        public IReadOnlyList<Type> FindConsoleRenderers(Type gameStateType, Type moveType) => this.GetConsoleRenderers(gameStateType, moveType).ToImmutableList();
 
         /// <summary>
         /// Enumerates the console renderers in this catalog.
         /// </summary>
         /// <returns>The enumerable collection of console renderers in the catalog.</returns>
-        protected abstract IEnumerable<Type> GetConsoleRenderers(Type moveType);
+        protected abstract IEnumerable<Type> GetConsoleRenderers(Type gameStateType, Type moveType);
     }
 }

@@ -8,10 +8,10 @@ namespace GameTheory.Games.Ergo.Players
     /// <summary>
     /// Provides a maximizing player for the game of <see cref="GameState">Ergo</see>.
     /// </summary>
-    public sealed class ErgoMaximizingPlayer : MaximizingPlayer<Move, ResultScore<double>>
+    public sealed class ErgoMaximizingPlayer : MaximizingPlayer<GameState, Move, ResultScore<double>>
     {
-        private static readonly IGameStateScoringMetric<Move, double> Metric =
-            ScoringMetric.Create((PlayerState<Move> s) => ((GameState)s.GameState).Scores[s.PlayerToken]);
+        private static readonly IGameStateScoringMetric<GameState, Move, double> Metric =
+            ScoringMetric.Create((PlayerState<GameState, Move> s) => s.GameState.Scores[s.PlayerToken]);
 
         private TimeSpan minThinkTime;
 

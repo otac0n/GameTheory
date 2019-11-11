@@ -22,10 +22,10 @@ namespace GameTheory.Tests.Players
 
             for (var i = 0; i < Samples; i++)
             {
-                var endState = await GameUtilities.PlayGame(new GameState(), playerTokens => new IPlayer<Move>[]
+                var endState = await GameUtilities.PlayGame(new GameState(), playerTokens => new IPlayer<GameState, Move>[]
                 {
-                    new DuhPlayer<Move>(playerTokens[0]),
-                    new RandomPlayer<Move>(playerTokens[1]),
+                    new DuhPlayer<GameState, Move>(playerTokens[0]),
+                    new RandomPlayer<GameState, Move>(playerTokens[1]),
                 });
 
                 var players = endState.Players.ToArray();
@@ -47,10 +47,10 @@ namespace GameTheory.Tests.Players
 
             for (var i = 0; i < Samples; i++)
             {
-                var endState = await GameUtilities.PlayGame(new GameState(), playerTokens => new IPlayer<Move>[]
+                var endState = await GameUtilities.PlayGame(new GameState(), playerTokens => new IPlayer<GameState, Move>[]
                 {
-                    new RandomPlayer<Move>(playerTokens[0]),
-                    new DuhPlayer<Move>(playerTokens[1]),
+                    new RandomPlayer<GameState, Move>(playerTokens[0]),
+                    new DuhPlayer<GameState, Move>(playerTokens[1]),
                 });
 
                 var players = endState.Players.ToArray();

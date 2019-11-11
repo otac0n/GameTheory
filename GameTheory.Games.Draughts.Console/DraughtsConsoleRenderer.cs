@@ -8,13 +8,13 @@ namespace GameTheory.Games.Draughts.Console
     /// <summary>
     /// Provides a console renderer for the game of <see cref="GameState">Draughts</see>.
     /// </summary>
-    public class DraughtsConsoleRenderer : ConsoleRendererBase<Move>
+    public class DraughtsConsoleRenderer : ConsoleRendererBase<GameState, Move>
     {
         /// <inheritdoc/>
-        public override void Show(IGameState<Move> state, PlayerToken playerToken = null) => this.Show((GameState)state);
+        public override void Show(GameState state, PlayerToken playerToken = null) => this.Show(state);
 
         /// <inheritdoc/>
-        protected override void RenderToken(IGameState<Move> state, object token)
+        protected override void RenderToken(GameState state, object token)
         {
             if (state == null)
             {
@@ -53,7 +53,7 @@ namespace GameTheory.Games.Draughts.Console
 
                 if (player != null)
                 {
-                    ConsoleInteraction.WithColor(ConsoleInteraction.GetPlayerColor(state, player), () =>
+                    ConsoleInteraction.WithColor(ConsoleInteraction.GetPlayerColor<GameState, Move>(state, player), () =>
                     {
                         Console.Write(pieceStr);
                     });

@@ -9,10 +9,10 @@ namespace GameTheory.Games.LoveLetter.Players
     /// <summary>
     /// Provides a maximizing player for the game of <see cref="GameState">Love Letter</see>.
     /// </summary>
-    public class LoveLetterMaximizingPlayer : MaximizingPlayer<Move, ResultScore<double>>
+    public class LoveLetterMaximizingPlayer : MaximizingPlayer<GameState, Move, ResultScore<double>>
     {
-        private static readonly IGameStateScoringMetric<Move, double> Metric =
-            ScoringMetric.Create<Move>(Score);
+        private static readonly IGameStateScoringMetric<GameState, Move, double> Metric =
+            ScoringMetric.Create<GameState, Move>(Score);
 
         private TimeSpan minThinkTime;
 
@@ -32,9 +32,9 @@ namespace GameTheory.Games.LoveLetter.Players
         /// <inheritdoc/>
         protected override TimeSpan? MinThinkTime => this.minThinkTime;
 
-        internal static double Score(PlayerState<Move> playerState)
+        internal static double Score(PlayerState<GameState, Move> playerState)
         {
-            var inventory = ((GameState)playerState.GameState).Inventory[playerState.PlayerToken];
+            var inventory = playerState.GameState.Inventory[playerState.PlayerToken];
 
             return inventory.Tokens + (inventory.Hand.Length > 0 ? inventory.Hand.Select(c => (int)c).Max() / 9.0 : 0);
         }

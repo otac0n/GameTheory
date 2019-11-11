@@ -1,4 +1,4 @@
-﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Strategies
 {
@@ -11,12 +11,14 @@ namespace GameTheory.Strategies
     /// <summary>
     /// Implements a strategy that looks a limited depth for a win before giving up.
     /// </summary>
+    /// <typeparam name="TGameState">The type of game states that the strategy will evaluate.</typeparam>
     /// <typeparam name="TMove">The type of the moves that the strategy will choose.</typeparam>
-    public class ImmediateWinStrategy<TMove> : IStrategy<TMove>
+    public class ImmediateWinStrategy<TGameState, TMove> : IStrategy<TGameState, TMove>
+        where TGameState : IGameState<TMove>
         where TMove : IMove
     {
         /// <summary>
-        /// Finalizes an instance of the <see cref="ImmediateWinStrategy{TMove}"/> class.
+        /// Finalizes an instance of the <see cref="ImmediateWinStrategy{TGameState, TMove}"/> class.
         /// </summary>
         ~ImmediateWinStrategy()
         {
@@ -24,7 +26,7 @@ namespace GameTheory.Strategies
         }
 
         /// <inheritdoc/>
-        public async Task<Maybe<TMove>> ChooseMove(IGameState<TMove> state, PlayerToken playerToken, IReadOnlyCollection<TMove> moves, CancellationToken cancel)
+        public async Task<Maybe<TMove>> ChooseMove(TGameState state, PlayerToken playerToken, IReadOnlyCollection<TMove> moves, CancellationToken cancel)
         {
             await Task.Yield();
 

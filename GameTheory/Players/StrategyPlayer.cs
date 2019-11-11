@@ -1,4 +1,4 @@
-﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Players
 {
@@ -9,26 +9,28 @@ namespace GameTheory.Players
     /// <summary>
     /// Implements a player that consults a strategy before defering to another player.
     /// </summary>
-    /// <typeparam name="TMove">The type of move that the player supports.</typeparam>
-    public class StrategyPlayer<TMove> : IPlayer<TMove>
+    /// <typeparam name="TGameState">The type of game states that the player will evaluate.</typeparam>
+    /// <typeparam name="TMove">The type of moves that the player will choose.</typeparam>
+    public class StrategyPlayer<TGameState, TMove> : IPlayer<TGameState, TMove>
+        where TGameState : IGameState<TMove>
         where TMove : IMove
     {
-        private readonly IPlayer<TMove> fallbackPlayer;
-        private readonly IStrategy<TMove> strategy;
+        private readonly IPlayer<TGameState, TMove> fallbackPlayer;
+        private readonly IStrategy<TGameState, TMove> strategy;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="StrategyPlayer{TMove}"/> class.
+        /// Initializes a new instance of the <see cref="StrategyPlayer{TGameState, TMove}"/> class.
         /// </summary>
         /// <param name="strategy">The strategy to use before defering to the player.</param>
         /// <param name="fallbackPlayer">The player to default to when the strategy doesn't yield a move.</param>
-        public StrategyPlayer(IStrategy<TMove> strategy, IPlayer<TMove> fallbackPlayer)
+        public StrategyPlayer(IStrategy<TGameState, TMove> strategy, IPlayer<TGameState, TMove> fallbackPlayer)
         {
             this.fallbackPlayer = fallbackPlayer ?? throw new ArgumentNullException(nameof(fallbackPlayer));
             this.strategy = strategy ?? throw new ArgumentNullException(nameof(strategy));
         }
 
         /// <summary>
-        /// Finalizes an instance of the <see cref="StrategyPlayer{TMove}"/> class.
+        /// Finalizes an instance of the <see cref="StrategyPlayer{TGameState, TMove}"/> class.
         /// </summary>
         ~StrategyPlayer()
         {
@@ -46,7 +48,7 @@ namespace GameTheory.Players
         public PlayerToken PlayerToken => this.fallbackPlayer.PlayerToken;
 
         /// <inheritdoc/>
-        public async Task<Maybe<TMove>> ChooseMove(IGameState<TMove> state, CancellationToken cancel)
+        public async Task<Maybe<TMove>> ChooseMove(TGameState state, CancellationToken cancel)
         {
             var maybeMove = await this.strategy.ChooseMove(state, this.fallbackPlayer.PlayerToken, cancel);
             if (maybeMove.HasValue)

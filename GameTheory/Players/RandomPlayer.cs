@@ -9,12 +9,14 @@ namespace GameTheory.Players
     /// <summary>
     /// Implements a player that chooses randomly from its options.
     /// </summary>
-    /// <typeparam name="TMove">The type of move that the player supports.</typeparam>
-    public sealed class RandomPlayer<TMove> : IPlayer<TMove>
+    /// <typeparam name="TGameState">The type of game states that the player will evaluate.</typeparam>
+    /// <typeparam name="TMove">The type of moves that the player will choose.</typeparam>
+    public sealed class RandomPlayer<TGameState, TMove> : IPlayer<TGameState, TMove>
+        where TGameState : IGameState<TMove>
         where TMove : IMove
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="RandomPlayer{TMove}"/> class.
+        /// Initializes a new instance of the <see cref="RandomPlayer{TGameState, TMove}"/> class.
         /// </summary>
         /// <param name="playerToken">The token that represents the player.</param>
         public RandomPlayer(PlayerToken playerToken)
@@ -33,14 +35,14 @@ namespace GameTheory.Players
         public PlayerToken PlayerToken { get; }
 
         /// <inheritdoc />
-        public async Task<Maybe<TMove>> ChooseMove(IGameState<TMove> state, CancellationToken cancel)
+        public async Task<Maybe<TMove>> ChooseMove(TGameState state, CancellationToken cancel)
         {
             await Task.Yield();
 
             var chosenMove = default(TMove);
             var count = 0;
 
-            foreach (var move in state.GetAvailableMoves(this.PlayerToken))
+            foreach (var move in state.GetAvailableMoves<TGameState, TMove>(this.PlayerToken))
             {
                 var max = count + 1;
 

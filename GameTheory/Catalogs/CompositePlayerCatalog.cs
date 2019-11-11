@@ -23,6 +23,6 @@ namespace GameTheory.Catalogs
         }
 
         /// <inheritdoc/>
-        protected override IEnumerable<ICatalogPlayer> GetPlayers(Type moveType) => this.catalogs.SelectMany(c => c.FindPlayers(moveType));
+        protected override IEnumerable<ICatalogPlayer> GetPlayers(Type gameStateType, Type moveType) => this.catalogs.SelectMany(c => c.FindPlayers(gameStateType, moveType));
     }
 }

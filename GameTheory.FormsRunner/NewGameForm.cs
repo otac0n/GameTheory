@@ -194,7 +194,9 @@ namespace GameTheory.FormsRunner
             if (state != null)
             {
                 var game = this.SelectedGame;
-                var playerOptions = (PlayerOptions)typeof(NewGameForm).GetMethod(nameof(CountPlayers), BindingFlags.Static | BindingFlags.NonPublic).MakeGenericMethod(game.MoveType).Invoke(null, new object[] { state });
+                var countPlayersMethod = typeof(NewGameForm).GetMethod(nameof(CountPlayers), BindingFlags.Static | BindingFlags.NonPublic);
+                var countPlayersConstructed = countPlayersMethod.MakeGenericMethod(game.GameStateType, game.MoveType);
+                var playerOptions = (PlayerOptions)countPlayersConstructed.Invoke(null, new object[] { state });
                 var playerCount = playerOptions.Names.Length;
                 this.playersTable.RowCount = playerCount * 2;
                 var players = new ICatalogPlayer[playerCount];
@@ -280,11 +282,12 @@ namespace GameTheory.FormsRunner
             }
         }
 
-        private static PlayerOptions CountPlayers<TMove>(IGameState<TMove> state)
+        private static PlayerOptions CountPlayers<TGameState, TMove>(TGameState state)
+            where TGameState : IGameState<TMove>
             where TMove : IMove
         {
-            var players = Program.PlayerCatalog.FindPlayers(typeof(TMove));
-            var names = state.Players.Select(state.GetPlayerName).ToArray();
+            var players = Program.PlayerCatalog.FindPlayers(typeof(TGameState), typeof(TMove));
+            var names = state.Players.Select(p => state.GetPlayerName<TGameState, TMove>(p)).ToArray();
             return new PlayerOptions(names, state.Players.ToArray(), players);
         }
 

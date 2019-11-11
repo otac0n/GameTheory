@@ -11,19 +11,20 @@ namespace GameTheory.Players.MaximizingPlayer
     using GameTheory.GameTree;
     using GameTheory.GameTree.Caches;
 
-    public class MonteCarloTreeSearchPlayer<TMove> : MaximizingPlayerBase<TMove, WinCount>
-            where TMove : IMove
+    public class MonteCarloTreeSearchPlayer<TGameState, TMove> : MaximizingPlayerBase<TGameState, TMove, WinCount>
+        where TGameState : IGameState<TMove>
+        where TMove : IMove
     {
         private readonly TimeSpan thinkTime;
 
         public MonteCarloTreeSearchPlayer(PlayerToken playerToken, int thinkSeconds = 5)
-            : base(playerToken, new WinCountScoringMetric<TMove>())
+            : base(playerToken, new WinCountScoringMetric<TGameState, TMove>())
         {
             this.thinkTime = TimeSpan.FromSeconds(Math.Max(1, thinkSeconds));
         }
 
         /// <inheritdoc/>
-        protected override Mainline<TMove, WinCount> GetMove(List<IGameState<TMove>> states, bool ponder, CancellationToken cancel)
+        protected override Mainline<TGameState, TMove, WinCount> GetMove(List<TGameState> states, bool ponder, CancellationToken cancel)
         {
             var nodes = states.Select(this.gameTree.GetOrAdd).ToList();
 
@@ -52,9 +53,9 @@ namespace GameTheory.Players.MaximizingPlayer
         }
 
         /// <inheritdoc />
-        protected override IGameStateCache<TMove, WinCount> MakeCache() => new DictionaryCache<TMove, WinCount>();
+        protected override IGameStateCache<TGameState, TMove, WinCount> MakeCache() => new DictionaryCache<TGameState, TMove, WinCount>();
 
-        private Mainline<TMove, WinCount> GetMaximizingMoves(PlayerToken player, IList<Mainline<TMove, WinCount>> moveScores)
+        private Mainline<TGameState, TMove, WinCount> GetMaximizingMoves(PlayerToken player, IList<Mainline<TGameState, TMove, WinCount>> moveScores)
         {
             var fullyDetermined = true;
             IDictionary<PlayerToken, WinCount> totalScores = null;
@@ -102,7 +103,7 @@ namespace GameTheory.Players.MaximizingPlayer
 
             var logOfTotalSimulations = Math.Log(totalScores[player].Simulations);
             double? maxScore = default;
-            var maxMainlines = new List<Mainline<TMove, WinCount>>();
+            var maxMainlines = new List<Mainline<TGameState, TMove, WinCount>>();
 
             for (var m = 0; m < moveScores.Count; m++)
             {
@@ -136,13 +137,13 @@ namespace GameTheory.Players.MaximizingPlayer
             var sourceMainline = maxMainlines.Pick();
             var maxMoves = maxMainlines.SelectMany(m => m.Strategies.Peek()).ToImmutableArray();
             var depth = fullyDetermined ? moveScores.Max(m => m.Depth) : moveScores.Where(m => !(m?.FullyDetermined ?? false)).Min(m => m?.Depth ?? 0);
-            return new Mainline<TMove, WinCount>(totalScores, sourceMainline.GameState, sourceMainline.PlayerToken, sourceMainline.Strategies.Pop().Push(maxMoves), depth, fullyDetermined);
+            return new Mainline<TGameState, TMove, WinCount>(totalScores, sourceMainline.GameState, sourceMainline.PlayerToken, sourceMainline.Strategies.Pop().Push(maxMoves), depth, fullyDetermined);
         }
 
-        private void Maximize(StateNode<TMove, WinCount> node)
+        private void Maximize(StateNode<TGameState, TMove, WinCount> node)
         {
             var allMoves = node.Moves;
-            var mainlines = new Mainline<TMove, WinCount>[allMoves.Length];
+            var mainlines = new Mainline<TGameState, TMove, WinCount>[allMoves.Length];
             for (var m = 0; m < allMoves.Length; m++)
             {
                 var move = allMoves[m];
@@ -150,7 +151,7 @@ namespace GameTheory.Players.MaximizingPlayer
 
                 // Expectimax.
                 var outcomes = moveNode.Outcomes;
-                var weightedOutcomes = new List<Weighted<Mainline<TMove, WinCount>>>();
+                var weightedOutcomes = new List<Weighted<Mainline<TGameState, TMove, WinCount>>>();
                 foreach (var outcome in outcomes)
                 {
                     var mainline = outcome.Value.Mainline;
@@ -185,7 +186,7 @@ namespace GameTheory.Players.MaximizingPlayer
             node.Mainline = playerLeads.Single().Mainline;
         }
 
-        private void Playout(StateNode<TMove, WinCount> node)
+        private void Playout(StateNode<TGameState, TMove, WinCount> node)
         {
             if (node.Mainline?.FullyDetermined ?? false)
             {
@@ -196,7 +197,7 @@ namespace GameTheory.Players.MaximizingPlayer
             IList<TMove> moves = node.Moves;
             if (moves.Count == 0)
             {
-                node.Mainline = new Mainline<TMove, WinCount>(this.scoringMetric.Score(state), state, null, ImmutableStack<IReadOnlyList<IWeighted<TMove>>>.Empty, depth: 0, fullyDetermined: true);
+                node.Mainline = new Mainline<TGameState, TMove, WinCount>(this.scoringMetric.Score(state), state, null, ImmutableStack<IReadOnlyList<IWeighted<TMove>>>.Empty, depth: 0, fullyDetermined: true);
                 return;
             }
 
@@ -209,7 +210,7 @@ namespace GameTheory.Players.MaximizingPlayer
             this.Maximize(node);
         }
 
-        private void Walk(StateNode<TMove, WinCount> node)
+        private void Walk(StateNode<TGameState, TMove, WinCount> node)
         {
             if (node.Mainline == null)
             {

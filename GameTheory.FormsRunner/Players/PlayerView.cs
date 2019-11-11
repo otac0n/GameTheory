@@ -46,7 +46,8 @@ namespace GameTheory.FormsRunner.Players
 
         public PlayerToken PlayerToken { get; }
 
-        internal Task<Maybe<TMove>> ChooseMove<TMove>(IGameState<TMove> state, CancellationToken cancel)
+        internal Task<Maybe<TMove>> ChooseMove<TGameState, TMove>(TGameState state, CancellationToken cancel)
+            where TGameState : IGameState<TMove>
             where TMove : IMove
         {
             var tcs = new TaskCompletionSource<Maybe<TMove>>(state);
@@ -56,7 +57,7 @@ namespace GameTheory.FormsRunner.Players
                 tcs.TrySetCanceled();
                 this.InvokeIfRequired(() =>
                 {
-                    if (this.GameState == state)
+                    if (object.ReferenceEquals(this.GameState, state))
                     {
                         this.splitContainer.Panel2.Controls.DisposeAndClear();
                     }
@@ -70,7 +71,7 @@ namespace GameTheory.FormsRunner.Players
                 Display.FindAndUpdate(
                     this.splitContainer.Panel1.Controls.Cast<Control>().SingleOrDefault(),
                     this.scope.Extend(nameof(this.GameState), state),
-                    state.GetType(),
+                    typeof(TGameState),
                     state,
                     this.displays,
                     (oldControl, newControl) =>
@@ -87,7 +88,7 @@ namespace GameTheory.FormsRunner.Players
                         }
                     });
 
-                var moves = state.GetAvailableMoves(this.PlayerToken).Select(m => new MoveChoice(m)).ToList();
+                var moves = state.GetAvailableMoves<TGameState, TMove>(this.PlayerToken).Select(m => new MoveChoice(m)).ToList();
                 Display.FindAndUpdate(
                     this.splitContainer.Panel2.Controls.Cast<Control>().SingleOrDefault(),
                     this.scope.Extend("Moves", moves),

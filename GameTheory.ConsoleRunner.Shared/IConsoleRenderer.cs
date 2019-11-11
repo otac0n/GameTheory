@@ -7,8 +7,9 @@ namespace GameTheory.ConsoleRunner.Shared
     /// <summary>
     /// Describes the interface for a console renderer.
     /// </summary>
+    /// <typeparam name="TGameState">The type of game states that will be displayed.</typeparam>
     /// <typeparam name="TMove">The type of moves in the game state.</typeparam>
-    public interface IConsoleRenderer<TMove>
+    public interface IConsoleRenderer<TGameState, TMove>
         where TMove : IMove
     {
         /// <summary>
@@ -16,20 +17,20 @@ namespace GameTheory.ConsoleRunner.Shared
         /// </summary>
         /// <param name="state">The game state to render.</param>
         /// <param name="playerToken">The player whose view is being rendered.</param>
-        void Show(IGameState<TMove> state, PlayerToken playerToken = null);
+        void Show(TGameState state, PlayerToken playerToken = null);
 
         /// <summary>
         /// Shows the specified format tokens.
         /// </summary>
         /// <param name="state">The game to use when rendering.</param>
         /// <param name="formatTokens">The format tokens to render.</param>
-        void Show(IGameState<TMove> state, IList<object> formatTokens);
+        void Show(TGameState state, IList<object> formatTokens);
 
         /// <summary>
         /// Renders the specified token formattable object.
         /// </summary>
         /// <param name="state">The game to use when rendering.</param>
         /// <param name="tokenFormattable">The token formattable object to render.</param>
-        void Show(IGameState<TMove> state, ITokenFormattable tokenFormattable);
+        void Show(TGameState state, ITokenFormattable tokenFormattable);
     }
 }

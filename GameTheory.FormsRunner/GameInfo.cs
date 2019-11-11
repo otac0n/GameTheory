@@ -9,20 +9,21 @@ namespace GameTheory.FormsRunner
     using System.Windows.Forms;
     using GameTheory.Catalogs;
 
-    public class GameInfo<TMove> : IGameInfo
+    public class GameInfo<TGameState, TMove> : IGameInfo
+        where TGameState : IGameState<TMove>
         where TMove : IMove
     {
         private GameDisplayForm displayForm;
         private GameManagerForm parent;
 
-        public GameInfo(ICatalogGame game, ICatalogPlayer[] players, IGameState<TMove> startingState, IPlayer<TMove>[] playerInstances, GameManagerForm parent)
+        public GameInfo(ICatalogGame game, ICatalogPlayer[] players, TGameState startingState, IPlayer<TGameState, TMove>[] playerInstances, GameManagerForm parent)
         {
             this.parent = parent;
             this.Game = game;
             this.Players = players.ToArray();
             this.PlayerTokens = startingState.Players.ToArray();
-            this.PlayerNames = this.PlayerTokens.Select(p => startingState.GetPlayerName(p)).ToArray();
-            this.GameStates = new List<IGameState<TMove>> { startingState };
+            this.PlayerNames = this.PlayerTokens.Select(p => startingState.GetPlayerName<TGameState, TMove>(p)).ToArray();
+            this.GameStates = new List<TGameState> { startingState };
             this.PlayerInstances = playerInstances.ToArray();
             this.Moves = new List<IMove>();
 
@@ -58,7 +59,7 @@ namespace GameTheory.FormsRunner
                     var winners = newState.GetWinners();
                     this.parent.InvokeIfRequired(() =>
                     {
-                        this.UpdateRow(3, string.Join(", ", winners.Select(w => newState.GetPlayerName(w))));
+                        this.UpdateRow(3, string.Join(", ", winners.Select(w => newState.GetPlayerName<TGameState, TMove>(w))));
                         this.Move?.Invoke(this, new EventArgs());
                     });
                 }).Result;
@@ -73,17 +74,17 @@ namespace GameTheory.FormsRunner
 
         public ICatalogGame Game { get; }
 
-        public List<IGameState<TMove>> GameStates { get; }
+        public List<TGameState> GameStates { get; }
 
-        IReadOnlyList<object> IGameInfo.GameStates => this.GameStates;
+        IReadOnlyList<object> IGameInfo.GameStates => (IReadOnlyList<object>)this.GameStates;
 
-        public Task<IGameState<TMove>> GameTask { get; }
+        public Task<TGameState> GameTask { get; }
 
         public List<IMove> Moves { get; }
 
         IReadOnlyList<IMove> IGameInfo.Moves => this.Moves;
 
-        public IReadOnlyList<IPlayer<TMove>> PlayerInstances { get; }
+        public IReadOnlyList<IPlayer<TGameState, TMove>> PlayerInstances { get; }
 
         IReadOnlyList<object> IGameInfo.PlayerInstances => this.PlayerInstances;
 

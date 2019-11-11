@@ -1,4 +1,4 @@
-﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Tests.Strategies
 {
@@ -18,7 +18,7 @@ namespace GameTheory.Tests.Strategies
         public async Task GetMove_Always_ReturnsNoMove()
         {
             var state = new TestGameState();
-            using (var strategy = new NullStrategy<TestGameState.Move>())
+            using (var strategy = new NullStrategy<TestGameState, TestGameState.Move>())
             {
                 var maybeMove = await strategy.ChooseMove(state, state.Players[0], CancellationToken.None);
                 Assert.That(maybeMove.HasValue, Is.False);

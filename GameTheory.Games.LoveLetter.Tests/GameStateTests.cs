@@ -17,7 +17,7 @@ namespace GameTheory.Games.LoveLetter.Tests
             for (var i = 0; i < Samples; i++)
             {
                 var state = new GameState();
-                state = (GameState)await GameUtilities.PlayGame(state, p => new RandomPlayer<Move>(p));
+                state = await GameUtilities.PlayGame(state, p => new RandomPlayer<GameState, Move>(p));
                 Assert.That(state.GetWinners(), Is.Not.Empty);
             }
         }

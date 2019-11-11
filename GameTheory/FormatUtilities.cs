@@ -166,15 +166,17 @@ namespace GameTheory
         /// <summary>
         /// Gets a player name for display.
         /// </summary>
+        /// <typeparam name="TGameState">The type of game states to search.</typeparam>
         /// <typeparam name="TMove">The type of object that represents a move in the game state.</typeparam>
         /// <param name="state">The game state.</param>
         /// <param name="playerToken">The player to search for.</param>
         /// <returns>A name representing the specified player token.</returns>
-        public static string GetPlayerName<TMove>(this IGameState<TMove> state, PlayerToken playerToken)
+        public static string GetPlayerName<TGameState, TMove>(this TGameState state, PlayerToken playerToken)
+            where TGameState : IGameState<TMove>
             where TMove : IMove
         {
             var playerNumber = state.GetPlayerNumber(playerToken);
-            return GetGameStateResource(state.GetType(), $"Player{playerNumber}") ??
+            return GetGameStateResource(typeof(TGameState), $"Player{playerNumber}") ??
                 string.Format(SharedResources.PlayerName, playerNumber);
         }
 

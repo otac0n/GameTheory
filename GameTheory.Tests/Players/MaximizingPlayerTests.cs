@@ -23,10 +23,10 @@ namespace GameTheory.Tests.Players
 
             for (var i = 0; i < Samples; i++)
             {
-                var endState = await GameUtilities.PlayGame(new GameState(), playerTokens => new IPlayer<Move>[]
+                var endState = await GameUtilities.PlayGame(new GameState(), playerTokens => new IPlayer<GameState, Move>[]
                 {
                     new TicTacToeMaximizingPlayer(playerTokens[0], minPly: 6),
-                    new DuhPlayer<Move>(playerTokens[1]),
+                    new DuhPlayer<GameState, Move>(playerTokens[1]),
                 });
 
                 var players = endState.Players.ToArray();
@@ -46,9 +46,9 @@ namespace GameTheory.Tests.Players
 
             for (var i = 0; i < Samples; i++)
             {
-                var endState = await GameUtilities.PlayGame(new GameState(), playerTokens => new IPlayer<Move>[]
+                var endState = await GameUtilities.PlayGame(new GameState(), playerTokens => new IPlayer<GameState, Move>[]
                 {
-                    new DuhPlayer<Move>(playerTokens[0]),
+                    new DuhPlayer<GameState, Move>(playerTokens[0]),
                     new TicTacToeMaximizingPlayer(playerTokens[1], minPly: 6),
                 });
 
@@ -96,7 +96,7 @@ namespace GameTheory.Tests.Players
             var movesArray = moves.Split(';');
             var nextMove = movesArray.Last();
             Array.Resize(ref movesArray, movesArray.Length - 1);
-            state = (GameState)movesArray.Aggregate((IGameState<Move>)state, (newState, move) => newState.PlayMove(playerToken(), m => m.ToString() == move));
+            state = movesArray.Aggregate(state, (newState, move) => newState.PlayMove<GameState, Move>(playerToken(), m => m.ToString() == move));
 
             var token = playerToken();
             var success = 0;

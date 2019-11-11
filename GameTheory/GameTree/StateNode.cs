@@ -6,18 +6,20 @@ namespace GameTheory.GameTree
     using System.Linq;
 
     /// <summary>
-    /// Represents a <see cref="IGameState{TMove}"/> in a <see cref="GameTree{TMove, TScore}"/>.
+    /// Represents a <see cref="IGameState{TMove}"/> in a <see cref="GameTree{TGameState, TMove, TScore}"/>.
     /// </summary>
+    /// <typeparam name="TGameState">The type of game states in the tree.</typeparam>
     /// <typeparam name="TMove">The type of moves supported by the game state.</typeparam>
     /// <typeparam name="TScore">The type used to keep track of score.</typeparam>
-    public class StateNode<TMove, TScore>
+    public class StateNode<TGameState, TMove, TScore>
+        where TGameState : IGameState<TMove>
         where TMove : IMove
     {
-        private readonly Dictionary<TMove, MoveNode<TMove, TScore>> results = new Dictionary<TMove, MoveNode<TMove, TScore>>();
-        private readonly GameTree<TMove, TScore> tree;
+        private readonly Dictionary<TMove, MoveNode<TGameState, TMove, TScore>> results = new Dictionary<TMove, MoveNode<TGameState, TMove, TScore>>();
+        private readonly GameTree<TGameState, TMove, TScore> tree;
         private TMove[] moves;
 
-        internal StateNode(GameTree<TMove, TScore> tree, IGameState<TMove> state)
+        internal StateNode(GameTree<TGameState, TMove, TScore> tree, TGameState state)
         {
             this.tree = tree;
             this.State = state;
@@ -26,7 +28,7 @@ namespace GameTheory.GameTree
         /// <summary>
         /// Gets or sets the mainline for this node.
         /// </summary>
-        public Mainline<TMove, TScore> Mainline { get; set; }
+        public Mainline<TGameState, TMove, TScore> Mainline { get; set; }
 
         /// <summary>
         /// Gets the subsequent moves available from this state.
@@ -39,20 +41,20 @@ namespace GameTheory.GameTree
         /// <summary>
         /// Gets the state that this node represents.
         /// </summary>
-        public IGameState<TMove> State { get; }
+        public TGameState State { get; }
 
         /// <summary>
         /// Gets the outcomes of applying the specified move.
         /// </summary>
         /// <param name="move">The move to apply.</param>
         /// <returns>The outcomes of applying <paramref name="move"/> to the game state.</returns>
-        public MoveNode<TMove, TScore> this[TMove move]
+        public MoveNode<TGameState, TMove, TScore> this[TMove move]
         {
             get
             {
                 if (!this.results.TryGetValue(move, out var result))
                 {
-                    this.results[move] = result = new MoveNode<TMove, TScore>(this.tree, this.State, move);
+                    this.results[move] = result = new MoveNode<TGameState, TMove, TScore>(this.tree, this.State, move);
                 }
 
                 return result;

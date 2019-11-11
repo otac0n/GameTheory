@@ -9,17 +9,17 @@ namespace GameTheory.Games.Ergo.Console
     /// <summary>
     /// Provides a console renderer for the game of <see cref="GameState">Splendor</see>.
     /// </summary>
-    public class ErgoConsoleRenderer : ConsoleRendererBase<Move>
+    public class ErgoConsoleRenderer : ConsoleRendererBase<GameState, Move>
     {
         /// <inheritdoc />
-        public override void Show(IGameState<Move> state, PlayerToken playerToken = null) => new Templates(playerToken).RenderGameState((GameState)state, this.MakeRenderTokenWriter(state));
+        public override void Show(GameState state, PlayerToken playerToken = null) => new Templates(playerToken).RenderGameState(state, this.MakeRenderTokenWriter(state));
 
         /// <inheritdoc/>
-        protected override void RenderToken(IGameState<Move> state, object token)
+        protected override void RenderToken(GameState state, object token)
         {
             if (token is PlayerToken playerToken)
             {
-                ConsoleInteraction.WithColor(ConsoleInteraction.GetPlayerColor(state, playerToken), () =>
+                ConsoleInteraction.WithColor(ConsoleInteraction.GetPlayerColor<GameState, Move>(state, playerToken), () =>
                 {
                     Console.Write(string.Format(SharedResources.PlayerName, Resources.ResourceManager.GetEnumString((Symbol)state.Players.IndexOf(playerToken))));
                 });
@@ -34,9 +34,9 @@ namespace GameTheory.Games.Ergo.Console
                     case Symbol.PlayerC:
                     case Symbol.PlayerD:
                         var index = (int)symbol;
-                        if (index < state.Players.Count)
+                        if (index < state.Players.Length)
                         {
-                            color = ConsoleInteraction.GetPlayerColor(state, state.Players[index]);
+                            color = ConsoleInteraction.GetPlayerColor<GameState, Move>(state, state.Players[index]);
                         }
 
                         break;

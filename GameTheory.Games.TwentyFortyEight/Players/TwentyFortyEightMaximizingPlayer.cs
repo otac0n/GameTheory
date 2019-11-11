@@ -11,10 +11,10 @@ namespace GameTheory.Games.TwentyFortyEight.Players
     /// <summary>
     /// Provides a maximizing player for the game of <see cref="GameState">2048</see>.
     /// </summary>
-    public sealed class TwentyFortyEightMaximizingPlayer : MaximizingPlayer<Move, ResultScore<double>>
+    public sealed class TwentyFortyEightMaximizingPlayer : MaximizingPlayer<GameState, Move, ResultScore<double>>
     {
-        private static readonly IGameStateScoringMetric<Move, double> Metric =
-            ScoringMetric.Create<Move>(Score);
+        private static readonly IGameStateScoringMetric<GameState, Move, double> Metric =
+            ScoringMetric.Create<GameState, Move>(Score);
 
         private static readonly double[] Pow = Enumerable.Range(0, GameState.Size * GameState.Size).Select(value => Math.Pow(10, value)).ToArray();
 
@@ -37,11 +37,11 @@ namespace GameTheory.Games.TwentyFortyEight.Players
         protected override TimeSpan? MinThinkTime => this.minThinkTime;
 
         /// <inheritdoc />
-        protected override IGameStateCache<Move, ResultScore<double>> MakeCache() => new DictionaryCache<Move, ResultScore<double>>();
+        protected override IGameStateCache<GameState, Move, ResultScore<double>> MakeCache() => new DictionaryCache<GameState, Move, ResultScore<double>>();
 
-        private static double Score(PlayerState<Move> playerState)
+        private static double Score(PlayerState<GameState, Move> playerState)
         {
-            var state = (GameState)playerState.GameState;
+            var state = playerState.GameState;
             if (state.Players[0] == playerState.PlayerToken)
             {
                 var sums = new[] { 0.0, 0.0, 0.0, 0.0 };

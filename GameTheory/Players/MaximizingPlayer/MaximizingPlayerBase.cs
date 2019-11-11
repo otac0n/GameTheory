@@ -11,24 +11,31 @@ namespace GameTheory.Players.MaximizingPlayer
     using System.Threading.Tasks;
     using GameTheory.GameTree;
 
-    public abstract class MaximizingPlayerBase<TMove, TScore> : IPlayer<TMove>
+    /// <summary>
+    /// Provides a base implementation for maximizing players.
+    /// </summary>
+    /// <typeparam name="TGameState">The type of game states that the player will evaluate.</typeparam>
+    /// <typeparam name="TMove">The type of moves that the player will choose.</typeparam>
+    /// <typeparam name="TScore">The type used to keep track of score.</typeparam>
+    public abstract class MaximizingPlayerBase<TGameState, TMove, TScore> : IPlayer<TGameState, TMove>
+        where TGameState : IGameState<TMove>
         where TMove : IMove
     {
-        protected readonly GameTree<TMove, TScore> gameTree;
+        protected readonly GameTree<TGameState, TMove, TScore> gameTree;
         protected readonly IScorePlyExtender<TScore> scoreExtender;
-        protected readonly IGameStateScoringMetric<TMove, TScore> scoringMetric;
+        protected readonly IGameStateScoringMetric<TGameState, TMove, TScore> scoringMetric;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="MaximizingPlayerBase{TMove, TScore}"/> class.
+        /// Initializes a new instance of the <see cref="MaximizingPlayerBase{TGameState, TMove, TScore}"/> class.
         /// </summary>
         /// <param name="playerToken">The token that represents the player.</param>
         /// <param name="scoringMetric">The scoring metric to use.</param>
-        public MaximizingPlayerBase(PlayerToken playerToken, IGameStateScoringMetric<TMove, TScore> scoringMetric)
+        public MaximizingPlayerBase(PlayerToken playerToken, IGameStateScoringMetric<TGameState, TMove, TScore> scoringMetric)
         {
             this.scoringMetric = scoringMetric ?? throw new ArgumentNullException(nameof(scoringMetric));
             this.scoreExtender = this.scoringMetric as IScorePlyExtender<TScore>;
             this.PlayerToken = playerToken;
-            this.gameTree = new GameTree<TMove, TScore>(this.MakeCache());
+            this.gameTree = new GameTree<TGameState, TMove, TScore>(this.MakeCache());
         }
 
         /// <inheritdoc />
@@ -48,7 +55,7 @@ namespace GameTheory.Players.MaximizingPlayer
         protected virtual bool Ponder => true;
 
         /// <inheritdoc />
-        public async Task<Maybe<TMove>> ChooseMove(IGameState<TMove> state, CancellationToken cancel)
+        public async Task<Maybe<TMove>> ChooseMove(TGameState state, CancellationToken cancel)
         {
             await Task.Yield();
 
@@ -77,7 +84,7 @@ namespace GameTheory.Players.MaximizingPlayer
                 }
             }
 
-            var states = state.GetView(this.PlayerToken, this.InitialSamples).ToList();
+            var states = state.GetView(this.PlayerToken, this.InitialSamples).Cast<TGameState>().ToList();
 
             var mainline = this.GetMove(states, ponder, cancel);
 
@@ -101,14 +108,14 @@ namespace GameTheory.Players.MaximizingPlayer
             GC.SuppressFinalize(this);
         }
 
-        protected Mainline<TMove, TScore> CombineMainlines(IList<Mainline<TMove, TScore>> mainlines)
+        protected Mainline<TGameState, TMove, TScore> CombineMainlines(IList<Mainline<TGameState, TMove, TScore>> mainlines)
         {
             if (mainlines.Count == 1)
             {
                 return mainlines[0];
             }
 
-            var moveWeights = new Dictionary<TMove, Weighted<Mainline<TMove, TScore>>>(new ComparableEqualityComparer<TMove>());
+            var moveWeights = new Dictionary<TMove, Weighted<Mainline<TGameState, TMove, TScore>>>(new ComparableEqualityComparer<TMove>());
             var fullyDetermined = true;
 
             // Single Monte-Carlo
@@ -149,10 +156,10 @@ namespace GameTheory.Players.MaximizingPlayer
                               PlayerToken = g.Key,
                               Score = this.scoringMetric.Combine(g.Select(s => Weighted.Create(s, 1)).ToArray()),
                           }).ToDictionary(m => m.PlayerToken, m => m.Score);
-            return new Mainline<TMove, TScore>(scores, sourceMainline.GameState, sourceMainline.PlayerToken, sourceStrategy, depth, fullyDetermined);
+            return new Mainline<TGameState, TMove, TScore>(scores, sourceMainline.GameState, sourceMainline.PlayerToken, sourceStrategy, depth, fullyDetermined);
         }
 
-        protected Mainline<TMove, TScore> CombineOutcomes(IGameState<TMove> state, IList<Weighted<Mainline<TMove, TScore>>> mainlines)
+        protected Mainline<TGameState, TMove, TScore> CombineOutcomes(TGameState state, IList<Weighted<Mainline<TGameState, TMove, TScore>>> mainlines)
         {
             var firstMainline = mainlines[0].Value;
             if (mainlines.Count == 1)
@@ -161,7 +168,7 @@ namespace GameTheory.Players.MaximizingPlayer
             }
 
             var maxWeight = double.NegativeInfinity;
-            Mainline<TMove, TScore> maxMainline = null;
+            Mainline<TGameState, TMove, TScore> maxMainline = null;
             var fullyDetermined = true;
             var unvisited = 0;
             for (var i = 0; i < mainlines.Count; i++)
@@ -207,7 +214,7 @@ namespace GameTheory.Players.MaximizingPlayer
             }
 
             var depth = fullyDetermined ? mainlines.Max(m => m.Value.Depth) : mainlines.Where(m => !(m.Value?.FullyDetermined ?? false)).Min(m => m.Value?.Depth ?? 0);
-            return new Mainline<TMove, TScore>(combinedScore, maxMainline.GameState, maxMainline.PlayerToken, maxMainline.Strategies, depth, fullyDetermined);
+            return new Mainline<TGameState, TMove, TScore>(combinedScore, maxMainline.GameState, maxMainline.PlayerToken, maxMainline.Strategies, depth, fullyDetermined);
         }
 
         /// <summary>
@@ -224,7 +231,7 @@ namespace GameTheory.Players.MaximizingPlayer
         /// <param name="mainline">The mainline contianing the state and score.</param>
         /// <param name="player">The player whose lead should be retrieved.</param>
         /// <returns>The player's lead, as a score.</returns>
-        protected TScore GetLead(Mainline<TMove, TScore> mainline, PlayerToken player) => this.GetLead(mainline.Scores, mainline.GameState, player);
+        protected TScore GetLead(Mainline<TGameState, TMove, TScore> mainline, PlayerToken player) => this.GetLead(mainline.Scores, mainline.GameState, player);
 
         /// <summary>
         /// Gets the lead of a specific player over the field.  In order to support games of 3 or more players, this class tries to maximize the lead rather than the actual score value.
@@ -234,7 +241,7 @@ namespace GameTheory.Players.MaximizingPlayer
         /// <param name="state">The <see cref="IGameState{TMove}"/> that was scored.</param>
         /// <param name="player">The player whose lead should be retrieved.</param>
         /// <returns>The player's lead, as a score.</returns>
-        protected virtual TScore GetLead(IDictionary<PlayerToken, TScore> score, IGameState<TMove> state, PlayerToken player)
+        protected virtual TScore GetLead(IDictionary<PlayerToken, TScore> score, TGameState state, PlayerToken player)
         {
             if (state == null)
             {
@@ -276,13 +283,13 @@ namespace GameTheory.Players.MaximizingPlayer
             }
         }
 
-        protected abstract Mainline<TMove, TScore> GetMove(List<IGameState<TMove>> states, bool ponder, CancellationToken cancel);
+        protected abstract Mainline<TGameState, TMove, TScore> GetMove(List<TGameState> states, bool ponder, CancellationToken cancel);
 
         /// <summary>
         /// Create the transposition table cache.
         /// </summary>
         /// <returns>The cache object to use as a transposition table.</returns>
-        protected abstract IGameStateCache<TMove, TScore> MakeCache();
+        protected abstract IGameStateCache<TGameState, TMove, TScore> MakeCache();
 
         /// <summary>
         /// Send a message.

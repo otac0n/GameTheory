@@ -5,13 +5,15 @@ namespace GameTheory.GameTree.Caches
     /// <summary>
     /// A null-object cache, meaning a cache that does not store any items and implements the interface by returning default values.
     /// </summary>
+    /// <typeparam name="TGameState">The type of game states in the cache.</typeparam>
     /// <typeparam name="TMove">The type of moves supported by the game states in the cache.</typeparam>
     /// <typeparam name="TScore">The type used to keep track of score.</typeparam>
-    public class NullCache<TMove, TScore> : IGameStateCache<TMove, TScore>
+    public class NullCache<TGameState, TMove, TScore> : IGameStateCache<TGameState, TMove, TScore>
+        where TGameState : IGameState<TMove>
         where TMove : IMove
     {
         /// <inheritdoc/>
-        public void SetValue(IGameState<TMove> state, StateNode<TMove, TScore> result)
+        public void SetValue(TGameState state, StateNode<TGameState, TMove, TScore> result)
         {
         }
 
@@ -21,9 +23,9 @@ namespace GameTheory.GameTree.Caches
         }
 
         /// <inheritdoc/>
-        public bool TryGetValue(IGameState<TMove> state, out StateNode<TMove, TScore> cached)
+        public bool TryGetValue(TGameState state, out StateNode<TGameState, TMove, TScore> cached)
         {
-            cached = default(StateNode<TMove, TScore>);
+            cached = default(StateNode<TGameState, TMove, TScore>);
             return false;
         }
     }

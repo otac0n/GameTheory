@@ -7,7 +7,8 @@ namespace GameTheory.Players.MaximizingPlayer
     using System.Diagnostics;
     using System.Linq;
 
-    public class WinCountScoringMetric<TMove> : IGameStateScoringMetric<TMove, WinCount>
+    public class WinCountScoringMetric<TGameState, TMove> : IGameStateScoringMetric<TGameState, TMove, WinCount>
+        where TGameState : IGameState<TMove>
         where TMove : IMove
     {
         /// <inheritdoc/>
@@ -43,7 +44,7 @@ namespace GameTheory.Players.MaximizingPlayer
         }
 
         /// <inheritdoc/>
-        public IDictionary<PlayerToken, WinCount> Score(IGameState<TMove> state)
+        public IDictionary<PlayerToken, WinCount> Score(TGameState state)
         {
             var winners = state.GetWinners();
 
@@ -60,7 +61,7 @@ namespace GameTheory.Players.MaximizingPlayer
         }
 
         /// <inheritdoc/>
-        public WinCount Score(PlayerState<TMove> playerState)
+        public WinCount Score(PlayerState<TGameState, TMove> playerState)
         {
             double score;
 

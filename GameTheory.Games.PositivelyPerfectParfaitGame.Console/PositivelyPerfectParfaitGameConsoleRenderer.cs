@@ -8,13 +8,13 @@ namespace GameTheory.Games.PositivelyPerfectParfaitGame.Console
     /// <summary>
     /// Provides a console renderer for the game of <see cref="GameState">Positively Perfect Parfait Game</see>.
     /// </summary>
-    public class PositivelyPerfectParfaitGameConsoleRenderer : ConsoleRendererBase<Move>
+    public class PositivelyPerfectParfaitGameConsoleRenderer : ConsoleRendererBase<GameState, Move>
     {
         /// <inheritdoc />
-        public override void Show(IGameState<Move> state, PlayerToken playerToken = null) => new Templates().RenderGameState((GameState)state, this.MakeRenderTokenWriter(state));
+        public override void Show(GameState state, PlayerToken playerToken = null) => new Templates().RenderGameState(state, this.MakeRenderTokenWriter(state));
 
         /// <inheritdoc/>
-        protected override void RenderToken(IGameState<Move> state, object token)
+        protected override void RenderToken(GameState state, object token)
         {
             if (token is Flavor flavor)
             {

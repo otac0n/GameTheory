@@ -7,7 +7,8 @@ namespace GameTheory.FormsRunner.Players
     using System.Threading.Tasks;
     using GameTheory.Catalogs;
 
-    public class WinFormsPlayer<TMove> : IPlayer<TMove>
+    public class WinFormsPlayer<TGameState, TMove> : IPlayer<TGameState, TMove>
+        where TGameState : IGameState<TMove>
         where TMove : IMove
     {
         private PlayerView playerView;
@@ -32,7 +33,7 @@ namespace GameTheory.FormsRunner.Players
         public PlayerToken PlayerToken { get; }
 
         /// <inheritdoc/>
-        public Task<Maybe<TMove>> ChooseMove(IGameState<TMove> state, CancellationToken cancel) => this.playerView.ChooseMove(state, cancel);
+        public Task<Maybe<TMove>> ChooseMove(TGameState state, CancellationToken cancel) => this.playerView.ChooseMove<TGameState, TMove>(state, cancel);
 
         /// <inheritdoc/>
         public void Dispose()

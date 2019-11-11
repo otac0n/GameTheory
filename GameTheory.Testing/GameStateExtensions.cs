@@ -10,28 +10,30 @@ namespace GameTheory.Testing
 
     public static class GameStateExtensions
     {
-        public static IGameState<TMove> PlayAnyMove<TMove>(this IGameState<TMove> state, PlayerToken playerToken, Func<TMove, bool> filter, System.Random instance = null)
+        public static TGameState PlayAnyMove<TGameState, TMove>(this TGameState state, PlayerToken playerToken, Func<TMove, bool> filter, System.Random instance = null)
+            where TGameState : IGameState<TMove>
             where TMove : IMove
         {
-            var moves = state.GetAvailableMoves(playerToken).Where(filter).ToList();
+            var moves = state.GetAvailableMoves<TGameState, TMove>(playerToken).Where(filter).ToList();
             if (moves.Count == 0)
             {
-                state.ShowMoves();
+                state.ShowMoves<TGameState, TMove>();
             }
 
             var move = moves.Pick(instance);
             Console.WriteLine("Playing move:");
-            Console.WriteLine($"{state.GetPlayerName(move.PlayerToken)}: {move}");
-            return state.MakeMove(move);
+            Console.WriteLine($"{state.GetPlayerName<TGameState, TMove>(move.PlayerToken)}: {move}");
+            return (TGameState)state.MakeMove(move);
         }
 
-        public static IGameState<TMove> PlayMove<TMove>(this IGameState<TMove> state, PlayerToken playerToken, Expression<Func<TMove, bool>> filter)
+        public static TGameState PlayMove<TGameState, TMove>(this TGameState state, PlayerToken playerToken, Expression<Func<TMove, bool>> filter)
+            where TGameState : IGameState<TMove>
             where TMove : IMove
         {
-            var moves = state.GetAvailableMoves(playerToken).Where(filter.Compile()).ToList();
+            var moves = state.GetAvailableMoves<TGameState, TMove>(playerToken).Where(filter.Compile()).ToList();
             if (moves.Count != 1)
             {
-                state.ShowMoves();
+                state.ShowMoves<TGameState, TMove>();
                 if (moves.Count > 1)
                 {
                     state.ShowMoves(moves);
@@ -42,27 +44,29 @@ namespace GameTheory.Testing
 
             var move = moves.Single();
             Console.WriteLine("Playing move:");
-            Console.WriteLine($"{state.GetPlayerName(move.PlayerToken)}: {move}");
-            return state.MakeMove(move);
+            Console.WriteLine($"{state.GetPlayerName<TGameState, TMove>(move.PlayerToken)}: {move}");
+            return (TGameState)state.MakeMove(move);
         }
 
-        public static void ShowMoves<TMove>(this IGameState<TMove> state)
+        public static void ShowMoves<TGameState, TMove>(this TGameState state)
+            where TGameState : IGameState<TMove>
             where TMove : IMove
         {
             Console.WriteLine("Available Moves:");
             foreach (var move in state.GetAvailableMoves())
             {
-                Console.WriteLine($"{state.GetPlayerName(move.PlayerToken)}: {move}");
+                Console.WriteLine($"{state.GetPlayerName<TGameState, TMove>(move.PlayerToken)}: {move}");
             }
         }
 
-        public static void ShowMoves<TMove>(this IGameState<TMove> state, IEnumerable<TMove> moves)
+        public static void ShowMoves<TGameState, TMove>(this TGameState state, IEnumerable<TMove> moves)
+            where TGameState : IGameState<TMove>
             where TMove : IMove
         {
             Console.WriteLine("Moves:");
             foreach (var move in moves)
             {
-                Console.WriteLine($"{state.GetPlayerName(move.PlayerToken)}: {move}");
+                Console.WriteLine($"{state.GetPlayerName<TGameState, TMove>(move.PlayerToken)}: {move}");
             }
         }
     }

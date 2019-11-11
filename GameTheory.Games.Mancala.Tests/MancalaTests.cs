@@ -26,10 +26,10 @@ namespace GameTheory.Games.Mancala.Tests
         [Test]
         public void GetWinners_AfterAGameHasBeenPlayed_ReturnsThePlayersWithTheHighestScore()
         {
-            var endState = (GameState)GameUtilities.PlayGame(
+            var endState = GameUtilities.PlayGame(
                 new GameState(),
-                p => new RandomPlayer<Move>(p),
-                (prevState, move, state) => Console.WriteLine("{0}: {1}", state.GetPlayerName(move.PlayerToken), move)).Result;
+                p => new RandomPlayer<GameState, Move>(p),
+                (prevState, move, state) => Console.WriteLine("{0}: {1}", state.GetPlayerName<GameState, Move>(move.PlayerToken), move)).Result;
 
             var highestScore = endState.Players.Max(p => endState.GetScore(p));
             var winners = endState.GetWinners();

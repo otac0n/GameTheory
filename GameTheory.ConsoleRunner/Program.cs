@@ -187,7 +187,9 @@ namespace GameTheory.ConsoleRunner
             var gameType = game.GameStateType;
             var state = ConstructType(gameType);
 
-            typeof(Program).GetMethod(nameof(RunGame), BindingFlags.Static | BindingFlags.NonPublic).MakeGenericMethod(game.MoveType).Invoke(null, new object[] { state });
+            var genericMethod = typeof(Program).GetMethod(nameof(RunGame), BindingFlags.Static | BindingFlags.NonPublic);
+            var constructedMethod = genericMethod.MakeGenericMethod(gameType, game.MoveType);
+            constructedMethod.Invoke(null, new object[] { state });
 
             if (Debugger.IsAttached)
             {
@@ -195,16 +197,17 @@ namespace GameTheory.ConsoleRunner
             }
         }
 
-        private static void RunGame<TMove>(IGameState<TMove> state)
+        private static void RunGame<TGameState, TMove>(TGameState state)
+            where TGameState : IGameState<TMove>
             where TMove : IMove
         {
             Console.WriteLine(Resources.GamePlayerCount, string.Format(state.Players.Count == 1 ? Resources.SingularPlayer : Resources.PluralPlayers, state.Players.Count));
-            var players = PlayerCatalog.FindPlayers(typeof(TMove));
+            var players = PlayerCatalog.FindPlayers(typeof(TGameState), typeof(TMove));
             var rendererType = ConsoleRendererCatalog
-                .FindConsoleRenderers<TMove>()
-                .OrderBy(t => t.IsConstructedGenericType && t.GetGenericTypeDefinition() == typeof(ToStringConsoleRenderer<>))
+                .FindConsoleRenderers<TGameState, TMove>()
+                .OrderBy(t => t.IsConstructedGenericType && t.GetGenericTypeDefinition() == typeof(ToStringConsoleRenderer<,>))
                 .First();
-            var consoleRenderer = (IConsoleRenderer<TMove>)Activator.CreateInstance(rendererType);
+            var consoleRenderer = (IConsoleRenderer<TGameState, TMove>)Activator.CreateInstance(rendererType);
             var font = consoleRenderer.GetType().GetCustomAttributes(inherit: true).OfType<ConsoleFontAttribute>().FirstOrDefault();
             if (font != null)
             {
@@ -216,18 +219,18 @@ namespace GameTheory.ConsoleRunner
             Console.WriteLine(Resources.StartingState);
             consoleRenderer.Show(state);
 
-            IPlayer<TMove> choosePlayer(PlayerToken playerToken)
+            IPlayer<TGameState, TMove> choosePlayer(PlayerToken playerToken)
             {
                 consoleRenderer.Show(state, FormatUtilities.ParseStringFormat(Resources.ChoosePlayer, playerToken));
                 Console.WriteLine();
                 var player = ConsoleInteraction.Choose(players as IList<ICatalogPlayer> ?? players.ToList());
-                return (IPlayer<TMove>)ConstructType(player.PlayerType, p =>
+                return (IPlayer<TGameState, TMove>)ConstructType(player.PlayerType, p =>
                     p.Name == nameof(playerToken) && p.ParameterType == typeof(PlayerToken) ? playerToken :
-                    typeof(IConsoleRenderer<TMove>).IsAssignableFrom(p.ParameterType) ? consoleRenderer :
+                    typeof(IConsoleRenderer<TGameState, TMove>).IsAssignableFrom(p.ParameterType) ? consoleRenderer :
                     GetArgument(p));
             }
 
-            IPlayer<TMove> getPlayer(PlayerToken playerToken)
+            IPlayer<TGameState, TMove> getPlayer(PlayerToken playerToken)
             {
                 var player = choosePlayer(playerToken);
                 player.MessageSent += (obj, args) =>
@@ -264,7 +267,7 @@ namespace GameTheory.ConsoleRunner
             }
         }
 
-        private static void ShowMove<TMove>(IGameState<TMove> state, TMove move, IConsoleRenderer<TMove> consoleRenderer)
+        private static void ShowMove<TGameState, TMove>(TGameState state, TMove move, IConsoleRenderer<TGameState, TMove> consoleRenderer)
             where TMove : IMove
         {
             ConsoleInteraction.WithLock(() =>

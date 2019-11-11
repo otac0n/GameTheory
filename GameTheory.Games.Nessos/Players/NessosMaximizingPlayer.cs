@@ -9,9 +9,9 @@ namespace GameTheory.Games.Nessos.Players
     /// <summary>
     /// Provides a maximizing player for the game of <see cref="GameState">Love Letter</see>.
     /// </summary>
-    public class NessosMaximizingPlayer : MaximizingPlayer<Move, ResultScore<Tuple<double, double>>>
+    public class NessosMaximizingPlayer : MaximizingPlayer<GameState, Move, ResultScore<Tuple<double, double>>>
     {
-        private static readonly IGameStateScoringMetric<Move, Tuple<double, double>> Metric = ScoringMetric.Create<Move, Tuple<double, double>>(
+        private static readonly IGameStateScoringMetric<GameState, Move, Tuple<double, double>> Metric = ScoringMetric.Create<GameState, Move, Tuple<double, double>>(
             Score,
             Combine,
             Compare,
@@ -64,9 +64,9 @@ namespace GameTheory.Games.Nessos.Players
             return Tuple.Create(minuend.Item1 - subtrahend.Item1, minuend.Item2 - subtrahend.Item2);
         }
 
-        private static Tuple<double, double> Score(PlayerState<Move> playerState)
+        private static Tuple<double, double> Score(PlayerState<GameState, Move> playerState)
         {
-            var ownedCards = ((GameState)playerState.GameState).Inventory[playerState.PlayerToken].OwnedCards;
+            var ownedCards = playerState.GameState.Inventory[playerState.PlayerToken].OwnedCards;
 
             return Tuple.Create((double)GameState.Score(ownedCards), (double)ownedCards[Card.Charon]);
         }

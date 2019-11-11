@@ -8,10 +8,10 @@ namespace GameTheory.Games.Draughts.Players
     /// <summary>
     /// Provides a maximizing player for the game of <see cref="GameState">Draughts</see>.
     /// </summary>
-    public class DraughtsMaximizingPlayer : MaximizingPlayer<Move, ResultScore<double>>
+    public class DraughtsMaximizingPlayer : MaximizingPlayer<GameState, Move, ResultScore<double>>
     {
-        private static readonly IGameStateScoringMetric<Move, double> Metric =
-            ScoringMetric.Create<Move>(Score);
+        private static readonly IGameStateScoringMetric<GameState, Move, double> Metric =
+            ScoringMetric.Create<GameState, Move>(Score);
 
         private TimeSpan minThinkTime;
 
@@ -31,9 +31,9 @@ namespace GameTheory.Games.Draughts.Players
         /// <inheritdoc />
         protected override TimeSpan? MinThinkTime => this.minThinkTime;
 
-        private static double Score(PlayerState<Move> playerState)
+        private static double Score(PlayerState<GameState, Move> playerState)
         {
-            var state = (GameState)playerState.GameState;
+            var state = playerState.GameState;
             var board = state.Board;
             var playerIndex = state.Players.IndexOf(playerState.PlayerToken);
             var playerColor = (Pieces)(1 << playerIndex);
