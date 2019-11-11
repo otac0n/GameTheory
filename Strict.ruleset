@@ -29,5 +29,6 @@
     <Rule Id="SA1600" Action="None" />
     <Rule Id="SA1601" Action="None" />
     <Rule Id="SA1602" Action="None" />
+    <Rule Id="SA1612" Action="Error" />
   </Rules>
 </RuleSet>
