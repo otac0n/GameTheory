@@ -329,10 +329,7 @@ namespace GameTheory.Games.LoveLetter
         }
 
         /// <inheritdoc />
-        IGameState<Move> IGameState<Move>.MakeMove(Move move)
-        {
-            return this.MakeMove(move);
-        }
+        IGameState<Move> IGameState<Move>.MakeMove(Move move) => this.MakeMove(move);
 
         /// <summary>
         /// Applies the move to the current game state.
