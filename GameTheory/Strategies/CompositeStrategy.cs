@@ -60,7 +60,7 @@ namespace GameTheory.Strategies
                 }
             }
 
-            return default(Maybe<TMove>);
+            return default;
         }
 
         /// <inheritdoc/>

@@ -68,7 +68,7 @@ namespace GameTheory.Players.MaximizingPlayer
             {
                 if (!this.Ponder || moves.Count == 0)
                 {
-                    return default(Maybe<TMove>);
+                    return default;
                 }
                 else
                 {
@@ -90,7 +90,7 @@ namespace GameTheory.Players.MaximizingPlayer
 
             if (mainline == null || mainline.PlayerToken != this.PlayerToken)
             {
-                return default(Maybe<TMove>);
+                return default;
             }
             else
             {

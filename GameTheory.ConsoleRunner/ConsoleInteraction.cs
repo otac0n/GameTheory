@@ -15,7 +15,7 @@ namespace GameTheory.ConsoleRunner
         {
             if (options.Count == 0)
             {
-                return default(T);
+                return default;
             }
 
             if (skipMessage != null && options.Count == 1)

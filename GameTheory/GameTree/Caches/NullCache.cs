@@ -25,7 +25,7 @@ namespace GameTheory.GameTree.Caches
         /// <inheritdoc/>
         public bool TryGetValue(TGameState state, out StateNode<TGameState, TMove, TScore> cached)
         {
-            cached = default(StateNode<TGameState, TMove, TScore>);
+            cached = default;
             return false;
         }
     }

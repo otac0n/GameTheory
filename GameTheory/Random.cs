@@ -211,7 +211,7 @@ namespace GameTheory
             }
             else
             {
-                dealt = default(T);
+                dealt = default;
                 return deck;
             }
         }
@@ -253,7 +253,7 @@ namespace GameTheory
             }
             else
             {
-                dealt = default(T);
+                dealt = default;
                 return deck;
             }
         }

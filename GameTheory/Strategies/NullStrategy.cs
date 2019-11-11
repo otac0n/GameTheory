@@ -29,7 +29,7 @@ namespace GameTheory.Strategies
         {
             await Task.Yield();
 
-            return default(Maybe<TMove>);
+            return default;
         }
 
         /// <inheritdoc/>

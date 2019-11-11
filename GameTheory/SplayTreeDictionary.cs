@@ -211,14 +211,14 @@ namespace GameTheory
         {
             if (this.count == 0)
             {
-                value = default(TValue);
+                value = default;
                 return false;
             }
 
             this.Splay(key);
             if (key.CompareTo(this.root.Key) != 0)
             {
-                value = default(TValue);
+                value = default;
                 return false;
             }
 
@@ -300,7 +300,7 @@ namespace GameTheory
         private void Splay(TKey key)
         {
             SplayTreeNode l, r, t, y, header;
-            l = r = header = new SplayTreeNode(default(TKey), default(TValue));
+            l = r = header = new SplayTreeNode(default, default);
             t = this.root;
             while (true)
             {

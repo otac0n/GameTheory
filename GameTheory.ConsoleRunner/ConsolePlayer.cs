@@ -82,7 +82,7 @@ namespace GameTheory.ConsoleRunner
             }
             else
             {
-                return default(Maybe<TMove>);
+                return default;
             }
         }
 
