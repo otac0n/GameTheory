@@ -66,6 +66,7 @@
     <None Include="packages.config" />
     <Compile Include="ParserTests.cs" />
     <Compile Include="PlayerTests.cs" />
+    <Compile Include="SerializerTests.cs" />
     <AdditionalFiles Include="..\stylecop.json">
       <Link>stylecop.json</Link>
     </AdditionalFiles>

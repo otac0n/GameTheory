@@ -1,0 +1,46 @@
+@namespace GameTheory.Games.Chess.Uci.Protocol
+@using System.Linq
+
+line <Command>
+    = _? c:command _? !. { c }
+    / unknown
+
+command <Command>
+    = id
+    / option
+    / info
+    / uciok
+    / readyok
+    / bestmove
+
+id <IdCommand>
+    = "id" _ field:token _ value:any { new IdCommand(field, value) }
+
+option <OptionCommand>
+    = "option"
+    _ "name" _ name:("" (!(_ "type") .)+)
+    _ "type" _ type:token
+    def:(_ "default" _ d:token { d })?
+    min:(_ "min" _ i:token { i })?
+    max:(_ "max" _ x:token { x })?
+    vars:(_ "var" _ v:token { v })*
+    { new OptionCommand(name, type, def.SingleOrDefault(), min.SingleOrDefault(), max.SingleOrDefault(), vars) }
+
+info <InfoCommand>
+    = "info" _ type:token vars:(_ v:token { v })* { new InfoCommand(type, vars) }
+
+uciok <UciOkCommand>
+    = "uciok" { UciOkCommand.Instance }
+
+readyok <ReadyOkCommand>
+    = "readyok" { ReadyOkCommand.Instance }
+
+bestmove <BestMoveCommand>
+    = "bestmove" _ move:token ponder:(_ "ponder" _ p:token { p })? { new BestMoveCommand(move, ponder.SingleOrDefault()) }
+
+unknown <UnknownCommand>
+    = l:any { new UnknownCommand(l) }
+
+token = "" [^ ]+
+any = "" .*
+_ = "" " "+

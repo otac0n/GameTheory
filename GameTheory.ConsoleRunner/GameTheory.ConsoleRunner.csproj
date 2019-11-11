@@ -114,10 +114,6 @@
     <Analyzer Include="..\packages\StyleCop.Analyzers.1.1.118\analyzers\dotnet\cs\StyleCop.Analyzers.dll" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\GameTheory.Games.Nessos.Console\GameTheory.Games.Nessos.Console.csproj">
-      <Project>{b514bbfa-5456-4c7b-b941-98b6a2e890fe}</Project>
-      <Name>GameTheory.Games.Nessos.Console</Name>
-    </ProjectReference>
     <ProjectReference Include="..\GameTheory\GameTheory.csproj">
       <Project>{3b3e3456-b950-44c1-b8a2-fe6c79c2232f}</Project>
       <Name>GameTheory</Name>
@@ -133,6 +129,10 @@
     <ProjectReference Include="..\GameTheory.Games.Chess.Console\GameTheory.Games.Chess.Console.csproj">
       <Project>{ecc600ad-d839-4a93-bc76-947df35fbfed}</Project>
       <Name>GameTheory.Games.Chess.Console</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\GameTheory.Games.Chess.Uci\GameTheory.Games.Chess.Uci.csproj">
+      <Project>{b4df39d1-6870-4958-a1c2-f6e5b09cb99e}</Project>
+      <Name>GameTheory.Games.Chess.Uci</Name>
     </ProjectReference>
     <ProjectReference Include="..\GameTheory.Games.Draughts.Console\GameTheory.Games.Draughts.Console.csproj">
       <Project>{575618b4-33eb-441b-88bd-422f13fb5d8d}</Project>
@@ -157,6 +157,10 @@
     <ProjectReference Include="..\GameTheory.Games.Mancala.Console\GameTheory.Games.Mancala.Console.csproj">
       <Project>{8417ecb7-2bb9-4460-a022-95f2806703a0}</Project>
       <Name>GameTheory.Games.Mancala.Console</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\GameTheory.Games.Nessos.Console\GameTheory.Games.Nessos.Console.csproj">
+      <Project>{b514bbfa-5456-4c7b-b941-98b6a2e890fe}</Project>
+      <Name>GameTheory.Games.Nessos.Console</Name>
     </ProjectReference>
     <ProjectReference Include="..\GameTheory.Games.NormalFormGame\GameTheory.Games.NormalFormGame.csproj">
       <Project>{2b9f26b4-66f6-4fdd-b4bd-e2990f19bb97}</Project>
