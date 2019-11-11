@@ -112,7 +112,7 @@ namespace GameTheory.Games.Splendor.Moves
             }
             else
             {
-                deck = deck.Deal(out DevelopmentCard replacement);
+                deck = deck.Deal(out var replacement);
                 track = track.SetItem(this.Index, replacement);
             }
 

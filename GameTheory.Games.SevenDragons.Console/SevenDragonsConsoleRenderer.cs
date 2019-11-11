@@ -26,7 +26,7 @@ namespace GameTheory.Games.SevenDragons.Console
                 {
                     for (var x = extents.MinX; x <= extents.MaxX; x++)
                     {
-                        if (state.Table.TryGetValue(new Point(x, y), out DragonCard card))
+                        if (state.Table.TryGetValue(new Point(x, y), out var card))
                         {
                             for (var u = 0; u < DragonCard.Grid.Width; u++)
                             {

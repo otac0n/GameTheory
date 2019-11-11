@@ -51,7 +51,7 @@ namespace GameTheory
             }
 
             var allDealt = ImmutableList<T>.Empty;
-            deck = deck.Deal(count, out ImmutableList<T> newlyDealt, instance);
+            deck = deck.Deal(count, out var newlyDealt, instance);
             allDealt = allDealt.AddRange(newlyDealt);
 
             count -= allDealt.Count;
@@ -94,7 +94,7 @@ namespace GameTheory
             }
 
             var allDealt = ImmutableList<T>.Empty;
-            deck = deck.Deal(count, out ImmutableList<T> newlyDealt, instance);
+            deck = deck.Deal(count, out var newlyDealt, instance);
             allDealt = allDealt.AddRange(newlyDealt);
 
             count -= allDealt.Count;

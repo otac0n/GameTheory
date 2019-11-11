@@ -19,7 +19,7 @@ namespace GameTheory.Tests
         {
             var list = Enumerable.Range(0, count).ToImmutableList();
 
-            list.Deal(count, out ImmutableList<int> dealt);
+            list.Deal(count, out var dealt);
 
             Assert.That(dealt, Is.EquivalentTo(list));
         }
@@ -29,7 +29,7 @@ namespace GameTheory.Tests
         {
             var list = Enumerable.Range(0, count).ToImmutableList();
 
-            list = list.Deal(count, out ImmutableList<int> dealt);
+            list = list.Deal(count, out var dealt);
 
             Assert.That(list, Is.Empty);
         }
@@ -42,7 +42,7 @@ namespace GameTheory.Tests
 
             var list = Enumerable.Range(0, count).ToImmutableList();
 
-            list.Deal(deal, out ImmutableList<int> dealt);
+            list.Deal(deal, out var dealt);
 
             Assert.That(dealt.Count, Is.EqualTo(deal));
         }
@@ -55,7 +55,7 @@ namespace GameTheory.Tests
 
             var list = Enumerable.Range(0, count).ToImmutableList();
 
-            list = list.Deal(deal, out ImmutableList<int> dealt);
+            list = list.Deal(deal, out var dealt);
 
             Assert.That(list.Count, Is.EqualTo(count - deal));
         }
@@ -65,7 +65,7 @@ namespace GameTheory.Tests
         {
             var list = Enumerable.Range(0, count).ToImmutableList();
 
-            list.Deal(0, out ImmutableList<int> dealt);
+            list.Deal(0, out var dealt);
 
             Assert.That(dealt, Is.Empty);
         }
@@ -75,7 +75,7 @@ namespace GameTheory.Tests
         {
             var list = Enumerable.Range(0, count).ToImmutableList();
 
-            var newList = list.Deal(0, out ImmutableList<int> dealt);
+            var newList = list.Deal(0, out var dealt);
 
             Assert.That(newList, Is.SameAs(list));
         }
@@ -85,7 +85,7 @@ namespace GameTheory.Tests
         {
             var list = Enumerable.Range(0, count).ToImmutableList();
 
-            list.Deal(count + extra, out ImmutableList<int> dealt);
+            list.Deal(count + extra, out var dealt);
 
             Assert.That(dealt, Is.EquivalentTo(list));
         }
@@ -95,7 +95,7 @@ namespace GameTheory.Tests
         {
             var list = Enumerable.Range(0, count).ToImmutableList();
 
-            list = list.Deal(count + extra, out ImmutableList<int> dealt);
+            list = list.Deal(count + extra, out var dealt);
 
             Assert.That(list, Is.Empty);
         }

@@ -31,7 +31,7 @@ namespace GameTheory.Games.FiveTribes.Moves
             var inventory = state.Inventory[player];
 
             var newDiscards = state.ResourceDiscards;
-            var newResourcesPile = state.ResourcePile.Deal(1, out ImmutableList<Resource> dealt, ref newDiscards);
+            var newResourcesPile = state.ResourcePile.Deal(1, out var dealt, ref newDiscards);
             var newInventory = inventory.With(resources: inventory.Resources.AddRange(dealt));
 
             return state.With(

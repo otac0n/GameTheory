@@ -70,7 +70,7 @@ namespace GameTheory.Games.CenturySpiceRoad.Moves
             var inventory = state.Inventory.SetItem(activePlayer, pInventory);
             var pointCardTrack = state.PointCardTrack.RemoveAt(this.Index);
 
-            var pointCardDeck = state.PointCardDeck.Deal(1, out ImmutableList<PointCard> dealt);
+            var pointCardDeck = state.PointCardDeck.Deal(1, out var dealt);
             pointCardTrack = pointCardTrack.AddRange(dealt);
 
             state = state.With(

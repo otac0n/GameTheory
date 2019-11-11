@@ -57,7 +57,7 @@ namespace GameTheory.Games.CenturySpiceRoad.Moves
             var inventory = state.Inventory.SetItem(activePlayer, pInventory);
             var merchantCardTrack = state.MerchantCardTrack.RemoveAt(state.MerchantCardIndexAfforded);
 
-            var merchantCardDeck = state.MerchantCardDeck.Deal(1, out ImmutableList<MerchantCard> dealt);
+            var merchantCardDeck = state.MerchantCardDeck.Deal(1, out var dealt);
             merchantCardTrack = merchantCardTrack.AddRange(dealt.Select(c => new MerchantStall(c, EnumCollection<Spice>.Empty)));
 
             state = state.With(

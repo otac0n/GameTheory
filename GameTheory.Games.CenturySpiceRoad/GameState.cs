@@ -149,9 +149,9 @@ namespace GameTheory.Games.CenturySpiceRoad
             this.Phase = Phase.Play;
             this.Inventory = Enumerable.Range(0, players).ToImmutableDictionary(i => this.Players[i], i => new Inventory(InitialSpices[i], InitialHand));
             this.Tokens = EnumCollection<Token>.Empty.Add(Token.Gold, players * 2).Add(Token.Silver, players * 2);
-            this.MerchantCardDeck = InitialMerchantCards.Deal(6, out ImmutableList<MerchantCard> dealtMerchantCards);
+            this.MerchantCardDeck = InitialMerchantCards.Deal(6, out var dealtMerchantCards);
             this.MerchantCardTrack = dealtMerchantCards.Select(c => new MerchantStall(c, EnumCollection<Spice>.Empty)).ToImmutableList();
-            this.PointCardDeck = InitialPointCards.Deal(5, out ImmutableList<PointCard> dealtPointCards);
+            this.PointCardDeck = InitialPointCards.Deal(5, out var dealtPointCards);
             this.PointCardTrack = dealtPointCards;
         }
 
