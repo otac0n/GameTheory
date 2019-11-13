@@ -5,18 +5,18 @@ namespace GameTheory.Games.Chess
     using System;
     using System.Collections.Generic;
 
-    internal static class Parser
+    public static class Parser
     {
-        private const int DimensionX = 1;
-        private const int DimensionY = 0;
-        private const char FenEmptyFieldValue = '-';
-        private const char FenRankSeparator = '/';
-        private const char FenRecordSeparator = ' ';
-        private const int MaxParseSize = 100;
-        private const int MaxShredderFenBoardWidth = 'z' + 1 - 'a';
-        private const int MaxXFenBoardWidth = 'k' - 'a';
+        internal const int DimensionX = 1;
+        internal const int DimensionY = 0;
+        internal const char FenEmptyFieldValue = '-';
+        internal const char FenRankSeparator = '/';
+        internal const char FenRecordSeparator = ' ';
+        internal const int MaxParseSize = 100;
+        internal const int MaxShredderFenBoardWidth = 'z' + 1 - 'a';
+        internal const int MaxXFenBoardWidth = 'k' - 'a';
 
-        private static readonly Dictionary<char, Pieces> FenCastling = new Dictionary<char, Pieces>
+        internal static readonly Dictionary<char, Pieces> FenCastling = new Dictionary<char, Pieces>
         {
             ['q'] = Pieces.Black | Pieces.Queen,
             ['k'] = Pieces.Black | Pieces.King,
@@ -24,13 +24,13 @@ namespace GameTheory.Games.Chess
             ['K'] = Pieces.White | Pieces.King,
         };
 
-        private static readonly Dictionary<char, Pieces> FenColors = new Dictionary<char, Pieces>
+        internal static readonly Dictionary<char, Pieces> FenColors = new Dictionary<char, Pieces>
         {
             ['b'] = Pieces.Black,
             ['w'] = Pieces.White,
         };
 
-        private static readonly Dictionary<char, Pieces> FenPieces = new Dictionary<char, Pieces>
+        internal static readonly Dictionary<char, Pieces> FenPieces = new Dictionary<char, Pieces>
         {
             ['p'] = Pieces.Black | Pieces.Pawn,
             ['n'] = Pieces.Black | Pieces.Knight,

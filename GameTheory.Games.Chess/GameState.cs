@@ -52,7 +52,7 @@ namespace GameTheory.Games.Chess
             this.Variant = Variant.Create(
                 width: board.GetLength(1),
                 height: board.GetLength(0));
-            this.ActiveColor = Pieces.White;
+            this.ActiveColor = activePlayer;
             this.board = board.Cast<Pieces>().ToArray();
             this.PlyCountClock = plyCountClock;
             this.MoveNumber = moveNumber;
