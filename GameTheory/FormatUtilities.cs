@@ -7,6 +7,7 @@ namespace GameTheory
     using System.Globalization;
     using System.Linq;
     using System.Resources;
+    using System.Text;
     using System.Text.RegularExpressions;
 
     /// <summary>
@@ -95,6 +96,13 @@ namespace GameTheory
         /// <summary>
         /// Returns the list of format tokens representing a list.
         /// </summary>
+        /// <param name="items">The items in the list that will be separated.</param>
+        /// <returns>The format tokens representing the list.</returns>
+        public static string FormatList(IEnumerable<string> items) => FormatList(items.ToList());
+
+        /// <summary>
+        /// Returns the list of format tokens representing a list.
+        /// </summary>
         /// <typeparam name="T">The type of elements in the list.</typeparam>
         /// <param name="items">The items in the list that will be separated.</param>
         /// <returns>The format tokens representing the list.</returns>
@@ -138,6 +146,48 @@ namespace GameTheory
             result[ix--] = items[i];
 
             return result;
+        }
+
+        /// <summary>
+        /// Returns the list of format tokens representing a list.
+        /// </summary>
+        /// <typeparam name="T">The type of elements in the list.</typeparam>
+        /// <param name="items">The items in the list that will be separated.</param>
+        /// <returns>The format tokens representing the list.</returns>
+        public static string FormatList(IList<string> items)
+        {
+            if (items == null)
+            {
+                throw new ArgumentNullException(nameof(items));
+            }
+
+            string last;
+            switch (items.Count)
+            {
+                case 0:
+                    return string.Empty;
+
+                case 1:
+                    return items[0];
+
+                case 2:
+                    last = SharedResources.ListItemSeparatorPair;
+                    break;
+
+                default:
+                    last = SharedResources.ListItemSeparatorLastElement;
+                    break;
+            }
+
+            var result = new StringBuilder();
+            result.Append(items[0]);
+            for (var i = 1; i < items.Count; i++)
+            {
+                result.Append(i == items.Count - 1 ? SharedResources.ListItemSeparator : last);
+                result.Append(items[i]);
+            }
+
+            return result.ToString();
         }
 
         /// <summary>
