@@ -68,6 +68,26 @@ namespace GameTheory
             return matches;
         }
 
+        public static IEnumerable<MethodBase> GetPublicInitializers(this Type type)
+        {
+            var staticProperties = from staticProperty in type.GetProperties(BindingFlags.Public | BindingFlags.Static)
+                                   where staticProperty.PropertyType == type
+                                   select staticProperty.GetGetMethod(false);
+
+            var constructors = from constructor in type.GetConstructors()
+                               let parameters = constructor.GetParameters()
+                               select (MethodBase)constructor;
+
+            return staticProperties.Concat(constructors);
+        }
+
+        public static object InvokeStatic(this MethodBase method, params object[] parameters)
+        {
+            return method is ConstructorInfo constructorInfo
+                ? constructorInfo.Invoke(parameters)
+                : method.Invoke(null, parameters);
+        }
+
         public static bool MatchesConstraint(Type typeParameter, Type typeArgument, Type typeConstraint)
         {
             return typeConstraint.GetTypeInfo().IsAssignableFrom(typeArgument.GetTypeInfo());

@@ -46,19 +46,14 @@ namespace GameTheory.ConsoleRunner
         {
             getParameter = getParameter ?? (p => GetArgument(p));
 
-            var constructors = from constructor in type.GetConstructors()
-                               let parameters = constructor.GetParameters()
-                               let name = parameters.Length == 0 ? "(default)" : string.Join(", ", parameters.Select(p => p.Name))
-                               let accessor = new Func<object>(() => constructor.Invoke(constructor.GetParameters().Select(getParameter).ToArray()))
-                               select ConsoleInteraction.MakeChoice(name, accessor);
-            var staticProperties = from staticProperty in type.GetProperties(BindingFlags.Public | BindingFlags.Static)
-                                   where staticProperty.PropertyType == type
-                                   let accessor = new Func<object>(() => staticProperty.GetValue(null))
-                                   select ConsoleInteraction.MakeChoice(staticProperty.Name, accessor);
+            var sources = (from method in type.GetPublicInitializers()
+                           let parameters = method.GetParameters()
+                           let name = method is MethodInfo methodInfo ? methodInfo.Name : parameters.Length == 0 ? "Default Instance" : $"Specify {string.Join(", ", parameters.Select(p => p.Name))}"
+                           orderby method is ConstructorInfo ? (parameters.Length == 0 ? 1 : 3) : 2
+                           select ConsoleInteraction.MakeChoice(name, method)).ToList();
 
-            var sources = constructors.Concat(staticProperties).ToList();
             var source = ConsoleInteraction.Choose(sources, skipMessage: _ => Resources.SingleConstructor);
-            return source.Value();
+            return source.Value.InvokeStatic(source.Value.GetParameters().Select(getParameter).ToArray());
         }
 
         private static object GetArgument(ParameterInfo parameter)

@@ -24,18 +24,14 @@ namespace GameTheory.FormsRunner.Shared.Editors
         protected override Control Update(Control control, Scope scope, Type type, object value, out Control errorControl, IReadOnlyList<Editor> editors, Action<Control, string> setError, Action<object, bool> set)
         {
             var noParameters = new ParameterInfo[0];
-            var nullValues = new[] { new { order = 0, selection = new InitializerSelection("(null)", args => null, noParameters) } }.ToList();
+            var nullValues = new[] { new InitializerSelection("(null)", args => null, noParameters) }.ToList();
             nullValues.RemoveAll(_ => type.IsValueType);
-            var constructors = from constructor in type.GetConstructors()
-                               let parameters = constructor.GetParameters()
-                               let text = parameters.Length == 0 ? "Default Instance" : $"Specify {string.Join(", ", parameters.Select(p => p.Name))}"
-                               let accessor = new Func<object[], object>(args => constructor.Invoke(args))
-                               select new { order = parameters.Length == 0 ? 1 : 3, selection = new InitializerSelection(text, accessor, parameters) };
-            var staticProperties = from staticProperty in type.GetProperties(BindingFlags.Public | BindingFlags.Static)
-                                   where staticProperty.PropertyType == type
-                                   let accessor = new Func<object[], object>(_ => staticProperty.GetValue(null))
-                                   select new { order = 2, selection = new InitializerSelection(staticProperty.Name, accessor, noParameters) };
-            var rootOptions = nullValues.Concat(constructors).Concat(staticProperties).OrderBy(s => s.order).Select(s => s.selection).ToArray();
+            var options = from method in type.GetPublicInitializers()
+                          let parameters = method.GetParameters()
+                          let name = method is MethodInfo methodInfo ? methodInfo.Name : parameters.Length == 0 ? "Default Instance" : $"Specify {string.Join(", ", parameters.Select(p => p.Name))}"
+                          orderby method is ConstructorInfo ? (parameters.Length == 0 ? 1 : 3) : 2
+                          select new InitializerSelection(name, method.InvokeStatic, parameters);
+            var rootOptions = nullValues.Concat(options).ToArray();
 
             var propertiesTable = MakeTablePanel(1, 2);
 
