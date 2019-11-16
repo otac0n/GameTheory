@@ -46,18 +46,11 @@ namespace GameTheory.ConsoleRunner
         {
             getParameter = getParameter ?? (p => GetArgument(p));
 
-            var sources = (from method in type.GetPublicInitializers()
-                           let parameters = method.GetParameters()
-                           let name = method is MethodInfo methodInfo
-                               ? methodInfo.Name
-                               : parameters.Length == 0
-                                   ? SharedResources.DefaultInstance
-                                   : string.Format(SharedResources.SpecifyFormat, FormatUtilities.FormatList(parameters.Select(p => p.Name)))
-                           orderby method is ConstructorInfo ? (parameters.Length == 0 ? 1 : 3) : 2
-                           select ConsoleInteraction.MakeChoice(name, method)).ToList();
+            var sources = (from init in type.GetPublicInitializers()
+                           select ConsoleInteraction.MakeChoice(init.Name, init)).ToList();
 
-            var source = ConsoleInteraction.Choose(sources, skipMessage: _ => Resources.SingleConstructor);
-            return source.Value.InvokeStatic(source.Value.GetParameters().Select(getParameter).ToArray());
+            var initializer = ConsoleInteraction.Choose(sources, skipMessage: _ => Resources.SingleConstructor).Value;
+            return initializer.Accessor(initializer.Parameters.Select(getParameter).ToArray());
         }
 
         private static object GetArgument(ParameterInfo parameter)

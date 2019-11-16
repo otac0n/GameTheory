@@ -26,17 +26,9 @@ namespace GameTheory.FormsRunner.Shared.Editors
         {
             var noParameters = new ParameterInfo[0];
             var nullValues = new[] { new Initializer(SharedResources.Null, args => null, noParameters) }.ToList();
-            nullValues.RemoveAll(_ => type.IsValueType);
-            var options = from method in type.GetPublicInitializers()
-                          let parameters = method.GetParameters()
-                          let name = method is MethodInfo methodInfo
-                              ? methodInfo.Name
-                              : parameters.Length == 0
-                                  ? SharedResources.DefaultInstance
-                                  : string.Format(SharedResources.SpecifyFormat, FormatUtilities.FormatList(parameters.Select(p => p.Name)))
-                          orderby method is ConstructorInfo ? (parameters.Length == 0 ? 1 : 3) : 2
-                          select new Initializer(name, method.InvokeStatic, parameters);
-            var rootOptions = nullValues.Concat(options).ToArray();
+            var rootOptions = (type.IsValueType
+                ? type.GetPublicInitializers()
+                : nullValues.Concat(type.GetPublicInitializers())).ToArray();
 
             var propertiesTable = MakeTablePanel(1, 2);
 

@@ -40,9 +40,9 @@ namespace GameTheory.Catalogs
             {
                 var games = (from t in assembly.ExportedTypes
                              where !t.GetTypeInfo().IsAbstract
-                             let m = CatalogGame.GetMoveType(t)
+                             let m = ReflectionUtilities.GetMoveType(t)
                              where m != null
-                             select new CatalogGame(t, m)).ToArray();
+                             select new CatalogGame(t, m, ReflectionUtilities.GetPublicInitializers(t))).ToArray();
 
                 foreach (var g in games)
                 {

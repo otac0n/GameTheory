@@ -3,10 +3,11 @@
 namespace GameTheory.Catalogs
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
 
     /// <summary>
-    /// A convenience class for dealing with types implementing <see cref="IPlayer{TMove}"/>.
+    /// A convenience class for dealing with types implementing <see cref="IPlayer{TGameState, TMove}"/>.
     /// </summary>
     public class CatalogPlayer : ICatalogPlayer
     {
@@ -16,12 +17,14 @@ namespace GameTheory.Catalogs
         /// <param name="playerType">The type of the player.</param>
         /// <param name="gameStateType">The type used for game states.</param>
         /// <param name="moveType">The type used for moves.</param>
+        /// <param name="initializers">The initializers used to create instances of the player.</param>
         /// <param name="name">The name of the player.</param>
-        public CatalogPlayer(Type playerType, Type gameStateType, Type moveType, string name = null)
+        public CatalogPlayer(Type playerType, Type gameStateType, Type moveType, IEnumerable<Initializer> initializers, string name = null)
         {
             this.PlayerType = playerType ?? throw new ArgumentNullException(nameof(playerType));
             this.GameStateType = gameStateType ?? throw new ArgumentNullException(nameof(gameStateType));
             this.MoveType = moveType ?? throw new ArgumentNullException(nameof(moveType));
+            this.Initializers = (initializers ?? throw new ArgumentNullException(nameof(initializers))).ToList().AsReadOnly();
             this.Name = string.IsNullOrEmpty(name)
                 ? GetPlayerName(this.PlayerType)
                 : name;
@@ -29,6 +32,9 @@ namespace GameTheory.Catalogs
 
         /// <inheritdoc/>
         public Type GameStateType { get; }
+
+        /// <inheritdoc/>
+        public IReadOnlyList<Initializer> Initializers { get; }
 
         /// <inheritdoc/>
         public Type MoveType { get; }
