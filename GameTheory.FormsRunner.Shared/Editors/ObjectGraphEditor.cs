@@ -7,6 +7,7 @@ namespace GameTheory.FormsRunner.Shared.Editors
     using System.Linq;
     using System.Reflection;
     using System.Windows.Forms;
+    using GameTheory.Catalogs;
     using static Controls;
 
     public class ObjectGraphEditor : Editor
@@ -24,7 +25,7 @@ namespace GameTheory.FormsRunner.Shared.Editors
         protected override Control Update(Control control, Scope scope, Type type, object value, out Control errorControl, IReadOnlyList<Editor> editors, Action<Control, string> setError, Action<object, bool> set)
         {
             var noParameters = new ParameterInfo[0];
-            var nullValues = new[] { new InitializerSelection(SharedResources.Null, args => null, noParameters) }.ToList();
+            var nullValues = new[] { new Initializer(SharedResources.Null, args => null, noParameters) }.ToList();
             nullValues.RemoveAll(_ => type.IsValueType);
             var options = from method in type.GetPublicInitializers()
                           let parameters = method.GetParameters()
@@ -34,7 +35,7 @@ namespace GameTheory.FormsRunner.Shared.Editors
                                   ? SharedResources.DefaultInstance
                                   : string.Format(SharedResources.SpecifyFormat, FormatUtilities.FormatList(parameters.Select(p => p.Name)))
                           orderby method is ConstructorInfo ? (parameters.Length == 0 ? 1 : 3) : 2
-                          select new InitializerSelection(name, method.InvokeStatic, parameters);
+                          select new Initializer(name, method.InvokeStatic, parameters);
             var rootOptions = nullValues.Concat(options).ToArray();
 
             var propertiesTable = MakeTablePanel(1, 2);
@@ -49,8 +50,8 @@ namespace GameTheory.FormsRunner.Shared.Editors
 
             constructorList.SelectedIndexChanged += (_, a) =>
             {
-                var constructor = constructorList.SelectedItem as InitializerSelection;
-                var parameterCount = constructor.Parameters.Length;
+                var constructor = constructorList.SelectedItem as Initializer;
+                var parameterCount = constructor.Parameters.Count;
                 propertiesTable.SuspendLayout();
                 propertiesTable.Controls.DisposeAndClear();
                 propertiesTable.RowCount = Math.Max(1, parameterCount);
@@ -176,22 +177,6 @@ namespace GameTheory.FormsRunner.Shared.Editors
             // TODO: Dispose controls when tablePanel is disposed.
             errorControl = constructorList;
             return tablePanel;
-        }
-
-        private class InitializerSelection
-        {
-            public InitializerSelection(string name, Func<object[], object> accessor, ParameterInfo[] parameters)
-            {
-                this.Name = name;
-                this.Accessor = accessor;
-                this.Parameters = parameters;
-            }
-
-            public Func<object[], object> Accessor { get; }
-
-            public string Name { get; }
-
-            public ParameterInfo[] Parameters { get; }
         }
     }
 }
