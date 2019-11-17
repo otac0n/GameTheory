@@ -84,10 +84,21 @@ namespace GameTheory.Games.Chess.Uci
 
                 Task<string> Read() => Task.Run(() =>
                 {
-                    string line;
-
-                    while ((line = stdOut.ReadLine()) is string s && s.Length == 0)
+                    string line = null;
+                    while (true)
                     {
+                        try
+                        {
+                            line = stdOut.ReadLine();
+                        }
+                        catch (ObjectDisposedException)
+                        {
+                        }
+
+                        if (line == null || line.Length > 0)
+                        {
+                            break;
+                        }
                     }
 
                     Debug.WriteLine($"<= {line}");
