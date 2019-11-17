@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="DefaultInstance" xml:space="preserve">
+    <value>Default Instance</value>
+  </data>
   <data name="ListItemSeparator" xml:space="preserve">
     <value>, </value>
   </data>
@@ -126,6 +129,9 @@
   <data name="ListItemSeparatorPair" xml:space="preserve">
     <value> and </value>
   </data>
+  <data name="Null" xml:space="preserve">
+    <value>(null)</value>
+  </data>
   <data name="PlayerName" xml:space="preserve">
     <value>Player {0}</value>
   </data>
@@ -134,6 +140,9 @@
   </data>
   <data name="Space" xml:space="preserve">
     <value> </value>
+  </data>
+  <data name="SpecifyFormat" xml:space="preserve">
+    <value>Specify {0}</value>
   </data>
   <data name="Times" xml:space="preserve">
     <value>×</value>

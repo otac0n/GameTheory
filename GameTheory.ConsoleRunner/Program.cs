@@ -42,23 +42,17 @@ namespace GameTheory.ConsoleRunner
         /// </summary>
         public static IPlayerCatalog PlayerCatalog { get; }
 
-        private static object ConstructType(Type type, Func<ParameterInfo, object> getParameter = null)
+        private static object ConstructType(Type type, Func<ParameterInfo, object> getParameter = null) => ConstructType(type.GetPublicInitializers(), getParameter);
+
+        private static object ConstructType(IEnumerable<Initializer> initializers, Func<ParameterInfo, object> getParameter = null)
         {
             getParameter = getParameter ?? (p => GetArgument(p));
 
-            var constructors = from constructor in type.GetConstructors()
-                               let parameters = constructor.GetParameters()
-                               let name = parameters.Length == 0 ? "(default)" : string.Join(", ", parameters.Select(p => p.Name))
-                               let accessor = new Func<object>(() => constructor.Invoke(constructor.GetParameters().Select(getParameter).ToArray()))
-                               select ConsoleInteraction.MakeChoice(name, accessor);
-            var staticProperties = from staticProperty in type.GetProperties(BindingFlags.Public | BindingFlags.Static)
-                                   where staticProperty.PropertyType == type
-                                   let accessor = new Func<object>(() => staticProperty.GetValue(null))
-                                   select ConsoleInteraction.MakeChoice(staticProperty.Name, accessor);
+            var sources = (from init in initializers
+                           select ConsoleInteraction.MakeChoice(init.Name, init)).ToList();
 
-            var sources = constructors.Concat(staticProperties).ToList();
-            var source = ConsoleInteraction.Choose(sources, skipMessage: _ => Resources.SingleConstructor);
-            return source.Value();
+            var initializer = ConsoleInteraction.Choose(sources, skipMessage: _ => Resources.SingleConstructor).Value;
+            return initializer.Accessor(initializer.Parameters.Select(getParameter).ToArray());
         }
 
         private static object GetArgument(ParameterInfo parameter)
@@ -185,7 +179,7 @@ namespace GameTheory.ConsoleRunner
 
             var game = ConsoleInteraction.Choose(GameCatalog.AvailableGames);
             var gameType = game.GameStateType;
-            var state = ConstructType(gameType);
+            var state = ConstructType(game.Initializers);
 
             var genericMethod = typeof(Program).GetMethod(nameof(RunGame), BindingFlags.Static | BindingFlags.NonPublic);
             var constructedMethod = genericMethod.MakeGenericMethod(gameType, game.MoveType);
@@ -224,7 +218,7 @@ namespace GameTheory.ConsoleRunner
                 consoleRenderer.Show(state, FormatUtilities.ParseStringFormat(Resources.ChoosePlayer, playerToken));
                 Console.WriteLine();
                 var player = ConsoleInteraction.Choose(players as IList<ICatalogPlayer> ?? players.ToList(), render: p => Console.Write(p.Name));
-                return (IPlayer<TGameState, TMove>)ConstructType(player.PlayerType, p =>
+                return (IPlayer<TGameState, TMove>)ConstructType(player.Initializers, p =>
                     p.Name == nameof(playerToken) && p.ParameterType == typeof(PlayerToken) ? playerToken :
                     typeof(IConsoleRenderer<TGameState, TMove>).IsAssignableFrom(p.ParameterType) ? consoleRenderer :
                     GetArgument(p));

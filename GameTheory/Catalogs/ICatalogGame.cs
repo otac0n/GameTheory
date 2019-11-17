@@ -3,6 +3,7 @@
 namespace GameTheory.Catalogs
 {
     using System;
+    using System.Collections.Generic;
 
     /// <summary>
     /// An interface representing a set of types implementing <see cref="IGameState{TMove}"/>.
@@ -13,6 +14,11 @@ namespace GameTheory.Catalogs
         /// Gets the type used as a game state.
         /// </summary>
         Type GameStateType { get; }
+
+        /// <summary>
+        /// Gets a collection of initializers, representing different ways to create this game.
+        /// </summary>
+        IReadOnlyList<Initializer> Initializers { get; }
 
         /// <summary>
         /// Gets the type used for moves.

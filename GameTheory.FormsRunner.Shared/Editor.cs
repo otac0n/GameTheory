@@ -21,16 +21,16 @@ namespace GameTheory.FormsRunner.Shared
             ObjectGraphEditor.Instance,
         }.AsReadOnly();
 
-        public static Control Update<T>(Control control, Scope scope, T value, out Control errorControl, IReadOnlyList<Editor> editors, Action<Control, string> setError, Action<object, bool> set, Action<Control, Control> update = null) =>
-            Update(control, scope, typeof(T), value, out errorControl, editors, setError, set);
+        public static Control FindAndUpdate<T>(Control control, Scope scope, T value, out Control errorControl, IReadOnlyList<Editor> editors, Action<Control, string> setError, Action<object, bool> set, Action<Control, Control> update = null) =>
+            FindAndUpdate(control, scope, typeof(T), value, out errorControl, editors, setError, set);
 
-        public static Control Update(Control control, Scope scope, Type type, object value, out Control errorControl, IReadOnlyList<Editor> editors, Action<Control, string> setError, Action<object, bool> set, Action<Control, Control> update = null)
+        public static Control FindAndUpdate(Control control, Scope scope, Type type, object value, out Control errorControl, IReadOnlyList<Editor> editors, Action<Control, string> setError, Action<object, bool> set, Action<Control, Control> update = null)
         {
             foreach (var editor in editors == null ? Editors : editors.Concat(Editors))
             {
                 if (editor.CanEdit(scope, type, value))
                 {
-                    return editor.UpdateWithAction(control, scope, type, value, out errorControl, editors, setError, set, update);
+                    return editor.Update(control, scope, type, value, out errorControl, editors, setError, set, update);
                 }
             }
 
@@ -40,7 +40,7 @@ namespace GameTheory.FormsRunner.Shared
 
         public abstract bool CanEdit(Scope scope, Type type, object value);
 
-        public Control UpdateWithAction(Control control, Scope scope, Type type, object value, out Control errorControl, IReadOnlyList<Editor> editors, Action<Control, string> setError, Action<object, bool> set, Action<Control, Control> update = null)
+        public Control Update(Control control, Scope scope, Type type, object value, out Control errorControl, IReadOnlyList<Editor> editors, Action<Control, string> setError, Action<object, bool> set, Action<Control, Control> update = null)
         {
             var newControl = this.Update(control, scope, type, value, out errorControl, editors, setError, set);
 

@@ -7,7 +7,6 @@ namespace GameTheory.Catalogs
     using System.Collections.Immutable;
     using System.Linq;
     using System.Reflection;
-    using GameTheory.Comparers;
 
     /// <summary>
     /// Exposes the players available as exported types from a list of assemblies.
@@ -54,7 +53,7 @@ namespace GameTheory.Catalogs
                     var typeInfo = type.GetTypeInfo();
                     if (playerInterfaceInfo.IsAssignableFrom(typeInfo))
                     {
-                        yield return new CatalogPlayer(type, gameStateType, moveType);
+                        yield return new CatalogPlayer(type, gameStateType, moveType, ReflectionUtilities.GetPublicInitializers(type));
                         continue;
                     }
 
@@ -75,7 +74,7 @@ namespace GameTheory.Catalogs
                             {
                                 if (playerInterfaceInfo.IsAssignableFrom(playerType.GetTypeInfo()))
                                 {
-                                    yield return new CatalogPlayer(playerType, gameStateType, moveType);
+                                    yield return new CatalogPlayer(playerType, gameStateType, moveType, ReflectionUtilities.GetPublicInitializers(playerType));
                                 }
                             }
                         }
