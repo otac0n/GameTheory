@@ -43,7 +43,7 @@ namespace GameTheory.Games.Chess.Uci
                 {
                     return new ReadOnlyCollection<Initializer>(new[]
                     {
-                        new Initializer(SharedResources.DefaultInstance, parameters => new UciPlayer((PlayerToken)parameters[0], this.path), new[]
+                        new Initializer(SharedResources.DefaultInstance, parameters => new UciPlayer((PlayerToken)parameters[0], this.path, null, null), new[]
                         {
                             new DynamicParameterInfo("playerToken", typeof(PlayerToken), 0, ParameterAttributes.None, false, null, null),
                         }),

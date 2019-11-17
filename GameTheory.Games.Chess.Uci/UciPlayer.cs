@@ -16,13 +16,22 @@ namespace GameTheory.Games.Chess.Uci
         private TaskCompletionSource<BestMoveCommand> moveSource;
         private ShortCoordinateNotation notationSystem;
 
-        public UciPlayer(PlayerToken playerToken, string fileName, string arguments = null)
+        public UciPlayer(PlayerToken playerToken, string fileName, string arguments, IEnumerable<SetOptionCommand> options)
         {
             this.PlayerToken = playerToken;
             this.engine = new UciEngine(fileName, arguments);
             this.engine.UnhandledCommand += this.Engine_UnhandledCommand;
-            this.engine.Execute(IsReadyCommand.Instance);
             this.notationSystem = new ShortCoordinateNotation();
+
+            if (options is object)
+            {
+                foreach (var option in options)
+                {
+                    this.engine.Execute(option);
+                }
+            }
+
+            this.engine.Execute(IsReadyCommand.Instance);
         }
 
         /// <inheritdoc/>

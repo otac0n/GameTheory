@@ -19,6 +19,7 @@ namespace GameTheory.Games.Chess.Uci
         private readonly LimitedAccessProcess engineProcess;
         private readonly TaskCompletionSource<string> nameSource = new TaskCompletionSource<string>();
         private readonly List<OptionCommand> options = new List<OptionCommand>();
+        private readonly TaskCompletionSource<IReadOnlyList<OptionCommand>> optionsSource = new TaskCompletionSource<IReadOnlyList<OptionCommand>>();
         private readonly Task runTask;
 
         public UciEngine(string fileName, string arguments = null)
@@ -49,6 +50,8 @@ namespace GameTheory.Games.Chess.Uci
         public string Author => this.authorSource.Task.Result;
 
         public string Name => this.nameSource.Task.Result;
+
+        public IReadOnlyList<OptionCommand> Options => this.optionsSource.Task.Result;
 
         public void Dispose()
         {
@@ -137,6 +140,7 @@ namespace GameTheory.Games.Chess.Uci
                         var timeout = new TimeoutException();
                         this.nameSource.TrySetException(timeout);
                         this.authorSource.TrySetException(timeout);
+                        this.optionsSource.TrySetException(timeout);
                         state = State.Quit;
                         continue;
                     }
@@ -200,6 +204,7 @@ namespace GameTheory.Games.Chess.Uci
 
                                     case UciOkCommand uciOkCommand:
                                         state = State.UciReady;
+                                        this.optionsSource.TrySetResult(this.options.AsReadOnly());
                                         otherTask = commandTask = Command();
                                         break;
 
@@ -241,6 +246,7 @@ namespace GameTheory.Games.Chess.Uci
             {
                 this.nameSource.TrySetException(ex);
                 this.authorSource.TrySetException(ex);
+                this.optionsSource.TrySetException(ex);
             }
             finally
             {
