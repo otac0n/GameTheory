@@ -6,15 +6,17 @@ namespace GameTheory.Games.Chess.Uci
 {
     using System;
     using System.Collections.Generic;
+    using System.Collections.ObjectModel;
     using System.IO;
-    using System.Threading;
+    using System.Linq;
+    using System.Reflection;
     using GameTheory.Catalogs;
 
     public class UciCatalog : PlayerCatalogBase
     {
         protected override IEnumerable<ICatalogPlayer> GetPlayers(Type gameStateType, Type moveType)
         {
-            if (moveType != typeof(Move))
+            if (gameStateType != typeof(GameState) || moveType != typeof(Move))
             {
                 yield break;
             }
@@ -27,16 +29,29 @@ namespace GameTheory.Games.Chess.Uci
 
         private class Player : ICatalogPlayer, IDisposable
         {
+            private readonly UciEngine engine;
+            private readonly Lazy<IReadOnlyList<Initializer>> initializers;
             private readonly string path;
-            private UciEngine engine;
 
             public Player(string path)
             {
                 this.path = path;
                 this.engine = new UciEngine(this.path);
+                this.initializers = new Lazy<IReadOnlyList<Initializer>>(() =>
+                {
+                    return new ReadOnlyCollection<Initializer>(new[]
+                    {
+                        new Initializer(SharedResources.DefaultInstance, parameters => new UciPlayer((PlayerToken)parameters[0], this.path), new[]
+                        {
+                            new DynamicParameterInfo("playerToken", typeof(PlayerToken), 0, ParameterAttributes.None, false, null, null),
+                        }),
+                    });
+                });
             }
 
             public Type GameStateType => typeof(GameState);
+
+            public IReadOnlyList<Initializer> Initializers => this.initializers.Value;
 
             public Type MoveType => typeof(Move);
 
@@ -46,7 +61,7 @@ namespace GameTheory.Games.Chess.Uci
 
             public void Dispose()
             {
-                this.engine?.Dispose();
+                this.engine.Dispose();
             }
         }
     }
