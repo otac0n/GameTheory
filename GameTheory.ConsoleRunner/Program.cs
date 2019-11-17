@@ -79,7 +79,7 @@ namespace GameTheory.ConsoleRunner
             {
                 if (range != null)
                 {
-                    Console.WriteLine(Resources.RangeWithDefault, range.Minimum, range.Maximum, parameter.DefaultValue);
+                    Console.Write(Resources.RangeWithDefault, range.Minimum, range.Maximum, parameter.DefaultValue);
                 }
                 else
                 {
@@ -88,7 +88,7 @@ namespace GameTheory.ConsoleRunner
             }
             else if (range != null)
             {
-                Console.WriteLine(Resources.Range, range.Minimum, range.Maximum);
+                Console.Write(Resources.Range, range.Minimum, range.Maximum);
             }
 
             Console.WriteLine();
