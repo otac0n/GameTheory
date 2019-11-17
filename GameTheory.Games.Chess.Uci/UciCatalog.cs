@@ -11,6 +11,7 @@ namespace GameTheory.Games.Chess.Uci
     using System.Linq;
     using System.Reflection;
     using GameTheory.Catalogs;
+    using GameTheory.Games.Chess.Uci.Protocol;
 
     public class UciCatalog : PlayerCatalogBase
     {
@@ -37,6 +38,7 @@ namespace GameTheory.Games.Chess.Uci
             {
                 this.path = path;
                 this.engine = new UciEngine(this.path);
+                this.engine.Execute(QuitCommand.Instance);
                 this.initializers = new Lazy<IReadOnlyList<Initializer>>(() =>
                 {
                     return new ReadOnlyCollection<Initializer>(new[]
