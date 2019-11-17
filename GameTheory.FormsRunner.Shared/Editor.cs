@@ -12,14 +12,16 @@ namespace GameTheory.FormsRunner.Shared
     {
         protected const int ErrorIconPadding = 32;
 
-        private static readonly IList<Editor> Editors = new List<Editor>
+        private static IList<Editor> editors;
+
+        private static IList<Editor> Editors => editors ?? (editors = new List<Editor>
         {
             BoolEditor.Instance,
             StringEditor.Instance,
             Int32Editor.Instance,
             EnumEditor.Instance,
             ObjectGraphEditor.Instance,
-        }.AsReadOnly();
+        }.AsReadOnly());
 
         public static Control FindAndUpdate<T>(Control control, Scope scope, T value, out Control errorControl, IReadOnlyList<Editor> editors, Action<Control, string> setError, Action<object, bool> set, Action<Control, Control> update = null) =>
             FindAndUpdate(control, scope, typeof(T), value, out errorControl, editors, setError, set);

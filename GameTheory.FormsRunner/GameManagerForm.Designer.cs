@@ -186,6 +186,7 @@
             this.MainMenuStrip = topMenu;
             this.Name = "GameManagerForm";
             this.Text = "Game Manager";
+            this.Shown += new System.EventHandler(this.GameManagerForm_Shown);
             topMenu.ResumeLayout(false);
             topMenu.PerformLayout();
             managerTabs.ResumeLayout(false);

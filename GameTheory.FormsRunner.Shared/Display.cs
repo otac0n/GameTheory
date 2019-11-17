@@ -10,7 +10,9 @@ namespace GameTheory.FormsRunner.Shared
 
     public abstract class Display
     {
-        private static readonly IList<Display> Displays = new List<Display>
+        private static IList<Display> displays;
+
+        private static IList<Display> Displays => displays ?? (displays = new List<Display>
         {
             NullDisplay.Instance,
             PrimitiveDisplay.Instance,
@@ -18,7 +20,7 @@ namespace GameTheory.FormsRunner.Shared
             DictionaryDisplay.Instance,
             ListDisplay.Instance,
             ObjectGraphDisplay.Instance,
-        }.AsReadOnly();
+        }.AsReadOnly());
 
         public static Control FindAndUpdate<T>(Control control, Scope scope, T value, IReadOnlyList<Display> displays, Action<Control, Control> update = null) =>
             FindAndUpdate(control, scope, typeof(T), value, displays, update);
