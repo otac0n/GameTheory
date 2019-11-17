@@ -12,6 +12,7 @@ namespace GameTheory.FormsRunner
     using System.Windows.Forms;
     using GameTheory.Catalogs;
     using GameTheory.FormsRunner.Shared;
+    using GameTheory.FormsRunner.Shared.Editors;
     using static Shared.Controls;
 
     public partial class NewGameForm : Form
@@ -145,10 +146,11 @@ namespace GameTheory.FormsRunner
 
             if (game != null)
             {
-                Editor.FindAndUpdate(
+                ObjectGraphEditor.Instance.Update(
                     this.configurationTab.Controls.Cast<Control>().SingleOrDefault(),
                     this.scope.Extend(game.Name, this.StartingState),
                     game.GameStateType,
+                    game.Initializers.ToArray(),
                     this.StartingState,
                     out var errorControl,
                     null,
@@ -246,10 +248,11 @@ namespace GameTheory.FormsRunner
                             this.playersTable.Controls.Remove(previous); // TODO: Dispose.
                         }
 
-                        var editor = Editor.FindAndUpdate(
+                        var editor = ObjectGraphEditor.Instance.Update(
                             null,
                             this.scope.Extend(player.Name, null),
                             player.PlayerType,
+                            player.Initializers.ToArray(),
                             null, // TODO: Remember previously selected player?
                             out var errorControl,
                             new Editor[] { new PlayerTokenEditor(playerToken), new CatalogGameEditor(game) },

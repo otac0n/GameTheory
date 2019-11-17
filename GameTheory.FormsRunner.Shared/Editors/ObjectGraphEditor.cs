@@ -22,14 +22,20 @@ namespace GameTheory.FormsRunner.Shared.Editors
 
         public override bool CanEdit(Scope scope, Type type, object value) => true;
 
-        protected override Control Update(Control control, Scope scope, Type type, object value, out Control errorControl, IReadOnlyList<Editor> editors, Action<Control, string> setError, Action<object, bool> set)
+        public Control Update(Control control, Scope scope, Type type, Initializer[] initializers, object value, out Control errorControl, IReadOnlyList<Editor> editors, Action<Control, string> setError, Action<object, bool> set, Action<Control, Control> update = null)
         {
-            var noParameters = new ParameterInfo[0];
-            var nullValues = new[] { new Initializer(SharedResources.Null, args => null, noParameters) }.ToList();
-            var rootOptions = (type.IsValueType
-                ? type.GetPublicInitializers()
-                : nullValues.Concat(type.GetPublicInitializers())).ToArray();
+            var newControl = this.Update(control, scope, type, initializers, value, out errorControl, editors, setError, set);
 
+            if (update != null && !object.ReferenceEquals(control, newControl))
+            {
+                update.Invoke(control, newControl);
+            }
+
+            return newControl;
+        }
+
+        public Control Update(Control control, Scope scope, Type type, Initializer[] initializers, object value, out Control errorControl, IReadOnlyList<Editor> editors, Action<Control, string> setError, Action<object, bool> set)
+        {
             var propertiesTable = MakeTablePanel(1, 2);
 
             var constructorList = new ComboBox
@@ -156,10 +162,10 @@ namespace GameTheory.FormsRunner.Shared.Editors
                 Touch();
             };
 
-            constructorList.Items.AddRange(rootOptions);
+            constructorList.Items.AddRange(initializers);
             if (constructorList.Items.Count > 0)
             {
-                constructorList.SelectedIndex = Math.Min(constructorList.Items.Count - 1, nullValues.Count);
+                constructorList.SelectedIndex = 0;
             }
 
             var tablePanel = MakeTablePanel(2, 1);
@@ -169,6 +175,15 @@ namespace GameTheory.FormsRunner.Shared.Editors
             // TODO: Dispose controls when tablePanel is disposed.
             errorControl = constructorList;
             return tablePanel;
+        }
+
+        protected override Control Update(Control control, Scope scope, Type type, object value, out Control errorControl, IReadOnlyList<Editor> editors, Action<Control, string> setError, Action<object, bool> set)
+        {
+            var noParameters = new ParameterInfo[0];
+            var initializers = (type.IsValueType
+                ? type.GetPublicInitializers()
+                : new[] { new Initializer(SharedResources.Null, args => null, noParameters) }.Concat(type.GetPublicInitializers())).ToArray();
+            return this.Update(control, scope, type, initializers, value, out errorControl, editors, setError, set);
         }
     }
 }
