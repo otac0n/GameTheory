@@ -14,5 +14,7 @@ namespace GameTheory.Games.Chess.Uci.Protocol
         public string Field { get; }
 
         public string Value { get; }
+
+        public override string ToString() => $"id {this.Field} {this.Value}";
     }
 }

@@ -11,5 +11,7 @@ namespace GameTheory.Games.Chess.Uci.Protocol
         }
 
         public string Text { get; }
+
+        public override string ToString() => this.Text;
     }
 }

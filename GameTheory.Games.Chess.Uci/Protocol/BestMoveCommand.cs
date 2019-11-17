@@ -2,15 +2,10 @@
 
 namespace GameTheory.Games.Chess.Uci.Protocol
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Collections.Immutable;
-    using System.Linq;
-
     public class BestMoveCommand : Command
     {
         public BestMoveCommand(string move, string ponder)
-            : base("position")
+            : base("bestmove")
         {
             this.Move = move;
             this.Ponder = ponder;
@@ -22,7 +17,7 @@ namespace GameTheory.Games.Chess.Uci.Protocol
 
         public override string ToString() =>
             string.IsNullOrEmpty(this.Ponder)
-                ? this.Move
-                : this.Move + " ponder " + this.Ponder;
+                ? $"bestmove {this.Move}"
+                : $"bestmove {this.Move} ponder {this.Ponder}";
     }
 }

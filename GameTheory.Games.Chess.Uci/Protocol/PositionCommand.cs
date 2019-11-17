@@ -20,6 +20,9 @@ namespace GameTheory.Games.Chess.Uci.Protocol
 
         public string Position { get; }
 
-        public override string ToString() => this.Verb + (this.Position == null ? string.Empty : " fen " + this.Position) + string.Concat(this.Moves.Select(m => " " + m));
+        public override string ToString() =>
+            this.Verb +
+            (this.Position == null ? string.Empty : this.Position == GameState.StartingPosition ? " startpos" : " fen " + this.Position) +
+            (this.Moves.IsEmpty ? string.Empty : " moves" + string.Concat(this.Moves.Select(m => " " + m)));
     }
 }

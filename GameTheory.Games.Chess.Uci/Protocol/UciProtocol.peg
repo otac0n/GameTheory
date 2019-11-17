@@ -6,18 +6,94 @@ line <Command>
     / unknown
 
 command <Command>
-    = id
-    / option
-    / info
+    = uci
+    / debug
+    / isready
+    / setoption
+    / register
+    / ucinewgame
+    / position
+    / go
+    / stop
+    / ponderhit
+    / quit
+    / id
     / uciok
     / readyok
     / bestmove
+    / copyprotection
+    / registration
+    / info
+    / option
+
+uci <UciCommand>
+    = t:token &{ t == "uci"} { UciCommand.Instance }
+
+debug <DebugCommand>
+    = t:token &{ t == "debug" } _ "on" { DebugCommand.On }
+    / t:token &{ t == "debug" } _ "off" { DebugCommand.Off }
+
+isready <IsReadyCommand>
+    = t:token &{ t == "isready" } { IsReadyCommand.Instance }
+
+setoption <SetOptionCommand>
+    = t:token &{ t == "setoption" }
+    _ "name" _ name:("" (!(_ "value") .)+)
+    value:(_ "value" _ d:any { d })?
+    { new SetOptionCommand(name, value.SingleOrDefault()) }
+
+register <RegisterCommand>
+    = t:token &{ t == "register" } _ "later" { RegisterCommand.Later }
+    / t:token &{ t == "register" } _ "name" _ name:("" (!(_ "code") .)+) _ "code" _ code:any { new RegisterCommand(name, code) }
+    / t:token &{ t == "register" } _ "code" _ code:("" (!(_ "name") .)+) _ "name" _ name:any { new RegisterCommand(name, code) }
+    / t:token &{ t == "register" } _ "name" _ name:any { new RegisterCommand(name, null) }
+    / t:token &{ t == "register" } _ "code" _ code:any { new RegisterCommand(null, code) }
+
+ucinewgame <UciNewGameCommand>
+    = t:token &{ t == "ucinewgame" } { UciNewGameCommand.Instance }
+
+position <PositionCommand>
+    = t:token &{ t == "position" }
+    position:(_ "startpos" { GameState.StartingPosition } / _ "fen" _ fen:("" (!(_ "moves") .)+) { fen })?
+    moves:(<IList<string>> _ "moves" _ m:token<0,,_> { m })?
+    { new PositionCommand(position.SingleOrDefault(), moves.SingleOrDefault()) }
+
+go <GoCommand>
+    = t:token &{ t == "go" } _ commands:any { new GoCommand(commands) }
+    / t:token &{ t == "go" } { new GoCommand(null) }
+
+stop <StopCommand>
+    = t:token &{ t == "stop" } { StopCommand.Instance }
+
+ponderhit <PonderHitCommand>
+    = t:token &{ t == "ponderhit" } { PonderHitCommand.Instance }
+
+quit <QuitCommand>
+    = t:token &{ t == "quit" } { QuitCommand.Instance }
 
 id <IdCommand>
-    = "id" _ field:token _ value:any { new IdCommand(field, value) }
+    = t:token &{ t == "id" } _ field:token _ value:any { new IdCommand(field, value) }
+
+uciok <UciOkCommand>
+    = t:token &{ t == "uciok" } { UciOkCommand.Instance }
+
+readyok <ReadyOkCommand>
+    = t:token &{ t == "readyok" } { ReadyOkCommand.Instance }
+
+bestmove <BestMoveCommand>
+    = t:token &{ t == "bestmove" } _ move:token ponder:(_ "ponder" _ p:token { p })? { new BestMoveCommand(move, ponder.SingleOrDefault()) }
+
+copyprotection <CopyProtectionCommand>
+    = t:token &{ t == "copyprotection" } _ status:token { new CopyProtectionCommand(status) }
+
+registration <RegistrationCommand>
+    = t:token &{ t == "registration" } _ status:token { new RegistrationCommand(status) }
+
+info <InfoCommand>
+    = t:token &{ t == "info" } _ type:token vars:(_ v:token { v })* { new InfoCommand(type, vars) }
 
 option <OptionCommand>
-    = "option"
+    = t:token &{ t == "option" }
     _ "name" _ name:("" (!(_ "type") .)+)
     _ "type" _ type:token
     def:(_ "default" _ d:token { d })?
@@ -26,21 +102,9 @@ option <OptionCommand>
     vars:(_ "var" _ v:token { v })*
     { new OptionCommand(name, type, def.SingleOrDefault(), min.SingleOrDefault(), max.SingleOrDefault(), vars) }
 
-info <InfoCommand>
-    = "info" _ type:token vars:(_ v:token { v })* { new InfoCommand(type, vars) }
-
-uciok <UciOkCommand>
-    = "uciok" { UciOkCommand.Instance }
-
-readyok <ReadyOkCommand>
-    = "readyok" { ReadyOkCommand.Instance }
-
-bestmove <BestMoveCommand>
-    = "bestmove" _ move:token ponder:(_ "ponder" _ p:token { p })? { new BestMoveCommand(move, ponder.SingleOrDefault()) }
-
 unknown <UnknownCommand>
     = l:any { new UnknownCommand(l) }
 
-token = "" [^ ]+
+token -memoize = "" [^ ]+
 any = "" .*
-_ = "" " "+
+_ -memoize = "" " "+

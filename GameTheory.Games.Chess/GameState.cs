@@ -15,6 +15,11 @@ namespace GameTheory.Games.Chess
     /// </summary>
     public sealed class GameState : IGameState<Move>
     {
+        /// <summary>
+        /// Gets the FEN of the starting position.
+        /// </summary>
+        public static readonly string StartingPosition = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+
         private static readonly ImmutableArray<int> EmptyCastling = ImmutableArray.Create(-1, -1, -1, -1);
 
         private readonly Pieces[] board;
@@ -25,7 +30,7 @@ namespace GameTheory.Games.Chess
         /// Initializes a new instance of the <see cref="GameState"/> class.
         /// </summary>
         public GameState()
-            : this("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")
+            : this(GameState.StartingPosition)
         {
         }
 
