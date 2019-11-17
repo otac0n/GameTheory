@@ -12,9 +12,9 @@
     <PackageTags />
   </PropertyGroup>
   <ItemGroup>
-    <None Remove="UciEngines\*.exe" />
-    <Content Include="UciEngines\*.exe">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    <None Remove="UciEngines\**\*.*" />
+    <Content Include="UciEngines\**\*.*">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <None Remove="Protocol\UciProtocol.peg" />
     <Compile Update="Resources.Designer.cs">
@@ -37,6 +37,7 @@
     <PackageReference Include="FixMe" Version="1.0.0" PrivateAssets="All" />
     <PackageReference Include="GitVersionTask" Version="4.0.0" PrivateAssets="All" />
     <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.6.3" PrivateAssets="All" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
     <PackageReference Include="Pegasus" Version="4.1.0" />
     <PackageReference Include="StyleCop.Analyzers" Version="1.1.118" PrivateAssets="All" />
     <PackageReference Include="System.Collections.Immutable" Version="1.5.0" />
