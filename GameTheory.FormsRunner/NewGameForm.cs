@@ -145,7 +145,7 @@ namespace GameTheory.FormsRunner
 
             if (game != null)
             {
-                Editor.Update(
+                Editor.FindAndUpdate(
                     this.configurationTab.Controls.Cast<Control>().SingleOrDefault(),
                     this.scope.Extend(game.Name, this.StartingState),
                     game.GameStateType,
@@ -246,7 +246,7 @@ namespace GameTheory.FormsRunner
                             this.playersTable.Controls.Remove(previous); // TODO: Dispose.
                         }
 
-                        var editor = Editor.Update(
+                        var editor = Editor.FindAndUpdate(
                             null,
                             this.scope.Extend(player.Name, null),
                             player.PlayerType,

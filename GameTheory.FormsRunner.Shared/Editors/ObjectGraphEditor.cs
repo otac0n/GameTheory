@@ -96,7 +96,7 @@ namespace GameTheory.FormsRunner.Shared.Editors
                     var parameter = constructor.Parameters[p];
 
                     var item = parameter.HasDefaultValue ? parameter.DefaultValue : null;
-                    var innerControl = Editor.Update(
+                    var innerControl = Editor.FindAndUpdate(
                         null,
                         scope.Extend(parameter.Name, item),
                         parameter.ParameterType,
