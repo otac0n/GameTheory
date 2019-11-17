@@ -36,6 +36,11 @@ namespace GameTheory.FormsRunner
             return gameInfo;
         }
 
+        private void GameManagerForm_Shown(object sender, EventArgs e)
+        {
+            this.NewGameMenu_Click(sender, e);
+        }
+
         private void NewGameMenu_Click(object sender, System.EventArgs e)
         {
             if (this.newGameForm == null || this.newGameForm.IsDisposed)
