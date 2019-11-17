@@ -16,7 +16,8 @@ namespace GameTheory.Games.Chess.Uci
         private readonly ProcessHandle processHandle;
 
         public LimitedAccessProcess(
-            string commandLine,
+            string executable,
+            string arguments,
             string workingDirectory = null,
             bool createNoWindow = false,
             bool redirectInput = false,
@@ -24,15 +25,23 @@ namespace GameTheory.Games.Chess.Uci
             bool redirectError = false,
             Encoding encoding = null)
         {
-            if (string.IsNullOrEmpty(commandLine))
+            if (string.IsNullOrEmpty(executable))
             {
-                throw new ArgumentNullException(nameof(commandLine));
+                throw new ArgumentNullException(nameof(executable));
             }
 
             if (string.IsNullOrEmpty(workingDirectory))
             {
                 workingDirectory = Environment.CurrentDirectory;
             }
+
+            executable = executable.Trim();
+            executable = executable.StartsWith("\"", StringComparison.Ordinal) && executable.EndsWith("\"", StringComparison.Ordinal)
+                ? executable
+                : $"\"{executable}\"";
+            var commandLine = string.IsNullOrWhiteSpace(arguments)
+                ? executable
+                : $"{executable} {arguments}";
 
             var safeUserHandle = IntPtr.Zero;
             WithSaferCreateLevel(SaferScope.SAFER_SCOPEID_USER, SaferLevel.SAFER_LEVELID_UNTRUSTED, safeLevel =>

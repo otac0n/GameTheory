@@ -5,6 +5,7 @@ namespace GameTheory.Games.Chess.Uci
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
+    using System.IO;
     using System.Threading;
     using System.Threading.Tasks;
     using GameTheory.Games.Chess.Uci.Protocol;
@@ -24,9 +25,13 @@ namespace GameTheory.Games.Chess.Uci
 
         public UciEngine(string fileName, string arguments = null)
         {
+            fileName = Path.GetFullPath(fileName);
+            var directoryName = Path.GetDirectoryName(fileName);
+
             this.engineProcess = new LimitedAccessProcess(
-                fileName,
-                arguments,
+                executable: fileName,
+                arguments: arguments,
+                workingDirectory: directoryName,
                 createNoWindow: true,
                 redirectInput: true,
                 redirectOutput: true,
