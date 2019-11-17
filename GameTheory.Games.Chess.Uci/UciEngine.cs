@@ -266,6 +266,9 @@ namespace GameTheory.Games.Chess.Uci
             }
             finally
             {
+                this.nameSource.TrySetCanceled();
+                this.authorSource.TrySetCanceled();
+                this.optionsSource.TrySetCanceled();
                 this.engineProcess.Dispose();
             }
         }
