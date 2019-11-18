@@ -3,7 +3,9 @@
 namespace GameTheory.Gdl.Catalogs
 {
     using System;
+    using System.Collections.Generic;
     using System.IO;
+    using System.Linq;
     using GameTheory.Catalogs;
     using Newtonsoft.Json;
 
@@ -12,6 +14,8 @@ namespace GameTheory.Gdl.Catalogs
         private readonly Lazy<Type> gameStateType;
 
         private readonly string gdlPath;
+
+        private readonly Lazy<IReadOnlyList<Initializer>> initializers;
 
         private readonly Lazy<Type> moveType;
 
@@ -32,12 +36,17 @@ namespace GameTheory.Gdl.Catalogs
                 },
                 isThreadSafe: true);
             this.moveType = new Lazy<Type>(
-                () => CatalogGame.GetMoveType(this.GameStateType),
+                () => ReflectionUtilities.GetMoveType(this.GameStateType),
+                isThreadSafe: true);
+            this.initializers = new Lazy<IReadOnlyList<Initializer>>(
+                () => ReflectionUtilities.GetPublicInitializers(this.gameStateType.Value).ToList().AsReadOnly(),
                 isThreadSafe: true);
         }
 
         /// <inheritdoc />
         public Type GameStateType => this.gameStateType.Value;
+
+        public IReadOnlyList<Initializer> Initializers => this.initializers.Value;
 
         /// <summary>
         /// Gets the game metadata for the game.

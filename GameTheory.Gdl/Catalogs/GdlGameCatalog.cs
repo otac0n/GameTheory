@@ -4,6 +4,7 @@
 
 namespace GameTheory.Gdl.Catalogs
 {
+    using System;
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
@@ -13,9 +14,9 @@ namespace GameTheory.Gdl.Catalogs
     {
         private readonly string folder;
 
-        public GdlGameCatalog(string folder)
+        public GdlGameCatalog(string folder = null)
         {
-            this.folder = folder;
+            this.folder = folder ?? Path.Combine(Environment.CurrentDirectory, "Games");
         }
 
         protected override IEnumerable<ICatalogGame> GetGames() =>

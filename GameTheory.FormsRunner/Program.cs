@@ -19,10 +19,6 @@ namespace GameTheory.FormsRunner
         static Program()
         {
             Container = new UnityContainer();
-            Container.RegisterFactory(typeof(string), null, (c, type, key) =>
-            {
-                return Environment.CurrentDirectory;
-            });
             var serviceLocator = new UnityServiceLocator(Container);
             DisplayCatalog = PluginLoader.LoadCatalogs<IDisplayCatalog>(d => new CompositeDisplayCatalog(d), serviceLocator: serviceLocator);
             GameCatalog = PluginLoader.LoadGameCatalogs(serviceLocator: serviceLocator);
