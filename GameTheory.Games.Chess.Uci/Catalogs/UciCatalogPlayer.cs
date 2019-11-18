@@ -67,56 +67,98 @@ namespace GameTheory.Games.Chess.Uci.Catalogs
                 new DynamicParameterInfo("playerToken", typeof(PlayerToken), position++, false, null, member, null),
             };
 
+            Action<object[], List<SetOptionCommand>> apply = (args, list) => { };
+            void Apply(Action<object[], List<SetOptionCommand>> action)
+            {
+                var prev = apply;
+                apply = (args, list) =>
+                {
+                    prev(args, list);
+                    action(args, list);
+                };
+            }
+
             foreach (var option in options)
             {
-                object defaultValue = null;
-                var hasDefault = false;
+                bool hasDefault;
                 CustomAttributeData[] attributes = null;
 
-                switch (option.Type)
+                if (option.Type == "check")
                 {
-                    case "check":
-                        if (hasDefault = bool.TryParse(option.Default, out var defaultBool))
+                    var pos = position++;
+                    hasDefault = bool.TryParse(option.Default, out var defaultValue);
+                    parameters.Add(new DynamicParameterInfo(option.Name, typeof(bool), pos, hasDefault, defaultValue, member, attributes));
+
+                    Apply((args, list) =>
+                    {
+                        var value = (bool)args[pos];
+                        if (!hasDefault || value != defaultValue)
                         {
-                            defaultValue = defaultBool;
+                            list.Add(new SetOptionCommand(option.Name, value ? "true" : "false"));
                         }
+                    });
+                }
+                else if (option.Type == "spin")
+                {
+                    var pos = position++;
+                    hasDefault = int.TryParse(option.Default, out var defaultValue);
+                    if (int.TryParse(option.Min, out var minInt) && int.TryParse(option.Max, out var maxInt))
+                    {
+                        attributes = new[] { new DynamicAttributeData(typeof(RangeAttribute).GetConstructor(new[] { typeof(int), typeof(int) }), new object[] { minInt, maxInt }) };
+                    }
 
-                        parameters.Add(new DynamicParameterInfo(option.Name, typeof(bool), position++, hasDefault, defaultValue, member, attributes));
-                        break;
+                    parameters.Add(new DynamicParameterInfo(option.Name, typeof(int), pos, hasDefault, defaultValue, member, attributes));
 
-                    case "spin":
-                        if (hasDefault = int.TryParse(option.Default, out var defaultInt))
+                    Apply((args, list) =>
+                    {
+                        var value = (int)args[pos];
+                        if (!hasDefault || value != defaultValue)
                         {
-                            defaultValue = defaultInt;
+                            list.Add(new SetOptionCommand(option.Name, value.ToString()));
                         }
+                    });
+                }
+                else if (option.Type == "combo")
+                {
+                    var pos = position++;
+                    hasDefault = option.Default is string;
+                    parameters.Add(new DynamicParameterInfo(option.Name, typeof(string), pos, hasDefault, option.Default, member, attributes));
 
-                        if (int.TryParse(option.Min, out var minInt) && int.TryParse(option.Max, out var maxInt))
+                    Apply((args, list) =>
+                    {
+                        var value = (string)args[pos];
+                        if (!hasDefault || value != option.Default)
                         {
-                            attributes = new[] { new DynamicAttributeData(typeof(RangeAttribute).GetConstructor(new[] { typeof(int), typeof(int) }), new object[] { minInt, maxInt }) };
+                            list.Add(new SetOptionCommand(option.Name, value));
                         }
+                    });
+                }
+                else if (option.Type == "string")
+                {
+                    var pos = position++;
+                    hasDefault = option.Default is string;
+                    parameters.Add(new DynamicParameterInfo(option.Name, typeof(string), pos, option.Default is string, option.Default, member, attributes));
 
-                        parameters.Add(new DynamicParameterInfo(option.Name, typeof(int), position++, hasDefault, defaultValue, member, attributes));
-                        break;
-
-                    case "combo":
-                        parameters.Add(new DynamicParameterInfo(option.Name, typeof(string), position++, option.Default is string, option.Default, member, attributes));
-                        break;
-
-                    case "string":
-                        if (option.Min != null && option.Max != null)
+                    Apply((args, list) =>
+                    {
+                        var value = (string)args[pos];
+                        if (!hasDefault || value != option.Default)
                         {
-                            attributes = new[] { new DynamicAttributeData(typeof(RangeAttribute).GetConstructor(new[] { typeof(Type), typeof(string), typeof(string) }), new object[] { typeof(string), option.Min, option.Max }) };
+                            list.Add(new SetOptionCommand(option.Name, value));
                         }
-
-                        parameters.Add(new DynamicParameterInfo(option.Name, typeof(string), position++, option.Default is string, option.Default, member, attributes));
-                        break;
-
-                    default:
-                        continue;
+                    });
                 }
             }
 
-            return new Initializer(FormatUtilities.FormatList(parameters.Select(p => p.Name)), args => new UciPlayer((PlayerToken)args[0], path, null, null), parameters);
+            return new Initializer(
+                FormatUtilities.FormatList(parameters.Select(p => p.Name)),
+                args =>
+                {
+                    var commands = new List<SetOptionCommand>();
+                    apply(args, commands);
+                    return new UciPlayer((PlayerToken)args[0], path, null, commands);
+                },
+                parameters);
         }
     }
 }
