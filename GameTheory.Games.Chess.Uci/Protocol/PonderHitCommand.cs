@@ -2,6 +2,9 @@
 
 namespace GameTheory.Games.Chess.Uci.Protocol
 {
+    /// <summary>
+    /// The "ponderhit" command.
+    /// </summary>
     public class PonderHitCommand : Command
     {
         private PonderHitCommand()
@@ -9,6 +12,9 @@ namespace GameTheory.Games.Chess.Uci.Protocol
         {
         }
 
+        /// <summary>
+        /// Gets an instance of the <see cref="PonderHitCommand"/>.
+        /// </summary>
         public static PonderHitCommand Instance { get; } = new PonderHitCommand();
     }
 }

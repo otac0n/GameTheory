@@ -10,6 +10,9 @@ namespace GameTheory.Games.Chess.Uci
     using System.Threading.Tasks;
     using GameTheory.Games.Chess.Uci.Protocol;
 
+    /// <summary>
+    /// Provides a facade for working with a UCI engine.
+    /// </summary>
     public class UciEngine : IDisposable
     {
         private static readonly TimeSpan HeaderTimeout = TimeSpan.FromSeconds(1);
@@ -22,7 +25,13 @@ namespace GameTheory.Games.Chess.Uci
         private readonly List<OptionCommand> options = new List<OptionCommand>();
         private readonly TaskCompletionSource<IReadOnlyList<OptionCommand>> optionsSource = new TaskCompletionSource<IReadOnlyList<OptionCommand>>();
         private readonly Task runTask;
+        private bool disposed;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="UciEngine"/> class.
+        /// </summary>
+        /// <param name="fileName">The executable file name of the engine.</param>
+        /// <param name="arguments">The arguments to the executable.</param>
         public UciEngine(string fileName, string arguments = null)
         {
             fileName = Path.GetFullPath(fileName);
@@ -40,6 +49,9 @@ namespace GameTheory.Games.Chess.Uci
             this.runTask = Task.Run(this.RunUci);
         }
 
+        /// <summary>
+        /// Raised when the engine emits a command that is not handled by this clas.
+        /// </summary>
         public event EventHandler<UnhandledCommandEventArgs> UnhandledCommand;
 
         private enum State : int
@@ -52,24 +64,52 @@ namespace GameTheory.Games.Chess.Uci
             Quit,
         }
 
+        /// <summary>
+        /// Gets the author of the engine.
+        /// </summary>
         public string Author => this.authorSource.Task.Result;
 
+        /// <summary>
+        /// Gets the name of the engine.
+        /// </summary>
         public string Name => this.nameSource.Task.Result;
 
+        /// <summary>
+        /// Gets the options supported by the engine.
+        /// </summary>
         public IReadOnlyList<OptionCommand> Options => this.optionsSource.Task.Result;
 
+        /// <inheritdoc/>
         public void Dispose()
         {
-            this.Execute(QuitCommand.Instance);
-            this.engineProcess.Dispose();
+            this.Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
+        /// <summary>
+        /// Instructs this instance to issue the command when ready.
+        /// </summary>
+        /// <param name="command">The command to issue to the engine.</param>
         public void Execute(Command command)
         {
             lock (this.commandSync)
             {
                 this.commandQueue.Enqueue(command);
                 Monitor.Pulse(this.commandSync);
+            }
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!this.disposed)
+            {
+                if (disposing)
+                {
+                    this.Execute(QuitCommand.Instance);
+                }
+
+                this.engineProcess.Dispose();
+                this.disposed = true;
             }
         }
 
@@ -221,6 +261,8 @@ namespace GameTheory.Games.Chess.Uci
                                     case UciOkCommand uciOkCommand:
                                         state = State.UciReady;
                                         this.optionsSource.TrySetResult(this.options.AsReadOnly());
+                                        this.nameSource.TrySetCanceled();
+                                        this.authorSource.TrySetCanceled();
                                         otherTask = commandTask = Command();
                                         break;
 

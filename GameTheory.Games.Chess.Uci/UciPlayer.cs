@@ -12,9 +12,9 @@ namespace GameTheory.Games.Chess.Uci
 
     public class UciPlayer : IPlayer<GameState, Move>
     {
-        private UciEngine engine;
+        private readonly UciEngine engine;
+        private readonly ShortCoordinateNotation notationSystem;
         private TaskCompletionSource<BestMoveCommand> moveSource;
-        private ShortCoordinateNotation notationSystem;
 
         public UciPlayer(PlayerToken playerToken, string fileName, string arguments, IEnumerable<SetOptionCommand> options)
         {
@@ -60,7 +60,16 @@ namespace GameTheory.Games.Chess.Uci
         /// <inheritdoc/>
         public void Dispose()
         {
-            this.engine.Dispose();
+            this.Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                this.engine.Dispose();
+            }
         }
 
         private void Engine_UnhandledCommand(object sender, UnhandledCommandEventArgs e)
@@ -71,7 +80,7 @@ namespace GameTheory.Games.Chess.Uci
                     this.moveSource?.TrySetResult(bestMoveCommand);
                     break;
 
-                case InfoCommand infoCommand:
+                case InfoCommand _:
                 default:
                     this.RaiseMessageSent(new object[] { e.Command.ToString() });
                     break;

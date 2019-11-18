@@ -10,7 +10,7 @@ namespace GameTheory.Games.Chess.Uci.Catalogs
     using System.Linq;
     using GameTheory.Catalogs;
 
-    public class UciCatalog : PlayerCatalogBase
+    internal class UciCatalog : PlayerCatalogBase
     {
         private readonly string folder;
 

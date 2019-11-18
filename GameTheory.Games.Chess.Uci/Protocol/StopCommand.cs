@@ -2,6 +2,9 @@
 
 namespace GameTheory.Games.Chess.Uci.Protocol
 {
+    /// <summary>
+    /// The "stop" command.
+    /// </summary>
     public class StopCommand : Command
     {
         private StopCommand()
@@ -9,6 +12,9 @@ namespace GameTheory.Games.Chess.Uci.Protocol
         {
         }
 
+        /// <summary>
+        /// Gets an instance of the <see cref="StopCommand"/>.
+        /// </summary>
         public static StopCommand Instance { get; } = new StopCommand();
     }
 }

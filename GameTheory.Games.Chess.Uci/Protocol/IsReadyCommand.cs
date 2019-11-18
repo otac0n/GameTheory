@@ -2,6 +2,9 @@
 
 namespace GameTheory.Games.Chess.Uci.Protocol
 {
+    /// <summary>
+    /// The "isready" command.
+    /// </summary>
     public class IsReadyCommand : Command
     {
         private IsReadyCommand()
@@ -9,6 +12,9 @@ namespace GameTheory.Games.Chess.Uci.Protocol
         {
         }
 
+        /// <summary>
+        /// Gets an instance of the <see cref="IsReadyCommand"/>.
+        /// </summary>
         public static IsReadyCommand Instance { get; } = new IsReadyCommand();
     }
 }

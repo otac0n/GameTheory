@@ -5,7 +5,6 @@ namespace GameTheory.Games.Chess.Uci
     using System;
     using System.Runtime.CompilerServices;
     using System.Runtime.InteropServices;
-    using System.Text;
     using Microsoft.Win32.SafeHandles;
 
     internal static class NativeMethods

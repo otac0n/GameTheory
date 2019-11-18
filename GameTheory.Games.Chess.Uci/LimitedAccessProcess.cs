@@ -11,13 +11,33 @@ namespace GameTheory.Games.Chess.Uci
     using Microsoft.Win32.SafeHandles;
     using static NativeMethods;
 
+    /// <summary>
+    /// Creates a new process with limited access.
+    /// </summary>
+    /// <remarks>
+    /// 1) Launches with SAFER_LEVELID_UNTRUSTED token via SaferComputeTokenFromLevel.
+    /// 2) Starts the with the executable marked as untrusted via the STARTF_UNTRUSTEDSOURCE start flag.
+    /// 3) Clears the environment to prevent snooping.
+    /// 4) Specifies __COMPAT_LAYER=RUNASINVOKER to prevent UAC elevation.
+    /// </remarks>
     public class LimitedAccessProcess : IDisposable
     {
         private readonly ProcessHandle processHandle;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="LimitedAccessProcess"/> class.
+        /// </summary>
+        /// <param name="executable">The file name of the executable to run.</param>
+        /// <param name="arguments">The arguments to the executable.</param>
+        /// <param name="workingDirectory">The working directory.</param>
+        /// <param name="createNoWindow">A value indicating whether creation of the main window will be suppressed.</param>
+        /// <param name="redirectInput">A value indicating whether standard input is redirected.</param>
+        /// <param name="redirectOutput">A value indicating whether standard output is redirected.</param>
+        /// <param name="redirectError">A value indicating whether standard error is redirected.</param>
+        /// <param name="encoding">The encoding to use for redirected streams.</param>
         public LimitedAccessProcess(
             string executable,
-            string arguments,
+            string arguments = null,
             string workingDirectory = null,
             bool createNoWindow = false,
             bool redirectInput = false,
@@ -194,10 +214,19 @@ namespace GameTheory.Games.Chess.Uci
             this.Dispose(false);
         }
 
+        /// <summary>
+        /// Gets the stream reader for redirected standard error.
+        /// </summary>
         public StreamReader StandardError { get; }
 
+        /// <summary>
+        /// Gets the stream reader for redirected standard input.
+        /// </summary>
         public StreamWriter StandardInput { get; }
 
+        /// <summary>
+        /// Gets the stream reader for redirected standard output.
+        /// </summary>
         public StreamReader StandardOutput { get; }
 
         private static Encoding DefaultEncoding => Encoding.GetEncoding(28591);

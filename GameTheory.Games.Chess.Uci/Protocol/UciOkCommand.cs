@@ -2,6 +2,9 @@
 
 namespace GameTheory.Games.Chess.Uci.Protocol
 {
+    /// <summary>
+    /// The "uciok" command.
+    /// </summary>
     public class UciOkCommand : Command
     {
         private UciOkCommand()
@@ -9,6 +12,9 @@ namespace GameTheory.Games.Chess.Uci.Protocol
         {
         }
 
+        /// <summary>
+        /// Gets an instance of the <see cref="UciOkCommand"/>.
+        /// </summary>
         public static UciOkCommand Instance { get; } = new UciOkCommand();
     }
 }

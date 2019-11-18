@@ -2,6 +2,9 @@
 
 namespace GameTheory.Games.Chess.Uci.Protocol
 {
+    /// <summary>
+    /// The "debug" command.
+    /// </summary>
     public class DebugCommand : Command
     {
         private DebugCommand(string value)
@@ -10,12 +13,22 @@ namespace GameTheory.Games.Chess.Uci.Protocol
             this.Value = value;
         }
 
+        /// <summary>
+        /// Gets an instance of the <see cref="DebugCommand"/> with the value "off".
+        /// </summary>
         public static DebugCommand Off { get; } = new DebugCommand("off");
 
+        /// <summary>
+        /// Gets an instance of the <see cref="DebugCommand"/> with the value "on".
+        /// </summary>
         public static DebugCommand On { get; } = new DebugCommand("on");
 
+        /// <summary>
+        /// Gets the value of the command.
+        /// </summary>
         public string Value { get; }
 
+        /// <inheritdoc/>
         public override string ToString() => $"debug {this.Value}";
     }
 }

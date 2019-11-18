@@ -2,6 +2,9 @@
 
 namespace GameTheory.Games.Chess.Uci.Protocol
 {
+    /// <summary>
+    /// The "quit" command.
+    /// </summary>
     public class QuitCommand : Command
     {
         private QuitCommand()
@@ -9,6 +12,9 @@ namespace GameTheory.Games.Chess.Uci.Protocol
         {
         }
 
+        /// <summary>
+        /// Gets an instance of the <see cref="QuitCommand"/>.
+        /// </summary>
         public static QuitCommand Instance { get; } = new QuitCommand();
     }
 }

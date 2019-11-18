@@ -2,13 +2,19 @@
 
 namespace GameTheory.Games.Chess.Uci.Protocol
 {
+    /// <summary>
+    /// The "uci" command.
+    /// </summary>
     public class UciCommand : Command
     {
-        public static readonly UciCommand Instance = new UciCommand();
-
         private UciCommand()
             : base("uci")
         {
         }
+
+        /// <summary>
+        /// Gets an instance of the <see cref="UciCommand"/>.
+        /// </summary>
+        public static UciCommand Instance { get; } = new UciCommand();
     }
 }

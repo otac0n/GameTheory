@@ -9,7 +9,6 @@ namespace GameTheory.Games.Chess.Uci.Catalogs
     using System.IO;
     using System.Linq;
     using System.Reflection;
-    using System.Threading;
     using GameTheory.Catalogs;
     using GameTheory.Games.Chess.Uci.Protocol;
     using Newtonsoft.Json;

@@ -2,6 +2,9 @@
 
 namespace GameTheory.Games.Chess.Uci.Protocol
 {
+    /// <summary>
+    /// The "readyok" command.
+    /// </summary>
     public class ReadyOkCommand : Command
     {
         private ReadyOkCommand()
@@ -9,6 +12,9 @@ namespace GameTheory.Games.Chess.Uci.Protocol
         {
         }
 
+        /// <summary>
+        /// Gets an instance of the <see cref="ReadyOkCommand"/>.
+        /// </summary>
         public static ReadyOkCommand Instance { get; } = new ReadyOkCommand();
     }
 }

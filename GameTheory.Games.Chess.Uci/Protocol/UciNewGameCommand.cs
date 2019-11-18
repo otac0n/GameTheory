@@ -2,6 +2,9 @@
 
 namespace GameTheory.Games.Chess.Uci.Protocol
 {
+    /// <summary>
+    /// The "ucinewgame" command.
+    /// </summary>
     public class UciNewGameCommand : Command
     {
         private UciNewGameCommand()
@@ -9,6 +12,9 @@ namespace GameTheory.Games.Chess.Uci.Protocol
         {
         }
 
+        /// <summary>
+        /// Gets an instance of the <see cref="UciNewGameCommand"/>.
+        /// </summary>
         public static UciNewGameCommand Instance { get; } = new UciNewGameCommand();
     }
 }
