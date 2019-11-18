@@ -10,10 +10,10 @@ namespace GameTheory.Games.PositivelyPerfectParfaitGame.Players
     /// <summary>
     /// Provides a maximizing player for the game of <see cref="GameState">Positively Perfect Parfait Game</see>.
     /// </summary>
-    public class PositivelyPerfectParfaitGameMaximizingPlayer : MaximizingPlayer<Move, ResultScore<double>>
+    public class PositivelyPerfectParfaitGameMaximizingPlayer : MaximizingPlayer<GameState, Move, ResultScore<double>>
     {
-        private static readonly IGameStateScoringMetric<Move, double> Metric =
-            ScoringMetric.Create((PlayerState<Move> s) => ((GameState)s.GameState).Parfaits[s.PlayerToken].Flavors.Keys.Count());
+        private static readonly IGameStateScoringMetric<GameState, Move, double> Metric =
+            ScoringMetric.Create((PlayerState<GameState, Move> s) => s.GameState.Parfaits[s.PlayerToken].Flavors.Keys.Count());
 
         private TimeSpan minThinkTime;
 
@@ -34,7 +34,7 @@ namespace GameTheory.Games.PositivelyPerfectParfaitGame.Players
         protected override TimeSpan? MinThinkTime => this.minThinkTime;
 
         /// <inheritdoc/>
-        protected override ResultScore<double> GetLead(IDictionary<PlayerToken, ResultScore<double>> score, IGameState<Move> state, PlayerToken player)
+        protected override ResultScore<double> GetLead(IDictionary<PlayerToken, ResultScore<double>> score, GameState state, PlayerToken player)
         {
             if (state == null)
             {
@@ -46,7 +46,7 @@ namespace GameTheory.Games.PositivelyPerfectParfaitGame.Players
                 throw new ArgumentNullException(nameof(score));
             }
 
-            if (((GameState)state).PlayOut)
+            if (state.PlayOut)
             {
                 return score[player];
             }

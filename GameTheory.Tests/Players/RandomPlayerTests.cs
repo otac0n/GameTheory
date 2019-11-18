@@ -21,7 +21,7 @@ namespace GameTheory.Tests.Players
             const double Expected = (double)Samples / Moves;
 
             var state = new StubGameState();
-            using (var player = new RandomPlayer<StubGameState.Move>(state.Players[0]))
+            using (var player = new RandomPlayer<StubGameState, StubGameState.Move>(state.Players[0]))
             {
                 state.Moves = Enumerable.Range(0, Moves).Select(i => new StubGameState.Move(player.PlayerToken, "Move " + (char)('A' + i))).ToList();
 

@@ -18,7 +18,7 @@ namespace GameTheory.Tests.Strategies
         public async Task GetMove_WhenThereIsAWinningMove_ReturnsAWinningMove(string moveList, string expectedMove)
         {
             var state = ApplyMoves(new GameState(), moveList);
-            using (var strategy = new ImmediateWinStrategy<Move>())
+            using (var strategy = new ImmediateWinStrategy<GameState, Move>())
             {
                 var maybeMove = await strategy.ChooseMove(state, state.ActivePlayer, CancellationToken.None);
                 var move = maybeMove.Value;
@@ -37,15 +37,15 @@ namespace GameTheory.Tests.Strategies
         public async Task GetMove_WhenThereIsNoWinningMove_ReturnsAnEmptyValue(string moveList)
         {
             var state = ApplyMoves(new GameState(), moveList);
-            using (var strategy = new ImmediateWinStrategy<Move>())
+            using (var strategy = new ImmediateWinStrategy<GameState, Move>())
             {
                 var maybeMove = await strategy.ChooseMove(state, state.ActivePlayer, CancellationToken.None);
                 Assert.That(maybeMove.HasValue, Is.False);
             }
         }
 
-        internal static T ApplyMoves<T>(T state, string moveList)
-            where T : IGameState<Move>
+        internal static TGameState ApplyMoves<TGameState>(TGameState state, string moveList)
+            where TGameState : IGameState<Move>
         {
             var moves = from move in moveList.Split(';')
                         let parts = move.Split(',')
@@ -53,7 +53,7 @@ namespace GameTheory.Tests.Strategies
                         let y = int.Parse(parts[1].Trim())
                         select new { x, y };
 
-            return (T)moves.Aggregate((IGameState<Move>)state, (s, m) => s.MakeMove(s.GetAvailableMoves().Single(a => a.X == m.x && a.Y == m.y)));
+            return moves.Aggregate(state, (s, m) => (TGameState)s.MakeMove(s.GetAvailableMoves().Single(a => a.X == m.x && a.Y == m.y)));
         }
     }
 }

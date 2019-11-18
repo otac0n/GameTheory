@@ -132,8 +132,8 @@ namespace GameTheory.Games.TicTacToe.Tests
             Assert.That(winner, Is.EqualTo(player2));
         }
 
-        internal static T ApplyMoves<T>(T state, string moveList)
-            where T : IGameState<Move>
+        internal static TGameState ApplyMoves<TGameState>(TGameState state, string moveList)
+            where TGameState : IGameState<Move>
         {
             var moves = from move in moveList.Split(';')
                         let parts = move.Split(',')
@@ -141,7 +141,7 @@ namespace GameTheory.Games.TicTacToe.Tests
                         let y = int.Parse(parts[1].Trim())
                         select new { x, y };
 
-            return (T)moves.Aggregate((IGameState<Move>)state, (s, m) => s.MakeMove(s.GetAvailableMoves().Single(a => a.X == m.x && a.Y == m.y)));
+            return moves.Aggregate(state, (s, m) => (TGameState)s.MakeMove(s.GetAvailableMoves().Single(a => a.X == m.x && a.Y == m.y)));
         }
     }
 }

@@ -175,7 +175,7 @@ namespace GameTheory.Games.Splendor
                 .Add(Token.Ruby, gemTokens)
                 .Add(Token.GoldJoker, 5);
 
-            InitialNobles.Deal(players + 1, out ImmutableList<Noble> nobles);
+            InitialNobles.Deal(players + 1, out var nobles);
             this.Nobles = nobles;
 
             this.Inventory = this.Players.ToImmutableDictionary(p => p, p => new Inventory());
@@ -184,7 +184,7 @@ namespace GameTheory.Games.Splendor
             var developmentTracks = new ImmutableArray<DevelopmentCard>[developmentDecks.Length];
             for (var i = 0; i < developmentDecks.Length; i++)
             {
-                var remaining = developmentDecks[i].Deal(4, out ImmutableList<DevelopmentCard> dealt);
+                var remaining = developmentDecks[i].Deal(4, out var dealt);
                 developmentDecks[i] = remaining;
                 developmentTracks[i] = dealt.ToImmutableArray();
             }
@@ -442,10 +442,7 @@ namespace GameTheory.Games.Splendor
         }
 
         /// <inheritdoc />
-        IGameState<Move> IGameState<Move>.MakeMove(Move move)
-        {
-            return this.MakeMove(move);
-        }
+        IGameState<Move> IGameState<Move>.MakeMove(Move move) => this.MakeMove(move);
 
         /// <summary>
         /// Applies the move to the current game state.

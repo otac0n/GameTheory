@@ -14,12 +14,14 @@ namespace GameTheory.Players.MaximizingPlayer
     /// <summary>
     /// Implements a player that maximizes a scoring function to some move depth (ply).
     /// </summary>
-    /// <typeparam name="TMove">The type of move that the player supports.</typeparam>
+    /// <typeparam name="TGameState">The type of game states that the player will evaluate.</typeparam>
+    /// <typeparam name="TMove">The type of moves that the player will choose.</typeparam>
     /// <typeparam name="TScore">The type used to keep track of score.</typeparam>
     /// <remarks>
     /// The maximizing player is a generalization of the min-max concept to games that have more than two players and that may allow moves by more than one player at a time.
     /// </remarks>
-    public abstract class MaximizingPlayer<TMove, TScore> : MaximizingPlayerBase<TMove, TScore>
+    public abstract class MaximizingPlayer<TGameState, TMove, TScore> : MaximizingPlayerBase<TGameState, TMove, TScore>
+        where TGameState : IGameState<TMove>
         where TMove : IMove
     {
         private int cacheHits;
@@ -27,19 +29,19 @@ namespace GameTheory.Players.MaximizingPlayer
         private int nodesSearched;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="MaximizingPlayer{TMove, TScore}"/> class.
+        /// Initializes a new instance of the <see cref="MaximizingPlayer{TGameState, TMove, TScore}"/> class.
         /// </summary>
         /// <param name="playerToken">The token that represents the player.</param>
         /// <param name="scoringMetric">The scoring metric to use.</param>
         /// <param name="minPly">The minimum number of ply to think ahead.</param>
-        protected MaximizingPlayer(PlayerToken playerToken, IGameStateScoringMetric<TMove, TScore> scoringMetric, int minPly)
+        protected MaximizingPlayer(PlayerToken playerToken, IGameStateScoringMetric<TGameState, TMove, TScore> scoringMetric, int minPly)
             : base(playerToken, scoringMetric)
         {
             this.MinPly = minPly > -1 ? minPly : throw new ArgumentOutOfRangeException(nameof(minPly));
         }
 
         /// <summary>
-        /// Finalizes an instance of the <see cref="MaximizingPlayer{TMove, TScore}"/> class.
+        /// Finalizes an instance of the <see cref="MaximizingPlayer{TGameState, TMove, TScore}"/> class.
         /// </summary>
         ~MaximizingPlayer()
         {
@@ -57,7 +59,7 @@ namespace GameTheory.Players.MaximizingPlayer
         protected virtual TimeSpan? MinThinkTime => null;
 
         /// <inheritdoc />
-        protected override Mainline<TMove, TScore> GetMove(List<IGameState<TMove>> states, bool ponder, CancellationToken cancel)
+        protected override Mainline<TGameState, TMove, TScore> GetMove(List<TGameState> states, bool ponder, CancellationToken cancel)
         {
             var sw = Stopwatch.StartNew();
 
@@ -78,7 +80,7 @@ namespace GameTheory.Players.MaximizingPlayer
             this.cacheHits = 0;
             this.cacheMisses = 0;
 
-            var mainlines = new Mainline<TMove, TScore>[states.Count];
+            var mainlines = new Mainline<TGameState, TMove, TScore>[states.Count];
             var roots = states.Select(this.gameTree.GetOrAdd).ToList();
 
             if (states.Count > 1)
@@ -130,9 +132,9 @@ namespace GameTheory.Players.MaximizingPlayer
         }
 
         /// <inheritdoc />
-        protected override IGameStateCache<TMove, TScore> MakeCache() => new SplayTreeCache<TMove, TScore>();
+        protected override IGameStateCache<TGameState, TMove, TScore> MakeCache() => new SplayTreeCache<TGameState, TMove, TScore>();
 
-        private Mainline<TMove, TScore> GetMove(StateNode<TMove, TScore> node, int ply, ImmutableDictionary<PlayerToken, IDictionary<PlayerToken, TScore>> alphaBetaScore, CancellationToken cancel)
+        private Mainline<TGameState, TMove, TScore> GetMove(StateNode<TGameState, TMove, TScore> node, int ply, ImmutableDictionary<PlayerToken, IDictionary<PlayerToken, TScore>> alphaBetaScore, CancellationToken cancel)
         {
             Interlocked.Increment(ref this.nodesSearched);
             var cached = node.Mainline;
@@ -152,7 +154,7 @@ namespace GameTheory.Players.MaximizingPlayer
             return node.Mainline = this.GetMoveImpl(node, ply, alphaBetaScore, cancel);
         }
 
-        private Mainline<TMove, TScore> GetMoveImpl(StateNode<TMove, TScore> node, int ply, ImmutableDictionary<PlayerToken, IDictionary<PlayerToken, TScore>> alphaBetaScore, CancellationToken cancel)
+        private Mainline<TGameState, TMove, TScore> GetMoveImpl(StateNode<TGameState, TMove, TScore> node, int ply, ImmutableDictionary<PlayerToken, IDictionary<PlayerToken, TScore>> alphaBetaScore, CancellationToken cancel)
         {
             var state = node.State;
 
@@ -162,7 +164,7 @@ namespace GameTheory.Players.MaximizingPlayer
             }
             else if (cancel.IsCancellationRequested || ply == 0)
             {
-                return new Mainline<TMove, TScore>(this.scoringMetric.Score(state), state, null, ImmutableStack<IReadOnlyList<IWeighted<TMove>>>.Empty, depth: 0, fullyDetermined: false);
+                return new Mainline<TGameState, TMove, TScore>(this.scoringMetric.Score(state), state, null, ImmutableStack<IReadOnlyList<IWeighted<TMove>>>.Empty, depth: 0, fullyDetermined: false);
             }
 
             var allMoves = node.Moves;
@@ -177,11 +179,11 @@ namespace GameTheory.Players.MaximizingPlayer
             switch (players.Count)
             {
                 case 0:
-                    return new Mainline<TMove, TScore>(this.scoringMetric.Score(state), state, null, ImmutableStack<IReadOnlyList<IWeighted<TMove>>>.Empty, depth: 0, fullyDetermined: true);
+                    return new Mainline<TGameState, TMove, TScore>(this.scoringMetric.Score(state), state, null, ImmutableStack<IReadOnlyList<IWeighted<TMove>>>.Empty, depth: 0, fullyDetermined: true);
 
                 case 1:
                     singlePlayer = players.Single();
-                    otherPlayer = state.Players.Count == 2 ? state.GetNextPlayer(singlePlayer) : null;
+                    otherPlayer = state.Players.Count == 2 ? state.GetNextPlayer<TGameState, TMove>(singlePlayer) : null;
                     break;
 
                 default:
@@ -196,7 +198,7 @@ namespace GameTheory.Players.MaximizingPlayer
                 ////Array.Sort(allMoves, (m1, m2) => this.scoringMetric.Compare(node[m1].Score, node[m2].Score));
             }
 
-            var mainlines = new Mainline<TMove, TScore>[allMoves.Length];
+            var mainlines = new Mainline<TGameState, TMove, TScore>[allMoves.Length];
             var leads = new TScore[allMoves.Length];
             for (var m = 0; m < allMoves.Length; m++)
             {
@@ -205,7 +207,7 @@ namespace GameTheory.Players.MaximizingPlayer
 
                 // Expectimax.
                 var outcomes = moveNode.Outcomes;
-                var weightedOutcomes = new List<Weighted<Mainline<TMove, TScore>>>();
+                var weightedOutcomes = new List<Weighted<Mainline<TGameState, TMove, TScore>>>();
                 foreach (var outcome in outcomes)
                 {
                     var mainline = this.GetMove(outcome.Value, ply - 1, alphaBetaScore, cancel);
@@ -302,7 +304,7 @@ namespace GameTheory.Players.MaximizingPlayer
                     // This is a stalemate? Without time controls, there is no incentive for any player to move.
                     var fullyDetermined = mainlines.All(m => m.FullyDetermined);
                     var depth = fullyDetermined ? mainlines.Max(m => m.Depth) : mainlines.Where(m => !m.FullyDetermined).Min(m => m.Depth);
-                    return new Mainline<TMove, TScore>(this.scoringMetric.Score(state), state, null, ImmutableStack<IReadOnlyList<IWeighted<TMove>>>.Empty, depth, fullyDetermined);
+                    return new Mainline<TGameState, TMove, TScore>(this.scoringMetric.Score(state), state, null, ImmutableStack<IReadOnlyList<IWeighted<TMove>>>.Empty, depth, fullyDetermined);
                 }
                 else
                 {
@@ -335,7 +337,7 @@ namespace GameTheory.Players.MaximizingPlayer
             }
         }
 
-        private Mainline<TMove, TScore> Maximize(PlayerToken player, Mainline<TMove, TScore> a, TScore leadA, Mainline<TMove, TScore> b, TScore leadB)
+        private Mainline<TGameState, TMove, TScore> Maximize(PlayerToken player, Mainline<TGameState, TMove, TScore> a, TScore leadA, Mainline<TGameState, TMove, TScore> b, TScore leadB)
         {
             bool fullyDetermined;
             int depth;
@@ -368,7 +370,7 @@ namespace GameTheory.Players.MaximizingPlayer
             if (comp == 0)
             {
                 var strategies = a.Strategies.Pop().Push(a.Strategies.Peek().Concat(b.Strategies.Peek()).ToList());
-                return new Mainline<TMove, TScore>(a.Scores, a.GameState, a.PlayerToken, strategies, depth, fullyDetermined);
+                return new Mainline<TGameState, TMove, TScore>(a.Scores, a.GameState, a.PlayerToken, strategies, depth, fullyDetermined);
             }
             else if (comp > 0)
             {
@@ -377,7 +379,7 @@ namespace GameTheory.Players.MaximizingPlayer
                     return a;
                 }
 
-                return new Mainline<TMove, TScore>(a.Scores, a.GameState, a.PlayerToken, a.Strategies, depth, fullyDetermined);
+                return new Mainline<TGameState, TMove, TScore>(a.Scores, a.GameState, a.PlayerToken, a.Strategies, depth, fullyDetermined);
             }
             else
             {
@@ -386,7 +388,7 @@ namespace GameTheory.Players.MaximizingPlayer
                     return b;
                 }
 
-                return new Mainline<TMove, TScore>(b.Scores, b.GameState, b.PlayerToken, b.Strategies, depth, fullyDetermined);
+                return new Mainline<TGameState, TMove, TScore>(b.Scores, b.GameState, b.PlayerToken, b.Strategies, depth, fullyDetermined);
             }
         }
     }

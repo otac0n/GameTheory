@@ -10,10 +10,10 @@ namespace GameTheory.Games.NormalFormGame.Players
     /// Provides a maximizing player for normal form games.
     /// </summary>
     /// <typeparam name="T">The type representing the distint moves available.</typeparam>
-    public class NormalFormGameMaximizingPlayer<T> : MaximizingPlayer<Move<T>, double>
+    public class NormalFormGameMaximizingPlayer<T> : MaximizingPlayer<GameState<T>, Move<T>, double>
         where T : class, IComparable<T>
     {
-        private static readonly IGameStateScoringMetric<Move<T>, double> Metric = ScoringMetric.Create<Move<T>>(Score);
+        private static readonly IGameStateScoringMetric<GameState<T>, Move<T>, double> Metric = ScoringMetric.Create<GameState<T>, Move<T>>(Score);
 
         /// <summary>
         /// Initializes a new instance of the <see cref="NormalFormGameMaximizingPlayer{T}"/> class.
@@ -26,7 +26,7 @@ namespace GameTheory.Games.NormalFormGame.Players
         }
 
         /// <inheritdoc/>
-        protected override double GetLead(IDictionary<PlayerToken, double> score, IGameState<Move<T>> state, PlayerToken player)
+        protected override double GetLead(IDictionary<PlayerToken, double> score, GameState<T> state, PlayerToken player)
         {
             if (score == null)
             {
@@ -36,9 +36,9 @@ namespace GameTheory.Games.NormalFormGame.Players
             return score[player];
         }
 
-        private static double Score(PlayerState<Move<T>> playerState)
+        private static double Score(PlayerState<GameState<T>, Move<T>> playerState)
         {
-            var state = (GameState<T>)playerState.GameState;
+            var state = playerState.GameState;
             return state.GetScore(playerState.PlayerToken);
         }
     }

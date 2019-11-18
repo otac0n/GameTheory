@@ -7,10 +7,10 @@ namespace GameTheory.Games.TicTacToe.Console
     /// <summary>
     /// Provides a console renderer for the game of <see cref="GameState">TicTacToe</see>.
     /// </summary>
-    public class TicTacToeConsoleRenderer : ConsoleRendererBase<Move>
+    public class TicTacToeConsoleRenderer : ConsoleRendererBase<GameState, Move>
     {
         /// <inheritdoc/>
-        public override void Show(IGameState<Move> state, PlayerToken playerToken = null) => this.Show((GameState)state);
+        public override void Show(GameState state, PlayerToken playerToken = null) => this.Show(state);
 
         private void Show(GameState state) => new Templates().RenderGameState(state, this.MakeRenderTokenWriter(state));
     }

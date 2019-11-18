@@ -7,6 +7,7 @@ namespace GameTheory.FormsRunner.Shared.Editors
     using System.Linq;
     using System.Reflection;
     using System.Windows.Forms;
+    using GameTheory.Catalogs;
     using static Controls;
 
     public class ObjectGraphEditor : Editor
@@ -21,22 +22,20 @@ namespace GameTheory.FormsRunner.Shared.Editors
 
         public override bool CanEdit(Scope scope, Type type, object value) => true;
 
-        protected override Control Update(Control control, Scope scope, Type type, object value, out Control errorControl, IReadOnlyList<Editor> editors, Action<Control, string> setError, Action<object, bool> set)
+        public Control Update(Control control, Scope scope, Type type, Initializer[] initializers, object value, out Control errorControl, IReadOnlyList<Editor> editors, Action<Control, string> setError, Action<object, bool> set, Action<Control, Control> update = null)
         {
-            var noParameters = new ParameterInfo[0];
-            var nullValues = new[] { new { order = 0, selection = new InitializerSelection("(null)", args => null, noParameters) } }.ToList();
-            nullValues.RemoveAll(_ => type.IsValueType);
-            var constructors = from constructor in type.GetConstructors()
-                               let parameters = constructor.GetParameters()
-                               let text = parameters.Length == 0 ? "Default Instance" : $"Specify {string.Join(", ", parameters.Select(p => p.Name))}"
-                               let accessor = new Func<object[], object>(args => constructor.Invoke(args))
-                               select new { order = parameters.Length == 0 ? 1 : 3, selection = new InitializerSelection(text, accessor, parameters) };
-            var staticProperties = from staticProperty in type.GetProperties(BindingFlags.Public | BindingFlags.Static)
-                                   where staticProperty.PropertyType == type
-                                   let accessor = new Func<object[], object>(_ => staticProperty.GetValue(null))
-                                   select new { order = 2, selection = new InitializerSelection(staticProperty.Name, accessor, noParameters) };
-            var rootOptions = nullValues.Concat(constructors).Concat(staticProperties).OrderBy(s => s.order).Select(s => s.selection).ToArray();
+            var newControl = this.Update(control, scope, type, initializers, value, out errorControl, editors, setError, set);
 
+            if (update != null && !object.ReferenceEquals(control, newControl))
+            {
+                update.Invoke(control, newControl);
+            }
+
+            return newControl;
+        }
+
+        public Control Update(Control control, Scope scope, Type type, Initializer[] initializers, object value, out Control errorControl, IReadOnlyList<Editor> editors, Action<Control, string> setError, Action<object, bool> set)
+        {
             var propertiesTable = MakeTablePanel(1, 2);
 
             var constructorList = new ComboBox
@@ -49,8 +48,8 @@ namespace GameTheory.FormsRunner.Shared.Editors
 
             constructorList.SelectedIndexChanged += (_, a) =>
             {
-                var constructor = constructorList.SelectedItem as InitializerSelection;
-                var parameterCount = constructor.Parameters.Length;
+                var constructor = constructorList.SelectedItem as Initializer;
+                var parameterCount = constructor.Parameters.Count;
                 propertiesTable.SuspendLayout();
                 propertiesTable.Controls.DisposeAndClear();
                 propertiesTable.RowCount = Math.Max(1, parameterCount);
@@ -103,7 +102,7 @@ namespace GameTheory.FormsRunner.Shared.Editors
                     var parameter = constructor.Parameters[p];
 
                     var item = parameter.HasDefaultValue ? parameter.DefaultValue : null;
-                    var innerControl = Editor.Update(
+                    var innerControl = Editor.FindAndUpdate(
                         null,
                         scope.Extend(parameter.Name, item),
                         parameter.ParameterType,
@@ -163,10 +162,10 @@ namespace GameTheory.FormsRunner.Shared.Editors
                 Touch();
             };
 
-            constructorList.Items.AddRange(rootOptions);
+            constructorList.Items.AddRange(initializers);
             if (constructorList.Items.Count > 0)
             {
-                constructorList.SelectedIndex = Math.Min(constructorList.Items.Count - 1, nullValues.Count);
+                constructorList.SelectedIndex = 0;
             }
 
             var tablePanel = MakeTablePanel(2, 1);
@@ -178,20 +177,13 @@ namespace GameTheory.FormsRunner.Shared.Editors
             return tablePanel;
         }
 
-        private class InitializerSelection
+        protected override Control Update(Control control, Scope scope, Type type, object value, out Control errorControl, IReadOnlyList<Editor> editors, Action<Control, string> setError, Action<object, bool> set)
         {
-            public InitializerSelection(string name, Func<object[], object> accessor, ParameterInfo[] parameters)
-            {
-                this.Name = name;
-                this.Accessor = accessor;
-                this.Parameters = parameters;
-            }
-
-            public Func<object[], object> Accessor { get; }
-
-            public string Name { get; }
-
-            public ParameterInfo[] Parameters { get; }
+            var noParameters = new ParameterInfo[0];
+            var initializers = (type.IsValueType
+                ? type.GetPublicInitializers()
+                : new[] { new Initializer(SharedResources.Null, args => null, noParameters) }.Concat(type.GetPublicInitializers())).ToArray();
+            return this.Update(control, scope, type, initializers, value, out errorControl, editors, setError, set);
         }
     }
 }

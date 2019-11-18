@@ -8,10 +8,10 @@ namespace GameTheory.Games.Skull.Players
     /// <summary>
     /// Provides a maximizing player for the game of <see cref="GameState">Skull</see>.
     /// </summary>
-    public sealed class SkullMaximizingPlayer : MaximizingPlayer<Move, ResultScore<double>>
+    public sealed class SkullMaximizingPlayer : MaximizingPlayer<GameState, Move, ResultScore<double>>
     {
-        private static readonly IGameStateScoringMetric<Move, double> Metric =
-            ScoringMetric.Create<Move>(Score);
+        private static readonly IGameStateScoringMetric<GameState, Move, double> Metric =
+            ScoringMetric.Create<GameState, Move>(Score);
 
         private TimeSpan minThinkTime;
 
@@ -34,9 +34,9 @@ namespace GameTheory.Games.Skull.Players
         /// <inheritdoc />
         protected override TimeSpan? MinThinkTime => this.minThinkTime;
 
-        private static double Score(PlayerState<Move> playerState)
+        private static double Score(PlayerState<GameState, Move> playerState)
         {
-            var state = (GameState)playerState.GameState;
+            var state = playerState.GameState;
             var inventory = state.Inventory[playerState.PlayerToken];
             var discardedSkull = inventory.Discards[Card.Skull];
             var discardedFlowers = inventory.Discards[Card.Flower];

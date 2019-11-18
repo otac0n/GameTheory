@@ -13,8 +13,9 @@ namespace GameTheory.Catalogs
         /// <summary>
         /// Gets the list of players who are capable of playing the specified move type.
         /// </summary>
+        /// <param name="gameStateType">The type of game states the players must support.</param>
         /// <param name="moveType">The type of moves to be played.</param>
         /// <returns>A collection of supported players.</returns>
-        IReadOnlyList<ICatalogPlayer> FindPlayers(Type moveType);
+        IReadOnlyList<ICatalogPlayer> FindPlayers(Type gameStateType, Type moveType);
     }
 }

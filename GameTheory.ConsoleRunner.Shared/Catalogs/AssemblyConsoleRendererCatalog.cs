@@ -34,52 +34,52 @@ namespace GameTheory.ConsoleRunner.Shared.Catalogs
         }
 
         /// <inheritdoc/>
-        protected override IEnumerable<Type> GetConsoleRenderers(Type moveType)
+        protected override IEnumerable<Type> GetConsoleRenderers(Type gameStateType, Type moveType)
         {
-            var consoleRendererUnconstructed = typeof(IConsoleRenderer<>);
-            var consoleRendererInterface = consoleRendererUnconstructed.MakeGenericType(moveType);
+            var consoleRendererUnconstructed = typeof(IConsoleRenderer<,>);
+            var consoleRendererInterface = consoleRendererUnconstructed.MakeGenericType(gameStateType, moveType);
+            var consoleRendererInterfaceInfo = consoleRendererInterface.GetTypeInfo();
+
             foreach (var assembly in this.assemblies)
             {
-                var staticConsoleRenderers = from t in assembly.ExportedTypes
-                                             where consoleRendererInterface.IsAssignableFrom(t)
-                                             select t;
-
-                var candidateTypeParameters = new List<Type> { moveType };
+                var candidateTypeParameters = new HashSet<Type> { gameStateType, moveType };
                 if (moveType.IsConstructedGenericType && moveType.GenericTypeArguments.Length == 1)
                 {
                     candidateTypeParameters.Add(moveType.GenericTypeArguments.Single());
                 }
 
-                var tryMakeConsoleRendererType = new Func<Type, Type, Type>((consoleRendererType, argument) =>
+                foreach (var type in assembly.ExportedTypes)
                 {
-                    try
+                    var typeInfo = type.GetTypeInfo();
+                    if (consoleRendererInterfaceInfo.IsAssignableFrom(typeInfo))
                     {
-                        return consoleRendererType.MakeGenericType(argument);
+                        yield return type;
+                        continue;
                     }
-                    catch (ArgumentException)
+
+                    if (!type.IsGenericTypeDefinition || typeInfo.IsAbstract)
                     {
-                        return null;
+                        continue;
                     }
-                });
 
-                var constructedConsoleRenderers = from t in assembly.ExportedTypes
-                                                  let info = t.GetTypeInfo()
-                                                  let typeParameters = info.GenericTypeParameters
-                                                  where typeParameters.Length == 1
-                                                  where info.ImplementedInterfaces.Any(i => i == consoleRendererUnconstructed || (i.IsConstructedGenericType && i.GetGenericTypeDefinition() == consoleRendererUnconstructed))
-                                                  let constraints = typeParameters[0].GetGenericParameterConstraints()
-                                                  from candidate in candidateTypeParameters
-                                                  let c = tryMakeConsoleRendererType(t, candidate)
-                                                  where c != null && !c.IsAbstract
-                                                  where consoleRendererInterface.IsAssignableFrom(c)
-                                                  select c;
-
-                var consoleRendererTypes = Enumerable.Concat(
-                    staticConsoleRenderers,
-                    constructedConsoleRenderers);
-                foreach (var consoleRendererType in consoleRendererTypes)
-                {
-                    yield return consoleRendererType;
+                    var targetDefinitions = typeInfo
+                        .ImplementedInterfaces
+                        .Where(i => i == consoleRendererUnconstructed || (i.IsConstructedGenericType && i.GetGenericTypeDefinition() == consoleRendererUnconstructed));
+                    if (targetDefinitions.Any())
+                    {
+                        var matches = ReflectionUtilities.FixGenericTypeConstraints(typeInfo.GenericTypeParameters, _ => candidateTypeParameters);
+                        foreach (var match in matches)
+                        {
+                            var consoleRendererType = ReflectionUtilities.TryMakeGenericType(type, match);
+                            if (consoleRendererType != null)
+                            {
+                                if (consoleRendererInterfaceInfo.IsAssignableFrom(consoleRendererType.GetTypeInfo()))
+                                {
+                                    yield return consoleRendererType;
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }

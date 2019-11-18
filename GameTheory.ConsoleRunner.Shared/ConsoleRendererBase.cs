@@ -10,15 +10,17 @@ namespace GameTheory.ConsoleRunner.Shared
     /// <summary>
     /// Provides basic rendering for more complex console renderers.
     /// </summary>
+    /// <typeparam name="TGameState">The type of game states that will be displayed.</typeparam>
     /// <typeparam name="TMove">The type of moves in the game state.</typeparam>
-    public abstract class ConsoleRendererBase<TMove> : IConsoleRenderer<TMove>
+    public abstract class ConsoleRendererBase<TGameState, TMove> : IConsoleRenderer<TGameState, TMove>
+        where TGameState : IGameState<TMove>
         where TMove : IMove
     {
         /// <inheritdoc/>
-        public abstract void Show(IGameState<TMove> state, PlayerToken playerToken = null);
+        public abstract void Show(TGameState state, PlayerToken playerToken = null);
 
         /// <inheritdoc/>
-        public void Show(IGameState<TMove> state, IList<object> formatTokens)
+        public void Show(TGameState state, IList<object> formatTokens)
         {
             if (state == null)
             {
@@ -37,7 +39,7 @@ namespace GameTheory.ConsoleRunner.Shared
         }
 
         /// <inheritdoc/>
-        public void Show(IGameState<TMove> state, ITokenFormattable tokenFormattable)
+        public void Show(TGameState state, ITokenFormattable tokenFormattable)
         {
             if (state == null)
             {
@@ -57,7 +59,7 @@ namespace GameTheory.ConsoleRunner.Shared
         /// </summary>
         /// <param name="state">The state used to invoke <see cref="RenderToken"/>.</param>
         /// <returns>A new <see cref="TextWriter"/>.</returns>
-        protected TextWriter MakeRenderTokenWriter(IGameState<TMove> state)
+        protected TextWriter MakeRenderTokenWriter(TGameState state)
         {
             return new ConsoleWriter(this, state);
         }
@@ -67,14 +69,14 @@ namespace GameTheory.ConsoleRunner.Shared
         /// </summary>
         /// <param name="state">The context game state.</param>
         /// <param name="token">The token to be rendered.</param>
-        protected virtual void RenderToken(IGameState<TMove> state, object token)
+        protected virtual void RenderToken(TGameState state, object token)
         {
             ITokenFormattable innerTokens;
             if (token is PlayerToken playerToken)
             {
-                ConsoleInteraction.WithColor(ConsoleInteraction.GetPlayerColor(state, playerToken), () =>
+                ConsoleInteraction.WithColor(ConsoleInteraction.GetPlayerColor<TGameState, TMove>(state, playerToken), () =>
                 {
-                    this.RenderToken(state, state.GetPlayerName(playerToken));
+                    this.RenderToken(state, state.GetPlayerName<TGameState, TMove>(playerToken));
                 });
             }
             else if ((innerTokens = token as ITokenFormattable) != null)
@@ -92,10 +94,10 @@ namespace GameTheory.ConsoleRunner.Shared
 
         private class ConsoleWriter : TextWriter
         {
-            private readonly ConsoleRendererBase<TMove> consoleRenderer;
-            private readonly IGameState<TMove> state;
+            private readonly ConsoleRendererBase<TGameState, TMove> consoleRenderer;
+            private readonly TGameState state;
 
-            public ConsoleWriter(ConsoleRendererBase<TMove> consoleRenderer, IGameState<TMove> state)
+            public ConsoleWriter(ConsoleRendererBase<TGameState, TMove> consoleRenderer, TGameState state)
             {
                 this.consoleRenderer = consoleRenderer;
                 this.state = state;

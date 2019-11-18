@@ -8,10 +8,10 @@ namespace GameTheory.Games.CenturySpiceRoad.Players
     /// <summary>
     /// Provides a maximizing player for the game of <see cref="GameState">CenturySpiceRoad</see>.
     /// </summary>
-    public class CenturySpiceRoadMaximizingPlayer : MaximizingPlayer<Move, ResultScore<double>>
+    public class CenturySpiceRoadMaximizingPlayer : MaximizingPlayer<GameState, Move, ResultScore<double>>
     {
-        private static readonly IGameStateScoringMetric<Move, double> Metric =
-            ScoringMetric.Create((PlayerState<Move> s) => ((GameState)s.GameState).GetScore(s.PlayerToken));
+        private static readonly IGameStateScoringMetric<GameState, Move, double> Metric =
+            ScoringMetric.Create((PlayerState<GameState, Move> s) => s.GameState.GetScore(s.PlayerToken));
 
         private TimeSpan minThinkTime;
 

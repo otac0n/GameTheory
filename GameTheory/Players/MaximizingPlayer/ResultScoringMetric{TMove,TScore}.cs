@@ -10,18 +10,20 @@ namespace GameTheory.Players.MaximizingPlayer
     /// <summary>
     /// Provides shared logic for maximizing players to prioritize winning over a higher score.
     /// </summary>
+    /// <typeparam name="TGameState">The type of game state to score.</typeparam>
     /// <typeparam name="TMove">The type of move in the game state.</typeparam>
     /// <typeparam name="TScore">The type used to keep track of the inner score.</typeparam>
-    public class ResultScoringMetric<TMove, TScore> : IGameStateScoringMetric<TMove, ResultScore<TScore>>, IScorePlyExtender<ResultScore<TScore>>, IComparer<Result>
+    public class ResultScoringMetric<TGameState, TMove, TScore> : IGameStateScoringMetric<TGameState, TMove, ResultScore<TScore>>, IScorePlyExtender<ResultScore<TScore>>, IComparer<Result>
+        where TGameState : IGameState<TMove>
         where TMove : IMove
     {
-        private readonly IScoringMetric<PlayerState<TMove>, TScore> scoringMetric;
+        private readonly IScoringMetric<PlayerState<TGameState, TMove>, TScore> scoringMetric;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ResultScoringMetric{TMove, TScore}"/> class.
+        /// Initializes a new instance of the <see cref="ResultScoringMetric{TGameState, TMove, TScore}"/> class.
         /// </summary>
         /// <param name="scoringMetric">The inner scoring metric.</param>
-        public ResultScoringMetric(IScoringMetric<PlayerState<TMove>, TScore> scoringMetric)
+        public ResultScoringMetric(IScoringMetric<PlayerState<TGameState, TMove>, TScore> scoringMetric)
         {
             this.scoringMetric = scoringMetric;
         }
@@ -126,7 +128,7 @@ namespace GameTheory.Players.MaximizingPlayer
         /// <inheritdoc/>
         public ResultScore<TScore> Extend(ResultScore<TScore> score) => new ResultScore<TScore>(score.Result, score.InPly + 1, score.Likelihood, score.Rest);
 
-        ResultScore<TScore> IScoringMetric<PlayerState<TMove>, ResultScore<TScore>>.Score(PlayerState<TMove> playerState)
+        ResultScore<TScore> IScoringMetric<PlayerState<TGameState, TMove>, ResultScore<TScore>>.Score(PlayerState<TGameState, TMove> playerState)
         {
             var winners = playerState.GameState.GetWinners();
             var sharedResult = winners.Count == 0 ? (playerState.GameState.GetAvailableMoves().Count == 0 ? (playerState.GameState.Players.Count == 1 ? Result.Loss : Result.Impasse) : Result.None) : (Result?)null;
@@ -136,7 +138,7 @@ namespace GameTheory.Players.MaximizingPlayer
         }
 
         /// <inheritdoc/>
-        public IDictionary<PlayerToken, ResultScore<TScore>> Score(IGameState<TMove> state)
+        public IDictionary<PlayerToken, ResultScore<TScore>> Score(TGameState state)
         {
             if (state == null)
             {
@@ -149,7 +151,7 @@ namespace GameTheory.Players.MaximizingPlayer
             return state.Players.ToDictionary(p => p, p =>
             {
                 var result = sharedResult ?? (winnersSet.Contains(p) ? (winnersSet.Count == 1 ? Result.Win : Result.SharedWin) : Result.Loss);
-                return new ResultScore<TScore>(result, 0, 1, this.scoringMetric.Score(new PlayerState<TMove>(p, state)));
+                return new ResultScore<TScore>(result, 0, 1, this.scoringMetric.Score(new PlayerState<TGameState, TMove>(p, state)));
             });
         }
 

@@ -5,11 +5,12 @@ namespace GameTheory.Testing
     using GameTheory.Players;
     using GameTheory.Strategies;
 
-    public class DuhPlayer<TMove> : StrategyPlayer<TMove>
+    public class DuhPlayer<TGameState, TMove> : StrategyPlayer<TGameState, TMove>
+        where TGameState : IGameState<TMove>
         where TMove : IMove
     {
         public DuhPlayer(PlayerToken playerToken)
-            : base(new ImmediateWinStrategy<TMove>(), new RandomPlayer<TMove>(playerToken))
+            : base(new ImmediateWinStrategy<TGameState, TMove>(), new RandomPlayer<TGameState, TMove>(playerToken))
         {
         }
     }

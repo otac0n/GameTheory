@@ -8,10 +8,10 @@ namespace GameTheory.Games.Lotus.Players
     /// <summary>
     /// Provides a maximizing player for the game of <see cref="GameState">Lotus</see>.
     /// </summary>
-    public class LotusMaximizingPlayer : MaximizingPlayer<Move, ResultScore<double>>
+    public class LotusMaximizingPlayer : MaximizingPlayer<GameState, Move, ResultScore<double>>
     {
-        private static readonly IGameStateScoringMetric<Move, double> Metric =
-            ScoringMetric.Create<Move>(Score);
+        private static readonly IGameStateScoringMetric<GameState, Move, double> Metric =
+            ScoringMetric.Create<GameState, Move>(Score);
 
         private TimeSpan minThinkTime;
 
@@ -31,9 +31,9 @@ namespace GameTheory.Games.Lotus.Players
         /// <inheritdoc />
         protected override TimeSpan? MinThinkTime => this.minThinkTime;
 
-        private static double Score(PlayerState<Move> playerState)
+        private static double Score(PlayerState<GameState, Move> playerState)
         {
-            var state = (GameState)playerState.GameState;
+            var state = playerState.GameState;
             double score = state.GetScore(playerState.PlayerToken);
             if (state.Phase != Phase.End)
             {

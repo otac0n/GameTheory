@@ -12,6 +12,7 @@ namespace GameTheory.FormsRunner
     using System.Windows.Forms;
     using GameTheory.Catalogs;
     using GameTheory.FormsRunner.Shared;
+    using GameTheory.FormsRunner.Shared.Editors;
     using static Shared.Controls;
 
     public partial class NewGameForm : Form
@@ -145,10 +146,11 @@ namespace GameTheory.FormsRunner
 
             if (game != null)
             {
-                Editor.Update(
+                ObjectGraphEditor.Instance.Update(
                     this.configurationTab.Controls.Cast<Control>().SingleOrDefault(),
                     this.scope.Extend(game.Name, this.StartingState),
                     game.GameStateType,
+                    game.Initializers.ToArray(),
                     this.StartingState,
                     out var errorControl,
                     null,
@@ -194,7 +196,9 @@ namespace GameTheory.FormsRunner
             if (state != null)
             {
                 var game = this.SelectedGame;
-                var playerOptions = (PlayerOptions)typeof(NewGameForm).GetMethod(nameof(CountPlayers), BindingFlags.Static | BindingFlags.NonPublic).MakeGenericMethod(game.MoveType).Invoke(null, new object[] { state });
+                var countPlayersMethod = typeof(NewGameForm).GetMethod(nameof(CountPlayers), BindingFlags.Static | BindingFlags.NonPublic);
+                var countPlayersConstructed = countPlayersMethod.MakeGenericMethod(game.GameStateType, game.MoveType);
+                var playerOptions = (PlayerOptions)countPlayersConstructed.Invoke(null, new object[] { state });
                 var playerCount = playerOptions.Names.Length;
                 this.playersTable.RowCount = playerCount * 2;
                 var players = new ICatalogPlayer[playerCount];
@@ -244,10 +248,11 @@ namespace GameTheory.FormsRunner
                             this.playersTable.Controls.Remove(previous); // TODO: Dispose.
                         }
 
-                        var editor = Editor.Update(
+                        var editor = ObjectGraphEditor.Instance.Update(
                             null,
                             this.scope.Extend(player.Name, null),
                             player.PlayerType,
+                            player.Initializers.ToArray(),
                             null, // TODO: Remember previously selected player?
                             out var errorControl,
                             new Editor[] { new PlayerTokenEditor(playerToken), new CatalogGameEditor(game) },
@@ -280,11 +285,12 @@ namespace GameTheory.FormsRunner
             }
         }
 
-        private static PlayerOptions CountPlayers<TMove>(IGameState<TMove> state)
+        private static PlayerOptions CountPlayers<TGameState, TMove>(TGameState state)
+            where TGameState : IGameState<TMove>
             where TMove : IMove
         {
-            var players = Program.PlayerCatalog.FindPlayers(typeof(TMove));
-            var names = state.Players.Select(state.GetPlayerName).ToArray();
+            var players = Program.PlayerCatalog.FindPlayers(typeof(TGameState), typeof(TMove));
+            var names = state.Players.Select(p => state.GetPlayerName<TGameState, TMove>(p)).ToArray();
             return new PlayerOptions(names, state.Players.ToArray(), players);
         }
 

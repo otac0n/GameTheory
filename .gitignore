@@ -30,3 +30,6 @@ TestResult.xml
 
 # Ignore NuGet packages (let package restore handle these)
 /packages/
+
+# Ignore Chess Engine Binaries
+/GameTheory.Games.Chess.Uci/UciEngines/

@@ -17,12 +17,14 @@ namespace GameTheory
         /// <summary>
         /// Finds the next player in the specified game state's players collection.
         /// </summary>
+        /// <typeparam name="TGameState">The type of game state that will be searched.</typeparam>
         /// <typeparam name="TMove">The type of moves in the game state.</typeparam>
         /// <param name="state">The game state to search.</param>
         /// <param name="currentPlayer">The current player.</param>
         /// <returns>The next player, or the first player if the current player was not found.</returns>
-        public static PlayerToken GetNextPlayer<TMove>(this IGameState<TMove> state, PlayerToken currentPlayer)
-                    where TMove : IMove
+        public static PlayerToken GetNextPlayer<TGameState, TMove>(this TGameState state, PlayerToken currentPlayer)
+            where TGameState : IGameState<TMove>
+            where TMove : IMove
         {
             if (state == null)
             {
@@ -102,13 +104,15 @@ namespace GameTheory
         /// <summary>
         /// Plays the game from the specified game state as a task. The result of the task is the final game state.
         /// </summary>
+        /// <typeparam name="TGameState">The type of game states that will be played through.</typeparam>
         /// <typeparam name="TMove">The type of object that represents a move in the game state.</typeparam>
         /// <param name="state">The starting game state.</param>
         /// <param name="getPlayer">A function that provides the player for each player token in the game state.</param>
         /// <param name="moveChosen">An action that is executed whenever a move is chosen.</param>
         /// <param name="timePerMove">The allowed time per move.</param>
         /// <returns>A task representing the ongoning operation.</returns>
-        public static Task<IGameState<TMove>> PlayGame<TMove>(IGameState<TMove> state, Func<PlayerToken, IPlayer<TMove>> getPlayer, Action<IGameState<TMove>, TMove, IGameState<TMove>> moveChosen = null, TimeSpan? timePerMove = null)
+        public static Task<TGameState> PlayGame<TGameState, TMove>(TGameState state, Func<PlayerToken, IPlayer<TGameState, TMove>> getPlayer, Action<TGameState, TMove, TGameState> moveChosen = null, TimeSpan? timePerMove = null)
+            where TGameState : IGameState<TMove>
             where TMove : IMove
         {
             return PlayGame(state, playerTokens => playerTokens.Select(p => getPlayer(p)).ToArray(), moveChosen, timePerMove);
@@ -117,13 +121,15 @@ namespace GameTheory
         /// <summary>
         /// Plays the game from the specified game state as a task. The result of the task is the final game state.
         /// </summary>
+        /// <typeparam name="TGameState">The type of game states that will be played through.</typeparam>
         /// <typeparam name="TMove">The type of object that represents a move in the game state.</typeparam>
         /// <param name="state">The starting game state.</param>
         /// <param name="getPlayers">A function that provides the list of players when given the list of player tokens in the game state.</param>
         /// <param name="moveChosen">An action that is executed whenever a move is chosen.</param>
         /// <param name="timePerMove">The allowed time per move.</param>
         /// <returns>A task representing the ongoning operation.</returns>
-        public static async Task<IGameState<TMove>> PlayGame<TMove>(IGameState<TMove> state, Func<IReadOnlyList<PlayerToken>, IReadOnlyList<IPlayer<TMove>>> getPlayers, Action<IGameState<TMove>, TMove, IGameState<TMove>> moveChosen = null, TimeSpan? timePerMove = null)
+        public static async Task<TGameState> PlayGame<TGameState, TMove>(TGameState state, Func<IReadOnlyList<PlayerToken>, IReadOnlyList<IPlayer<TGameState, TMove>>> getPlayers, Action<TGameState, TMove, TGameState> moveChosen = null, TimeSpan? timePerMove = null)
+            where TGameState : IGameState<TMove>
             where TMove : IMove
         {
             var playerTokens = state.Players;
@@ -134,8 +140,8 @@ namespace GameTheory
                 {
                     return players.Select(async p =>
                     {
-                        var move = await p.ChooseMove(state.GetView(p.PlayerToken, maxStates: 1).First(), cancel);
-                        return move.HasValue && move.Value.PlayerToken == p.PlayerToken ? move : default(Maybe<TMove>);
+                        var move = await p.ChooseMove((TGameState)state.GetView(p.PlayerToken, maxStates: 1).First(), cancel);
+                        return move.HasValue && move.Value.PlayerToken == p.PlayerToken ? move : default;
                     }).ToArray();
                 });
 
@@ -184,7 +190,7 @@ namespace GameTheory
                     }
 
                     var before = state;
-                    state = state.MakeMove(chosenMove.Value);
+                    state = (TGameState)state.MakeMove(chosenMove.Value);
                     moveChosen?.Invoke(before, chosenMove.Value, state);
                 }
 

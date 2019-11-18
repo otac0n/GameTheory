@@ -1,5 +1,5 @@
-﻿@model Square
-{{= model.Tile.Color }} {{= model.Tile.GetType().Name }} +{{= model.Tile.Value }}{{if model.Owner != null}} ({{= this.state.GetPlayerName(model.Owner )}}){{/if}}
+@model Square
+{{= model.Tile.Color }} {{= model.Tile.GetType().Name }} +{{= model.Tile.Value }}{{if model.Owner != null}} ({{= this.state.GetPlayerName<GameState, Move>(model.Owner) }}){{/if}}
 {{= model.Meeples }}
 {{if model.Palaces > 0}}
   {{= model.Palaces }}{{= SharedResources.Times }}{{= Resources.Palace }}

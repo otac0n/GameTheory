@@ -22,13 +22,14 @@ namespace GameTheory.Catalogs
         }
 
         /// <inheritdoc/>
-        public IReadOnlyList<ICatalogPlayer> FindPlayers(Type moveType) => this.players.GetOrAdd(moveType, _ => this.GetPlayers(moveType).ToImmutableList());
+        public IReadOnlyList<ICatalogPlayer> FindPlayers(Type gameStateType, Type moveType) => this.players.GetOrAdd(moveType, _ => this.GetPlayers(gameStateType, moveType).ToImmutableList());
 
         /// <summary>
         /// Enumerates the players who are capable of playing the specified move type.
         /// </summary>
+        /// <param name="gameStateType">The type of game states the players must support.</param>
         /// <param name="moveType">The type of moves to be played.</param>
         /// <returns>The enumerable collection of supported players.</returns>
-        protected abstract IEnumerable<ICatalogPlayer> GetPlayers(Type moveType);
+        protected abstract IEnumerable<ICatalogPlayer> GetPlayers(Type gameStateType, Type moveType);
     }
 }

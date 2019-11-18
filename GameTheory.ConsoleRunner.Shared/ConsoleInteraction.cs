@@ -16,7 +16,8 @@ namespace GameTheory.ConsoleRunner.Shared
             ConsoleColor.DarkRed,
         }.AsReadOnly();
 
-        public static ConsoleColor GetPlayerColor<TMove>(IGameState<TMove> state, PlayerToken playerToken)
+        public static ConsoleColor GetPlayerColor<TGameState, TMove>(TGameState state, PlayerToken playerToken)
+            where TGameState : IGameState<TMove>
             where TMove : IMove
         {
             var i = 0;

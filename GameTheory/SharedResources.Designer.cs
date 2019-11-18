@@ -19,7 +19,7 @@ namespace GameTheory {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class SharedResources {
@@ -61,6 +61,15 @@ namespace GameTheory {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Default Instance.
+        /// </summary>
+        public static string DefaultInstance {
+            get {
+                return ResourceManager.GetString("DefaultInstance", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to , .
         /// </summary>
         public static string ListItemSeparator {
@@ -88,6 +97,15 @@ namespace GameTheory {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to (null).
+        /// </summary>
+        public static string Null {
+            get {
+                return ResourceManager.GetString("Null", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Player {0}.
         /// </summary>
         public static string PlayerName {
@@ -111,6 +129,15 @@ namespace GameTheory {
         public static string Space {
             get {
                 return ResourceManager.GetString("Space", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Specify {0}.
+        /// </summary>
+        public static string SpecifyFormat {
+            get {
+                return ResourceManager.GetString("SpecifyFormat", resourceCulture);
             }
         }
         

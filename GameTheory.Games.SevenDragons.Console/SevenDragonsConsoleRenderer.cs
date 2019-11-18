@@ -10,14 +10,13 @@ namespace GameTheory.Games.SevenDragons.Console
     /// <summary>
     /// Provides a console renderer for the game of <see cref="GameState">Seven Dragons</see>.
     /// </summary>
-    public class SevenDragonsConsoleRenderer : ConsoleRendererBase<Move>
+    public class SevenDragonsConsoleRenderer : ConsoleRendererBase<GameState, Move>
     {
         /// <inheritdoc />
-        public override void Show(IGameState<Move> state, PlayerToken playerToken = null)
+        public override void Show(GameState state, PlayerToken playerToken = null)
         {
-            var gameState = (GameState)state;
             var writer = this.MakeRenderTokenWriter(state);
-            var extents = gameState.Table.Keys.Aggregate(
+            var extents = state.Table.Keys.Aggregate(
                 new { MinX = int.MaxValue, MaxX = int.MinValue, MinY = int.MaxValue, MaxY = int.MinValue },
                 (value, key) => new { MinX = Math.Min(value.MinX, key.X), MaxX = Math.Max(value.MaxX, key.X), MinY = Math.Min(value.MinY, key.Y), MaxY = Math.Max(value.MaxY, key.Y) });
 
@@ -27,7 +26,7 @@ namespace GameTheory.Games.SevenDragons.Console
                 {
                     for (var x = extents.MinX; x <= extents.MaxX; x++)
                     {
-                        if (gameState.Table.TryGetValue(new Point(x, y), out DragonCard card))
+                        if (state.Table.TryGetValue(new Point(x, y), out var card))
                         {
                             for (var u = 0; u < DragonCard.Grid.Width; u++)
                             {
@@ -62,7 +61,7 @@ namespace GameTheory.Games.SevenDragons.Console
 
             if (playerToken != null)
             {
-                var inventory = gameState.Inventories[gameState.InventoryMap[playerToken]];
+                var inventory = state.Inventories[state.InventoryMap[playerToken]];
 
                 writer.WriteLine("{0}:", Resources.Goal);
                 writer.WriteLine("    {0}", inventory.Goal);
@@ -105,7 +104,7 @@ namespace GameTheory.Games.SevenDragons.Console
         }
 
         /// <inheritdoc/>
-        protected override void RenderToken(IGameState<Move> state, object token)
+        protected override void RenderToken(GameState state, object token)
         {
             if (token is DragonCard dragonCard)
             {

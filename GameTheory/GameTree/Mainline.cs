@@ -9,9 +9,11 @@ namespace GameTheory.GameTree
     /// <summary>
     /// Records a possible line of gameplay and it's computed scores.
     /// </summary>
+    /// <typeparam name="TGameState">The type of game states in the mainline.</typeparam>
     /// <typeparam name="TMove">The type of moves in the mainline.</typeparam>
     /// <typeparam name="TScore">The type used to keep track of score.</typeparam>
-    public class Mainline<TMove, TScore> : ITokenFormattable
+    public class Mainline<TGameState, TMove, TScore> : ITokenFormattable
+        where TGameState : IGameState<TMove>
         where TMove : IMove
     {
         /// <summary>
@@ -23,7 +25,7 @@ namespace GameTheory.GameTree
         /// <param name="playerToken">The player who moves next in the sequence or <c>null</c> if there are no moves.</param>
         /// <param name="depth">The depth to which the score was computed.</param>
         /// <param name="fullyDetermined">A flag indicating whether or not the game tree has been exhaustively searched at this node.</param>
-        public Mainline(IDictionary<PlayerToken, TScore> scores, IGameState<TMove> state, PlayerToken playerToken, ImmutableStack<IReadOnlyList<IWeighted<TMove>>> strategies, int depth, bool fullyDetermined)
+        public Mainline(IDictionary<PlayerToken, TScore> scores, TGameState state, PlayerToken playerToken, ImmutableStack<IReadOnlyList<IWeighted<TMove>>> strategies, int depth, bool fullyDetermined)
         {
             this.Scores = scores;
             this.GameState = state;
@@ -126,7 +128,7 @@ namespace GameTheory.GameTree
         /// <summary>
         /// Gets the resulting game state.
         /// </summary>
-        public IGameState<TMove> GameState { get; }
+        public TGameState GameState { get; }
 
         /// <summary>
         /// Gets the player who moves next in the sequence or <c>null</c> if there are no moves.
@@ -150,7 +152,7 @@ namespace GameTheory.GameTree
         /// <param name="strategy">The strategy to execute at this stage in the game tree.</param>
         /// <param name="scoreExtender">The optional <see cref="IScorePlyExtender{TScore}"/> to use to extend the score.</param>
         /// <returns>The extended mainline.</returns>
-        public Mainline<TMove, TScore> Extend(PlayerToken player, ImmutableArray<IWeighted<TMove>> strategy, IScorePlyExtender<TScore> scoreExtender = null)
+        public Mainline<TGameState, TMove, TScore> Extend(PlayerToken player, ImmutableArray<IWeighted<TMove>> strategy, IScorePlyExtender<TScore> scoreExtender = null)
         {
             var scores = this.Scores;
 
@@ -166,7 +168,7 @@ namespace GameTheory.GameTree
                 scores = newScores;
             }
 
-            return new Mainline<TMove, TScore>(scores, this.GameState, player, this.Strategies.Push(strategy), this.Depth + 1, this.FullyDetermined);
+            return new Mainline<TGameState, TMove, TScore>(scores, this.GameState, player, this.Strategies.Push(strategy), this.Depth + 1, this.FullyDetermined);
         }
 
         /// <inheritdoc/>

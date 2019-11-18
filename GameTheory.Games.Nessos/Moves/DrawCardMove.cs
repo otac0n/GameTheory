@@ -57,7 +57,7 @@ namespace GameTheory.Games.Nessos.Moves
                         yield break;
                     }
 
-                    player = state.GetNextPlayer(player);
+                    player = state.GetNextPlayer<GameState, Move>(player);
                 }
                 while (player != state.FirstPlayer);
             }

@@ -163,10 +163,10 @@ namespace GameTheory.Games.FiveTribes
             this.ScoreTables = this.Players.ToImmutableDictionary(p => p, p => new ScoreTable());
             this.Sultanate = ImmutableList.CreateRange(InitialTiles.Shuffle().Zip(Meeples.Shuffle().Partition(3), (t, ms) => new Square(t, new EnumCollection<Meeple>(ms))));
             this.Bag = EnumCollection<Meeple>.Empty;
-            this.DjinnPile = (includeDhenim ? GameState.Djinns.Add(Dhenim.Instance) : GameState.Djinns).Deal(3, out ImmutableList<Djinn> visibleDjinns);
+            this.DjinnPile = (includeDhenim ? GameState.Djinns.Add(Dhenim.Instance) : GameState.Djinns).Deal(3, out var visibleDjinns);
             this.VisibleDjinns = visibleDjinns;
             this.DjinnDiscards = ImmutableList<Djinn>.Empty;
-            this.ResourcePile = GameState.Resources.Deal(9, out ImmutableList<Resource> visibleResources);
+            this.ResourcePile = GameState.Resources.Deal(9, out var visibleResources);
             this.VisibleResources = visibleResources;
             this.ResourceDiscards = EnumCollection<Resource>.Empty;
             this.additionalState = ImmutableDictionary<string, string>.Empty;
@@ -657,10 +657,7 @@ namespace GameTheory.Games.FiveTribes
         }
 
         /// <inheritdoc />
-        IGameState<Move> IGameState<Move>.MakeMove(Move move)
-        {
-            return this.MakeMove(move);
-        }
+        IGameState<Move> IGameState<Move>.MakeMove(Move move) => this.MakeMove(move);
 
         /// <summary>
         /// Applies the move to the current game state.

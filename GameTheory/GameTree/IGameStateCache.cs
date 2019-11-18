@@ -5,9 +5,11 @@ namespace GameTheory.GameTree
     /// <summary>
     /// Represents a cache, primarily for use as a transposition table.
     /// </summary>
+    /// <typeparam name="TGameState">The type of game states in the cache.</typeparam>
     /// <typeparam name="TMove">The type of moves supported by the game states in the cache.</typeparam>
     /// <typeparam name="TScore">The type used to keep track of score.</typeparam>
-    public interface IGameStateCache<TMove, TScore>
+    public interface IGameStateCache<TGameState, TMove, TScore>
+        where TGameState : IGameState<TMove>
         where TMove : IMove
     {
         /// <summary>
@@ -15,7 +17,7 @@ namespace GameTheory.GameTree
         /// </summary>
         /// <param name="state">The game state used as the key.</param>
         /// <param name="result">The mainline used as the value.</param>
-        void SetValue(IGameState<TMove> state, StateNode<TMove, TScore> result);
+        void SetValue(TGameState state, StateNode<TGameState, TMove, TScore> result);
 
         /// <summary>
         /// Instructs the cache to free available memory.
@@ -28,6 +30,6 @@ namespace GameTheory.GameTree
         /// <param name="state">The game state used as the key.</param>
         /// <param name="cached">The mainline value stored in the cache.</param>
         /// <returns><c>true</c>, if the item was found in the cache; <c>false</c>, otherwise.</returns>
-        bool TryGetValue(IGameState<TMove> state, out StateNode<TMove, TScore> cached);
+        bool TryGetValue(TGameState state, out StateNode<TGameState, TMove, TScore> cached);
     }
 }

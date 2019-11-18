@@ -34,52 +34,51 @@ namespace GameTheory.Catalogs
         }
 
         /// <inheritdoc/>
-        protected override IEnumerable<ICatalogPlayer> GetPlayers(Type moveType)
+        protected override IEnumerable<ICatalogPlayer> GetPlayers(Type gameStateType, Type moveType)
         {
-            var playerUnconstructed = typeof(IPlayer<>);
-            var playerInterface = playerUnconstructed.MakeGenericType(moveType);
+            var playerUnconstructed = typeof(IPlayer<,>);
+            var playerInterface = playerUnconstructed.MakeGenericType(gameStateType, moveType);
+            var playerInterfaceInfo = playerInterface.GetTypeInfo();
+
             foreach (var assembly in this.assemblies)
             {
-                var staticPlayers = from t in assembly.ExportedTypes
-                                    where playerInterface.GetTypeInfo().IsAssignableFrom(t.GetTypeInfo())
-                                    select t;
-
-                var candidateTypeParameters = new List<Type> { moveType };
+                var candidateTypeParameters = new HashSet<Type> { gameStateType, moveType };
                 if (moveType.IsConstructedGenericType && moveType.GenericTypeArguments.Length == 1)
                 {
                     candidateTypeParameters.Add(moveType.GenericTypeArguments.Single());
                 }
 
-                var tryMakePlayerType = new Func<Type, Type, Type>((playerType, argument) =>
+                foreach (var type in assembly.ExportedTypes)
                 {
-                    try
+                    var typeInfo = type.GetTypeInfo();
+                    if (playerInterfaceInfo.IsAssignableFrom(typeInfo))
                     {
-                        return playerType.MakeGenericType(argument);
+                        yield return new CatalogPlayer(type, gameStateType, moveType, ReflectionUtilities.GetPublicInitializers(type));
+                        continue;
                     }
-                    catch (ArgumentException)
+
+                    if (!type.IsGenericTypeDefinition || typeInfo.IsAbstract)
                     {
-                        return null;
+                        continue;
                     }
-                });
 
-                var constructedPlayers = from t in assembly.ExportedTypes
-                                         let info = t.GetTypeInfo()
-                                         let typeParameters = info.GenericTypeParameters
-                                         where typeParameters.Length == 1
-                                         where info.ImplementedInterfaces.Any(i => i == playerUnconstructed || (i.IsConstructedGenericType && i.GetGenericTypeDefinition() == playerUnconstructed))
-                                         let constraints = typeParameters[0].GetTypeInfo().GetGenericParameterConstraints()
-                                         from candidate in candidateTypeParameters
-                                         let c = tryMakePlayerType(t, candidate)
-                                         where c != null && !c.GetTypeInfo().IsAbstract
-                                         where playerInterface.GetTypeInfo().IsAssignableFrom(c.GetTypeInfo())
-                                         select c;
-
-                var playerTypes = Enumerable.Concat(
-                    staticPlayers,
-                    constructedPlayers);
-                foreach (var playerType in playerTypes)
-                {
-                    yield return new CatalogPlayer(playerType, moveType);
+                    var targetDefinitions = typeInfo
+                        .ImplementedInterfaces
+                        .Where(i => i == playerUnconstructed || (i.IsConstructedGenericType && i.GetGenericTypeDefinition() == playerUnconstructed));
+                    if (targetDefinitions.Any())
+                    {
+                        foreach (var match in ReflectionUtilities.FixGenericTypeConstraints(typeInfo.GenericTypeParameters, _ => candidateTypeParameters))
+                        {
+                            var playerType = ReflectionUtilities.TryMakeGenericType(type, match);
+                            if (playerType != null)
+                            {
+                                if (playerInterfaceInfo.IsAssignableFrom(playerType.GetTypeInfo()))
+                                {
+                                    yield return new CatalogPlayer(playerType, gameStateType, moveType, ReflectionUtilities.GetPublicInitializers(playerType));
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }

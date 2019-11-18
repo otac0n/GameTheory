@@ -8,10 +8,10 @@ namespace GameTheory.Games.Splendor.Players
     /// <summary>
     /// Provides a maximizing player for the game of <see cref="GameState">Splendor</see>.
     /// </summary>
-    public class SplendorMaximizingPlayer : MaximizingPlayer<Move, ResultScore<double>>
+    public class SplendorMaximizingPlayer : MaximizingPlayer<GameState, Move, ResultScore<double>>
     {
-        private static readonly IGameStateScoringMetric<Move, double> Metric =
-            ScoringMetric.Create((PlayerState<Move> s) => ((GameState)s.GameState).GetScore(s.PlayerToken));
+        private static readonly IGameStateScoringMetric<GameState, Move, double> Metric =
+            ScoringMetric.Create((PlayerState<GameState, Move> s) => s.GameState.GetScore(s.PlayerToken));
 
         private TimeSpan minThinkTime;
 

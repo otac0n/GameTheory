@@ -5,18 +5,18 @@ namespace GameTheory.Games.Chess
     using System;
     using System.Collections.Generic;
 
-    internal static class Parser
+    public static class Parser
     {
-        private const int DimensionX = 1;
-        private const int DimensionY = 0;
-        private const char FenEmptyFieldValue = '-';
-        private const char FenRankSeparator = '/';
-        private const char FenRecordSeparator = ' ';
-        private const int MaxParseSize = 100;
-        private const int MaxShredderFenBoardWidth = 'z' + 1 - 'a';
-        private const int MaxXFenBoardWidth = 'k' - 'a';
+        internal const int DimensionX = 1;
+        internal const int DimensionY = 0;
+        internal const char FenEmptyFieldValue = '-';
+        internal const char FenRankSeparator = '/';
+        internal const char FenRecordSeparator = ' ';
+        internal const int MaxParseSize = 100;
+        internal const int MaxShredderFenBoardWidth = 'z' + 1 - 'a';
+        internal const int MaxXFenBoardWidth = 'k' - 'a';
 
-        private static readonly Dictionary<char, Pieces> FenCastling = new Dictionary<char, Pieces>
+        internal static readonly Dictionary<char, Pieces> FenCastling = new Dictionary<char, Pieces>
         {
             ['q'] = Pieces.Black | Pieces.Queen,
             ['k'] = Pieces.Black | Pieces.King,
@@ -24,13 +24,13 @@ namespace GameTheory.Games.Chess
             ['K'] = Pieces.White | Pieces.King,
         };
 
-        private static readonly Dictionary<char, Pieces> FenColors = new Dictionary<char, Pieces>
+        internal static readonly Dictionary<char, Pieces> FenColors = new Dictionary<char, Pieces>
         {
             ['b'] = Pieces.Black,
             ['w'] = Pieces.White,
         };
 
-        private static readonly Dictionary<char, Pieces> FenPieces = new Dictionary<char, Pieces>
+        internal static readonly Dictionary<char, Pieces> FenPieces = new Dictionary<char, Pieces>
         {
             ['p'] = Pieces.Black | Pieces.Pawn,
             ['n'] = Pieces.Black | Pieces.Knight,
@@ -51,7 +51,7 @@ namespace GameTheory.Games.Chess
             char c;
             if (index >= subject.Length || (c = subject[index]) < 'a' || c > 'z')
             {
-                coordinate = default(Point);
+                coordinate = default;
                 return false;
             }
 
@@ -61,7 +61,7 @@ namespace GameTheory.Games.Chess
             if (!Parser.TryParseInt32(subject, ref index, out var rank))
             {
                 index = startIndex;
-                coordinate = default(Point);
+                coordinate = default;
                 return false;
             }
             else
@@ -89,12 +89,12 @@ namespace GameTheory.Games.Chess
                 !Parser.TryParseInt32(subject, ref index, out turnNumber))
             {
                 index = startIndex;
-                board = default(Pieces[,]);
-                activePlayer = default(Pieces);
-                castling = default(HashSet<Pieces>);
-                epCoordinate = default(Point?);
-                plyCountClock = default(int);
-                turnNumber = default(int);
+                board = default;
+                activePlayer = default;
+                castling = default;
+                epCoordinate = default;
+                plyCountClock = default;
+                turnNumber = default;
                 return false;
             }
 
@@ -111,7 +111,7 @@ namespace GameTheory.Games.Chess
                 {
                     if (ranks.Count == 0)
                     {
-                        board = default(Pieces[,]);
+                        board = default;
                         return false;
                     }
 
@@ -132,7 +132,7 @@ namespace GameTheory.Games.Chess
                 if (ranks[r].Count != ranks[0].Count)
                 {
                     index = startIndex;
-                    board = default(Pieces[,]);
+                    board = default;
                     return false;
                 }
             }
@@ -164,7 +164,7 @@ namespace GameTheory.Games.Chess
 
             if (result.Count == 0)
             {
-                castling = default(HashSet<Pieces>);
+                castling = default;
                 return false;
             }
             else
@@ -178,7 +178,7 @@ namespace GameTheory.Games.Chess
         {
             if (index >= subject.Length)
             {
-                color = default(Pieces);
+                color = default;
                 return false;
             }
 
@@ -197,7 +197,7 @@ namespace GameTheory.Games.Chess
         {
             if (index >= subject.Length)
             {
-                piece = default(Pieces);
+                piece = default;
                 return false;
             }
 
@@ -233,7 +233,7 @@ namespace GameTheory.Games.Chess
                 }
                 else if (result.Count == 0)
                 {
-                    pieces = default(List<Pieces>);
+                    pieces = default;
                     return false;
                 }
                 else
@@ -244,7 +244,7 @@ namespace GameTheory.Games.Chess
             }
 
             index = startIndex;
-            pieces = default(List<Pieces>);
+            pieces = default;
             return false;
         }
 
@@ -286,7 +286,7 @@ namespace GameTheory.Games.Chess
 
             if (end == index)
             {
-                value = default(int);
+                value = default;
                 return false;
             }
             else if (int.TryParse(subject.Substring(index, end - index), out value))
@@ -320,12 +320,12 @@ namespace GameTheory.Games.Chess
                 !Parser.TryParseInt32(subject, ref index, out turnNumber))
             {
                 index = startIndex;
-                board = default(Pieces[,]);
-                activePlayer = default(Pieces);
-                castling = default(Dictionary<Pieces, int>);
-                epCoordinate = default(Point?);
-                plyCountClock = default(int);
-                turnNumber = default(int);
+                board = default;
+                activePlayer = default;
+                castling = default;
+                epCoordinate = default;
+                plyCountClock = default;
+                turnNumber = default;
                 return false;
             }
 
@@ -455,7 +455,7 @@ namespace GameTheory.Games.Chess
 
             if (result.Count == 0)
             {
-                castling = default(Dictionary<Pieces, int>);
+                castling = default;
                 return false;
             }
             else
@@ -485,12 +485,12 @@ namespace GameTheory.Games.Chess
                 !Parser.TryParseInt32(subject, ref index, out turnNumber))
             {
                 index = startIndex;
-                board = default(Pieces[,]);
-                activePlayer = default(Pieces);
-                castling = default(Dictionary<Pieces, int>);
-                epCoordinate = default(Point?);
-                plyCountClock = default(int);
-                turnNumber = default(int);
+                board = default;
+                activePlayer = default;
+                castling = default;
+                epCoordinate = default;
+                plyCountClock = default;
+                turnNumber = default;
                 return false;
             }
 
@@ -778,7 +778,7 @@ namespace GameTheory.Games.Chess
 
             if (result.Count == 0)
             {
-                castling = default(Dictionary<Pieces, int>);
+                castling = default;
                 return false;
             }
             else
@@ -792,12 +792,12 @@ namespace GameTheory.Games.Chess
         {
             if (index >= subject.Length)
             {
-                coordinate = default(Point?);
+                coordinate = default;
                 return false;
             }
             else if (subject[index] == Parser.FenEmptyFieldValue)
             {
-                coordinate = default(Point?);
+                coordinate = default;
                 index++;
                 return true;
             }
@@ -811,12 +811,12 @@ namespace GameTheory.Games.Chess
         {
             if (index >= subject.Length)
             {
-                castling = default(HashSet<Pieces>);
+                castling = default;
                 return false;
             }
             else if (subject[index] == Parser.FenEmptyFieldValue)
             {
-                castling = default(HashSet<Pieces>);
+                castling = default;
                 index++;
                 return true;
             }
@@ -828,12 +828,12 @@ namespace GameTheory.Games.Chess
         {
             if (index >= subject.Length)
             {
-                castling = default(Dictionary<Pieces, int>);
+                castling = default;
                 return false;
             }
             else if (subject[index] == Parser.FenEmptyFieldValue)
             {
-                castling = default(Dictionary<Pieces, int>);
+                castling = default;
                 index++;
                 return true;
             }
@@ -845,12 +845,12 @@ namespace GameTheory.Games.Chess
         {
             if (index >= subject.Length)
             {
-                castling = default(Dictionary<Pieces, int>);
+                castling = default;
                 return false;
             }
             else if (subject[index] == Parser.FenEmptyFieldValue)
             {
-                castling = default(Dictionary<Pieces, int>);
+                castling = default;
                 index++;
                 return true;
             }

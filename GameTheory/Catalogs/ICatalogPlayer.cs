@@ -3,12 +3,23 @@
 namespace GameTheory.Catalogs
 {
     using System;
+    using System.Collections.Generic;
 
     /// <summary>
-    /// An interface representing a set of types implementing <see cref="IPlayer{TMove}"/>.
+    /// An interface representing a set of types implementing <see cref="IPlayer{TGameState, TMove}"/>.
     /// </summary>
     public interface ICatalogPlayer
     {
+        /// <summary>
+        /// Gets the type used for game states.
+        /// </summary>
+        Type GameStateType { get; }
+
+        /// <summary>
+        /// Gets a collection of initializers, representing different ways to create this player.
+        /// </summary>
+        IReadOnlyList<Initializer> Initializers { get; }
+
         /// <summary>
         /// Gets the type used for moves.
         /// </summary>

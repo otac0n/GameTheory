@@ -84,7 +84,7 @@ namespace GameTheory.Games.Splendor.Moves
                 pTokens = pTokens.Add(Token.GoldJoker);
             }
 
-            deck = deck.Deal(out DevelopmentCard drawn);
+            deck = deck.Deal(out var drawn);
             pHand = pHand.Add(drawn);
 
             return base.Apply(state.With(

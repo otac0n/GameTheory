@@ -58,7 +58,7 @@ namespace GameTheory.Games.Lotus
             this.RemainingActions = ActionsPerTurn;
             this.Field = ImmutableDictionary.CreateRange(EnumUtilities<FlowerType>.Values.Select(f => new KeyValuePair<FlowerType, Flower>(f, new Flower())));
             this.ChoosingPlayers = ImmutableList<PlayerToken>.Empty;
-            this.WildflowerDeck = InitialWildflowers.Deal(4, out ImmutableList<PetalCard> availableWildflowers).Shuffle().ToImmutableList();
+            this.WildflowerDeck = InitialWildflowers.Deal(4, out var availableWildflowers).Shuffle().ToImmutableList();
             this.AvailableWildflowers = availableWildflowers;
         }
 

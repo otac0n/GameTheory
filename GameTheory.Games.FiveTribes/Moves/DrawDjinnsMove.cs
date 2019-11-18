@@ -31,7 +31,7 @@ namespace GameTheory.Games.FiveTribes.Moves
             var toDraw = GetDrawCount(state);
 
             var newDjinnDiscards = state.DjinnDiscards;
-            var newDjinnPile = state.DjinnPile.Deal(toDraw, out ImmutableList<Djinn> dealt, ref newDjinnDiscards);
+            var newDjinnPile = state.DjinnPile.Deal(toDraw, out var dealt, ref newDjinnDiscards);
 
             var s1 = state.With(
                 djinnPile: newDjinnPile,

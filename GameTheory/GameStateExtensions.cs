@@ -1,4 +1,4 @@
-﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory
 {
@@ -14,11 +14,13 @@ namespace GameTheory
         /// <summary>
         /// Gets all moves for all players in the specified <see cref="IGameState{TMove}"/>.
         /// </summary>
+        /// <typeparam name="TGameState">The type of game state that will be searched.</typeparam>
         /// <typeparam name="TMove">The type of object that represents a move.</typeparam>
         /// <param name="state">The game state for which to retrieve all moves.</param>
         /// <param name="playerToken">The player whose moves will be retrieved.</param>
         /// <returns>All moves for all players in the specified game state.</returns>
-        public static List<TMove> GetAvailableMoves<TMove>(this IGameState<TMove> state, PlayerToken playerToken)
+        public static List<TMove> GetAvailableMoves<TGameState, TMove>(this TGameState state, PlayerToken playerToken)
+            where TGameState : IGameState<TMove>
             where TMove : IMove
         {
             if (state == null)

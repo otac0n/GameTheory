@@ -8,13 +8,13 @@ namespace GameTheory.Games.TwentyFortyEight.Console
     /// <summary>
     /// Provides a console renderer for the game of <see cref="GameState">TwentyFortyEight</see>.
     /// </summary>
-    public class TwentyFortyEightConsoleRenderer : ConsoleRendererBase<Move>
+    public class TwentyFortyEightConsoleRenderer : ConsoleRendererBase<GameState, Move>
     {
         /// <inheritdoc />
-        public override void Show(IGameState<Move> state, PlayerToken playerToken = null) => this.Show((GameState)state);
+        public override void Show(GameState state, PlayerToken playerToken = null) => this.Show(state);
 
         /// <inheritdoc/>
-        protected override void RenderToken(IGameState<Move> state, object token)
+        protected override void RenderToken(GameState state, object token)
         {
             if (token is MoveDirection move)
             {

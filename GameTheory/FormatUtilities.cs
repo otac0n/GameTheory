@@ -7,6 +7,7 @@ namespace GameTheory
     using System.Globalization;
     using System.Linq;
     using System.Resources;
+    using System.Text;
     using System.Text.RegularExpressions;
 
     /// <summary>
@@ -95,6 +96,13 @@ namespace GameTheory
         /// <summary>
         /// Returns the list of format tokens representing a list.
         /// </summary>
+        /// <param name="items">The items in the list that will be separated.</param>
+        /// <returns>The format tokens representing the list.</returns>
+        public static string FormatList(IEnumerable<string> items) => FormatList(items.ToList());
+
+        /// <summary>
+        /// Returns the list of format tokens representing a list.
+        /// </summary>
         /// <typeparam name="T">The type of elements in the list.</typeparam>
         /// <param name="items">The items in the list that will be separated.</param>
         /// <returns>The format tokens representing the list.</returns>
@@ -141,6 +149,48 @@ namespace GameTheory
         }
 
         /// <summary>
+        /// Returns the list of format tokens representing a list.
+        /// </summary>
+        /// <typeparam name="T">The type of elements in the list.</typeparam>
+        /// <param name="items">The items in the list that will be separated.</param>
+        /// <returns>The format tokens representing the list.</returns>
+        public static string FormatList(IList<string> items)
+        {
+            if (items == null)
+            {
+                throw new ArgumentNullException(nameof(items));
+            }
+
+            string last;
+            switch (items.Count)
+            {
+                case 0:
+                    return string.Empty;
+
+                case 1:
+                    return items[0];
+
+                case 2:
+                    last = SharedResources.ListItemSeparatorPair;
+                    break;
+
+                default:
+                    last = SharedResources.ListItemSeparatorLastElement;
+                    break;
+            }
+
+            var result = new StringBuilder();
+            result.Append(items[0]);
+            for (var i = 1; i < items.Count; i++)
+            {
+                result.Append(i == items.Count - 1 ? SharedResources.ListItemSeparator : last);
+                result.Append(items[i]);
+            }
+
+            return result.ToString();
+        }
+
+        /// <summary>
         /// Gets a resource string for the specified game type, if the resource can be found; or the specified default, if the resource could not be found.
         /// </summary>
         /// <param name="gameType">The type of game for which to fetch resources.</param>
@@ -166,15 +216,17 @@ namespace GameTheory
         /// <summary>
         /// Gets a player name for display.
         /// </summary>
+        /// <typeparam name="TGameState">The type of game states to search.</typeparam>
         /// <typeparam name="TMove">The type of object that represents a move in the game state.</typeparam>
         /// <param name="state">The game state.</param>
         /// <param name="playerToken">The player to search for.</param>
         /// <returns>A name representing the specified player token.</returns>
-        public static string GetPlayerName<TMove>(this IGameState<TMove> state, PlayerToken playerToken)
+        public static string GetPlayerName<TGameState, TMove>(this TGameState state, PlayerToken playerToken)
+            where TGameState : IGameState<TMove>
             where TMove : IMove
         {
             var playerNumber = state.GetPlayerNumber(playerToken);
-            return GetGameStateResource(state.GetType(), $"Player{playerNumber}") ??
+            return GetGameStateResource(typeof(TGameState), $"Player{playerNumber}") ??
                 string.Format(SharedResources.PlayerName, playerNumber);
         }
 

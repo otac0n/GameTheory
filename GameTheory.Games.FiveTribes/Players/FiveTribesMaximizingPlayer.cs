@@ -8,10 +8,10 @@ namespace GameTheory.Games.FiveTribes.Players
     /// <summary>
     /// Provides a maximizing player for the game of <see cref="GameState">Five Tribes</see>.
     /// </summary>
-    public class FiveTribesMaximizingPlayer : MaximizingPlayer<Move, ResultScore<double>>
+    public class FiveTribesMaximizingPlayer : MaximizingPlayer<GameState, Move, ResultScore<double>>
     {
-        private static readonly IGameStateScoringMetric<Move, double> Metric =
-            ScoringMetric.Create((PlayerState<Move> s) => ((GameState)s.GameState).GetScore(s.PlayerToken));
+        private static readonly IGameStateScoringMetric<GameState, Move, double> Metric =
+            ScoringMetric.Create((PlayerState<GameState, Move> s) => s.GameState.GetScore(s.PlayerToken));
 
         private TimeSpan minThinkTime;
 

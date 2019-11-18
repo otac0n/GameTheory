@@ -76,7 +76,7 @@ namespace GameTheory.Games.LoveLetter
                 {
                     do
                     {
-                        nextPlayer = state.GetNextPlayer(nextPlayer);
+                        nextPlayer = state.GetNextPlayer<GameState, Move>(nextPlayer);
                     }
                     while (nextPlayer != activePlayer && state.Inventory[nextPlayer].Hand.Length == 0);
                 }

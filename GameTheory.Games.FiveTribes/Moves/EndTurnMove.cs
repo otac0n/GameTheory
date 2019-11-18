@@ -47,10 +47,10 @@ namespace GameTheory.Games.FiveTribes.Moves
                 var isOver = state.Players.Any(p => !state.IsPlayerUnderCamelLimit(p)) || !state.Sultanate.GetPickUps().Any();
 
                 var djinnDiscards = state.DjinnDiscards;
-                var djinnPile = state.DjinnPile.Deal(3 - state.VisibleDjinns.Count, out ImmutableList<Djinn> dealtDjinns, ref djinnDiscards);
+                var djinnPile = state.DjinnPile.Deal(3 - state.VisibleDjinns.Count, out var dealtDjinns, ref djinnDiscards);
 
                 var resourceDiscards = state.ResourceDiscards;
-                var resourcePile = state.ResourcePile.Deal(9 - state.VisibleResources.Count, out ImmutableList<Resource> dealtResources, ref resourceDiscards);
+                var resourcePile = state.ResourcePile.Deal(9 - state.VisibleResources.Count, out var dealtResources, ref resourceDiscards);
 
                 return state.With(
                     djinnDiscards: djinnDiscards,

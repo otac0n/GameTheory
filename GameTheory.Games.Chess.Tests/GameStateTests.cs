@@ -30,7 +30,7 @@ namespace GameTheory.Games.Chess.Tests
 
             for (var i = 0; i < 100; i++)
             {
-                state = (GameState)state.PlayAnyMove(state.ActivePlayer, move =>
+                state = state.PlayAnyMove<GameState, Move>(state.ActivePlayer, move =>
                 {
                     if (move is BasicMove basicMove)
                     {
@@ -67,7 +67,7 @@ namespace GameTheory.Games.Chess.Tests
             var state = new GameState();
             foreach (var m in moves.Split(';').Select(m => m.Trim()))
             {
-                state = (GameState)state.PlayMove(state.ActivePlayer, move => move.ToString() == m);
+                state = state.PlayMove<GameState, Move>(state.ActivePlayer, move => move.ToString() == m);
             }
 
             Assert.That(state.GetAvailableMoves().OfType<CastleMove>(), Is.Empty);

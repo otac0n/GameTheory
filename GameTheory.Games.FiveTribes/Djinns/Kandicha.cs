@@ -73,7 +73,7 @@ namespace GameTheory.Games.FiveTribes.Djinns
                     case Meeple.Merchant:
                         {
                             var newDiscards = s1.ResourceDiscards;
-                            var newResourcesPile = s1.ResourcePile.Deal(kill[meeple], out ImmutableList<Resource> dealt, ref newDiscards);
+                            var newResourcesPile = s1.ResourcePile.Deal(kill[meeple], out var dealt, ref newDiscards);
                             var newInventory = inventory.With(resources: inventory.Resources.AddRange(dealt));
 
                             s1 = s1.With(

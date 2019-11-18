@@ -29,7 +29,7 @@ namespace GameTheory.Games.Chess.Tests
                     Index = i,
                     Position = p,
                     GameState = state,
-                    Score = ChessMaximizingPlayer.Score(new PlayerState<Move>(state.Players[1], state)),
+                    Score = ChessMaximizingPlayer.Score(new PlayerState<GameState, Move>(state.Players[1], state)),
                 };
             }).ToList();
 
@@ -57,7 +57,7 @@ namespace GameTheory.Games.Chess.Tests
                     Index = i,
                     Position = p,
                     GameState = state,
-                    Score = ChessMaximizingPlayer.Score(new PlayerState<Move>(state.Players[0], state)),
+                    Score = ChessMaximizingPlayer.Score(new PlayerState<GameState, Move>(state.Players[0], state)),
                 };
             }).ToList();
 

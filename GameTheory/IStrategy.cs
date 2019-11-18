@@ -1,4 +1,4 @@
-﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory
 {
@@ -10,8 +10,10 @@ namespace GameTheory
     /// <summary>
     /// Defines the contract for the implementation of a strategy, which can be composed with other strategies or players.
     /// </summary>
+    /// <typeparam name="TGameState">The type of game states that the strategy will evaluate.</typeparam>
     /// <typeparam name="TMove">The type of the moves that the strategy will choose.</typeparam>
-    public interface IStrategy<TMove> : IDisposable
+    public interface IStrategy<TGameState, TMove> : IDisposable
+        where TGameState : IGameState<TMove>
         where TMove : IMove
     {
         /// <summary>
@@ -22,6 +24,6 @@ namespace GameTheory
         /// <param name="moves">The list of moves available.</param>
         /// <param name="cancel">A <see cref="CancellationToken"/> that notifies a player if the request for a move is cancelled.</param>
         /// <returns>A task representing the ongoing operation.</returns>
-        Task<Maybe<TMove>> ChooseMove(IGameState<TMove> state, PlayerToken playerToken, IReadOnlyCollection<TMove> moves, CancellationToken cancel);
+        Task<Maybe<TMove>> ChooseMove(TGameState state, PlayerToken playerToken, IReadOnlyCollection<TMove> moves, CancellationToken cancel);
     }
 }

@@ -10,14 +10,13 @@ namespace GameTheory.Games.Chess.Console
     /// Provides a console renderer for the game of <see cref="GameState">Chess</see>.
     /// </summary>
     [ConsoleFont("Consolas", 8, 18)]
-    public class ChessConsoleRenderer : ConsoleRendererBase<Move>
+    public class ChessConsoleRenderer : ConsoleRendererBase<GameState, Move>
     {
         /// <inheritdoc/>
-        public override void Show(IGameState<Move> state, PlayerToken playerToken = null)
+        public override void Show(GameState state, PlayerToken playerToken = null)
         {
-            var gameState = (GameState)state;
-            var ranks = Enumerable.Range(0, gameState.Variant.Height);
-            var files = Enumerable.Range(0, gameState.Variant.Width);
+            var ranks = Enumerable.Range(0, state.Variant.Height);
+            var files = Enumerable.Range(0, state.Variant.Width);
             if (playerToken == null || state.Players.IndexOf(playerToken) <= 0)
             {
                 ranks = ranks.Reverse();
@@ -34,7 +33,7 @@ namespace GameTheory.Games.Chess.Console
                     ConsoleInteraction.WithColor(Console.ForegroundColor, (x + y) % 2 == 0 ? ConsoleColor.Black : ConsoleColor.Gray, () =>
                     {
                         Console.Write(' ');
-                        this.RenderToken(state, gameState.GetPieceAt(x, y));
+                        this.RenderToken(state, state.GetPieceAt(x, y));
                         Console.Write(' ');
                     });
                 }
@@ -51,7 +50,7 @@ namespace GameTheory.Games.Chess.Console
         }
 
         /// <inheritdoc/>
-        protected override void RenderToken(IGameState<Move> state, object token)
+        protected override void RenderToken(GameState state, object token)
         {
             if (state == null)
             {
@@ -61,7 +60,6 @@ namespace GameTheory.Games.Chess.Console
             if (token is Pieces piece)
             {
                 PlayerToken player = null;
-                var gameState = (GameState)state;
 
                 switch (piece & PieceMasks.Colors)
                 {
@@ -76,11 +74,11 @@ namespace GameTheory.Games.Chess.Console
 
                 var pieceStr = piece == Pieces.None
                     ? " "
-                    : gameState.Variant.NotationSystem.Format(piece);
+                    : state.Variant.NotationSystem.Format(piece);
 
                 if (player != null)
                 {
-                    ConsoleInteraction.WithColor(ConsoleInteraction.GetPlayerColor(state, player), () =>
+                    ConsoleInteraction.WithColor(ConsoleInteraction.GetPlayerColor<GameState, Move>(state, player), () =>
                     {
                         Console.Write(pieceStr);
                     });

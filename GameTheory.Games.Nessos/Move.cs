@@ -97,7 +97,7 @@ namespace GameTheory.Games.Nessos
                         var firstPlayer = state.FirstPlayer;
                         do
                         {
-                            firstPlayer = state.GetNextPlayer(firstPlayer);
+                            firstPlayer = state.GetNextPlayer<GameState, Move>(firstPlayer);
                         }
                         while (firstPlayer != state.FirstPlayer && state.Inventory[firstPlayer].OwnedCards[Card.Charon] >= GameState.PlayerCharonLimit);
 

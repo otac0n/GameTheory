@@ -23,7 +23,7 @@ namespace GameTheory.ConsoleRunner.Shared.Catalogs
         }
 
         /// <inheritdoc/>
-        protected override IEnumerable<Type> GetConsoleRenderers(Type moveType) =>
-            this.catalogs.SelectMany(c => c.FindConsoleRenderers(moveType));
+        protected override IEnumerable<Type> GetConsoleRenderers(Type gameStateType, Type moveType) =>
+            this.catalogs.SelectMany(c => c.FindConsoleRenderers(gameStateType, moveType));
     }
 }

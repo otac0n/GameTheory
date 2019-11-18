@@ -87,7 +87,7 @@ namespace GameTheory
 
             comparer = comparer ?? Comparer<TElement>.Default;
 
-            max = default(TElement);
+            max = default;
             var list = new List<TItem>();
             foreach (var item in source)
             {
@@ -183,7 +183,7 @@ namespace GameTheory
 
             comparer = comparer ?? Comparer<TElement>.Default;
 
-            min = default(TElement);
+            min = default;
             var list = new List<TItem>();
             foreach (var item in source)
             {

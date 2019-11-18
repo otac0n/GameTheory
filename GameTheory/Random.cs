@@ -51,7 +51,7 @@ namespace GameTheory
             }
 
             var allDealt = ImmutableList<T>.Empty;
-            deck = deck.Deal(count, out ImmutableList<T> newlyDealt, instance);
+            deck = deck.Deal(count, out var newlyDealt, instance);
             allDealt = allDealt.AddRange(newlyDealt);
 
             count -= allDealt.Count;
@@ -94,7 +94,7 @@ namespace GameTheory
             }
 
             var allDealt = ImmutableList<T>.Empty;
-            deck = deck.Deal(count, out ImmutableList<T> newlyDealt, instance);
+            deck = deck.Deal(count, out var newlyDealt, instance);
             allDealt = allDealt.AddRange(newlyDealt);
 
             count -= allDealt.Count;
@@ -211,7 +211,7 @@ namespace GameTheory
             }
             else
             {
-                dealt = default(T);
+                dealt = default;
                 return deck;
             }
         }
@@ -253,7 +253,7 @@ namespace GameTheory
             }
             else
             {
-                dealt = default(T);
+                dealt = default;
                 return deck;
             }
         }
@@ -304,6 +304,15 @@ namespace GameTheory
         /// <param name="instance">An instance of <see cref="System.Random"/> to use.</param>
         /// <returns>The selected element.</returns>
         public static T Pick<T>(this List<T> items, System.Random instance = null) => Pick((IList<T>)items, instance);
+
+        /// <summary>
+        /// Selects a random element from a list.
+        /// </summary>
+        /// <typeparam name="T">The type of items in the list.</typeparam>
+        /// <param name="items">The items to choose from.</param>
+        /// <param name="instance">An instance of <see cref="System.Random"/> to use.</param>
+        /// <returns>The selected element.</returns>
+        public static T Pick<T>(this T[] items, System.Random instance = null) => Pick((IList<T>)items, instance);
 
         /// <summary>
         /// Selects a random element from a list.
@@ -385,7 +394,71 @@ namespace GameTheory
         /// <param name="weightedItems">The weighted items to choose from.</param>
         /// <param name="instance">An instance of <see cref="System.Random"/> to use.</param>
         /// <returns>The selected element.</returns>
+        public static T Pick<T>(this IList<Weighted<T>> weightedItems, System.Random instance = null)
+        {
+            if (weightedItems == null)
+            {
+                throw new ArgumentNullException(nameof(weightedItems));
+            }
+
+            instance = instance ?? Instance;
+
+            var totalWeight = weightedItems.Sum(i => i.Weight);
+            var threshold = totalWeight * instance.NextDouble();
+
+            var value = 0.0;
+            foreach (var item in weightedItems)
+            {
+                value += item.Weight;
+                if (value >= threshold)
+                {
+                    return item.Value;
+                }
+            }
+
+            throw new InvalidOperationException();
+        }
+
+        /// <summary>
+        /// Selects a random element from a list of weighted items.
+        /// </summary>
+        /// <typeparam name="T">The type of items in the list.</typeparam>
+        /// <param name="weightedItems">The weighted items to choose from.</param>
+        /// <param name="instance">An instance of <see cref="System.Random"/> to use.</param>
+        /// <returns>The selected element.</returns>
         public static T Pick<T>(this IReadOnlyList<IWeighted<T>> weightedItems, System.Random instance = null)
+        {
+            if (weightedItems == null)
+            {
+                throw new ArgumentNullException(nameof(weightedItems));
+            }
+
+            instance = instance ?? Instance;
+
+            var totalWeight = weightedItems.Sum(i => i.Weight);
+            var threshold = totalWeight * instance.NextDouble();
+
+            var value = 0.0;
+            foreach (var item in weightedItems)
+            {
+                value += item.Weight;
+                if (value >= threshold)
+                {
+                    return item.Value;
+                }
+            }
+
+            throw new InvalidOperationException();
+        }
+
+        /// <summary>
+        /// Selects a random element from a list of weighted items.
+        /// </summary>
+        /// <typeparam name="T">The type of items in the list.</typeparam>
+        /// <param name="weightedItems">The weighted items to choose from.</param>
+        /// <param name="instance">An instance of <see cref="System.Random"/> to use.</param>
+        /// <returns>The selected element.</returns>
+        public static T Pick<T>(this IReadOnlyList<Weighted<T>> weightedItems, System.Random instance = null)
         {
             if (weightedItems == null)
             {
@@ -426,7 +499,43 @@ namespace GameTheory
         /// <param name="weightedItems">The weighted items to choose from.</param>
         /// <param name="instance">An instance of <see cref="System.Random"/> to use.</param>
         /// <returns>The selected element.</returns>
+        public static T Pick<T>(this List<Weighted<T>> weightedItems, System.Random instance = null) => Pick((IList<Weighted<T>>)weightedItems, instance);
+
+        /// <summary>
+        /// Selects a random element from a list of weighted items.
+        /// </summary>
+        /// <typeparam name="T">The type of items in the list.</typeparam>
+        /// <param name="weightedItems">The weighted items to choose from.</param>
+        /// <param name="instance">An instance of <see cref="System.Random"/> to use.</param>
+        /// <returns>The selected element.</returns>
+        public static T Pick<T>(this IWeighted<T>[] weightedItems, System.Random instance = null) => Pick((IList<IWeighted<T>>)weightedItems, instance);
+
+        /// <summary>
+        /// Selects a random element from a list of weighted items.
+        /// </summary>
+        /// <typeparam name="T">The type of items in the list.</typeparam>
+        /// <param name="weightedItems">The weighted items to choose from.</param>
+        /// <param name="instance">An instance of <see cref="System.Random"/> to use.</param>
+        /// <returns>The selected element.</returns>
+        public static T Pick<T>(this Weighted<T>[] weightedItems, System.Random instance = null) => Pick((IList<Weighted<T>>)weightedItems, instance);
+
+        /// <summary>
+        /// Selects a random element from a list of weighted items.
+        /// </summary>
+        /// <typeparam name="T">The type of items in the list.</typeparam>
+        /// <param name="weightedItems">The weighted items to choose from.</param>
+        /// <param name="instance">An instance of <see cref="System.Random"/> to use.</param>
+        /// <returns>The selected element.</returns>
         public static T Pick<T>(this ImmutableArray<IWeighted<T>> weightedItems, System.Random instance = null) => Pick((IList<IWeighted<T>>)weightedItems, instance);
+
+        /// <summary>
+        /// Selects a random element from a list of weighted items.
+        /// </summary>
+        /// <typeparam name="T">The type of items in the list.</typeparam>
+        /// <param name="weightedItems">The weighted items to choose from.</param>
+        /// <param name="instance">An instance of <see cref="System.Random"/> to use.</param>
+        /// <returns>The selected element.</returns>
+        public static T Pick<T>(this ImmutableArray<Weighted<T>> weightedItems, System.Random instance = null) => Pick((IList<Weighted<T>>)weightedItems, instance);
 
         /// <summary>
         /// Selects a random element from a collection of weighted items.

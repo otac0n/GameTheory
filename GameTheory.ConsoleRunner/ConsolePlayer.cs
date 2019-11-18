@@ -12,18 +12,20 @@ namespace GameTheory.ConsoleRunner
     /// <summary>
     /// Implements a player who interacts with the game state via the processes console.
     /// </summary>
+    /// <typeparam name="TGameState">The type of game state that will be played.</typeparam>
     /// <typeparam name="TMove">The type of moves that will be played.</typeparam>
-    public sealed class ConsolePlayer<TMove> : IPlayer<TMove>
+    public sealed class ConsolePlayer<TGameState, TMove> : IPlayer<TGameState, TMove>
+        where TGameState : IGameState<TMove>
         where TMove : IMove
     {
-        private readonly IConsoleRenderer<TMove> renderer;
+        private readonly IConsoleRenderer<TGameState, TMove> renderer;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ConsolePlayer{TMove}"/> class.
+        /// Initializes a new instance of the <see cref="ConsolePlayer{TGameState, TMove}"/> class.
         /// </summary>
         /// <param name="playerToken">The player token that represents the player.</param>
         /// <param name="renderer">The console renderer to use.</param>
-        public ConsolePlayer(PlayerToken playerToken, IConsoleRenderer<TMove> renderer)
+        public ConsolePlayer(PlayerToken playerToken, IConsoleRenderer<TGameState, TMove> renderer)
         {
             this.PlayerToken = playerToken;
             this.renderer = renderer;
@@ -40,13 +42,13 @@ namespace GameTheory.ConsoleRunner
         public PlayerToken PlayerToken { get; }
 
         /// <inheritdoc />
-        public async Task<Maybe<TMove>> ChooseMove(IGameState<TMove> state, CancellationToken cancel)
+        public async Task<Maybe<TMove>> ChooseMove(TGameState state, CancellationToken cancel)
         {
-            var playerColor = Shared.ConsoleInteraction.GetPlayerColor(state, this.PlayerToken);
+            var playerColor = Shared.ConsoleInteraction.GetPlayerColor<TGameState, TMove>(state, this.PlayerToken);
 
             await Task.Yield();
 
-            var moves = state.GetAvailableMoves(this.PlayerToken);
+            var moves = state.GetAvailableMoves<TGameState, TMove>(this.PlayerToken);
             if (moves.Any())
             {
                 return ConsoleInteraction.WithLock(() =>
@@ -80,7 +82,7 @@ namespace GameTheory.ConsoleRunner
             }
             else
             {
-                return default(Maybe<TMove>);
+                return default;
             }
         }
 

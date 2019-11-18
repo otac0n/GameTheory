@@ -10,10 +10,10 @@ namespace GameTheory.Games.Mancala.Players
     /// <summary>
     /// Provides a maximizing player for the game of <see cref="GameState">Mancala</see>.
     /// </summary>
-    public class MancalaMaximizingPlayer : MaximizingPlayer<Move, ResultScore<double>>
+    public class MancalaMaximizingPlayer : MaximizingPlayer<GameState, Move, ResultScore<double>>
     {
-        private static readonly IGameStateScoringMetric<Move, double> Metric =
-            ScoringMetric.Create<Move>(Score);
+        private static readonly IGameStateScoringMetric<GameState, Move, double> Metric =
+            ScoringMetric.Create<GameState, Move>(Score);
 
         private TimeSpan minThinkTime;
 
@@ -34,11 +34,11 @@ namespace GameTheory.Games.Mancala.Players
         protected override TimeSpan? MinThinkTime => this.minThinkTime;
 
         /// <inheritdoc />
-        protected override IGameStateCache<Move, ResultScore<double>> MakeCache() => new NullCache<Move, ResultScore<double>>();
+        protected override IGameStateCache<GameState, Move, ResultScore<double>> MakeCache() => new NullCache<GameState, Move, ResultScore<double>>();
 
-        private static double Score(PlayerState<Move> playerState)
+        private static double Score(PlayerState<GameState, Move> playerState)
         {
-            var state = (GameState)playerState.GameState;
+            var state = playerState.GameState;
             return state[state.GetPlayerIndexOffset(state.Players.IndexOf(playerState.PlayerToken)) + state.BinsPerSide];
         }
     }
