@@ -9,32 +9,32 @@ namespace GameTheory.Strategies
     using System.Threading.Tasks;
 
     /// <summary>
-    /// Implements a strategy that composes together a collection of other strategies.
+    /// Implements a mixed strategy.
     /// </summary>
     /// <typeparam name="TGameState">The type of game states that the strategy will evaluate.</typeparam>
     /// <typeparam name="TMove">The type of the moves that the strategy will choose.</typeparam>
-    public class CompositeStrategy<TGameState, TMove> : IStrategy<TGameState, TMove>
+    public class MixedStrategy<TGameState, TMove> : IStrategy<TGameState, TMove>
         where TGameState : IGameState<TMove>
         where TMove : IMove
     {
         private readonly bool disposeChildren;
-        private readonly IList<IStrategy<TGameState, TMove>> strategies;
+        private readonly IList<Weighted<IStrategy<TGameState, TMove>>> strategies;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="CompositeStrategy{TGameState, TMove}"/> class.
+        /// Initializes a new instance of the <see cref="MixedStrategy{TGameState, TMove}"/> class.
         /// </summary>
         /// <param name="strategies">The strategies that together make up this strategy.</param>
-        public CompositeStrategy(params IStrategy<TGameState, TMove>[] strategies)
+        public MixedStrategy(params Weighted<IStrategy<TGameState, TMove>>[] strategies)
             : this(strategies, disposeChildren: false)
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="CompositeStrategy{TGameState, TMove}"/> class.
+        /// Initializes a new instance of the <see cref="MixedStrategy{TGameState, TMove}"/> class.
         /// </summary>
         /// <param name="strategies">The strategies that together make up this strategy.</param>
         /// <param name="disposeChildren">A value indicating whether or not this strategy should own the disposal of the specified strategies.</param>
-        public CompositeStrategy(IEnumerable<IStrategy<TGameState, TMove>> strategies, bool disposeChildren)
+        public MixedStrategy(IEnumerable<Weighted<IStrategy<TGameState, TMove>>> strategies, bool disposeChildren)
         {
             if (strategies == null)
             {
@@ -46,26 +46,17 @@ namespace GameTheory.Strategies
         }
 
         /// <summary>
-        /// Finalizes an instance of the <see cref="CompositeStrategy{TGameState, TMove}"/> class.
+        /// Finalizes an instance of the <see cref="MixedStrategy{TGameState, TMove}"/> class.
         /// </summary>
-        ~CompositeStrategy()
+        ~MixedStrategy()
         {
             this.Dispose(false);
         }
 
         /// <inheritdoc/>
-        public async Task<Maybe<TMove>> ChooseMove(TGameState state, PlayerToken playerToken, IReadOnlyCollection<TMove> moves, CancellationToken cancel)
+        public Task<Maybe<TMove>> ChooseMove(TGameState state, PlayerToken playerToken, IReadOnlyCollection<TMove> moves, CancellationToken cancel)
         {
-            foreach (var strategy in this.strategies)
-            {
-                var move = await strategy.ChooseMove(state, playerToken, moves, cancel).ConfigureAwait(false);
-                if (move.HasValue)
-                {
-                    return move;
-                }
-            }
-
-            return default;
+            return this.strategies.Pick().ChooseMove(state, playerToken, moves, cancel);
         }
 
         /// <inheritdoc/>
@@ -87,7 +78,7 @@ namespace GameTheory.Strategies
                 {
                     foreach (var strategy in this.strategies)
                     {
-                        strategy.Dispose();
+                        strategy.Value.Dispose();
                     }
                 }
             }
