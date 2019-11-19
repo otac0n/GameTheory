@@ -85,13 +85,17 @@ namespace GameTheory.ConsoleRunner
             if (parameter.HasDefaultValue)
             {
                 Console.Write(' ');
+                var defaultDisplay =
+                    parameter.DefaultValue is null ? Resources.Null :
+                    parameter.DefaultValue is string d && d == string.Empty ? Resources.Empty :
+                    parameter.DefaultValue;
                 if (range != null)
                 {
-                    Console.Write(Resources.RangeWithDefault, range.Minimum, range.Maximum, parameter.DefaultValue);
+                    Console.Write(Resources.RangeWithDefault, range.Minimum, range.Maximum, defaultDisplay);
                 }
                 else
                 {
-                    Console.Write(Resources.DefaultValue, parameter.DefaultValue);
+                    Console.Write(Resources.DefaultValue, defaultDisplay);
                 }
             }
             else if (range != null)

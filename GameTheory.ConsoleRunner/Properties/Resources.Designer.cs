@@ -88,6 +88,15 @@ namespace GameTheory.ConsoleRunner.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to (empty).
+        /// </summary>
+        internal static string Empty {
+            get {
+                return ResourceManager.GetString("Empty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Final state:.
         /// </summary>
         internal static string FinalState {
@@ -160,7 +169,7 @@ namespace GameTheory.ConsoleRunner.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Please make a selection: [1-{0}].
+        ///   Looks up a localized string similar to Please make a selection: [1 to {0}].
         /// </summary>
         internal static string ListPrompt {
             get {
@@ -183,6 +192,15 @@ namespace GameTheory.ConsoleRunner.Properties {
         internal static string None {
             get {
                 return ResourceManager.GetString("None", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to (null).
+        /// </summary>
+        internal static string Null {
+            get {
+                return ResourceManager.GetString("Null", resourceCulture);
             }
         }
         
@@ -232,7 +250,7 @@ namespace GameTheory.ConsoleRunner.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to [{0}-{1}].
+        ///   Looks up a localized string similar to [{0} to {1}].
         /// </summary>
         internal static string Range {
             get {
@@ -241,7 +259,7 @@ namespace GameTheory.ConsoleRunner.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to [{0}-{1}, default {2}].
+        ///   Looks up a localized string similar to [{0} to {1}, default {2}].
         /// </summary>
         internal static string RangeWithDefault {
             get {
