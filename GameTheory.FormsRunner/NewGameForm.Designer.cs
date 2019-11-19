@@ -33,10 +33,10 @@ namespace GameTheory.FormsRunner
             System.Windows.Forms.TabPage gameTab;
             System.Windows.Forms.Label searchLabel;
             System.Windows.Forms.TabPage playersTab;
-            this.nextButton = new System.Windows.Forms.Button();
             this.searchResults = new System.Windows.Forms.ListView();
             this.searchBox = new System.Windows.Forms.TextBox();
             this.playersTable = new System.Windows.Forms.TableLayoutPanel();
+            this.nextButton = new System.Windows.Forms.Button();
             this.configurationTab = new System.Windows.Forms.TabPage();
             this.wizardTabs = new System.Windows.Forms.TabControl();
             this.backButton = new System.Windows.Forms.Button();
@@ -51,17 +51,6 @@ namespace GameTheory.FormsRunner
             this.wizardTabs.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
             this.SuspendLayout();
-            // 
-            // nextButton
-            // 
-            this.nextButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.nextButton.Location = new System.Drawing.Point(203, 378);
-            this.nextButton.Name = "nextButton";
-            this.nextButton.Size = new System.Drawing.Size(75, 23);
-            this.nextButton.TabIndex = 2;
-            this.nextButton.Text = "&Next >";
-            this.nextButton.UseVisualStyleBackColor = true;
-            this.nextButton.Click += new System.EventHandler(this.NextButton_Click);
             // 
             // cancelButton
             // 
@@ -138,6 +127,7 @@ namespace GameTheory.FormsRunner
             // 
             // playersTable
             // 
+            this.playersTable.AutoScroll = true;
             this.playersTable.ColumnCount = 2;
             this.playersTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.playersTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
@@ -149,8 +139,20 @@ namespace GameTheory.FormsRunner
             this.playersTable.Size = new System.Drawing.Size(423, 328);
             this.playersTable.TabIndex = 0;
             // 
+            // nextButton
+            // 
+            this.nextButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.nextButton.Location = new System.Drawing.Point(203, 378);
+            this.nextButton.Name = "nextButton";
+            this.nextButton.Size = new System.Drawing.Size(75, 23);
+            this.nextButton.TabIndex = 2;
+            this.nextButton.Text = "&Next >";
+            this.nextButton.UseVisualStyleBackColor = true;
+            this.nextButton.Click += new System.EventHandler(this.NextButton_Click);
+            // 
             // configurationTab
             // 
+            this.configurationTab.AutoScroll = true;
             this.configurationTab.Location = new System.Drawing.Point(4, 22);
             this.configurationTab.Name = "configurationTab";
             this.configurationTab.Padding = new System.Windows.Forms.Padding(3);
