@@ -112,6 +112,13 @@ namespace GameTheory.Games.Chess.Uci.Catalogs
                     (attributes ?? (attributes = new List<CustomAttributeData>())).Add(attribute);
                 }
 
+                if (option.Name.StartsWith("Nalimov", StringComparison.OrdinalIgnoreCase) ||
+                    option.Name.StartsWith("Syzygy", StringComparison.OrdinalIgnoreCase) ||
+                    option.Name.StartsWith("UCI_", StringComparison.OrdinalIgnoreCase))
+                {
+                    continue;
+                }
+
                 if (KnownOptions.TryGetValue(option.Name, out var displayValues))
                 {
                     AddAttribute(ReflectionUtilities.AttributeData<DisplayNameAttribute>(displayValues.Item1));
