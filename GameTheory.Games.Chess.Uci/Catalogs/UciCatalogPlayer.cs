@@ -81,13 +81,17 @@ namespace GameTheory.Games.Chess.Uci.Catalogs
             foreach (var option in options)
             {
                 bool hasDefault;
-                CustomAttributeData[] attributes = null;
+                List<CustomAttributeData> attributes = null;
+                void AddAttribute(CustomAttributeData attribute)
+                {
+                    (attributes ?? (attributes = new List<CustomAttributeData>())).Add(attribute);
+                }
 
                 if (option.Type == "check")
                 {
                     var pos = position++;
                     hasDefault = bool.TryParse(option.Default, out var defaultValue);
-                    parameters.Add(new DynamicParameterInfo(option.Name, typeof(bool), pos, hasDefault, defaultValue, member, attributes));
+                    parameters.Add(new DynamicParameterInfo(option.Name, typeof(bool), pos, hasDefault, defaultValue, member, attributes?.ToArray()));
 
                     Apply((args, list) =>
                     {
@@ -104,10 +108,10 @@ namespace GameTheory.Games.Chess.Uci.Catalogs
                     hasDefault = int.TryParse(option.Default, out var defaultValue);
                     if (int.TryParse(option.Min, out var minInt) && int.TryParse(option.Max, out var maxInt))
                     {
-                        attributes = new[] { new DynamicAttributeData(typeof(RangeAttribute).GetConstructor(new[] { typeof(int), typeof(int) }), new object[] { minInt, maxInt }) };
+                        AddAttribute(ReflectionUtilities.AttributeData<RangeAttribute>(minInt, maxInt));
                     }
 
-                    parameters.Add(new DynamicParameterInfo(option.Name, typeof(int), pos, hasDefault, defaultValue, member, attributes));
+                    parameters.Add(new DynamicParameterInfo(option.Name, typeof(int), pos, hasDefault, defaultValue, member, attributes?.ToArray()));
 
                     Apply((args, list) =>
                     {
@@ -122,7 +126,7 @@ namespace GameTheory.Games.Chess.Uci.Catalogs
                 {
                     var pos = position++;
                     hasDefault = option.Default is string;
-                    parameters.Add(new DynamicParameterInfo(option.Name, typeof(string), pos, hasDefault, option.Default, member, attributes));
+                    parameters.Add(new DynamicParameterInfo(option.Name, typeof(string), pos, hasDefault, option.Default, member, attributes?.ToArray()));
 
                     Apply((args, list) =>
                     {
@@ -137,7 +141,7 @@ namespace GameTheory.Games.Chess.Uci.Catalogs
                 {
                     var pos = position++;
                     hasDefault = option.Default is string;
-                    parameters.Add(new DynamicParameterInfo(option.Name, typeof(string), pos, option.Default is string, option.Default, member, attributes));
+                    parameters.Add(new DynamicParameterInfo(option.Name, typeof(string), pos, option.Default is string, option.Default, member, attributes?.ToArray()));
 
                     Apply((args, list) =>
                     {

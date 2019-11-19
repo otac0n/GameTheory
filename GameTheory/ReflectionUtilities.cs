@@ -14,6 +14,11 @@ namespace GameTheory
     /// </summary>
     public static class ReflectionUtilities
     {
+        public static DynamicAttributeData AttributeData<TAttribute>(params object[] arguments)
+        {
+            return new DynamicAttributeData(typeof(TAttribute).GetConstructor(Array.ConvertAll(arguments, arg => arg?.GetType() ?? typeof(object))), arguments);
+        }
+
         public static List<Type[]> FixGenericTypeConstraints(Type[] typeParameters, Converter<Type, IEnumerable<Type>> getCandidates)
         {
             var constraints = Array.ConvertAll(typeParameters, p => p.GetTypeInfo().GetGenericParameterConstraints());
