@@ -4,6 +4,7 @@ namespace GameTheory.ConsoleRunner
 {
     using System;
     using System.Collections.Generic;
+    using System.ComponentModel;
     using System.ComponentModel.DataAnnotations;
     using System.Diagnostics;
     using System.Linq;
@@ -57,7 +58,19 @@ namespace GameTheory.ConsoleRunner
 
         private static object GetArgument(ParameterInfo parameter)
         {
-            Console.Write(Resources.ParameterName, parameter.Name);
+            var description = parameter.GetCustomAttribute<DescriptionAttribute>();
+            var displayName = parameter.GetCustomAttribute<DisplayNameAttribute>();
+            var parenthesizePropertyName = parameter.GetCustomAttribute<ParenthesizePropertyNameAttribute>();
+            var range = parameter.GetCustomAttribute<RangeAttribute>();
+
+            if (range != null && (!(range.Minimum is int) || parameter.ParameterType != typeof(int)))
+            {
+                range = null;
+            }
+
+            Console.Write(
+                parenthesizePropertyName?.NeedParenthesis ?? false ? Resources.ParameterNameParenthesis : Resources.ParameterName,
+                displayName?.DisplayName ?? parameter.Name);
 
             if (parameter.ParameterType != typeof(string) &&
                 parameter.ParameterType != typeof(bool) &&
@@ -69,14 +82,9 @@ namespace GameTheory.ConsoleRunner
                 return ConstructType(parameter.ParameterType);
             }
 
-            var range = parameter.GetCustomAttribute<RangeAttribute>();
-            if (range != null && (!(range.Minimum is int) || parameter.ParameterType != typeof(int)))
-            {
-                range = null;
-            }
-
             if (parameter.HasDefaultValue)
             {
+                Console.Write(' ');
                 if (range != null)
                 {
                     Console.Write(Resources.RangeWithDefault, range.Minimum, range.Maximum, parameter.DefaultValue);
@@ -88,10 +96,19 @@ namespace GameTheory.ConsoleRunner
             }
             else if (range != null)
             {
+                Console.Write(' ');
                 Console.Write(Resources.Range, range.Minimum, range.Maximum);
             }
 
             Console.WriteLine();
+
+            if (description != null)
+            {
+                Shared.ConsoleInteraction.WithColor(ConsoleColor.DarkGray, () =>
+                {
+                    Console.WriteLine(description.Description);
+                });
+            }
 
             while (true)
             {

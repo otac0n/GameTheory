@@ -162,6 +162,9 @@
   <data name="ParameterName" xml:space="preserve">
     <value>{0}:</value>
   </data>
+  <data name="ParameterNameParenthesis" xml:space="preserve">
+    <value>({0}):</value>
+  </data>
   <data name="PlayerMessaged" xml:space="preserve">
     <value>{0} messaged: </value>
   </data>

@@ -196,6 +196,15 @@ namespace GameTheory.ConsoleRunner.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to ({0}):.
+        /// </summary>
+        internal static string ParameterNameParenthesis {
+            get {
+                return ResourceManager.GetString("ParameterNameParenthesis", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {0} messaged: .
         /// </summary>
         internal static string PlayerMessaged {
