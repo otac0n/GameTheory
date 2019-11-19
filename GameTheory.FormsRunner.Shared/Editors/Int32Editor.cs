@@ -20,9 +20,11 @@ namespace GameTheory.FormsRunner.Shared.Editors
         {
             var numericUpDown = new NumericUpDown
             {
-                Value = value as int? ?? default,
+                Minimum = int.MinValue,
+                Maximum = int.MaxValue,
                 Tag = this,
             };
+            numericUpDown.Value = value as int? ?? default;
             numericUpDown.AddMargin(right: ErrorIconPadding);
             numericUpDown.ValueChanged += (_, a) =>
             {
