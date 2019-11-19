@@ -76,12 +76,17 @@ namespace GameTheory.FormsRunner.Shared.Editors
                                 setError(innerErrorControl, null);
                             }
                         }
-                        catch (TargetInvocationException ex)
+                        catch (Exception ex)
                         {
                             valid = false;
-                            var inner = ex.InnerException;
+
+                            if (ex is TargetInvocationException)
+                            {
+                                ex = ex.InnerException;
+                            }
+
                             Control innerErrorControl = null;
-                            switch (inner)
+                            switch (ex)
                             {
                                 case ArgumentException argumentException:
                                     errorControls.TryGetValue(argumentException.ParamName, out innerErrorControl);
@@ -91,7 +96,7 @@ namespace GameTheory.FormsRunner.Shared.Editors
                                     break;
                             }
 
-                            setError(innerErrorControl ?? constructorList, inner.Message);
+                            setError(innerErrorControl ?? constructorList, ex.Message);
                         }
                     }
 

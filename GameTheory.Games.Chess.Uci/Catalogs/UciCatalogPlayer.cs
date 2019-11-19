@@ -144,8 +144,10 @@ namespace GameTheory.Games.Chess.Uci.Catalogs
                 {
                     var pos = position++;
                     hasDefault = int.TryParse(option.Default, out var defaultValue);
-                    if (int.TryParse(option.Min, out var minInt) && int.TryParse(option.Max, out var maxInt))
+                    var hasRange = false;
+                    if (int.TryParse(option.Min, out var minInt) & int.TryParse(option.Max, out var maxInt))
                     {
+                        hasRange = true;
                         AddAttribute(ReflectionUtilities.AttributeData<RangeAttribute>(minInt, maxInt));
                     }
 
@@ -156,6 +158,11 @@ namespace GameTheory.Games.Chess.Uci.Catalogs
                         var value = (int)args[pos];
                         if (!hasDefault || value != defaultValue)
                         {
+                            if (hasRange && (value < minInt || value > maxInt))
+                            {
+                                throw new ArgumentOutOfRangeException(option.Name);
+                            }
+
                             list.Add(new SetOptionCommand(option.Name, value.ToString()));
                         }
                     });
