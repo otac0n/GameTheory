@@ -55,6 +55,7 @@ namespace GameTheory.Games.Chess.Tests.Uci.Protocol
         [TestCase("option name Selectivity type spin default 2 min 0 max 4", false)]
         [TestCase("option name Style type combo default Normal var Solid var Normal var Risky", false)]
         [TestCase("option name NalimovPath type string default <empty>", false)]
+        [TestCase("option name NalimovPath type string default ", false)]
         [TestCase("option name Clear Hash type button", false)]
         public void Parse_WithAnyCommandText_RoundTripsTheText(string subject, bool isUnknown)
         {

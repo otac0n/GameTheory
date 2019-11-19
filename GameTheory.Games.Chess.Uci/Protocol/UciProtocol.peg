@@ -38,14 +38,14 @@ isready <IsReadyCommand>
 
 setoption <SetOptionCommand>
     = t:token &{ t == "setoption" }
-    _ "name" _ name:("" (!(_ "value") .)+)
+    _ "name" _ name:("" (!(_ v:token &{ v == "value" }) .)+)
     value:(_ "value" _ d:any { d })?
     { new SetOptionCommand(name, value.SingleOrDefault()) }
 
 register <RegisterCommand>
     = t:token &{ t == "register" } _ "later" { RegisterCommand.Later }
-    / t:token &{ t == "register" } _ "name" _ name:("" (!(_ "code") .)+) _ "code" _ code:any { new RegisterCommand(name, code) }
-    / t:token &{ t == "register" } _ "code" _ code:("" (!(_ "name") .)+) _ "name" _ name:any { new RegisterCommand(name, code) }
+    / t:token &{ t == "register" } _ "name" _ name:("" (!(_ c:token &{ c == "code" }) .)+) _ "code" _ code:any { new RegisterCommand(name, code) }
+    / t:token &{ t == "register" } _ "code" _ code:("" (!(_ n:token &{ n == "name" }) .)+) _ "name" _ name:any { new RegisterCommand(name, code) }
     / t:token &{ t == "register" } _ "name" _ name:any { new RegisterCommand(name, null) }
     / t:token &{ t == "register" } _ "code" _ code:any { new RegisterCommand(null, code) }
 
@@ -54,7 +54,7 @@ ucinewgame <UciNewGameCommand>
 
 position <PositionCommand>
     = t:token &{ t == "position" }
-    position:(_ "startpos" { GameState.StartingPosition } / _ "fen" _ fen:("" (!(_ "moves") .)+) { fen })?
+    position:(_ "startpos" { GameState.StartingPosition } / _ "fen" _ fen:("" (!(_ m:token &{ m == "moves" }) .)+) { fen })?
     moves:(<IList<string>> _ "moves" _ m:token<0,,_> { m })?
     { new PositionCommand(position.SingleOrDefault(), moves.SingleOrDefault()) }
 
@@ -94,13 +94,20 @@ info <InfoCommand>
 
 option <OptionCommand>
     = t:token &{ t == "option" }
-    _ "name" _ name:("" (!(_ "type") .)+)
+    _ "name" _ name:("" (!(_ y:token &{ y == "type" }) .)+)
     _ "type" _ type:token
-    def:(_ "default" _ d:token { d })?
-    min:(_ "min" _ i:token { i })?
-    max:(_ "max" _ x:token { x })?
-    vars:(_ "var" _ v:token { v })*
-    { new OptionCommand(name, type, def.SingleOrDefault(), min.SingleOrDefault(), max.SingleOrDefault(), vars) }
+    args:optionArg<0,3>
+    &{ args.Select(a => a.Item1).Distinct().Count() == args.Count }
+    default:({ args.Where(a => a.Item1 == "default").Select(a => a.Item2).SingleOrDefault() })
+    min:({ args.Where(a => a.Item1 == "min").Select(a => a.Item2).SingleOrDefault() })
+    max:({ args.Where(a => a.Item1 == "max").Select(a => a.Item2).SingleOrDefault() })
+    vars:(_ "var" _ v:("" (!(_ m:token &{ m == "var" }) .)+) { v })*
+    { new OptionCommand(name, type, @default, min, max, vars) }
+
+optionArg <Tuple<string, string>>
+    = _ "default" (_ !(f:token &{ f == "min" || f == "max" || f == "var" }) / !.) v:("" (!(_ t:token &{ t == "min" || t == "max" || t == "var" }) .)*) { Tuple.Create("default", v) }
+    / _ "min" _ i:token { Tuple.Create("min", i) }
+    / _ "max" _ x:token { Tuple.Create("max", x) }
 
 unknown <UnknownCommand>
     = l:any { new UnknownCommand(l) }
