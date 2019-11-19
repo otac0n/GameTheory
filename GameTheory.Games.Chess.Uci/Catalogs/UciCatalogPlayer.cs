@@ -5,6 +5,7 @@ namespace GameTheory.Games.Chess.Uci.Catalogs
     using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
+    using System.ComponentModel;
     using System.ComponentModel.DataAnnotations;
     using System.IO;
     using System.Linq;
@@ -15,6 +16,30 @@ namespace GameTheory.Games.Chess.Uci.Catalogs
 
     internal class UciCatalogPlayer : ICatalogPlayer, IDisposable
     {
+        private static readonly Dictionary<string, Tuple<string, string>> KnownOptions = new Dictionary<string, Tuple<string, string>>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["Hash"] = Tuple.Create(Resources.Hash, Resources.HashDescription),
+            ["NalimovPath"] = Tuple.Create(Resources.NalimovPath, Resources.NalimovPathDescription),
+            ["NalimovCache"] = Tuple.Create(Resources.NalimovCache, Resources.NalimovCacheDescription),
+            ["Ponder"] = Tuple.Create(Resources.Ponder, Resources.PonderDescription),
+            ["OwnBook"] = Tuple.Create(Resources.OwnBook, Resources.OwnBookDescription),
+            ["MultiPV"] = Tuple.Create(Resources.MultiPV, Resources.MultiPVDescription),
+            ["SyzygyPath"] = Tuple.Create(Resources.SyzygyPath, Resources.SyzygyPathDescription),
+            ["SyzygyProbeDepth"] = Tuple.Create(Resources.SyzygyProbeDepth, Resources.SyzygyProbeDepthDescription),
+            ["Syzygy Probe Depth"] = Tuple.Create(Resources.SyzygyProbeDepth, Resources.SyzygyProbeDepthDescription),
+            ["SyzygyProbeLimit"] = Tuple.Create(Resources.SyzygyProbeLimit, Resources.SyzygyProbeLimitDescription),
+            ["Syzygy Probe Limit"] = Tuple.Create(Resources.SyzygyProbeLimit, Resources.SyzygyProbeLimitDescription),
+            ["Syzygy50MoveRule"] = Tuple.Create(Resources.Syzygy50MoveRule, Resources.Syzygy50MoveRuleDescription),
+            ["Syzygy 50 Move Rule"] = Tuple.Create(Resources.Syzygy50MoveRule, Resources.Syzygy50MoveRuleDescription),
+            ["UCI_Chess960"] = Tuple.Create(Resources.UCI_Chess960, Resources.UCI_Chess960Description),
+            ["UCI_ShowCurrLine"] = Tuple.Create(Resources.UCI_ShowCurrLine, Resources.UCI_ShowCurrLineDescription),
+            ["UCI_ShowRefutations"] = Tuple.Create(Resources.UCI_ShowRefutations, Resources.UCI_ShowRefutationsDescription),
+            ["UCI_LimitStrength"] = Tuple.Create(Resources.UCI_LimitStrength, Resources.UCI_LimitStrengthDescription),
+            ["UCI_Elo"] = Tuple.Create(Resources.UCI_Elo, Resources.UCI_EloDescription),
+            ["UCI_AnalyseMode"] = Tuple.Create(Resources.UCI_AnalyseMode, Resources.UCI_AnalyseModeDescription),
+            ["UCI_Opponent"] = Tuple.Create(Resources.UCI_Opponent, Resources.UCI_OpponentDescription),
+        };
+
         private readonly string executablePath;
         private Lazy<UciEngine> engine;
         private IReadOnlyList<Initializer> initializers;
@@ -85,6 +110,12 @@ namespace GameTheory.Games.Chess.Uci.Catalogs
                 void AddAttribute(CustomAttributeData attribute)
                 {
                     (attributes ?? (attributes = new List<CustomAttributeData>())).Add(attribute);
+                }
+
+                if (KnownOptions.TryGetValue(option.Name, out var displayValues))
+                {
+                    AddAttribute(ReflectionUtilities.AttributeData<DisplayNameAttribute>(displayValues.Item1));
+                    AddAttribute(ReflectionUtilities.AttributeData<DescriptionAttribute>(displayValues.Item2));
                 }
 
                 if (option.Type == "check")
