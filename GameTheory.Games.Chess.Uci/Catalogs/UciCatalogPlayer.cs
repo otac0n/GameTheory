@@ -3,6 +3,7 @@
 namespace GameTheory.Games.Chess.Uci.Catalogs
 {
     using System;
+    using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.ComponentModel;
@@ -10,6 +11,8 @@ namespace GameTheory.Games.Chess.Uci.Catalogs
     using System.IO;
     using System.Linq;
     using System.Reflection;
+    using System.Reflection.Emit;
+    using System.Threading;
     using GameTheory.Catalogs;
     using GameTheory.Games.Chess.Uci.Protocol;
     using Newtonsoft.Json;
@@ -171,16 +174,48 @@ namespace GameTheory.Games.Chess.Uci.Catalogs
                 {
                     var pos = position++;
                     hasDefault = option.Default is string;
-                    parameters.Add(new DynamicParameterInfo(option.Name, typeof(string), pos, hasDefault, option.Default, member, attributes?.ToArray()));
-
-                    Apply((args, list) =>
+                    var hasEnum = false;
+                    Type @enum = null;
+                    if (option.Vars.Count > 0)
                     {
-                        var value = (string)args[pos];
-                        if (!hasDefault || value != option.Default)
+                        hasEnum = true;
+                        @enum = EnumCache.GetEnum(option.Vars);
+                        AddAttribute(ReflectionUtilities.AttributeData<EnumDataTypeAttribute>(@enum));
+
+                        parameters.Add(new DynamicParameterInfo(option.Name, @enum, pos, hasDefault, Enum.ToObject(@enum, hasDefault ? option.Vars.IndexOf(option.Default) : 0), member, attributes?.ToArray()));
+
+                        Apply((args, list) =>
                         {
-                            list.Add(new SetOptionCommand(option.Name, value));
-                        }
-                    });
+                            var value = args[pos].ToString();
+                            if (!hasDefault || value != option.Default)
+                            {
+                                if (hasEnum && !option.Vars.Any(v => v == value))
+                                {
+                                    throw new ArgumentOutOfRangeException(option.Name);
+                                }
+
+                                list.Add(new SetOptionCommand(option.Name, value));
+                            }
+                        });
+                    }
+                    else
+                    {
+                        parameters.Add(new DynamicParameterInfo(option.Name, typeof(string), pos, hasDefault, option.Default, member, attributes?.ToArray()));
+
+                        Apply((args, list) =>
+                        {
+                            var value = (string)args[pos];
+                            if (!hasDefault || value != option.Default)
+                            {
+                                if (hasEnum && !option.Vars.Any(v => v == value))
+                                {
+                                    throw new ArgumentOutOfRangeException(option.Name);
+                                }
+
+                                list.Add(new SetOptionCommand(option.Name, value));
+                            }
+                        });
+                    }
                 }
                 else if (option.Type == "string")
                 {
@@ -208,6 +243,47 @@ namespace GameTheory.Games.Chess.Uci.Catalogs
                     return new UciPlayer((PlayerToken)args[0], path, null, commands);
                 },
                 parameters);
+        }
+
+        private static class EnumCache
+        {
+            private static int nextId;
+
+            static EnumCache()
+            {
+                var assemblyName = new AssemblyName("UciEnums");
+                var builder = AppDomain.CurrentDomain.DefineDynamicAssembly(assemblyName, AssemblyBuilderAccess.Run);
+                EnumCache.DynamicModule = builder.DefineDynamicModule(assemblyName.Name);
+                EnumCache.Cache = new ConcurrentDictionary<string, Type>();
+            }
+
+            public static ConcurrentDictionary<string, Type> Cache { get; }
+
+            public static ModuleBuilder DynamicModule { get; }
+
+            public static Type GetEnum(IList<string> values)
+            {
+                if (values == null)
+                {
+                    throw new ArgumentNullException(nameof(values));
+                }
+                else if (values.Count == 0)
+                {
+                    throw new ArgumentOutOfRangeException(nameof(values));
+                }
+
+                var key = string.Join("|", values.Select(v => v.Replace("\\", "\\\\").Replace("|", "\\|")));
+                return EnumCache.Cache.GetOrAdd(key, _ =>
+                {
+                    var @enum = EnumCache.DynamicModule.DefineEnum($"Enum{Interlocked.Increment(ref EnumCache.nextId)}", TypeAttributes.Public, typeof(int));
+                    for (var i = 0; i < values.Count; i++)
+                    {
+                        @enum.DefineLiteral(values[i], i);
+                    }
+
+                    return @enum.CreateType();
+                });
+            }
         }
     }
 }
