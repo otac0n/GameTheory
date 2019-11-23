@@ -132,7 +132,7 @@ namespace GameTheory.Games.Chess.Uci.Catalogs
                 {
                     var pos = position++;
                     hasDefault = bool.TryParse(option.Default, out var defaultValue);
-                    parameters.Add(new Parameter(displayName, typeof(bool), hasDefault ? defaultValue : default, description, attributes));
+                    parameters.Add(new Parameter(displayName, typeof(bool), hasDefault ? defaultValue : default, description, null, attributes));
 
                     Apply((args, list) =>
                     {
@@ -154,7 +154,7 @@ namespace GameTheory.Games.Chess.Uci.Catalogs
                         AddAttribute(new RangeAttribute(minInt, maxInt));
                     }
 
-                    parameters.Add(new Parameter(displayName, typeof(int), hasDefault ? defaultValue : default, description, attributes));
+                    parameters.Add(new Parameter(displayName, typeof(int), hasDefault ? defaultValue : default, description, null, attributes));
 
                     Apply((args, list) =>
                     {
@@ -182,7 +182,7 @@ namespace GameTheory.Games.Chess.Uci.Catalogs
                         @enum = EnumCache.GetEnum(option.Vars);
                         AddAttribute(new EnumDataTypeAttribute(@enum));
 
-                        parameters.Add(new Parameter(displayName, @enum, hasDefault ? Enum.ToObject(@enum, hasDefault ? option.Vars.IndexOf(option.Default) : 0) : default, description, attributes));
+                        parameters.Add(new Parameter(displayName, @enum, hasDefault ? Enum.ToObject(@enum, hasDefault ? option.Vars.IndexOf(option.Default) : 0) : default, description, null, attributes));
 
                         Apply((args, list) =>
                         {
@@ -200,7 +200,7 @@ namespace GameTheory.Games.Chess.Uci.Catalogs
                     }
                     else
                     {
-                        parameters.Add(new Parameter(displayName, typeof(string), hasDefault ? option.Default : default, description, attributes));
+                        parameters.Add(new Parameter(displayName, typeof(string), hasDefault ? option.Default : default, description, null, attributes));
 
                         Apply((args, list) =>
                         {
@@ -221,7 +221,7 @@ namespace GameTheory.Games.Chess.Uci.Catalogs
                 {
                     var pos = position++;
                     hasDefault = option.Default is string;
-                    parameters.Add(new Parameter(displayName, typeof(string), hasDefault ? option.Default : default, description, attributes));
+                    parameters.Add(new Parameter(displayName, typeof(string), hasDefault ? option.Default : default, description, null, attributes));
 
                     Apply((args, list) =>
                     {

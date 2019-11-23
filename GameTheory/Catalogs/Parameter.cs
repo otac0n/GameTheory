@@ -22,23 +22,56 @@ namespace GameTheory.Catalogs
         {
             this.ParameterType = parameterInfo.ParameterType;
 
-            var description = parameterInfo.GetCustomAttribute<DescriptionAttribute>(inherit: true);
-            var displayName = parameterInfo.GetCustomAttribute<DisplayNameAttribute>(inherit: true);
-            var parenthesizePropertyName = parameterInfo.GetCustomAttribute<ParenthesizePropertyNameAttribute>(inherit: true);
+            var display = parameterInfo.GetCustomAttribute<DisplayAttribute>(inherit: true);
+            string name = null;
+            if (display != null && !string.IsNullOrEmpty(display.Name))
+            {
+                name = display.GetName();
+            }
 
-            var name = displayName?.DisplayName ?? parameterInfo.Name;
+            if (string.IsNullOrEmpty(name))
+            {
+                name = parameterInfo.GetCustomAttribute<DisplayNameAttribute>(inherit: true)?.DisplayName;
+            }
+
+            if (string.IsNullOrEmpty(name))
+            {
+                name = parameterInfo.Name;
+            }
+
+            var parenthesizePropertyName = parameterInfo.GetCustomAttribute<ParenthesizePropertyNameAttribute>(inherit: true);
             if (parenthesizePropertyName?.NeedParenthesis ?? false)
             {
                 name = string.Format(SharedResources.ParameterNameParenthesis, name);
             }
 
             this.Name = name;
-            this.Description = description?.Description;
+
+            string description = null;
+            if (display != null && !string.IsNullOrEmpty(display.Description))
+            {
+                description = display.GetDescription();
+            }
+
+            if (string.IsNullOrEmpty(description))
+            {
+                description = parameterInfo.GetCustomAttribute<DescriptionAttribute>(inherit: true)?.Description;
+            }
+
+            this.Description = description;
 
             if (parameterInfo.HasDefaultValue)
             {
                 this.Default = new Maybe<object>(parameterInfo.RawDefaultValue);
             }
+
+            string placeholder = null;
+            if (display != null && !string.IsNullOrEmpty(display.Prompt))
+            {
+                placeholder = display.GetPrompt();
+            }
+
+            this.Placeholder = placeholder;
 
             var validations = parameterInfo.GetCustomAttributes<ValidationAttribute>(inherit: true);
             this.Validations = validations.ToList().AsReadOnly();
@@ -51,8 +84,9 @@ namespace GameTheory.Catalogs
         /// <param name="parameterType">The type of the parameter.</param>
         /// <param name="default">The optional default value.</param>
         /// <param name="description">The description of the parameter.</param>
+        /// <param name="placeholder">An optional placeholder value.</param>
         /// <param name="validations">A collection of validation attributes.</param>
-        public Parameter(string name, Type parameterType, Maybe<object> @default = default, string description = null, IEnumerable<ValidationAttribute> validations = null)
+        public Parameter(string name, Type parameterType, Maybe<object> @default = default, string description = null, string placeholder = null, IEnumerable<ValidationAttribute> validations = null)
         {
             this.Name = name ?? throw new ArgumentNullException(nameof(name));
             this.ParameterType = parameterType ?? throw new ArgumentNullException(nameof(parameterType));
@@ -80,6 +114,11 @@ namespace GameTheory.Catalogs
         /// Gets the type of the parameter.
         /// </summary>
         public Type ParameterType { get; }
+
+        /// <summary>
+        /// Gets an optional placeholder value.
+        /// </summary>
+        public string Placeholder { get; }
 
         /// <summary>
         /// Gets a collection of validation attributes.
