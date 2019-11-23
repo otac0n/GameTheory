@@ -5,6 +5,7 @@ namespace GameTheory.FormsRunner.Shared.Editors
     using System;
     using System.Collections.Generic;
     using System.Windows.Forms;
+    using GameTheory.Catalogs;
 
     public class StringEditor : Editor
     {
@@ -14,9 +15,9 @@ namespace GameTheory.FormsRunner.Shared.Editors
 
         public static StringEditor Instance { get; } = new StringEditor();
 
-        public override bool CanEdit(Scope scope, Type type, object value) => type == typeof(string);
+        public override bool CanEdit(Scope scope, Parameter parameter, object value) => parameter.ParameterType == typeof(string);
 
-        protected override Control Update(Control control, Scope scope, Type type, object value, out Control errorControl, IReadOnlyList<Editor> editors, Action<Control, string> setError, Action<object, bool> set)
+        protected override Control Update(Control control, Scope scope, Parameter parameter, object value, out Control errorControl, IReadOnlyList<Editor> editors, Action<Control, string> setError, Action<object, bool> set)
         {
             var textBox = new TextBox
             {

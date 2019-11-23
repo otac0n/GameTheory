@@ -16,15 +16,15 @@ namespace GameTheory.FormsRunner.Shared.Editors
         {
         }
 
-        public delegate bool OverrideEditor(Scope scope, Type type, object value, out Control control, out Control errorControl, out Label label, Action<Control, string> setError, Action<object, bool> set);
+        public delegate bool OverrideEditor(Scope scope, Parameter parameter, object value, out Control control, out Control errorControl, out Label label, Action<Control, string> setError, Action<object, bool> set);
 
         public static ObjectGraphEditor Instance { get; } = new ObjectGraphEditor();
 
-        public override bool CanEdit(Scope scope, Type type, object value) => true;
+        public override bool CanEdit(Scope scope, Parameter parameter, object value) => true;
 
-        public Control Update(Control control, Scope scope, Type type, Initializer[] initializers, object value, out Control errorControl, IReadOnlyList<Editor> editors, Action<Control, string> setError, Action<object, bool> set, Action<Control, Control> update = null)
+        public Control Update(Control control, Scope scope, Parameter parameter, Initializer[] initializers, object value, out Control errorControl, IReadOnlyList<Editor> editors, Action<Control, string> setError, Action<object, bool> set, Action<Control, Control> update = null)
         {
-            var newControl = this.Update(control, scope, type, initializers, value, out errorControl, editors, setError, set);
+            var newControl = this.Update(control, scope, parameter, initializers, value, out errorControl, editors, setError, set);
 
             if (update != null && !object.ReferenceEquals(control, newControl))
             {
@@ -34,7 +34,7 @@ namespace GameTheory.FormsRunner.Shared.Editors
             return newControl;
         }
 
-        public Control Update(Control control, Scope scope, Type type, Initializer[] initializers, object value, out Control errorControl, IReadOnlyList<Editor> editors, Action<Control, string> setError, Action<object, bool> set)
+        public Control Update(Control control, Scope scope, Parameter parameter, Initializer[] initializers, object value, out Control errorControl, IReadOnlyList<Editor> editors, Action<Control, string> setError, Action<object, bool> set)
         {
             var propertiesTable = MakeTablePanel(1, 2);
 
@@ -104,13 +104,13 @@ namespace GameTheory.FormsRunner.Shared.Editors
                 for (var i = 0; i < parameterCount; i++)
                 {
                     var p = i; // Closure variable.
-                    var parameter = constructor.Parameters[p];
+                    var innerParameter = constructor.Parameters[p];
 
-                    var item = parameter.Default.ValueOrDefault;
+                    var item = innerParameter.Default.ValueOrDefault;
                     var innerControl = Editor.FindAndUpdate(
                         null,
-                        scope.Extend(parameter.Name, item),
-                        parameter.ParameterType,
+                        scope.Extend(innerParameter.Name, item),
+                        innerParameter,
                         item,
                         out var innerErrorControl,
                         editors,
@@ -141,7 +141,7 @@ namespace GameTheory.FormsRunner.Shared.Editors
 
                     if (!(innerControl is CheckBox))
                     {
-                        var label = MakeLabel(parameter.DisplayName, tag: this);
+                        var label = MakeLabel(innerParameter.DisplayName, tag: this);
 
                         switch (innerControl)
                         {
@@ -159,7 +159,7 @@ namespace GameTheory.FormsRunner.Shared.Editors
                     }
 
                     disposeControls[p] = innerControl;
-                    errorControls[parameter.Name] = innerErrorControl;
+                    errorControls[innerParameter.Name] = innerErrorControl;
                 }
 
                 propertiesTable.ResumeLayout();
@@ -182,12 +182,13 @@ namespace GameTheory.FormsRunner.Shared.Editors
             return tablePanel;
         }
 
-        protected override Control Update(Control control, Scope scope, Type type, object value, out Control errorControl, IReadOnlyList<Editor> editors, Action<Control, string> setError, Action<object, bool> set)
+        protected override Control Update(Control control, Scope scope, Parameter parameter, object value, out Control errorControl, IReadOnlyList<Editor> editors, Action<Control, string> setError, Action<object, bool> set)
         {
-            var initializers = (type.IsValueType
-                ? type.GetPublicInitializers()
-                : new[] { new Initializer(SharedResources.Null, args => null, Array.Empty<Parameter>()) }.Concat(type.GetPublicInitializers())).ToArray();
-            return this.Update(control, scope, type, initializers, value, out errorControl, editors, setError, set);
+            var publicInitializers = parameter.ParameterType.GetPublicInitializers();
+            var initializers = (parameter.ParameterType.IsValueType
+                ? publicInitializers
+                : new[] { new Initializer(SharedResources.Null, args => null, Array.Empty<Parameter>()) }.Concat(publicInitializers)).ToArray();
+            return this.Update(control, scope, parameter, initializers, value, out errorControl, editors, setError, set);
         }
     }
 }

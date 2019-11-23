@@ -6,6 +6,7 @@ namespace GameTheory.FormsRunner.Shared.Editors
     using System.Collections.Generic;
     using System.Linq;
     using System.Windows.Forms;
+    using GameTheory.Catalogs;
 
     public class EnumEditor : Editor
     {
@@ -15,11 +16,11 @@ namespace GameTheory.FormsRunner.Shared.Editors
 
         public static EnumEditor Instance { get; } = new EnumEditor();
 
-        public override bool CanEdit(Scope scope, Type type, object value) => type.IsEnum;
+        public override bool CanEdit(Scope scope, Parameter parameter, object value) => parameter.ParameterType.IsEnum;
 
-        protected override Control Update(Control control, Scope scope, Type type, object value, out Control errorControl, IReadOnlyList<Editor> editors, Action<Control, string> setError, Action<object, bool> set)
+        protected override Control Update(Control control, Scope scope, Parameter parameter, object value, out Control errorControl, IReadOnlyList<Editor> editors, Action<Control, string> setError, Action<object, bool> set)
         {
-            var values = Enum.GetValues(type).Cast<object>().ToArray();
+            var values = Enum.GetValues(parameter.ParameterType).Cast<object>().ToArray();
             var comboBox = new ComboBox
             {
                 DropDownStyle = ComboBoxStyle.DropDownList,
