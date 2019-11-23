@@ -178,7 +178,7 @@ namespace GameTheory.ConsoleRunner
                         case "NO":
                         case "F":
                         case "FALSE":
-                            return true;
+                            return false;
 
                         default:
                             Console.WriteLine(Resources.InvalidBoolean);
