@@ -4,6 +4,8 @@ namespace GameTheory.FormsRunner.Shared.Editors
 {
     using System;
     using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
+    using System.Linq;
     using System.Windows.Forms;
     using GameTheory.Catalogs;
 
@@ -19,10 +21,20 @@ namespace GameTheory.FormsRunner.Shared.Editors
 
         protected override Control Update(Control control, Scope scope, Parameter parameter, object value, out Control errorControl, IReadOnlyList<Editor> editors, Action<Control, string> setError, Action<object, bool> set)
         {
+            var min = int.MinValue;
+            var max = int.MaxValue;
+
+            var range = parameter.Validations.OfType<RangeAttribute>().FirstOrDefault();
+            if (range != null && range.OperandType == typeof(int))
+            {
+                max = (int)range.Maximum;
+                min = (int)range.Minimum;
+            }
+
             var numericUpDown = new NumericUpDown
             {
-                Minimum = int.MinValue,
-                Maximum = int.MaxValue,
+                Minimum = min,
+                Maximum = max,
                 Tag = this,
             };
             numericUpDown.Value = value as int? ?? default;

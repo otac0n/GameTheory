@@ -23,7 +23,7 @@ namespace GameTheory.FormsRunner.Shared.Editors
             {
                 AutoSize = true,
                 Checked = value as bool? ?? default,
-                Text = scope.Name,
+                Text = parameter.DisplayName,
                 Tag = this,
             };
             checkBox.AddMargin(right: ErrorIconPadding);
