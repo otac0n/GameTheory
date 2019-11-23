@@ -138,6 +138,12 @@
   <data name="PlayerName" xml:space="preserve">
     <value>Player {0}</value>
   </data>
+  <data name="Players" xml:space="preserve">
+    <value>Players</value>
+  </data>
+  <data name="PlayersDescription" xml:space="preserve">
+    <value>The number of players.</value>
+  </data>
   <data name="PlayerTokenFormat" xml:space="preserve">
     <value>&lt;Player #{0}&gt;</value>
   </data>

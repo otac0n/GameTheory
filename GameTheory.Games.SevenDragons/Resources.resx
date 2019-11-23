@@ -162,6 +162,12 @@
   <data name="Hand" xml:space="preserve">
     <value>Hand</value>
   </data>
+  <data name="IncludeActions" xml:space="preserve">
+    <value>Include actions</value>
+  </data>
+  <data name="IncludeActionsDescription" xml:space="preserve">
+    <value>Include action cards in the deck?</value>
+  </data>
   <data name="MoveACard" xml:space="preserve">
     <value>Move a card</value>
   </data>

@@ -19,7 +19,7 @@ namespace GameTheory.Games.FiveTribes {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class Resources {
@@ -273,6 +273,24 @@ namespace GameTheory.Games.FiveTribes {
         public static string Ibus {
             get {
                 return ResourceManager.GetString("Ibus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Include Dhenim.
+        /// </summary>
+        public static string IncludeDhenim {
+            get {
+                return ResourceManager.GetString("IncludeDhenim", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Include the Dhenim djinn?.
+        /// </summary>
+        public static string IncludeDhenimDescription {
+            get {
+                return ResourceManager.GetString("IncludeDhenimDescription", resourceCulture);
             }
         }
         

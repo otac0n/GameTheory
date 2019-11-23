@@ -124,6 +124,24 @@ namespace GameTheory {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Players.
+        /// </summary>
+        public static string Players {
+            get {
+                return ResourceManager.GetString("Players", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The number of players..
+        /// </summary>
+        public static string PlayersDescription {
+            get {
+                return ResourceManager.GetString("PlayersDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &lt;Player #{0}&gt;.
         /// </summary>
         public static string PlayerTokenFormat {

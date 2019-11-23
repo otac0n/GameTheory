@@ -117,6 +117,18 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="BinsPerSide" xml:space="preserve">
+    <value>Bins per side</value>
+  </data>
+  <data name="BinsPerSideDescription" xml:space="preserve">
+    <value>The number of bins each player controls, excluding their Mancala.</value>
+  </data>
+  <data name="InitialStonesPerBin" xml:space="preserve">
+    <value>Initial stones per bin</value>
+  </data>
+  <data name="InitialStonesPerBinDescription" xml:space="preserve">
+    <value>The number of stones in each bin at the start of the game.</value>
+  </data>
   <data name="Name" xml:space="preserve">
     <value>Mancala</value>
   </data>

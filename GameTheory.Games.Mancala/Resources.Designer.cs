@@ -61,6 +61,42 @@ namespace GameTheory.Games.Mancala {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Bins per side.
+        /// </summary>
+        public static string BinsPerSide {
+            get {
+                return ResourceManager.GetString("BinsPerSide", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The number of bins each player controls, excluding their Mancala..
+        /// </summary>
+        public static string BinsPerSideDescription {
+            get {
+                return ResourceManager.GetString("BinsPerSideDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Initial stones per bin.
+        /// </summary>
+        public static string InitialStonesPerBin {
+            get {
+                return ResourceManager.GetString("InitialStonesPerBin", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The number of stones in each bin at the start of the game..
+        /// </summary>
+        public static string InitialStonesPerBinDescription {
+            get {
+                return ResourceManager.GetString("InitialStonesPerBinDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Mancala.
         /// </summary>
         public static string Name {

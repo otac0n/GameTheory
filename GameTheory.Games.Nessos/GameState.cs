@@ -59,7 +59,10 @@ namespace GameTheory.Games.Nessos
         /// Initializes a new instance of the <see cref="GameState"/> class in the starting position.
         /// </summary>
         /// <param name="players">The number of players.</param>
-        public GameState([Range(MinPlayers, MaxPlayers)] int players = MinPlayers)
+        public GameState(
+            [Range(MinPlayers, MaxPlayers)]
+            [Display(ResourceType = typeof(SharedResources), Name = nameof(SharedResources.Players), Description = nameof(SharedResources.PlayersDescription))]
+            int players = MinPlayers)
         {
             if (players < MinPlayers || players > MaxPlayers)
             {

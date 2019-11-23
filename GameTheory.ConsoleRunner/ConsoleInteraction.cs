@@ -67,7 +67,7 @@ namespace GameTheory.ConsoleRunner
 
         public static object GetArgument(Parameter parameter)
         {
-            Console.Write(parameter.Name);
+            Console.Write(Resources.ParameterName, parameter.Name);
 
             if (parameter.ParameterType != typeof(string) &&
                 parameter.ParameterType != typeof(bool) &&

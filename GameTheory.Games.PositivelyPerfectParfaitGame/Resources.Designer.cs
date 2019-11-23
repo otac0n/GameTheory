@@ -133,6 +133,24 @@ namespace GameTheory.Games.PositivelyPerfectParfaitGame {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Play out.
+        /// </summary>
+        public static string PlayOut {
+            get {
+                return ResourceManager.GetString("PlayOut", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Play the game until everyone has completed their parfait?.
+        /// </summary>
+        public static string PlayOutDescription {
+            get {
+                return ResourceManager.GetString("PlayOutDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Switch your {0} for a {1} from {2}.
         /// </summary>
         public static string SwitchAScoop {
