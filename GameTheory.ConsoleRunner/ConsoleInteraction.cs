@@ -4,7 +4,12 @@ namespace GameTheory.ConsoleRunner
 {
     using System;
     using System.Collections.Generic;
+    using System.ComponentModel;
+    using System.ComponentModel.DataAnnotations;
+    using System.Linq;
+    using System.Reflection;
     using System.Threading;
+    using GameTheory.Catalogs;
     using GameTheory.ConsoleRunner.Properties;
 
     internal static class ConsoleInteraction
@@ -51,6 +56,151 @@ namespace GameTheory.ConsoleRunner
                 i => i > 0 && i <= options.Count ? null : string.Format(Resources.InvalidListItem, options.Count));
 
             return options[selection - 1];
+        }
+
+        public static object ConstructType(Type type, Func<ParameterInfo, object> getParameter = null) => ConstructType(type.GetPublicInitializers().ToList(), getParameter);
+
+        public static object ConstructType(IList<Initializer> initializers, Func<ParameterInfo, object> getArgument = null)
+        {
+            getArgument = getArgument ?? (p => GetArgument(p));
+            var initializer = ConsoleInteraction.Choose(initializers, skipMessage: _ => Resources.SingleConstructor);
+            return initializer.Accessor(initializer.Parameters.Select(getArgument).ToArray());
+        }
+
+        public static object GetArgument(ParameterInfo parameter)
+        {
+            var description = parameter.GetCustomAttribute<DescriptionAttribute>();
+            var displayName = parameter.GetCustomAttribute<DisplayNameAttribute>();
+            var parenthesizePropertyName = parameter.GetCustomAttribute<ParenthesizePropertyNameAttribute>();
+            var range = parameter.GetCustomAttribute<RangeAttribute>();
+
+            if (range != null && (!(range.Minimum is int) || parameter.ParameterType != typeof(int)))
+            {
+                range = null;
+            }
+
+            Console.Write(
+                parenthesizePropertyName?.NeedParenthesis ?? false ? Resources.ParameterNameParenthesis : Resources.ParameterName,
+                displayName?.DisplayName ?? parameter.Name);
+
+            if (parameter.ParameterType != typeof(string) &&
+                parameter.ParameterType != typeof(bool) &&
+                parameter.ParameterType != typeof(int) &&
+                !parameter.ParameterType.IsEnum)
+            {
+                Console.WriteLine();
+
+                return ConstructType(parameter.ParameterType);
+            }
+
+            if (parameter.HasDefaultValue)
+            {
+                Console.Write(' ');
+                var defaultDisplay =
+                    parameter.DefaultValue is null ? Resources.Null :
+                    parameter.DefaultValue is string d && d == string.Empty ? Resources.Empty :
+                    parameter.DefaultValue;
+                if (range != null)
+                {
+                    Console.Write(Resources.RangeWithDefault, range.Minimum, range.Maximum, defaultDisplay);
+                }
+                else
+                {
+                    Console.Write(Resources.DefaultValue, defaultDisplay);
+                }
+            }
+            else if (range != null)
+            {
+                Console.Write(' ');
+                Console.Write(Resources.Range, range.Minimum, range.Maximum);
+            }
+
+            Console.WriteLine();
+
+            if (description != null)
+            {
+                Shared.ConsoleInteraction.WithColor(ConsoleColor.DarkGray, () =>
+                {
+                    Console.WriteLine(description.Description);
+                });
+            }
+
+            while (true)
+            {
+                var line = Console.ReadLine();
+
+                if (string.IsNullOrEmpty(line))
+                {
+                    if (parameter.HasDefaultValue)
+                    {
+                        return parameter.DefaultValue;
+                    }
+                    else
+                    {
+                        Console.WriteLine(Resources.NoDefault);
+                        continue;
+                    }
+                }
+
+                if (parameter.ParameterType == typeof(string))
+                {
+                    return line;
+                }
+                else if (parameter.ParameterType.IsEnum)
+                {
+                    try
+                    {
+                        return Enum.Parse(parameter.ParameterType, line, ignoreCase: true);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(Resources.InvalidInput, ex.Message);
+                    }
+                }
+                else if (parameter.ParameterType == typeof(int))
+                {
+                    if (int.TryParse(line, out var selection))
+                    {
+                        if (range == null || ((int)range.Minimum <= selection && (int)range.Maximum >= selection))
+                        {
+                            return selection;
+                        }
+                        else
+                        {
+                            Console.WriteLine(range.FormatErrorMessage(parameter.Name));
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine(Resources.InvalidInteger);
+                    }
+                }
+                else if (parameter.ParameterType == typeof(bool))
+                {
+                    switch (line.ToUpperInvariant())
+                    {
+                        case "Y":
+                        case "YES":
+                        case "T":
+                        case "TRUE":
+                            return true;
+
+                        case "N":
+                        case "NO":
+                        case "F":
+                        case "FALSE":
+                            return false;
+
+                        default:
+                            Console.WriteLine(Resources.InvalidBoolean);
+                            break;
+                    }
+                }
+                else
+                {
+                    throw new NotImplementedException();
+                }
+            }
         }
 
         public static void List<T>(IList<T> items, Action<T> render = null)

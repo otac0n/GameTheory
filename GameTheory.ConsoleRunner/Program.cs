@@ -43,155 +43,6 @@ namespace GameTheory.ConsoleRunner
         /// </summary>
         public static IPlayerCatalog PlayerCatalog { get; }
 
-        private static object ConstructType(Type type, Func<ParameterInfo, object> getParameter = null) => ConstructType(type.GetPublicInitializers(), getParameter);
-
-        private static object ConstructType(IEnumerable<Initializer> initializers, Func<ParameterInfo, object> getParameter = null)
-        {
-            getParameter = getParameter ?? (p => GetArgument(p));
-
-            var sources = (from init in initializers
-                           select ConsoleInteraction.MakeChoice(init.Name, init)).ToList();
-
-            var initializer = ConsoleInteraction.Choose(sources, skipMessage: _ => Resources.SingleConstructor).Value;
-            return initializer.Accessor(initializer.Parameters.Select(getParameter).ToArray());
-        }
-
-        private static object GetArgument(ParameterInfo parameter)
-        {
-            var description = parameter.GetCustomAttribute<DescriptionAttribute>();
-            var displayName = parameter.GetCustomAttribute<DisplayNameAttribute>();
-            var parenthesizePropertyName = parameter.GetCustomAttribute<ParenthesizePropertyNameAttribute>();
-            var range = parameter.GetCustomAttribute<RangeAttribute>();
-
-            if (range != null && (!(range.Minimum is int) || parameter.ParameterType != typeof(int)))
-            {
-                range = null;
-            }
-
-            Console.Write(
-                parenthesizePropertyName?.NeedParenthesis ?? false ? Resources.ParameterNameParenthesis : Resources.ParameterName,
-                displayName?.DisplayName ?? parameter.Name);
-
-            if (parameter.ParameterType != typeof(string) &&
-                parameter.ParameterType != typeof(bool) &&
-                parameter.ParameterType != typeof(int) &&
-                !parameter.ParameterType.IsEnum)
-            {
-                Console.WriteLine();
-
-                return ConstructType(parameter.ParameterType);
-            }
-
-            if (parameter.HasDefaultValue)
-            {
-                Console.Write(' ');
-                var defaultDisplay =
-                    parameter.DefaultValue is null ? Resources.Null :
-                    parameter.DefaultValue is string d && d == string.Empty ? Resources.Empty :
-                    parameter.DefaultValue;
-                if (range != null)
-                {
-                    Console.Write(Resources.RangeWithDefault, range.Minimum, range.Maximum, defaultDisplay);
-                }
-                else
-                {
-                    Console.Write(Resources.DefaultValue, defaultDisplay);
-                }
-            }
-            else if (range != null)
-            {
-                Console.Write(' ');
-                Console.Write(Resources.Range, range.Minimum, range.Maximum);
-            }
-
-            Console.WriteLine();
-
-            if (description != null)
-            {
-                Shared.ConsoleInteraction.WithColor(ConsoleColor.DarkGray, () =>
-                {
-                    Console.WriteLine(description.Description);
-                });
-            }
-
-            while (true)
-            {
-                var line = Console.ReadLine();
-
-                if (string.IsNullOrEmpty(line))
-                {
-                    if (parameter.HasDefaultValue)
-                    {
-                        return parameter.DefaultValue;
-                    }
-                    else
-                    {
-                        Console.WriteLine(Resources.NoDefault);
-                        continue;
-                    }
-                }
-
-                if (parameter.ParameterType == typeof(string))
-                {
-                    return line;
-                }
-                else if (parameter.ParameterType.IsEnum)
-                {
-                    try
-                    {
-                        return Enum.Parse(parameter.ParameterType, line, ignoreCase: true);
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine(Resources.InvalidInput, ex.Message);
-                    }
-                }
-                else if (parameter.ParameterType == typeof(int))
-                {
-                    if (int.TryParse(line, out var selection))
-                    {
-                        if (range == null || ((int)range.Minimum <= selection && (int)range.Maximum >= selection))
-                        {
-                            return selection;
-                        }
-                        else
-                        {
-                            Console.WriteLine(range.FormatErrorMessage(parameter.Name));
-                        }
-                    }
-                    else
-                    {
-                        Console.WriteLine(Resources.InvalidInteger);
-                    }
-                }
-                else if (parameter.ParameterType == typeof(bool))
-                {
-                    switch (line.ToUpperInvariant())
-                    {
-                        case "Y":
-                        case "YES":
-                        case "T":
-                        case "TRUE":
-                            return true;
-
-                        case "N":
-                        case "NO":
-                        case "F":
-                        case "FALSE":
-                            return false;
-
-                        default:
-                            Console.WriteLine(Resources.InvalidBoolean);
-                            break;
-                    }
-                }
-                else
-                {
-                    throw new NotImplementedException();
-                }
-            }
-        }
-
         private static void Main()
         {
             Console.OutputEncoding = Encoding.UTF8;
@@ -200,7 +51,7 @@ namespace GameTheory.ConsoleRunner
 
             var game = ConsoleInteraction.Choose(GameCatalog.AvailableGames);
             var gameType = game.GameStateType;
-            var state = ConstructType(game.Initializers);
+            var state = ConsoleInteraction.ConstructType(game.Initializers);
 
             var genericMethod = typeof(Program).GetMethod(nameof(RunGame), BindingFlags.Static | BindingFlags.NonPublic);
             var constructedMethod = genericMethod.MakeGenericMethod(gameType, game.MoveType);
@@ -234,20 +85,20 @@ namespace GameTheory.ConsoleRunner
             Console.WriteLine(Resources.StartingState);
             consoleRenderer.Show(state);
 
-            IPlayer<TGameState, TMove> choosePlayer(PlayerToken playerToken)
+            IPlayer<TGameState, TMove> ChoosePlayer(PlayerToken playerToken)
             {
                 consoleRenderer.Show(state, FormatUtilities.ParseStringFormat(Resources.ChoosePlayer, playerToken));
                 Console.WriteLine();
                 var player = ConsoleInteraction.Choose(players as IList<ICatalogPlayer> ?? players.ToList(), render: p => Console.Write(p.Name));
-                return (IPlayer<TGameState, TMove>)ConstructType(player.Initializers, p =>
+                return (IPlayer<TGameState, TMove>)ConsoleInteraction.ConstructType(player.Initializers, p =>
                     p.Name == nameof(playerToken) && p.ParameterType == typeof(PlayerToken) ? playerToken :
                     typeof(IConsoleRenderer<TGameState, TMove>).IsAssignableFrom(p.ParameterType) ? consoleRenderer :
-                    GetArgument(p));
+                    ConsoleInteraction.GetArgument(p));
             }
 
-            IPlayer<TGameState, TMove> getPlayer(PlayerToken playerToken)
+            IPlayer<TGameState, TMove> GetPlayer(PlayerToken playerToken)
             {
-                var player = choosePlayer(playerToken);
+                var player = ChoosePlayer(playerToken);
                 player.MessageSent += (obj, args) =>
                 {
                     ConsoleInteraction.WithLock(() =>
@@ -260,7 +111,7 @@ namespace GameTheory.ConsoleRunner
                 return player;
             }
 
-            state = GameUtilities.PlayGame(state, getPlayer, (prevState, move, newState) => ShowMove(newState, move, consoleRenderer), TimeSpan.FromMinutes(5)).Result;
+            state = GameUtilities.PlayGame(state, GetPlayer, (prevState, move, newState) => ShowMove(newState, move, consoleRenderer), TimeSpan.FromMinutes(5)).Result;
             Console.WriteLine(Resources.FinalState);
 
             Console.WriteLine();

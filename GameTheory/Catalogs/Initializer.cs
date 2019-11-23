@@ -33,5 +33,8 @@ namespace GameTheory.Catalogs
 
         /// <inheritdoc/>
         public IReadOnlyList<ParameterInfo> Parameters { get; }
+
+        /// <inheritdoc/>
+        public override string ToString() => this.Name;
     }
 }
