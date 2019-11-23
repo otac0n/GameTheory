@@ -20,6 +20,7 @@ namespace GameTheory.Catalogs
         /// <param name="parameterInfo">The <see cref="ParameterInfo"/> to use as the soruce for this parameter.</param>
         public Parameter(ParameterInfo parameterInfo)
         {
+            this.Name = parameterInfo.Name;
             this.ParameterType = parameterInfo.ParameterType;
 
             var display = parameterInfo.GetCustomAttribute<DisplayAttribute>(inherit: true);
@@ -45,7 +46,7 @@ namespace GameTheory.Catalogs
                 name = string.Format(SharedResources.ParameterNameParenthesis, name);
             }
 
-            this.Name = name;
+            this.DisplayName = name;
 
             string description = null;
             if (display != null && !string.IsNullOrEmpty(display.Description))
@@ -82,14 +83,16 @@ namespace GameTheory.Catalogs
         /// </summary>
         /// <param name="name">The name of the parameter.</param>
         /// <param name="parameterType">The type of the parameter.</param>
+        /// <param name="displayName">The display name of the parameter.</param>
         /// <param name="default">The optional default value.</param>
         /// <param name="description">The description of the parameter.</param>
         /// <param name="placeholder">An optional placeholder value.</param>
         /// <param name="validations">A collection of validation attributes.</param>
-        public Parameter(string name, Type parameterType, Maybe<object> @default = default, string description = null, string placeholder = null, IEnumerable<ValidationAttribute> validations = null)
+        public Parameter(string name, Type parameterType, string displayName = null, Maybe<object> @default = default, string description = null, string placeholder = null, IEnumerable<ValidationAttribute> validations = null)
         {
             this.Name = name ?? throw new ArgumentNullException(nameof(name));
             this.ParameterType = parameterType ?? throw new ArgumentNullException(nameof(parameterType));
+            this.DisplayName = displayName ?? this.Name;
             this.Default = @default;
             this.Description = description;
             this.Validations = (validations ?? Array.Empty<ValidationAttribute>()).ToList().AsReadOnly();
@@ -104,6 +107,11 @@ namespace GameTheory.Catalogs
         /// Gets the description of the parameter.
         /// </summary>
         public string Description { get; }
+
+        /// <summary>
+        /// Gets the display name of the parameter.
+        /// </summary>
+        public string DisplayName { get; }
 
         /// <summary>
         /// Gets the name of the parameter.

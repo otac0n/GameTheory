@@ -67,7 +67,7 @@ namespace GameTheory.ConsoleRunner
 
         public static object GetArgument(Parameter parameter)
         {
-            Console.Write(Resources.ParameterName, parameter.Name);
+            Console.Write(Resources.ParameterName, parameter.DisplayName);
 
             if (parameter.ParameterType != typeof(string) &&
                 parameter.ParameterType != typeof(bool) &&
@@ -204,7 +204,7 @@ namespace GameTheory.ConsoleRunner
                     if (!validation.IsValid(value))
                     {
                         valid = false;
-                        Console.WriteLine(validation.FormatErrorMessage(parameter.Name));
+                        Console.WriteLine(validation.FormatErrorMessage(parameter.DisplayName));
                     }
                 }
 

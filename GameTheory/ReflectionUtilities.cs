@@ -98,7 +98,7 @@ namespace GameTheory
                                let parameters = constructor.GetParameters().Select(p => new Parameter(p)).ToList()
                                let name = parameters.Count == 0
                                    ? SharedResources.DefaultInstance
-                                   : string.Format(SharedResources.SpecifyFormat, FormatUtilities.FormatList(parameters.Select(p => p.Name)))
+                                   : string.Format(SharedResources.SpecifyFormat, FormatUtilities.FormatList(parameters.Select(p => p.DisplayName)))
                                select new { order = parameters.Count == 0 ? 1 : 3, initializer = new Initializer(name, constructor.Invoke, parameters) };
 
             return staticProperties.Concat(constructors)

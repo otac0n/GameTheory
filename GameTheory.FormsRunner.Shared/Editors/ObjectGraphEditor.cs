@@ -141,7 +141,7 @@ namespace GameTheory.FormsRunner.Shared.Editors
 
                     if (!(innerControl is CheckBox))
                     {
-                        var label = MakeLabel(parameter.Name, tag: this);
+                        var label = MakeLabel(parameter.DisplayName, tag: this);
 
                         switch (innerControl)
                         {
