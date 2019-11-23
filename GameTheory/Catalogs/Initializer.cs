@@ -18,7 +18,7 @@ namespace GameTheory.Catalogs
         /// <param name="name">The name of the initializer.</param>
         /// <param name="accessor">The accessor function that will create new instances of the item.</param>
         /// <param name="parameters">A collection of parameters to be passed to the accessor function as arguments.</param>
-        public Initializer(string name, Func<object[], object> accessor, IEnumerable<ParameterInfo> parameters)
+        public Initializer(string name, Func<object[], object> accessor, IEnumerable<Parameter> parameters)
         {
             this.Name = name ?? throw new ArgumentNullException(nameof(name));
             this.Accessor = accessor ?? throw new ArgumentNullException(nameof(accessor));
@@ -32,7 +32,7 @@ namespace GameTheory.Catalogs
         public string Name { get; }
 
         /// <inheritdoc/>
-        public IReadOnlyList<ParameterInfo> Parameters { get; }
+        public IReadOnlyList<Parameter> Parameters { get; }
 
         /// <inheritdoc/>
         public override string ToString() => this.Name;

@@ -4,12 +4,10 @@ namespace GameTheory.FormsRunner.Shared.Editors
 {
     using System;
     using System.Collections.Generic;
-    using System.ComponentModel;
     using System.Linq;
     using System.Reflection;
     using System.Windows.Forms;
     using GameTheory.Catalogs;
-    using GameTheory.FormsRunner.Shared.Properties;
     using static Controls;
 
     public class ObjectGraphEditor : Editor
@@ -107,11 +105,8 @@ namespace GameTheory.FormsRunner.Shared.Editors
                 {
                     var p = i; // Closure variable.
                     var parameter = constructor.Parameters[p];
-                    var description = parameter.GetCustomAttribute<DescriptionAttribute>();
-                    var displayName = parameter.GetCustomAttribute<DisplayNameAttribute>();
-                    var parenthesizePropertyName = parameter.GetCustomAttribute<ParenthesizePropertyNameAttribute>();
 
-                    var item = parameter.HasDefaultValue ? parameter.DefaultValue : null;
+                    var item = parameter.Default.ValueOrDefault;
                     var innerControl = Editor.FindAndUpdate(
                         null,
                         scope.Extend(parameter.Name, item),
@@ -146,13 +141,7 @@ namespace GameTheory.FormsRunner.Shared.Editors
 
                     if (!(innerControl is CheckBox))
                     {
-                        var parameterName = displayName?.DisplayName ?? parameter.Name;
-                        if (parenthesizePropertyName?.NeedParenthesis ?? false)
-                        {
-                            parameterName = string.Format(Resources.ParameterNameParenthesis, parameterName);
-                        }
-
-                        var label = MakeLabel(parameterName, tag: this);
+                        var label = MakeLabel(parameter.Name, tag: this);
 
                         switch (innerControl)
                         {
@@ -195,10 +184,9 @@ namespace GameTheory.FormsRunner.Shared.Editors
 
         protected override Control Update(Control control, Scope scope, Type type, object value, out Control errorControl, IReadOnlyList<Editor> editors, Action<Control, string> setError, Action<object, bool> set)
         {
-            var noParameters = new ParameterInfo[0];
             var initializers = (type.IsValueType
                 ? type.GetPublicInitializers()
-                : new[] { new Initializer(SharedResources.Null, args => null, noParameters) }.Concat(type.GetPublicInitializers())).ToArray();
+                : new[] { new Initializer(SharedResources.Null, args => null, Array.Empty<Parameter>()) }.Concat(type.GetPublicInitializers())).ToArray();
             return this.Update(control, scope, type, initializers, value, out errorControl, editors, setError, set);
         }
     }

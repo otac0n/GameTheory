@@ -134,6 +134,9 @@
     <AdditionalFiles Include="GameTheory.ruleset" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="CommonServiceLocator" Version="2.0.4" />
     <PackageReference Include="FixMe" Version="1.0.0" PrivateAssets="All" />
     <PackageReference Include="GitVersionTask" Version="4.0.0" PrivateAssets="All" />

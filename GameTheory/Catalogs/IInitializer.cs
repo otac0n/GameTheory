@@ -4,7 +4,6 @@ namespace GameTheory.Catalogs
 {
     using System;
     using System.Collections.Generic;
-    using System.Reflection;
 
     /// <summary>
     /// Represents a generic runtime initializer.
@@ -24,6 +23,6 @@ namespace GameTheory.Catalogs
         /// <summary>
         /// Gets a collection of parameters to be passed to the accessor function as arguments.
         /// </summary>
-        IReadOnlyList<ParameterInfo> Parameters { get; }
+        IReadOnlyList<Parameter> Parameters { get; }
     }
 }

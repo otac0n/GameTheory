@@ -106,6 +106,15 @@ namespace GameTheory {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to ({0}).
+        /// </summary>
+        public static string ParameterNameParenthesis {
+            get {
+                return ResourceManager.GetString("ParameterNameParenthesis", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Player {0}.
         /// </summary>
         public static string PlayerName {

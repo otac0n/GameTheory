@@ -6,7 +6,6 @@ namespace GameTheory.Games.Chess.Uci.Catalogs
     using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
-    using System.ComponentModel;
     using System.ComponentModel.DataAnnotations;
     using System.IO;
     using System.Linq;
@@ -88,11 +87,10 @@ namespace GameTheory.Games.Chess.Uci.Catalogs
 
         private static Initializer CreateInitializer(string path, IEnumerable<OptionCommand> options)
         {
-            var member = typeof(UciPlayer);
-            var position = 0;
-            var parameters = new List<ParameterInfo>
+            var position = 1;
+            var parameters = new List<Parameter>
             {
-                new DynamicParameterInfo("playerToken", typeof(PlayerToken), position++, false, null, member, null),
+                new Parameter("playerToken", typeof(PlayerToken), default, null),
             };
 
             Action<object[], List<SetOptionCommand>> apply = (args, list) => { };
@@ -108,11 +106,13 @@ namespace GameTheory.Games.Chess.Uci.Catalogs
 
             foreach (var option in options)
             {
+                string displayName = option.Name;
+                string description = null;
                 bool hasDefault;
-                List<CustomAttributeData> attributes = null;
-                void AddAttribute(CustomAttributeData attribute)
+                List<ValidationAttribute> attributes = null;
+                void AddAttribute(ValidationAttribute attribute)
                 {
-                    (attributes ?? (attributes = new List<CustomAttributeData>())).Add(attribute);
+                    (attributes ?? (attributes = new List<ValidationAttribute>())).Add(attribute);
                 }
 
                 if (option.Name.StartsWith("Nalimov", StringComparison.OrdinalIgnoreCase) ||
@@ -124,15 +124,15 @@ namespace GameTheory.Games.Chess.Uci.Catalogs
 
                 if (KnownOptions.TryGetValue(option.Name, out var displayValues))
                 {
-                    AddAttribute(ReflectionUtilities.AttributeData<DisplayNameAttribute>(displayValues.Item1));
-                    AddAttribute(ReflectionUtilities.AttributeData<DescriptionAttribute>(displayValues.Item2));
+                    displayName = displayValues.Item1;
+                    description = displayValues.Item2;
                 }
 
                 if (option.Type == "check")
                 {
                     var pos = position++;
                     hasDefault = bool.TryParse(option.Default, out var defaultValue);
-                    parameters.Add(new DynamicParameterInfo(option.Name, typeof(bool), pos, hasDefault, defaultValue, member, attributes?.ToArray()));
+                    parameters.Add(new Parameter(displayName, typeof(bool), hasDefault ? defaultValue : default, description, attributes));
 
                     Apply((args, list) =>
                     {
@@ -151,10 +151,10 @@ namespace GameTheory.Games.Chess.Uci.Catalogs
                     if (int.TryParse(option.Min, out var minInt) & int.TryParse(option.Max, out var maxInt))
                     {
                         hasRange = true;
-                        AddAttribute(ReflectionUtilities.AttributeData<RangeAttribute>(minInt, maxInt));
+                        AddAttribute(new RangeAttribute(minInt, maxInt));
                     }
 
-                    parameters.Add(new DynamicParameterInfo(option.Name, typeof(int), pos, hasDefault, defaultValue, member, attributes?.ToArray()));
+                    parameters.Add(new Parameter(displayName, typeof(int), hasDefault ? defaultValue : default, description, attributes));
 
                     Apply((args, list) =>
                     {
@@ -180,9 +180,9 @@ namespace GameTheory.Games.Chess.Uci.Catalogs
                     {
                         hasEnum = true;
                         @enum = EnumCache.GetEnum(option.Vars);
-                        AddAttribute(ReflectionUtilities.AttributeData<EnumDataTypeAttribute>(@enum));
+                        AddAttribute(new EnumDataTypeAttribute(@enum));
 
-                        parameters.Add(new DynamicParameterInfo(option.Name, @enum, pos, hasDefault, Enum.ToObject(@enum, hasDefault ? option.Vars.IndexOf(option.Default) : 0), member, attributes?.ToArray()));
+                        parameters.Add(new Parameter(displayName, @enum, hasDefault ? Enum.ToObject(@enum, hasDefault ? option.Vars.IndexOf(option.Default) : 0) : default, description, attributes));
 
                         Apply((args, list) =>
                         {
@@ -200,7 +200,7 @@ namespace GameTheory.Games.Chess.Uci.Catalogs
                     }
                     else
                     {
-                        parameters.Add(new DynamicParameterInfo(option.Name, typeof(string), pos, hasDefault, option.Default, member, attributes?.ToArray()));
+                        parameters.Add(new Parameter(displayName, typeof(string), hasDefault ? option.Default : default, description, attributes));
 
                         Apply((args, list) =>
                         {
@@ -221,7 +221,7 @@ namespace GameTheory.Games.Chess.Uci.Catalogs
                 {
                     var pos = position++;
                     hasDefault = option.Default is string;
-                    parameters.Add(new DynamicParameterInfo(option.Name, typeof(string), pos, option.Default is string, option.Default, member, attributes?.ToArray()));
+                    parameters.Add(new Parameter(displayName, typeof(string), hasDefault ? option.Default : default, description, attributes));
 
                     Apply((args, list) =>
                     {

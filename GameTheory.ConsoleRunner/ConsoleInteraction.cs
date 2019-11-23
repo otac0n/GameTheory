@@ -4,10 +4,8 @@ namespace GameTheory.ConsoleRunner
 {
     using System;
     using System.Collections.Generic;
-    using System.ComponentModel;
     using System.ComponentModel.DataAnnotations;
     using System.Linq;
-    using System.Reflection;
     using System.Threading;
     using GameTheory.Catalogs;
     using GameTheory.ConsoleRunner.Properties;
@@ -58,30 +56,18 @@ namespace GameTheory.ConsoleRunner
             return options[selection - 1];
         }
 
-        public static object ConstructType(Type type, Func<ParameterInfo, object> getParameter = null) => ConstructType(type.GetPublicInitializers().ToList(), getParameter);
+        public static object ConstructType(Type type, Func<Parameter, object> getParameter = null) => ConstructType(type.GetPublicInitializers(), getParameter);
 
-        public static object ConstructType(IList<Initializer> initializers, Func<ParameterInfo, object> getArgument = null)
+        public static object ConstructType(IEnumerable<Initializer> initializers, Func<Parameter, object> getArgument = null)
         {
             getArgument = getArgument ?? (p => GetArgument(p));
-            var initializer = ConsoleInteraction.Choose(initializers, skipMessage: _ => Resources.SingleConstructor);
+            var initializer = ConsoleInteraction.Choose(initializers.ToList(), skipMessage: _ => Resources.SingleConstructor);
             return initializer.Accessor(initializer.Parameters.Select(getArgument).ToArray());
         }
 
-        public static object GetArgument(ParameterInfo parameter)
+        public static object GetArgument(Parameter parameter)
         {
-            var description = parameter.GetCustomAttribute<DescriptionAttribute>();
-            var displayName = parameter.GetCustomAttribute<DisplayNameAttribute>();
-            var parenthesizePropertyName = parameter.GetCustomAttribute<ParenthesizePropertyNameAttribute>();
-            var range = parameter.GetCustomAttribute<RangeAttribute>();
-
-            if (range != null && (!(range.Minimum is int) || parameter.ParameterType != typeof(int)))
-            {
-                range = null;
-            }
-
-            Console.Write(
-                parenthesizePropertyName?.NeedParenthesis ?? false ? Resources.ParameterNameParenthesis : Resources.ParameterName,
-                displayName?.DisplayName ?? parameter.Name);
+            Console.Write(parameter.Name);
 
             if (parameter.ParameterType != typeof(string) &&
                 parameter.ParameterType != typeof(bool) &&
@@ -93,13 +79,19 @@ namespace GameTheory.ConsoleRunner
                 return ConstructType(parameter.ParameterType);
             }
 
-            if (parameter.HasDefaultValue)
+            var range = parameter.Validations.OfType<RangeAttribute>().FirstOrDefault();
+            if (range != null && (!(range.Minimum is int) || parameter.ParameterType != typeof(int)))
+            {
+                range = null;
+            }
+
+            if (parameter.Default.HasValue)
             {
                 Console.Write(' ');
                 var defaultDisplay =
-                    parameter.DefaultValue is null ? Resources.Null :
-                    parameter.DefaultValue is string d && d == string.Empty ? Resources.Empty :
-                    parameter.DefaultValue;
+                    parameter.Default.Value is null ? Resources.Null :
+                    parameter.Default.Value is string d && d == string.Empty ? Resources.Empty :
+                    parameter.Default.Value;
                 if (range != null)
                 {
                     Console.Write(Resources.RangeWithDefault, range.Minimum, range.Maximum, defaultDisplay);
@@ -117,11 +109,11 @@ namespace GameTheory.ConsoleRunner
 
             Console.WriteLine();
 
-            if (description != null)
+            if (!string.IsNullOrWhiteSpace(parameter.Description))
             {
                 Shared.ConsoleInteraction.WithColor(ConsoleColor.DarkGray, () =>
                 {
-                    Console.WriteLine(description.Description);
+                    Console.WriteLine(parameter.Description);
                 });
             }
 
@@ -131,9 +123,9 @@ namespace GameTheory.ConsoleRunner
 
                 if (string.IsNullOrEmpty(line))
                 {
-                    if (parameter.HasDefaultValue)
+                    if (parameter.Default.HasValue)
                     {
-                        return parameter.DefaultValue;
+                        return parameter.Default.Value;
                     }
                     else
                     {

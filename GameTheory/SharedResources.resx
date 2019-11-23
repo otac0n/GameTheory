@@ -132,6 +132,9 @@
   <data name="Null" xml:space="preserve">
     <value>(null)</value>
   </data>
+  <data name="ParameterNameParenthesis" xml:space="preserve">
+    <value>({0})</value>
+  </data>
   <data name="PlayerName" xml:space="preserve">
     <value>Player {0}</value>
   </data>
