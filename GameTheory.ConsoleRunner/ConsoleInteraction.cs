@@ -140,38 +140,11 @@ namespace GameTheory.ConsoleRunner
                     }
                 }
 
+                object value;
+
                 if (parameter.ParameterType == typeof(string))
                 {
-                    return line;
-                }
-                else if (parameter.ParameterType.IsEnum)
-                {
-                    try
-                    {
-                        return Enum.Parse(parameter.ParameterType, line, ignoreCase: true);
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine(Resources.InvalidInput, ex.Message);
-                    }
-                }
-                else if (parameter.ParameterType == typeof(int))
-                {
-                    if (int.TryParse(line, out var selection))
-                    {
-                        if (range == null || ((int)range.Minimum <= selection && (int)range.Maximum >= selection))
-                        {
-                            return selection;
-                        }
-                        else
-                        {
-                            Console.WriteLine(range.FormatErrorMessage(parameter.Name));
-                        }
-                    }
-                    else
-                    {
-                        Console.WriteLine(Resources.InvalidInteger);
-                    }
+                    value = line;
                 }
                 else if (parameter.ParameterType == typeof(bool))
                 {
@@ -181,22 +154,63 @@ namespace GameTheory.ConsoleRunner
                         case "YES":
                         case "T":
                         case "TRUE":
-                            return true;
+                            value = true;
+                            break;
 
                         case "N":
                         case "NO":
                         case "F":
                         case "FALSE":
-                            return false;
+                            value = false;
+                            break;
 
                         default:
                             Console.WriteLine(Resources.InvalidBoolean);
-                            break;
+                            continue;
+                    }
+                }
+                else if (parameter.ParameterType == typeof(int))
+                {
+                    if (int.TryParse(line, out var selection))
+                    {
+                        value = selection;
+                    }
+                    else
+                    {
+                        Console.WriteLine(Resources.InvalidInteger);
+                        continue;
+                    }
+                }
+                else if (parameter.ParameterType.IsEnum)
+                {
+                    try
+                    {
+                        value = Enum.Parse(parameter.ParameterType, line, ignoreCase: true);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(Resources.InvalidInput, ex.Message);
+                        continue;
                     }
                 }
                 else
                 {
                     throw new NotImplementedException();
+                }
+
+                var valid = true;
+                foreach (var validation in parameter.Validations)
+                {
+                    if (!validation.IsValid(value))
+                    {
+                        valid = false;
+                        Console.WriteLine(validation.FormatErrorMessage(parameter.Name));
+                    }
+                }
+
+                if (valid)
+                {
+                    return value;
                 }
             }
         }
