@@ -79,7 +79,9 @@ namespace GameTheory.ConsoleRunner
                 return ConstructType(parameter.ParameterType);
             }
 
+            var required = parameter.Validations.OfType<RequiredAttribute>().FirstOrDefault();
             var range = parameter.Validations.OfType<RangeAttribute>().FirstOrDefault();
+
             if (range != null && (!(range.Minimum is int) || parameter.ParameterType != typeof(int)))
             {
                 range = null;
@@ -126,6 +128,10 @@ namespace GameTheory.ConsoleRunner
                     if (parameter.Default.HasValue)
                     {
                         return parameter.Default.Value;
+                    }
+                    else if (required != null && parameter.ParameterType == typeof(string) && required.AllowEmptyStrings == true)
+                    {
+                        return string.Empty;
                     }
                     else
                     {
