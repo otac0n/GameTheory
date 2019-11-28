@@ -14,40 +14,19 @@ namespace GameTheory.Games.Hangman
     public sealed class GameState : IGameState<Move>
     {
         /// <summary>
-        /// The maximum number of supported players.
-        /// </summary>
-        public const int MaxPlayers = 4;
-
-        /// <summary>
-        /// The minimum number of supported players.
-        /// </summary>
-        public const int MinPlayers = 2;
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="GameState"/> class in the starting position.
         /// </summary>
-        /// <param name="players">The number of players.</param>
-        public GameState([Range(MinPlayers, MaxPlayers)] int players = MinPlayers)
+        public GameState()
         {
-            if (players < MinPlayers || players > MaxPlayers)
-            {
-                throw new ArgumentOutOfRangeException(nameof(players));
-            }
-
-            this.Players = Enumerable.Range(0, players).Select(i => new PlayerToken()).ToImmutableArray();
-            this.ActivePlayer = this.Players[0];
+            this.Players = ImmutableArray.Create(new PlayerToken());
+            this.Word = "kick";
         }
 
-        private GameState(ImmutableArray<PlayerToken> players, PlayerToken activePlayer)
+        private GameState(ImmutableArray<PlayerToken> players, string word)
         {
             this.Players = players;
-            this.ActivePlayer = activePlayer;
+            this.Word = word;
         }
-
-        /// <summary>
-        /// Gets the <see cref="PlayerToken"/> representing the active player.
-        /// </summary>
-        public PlayerToken ActivePlayer { get; }
 
         /// <summary>
         /// Gets the list of players.
@@ -56,6 +35,11 @@ namespace GameTheory.Games.Hangman
 
         /// <inheritdoc />
         IReadOnlyList<PlayerToken> IGameState<Move>.Players => this.Players;
+
+        /// <summary>
+        /// Gets the word being guessed.
+        /// </summary>
+        private string Word { get; }
 
         /// <inheritdoc/>
         public int CompareTo(IGameState<Move> other)
@@ -73,7 +57,7 @@ namespace GameTheory.Games.Hangman
 
             int comp;
 
-            if ((comp = this.ActivePlayer.CompareTo(state.ActivePlayer)) != 0 ||
+            if ((comp = string.CompareOrdinal(this.Word, state.Word)) != 0 ||
                 (comp = CompareUtilities.CompareLists(this.Players, state.Players)) != 0)
             {
                 return comp;
@@ -95,7 +79,7 @@ namespace GameTheory.Games.Hangman
         public override int GetHashCode()
         {
             var hash = HashUtilities.Seed;
-            HashUtilities.Combine(ref hash, this.ActivePlayer.GetHashCode());
+            HashUtilities.Combine(ref hash, this.Word.GetHashCode());
 
             for (var i = 0; i < this.Players.Length; i++)
             {
