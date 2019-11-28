@@ -1,4 +1,4 @@
-﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Games.NormalFormGame
 {
@@ -109,7 +109,7 @@ namespace GameTheory.Games.NormalFormGame
         }
 
         /// <inheritdoc />
-        public IReadOnlyCollection<PlayerToken> GetWinners()
+        public IReadOnlyList<PlayerToken> GetWinners()
         {
             if (this.Choices.Any(c => c == null))
             {

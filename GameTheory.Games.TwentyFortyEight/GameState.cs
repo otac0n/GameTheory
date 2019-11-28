@@ -197,7 +197,7 @@ namespace GameTheory.Games.TwentyFortyEight
         }
 
         /// <inheritdoc/>
-        public IReadOnlyCollection<PlayerToken> GetWinners()
+        public IReadOnlyList<PlayerToken> GetWinners()
         {
             for (var x = 0; x < Size; x++)
             {

@@ -325,7 +325,7 @@ namespace GameTheory.Games.LoveLetter
         }
 
         /// <inheritdoc />
-        public IReadOnlyCollection<PlayerToken> GetWinners()
+        public IReadOnlyList<PlayerToken> GetWinners()
         {
             var winThreshold = WinThresholds[this.Players.Length];
             return this.Players.Where(p => this.Inventory[p].Tokens >= winThreshold).ToList();

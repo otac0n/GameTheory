@@ -68,7 +68,7 @@ namespace GameTheory.Tests.Strategies
                 yield return this;
             }
 
-            public IReadOnlyCollection<PlayerToken> GetWinners()
+            public IReadOnlyList<PlayerToken> GetWinners()
             {
                 return new List<PlayerToken>().AsReadOnly();
             }

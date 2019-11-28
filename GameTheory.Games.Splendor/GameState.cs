@@ -427,7 +427,7 @@ namespace GameTheory.Games.Splendor
         }
 
         /// <inheritdoc />
-        public IReadOnlyCollection<PlayerToken> GetWinners()
+        public IReadOnlyList<PlayerToken> GetWinners()
         {
             if (this.Phase != Phase.End)
             {

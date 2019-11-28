@@ -51,7 +51,7 @@ namespace GameTheory
         /// If the game results in a draw, this collection will be empty.
         /// </remarks>
         [SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate", Justification = "This could be quite computationally intensive.")]
-        IReadOnlyCollection<PlayerToken> GetWinners();
+        IReadOnlyList<PlayerToken> GetWinners();
 
         /// <summary>
         /// Applies the specified move to the given game state and returns the result.
