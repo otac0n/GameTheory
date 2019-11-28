@@ -72,7 +72,7 @@ namespace GameTheory.Games.Hangman
         /// <inheritdoc />
         public IReadOnlyList<Move> GetAvailableMoves()
         {
-            return ImmutableList<Move>.Empty;
+            return Enumerable.Range('a', 'z' - 'a' + 1).Select(n => new Move(this, (char)n)).ToImmutableList();
         }
 
         /// <inheritdoc/>
