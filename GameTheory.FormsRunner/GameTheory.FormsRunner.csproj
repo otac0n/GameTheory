@@ -188,6 +188,10 @@
       <Project>{0d176fb9-3e54-4500-97a8-fab80a0bf6f3}</Project>
       <Name>GameTheory.Games.FiveTribes</Name>
     </ProjectReference>
+    <ProjectReference Include="..\GameTheory.Games.Hangman\GameTheory.Games.Hangman.csproj">
+      <Project>{70c1838c-ad1f-488c-9339-b9a1b5dcc5c1}</Project>
+      <Name>GameTheory.Games.Hangman</Name>
+    </ProjectReference>
     <ProjectReference Include="..\GameTheory.Games.Lotus\GameTheory.Games.Lotus.csproj">
       <Project>{77a78fa3-d2fa-4b1c-b38d-e66d578f4211}</Project>
       <Name>GameTheory.Games.Lotus</Name>
