@@ -3,4 +3,5 @@
 @namespace GameTheory.Games.Hangman.Console
 @static false
 @model GameState
-{{= model }}
+Word: {{each c in model.Word}}{{= c}}{{delimit}} {{/each}}
+Guesses: {{each g in model.Guesses}}{{= g}}{{delimit}} {{/each}}

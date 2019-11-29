@@ -6,6 +6,7 @@ namespace GameTheory.Games.Hangman
     using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Linq;
+    using System.Text.RegularExpressions;
 
     /// <summary>
     /// Represents the current state in a game of Hangman.
@@ -37,7 +38,12 @@ namespace GameTheory.Games.Hangman
         public ImmutableHashSet<char> Guesses { get; }
 
         /// <summary>
-        /// Gets the maximum number of incorrect guesses before the game ends.
+        /// Gets the number of incorrect guesses.
+        /// </summary>
+        public int IncorrectGuesses => this.Guesses.Except(this.Word).Count;
+
+        /// <summary>
+        /// Gets the number of incorrect guesses that ends the game.
         /// </summary>
         public int IncorrectGuessLimit { get; }
 
@@ -52,7 +58,7 @@ namespace GameTheory.Games.Hangman
         /// <summary>
         /// Gets the word being guessed.
         /// </summary>
-        private string Word { get; }
+        public string Word { get; }
 
         /// <inheritdoc/>
         public int CompareTo(IGameState<Move> other)
@@ -85,7 +91,7 @@ namespace GameTheory.Games.Hangman
         /// <inheritdoc />
         public IReadOnlyList<Move> GetAvailableMoves()
         {
-            return !this.Word.All(this.Guesses.Contains) && this.Guesses.Except(this.Word).Count < this.IncorrectGuessLimit
+            return !this.Word.All(this.Guesses.Contains) && this.IncorrectGuesses < this.IncorrectGuessLimit
                 ? Enumerable
                     .Range('a', 'z' - 'a' + 1)
                     .Select(n => (char)n)
@@ -118,7 +124,14 @@ namespace GameTheory.Games.Hangman
         /// <inheritdoc />
         public IEnumerable<IGameState<Move>> GetView(PlayerToken playerToken, int maxStates)
         {
-            yield return this;
+            return new[]
+            {
+                new GameState(
+                    this.Players,
+                    this.IncorrectGuessLimit,
+                    Regex.Replace(this.Word, ".", match => this.Guesses.Contains(match.Value[0]) ? match.Value : "_"),
+                    this.Guesses),
+            };
         }
 
         /// <inheritdoc />
@@ -145,7 +158,7 @@ namespace GameTheory.Games.Hangman
                 throw new ArgumentNullException(nameof(move));
             }
 
-            if (this.CompareTo(move.GameState) != 0)
+            if (this.Guesses.Contains(move.Guess))
             {
                 throw new ArgumentOutOfRangeException(nameof(move));
             }
