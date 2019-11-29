@@ -58,7 +58,8 @@ namespace GameTheory.Games.Hangman
 
         internal GameState Apply(GameState state)
         {
-            return state;
+            return state.With(
+                guesses: state.Guesses.Add(this.Guess));
         }
     }
 }
