@@ -192,6 +192,10 @@
       <Project>{70c1838c-ad1f-488c-9339-b9a1b5dcc5c1}</Project>
       <Name>GameTheory.Games.Hangman</Name>
     </ProjectReference>
+    <ProjectReference Include="..\GameTheory.Games.Hangman.Forms\GameTheory.Games.Hangman.Forms.csproj">
+      <Project>{617e8f28-4549-4eb4-98d7-69ad743823cf}</Project>
+      <Name>GameTheory.Games.Hangman.Forms</Name>
+    </ProjectReference>
     <ProjectReference Include="..\GameTheory.Games.Lotus\GameTheory.Games.Lotus.csproj">
       <Project>{77a78fa3-d2fa-4b1c-b38d-e66d578f4211}</Project>
       <Name>GameTheory.Games.Lotus</Name>
