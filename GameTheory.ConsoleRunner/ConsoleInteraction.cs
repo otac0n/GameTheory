@@ -266,23 +266,7 @@ namespace GameTheory.ConsoleRunner
             }
         }
 
-        public static void WithLock(Action action)
-        {
-            lock (@lock)
-            {
-                action();
-            }
-        }
-
-        public static T WithLock<T>(Func<T> action)
-        {
-            lock (@lock)
-            {
-                return action();
-            }
-        }
-
-        private static string ReadPassword(char maskChar = '*')
+        public static string ReadPassword(char maskChar = '*')
         {
             var password = new SecureString();
 
@@ -330,6 +314,22 @@ namespace GameTheory.ConsoleRunner
             finally
             {
                 Marshal.ZeroFreeGlobalAllocUnicode(unmanagedString);
+            }
+        }
+
+        public static void WithLock(Action action)
+        {
+            lock (@lock)
+            {
+                action();
+            }
+        }
+
+        public static T WithLock<T>(Func<T> action)
+        {
+            lock (@lock)
+            {
+                return action();
             }
         }
 
