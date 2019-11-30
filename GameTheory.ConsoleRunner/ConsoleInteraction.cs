@@ -8,7 +8,6 @@ namespace GameTheory.ConsoleRunner
     using System.Linq;
     using System.Runtime.InteropServices;
     using System.Security;
-    using System.Text;
     using System.Threading;
     using GameTheory.Catalogs;
     using GameTheory.ConsoleRunner.Properties;

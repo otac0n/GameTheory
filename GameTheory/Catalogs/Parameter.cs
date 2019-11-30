@@ -74,7 +74,7 @@ namespace GameTheory.Catalogs
 
             this.Placeholder = placeholder;
 
-            var passwordPropertyText = parameterInfo.GetCustomAttribute<PasswordPropertyTextAttribute>()?.Password;
+            var passwordPropertyText = parameterInfo.GetCustomAttribute<PasswordPropertyTextAttribute>(inherit: true)?.Password;
             var dataTypes = parameterInfo.GetCustomAttributes<DataTypeAttribute>();
 
             this.IsPassword = passwordPropertyText ?? false || dataTypes.Any(d => d.DataType == DataType.Password);

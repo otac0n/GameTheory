@@ -32,7 +32,7 @@ namespace GameTheory.Games.Hangman
         /// </summary>
         /// <param name="word">The word being guessed.</param>
         public GameState(
-            [PasswordPropertyText]
+            [PasswordPropertyText(true)]
             string word)
         {
             this.Players = ImmutableArray.Create(new PlayerToken());
