@@ -21,12 +21,10 @@ namespace GameTheory.FormsRunner.Shared.Editors
 
         protected override Control Update(Control control, Scope scope, Parameter parameter, object value, out Control errorControl, IReadOnlyList<Editor> editors, Action<Control, string> setError, Action<object, bool> set)
         {
-            var passwordProperty = parameter.Validations.OfType<PasswordPropertyTextAttribute>().FirstOrDefault();
-
             var textBox = new TextBox
             {
                 Text = value as string ?? string.Empty,
-                PasswordChar = passwordProperty?.Password ?? false ? '*' : '\0',
+                PasswordChar = parameter.IsPassword ? '*' : '\0',
                 UseSystemPasswordChar = true,
                 Tag = this,
             };

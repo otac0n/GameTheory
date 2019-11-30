@@ -74,6 +74,11 @@ namespace GameTheory.Catalogs
 
             this.Placeholder = placeholder;
 
+            var passwordPropertyText = parameterInfo.GetCustomAttribute<PasswordPropertyTextAttribute>()?.Password;
+            var dataTypes = parameterInfo.GetCustomAttributes<DataTypeAttribute>();
+
+            this.IsPassword = passwordPropertyText ?? false || dataTypes.Any(d => d.DataType == DataType.Password);
+
             var validations = parameterInfo.GetCustomAttributes<ValidationAttribute>(inherit: true);
             this.Validations = validations.ToList().AsReadOnly();
         }
@@ -88,13 +93,14 @@ namespace GameTheory.Catalogs
         /// <param name="description">The description of the parameter.</param>
         /// <param name="placeholder">An optional placeholder value.</param>
         /// <param name="validations">A collection of validation attributes.</param>
-        public Parameter(string name, Type parameterType, string displayName = null, Maybe<object> @default = default, string description = null, string placeholder = null, IEnumerable<ValidationAttribute> validations = null)
+        public Parameter(string name, Type parameterType, string displayName = null, Maybe<object> @default = default, string description = null, string placeholder = null, bool isPassword = false, IEnumerable<ValidationAttribute> validations = null)
         {
             this.Name = name ?? throw new ArgumentNullException(nameof(name));
             this.ParameterType = parameterType ?? throw new ArgumentNullException(nameof(parameterType));
             this.DisplayName = displayName ?? this.Name;
             this.Default = @default;
             this.Description = description;
+            this.IsPassword = isPassword;
             this.Validations = (validations ?? Array.Empty<ValidationAttribute>()).ToList().AsReadOnly();
         }
 
@@ -112,6 +118,11 @@ namespace GameTheory.Catalogs
         /// Gets the display name of the parameter.
         /// </summary>
         public string DisplayName { get; }
+
+        /// <summary>
+        /// Gets a value indicating whether the value is sensitive, such as a password.
+        /// </summary>
+        public bool IsPassword { get; }
 
         /// <summary>
         /// Gets the name of the parameter.
