@@ -5,6 +5,7 @@ namespace GameTheory.Games.Hangman
     using System;
     using System.Collections.Generic;
     using System.Collections.Immutable;
+    using System.ComponentModel;
     using System.Linq;
     using System.Text.RegularExpressions;
 
@@ -23,6 +24,20 @@ namespace GameTheory.Games.Hangman
             this.Players = ImmutableArray.Create(new PlayerToken());
             this.IncorrectGuessLimit = 6;
             this.Word = WordList.Pick();
+            this.Guesses = ImmutableHashSet<char>.Empty;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="GameState"/> class in the starting position.
+        /// </summary>
+        /// <param name="word">The word being guessed.</param>
+        public GameState(
+            [PasswordPropertyText]
+            string word)
+        {
+            this.Players = ImmutableArray.Create(new PlayerToken());
+            this.IncorrectGuessLimit = 6;
+            this.Word = string.IsNullOrEmpty(word) ? WordList.Pick() : word;
             this.Guesses = ImmutableHashSet<char>.Empty;
         }
 
