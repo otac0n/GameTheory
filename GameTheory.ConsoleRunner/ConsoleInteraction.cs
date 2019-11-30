@@ -270,6 +270,20 @@ namespace GameTheory.ConsoleRunner
         {
             var password = new SecureString();
 
+            void Erase()
+            {
+                if (Console.CursorLeft == 0)
+                {
+                    Console.SetCursorPosition(Console.BufferWidth - 1, Console.CursorTop - 1);
+                    Console.Write(' ');
+                    Console.SetCursorPosition(Console.BufferWidth - 1, Console.CursorTop - 1);
+                }
+                else
+                {
+                    Console.Write("\b \b");
+                }
+            }
+
             var done = false;
             while (!done)
             {
@@ -280,10 +294,18 @@ namespace GameTheory.ConsoleRunner
                         var length = password.Length;
                         if (length > 0)
                         {
-                            password.RemoveAt(length - 1);
-                            if (maskChar != '\0')
+                            var targetLength =
+                                c.Modifiers == 0
+                                ? length - 1
+                                : 0;
+
+                            while (length > targetLength)
                             {
-                                Console.Write("\b \b");
+                                password.RemoveAt(--length);
+                                if (maskChar != '\0')
+                                {
+                                    Erase();
+                                }
                             }
                         }
 
@@ -295,10 +317,21 @@ namespace GameTheory.ConsoleRunner
                         break;
 
                     default:
-                        password.AppendChar(c.KeyChar);
-                        if (maskChar != '\0')
+                        if (!char.IsControl(c.KeyChar) &&
+                            (c.Modifiers == 0 || c.Modifiers == ConsoleModifiers.Shift))
                         {
-                            Console.Write(maskChar);
+                            if (password.Length >= (1 << 16))
+                            {
+                                Console.Write('\x07');
+                            }
+                            else
+                            {
+                                password.AppendChar(c.KeyChar);
+                                if (maskChar != '\0')
+                                {
+                                    Console.Write(maskChar);
+                                }
+                            }
                         }
 
                         break;
