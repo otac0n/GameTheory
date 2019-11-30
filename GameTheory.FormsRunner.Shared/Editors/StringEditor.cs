@@ -4,6 +4,8 @@ namespace GameTheory.FormsRunner.Shared.Editors
 {
     using System;
     using System.Collections.Generic;
+    using System.ComponentModel;
+    using System.Linq;
     using System.Windows.Forms;
     using GameTheory.Catalogs;
 
@@ -19,9 +21,13 @@ namespace GameTheory.FormsRunner.Shared.Editors
 
         protected override Control Update(Control control, Scope scope, Parameter parameter, object value, out Control errorControl, IReadOnlyList<Editor> editors, Action<Control, string> setError, Action<object, bool> set)
         {
+            var passwordProperty = parameter.Validations.OfType<PasswordPropertyTextAttribute>().FirstOrDefault();
+
             var textBox = new TextBox
             {
                 Text = value as string ?? string.Empty,
+                PasswordChar = passwordProperty?.Password ?? false ? '*' : '\0',
+                UseSystemPasswordChar = true,
                 Tag = this,
             };
             textBox.AddMargin(right: ErrorIconPadding);
