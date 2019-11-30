@@ -17,9 +17,9 @@ namespace GameTheory.Games.Hangman
         /// <summary>
         /// All of the letters available to guess.
         /// </summary>
-        public static readonly ImmutableArray<char> Letters = Enumerable.Range('a', 'z' - 'a' + 1).Select(n => (char)n).ToImmutableArray();
+        public static readonly ImmutableArray<string> Letters = Enumerable.Range('a', 'z' - 'a' + 1).Select(n => ((char)n).ToString()).ToImmutableArray();
 
-        private static readonly string[] WordList = Resources.WordsAlpha.Split(new[] { '\r', '\n' });
+        private static readonly string[] WordList = Resources.WordsAlpha.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
 
         private readonly string word;
 
@@ -31,7 +31,7 @@ namespace GameTheory.Games.Hangman
             this.Players = ImmutableArray.Create(new PlayerToken());
             this.IncorrectGuessLimit = 6;
             this.word = WordList.Pick();
-            this.Guesses = ImmutableHashSet<char>.Empty;
+            this.Guesses = ImmutableHashSet.Create<string>(StringComparer.OrdinalIgnoreCase);
         }
 
         /// <summary>
@@ -45,10 +45,10 @@ namespace GameTheory.Games.Hangman
             this.Players = ImmutableArray.Create(new PlayerToken());
             this.IncorrectGuessLimit = 6;
             this.word = string.IsNullOrEmpty(word) ? WordList.Pick() : word;
-            this.Guesses = ImmutableHashSet<char>.Empty;
+            this.Guesses = ImmutableHashSet.Create<string>(StringComparer.OrdinalIgnoreCase);
         }
 
-        private GameState(ImmutableArray<PlayerToken> players, int incorrectGuessLimit, string word, ImmutableHashSet<char> guesses)
+        private GameState(ImmutableArray<PlayerToken> players, int incorrectGuessLimit, string word, ImmutableHashSet<string> guesses)
         {
             this.Players = players;
             this.IncorrectGuessLimit = incorrectGuessLimit;
@@ -59,17 +59,22 @@ namespace GameTheory.Games.Hangman
         /// <summary>
         /// Gets the guesses that have been chosen.
         /// </summary>
-        public ImmutableHashSet<char> Guesses { get; }
+        public ImmutableHashSet<string> Guesses { get; }
 
         /// <summary>
         /// Gets the number of incorrect guesses.
         /// </summary>
-        public int IncorrectGuesses => this.Guesses.Except(this.word).Count;
+        public int IncorrectGuesses => this.Guesses.Except(this.word.Select(c => c.ToString())).Count;
 
         /// <summary>
         /// Gets the number of incorrect guesses that ends the game.
         /// </summary>
         public int IncorrectGuessLimit { get; }
+
+        /// <summary>
+        /// Gets a value indicating whether the puzzle is solved.
+        /// </summary>
+        public bool IsSolved => this.word.All(c => !GameState.IsLetter(c) || this.Guesses.Contains(c.ToString()));
 
         /// <summary>
         /// Gets the list of players.
@@ -92,7 +97,14 @@ namespace GameTheory.Games.Hangman
         /// </summary>
         /// <param name="c">The character.</param>
         /// <returns><c>true</c>, if the character is a letter available to guess; <c>false</c>, otherwise.</returns>
-        public static bool IsLetter(char c) => c >= 'a' && c <= 'z';
+        public static bool IsLetter(string c) => c.Length == 1 && GameState.IsLetter(c[0]);
+
+        /// <summary>
+        /// Is the character a letter available to guess?
+        /// </summary>
+        /// <param name="c">The character.</param>
+        /// <returns><c>true</c>, if the character is a letter available to guess; <c>false</c>, otherwise.</returns>
+        public static bool IsLetter(char c) => (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z');
 
         /// <inheritdoc/>
         public int CompareTo(IGameState<Move> other)
@@ -125,7 +137,7 @@ namespace GameTheory.Games.Hangman
         /// <inheritdoc />
         public IReadOnlyList<Move> GetAvailableMoves()
         {
-            return this.word.All(this.Guesses.Contains) || this.IncorrectGuesses >= this.IncorrectGuessLimit
+            return this.IsSolved || this.IncorrectGuesses >= this.IncorrectGuessLimit
                 ? ImmutableList<Move>.Empty
                 : GameState.Letters
                     .Where(c => !this.Guesses.Contains(c))
@@ -172,7 +184,7 @@ namespace GameTheory.Games.Hangman
 
         /// <inheritdoc />
         public IReadOnlyList<PlayerToken> GetWinners() =>
-            this.word.All(c => !GameState.IsLetter(c) || this.Guesses.Contains(c))
+            this.IsSolved
                 ? this.Players
                 : ImmutableArray<PlayerToken>.Empty;
 
@@ -202,7 +214,7 @@ namespace GameTheory.Games.Hangman
             return move.Apply(this);
         }
 
-        internal GameState With(ImmutableHashSet<char> guesses = null)
+        internal GameState With(ImmutableHashSet<string> guesses = null)
         {
             return new GameState(
                 this.Players,
@@ -211,20 +223,23 @@ namespace GameTheory.Games.Hangman
                 guesses: guesses ?? this.Guesses);
         }
 
-        private string MaskWord(Func<char, char> mask = null)
+        private string MaskWord(Func<string, string> mask = null)
         {
             if (mask == null)
             {
-                mask = _ => '_';
+                mask = _ => "_";
             }
 
             var builder = new StringBuilder(this.word);
             for (var i = builder.Length - 1; i >= 0; i--)
             {
-                var c = builder[i];
-                if (GameState.IsLetter(c) && !this.Guesses.Contains(c))
+                if (GameState.IsLetter(builder[i]))
                 {
-                    builder[i] = mask(c);
+                    var c = builder[i].ToString();
+                    if (!this.Guesses.Contains(c))
+                    {
+                        builder.Replace(c, mask(c), i, 1);
+                    }
                 }
             }
 

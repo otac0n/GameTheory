@@ -15,7 +15,7 @@ namespace GameTheory.Games.Hangman
         /// </summary>
         /// <param name="state">The <see cref="Hangman.GameState"/> that this move is based on.</param>
         /// <param name="guess">The letter being guessed.</param>
-        public Move(GameState state, char guess)
+        public Move(GameState state, string guess)
         {
             this.GameState = state ?? throw new ArgumentNullException(nameof(state));
             this.PlayerToken = state.Players[0];
@@ -28,7 +28,7 @@ namespace GameTheory.Games.Hangman
         /// <summary>
         /// Gets the letter being guessed.
         /// </summary>
-        public char Guess { get; }
+        public string Guess { get; }
 
         /// <inheritdoc />
         public bool IsDeterministic => true;
