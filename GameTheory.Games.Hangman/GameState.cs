@@ -7,14 +7,21 @@ namespace GameTheory.Games.Hangman
     using System.Collections.Immutable;
     using System.ComponentModel;
     using System.Linq;
-    using System.Text.RegularExpressions;
+    using System.Text;
 
     /// <summary>
     /// Represents the current state in a game of Hangman.
     /// </summary>
     public sealed class GameState : IGameState<Move>
     {
+        /// <summary>
+        /// All of the letters available to guess.
+        /// </summary>
+        public static readonly ImmutableArray<char> Letters = Enumerable.Range('a', 'z' - 'a' + 1).Select(n => (char)n).ToImmutableArray();
+
         private static readonly string[] WordList = Resources.WordsAlpha.Split(new[] { '\r', '\n' });
+
+        private readonly string word;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GameState"/> class in the starting position.
@@ -23,7 +30,7 @@ namespace GameTheory.Games.Hangman
         {
             this.Players = ImmutableArray.Create(new PlayerToken());
             this.IncorrectGuessLimit = 6;
-            this.Word = WordList.Pick();
+            this.word = WordList.Pick();
             this.Guesses = ImmutableHashSet<char>.Empty;
         }
 
@@ -37,7 +44,7 @@ namespace GameTheory.Games.Hangman
         {
             this.Players = ImmutableArray.Create(new PlayerToken());
             this.IncorrectGuessLimit = 6;
-            this.Word = string.IsNullOrEmpty(word) ? WordList.Pick() : word;
+            this.word = string.IsNullOrEmpty(word) ? WordList.Pick() : word;
             this.Guesses = ImmutableHashSet<char>.Empty;
         }
 
@@ -45,7 +52,7 @@ namespace GameTheory.Games.Hangman
         {
             this.Players = players;
             this.IncorrectGuessLimit = incorrectGuessLimit;
-            this.Word = word;
+            this.word = word;
             this.Guesses = guesses;
         }
 
@@ -57,7 +64,7 @@ namespace GameTheory.Games.Hangman
         /// <summary>
         /// Gets the number of incorrect guesses.
         /// </summary>
-        public int IncorrectGuesses => this.Guesses.Except(this.Word).Count;
+        public int IncorrectGuesses => this.Guesses.Except(this.word).Count;
 
         /// <summary>
         /// Gets the number of incorrect guesses that ends the game.
@@ -75,7 +82,17 @@ namespace GameTheory.Games.Hangman
         /// <summary>
         /// Gets the word being guessed.
         /// </summary>
-        public string Word { get; }
+        public string Word =>
+            this.IncorrectGuesses >= this.IncorrectGuessLimit
+                ? this.word
+                : this.MaskWord();
+
+        /// <summary>
+        /// Is the character a letter available to guess?
+        /// </summary>
+        /// <param name="c">The character.</param>
+        /// <returns><c>true</c>, if the character is a letter available to guess; <c>false</c>, otherwise.</returns>
+        public static bool IsLetter(char c) => c >= 'a' && c <= 'z';
 
         /// <inheritdoc/>
         public int CompareTo(IGameState<Move> other)
@@ -93,7 +110,7 @@ namespace GameTheory.Games.Hangman
 
             int comp;
 
-            if ((comp = string.CompareOrdinal(this.Word, state.Word)) != 0 ||
+            if ((comp = string.CompareOrdinal(this.word, state.word)) != 0 ||
                 (comp = CompareUtilities.CompareLists(this.Players, state.Players)) != 0)
             {
                 return comp;
@@ -108,21 +125,19 @@ namespace GameTheory.Games.Hangman
         /// <inheritdoc />
         public IReadOnlyList<Move> GetAvailableMoves()
         {
-            return !this.Word.All(this.Guesses.Contains) && this.IncorrectGuesses < this.IncorrectGuessLimit
-                ? Enumerable
-                    .Range('a', 'z' - 'a' + 1)
-                    .Select(n => (char)n)
+            return this.word.All(this.Guesses.Contains) || this.IncorrectGuesses >= this.IncorrectGuessLimit
+                ? ImmutableList<Move>.Empty
+                : GameState.Letters
                     .Where(c => !this.Guesses.Contains(c))
                     .Select(c => new Move(this, c))
-                    .ToImmutableList()
-                : ImmutableList<Move>.Empty;
+                    .ToImmutableList();
         }
 
         /// <inheritdoc/>
         public override int GetHashCode()
         {
             var hash = HashUtilities.Seed;
-            HashUtilities.Combine(ref hash, this.Word.GetHashCode());
+            HashUtilities.Combine(ref hash, this.word.GetHashCode());
 
             for (var i = 0; i < this.Players.Length; i++)
             {
@@ -141,19 +156,23 @@ namespace GameTheory.Games.Hangman
         /// <inheritdoc />
         public IEnumerable<IGameState<Move>> GetView(PlayerToken playerToken, int maxStates)
         {
-            return new[]
+            var remaining = GameState.Letters
+                .Where(c => !this.Guesses.Contains(c))
+                .ToList();
+
+            for (; maxStates > 0; maxStates--)
             {
-                new GameState(
+                yield return new GameState(
                     this.Players,
                     this.IncorrectGuessLimit,
-                    Regex.Replace(this.Word, ".", match => this.Guesses.Contains(match.Value[0]) ? match.Value : "_"),
-                    this.Guesses),
-            };
+                    this.MaskWord(c => remaining.Pick()),
+                    this.Guesses);
+            }
         }
 
         /// <inheritdoc />
         public IReadOnlyList<PlayerToken> GetWinners() =>
-            this.Word.All(this.Guesses.Contains)
+            this.word.All(c => !GameState.IsLetter(c) || this.Guesses.Contains(c))
                 ? this.Players
                 : ImmutableArray<PlayerToken>.Empty;
 
@@ -188,8 +207,28 @@ namespace GameTheory.Games.Hangman
             return new GameState(
                 this.Players,
                 this.IncorrectGuessLimit,
-                this.Word,
+                this.word,
                 guesses: guesses ?? this.Guesses);
+        }
+
+        private string MaskWord(Func<char, char> mask = null)
+        {
+            if (mask == null)
+            {
+                mask = _ => '_';
+            }
+
+            var builder = new StringBuilder(this.word);
+            for (var i = builder.Length - 1; i >= 0; i--)
+            {
+                var c = builder[i];
+                if (GameState.IsLetter(c) && !this.Guesses.Contains(c))
+                {
+                    builder[i] = mask(c);
+                }
+            }
+
+            return builder.ToString();
         }
     }
 }
