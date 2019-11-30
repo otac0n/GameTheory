@@ -6,6 +6,9 @@ namespace GameTheory.ConsoleRunner
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using System.Linq;
+    using System.Runtime.InteropServices;
+    using System.Security;
+    using System.Text;
     using System.Threading;
     using GameTheory.Catalogs;
     using GameTheory.ConsoleRunner.Properties;
@@ -121,7 +124,9 @@ namespace GameTheory.ConsoleRunner
 
             while (true)
             {
-                var line = Console.ReadLine();
+                var line = parameter.IsPassword
+                    ? ConsoleInteraction.ReadPassword()
+                    : Console.ReadLine();
 
                 if (string.IsNullOrEmpty(line))
                 {
@@ -275,6 +280,57 @@ namespace GameTheory.ConsoleRunner
             lock (@lock)
             {
                 return action();
+            }
+        }
+
+        private static string ReadPassword(char maskChar = '*')
+        {
+            var password = new SecureString();
+
+            var done = false;
+            while (!done)
+            {
+                var c = Console.ReadKey(intercept: true);
+                switch (c.Key)
+                {
+                    case ConsoleKey.Backspace:
+                        var length = password.Length;
+                        if (length > 0)
+                        {
+                            password.RemoveAt(length - 1);
+                            if (maskChar != '\0')
+                            {
+                                Console.Write("\b \b");
+                            }
+                        }
+
+                        break;
+
+                    case ConsoleKey.Enter:
+                        done = true;
+                        Console.WriteLine();
+                        break;
+
+                    default:
+                        password.AppendChar(c.KeyChar);
+                        if (maskChar != '\0')
+                        {
+                            Console.Write(maskChar);
+                        }
+
+                        break;
+                }
+            }
+
+            var unmanagedString = IntPtr.Zero;
+            try
+            {
+                unmanagedString = Marshal.SecureStringToGlobalAllocUnicode(password);
+                return Marshal.PtrToStringUni(unmanagedString);
+            }
+            finally
+            {
+                Marshal.ZeroFreeGlobalAllocUnicode(unmanagedString);
             }
         }
 
