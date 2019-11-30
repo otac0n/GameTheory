@@ -13,6 +13,8 @@ namespace GameTheory.Games.Hangman
     /// </summary>
     public sealed class GameState : IGameState<Move>
     {
+        private static readonly string[] WordList = Resources.WordsAlpha.Split(new[] { '\r', '\n' });
+
         /// <summary>
         /// Initializes a new instance of the <see cref="GameState"/> class in the starting position.
         /// </summary>
@@ -20,7 +22,7 @@ namespace GameTheory.Games.Hangman
         {
             this.Players = ImmutableArray.Create(new PlayerToken());
             this.IncorrectGuessLimit = 6;
-            this.Word = "kick";
+            this.Word = WordList.Pick();
             this.Guesses = ImmutableHashSet<char>.Empty;
         }
 
