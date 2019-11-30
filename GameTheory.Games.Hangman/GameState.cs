@@ -123,7 +123,8 @@ namespace GameTheory.Games.Hangman
             int comp;
 
             if ((comp = string.CompareOrdinal(this.word, state.word)) != 0 ||
-                (comp = CompareUtilities.CompareLists(this.Players, state.Players)) != 0)
+                (comp = CompareUtilities.CompareLists(this.Players, state.Players)) != 0 ||
+                (comp = CompareUtilities.CompareSets(this.Guesses, state.Guesses, StringComparer.OrdinalIgnoreCase)) != 0)
             {
                 return comp;
             }
@@ -150,10 +151,10 @@ namespace GameTheory.Games.Hangman
         {
             var hash = HashUtilities.Seed;
             HashUtilities.Combine(ref hash, this.word.GetHashCode());
-
-            for (var i = 0; i < this.Players.Length; i++)
+            HashUtilities.Combine(ref hash, this.Players[0].GetHashCode());
+            foreach (var guess in this.Guesses.OrderBy(g => g, StringComparer.OrdinalIgnoreCase))
             {
-                HashUtilities.Combine(ref hash, this.Players[i].GetHashCode());
+                HashUtilities.Combine(ref hash, guess[0]);
             }
 
             return hash;
