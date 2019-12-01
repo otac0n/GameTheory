@@ -56,6 +56,20 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\GameTheory\GameTheory.csproj">
+      <Project>{3b3e3456-b950-44c1-b8a2-fe6c79c2232f}</Project>
+      <Name>GameTheory</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\GameTheory.$namespace$\GameTheory.$namespace$.csproj">
+      <Project>{$guid1$}</Project>
+      <Name>GameTheory.$namespace$</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\GameTheory.Testing\GameTheory.Testing.csproj">
+      <Project>{8f3e7e82-c364-40a0-be1e-d165bf30e304}</Project>
+      <Name>GameTheory.Testing</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
     <Compile Include="..\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
@@ -70,20 +84,6 @@
   <ItemGroup>
     <Analyzer Include="..\packages\StyleCop.Analyzers.1.1.118\analyzers\dotnet\cs\StyleCop.Analyzers.CodeFixes.dll" />
     <Analyzer Include="..\packages\StyleCop.Analyzers.1.1.118\analyzers\dotnet\cs\StyleCop.Analyzers.dll" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\GameTheory\GameTheory.csproj">
-      <Project>{3b3e3456-b950-44c1-b8a2-fe6c79c2232f}</Project>
-      <Name>GameTheory</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\GameTheory.$namespace$\GameTheory.$namespace$.csproj">
-      <Project>{$guid1$}</Project>
-      <Name>GameTheory.$namespace$</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\GameTheory.Testing\GameTheory.Testing.csproj">
-      <Project>{8f3e7e82-c364-40a0-be1e-d165bf30e304}</Project>
-      <Name>GameTheory.Testing</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />

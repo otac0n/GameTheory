@@ -6,15 +6,9 @@
     <DebugType>Full</DebugType>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <TargetFrameworks>net462;netcoreapp2.0</TargetFrameworks>
-    <Description />
     <PackageLicenseUrl>https://raw.github.com/otac0n/GameTheory/master/license.md</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/otac0n/GameTheory</PackageProjectUrl>
-    <PackageTags />
   </PropertyGroup>
-  <ItemGroup>
-    <AdditionalFiles Include="..\stylecop.json" Link="stylecop.json" />
-    <AdditionalFiles Include="GameTheory.Games.Chess.Console.ruleset" />
-  </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Weave" Version="2.0.0">
       <PrivateAssets>all</PrivateAssets>
@@ -22,8 +16,12 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\GameTheory\GameTheory.csproj" />
     <ProjectReference Include="..\GameTheory.ConsoleRunner.Shared\GameTheory.ConsoleRunner.Shared.csproj" />
     <ProjectReference Include="..\GameTheory.Games.Chess\GameTheory.Games.Chess.csproj" />
-    <ProjectReference Include="..\GameTheory\GameTheory.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <AdditionalFiles Include="GameTheory.Games.Chess.Console.ruleset" />
+    <AdditionalFiles Include="..\stylecop.json" Link="stylecop.json" />
   </ItemGroup>
 </Project>

@@ -6,27 +6,23 @@
     <DebugType>Full</DebugType>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <TargetFrameworks>net462</TargetFrameworks>
-    <Description />
     <PackageLicenseUrl>https://raw.github.com/otac0n/GameTheory/master/license.md</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/otac0n/GameTheory</PackageProjectUrl>
-    <PackageTags />
   </PropertyGroup>
   <ItemGroup>
-    <AdditionalFiles Include="..\stylecop.json" Link="stylecop.json" />
-    <AdditionalFiles Include="GameTheory.Games.SevenDragons.Forms.ruleset" />
+    <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\GameTheory\GameTheory.csproj" />
     <ProjectReference Include="..\GameTheory.FormsRunner.Shared\GameTheory.FormsRunner.Shared.csproj" />
     <ProjectReference Include="..\GameTheory.Games.SevenDragons\GameTheory.Games.SevenDragons.csproj" />
-    <ProjectReference Include="..\GameTheory\GameTheory.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
     <Compile Update="CardControl.cs">
       <SubType>Component</SubType>
     </Compile>
+    <AdditionalFiles Include="GameTheory.Games.SevenDragons.Forms.ruleset" />
+    <AdditionalFiles Include="..\stylecop.json" Link="stylecop.json" />
     <Compile Update="TableControl.cs">
       <SubType>Component</SubType>
     </Compile>
