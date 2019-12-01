@@ -10,6 +10,12 @@
     <PackageProjectUrl>https://github.com/otac0n/GameTheory</PackageProjectUrl>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.8">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\GameTheory\GameTheory.csproj" />
     <ProjectReference Include="..\GameTheory.ConsoleRunner.Shared\GameTheory.ConsoleRunner.Shared.csproj" />
     <ProjectReference Include="..\GameTheory.Games.SevenDragons\GameTheory.Games.SevenDragons.csproj" />

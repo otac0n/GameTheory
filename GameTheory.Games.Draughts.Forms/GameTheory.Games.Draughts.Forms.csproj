@@ -13,6 +13,12 @@
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.8">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\GameTheory\GameTheory.csproj" />
     <ProjectReference Include="..\GameTheory.FormsRunner.Shared\GameTheory.FormsRunner.Shared.csproj" />
     <ProjectReference Include="..\GameTheory.Games.Draughts\GameTheory.Games.Draughts.csproj" />
