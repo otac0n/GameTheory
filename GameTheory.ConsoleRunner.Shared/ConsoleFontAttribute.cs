@@ -13,6 +13,8 @@ namespace GameTheory.ConsoleRunner.Shared
         /// Initializes a new instance of the <see cref="ConsoleFontAttribute"/> class.
         /// </summary>
         /// <param name="name">The font name.</param>
+        /// <param name="xSize">The x-Size value.</param>
+        /// <param name="ySize">The y-Size value.</param>
         public ConsoleFontAttribute(string name, short xSize = 0, short ySize = 0)
         {
             this.Name = name;

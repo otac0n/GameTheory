@@ -15,9 +15,9 @@ namespace GameTheory.GameTree
         private readonly IGameStateCache<TGameState, TMove, TScore> cache;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="GameTree{TMove, TScore}"/> class.
+        /// Initializes a new instance of the <see cref="GameTree{TGameState, TMove, TScore}"/> class.
         /// </summary>
-        /// <param name="cache">The <see cref="IGameStateCache{TMove, TScore}"/> to be used as a transposition table.</param>
+        /// <param name="cache">The <see cref="IGameStateCache{TGameState, TMove, TScore}"/> to be used as a transposition table.</param>
         public GameTree(IGameStateCache<TGameState, TMove, TScore> cache)
         {
             this.cache = cache;

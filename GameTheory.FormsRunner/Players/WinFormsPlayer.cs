@@ -14,7 +14,7 @@ namespace GameTheory.FormsRunner.Players
         private PlayerView playerView;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="WinFormsPlayer{TMove}"/> class.
+        /// Initializes a new instance of the <see cref="WinFormsPlayer{TGameState, TMove}"/> class.
         /// </summary>
         /// <param name="playerToken">The <see cref="PlayerToken"/> that represents the player.</param>
         /// <param name="game">The <see cref="ICatalogGame"/> that describes the game being played.</param>

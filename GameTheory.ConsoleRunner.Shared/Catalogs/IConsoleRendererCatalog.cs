@@ -23,7 +23,7 @@ namespace GameTheory.ConsoleRunner.Shared.Catalogs
         /// <summary>
         /// Gets the list of console renderers who are capable of playing the specified move type.
         /// </summary>
-        /// <param name="TGameState">The type of game states that will be displayed.</param>
+        /// <param name="gameStateType">The type of game states that will be displayed.</param>
         /// <param name="moveType">The type of moves to be played.</param>
         /// <returns>A collection of supported console renderers.</returns>
         IReadOnlyList<Type> FindConsoleRenderers(Type gameStateType, Type moveType);

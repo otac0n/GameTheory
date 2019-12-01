@@ -23,6 +23,8 @@ namespace GameTheory.ConsoleRunner.Shared.Catalogs
         /// <summary>
         /// Enumerates the console renderers in this catalog.
         /// </summary>
+        /// <param name="gameStateType">The type of game states that will be displayed.</param>
+        /// <param name="moveType">The type of moves to be played.</param>
         /// <returns>The enumerable collection of console renderers in the catalog.</returns>
         protected abstract IEnumerable<Type> GetConsoleRenderers(Type gameStateType, Type moveType);
     }

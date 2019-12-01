@@ -142,8 +142,10 @@ namespace GameTheory.Games.Nessos
         public PlayerToken TargetPlayer { get; }
 
         /// <summary>
-        /// Makes the <see cref="Deck"/> used for the current number of players.
+        /// Makes the <see cref="Deck"/> used for the specified number of players.
         /// </summary>
+        /// <param name="players">The number of players.</param>
+        /// <returns>The deck for the specified number of players.</returns>
         public static EnumCollection<Card> MakeDeck(int players)
         {
             switch (players)

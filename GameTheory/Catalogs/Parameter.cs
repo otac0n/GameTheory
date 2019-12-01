@@ -20,6 +20,11 @@ namespace GameTheory.Catalogs
         /// <param name="parameterInfo">The <see cref="ParameterInfo"/> to use as the soruce for this parameter.</param>
         public Parameter(ParameterInfo parameterInfo)
         {
+            if (parameterInfo == null)
+            {
+                throw new ArgumentNullException(nameof(parameterInfo));
+            }
+
             this.Name = parameterInfo.Name;
             this.ParameterType = parameterInfo.ParameterType;
 
@@ -92,6 +97,7 @@ namespace GameTheory.Catalogs
         /// <param name="default">The optional default value.</param>
         /// <param name="description">The description of the parameter.</param>
         /// <param name="placeholder">An optional placeholder value.</param>
+        /// <param name="isPassword">A value indicating whether the value is sensitive, such as a password.</param>
         /// <param name="validations">A collection of validation attributes.</param>
         public Parameter(string name, Type parameterType, string displayName = null, Maybe<object> @default = default, string description = null, string placeholder = null, bool isPassword = false, IEnumerable<ValidationAttribute> validations = null)
         {

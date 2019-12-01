@@ -17,7 +17,7 @@ namespace GameTheory.GameTree
         where TMove : IMove
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="Mainline{TMove, TScore}"/> class.
+        /// Initializes a new instance of the <see cref="Mainline{TGameState, TMove, TScore}"/> class.
         /// </summary>
         /// <param name="scores">The computed scores for all players in the resulting state.</param>
         /// <param name="state">The resulting game state.</param>
