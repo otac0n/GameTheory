@@ -1,4 +1,4 @@
-﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory
 {
@@ -230,7 +230,7 @@ namespace GameTheory
         {
             if (this.root == null)
             {
-                return new TEnumerator[0];
+                return Array.Empty<TEnumerator>();
             }
 
             var result = new List<TEnumerator>(this.count);

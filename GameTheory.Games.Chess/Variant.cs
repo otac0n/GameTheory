@@ -54,7 +54,7 @@ namespace GameTheory.Games.Chess
 
         private static readonly Point[][] StraightLines = new[]
         {
-            new Point[0],
+            Array.Empty<Point>(),
             BishopDirections,
             RookDirections,
             BishopDirections.Concat(RookDirections).ToArray(),
