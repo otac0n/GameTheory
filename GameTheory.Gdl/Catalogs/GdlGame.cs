@@ -32,6 +32,11 @@ namespace GameTheory.Gdl.Catalogs
                     var gdl = File.ReadAllText(this.gdlPath);
                     var compiler = new GameCompiler();
                     var result = compiler.Compile(gdl, this.gdlPath);
+                    if (result.Errors.Where(e => !e.IsWarning).Any())
+                    {
+                        throw new InvalidOperationException(string.Join(Environment.NewLine, result.Errors));
+                    }
+
                     return result.Type;
                 },
                 isThreadSafe: true);
