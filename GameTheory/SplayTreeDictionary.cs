@@ -1,4 +1,4 @@
-﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory
 {
@@ -183,7 +183,7 @@ namespace GameTheory
         {
             if (depth < 0)
             {
-                throw new ArgumentOutOfRangeException("depth", "The trim depth must not be negative.");
+                throw new ArgumentOutOfRangeException(nameof(depth), "The trim depth must not be negative.");
             }
 
             if (this.count == 0)
@@ -230,7 +230,7 @@ namespace GameTheory
         {
             if (this.root == null)
             {
-                return new TEnumerator[0];
+                return Array.Empty<TEnumerator>();
             }
 
             var result = new List<TEnumerator>(this.count);
@@ -416,9 +416,9 @@ namespace GameTheory
 
             public TiedList(SplayTreeDictionary<TKey, TValue> tree, int version, IList<T> backingList)
             {
-                this.tree = tree ?? throw new ArgumentNullException("tree");
+                this.tree = tree ?? throw new ArgumentNullException(nameof(tree));
                 this.version = version;
-                this.backingList = backingList ?? throw new ArgumentNullException("backingList");
+                this.backingList = backingList ?? throw new ArgumentNullException(nameof(backingList));
             }
 
             public int Count => this.tree.count;

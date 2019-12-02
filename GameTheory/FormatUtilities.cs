@@ -117,7 +117,7 @@ namespace GameTheory
             switch (items.Count)
             {
                 case 0:
-                    return new object[0];
+                    return Array.Empty<object>();
 
                 case 1:
                     return new object[] { items[0] };

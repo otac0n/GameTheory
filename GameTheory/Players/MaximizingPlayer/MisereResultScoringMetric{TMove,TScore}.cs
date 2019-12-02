@@ -13,7 +13,7 @@ namespace GameTheory.Players.MaximizingPlayer
         where TMove : IMove
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="MisereResultScoringMetric{TMove, TScore}"/> class.
+        /// Initializes a new instance of the <see cref="MisereResultScoringMetric{TGameState, TMove, TScore}"/> class.
         /// </summary>
         /// <param name="scoringMetric">The inner scoring metric.</param>
         public MisereResultScoringMetric(IScoringMetric<PlayerState<TGameState, TMove>, TScore> scoringMetric)

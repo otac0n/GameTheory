@@ -54,7 +54,7 @@ namespace GameTheory.FormsRunner
         {
             if (@this.InvokeRequired)
             {
-                @this.Invoke(action, new object[0]);
+                @this.Invoke(action, Array.Empty<object>());
             }
             else
             {

@@ -228,7 +228,7 @@ namespace GameTheory.Games.TicTacToe
                 move.Y >= Size ||
                 this.field[move.X, move.Y] != null)
             {
-                throw new ArgumentOutOfRangeException("move");
+                throw new ArgumentOutOfRangeException(nameof(move));
             }
 
             var newField = new PlayerToken[Size, Size];
