@@ -131,6 +131,11 @@ namespace GameTheory.Gdl
                 SyntaxFactory.Token(
                     SyntaxKind.IntKeyword));
 
+        public static readonly PredefinedTypeSyntax DoubleType =
+            SyntaxFactory.PredefinedType(
+                SyntaxFactory.Token(
+                    SyntaxKind.DoubleKeyword));
+
         public static readonly PredefinedTypeSyntax ObjectType =
             SyntaxFactory.PredefinedType(
                 SyntaxFactory.Token(

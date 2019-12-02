@@ -344,6 +344,12 @@ namespace GameTheory.Gdl.Passes
                             SyntaxFactory.QualifiedName(
                                 SyntaxFactory.QualifiedName(
                                     SyntaxHelper.IdentifierName("GameTheory"),
+                                    SyntaxHelper.IdentifierName("Players")),
+                                SyntaxHelper.IdentifierName("MaximizingPlayer"))),
+                        SyntaxFactory.UsingDirective(
+                            SyntaxFactory.QualifiedName(
+                                SyntaxFactory.QualifiedName(
+                                    SyntaxHelper.IdentifierName("GameTheory"),
                                     SyntaxHelper.IdentifierName("Gdl")),
                                 SyntaxHelper.IdentifierName("Shared"))));
 
@@ -411,7 +417,8 @@ namespace GameTheory.Gdl.Passes
                     .AddMembers(
                         this.CreatePublicTypeDeclarations(renderedTypes))
                     .AddMembers(
-                        this.CreateObjectComparerDeclaration(allTypes));
+                        this.CreateObjectComparerDeclaration(allTypes),
+                        this.CreatePlayerTypeDeclaration());
                 root = root.AddMembers(ns);
 
                 this.result.DeclarationSyntax = root.NormalizeWhitespace();
@@ -2323,6 +2330,186 @@ namespace GameTheory.Gdl.Passes
                     default:
                         return SyntaxHelper.IdentifierName(this.result.GameStateScope.GetPublic(objectInfo));
                 }
+            }
+
+            private ClassDeclarationSyntax CreatePlayerTypeDeclaration()
+            {
+                var playerClassName = this.result.NamespaceScope.GetPublic(this.result.Name + "MaximizingPlayer");
+                var gameStateType = SyntaxHelper.IdentifierName(this.result.NamespaceScope.GetPublic("GameState"));
+                var moveType = SyntaxHelper.IdentifierName(this.result.NamespaceScope.GetPublic("Move"));
+
+                return SyntaxFactory.ClassDeclaration(playerClassName)
+                    .AddModifiers(SyntaxFactory.Token(SyntaxKind.PublicKeyword))
+                    .AddBaseListTypes(
+                        SyntaxFactory.SimpleBaseType(
+                            SyntaxFactory.GenericName(
+                                SyntaxFactory.Identifier("MaximizingPlayer"))
+                                .AddTypeArgumentListArguments(
+                                    gameStateType,
+                                    moveType,
+                                    SyntaxFactory.GenericName(
+                                        SyntaxFactory.Identifier("ResultScore"))
+                                        .AddTypeArgumentListArguments(
+                                            SyntaxHelper.DoubleType))))
+                    .AddMembers(
+                        SyntaxFactory.FieldDeclaration(
+                            SyntaxFactory.VariableDeclaration(
+                                SyntaxFactory.GenericName(
+                                    SyntaxFactory.Identifier("IGameStateScoringMetric"))
+                                    .AddTypeArgumentListArguments(
+                                        gameStateType,
+                                        moveType,
+                                        SyntaxFactory.PredefinedType(
+                                            SyntaxFactory.Token(SyntaxKind.DoubleKeyword))))
+                                .AddVariables(
+                                    SyntaxFactory.VariableDeclarator(
+                                        SyntaxFactory.Identifier("Metric"))
+                                        .WithInitializer(
+                                            SyntaxFactory.EqualsValueClause(
+                                                SyntaxFactory.InvocationExpression(
+                                                    SyntaxFactory.MemberAccessExpression(
+                                                        SyntaxKind.SimpleMemberAccessExpression,
+                                                        SyntaxHelper.IdentifierName("ScoringMetric"),
+                                                        SyntaxFactory.GenericName(
+                                                            SyntaxHelper.Identifier("Create"))
+                                                            .AddTypeArgumentListArguments(
+                                                                gameStateType,
+                                                                moveType)))
+                                                    .AddArgumentListArguments(
+                                                        SyntaxFactory.Argument(
+                                                            SyntaxFactory.SimpleLambdaExpression(
+                                                                SyntaxFactory.Parameter(
+                                                                    SyntaxHelper.Identifier("playerState")),
+                                                                SyntaxFactory.InvocationExpression(
+                                                                    SyntaxFactory.MemberAccessExpression(
+                                                                        SyntaxKind.SimpleMemberAccessExpression,
+                                                                        SyntaxFactory.MemberAccessExpression(
+                                                                            SyntaxKind.SimpleMemberAccessExpression,
+                                                                            SyntaxHelper.IdentifierName("playerState"),
+                                                                            SyntaxHelper.IdentifierName("GameState")),
+                                                                        SyntaxHelper.IdentifierName("GetScore")))
+                                                                    .AddArgumentListArguments(
+                                                                        SyntaxFactory.Argument(
+                                                                            SyntaxFactory.MemberAccessExpression(
+                                                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                                                SyntaxHelper.IdentifierName("playerState"),
+                                                                                SyntaxHelper.IdentifierName("PlayerToken")))))))))))
+                            .AddModifiers(
+                                SyntaxFactory.Token(SyntaxKind.PrivateKeyword),
+                                SyntaxFactory.Token(SyntaxKind.StaticKeyword),
+                                SyntaxFactory.Token(SyntaxKind.ReadOnlyKeyword)),
+                        SyntaxFactory.FieldDeclaration(
+                            SyntaxFactory.VariableDeclaration(
+                                SyntaxHelper.IdentifierName("TimeSpan"))
+                                .AddVariables(
+                                    SyntaxFactory.VariableDeclarator(
+                                        SyntaxHelper.Identifier("minThinkTime"))))
+                            .AddModifiers(SyntaxFactory.Token(SyntaxKind.PrivateKeyword)),
+                        SyntaxFactory.ConstructorDeclaration(
+                            SyntaxHelper.Identifier(playerClassName))
+                            .AddModifiers(SyntaxFactory.Token(SyntaxKind.PublicKeyword))
+                            .AddParameterListParameters(
+                                SyntaxFactory.Parameter(
+                                    SyntaxHelper.Identifier("playerToken"))
+                                    .WithType(
+                                        SyntaxHelper.IdentifierName("PlayerToken")),
+                                SyntaxFactory.Parameter(
+                                    SyntaxHelper.Identifier("minPly"))
+                                    .WithType(SyntaxHelper.IntType)
+                                    .WithDefault(
+                                        SyntaxFactory.EqualsValueClause(
+                                            SyntaxFactory.LiteralExpression(
+                                                SyntaxKind.NumericLiteralExpression,
+                                                SyntaxFactory.Literal(2)))),
+                                SyntaxFactory.Parameter(
+                                    SyntaxHelper.Identifier("thinkSeconds"))
+                                    .WithType(SyntaxHelper.IntType)
+                                    .WithDefault(
+                                        SyntaxFactory.EqualsValueClause(
+                                            SyntaxFactory.LiteralExpression(
+                                                SyntaxKind.NumericLiteralExpression,
+                                                SyntaxFactory.Literal(5)))),
+                                SyntaxFactory.Parameter(
+                                    SyntaxHelper.Identifier("misereMode"))
+                                    .WithType(SyntaxHelper.BoolType)
+                                    .WithDefault(
+                                        SyntaxFactory.EqualsValueClause(
+                                            SyntaxFactory.LiteralExpression(
+                                                SyntaxKind.FalseLiteralExpression))))
+                            .WithInitializer(
+                                SyntaxFactory.ConstructorInitializer(
+                                    SyntaxKind.BaseConstructorInitializer,
+                                    SyntaxFactory.ArgumentList(
+                                        SyntaxFactory.SeparatedList<ArgumentSyntax>(
+                                            new SyntaxNodeOrToken[]
+                                            {
+                                                SyntaxFactory.Argument(
+                                                    SyntaxHelper.IdentifierName("playerToken")),
+                                                SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                                SyntaxFactory.Argument(
+                                                    SyntaxFactory.InvocationExpression(
+                                                        SyntaxFactory.MemberAccessExpression(
+                                                            SyntaxKind.SimpleMemberAccessExpression,
+                                                            SyntaxHelper.IdentifierName("ResultScoringMetric"),
+                                                            SyntaxHelper.IdentifierName("Create")))
+                                                        .AddArgumentListArguments(
+                                                            SyntaxFactory.Argument(
+                                                                SyntaxHelper.IdentifierName("Metric")),
+                                                            SyntaxFactory.Argument(
+                                                                SyntaxHelper.IdentifierName("misereMode")))),
+                                                SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                                SyntaxFactory.Argument(
+                                                    SyntaxHelper.IdentifierName("minPly")),
+                                            }))))
+                            .WithBody(
+                                SyntaxFactory.Block(
+                                    SyntaxFactory.SingletonList<StatementSyntax>(
+                                        SyntaxFactory.ExpressionStatement(
+                                            SyntaxFactory.AssignmentExpression(
+                                                SyntaxKind.SimpleAssignmentExpression,
+                                                SyntaxFactory.MemberAccessExpression(
+                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                    SyntaxFactory.ThisExpression(),
+                                                    SyntaxHelper.IdentifierName("minThinkTime")),
+                                                SyntaxFactory.InvocationExpression(
+                                                    SyntaxFactory.MemberAccessExpression(
+                                                        SyntaxKind.SimpleMemberAccessExpression,
+                                                        SyntaxHelper.IdentifierName("TimeSpan"),
+                                                        SyntaxHelper.IdentifierName("FromSeconds")))
+                                                    .AddArgumentListArguments(
+                                                        SyntaxFactory.Argument(
+                                                            SyntaxFactory.BinaryExpression(
+                                                                SyntaxKind.SubtractExpression,
+                                                                SyntaxFactory.InvocationExpression(
+                                                                    SyntaxFactory.MemberAccessExpression(
+                                                                        SyntaxKind.SimpleMemberAccessExpression,
+                                                                        SyntaxHelper.IdentifierName("Math"),
+                                                                        SyntaxHelper.IdentifierName("Max")))
+                                                                    .AddArgumentListArguments(
+                                                                        SyntaxFactory.Argument(
+                                                                            SyntaxFactory.LiteralExpression(
+                                                                                SyntaxKind.NumericLiteralExpression,
+                                                                                SyntaxFactory.Literal(1))),
+                                                                        SyntaxFactory.Argument(
+                                                                            SyntaxHelper.IdentifierName("thinkSeconds"))),
+                                                                SyntaxFactory.LiteralExpression(
+                                                                    SyntaxKind.NumericLiteralExpression,
+                                                                    SyntaxFactory.Literal(0.1)))))))))),
+                        SyntaxFactory.PropertyDeclaration(
+                            SyntaxFactory.NullableType(
+                                SyntaxHelper.IdentifierName("TimeSpan")),
+                            SyntaxHelper.Identifier("MinThinkTime"))
+                            .AddModifiers(
+                                SyntaxFactory.Token(SyntaxKind.ProtectedKeyword),
+                                SyntaxFactory.Token(SyntaxKind.OverrideKeyword))
+                            .WithExpressionBody(
+                                SyntaxFactory.ArrowExpressionClause(
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.ThisExpression(),
+                                        SyntaxHelper.IdentifierName("minThinkTime"))))
+                            .WithSemicolonToken(
+                                SyntaxFactory.Token(SyntaxKind.SemicolonToken)));
             }
 
             private MemberDeclarationSyntax[] CreatePublicTypeDeclarations(IEnumerable<ExpressionType> renderedTypes)
