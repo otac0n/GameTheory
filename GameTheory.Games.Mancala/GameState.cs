@@ -41,7 +41,13 @@ namespace GameTheory.Games.Mancala
         /// </summary>
         /// <param name="binsPerSide">The number of bins on each side of the board.</param>
         /// <param name="initialStonesPerBin">The number of stones initially in each bin.</param>
-        public GameState([Range(MinBinsPerSide, MaxBinsPerSide)] int binsPerSide = 6, [Range(MinInitialStonesPerBin, MaxInitialStonesPerBin)] int initialStonesPerBin = 4)
+        public GameState(
+            [Range(MinBinsPerSide, MaxBinsPerSide)]
+            [Display(ResourceType = typeof(Resources), Name = nameof(Resources.BinsPerSide), Description = nameof(Resources.BinsPerSideDescription))]
+            int binsPerSide = 6,
+            [Range(MinInitialStonesPerBin, MaxInitialStonesPerBin)]
+            [Display(ResourceType = typeof(Resources), Name = nameof(Resources.InitialStonesPerBin), Description = nameof(Resources.InitialStonesPerBinDescription))]
+            int initialStonesPerBin = 4)
         {
             if (binsPerSide < MinBinsPerSide || binsPerSide > MaxBinsPerSide)
             {
@@ -212,7 +218,7 @@ namespace GameTheory.Games.Mancala
         }
 
         /// <inheritdoc />
-        public IReadOnlyCollection<PlayerToken> GetWinners()
+        public IReadOnlyList<PlayerToken> GetWinners()
         {
             if (this.Phase != Phase.End)
             {

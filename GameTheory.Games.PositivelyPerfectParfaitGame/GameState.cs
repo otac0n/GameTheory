@@ -39,7 +39,12 @@ namespace GameTheory.Games.PositivelyPerfectParfaitGame
         /// </summary>
         /// <param name="players">The number of players.</param>
         /// <param name="playOut">A value indicating whether all players are allowed to complete their parfaits.</param>
-        public GameState([Range(MinPlayers, MaxPlayers)] int players = MinPlayers, bool playOut = false)
+        public GameState(
+            [Range(MinPlayers, MaxPlayers)]
+            [Display(ResourceType = typeof(SharedResources), Name = nameof(SharedResources.Players), Description = nameof(SharedResources.PlayersDescription))]
+            int players = MinPlayers,
+            [Display(ResourceType = typeof(Resources), Name = nameof(Resources.PlayOut), Description = nameof(Resources.PlayOutDescription))]
+            bool playOut = false)
         {
             if (players < MinPlayers || players > MaxPlayers)
             {
@@ -200,7 +205,7 @@ namespace GameTheory.Games.PositivelyPerfectParfaitGame
         }
 
         /// <inheritdoc />
-        public IReadOnlyCollection<PlayerToken> GetWinners()
+        public IReadOnlyList<PlayerToken> GetWinners()
         {
             if (this.Phase != Phase.End)
             {

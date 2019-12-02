@@ -1475,7 +1475,7 @@ namespace GameTheory.Gdl.Passes
 
                 return SyntaxFactory.MethodDeclaration(
                     SyntaxFactory.GenericName(
-                        SyntaxHelper.Identifier("IReadOnlyCollection"))
+                        SyntaxHelper.Identifier("IReadOnlyList"))
                         .WithTypeArgumentList(
                             SyntaxFactory.TypeArgumentList(
                                 SyntaxFactory.SingletonSeparatedList<TypeSyntax>(

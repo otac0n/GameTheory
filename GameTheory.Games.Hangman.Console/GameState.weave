@@ -1,0 +1,14 @@
+@using System.Linq
+@using GameTheory.ConsoleRunner.Shared
+@namespace GameTheory.Games.Hangman.Console
+@static false
+@model GameState
+{{ var i = model.IncorrectGuesses; }}
+┌──┬
+│  {{if i > 0}}O{{/if}}
+│ {{if i > 2}}/{{else}} {{/if}}{{if i > 1}}|{{/if}}{{if i > 3}}\{{/if}}
+│ {{if i > 4}}/{{/if}} {{if i > 5}}\{{/if}}
+│
+┴─────
+Word: {{each c in model.Word}}{{= c}}{{delimit}} {{/each}}
+Guesses: {{each g in model.Guesses}}{{= g}}{{delimit}} {{/each}}

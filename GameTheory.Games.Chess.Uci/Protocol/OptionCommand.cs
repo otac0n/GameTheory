@@ -66,7 +66,7 @@ namespace GameTheory.Games.Chess.Uci.Protocol
         /// <inheritdoc/>
         public override string ToString() =>
             $"option name {this.Name} type {this.Type}" +
-            (string.IsNullOrEmpty(this.Default) ? string.Empty : $" default {this.Default}") +
+            (this.Default == null ? string.Empty : $" default {this.Default}") +
             (string.IsNullOrEmpty(this.Min) ? string.Empty : $" min {this.Min}") +
             (string.IsNullOrEmpty(this.Max) ? string.Empty : $" max {this.Max}") +
             string.Concat(this.Vars.Select(v => $" var {v}"));

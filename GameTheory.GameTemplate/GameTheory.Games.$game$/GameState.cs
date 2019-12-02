@@ -118,7 +118,7 @@ namespace GameTheory.Games.$game$
         }
 
         /// <inheritdoc />
-        public IReadOnlyCollection<PlayerToken> GetWinners() => ImmutableList<PlayerToken>.Empty;
+        public IReadOnlyList<PlayerToken> GetWinners() => ImmutableList<PlayerToken>.Empty;
 
         /// <inheritdoc />
         IGameState<Move> IGameState<Move>.MakeMove(Move move)

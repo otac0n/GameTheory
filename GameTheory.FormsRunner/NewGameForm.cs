@@ -149,7 +149,7 @@ namespace GameTheory.FormsRunner
                 ObjectGraphEditor.Instance.Update(
                     this.configurationTab.Controls.Cast<Control>().SingleOrDefault(),
                     this.scope.Extend(game.Name, this.StartingState),
-                    game.GameStateType,
+                    new Parameter("initialState", game.GameStateType),
                     game.Initializers.ToArray(),
                     this.StartingState,
                     out var errorControl,
@@ -251,7 +251,7 @@ namespace GameTheory.FormsRunner
                         var editor = ObjectGraphEditor.Instance.Update(
                             null,
                             this.scope.Extend(player.Name, null),
-                            player.PlayerType,
+                            new Parameter($"player{p + 1}", player.PlayerType),
                             player.Initializers.ToArray(),
                             null, // TODO: Remember previously selected player?
                             out var errorControl,
@@ -516,9 +516,9 @@ namespace GameTheory.FormsRunner
                 this.game = game;
             }
 
-            public override bool CanEdit(Scope scope, Type type, object value) => type == typeof(ICatalogGame);
+            public override bool CanEdit(Scope scope, Parameter parameter, object value) => parameter.ParameterType == typeof(ICatalogGame);
 
-            protected override Control Update(Control control, Scope scope, Type type, object value, out Control errorControl, IReadOnlyList<Editor> editors, Action<Control, string> setError, Action<object, bool> set)
+            protected override Control Update(Control control, Scope scope, Parameter parameter, object value, out Control errorControl, IReadOnlyList<Editor> editors, Action<Control, string> setError, Action<object, bool> set)
             {
                 if (control is Label label && label.Tag == this)
                 {
@@ -561,9 +561,9 @@ namespace GameTheory.FormsRunner
                 this.playerToken = playerToken;
             }
 
-            public override bool CanEdit(Scope scope, Type type, object value) => type == typeof(PlayerToken);
+            public override bool CanEdit(Scope scope, Parameter parameter, object value) => parameter.ParameterType == typeof(PlayerToken);
 
-            protected override Control Update(Control control, Scope scope, Type type, object value, out Control errorControl, IReadOnlyList<Editor> editors, Action<Control, string> setError, Action<object, bool> set)
+            protected override Control Update(Control control, Scope scope, Parameter parameter, object value, out Control errorControl, IReadOnlyList<Editor> editors, Action<Control, string> setError, Action<object, bool> set)
             {
                 if (control is Label label && label.Tag == this)
                 {

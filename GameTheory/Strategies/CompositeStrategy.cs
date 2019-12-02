@@ -18,10 +18,10 @@ namespace GameTheory.Strategies
         where TMove : IMove
     {
         private readonly bool disposeChildren;
-        private readonly IReadOnlyCollection<IStrategy<TGameState, TMove>> strategies;
+        private readonly IList<IStrategy<TGameState, TMove>> strategies;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="CompositeStrategy{TMove}"/> class.
+        /// Initializes a new instance of the <see cref="CompositeStrategy{TGameState, TMove}"/> class.
         /// </summary>
         /// <param name="strategies">The strategies that together make up this strategy.</param>
         public CompositeStrategy(params IStrategy<TGameState, TMove>[] strategies)
@@ -30,18 +30,23 @@ namespace GameTheory.Strategies
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="CompositeStrategy{TMove}"/> class.
+        /// Initializes a new instance of the <see cref="CompositeStrategy{TGameState, TMove}"/> class.
         /// </summary>
         /// <param name="strategies">The strategies that together make up this strategy.</param>
         /// <param name="disposeChildren">A value indicating whether or not this strategy should own the disposal of the specified strategies.</param>
-        public CompositeStrategy(IStrategy<TGameState, TMove>[] strategies, bool disposeChildren)
+        public CompositeStrategy(IEnumerable<IStrategy<TGameState, TMove>> strategies, bool disposeChildren)
         {
+            if (strategies == null)
+            {
+                throw new ArgumentNullException(nameof(strategies));
+            }
+
             this.strategies = strategies.ToImmutableList();
             this.disposeChildren = disposeChildren;
         }
 
         /// <summary>
-        /// Finalizes an instance of the <see cref="CompositeStrategy{TMove}"/> class.
+        /// Finalizes an instance of the <see cref="CompositeStrategy{TGameState, TMove}"/> class.
         /// </summary>
         ~CompositeStrategy()
         {
@@ -53,7 +58,7 @@ namespace GameTheory.Strategies
         {
             foreach (var strategy in this.strategies)
             {
-                var move = await strategy.ChooseMove(state, playerToken, moves, cancel);
+                var move = await strategy.ChooseMove(state, playerToken, moves, cancel).ConfigureAwait(false);
                 if (move.HasValue)
                 {
                     return move;

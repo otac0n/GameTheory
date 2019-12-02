@@ -167,7 +167,7 @@ namespace GameTheory.Games.Draughts
         }
 
         /// <inheritdoc/>
-        public IReadOnlyCollection<PlayerToken> GetWinners()
+        public IReadOnlyList<PlayerToken> GetWinners()
         {
             if (!this.GetAvailableMoves().Any())
             {

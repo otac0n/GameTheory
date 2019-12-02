@@ -141,6 +141,12 @@
   <data name="Name" xml:space="preserve">
     <value>Positively Perfect Parfait Game</value>
   </data>
+  <data name="PlayOut" xml:space="preserve">
+    <value>Play out</value>
+  </data>
+  <data name="PlayOutDescription" xml:space="preserve">
+    <value>Play the game until everyone has completed their parfait?</value>
+  </data>
   <data name="SwitchAScoop" xml:space="preserve">
     <value>Switch your {0} for a {1} from {2}</value>
   </data>

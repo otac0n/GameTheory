@@ -6,6 +6,7 @@ namespace GameTheory.FormsRunner.Shared
     using System.Collections.Generic;
     using System.Linq;
     using System.Windows.Forms;
+    using GameTheory.Catalogs;
     using GameTheory.FormsRunner.Shared.Editors;
 
     public abstract class Editor
@@ -23,16 +24,13 @@ namespace GameTheory.FormsRunner.Shared
             ObjectGraphEditor.Instance,
         }.AsReadOnly());
 
-        public static Control FindAndUpdate<T>(Control control, Scope scope, T value, out Control errorControl, IReadOnlyList<Editor> editors, Action<Control, string> setError, Action<object, bool> set, Action<Control, Control> update = null) =>
-            FindAndUpdate(control, scope, typeof(T), value, out errorControl, editors, setError, set);
-
-        public static Control FindAndUpdate(Control control, Scope scope, Type type, object value, out Control errorControl, IReadOnlyList<Editor> editors, Action<Control, string> setError, Action<object, bool> set, Action<Control, Control> update = null)
+        public static Control FindAndUpdate(Control control, Scope scope, Parameter parameter, object value, out Control errorControl, IReadOnlyList<Editor> editors, Action<Control, string> setError, Action<object, bool> set, Action<Control, Control> update = null)
         {
             foreach (var editor in editors == null ? Editors : editors.Concat(Editors))
             {
-                if (editor.CanEdit(scope, type, value))
+                if (editor.CanEdit(scope, parameter, value))
                 {
-                    return editor.Update(control, scope, type, value, out errorControl, editors, setError, set, update);
+                    return editor.Update(control, scope, parameter, value, out errorControl, editors, setError, set, update);
                 }
             }
 
@@ -40,11 +38,11 @@ namespace GameTheory.FormsRunner.Shared
             return null;
         }
 
-        public abstract bool CanEdit(Scope scope, Type type, object value);
+        public abstract bool CanEdit(Scope scope, Parameter parameter, object value);
 
-        public Control Update(Control control, Scope scope, Type type, object value, out Control errorControl, IReadOnlyList<Editor> editors, Action<Control, string> setError, Action<object, bool> set, Action<Control, Control> update = null)
+        public Control Update(Control control, Scope scope, Parameter parameter, object value, out Control errorControl, IReadOnlyList<Editor> editors, Action<Control, string> setError, Action<object, bool> set, Action<Control, Control> update = null)
         {
-            var newControl = this.Update(control, scope, type, value, out errorControl, editors, setError, set);
+            var newControl = this.Update(control, scope, parameter, value, out errorControl, editors, setError, set);
 
             if (update != null && !object.ReferenceEquals(control, newControl))
             {
@@ -54,6 +52,6 @@ namespace GameTheory.FormsRunner.Shared
             return newControl;
         }
 
-        protected abstract Control Update(Control control, Scope scope, Type type, object value, out Control errorControl, IReadOnlyList<Editor> editors, Action<Control, string> setError, Action<object, bool> set);
+        protected abstract Control Update(Control control, Scope scope, Parameter parameter, object value, out Control errorControl, IReadOnlyList<Editor> editors, Action<Control, string> setError, Action<object, bool> set);
     }
 }

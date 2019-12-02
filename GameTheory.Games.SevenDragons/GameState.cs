@@ -110,7 +110,12 @@ namespace GameTheory.Games.SevenDragons
         /// </summary>
         /// <param name="players">The number of players.</param>
         /// <param name="includeActions">A value that indicates whether or not acion cards are included.</param>
-        public GameState([Range(MinPlayers, MaxPlayers)] int players = MinPlayers, bool includeActions = true)
+        public GameState(
+            [Range(MinPlayers, MaxPlayers)]
+            [Display(ResourceType = typeof(SharedResources), Name = nameof(SharedResources.Players), Description = nameof(SharedResources.PlayersDescription))]
+            int players = MinPlayers,
+            [Display(ResourceType = typeof(Resources), Name = nameof(Resources.IncludeActions), Description = nameof(Resources.IncludeActionsDescription))]
+            bool includeActions = true)
             : this(null)
         {
             if (players < MinPlayers || players > MaxPlayers)
@@ -296,7 +301,7 @@ namespace GameTheory.Games.SevenDragons
         }
 
         /// <inheritdoc />
-        public IReadOnlyCollection<PlayerToken> GetWinners()
+        public IReadOnlyList<PlayerToken> GetWinners()
         {
             if (this.Phase != Phase.End)
             {

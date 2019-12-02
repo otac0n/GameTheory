@@ -92,14 +92,14 @@ namespace GameTheory
         {
             var staticProperties = from staticProperty in type.GetProperties(BindingFlags.Public | BindingFlags.Static)
                                    where staticProperty.PropertyType == type
-                                   select new { order = 2, initializer = new Initializer(staticProperty.Name, _ => staticProperty.GetValue(null), Array.Empty<ParameterInfo>()) };
+                                   select new { order = 2, initializer = new Initializer(staticProperty.Name, _ => staticProperty.GetValue(null), Array.Empty<Parameter>()) };
 
             var constructors = from constructor in type.GetConstructors()
-                               let parameters = constructor.GetParameters()
-                               let name = parameters.Length == 0
+                               let parameters = constructor.GetParameters().Select(p => new Parameter(p)).ToList()
+                               let name = parameters.Count == 0
                                    ? SharedResources.DefaultInstance
-                                   : string.Format(SharedResources.SpecifyFormat, FormatUtilities.FormatList(parameters.Select(p => p.Name)))
-                               select new { order = parameters.Length == 0 ? 1 : 3, initializer = new Initializer(name, constructor.Invoke, parameters) };
+                                   : string.Format(SharedResources.SpecifyFormat, FormatUtilities.FormatList(parameters.Select(p => p.DisplayName)))
+                               select new { order = parameters.Count == 0 ? 1 : 3, initializer = new Initializer(name, constructor.Invoke, parameters) };
 
             return staticProperties.Concat(constructors)
                 .OrderBy(p => p.order)

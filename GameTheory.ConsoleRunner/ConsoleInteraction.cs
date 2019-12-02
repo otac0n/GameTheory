@@ -4,7 +4,12 @@ namespace GameTheory.ConsoleRunner
 {
     using System;
     using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
+    using System.Linq;
+    using System.Runtime.InteropServices;
+    using System.Security;
     using System.Threading;
+    using GameTheory.Catalogs;
     using GameTheory.ConsoleRunner.Properties;
 
     internal static class ConsoleInteraction
@@ -53,6 +58,167 @@ namespace GameTheory.ConsoleRunner
             return options[selection - 1];
         }
 
+        public static object ConstructType(Type type, Func<Parameter, object> getParameter = null) => ConstructType(type.GetPublicInitializers(), getParameter);
+
+        public static object ConstructType(IEnumerable<Initializer> initializers, Func<Parameter, object> getArgument = null)
+        {
+            getArgument = getArgument ?? (p => GetArgument(p));
+            var initializer = ConsoleInteraction.Choose(initializers.ToList(), skipMessage: _ => Resources.SingleConstructor);
+            return initializer.Accessor(initializer.Parameters.Select(getArgument).ToArray());
+        }
+
+        public static object GetArgument(Parameter parameter)
+        {
+            Console.Write(Resources.ParameterName, parameter.DisplayName);
+
+            if (parameter.ParameterType != typeof(string) &&
+                parameter.ParameterType != typeof(bool) &&
+                parameter.ParameterType != typeof(int) &&
+                !parameter.ParameterType.IsEnum)
+            {
+                Console.WriteLine();
+
+                return ConstructType(parameter.ParameterType);
+            }
+
+            var required = parameter.Validations.OfType<RequiredAttribute>().FirstOrDefault();
+            var range = parameter.Validations.OfType<RangeAttribute>().FirstOrDefault();
+
+            if (range != null && (!(range.Minimum is int) || parameter.ParameterType != typeof(int)))
+            {
+                range = null;
+            }
+
+            if (parameter.Default.HasValue)
+            {
+                Console.Write(' ');
+                var defaultDisplay =
+                    parameter.Default.Value is null ? Resources.Null :
+                    parameter.Default.Value is string d && d == string.Empty ? Resources.Empty :
+                    parameter.Default.Value;
+                if (range != null)
+                {
+                    Console.Write(Resources.RangeWithDefault, range.Minimum, range.Maximum, defaultDisplay);
+                }
+                else
+                {
+                    Console.Write(Resources.DefaultValue, defaultDisplay);
+                }
+            }
+            else if (range != null)
+            {
+                Console.Write(' ');
+                Console.Write(Resources.Range, range.Minimum, range.Maximum);
+            }
+
+            Console.WriteLine();
+
+            if (!string.IsNullOrWhiteSpace(parameter.Description))
+            {
+                Shared.ConsoleInteraction.WithColor(ConsoleColor.DarkGray, () =>
+                {
+                    Console.WriteLine(parameter.Description);
+                });
+            }
+
+            while (true)
+            {
+                var line = parameter.IsPassword
+                    ? ConsoleInteraction.ReadPassword()
+                    : Console.ReadLine();
+
+                if (string.IsNullOrEmpty(line))
+                {
+                    if (parameter.Default.HasValue)
+                    {
+                        return parameter.Default.Value;
+                    }
+                    else if (required != null && parameter.ParameterType == typeof(string) && required.AllowEmptyStrings == true)
+                    {
+                        return string.Empty;
+                    }
+                    else
+                    {
+                        Console.WriteLine(Resources.NoDefault);
+                        continue;
+                    }
+                }
+
+                object value;
+
+                if (parameter.ParameterType == typeof(string))
+                {
+                    value = line;
+                }
+                else if (parameter.ParameterType == typeof(bool))
+                {
+                    switch (line.ToUpperInvariant())
+                    {
+                        case "Y":
+                        case "YES":
+                        case "T":
+                        case "TRUE":
+                            value = true;
+                            break;
+
+                        case "N":
+                        case "NO":
+                        case "F":
+                        case "FALSE":
+                            value = false;
+                            break;
+
+                        default:
+                            Console.WriteLine(Resources.InvalidBoolean);
+                            continue;
+                    }
+                }
+                else if (parameter.ParameterType == typeof(int))
+                {
+                    if (int.TryParse(line, out var selection))
+                    {
+                        value = selection;
+                    }
+                    else
+                    {
+                        Console.WriteLine(Resources.InvalidInteger);
+                        continue;
+                    }
+                }
+                else if (parameter.ParameterType.IsEnum)
+                {
+                    try
+                    {
+                        value = Enum.Parse(parameter.ParameterType, line, ignoreCase: true);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(Resources.InvalidInput, ex.Message);
+                        continue;
+                    }
+                }
+                else
+                {
+                    throw new NotImplementedException();
+                }
+
+                var valid = true;
+                foreach (var validation in parameter.Validations)
+                {
+                    if (!validation.IsValid(value))
+                    {
+                        valid = false;
+                        Console.WriteLine(validation.FormatErrorMessage(parameter.DisplayName));
+                    }
+                }
+
+                if (valid)
+                {
+                    return value;
+                }
+            }
+        }
+
         public static void List<T>(IList<T> items, Action<T> render = null)
         {
             render = render ?? new Action<T>(item => Console.Write(item?.ToString()));
@@ -97,6 +263,90 @@ namespace GameTheory.ConsoleRunner
                 }
 
                 return value;
+            }
+        }
+
+        public static string ReadPassword(char maskChar = '*')
+        {
+            var password = new SecureString();
+
+            void Erase()
+            {
+                if (Console.CursorLeft == 0)
+                {
+                    Console.SetCursorPosition(Console.BufferWidth - 1, Console.CursorTop - 1);
+                    Console.Write(' ');
+                    Console.SetCursorPosition(Console.BufferWidth - 1, Console.CursorTop - 1);
+                }
+                else
+                {
+                    Console.Write("\b \b");
+                }
+            }
+
+            var done = false;
+            while (!done)
+            {
+                var c = Console.ReadKey(intercept: true);
+                switch (c.Key)
+                {
+                    case ConsoleKey.Backspace:
+                        var length = password.Length;
+                        if (length > 0)
+                        {
+                            var targetLength =
+                                c.Modifiers == 0
+                                ? length - 1
+                                : 0;
+
+                            while (length > targetLength)
+                            {
+                                password.RemoveAt(--length);
+                                if (maskChar != '\0')
+                                {
+                                    Erase();
+                                }
+                            }
+                        }
+
+                        break;
+
+                    case ConsoleKey.Enter:
+                        done = true;
+                        Console.WriteLine();
+                        break;
+
+                    default:
+                        if (!char.IsControl(c.KeyChar) &&
+                            (c.Modifiers == 0 || c.Modifiers == ConsoleModifiers.Shift))
+                        {
+                            if (password.Length >= (1 << 16))
+                            {
+                                Console.Write('\x07');
+                            }
+                            else
+                            {
+                                password.AppendChar(c.KeyChar);
+                                if (maskChar != '\0')
+                                {
+                                    Console.Write(maskChar);
+                                }
+                            }
+                        }
+
+                        break;
+                }
+            }
+
+            var unmanagedString = IntPtr.Zero;
+            try
+            {
+                unmanagedString = Marshal.SecureStringToGlobalAllocUnicode(password);
+                return Marshal.PtrToStringUni(unmanagedString);
+            }
+            finally
+            {
+                Marshal.ZeroFreeGlobalAllocUnicode(unmanagedString);
             }
         }
 

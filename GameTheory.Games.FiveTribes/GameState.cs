@@ -146,7 +146,12 @@ namespace GameTheory.Games.FiveTribes
         /// </summary>
         /// <param name="players">The number of players.</param>
         /// <param name="includeDhenim">Include the promo card, Dhenim, with the Djins?</param>
-        public GameState([Range(MinPlayers, MaxPlayers)] int players = MinPlayers, bool includeDhenim = false)
+        public GameState(
+            [Range(MinPlayers, MaxPlayers)]
+            [Display(ResourceType = typeof(SharedResources), Name = nameof(SharedResources.Players), Description = nameof(SharedResources.PlayersDescription))]
+            int players = MinPlayers,
+            [Display(ResourceType = typeof(Resources), Name = nameof(FiveTribes.Resources.IncludeDhenim), Description = nameof(FiveTribes.Resources.IncludeDhenimDescription))]
+            bool includeDhenim = false)
             : this(null)
         {
             if (players < MinPlayers || players > MaxPlayers)
@@ -636,7 +641,7 @@ namespace GameTheory.Games.FiveTribes
         }
 
         /// <inheritdoc />
-        public IReadOnlyCollection<PlayerToken> GetWinners()
+        public IReadOnlyList<PlayerToken> GetWinners()
         {
             if (this.Phase != Phase.End)
             {

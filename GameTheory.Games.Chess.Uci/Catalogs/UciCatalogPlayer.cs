@@ -3,18 +3,45 @@
 namespace GameTheory.Games.Chess.Uci.Catalogs
 {
     using System;
+    using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.ComponentModel.DataAnnotations;
     using System.IO;
     using System.Linq;
     using System.Reflection;
+    using System.Reflection.Emit;
+    using System.Threading;
     using GameTheory.Catalogs;
     using GameTheory.Games.Chess.Uci.Protocol;
     using Newtonsoft.Json;
 
     internal class UciCatalogPlayer : ICatalogPlayer, IDisposable
     {
+        private static readonly Dictionary<string, Tuple<string, string>> KnownOptions = new Dictionary<string, Tuple<string, string>>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["Hash"] = Tuple.Create(Resources.Hash, Resources.HashDescription),
+            ["NalimovPath"] = Tuple.Create(Resources.NalimovPath, Resources.NalimovPathDescription),
+            ["NalimovCache"] = Tuple.Create(Resources.NalimovCache, Resources.NalimovCacheDescription),
+            ["Ponder"] = Tuple.Create(Resources.Ponder, Resources.PonderDescription),
+            ["OwnBook"] = Tuple.Create(Resources.OwnBook, Resources.OwnBookDescription),
+            ["MultiPV"] = Tuple.Create(Resources.MultiPV, Resources.MultiPVDescription),
+            ["SyzygyPath"] = Tuple.Create(Resources.SyzygyPath, Resources.SyzygyPathDescription),
+            ["SyzygyProbeDepth"] = Tuple.Create(Resources.SyzygyProbeDepth, Resources.SyzygyProbeDepthDescription),
+            ["Syzygy Probe Depth"] = Tuple.Create(Resources.SyzygyProbeDepth, Resources.SyzygyProbeDepthDescription),
+            ["SyzygyProbeLimit"] = Tuple.Create(Resources.SyzygyProbeLimit, Resources.SyzygyProbeLimitDescription),
+            ["Syzygy Probe Limit"] = Tuple.Create(Resources.SyzygyProbeLimit, Resources.SyzygyProbeLimitDescription),
+            ["Syzygy50MoveRule"] = Tuple.Create(Resources.Syzygy50MoveRule, Resources.Syzygy50MoveRuleDescription),
+            ["Syzygy 50 Move Rule"] = Tuple.Create(Resources.Syzygy50MoveRule, Resources.Syzygy50MoveRuleDescription),
+            ["UCI_Chess960"] = Tuple.Create(Resources.UCI_Chess960, Resources.UCI_Chess960Description),
+            ["UCI_ShowCurrLine"] = Tuple.Create(Resources.UCI_ShowCurrLine, Resources.UCI_ShowCurrLineDescription),
+            ["UCI_ShowRefutations"] = Tuple.Create(Resources.UCI_ShowRefutations, Resources.UCI_ShowRefutationsDescription),
+            ["UCI_LimitStrength"] = Tuple.Create(Resources.UCI_LimitStrength, Resources.UCI_LimitStrengthDescription),
+            ["UCI_Elo"] = Tuple.Create(Resources.UCI_Elo, Resources.UCI_EloDescription),
+            ["UCI_AnalyseMode"] = Tuple.Create(Resources.UCI_AnalyseMode, Resources.UCI_AnalyseModeDescription),
+            ["UCI_Opponent"] = Tuple.Create(Resources.UCI_Opponent, Resources.UCI_OpponentDescription),
+        };
+
         private readonly string executablePath;
         private Lazy<UciEngine> engine;
         private IReadOnlyList<Initializer> initializers;
@@ -60,11 +87,10 @@ namespace GameTheory.Games.Chess.Uci.Catalogs
 
         private static Initializer CreateInitializer(string path, IEnumerable<OptionCommand> options)
         {
-            var member = typeof(UciPlayer);
-            var position = 0;
-            var parameters = new List<ParameterInfo>
+            var position = 1;
+            var parameters = new List<Parameter>
             {
-                new DynamicParameterInfo("playerToken", typeof(PlayerToken), position++, false, null, member, null),
+                new Parameter("playerToken", typeof(PlayerToken), default, null),
             };
 
             Action<object[], List<SetOptionCommand>> apply = (args, list) => { };
@@ -80,14 +106,33 @@ namespace GameTheory.Games.Chess.Uci.Catalogs
 
             foreach (var option in options)
             {
+                var displayName = option.Name;
+                string description = null;
                 bool hasDefault;
-                CustomAttributeData[] attributes = null;
+                List<ValidationAttribute> attributes = null;
+                void AddAttribute(ValidationAttribute attribute)
+                {
+                    (attributes ?? (attributes = new List<ValidationAttribute>())).Add(attribute);
+                }
+
+                if (option.Name.StartsWith("Nalimov", StringComparison.OrdinalIgnoreCase) ||
+                    option.Name.StartsWith("Syzygy", StringComparison.OrdinalIgnoreCase) ||
+                    option.Name.StartsWith("UCI_", StringComparison.OrdinalIgnoreCase))
+                {
+                    continue;
+                }
+
+                if (KnownOptions.TryGetValue(option.Name, out var displayValues))
+                {
+                    displayName = displayValues.Item1;
+                    description = displayValues.Item2;
+                }
 
                 if (option.Type == "check")
                 {
                     var pos = position++;
                     hasDefault = bool.TryParse(option.Default, out var defaultValue);
-                    parameters.Add(new DynamicParameterInfo(option.Name, typeof(bool), pos, hasDefault, defaultValue, member, attributes));
+                    parameters.Add(new Parameter(option.Name, typeof(bool), displayName, hasDefault ? defaultValue : default, description, null, false, attributes));
 
                     Apply((args, list) =>
                     {
@@ -102,18 +147,25 @@ namespace GameTheory.Games.Chess.Uci.Catalogs
                 {
                     var pos = position++;
                     hasDefault = int.TryParse(option.Default, out var defaultValue);
-                    if (int.TryParse(option.Min, out var minInt) && int.TryParse(option.Max, out var maxInt))
+                    var hasRange = false;
+                    if (int.TryParse(option.Min, out var minInt) & int.TryParse(option.Max, out var maxInt))
                     {
-                        attributes = new[] { new DynamicAttributeData(typeof(RangeAttribute).GetConstructor(new[] { typeof(int), typeof(int) }), new object[] { minInt, maxInt }) };
+                        hasRange = true;
+                        AddAttribute(new RangeAttribute(minInt, maxInt));
                     }
 
-                    parameters.Add(new DynamicParameterInfo(option.Name, typeof(int), pos, hasDefault, defaultValue, member, attributes));
+                    parameters.Add(new Parameter(option.Name, typeof(int), displayName, hasDefault ? defaultValue : default, description, null, false, attributes));
 
                     Apply((args, list) =>
                     {
                         var value = (int)args[pos];
                         if (!hasDefault || value != defaultValue)
                         {
+                            if (hasRange && (value < minInt || value > maxInt))
+                            {
+                                throw new ArgumentOutOfRangeException(option.Name);
+                            }
+
                             list.Add(new SetOptionCommand(option.Name, value.ToString()));
                         }
                     });
@@ -122,22 +174,54 @@ namespace GameTheory.Games.Chess.Uci.Catalogs
                 {
                     var pos = position++;
                     hasDefault = option.Default is string;
-                    parameters.Add(new DynamicParameterInfo(option.Name, typeof(string), pos, hasDefault, option.Default, member, attributes));
-
-                    Apply((args, list) =>
+                    var hasEnum = false;
+                    Type @enum = null;
+                    if (option.Vars.Count > 0)
                     {
-                        var value = (string)args[pos];
-                        if (!hasDefault || value != option.Default)
+                        hasEnum = true;
+                        @enum = EnumCache.GetEnum(option.Vars);
+                        AddAttribute(new EnumDataTypeAttribute(@enum));
+
+                        parameters.Add(new Parameter(option.Name, @enum, displayName, hasDefault ? Enum.ToObject(@enum, hasDefault ? option.Vars.IndexOf(option.Default) : 0) : default, description, null, false, attributes));
+
+                        Apply((args, list) =>
                         {
-                            list.Add(new SetOptionCommand(option.Name, value));
-                        }
-                    });
+                            var value = args[pos].ToString();
+                            if (!hasDefault || value != option.Default)
+                            {
+                                if (hasEnum && !option.Vars.Any(v => v == value))
+                                {
+                                    throw new ArgumentOutOfRangeException(option.Name);
+                                }
+
+                                list.Add(new SetOptionCommand(option.Name, value));
+                            }
+                        });
+                    }
+                    else
+                    {
+                        parameters.Add(new Parameter(option.Name, typeof(string), displayName, hasDefault ? option.Default : default, description, null, false, attributes));
+
+                        Apply((args, list) =>
+                        {
+                            var value = (string)args[pos];
+                            if (!hasDefault || value != option.Default)
+                            {
+                                if (hasEnum && !option.Vars.Any(v => v == value))
+                                {
+                                    throw new ArgumentOutOfRangeException(option.Name);
+                                }
+
+                                list.Add(new SetOptionCommand(option.Name, value));
+                            }
+                        });
+                    }
                 }
                 else if (option.Type == "string")
                 {
                     var pos = position++;
                     hasDefault = option.Default is string;
-                    parameters.Add(new DynamicParameterInfo(option.Name, typeof(string), pos, option.Default is string, option.Default, member, attributes));
+                    parameters.Add(new Parameter(option.Name, typeof(string), displayName, hasDefault ? option.Default : default, description, null, false, attributes));
 
                     Apply((args, list) =>
                     {
@@ -151,7 +235,7 @@ namespace GameTheory.Games.Chess.Uci.Catalogs
             }
 
             return new Initializer(
-                FormatUtilities.FormatList(parameters.Select(p => p.Name)),
+                FormatUtilities.FormatList(parameters.Select(p => p.DisplayName)),
                 args =>
                 {
                     var commands = new List<SetOptionCommand>();
@@ -159,6 +243,47 @@ namespace GameTheory.Games.Chess.Uci.Catalogs
                     return new UciPlayer((PlayerToken)args[0], path, null, commands);
                 },
                 parameters);
+        }
+
+        private static class EnumCache
+        {
+            private static int nextId;
+
+            static EnumCache()
+            {
+                var assemblyName = new AssemblyName("UciEnums");
+                var builder = AppDomain.CurrentDomain.DefineDynamicAssembly(assemblyName, AssemblyBuilderAccess.Run);
+                EnumCache.DynamicModule = builder.DefineDynamicModule(assemblyName.Name);
+                EnumCache.Cache = new ConcurrentDictionary<string, Type>();
+            }
+
+            public static ConcurrentDictionary<string, Type> Cache { get; }
+
+            public static ModuleBuilder DynamicModule { get; }
+
+            public static Type GetEnum(IList<string> values)
+            {
+                if (values == null)
+                {
+                    throw new ArgumentNullException(nameof(values));
+                }
+                else if (values.Count == 0)
+                {
+                    throw new ArgumentOutOfRangeException(nameof(values));
+                }
+
+                var key = string.Join("|", values.Select(v => v.Replace("\\", "\\\\").Replace("|", "\\|")));
+                return EnumCache.Cache.GetOrAdd(key, _ =>
+                {
+                    var @enum = EnumCache.DynamicModule.DefineEnum($"Enum{Interlocked.Increment(ref EnumCache.nextId)}", TypeAttributes.Public, typeof(int));
+                    for (var i = 0; i < values.Count; i++)
+                    {
+                        @enum.DefineLiteral(values[i], i);
+                    }
+
+                    return @enum.CreateType();
+                });
+            }
         }
     }
 }

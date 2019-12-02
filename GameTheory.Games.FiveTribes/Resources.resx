@@ -189,6 +189,12 @@
   <data name="Ibus" xml:space="preserve">
     <value>Ibus</value>
   </data>
+  <data name="IncludeDhenim" xml:space="preserve">
+    <value>Include Dhenim</value>
+  </data>
+  <data name="IncludeDhenimDescription" xml:space="preserve">
+    <value>Include the Dhenim djinn?</value>
+  </data>
   <data name="Jafaar" xml:space="preserve">
     <value>Jafaar</value>
   </data>

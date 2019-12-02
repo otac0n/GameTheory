@@ -196,6 +196,24 @@ namespace GameTheory.Games.SevenDragons {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Include actions.
+        /// </summary>
+        public static string IncludeActions {
+            get {
+                return ResourceManager.GetString("IncludeActions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Include action cards in the deck?.
+        /// </summary>
+        public static string IncludeActionsDescription {
+            get {
+                return ResourceManager.GetString("IncludeActionsDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Move a card.
         /// </summary>
         public static string MoveACard {

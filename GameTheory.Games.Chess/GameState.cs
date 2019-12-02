@@ -326,7 +326,7 @@ namespace GameTheory.Games.Chess
         }
 
         /// <inheritdoc/>
-        public IReadOnlyCollection<PlayerToken> GetWinners()
+        public IReadOnlyList<PlayerToken> GetWinners()
         {
             if (this.IsCheckmate)
             {

@@ -106,11 +106,38 @@ namespace GameTheory {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to ({0}).
+        /// </summary>
+        public static string ParameterNameParenthesis {
+            get {
+                return ResourceManager.GetString("ParameterNameParenthesis", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Player {0}.
         /// </summary>
         public static string PlayerName {
             get {
                 return ResourceManager.GetString("PlayerName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Players.
+        /// </summary>
+        public static string Players {
+            get {
+                return ResourceManager.GetString("Players", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The number of players..
+        /// </summary>
+        public static string PlayersDescription {
+            get {
+                return ResourceManager.GetString("PlayersDescription", resourceCulture);
             }
         }
         

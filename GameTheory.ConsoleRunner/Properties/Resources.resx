@@ -126,6 +126,9 @@
   <data name="DefaultValue" xml:space="preserve">
     <value>[default {0}]</value>
   </data>
+  <data name="Empty" xml:space="preserve">
+    <value>(empty)</value>
+  </data>
   <data name="FinalState" xml:space="preserve">
     <value>Final state:</value>
   </data>
@@ -151,13 +154,16 @@
     <value>{0}: </value>
   </data>
   <data name="ListPrompt" xml:space="preserve">
-    <value>Please make a selection: [1-{0}]</value>
+    <value>Please make a selection: [1 to {0}]</value>
   </data>
   <data name="NoDefault" xml:space="preserve">
     <value>No default available.</value>
   </data>
   <data name="None" xml:space="preserve">
     <value>(none)</value>
+  </data>
+  <data name="Null" xml:space="preserve">
+    <value>(null)</value>
   </data>
   <data name="ParameterName" xml:space="preserve">
     <value>{0}:</value>
@@ -172,10 +178,10 @@
     <value>{0} players</value>
   </data>
   <data name="Range" xml:space="preserve">
-    <value>[{0}-{1}]</value>
+    <value>[{0} to {1}]</value>
   </data>
   <data name="RangeWithDefault" xml:space="preserve">
-    <value>[{0}-{1}, default {2}]</value>
+    <value>[{0} to {1}, default {2}]</value>
   </data>
   <data name="SingleConstructor" xml:space="preserve">
     <value>Using only available constructor.</value>

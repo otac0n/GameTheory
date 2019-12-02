@@ -89,7 +89,7 @@ namespace GameTheory.Testing
             yield return this;
         }
 
-        public IReadOnlyCollection<PlayerToken> GetWinners()
+        public IReadOnlyList<PlayerToken> GetWinners()
         {
             return this.winnersReadOnly.Distinct().ToList().AsReadOnly();
         }

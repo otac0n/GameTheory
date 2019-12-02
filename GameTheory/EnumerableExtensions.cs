@@ -17,6 +17,16 @@ namespace GameTheory
         /// </summary>
         /// <typeparam name="T">The type of items in the collection.</typeparam>
         /// <param name="source">The list of elements to compare.</param>
+        /// <param name="comparison">The comparison to use.</param>
+        /// <returns>The collection of elements that match the maximum.</returns>
+        public static List<T> AllMax<T>(this IEnumerable<T> source, Comparison<T> comparison) =>
+            AllMax(source, Comparer<T>.Create(comparison));
+
+        /// <summary>
+        /// Gets the collection of elements that match the maximum according to the specified comparer.
+        /// </summary>
+        /// <typeparam name="T">The type of items in the collection.</typeparam>
+        /// <param name="source">The list of elements to compare.</param>
         /// <param name="comparer">The comparer to use.</param>
         /// <returns>The collection of elements that match the maximum.</returns>
         public static List<T> AllMax<T>(this IEnumerable<T> source, IComparer<T> comparer)
@@ -107,6 +117,16 @@ namespace GameTheory
 
             return list;
         }
+
+        /// <summary>
+        /// Gets the collection of elements that match the minimum according to the specified comparer.
+        /// </summary>
+        /// <typeparam name="T">The type of items in the collection.</typeparam>
+        /// <param name="source">The list of elements to compare.</param>
+        /// <param name="comparison">The comparison to use.</param>
+        /// <returns>The collection of elements that match the minimum.</returns>
+        public static List<T> AllMin<T>(this IEnumerable<T> source, Comparison<T> comparison) =>
+            AllMin(source, Comparer<T>.Create(comparison));
 
         /// <summary>
         /// Gets the collection of elements that match the minimum according to the specified comparer.
