@@ -180,16 +180,17 @@ namespace GameTheory.Tests.Gdl
             var stateType = result.Type;
             var moveType = stateType.GetInterfaces().Single(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IGameState<>)).GetGenericArguments().Single();
             var startingState = Activator.CreateInstance(stateType);
-            var manager = (IGameManager)Activator.CreateInstance(typeof(GameManager<>).MakeGenericType(moveType), startingState);
+            var manager = (IGameManager)Activator.CreateInstance(typeof(GameManager<,>).MakeGenericType(stateType, moveType), startingState);
             var endState = manager.Run();
         }
 
-        private class GameManager<TMove> : IGameManager
+        private class GameManager<TGameState, TMove> : IGameManager
+            where TGameState : IGameState<TMove>
             where TMove : IMove
         {
-            private IGameState<TMove> state;
+            private TGameState state;
 
-            public GameManager(IGameState<TMove> state)
+            public GameManager(TGameState state)
             {
                 this.state = state;
             }
@@ -198,8 +199,8 @@ namespace GameTheory.Tests.Gdl
             {
                 return GameUtilities.PlayGame(
                     this.state,
-                    p => new RandomPlayer<TMove>(p),
-                    (prevState, move, state) => Console.WriteLine("{0}: {1}", state.GetPlayerName(move.PlayerToken), move)).Result;
+                    p => new RandomPlayer<TGameState, TMove>(p),
+                    (prevState, move, state) => Console.WriteLine("{0}: {1}", state.GetPlayerName<TGameState, TMove>(move.PlayerToken), move)).Result;
             }
         }
     }
