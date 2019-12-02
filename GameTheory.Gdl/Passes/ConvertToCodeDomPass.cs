@@ -364,6 +364,7 @@ namespace GameTheory.Gdl.Passes
                     .AddMembers(this.CreateGameStateConstructorDeclarations(init, stateType, role, moveType, noop))
                     .AddMembers(
                         this.CreateMakeMoveDeclaration(next, stateType, role, noop),
+                        this.CreateGetScoreDeclaration(goal, role),
                         this.CreateGetWinnersDeclaration(goal, role, terminal),
                         this.CreateGetAvailableMovesDeclaration(legal, role, terminal))
                     .AddMembers(this.CreateSharedGameStateDeclarations())
@@ -1449,6 +1450,93 @@ namespace GameTheory.Gdl.Passes
                                 statements),
                             SyntaxFactory.ReturnStatement(
                             SyntaxHelper.IdentifierName("moves"))));
+            }
+
+            private MethodDeclarationSyntax CreateGetScoreDeclaration(RelationInfo goal, RelationInfo role)
+            {
+                var scope = new Scope<object>()
+                    .AddPrivate("player", "player")
+                    .AddPrivate("role", "role")
+                    .AddPrivate("g", "g");
+
+                return SyntaxFactory.MethodDeclaration(
+                    SyntaxHelper.IntType,
+                    SyntaxHelper.Identifier("GetScore"))
+                    .AddModifiers(SyntaxFactory.Token(SyntaxKind.PublicKeyword))
+                    .AddParameterListParameters(
+                        SyntaxFactory.Parameter(
+                            SyntaxHelper.Identifier(scope.GetPrivate("player")))
+                            .WithType(
+                                SyntaxHelper.IdentifierName("PlayerToken")))
+                    .WithBody(
+                        SyntaxFactory.Block(
+                            SyntaxFactory.LocalDeclarationStatement(
+                                SyntaxFactory.VariableDeclaration(
+                                    SyntaxHelper.IdentifierName("var"))
+                                    .AddVariables(
+                                        SyntaxFactory.VariableDeclarator(
+                                            SyntaxHelper.Identifier(scope.GetPrivate("role")))
+                                            .WithInitializer(
+                                                SyntaxFactory.EqualsValueClause(
+                                                    SyntaxFactory.CastExpression(
+                                                        this.Reference(role.Arguments[0].ReturnType),
+                                                        SyntaxFactory.InvocationExpression(
+                                                            SyntaxFactory.MemberAccessExpression(
+                                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                                SyntaxFactory.MemberAccessExpression(
+                                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                                    SyntaxFactory.ThisExpression(),
+                                                                    SyntaxFactory.IdentifierName("Players")),
+                                                                SyntaxFactory.IdentifierName("IndexOf")))
+                                                            .WithArgumentList(
+                                                                SyntaxFactory.ArgumentList(
+                                                                    SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                                        SyntaxFactory.Argument(
+                                                                            SyntaxHelper.IdentifierName(scope.GetPrivate("player"))))))))))),
+                            SyntaxFactory.ForStatement(
+                                SyntaxFactory.Block(
+                                    SyntaxFactory.SingletonList<StatementSyntax>(
+                                        SyntaxFactory.IfStatement(
+                                            SyntaxFactory.InvocationExpression(
+                                                SyntaxFactory.MemberAccessExpression(
+                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                    SyntaxFactory.ThisExpression(),
+                                                    SyntaxHelper.IdentifierName(this.result.GameStateScope.GetPublic(goal))))
+                                                .AddArgumentListArguments(
+                                                    SyntaxFactory.Argument(
+                                                        SyntaxHelper.IdentifierName(scope.GetPrivate("role"))),
+                                                    SyntaxFactory.Argument(
+                                                        SyntaxHelper.IdentifierName(scope.GetPrivate("g")))),
+                                            SyntaxFactory.Block(
+                                                SyntaxFactory.SingletonList<StatementSyntax>(
+                                                    SyntaxFactory.ReturnStatement(
+                                                        SyntaxHelper.IdentifierName(scope.GetPrivate("g")))))))))
+                                .WithDeclaration(
+                                    SyntaxFactory.VariableDeclaration(
+                                        SyntaxFactory.IdentifierName("var"))
+                                    .WithVariables(
+                                        SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
+                                            SyntaxFactory.VariableDeclarator(
+                                                SyntaxHelper.Identifier(scope.GetPrivate("g")))
+                                            .WithInitializer(
+                                                SyntaxFactory.EqualsValueClause(
+                                                    SyntaxFactory.LiteralExpression(
+                                                        SyntaxKind.NumericLiteralExpression,
+                                                        SyntaxFactory.Literal(100)))))))
+                                .WithCondition(
+                                    SyntaxFactory.BinaryExpression(
+                                        SyntaxKind.GreaterThanOrEqualExpression,
+                                        SyntaxHelper.IdentifierName(scope.GetPrivate("g")),
+                                        SyntaxFactory.LiteralExpression(
+                                            SyntaxKind.NumericLiteralExpression,
+                                            SyntaxFactory.Literal(1))))
+                                .WithIncrementors(
+                                    SyntaxFactory.SingletonSeparatedList<ExpressionSyntax>(
+                                        SyntaxFactory.PostfixUnaryExpression(
+                                            SyntaxKind.PostDecrementExpression,
+                                            SyntaxHelper.IdentifierName(scope.GetPrivate("g"))))),
+                            SyntaxFactory.ReturnStatement(
+                                SyntaxHelper.LiteralExpression(0))));
             }
 
             private MethodDeclarationSyntax CreateGetWinnersDeclaration(RelationInfo goal, RelationInfo role, LogicalInfo terminal)

@@ -68,6 +68,7 @@ namespace GameTheory.Gdl.Passes
                 .Reserve("GetAvailableMoves")
                 .Reserve("GetOutcomes")
                 .Reserve("GetView")
+                .Reserve("GetScore")
                 .Reserve("GetWinners")
                 .Reserve("Players")
                 .Reserve("MakeMove")

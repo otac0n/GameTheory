@@ -80,6 +80,7 @@ namespace GameTheory.Tests.Gdl
                 "GetOutcomes",
                 "GetValues",
                 "GetView",
+                "GetScore",
                 "GetWinners",
                 "IXml",
                 "List",
