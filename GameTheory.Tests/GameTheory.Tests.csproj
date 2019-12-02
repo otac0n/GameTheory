@@ -74,6 +74,32 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\GameTheory\GameTheory.csproj">
+      <Project>{3b3e3456-b950-44c1-b8a2-fe6c79c2232f}</Project>
+      <Name>GameTheory</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\GameTheory.Games.Nessos\GameTheory.Games.Nessos.csproj">
+      <Project>{c498fabf-25e4-4690-a541-d2fce1d0c323}</Project>
+      <Name>GameTheory.Games.Nessos</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\GameTheory.Games.TicTacToe\GameTheory.Games.TicTacToe.csproj">
+      <Project>{f5b38959-a87d-432b-ae38-c2bcce50b836}</Project>
+      <Name>GameTheory.Games.TicTacToe</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\GameTheory.Gdl\GameTheory.Gdl.csproj">
+      <Project>{e9225da4-7ebc-4915-93a5-d14df8aad0a3}</Project>
+      <Name>GameTheory.Gdl</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\GameTheory.Gdl.Shared\GameTheory.Gdl.Shared.csproj">
+      <Project>{9759b3d1-3b3d-4cfd-8580-b4bb99ab3300}</Project>
+      <Name>GameTheory.Gdl.Shared</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\GameTheory.Testing\GameTheory.Testing.csproj">
+      <Project>{8f3e7e82-c364-40a0-be1e-d165bf30e304}</Project>
+      <Name>GameTheory.Testing</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
     <EmbeddedResource Include="Gdl\Games\best_buttons_and_lights_extended.kif" />
     <EmbeddedResource Include="Gdl\Games\cooperation.gdl" />
     <EmbeddedResource Include="Gdl\Games\knights_tour_5v5.kif" />
@@ -105,32 +131,6 @@
   <ItemGroup>
     <Analyzer Include="..\packages\StyleCop.Analyzers.1.1.118\analyzers\dotnet\cs\StyleCop.Analyzers.CodeFixes.dll" />
     <Analyzer Include="..\packages\StyleCop.Analyzers.1.1.118\analyzers\dotnet\cs\StyleCop.Analyzers.dll" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\GameTheory.Games.Nessos\GameTheory.Games.Nessos.csproj">
-      <Project>{c498fabf-25e4-4690-a541-d2fce1d0c323}</Project>
-      <Name>GameTheory.Games.Nessos</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\GameTheory\GameTheory.csproj">
-      <Project>{3b3e3456-b950-44c1-b8a2-fe6c79c2232f}</Project>
-      <Name>GameTheory</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\GameTheory.Games.TicTacToe\GameTheory.Games.TicTacToe.csproj">
-      <Project>{f5b38959-a87d-432b-ae38-c2bcce50b836}</Project>
-      <Name>GameTheory.Games.TicTacToe</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\GameTheory.Gdl\GameTheory.Gdl.csproj">
-      <Project>{e9225da4-7ebc-4915-93a5-d14df8aad0a3}</Project>
-      <Name>GameTheory.Gdl</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\GameTheory.Gdl.Shared\GameTheory.Gdl.Shared.csproj">
-      <Project>{9759b3d1-3b3d-4cfd-8580-b4bb99ab3300}</Project>
-      <Name>GameTheory.Gdl.Shared</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\GameTheory.Testing\GameTheory.Testing.csproj">
-      <Project>{8f3e7e82-c364-40a0-be1e-d165bf30e304}</Project>
-      <Name>GameTheory.Testing</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />

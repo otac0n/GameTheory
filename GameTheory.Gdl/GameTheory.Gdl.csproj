@@ -17,25 +17,23 @@
     <PackageReference Include="System.CodeDom" Version="4.5.0" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\GameTheory.Gdl.Shared\GameTheory.Gdl.Shared.csproj" />
     <ProjectReference Include="..\GameTheory\GameTheory.csproj" />
+    <ProjectReference Include="..\GameTheory.Gdl.Shared\GameTheory.Gdl.Shared.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Games\**\*.*">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <AdditionalFiles Include="GameTheory.Gdl.ruleset" />
     <Compile Update="Resources.Designer.cs">
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
     </Compile>
-    <AdditionalFiles Include="..\stylecop.json" Link="stylecop.json" />
-    <AdditionalFiles Include="GameTheory.Gdl.ruleset" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Update="Resources.resx">
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <Generator>ResXFileCodeGenerator</Generator>
     </EmbeddedResource>
+    <AdditionalFiles Include="..\stylecop.json" Link="stylecop.json" />
   </ItemGroup>
 </Project>

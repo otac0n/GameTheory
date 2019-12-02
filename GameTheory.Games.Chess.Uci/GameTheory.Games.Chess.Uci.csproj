@@ -6,32 +6,11 @@
     <DebugType>Full</DebugType>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <TargetFrameworks>net462</TargetFrameworks>
-    <Description />
     <PackageLicenseUrl>https://raw.github.com/otac0n/GameTheory/master/license.md</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/otac0n/GameTheory</PackageProjectUrl>
-    <PackageTags />
   </PropertyGroup>
   <ItemGroup>
-    <None Remove="UciEngines\**\*.*" />
-    <Content Include="UciEngines\**\*.*">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <None Remove="Protocol\UciProtocol.peg" />
-    <Compile Update="Resources.Designer.cs">
-      <DependentUpon>Resources.resx</DependentUpon>
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-    </Compile>
-    <EmbeddedResource Update="Resources.resx">
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-      <Generator>PublicResXFileCodeGenerator</Generator>
-    </EmbeddedResource>
-    <AdditionalFiles Include="..\stylecop.json" Link="stylecop.json" />
-    <AdditionalFiles Include="GameTheory.Games.Chess.Uci.ruleset" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\GameTheory.Games.Chess\GameTheory.Games.Chess.csproj" />
-    <ProjectReference Include="..\GameTheory\GameTheory.csproj" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="FixMe" Version="1.0.0" PrivateAssets="All" />
@@ -43,9 +22,26 @@
     <PackageReference Include="System.Collections.Immutable" Version="1.5.0" />
   </ItemGroup>
   <ItemGroup>
-    <PegGrammar Include="Protocol\UciProtocol.peg" />
+    <ProjectReference Include="..\GameTheory\GameTheory.csproj" />
+    <ProjectReference Include="..\GameTheory.Games.Chess\GameTheory.Games.Chess.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <None Remove="Protocol\UciProtocol.peg" />
+    <PegGrammar Include="Protocol\UciProtocol.peg" />
+    <None Remove="UciEngines\**\*.*" />
+    <Content Include="UciEngines\**\*.*">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <AdditionalFiles Include="GameTheory.Games.Chess.Uci.ruleset" />
+    <Compile Update="Resources.Designer.cs">
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <EmbeddedResource Update="Resources.resx">
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <Generator>PublicResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
+    <AdditionalFiles Include="..\stylecop.json" Link="stylecop.json" />
   </ItemGroup>
 </Project>

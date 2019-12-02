@@ -6,12 +6,21 @@
     <DebugType>Full</DebugType>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <TargetFrameworks>net462</TargetFrameworks>
-    <Description />
     <PackageLicenseUrl>https://raw.github.com/otac0n/GameTheory/master/license.md</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/otac0n/GameTheory</PackageProjectUrl>
-    <PackageTags />
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="HtmlAgilityPack" Version="1.11.16" />
+    <PackageReference Include="HtmlRenderer.WinForms" Version="1.5.1-beta1" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\GameTheory\GameTheory.csproj" />
+    <ProjectReference Include="..\GameTheory.FormsRunner.Shared\GameTheory.FormsRunner.Shared.csproj" />
+    <ProjectReference Include="..\GameTheory.Gdl\GameTheory.Gdl.csproj" />
+    <ProjectReference Include="..\GameTheory.Gdl.Shared\GameTheory.Gdl.Shared.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <AdditionalFiles Include="GameTheory.Gdl.Forms.ruleset" />
     <Compile Update="Resources.Designer.cs">
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
@@ -22,16 +31,5 @@
       <Generator>PublicResXFileCodeGenerator</Generator>
     </EmbeddedResource>
     <AdditionalFiles Include="..\stylecop.json" Link="stylecop.json" />
-    <AdditionalFiles Include="GameTheory.Gdl.Forms.ruleset" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="HtmlAgilityPack" Version="1.11.16" />
-    <PackageReference Include="HtmlRenderer.WinForms" Version="1.5.1-beta1" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\GameTheory.FormsRunner.Shared\GameTheory.FormsRunner.Shared.csproj" />
-    <ProjectReference Include="..\GameTheory.Gdl.Shared\GameTheory.Gdl.Shared.csproj" />
-    <ProjectReference Include="..\GameTheory.Gdl\GameTheory.Gdl.csproj" />
-    <ProjectReference Include="..\GameTheory\GameTheory.csproj" />
   </ItemGroup>
 </Project>
