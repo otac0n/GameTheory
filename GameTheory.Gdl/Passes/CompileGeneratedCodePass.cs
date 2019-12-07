@@ -55,6 +55,7 @@ namespace GameTheory.Gdl.Passes
 
                 var assembly = results.CompiledAssembly;
                 result.Type = assembly.GetType($"{result.Name}.GameState");
+                result.Player = assembly.GetType($"{result.Name}.{result.NamespaceScope.GetPublic(result.Name + "MaximizingPlayer")}");
             }
             catch (Exception ex)
             {

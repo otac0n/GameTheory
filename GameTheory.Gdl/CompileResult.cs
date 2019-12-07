@@ -7,7 +7,6 @@ namespace GameTheory.Gdl
     using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Globalization;
-    using System.Linq;
     using KnowledgeInterchangeFormat.Expressions;
     using Microsoft.CodeAnalysis.CSharp;
     using Pegasus.Common;
@@ -73,7 +72,12 @@ namespace GameTheory.Gdl
         public string Name { get; set; }
 
         /// <summary>
-        /// Gets or sets the type resulting from compilation.
+        /// Gets or sets the player type resulting from compilation.
+        /// </summary>
+        public Type Player { get; set; }
+
+        /// <summary>
+        /// Gets or sets the game state type resulting from compilation.
         /// </summary>
         public Type Type { get; set; }
 
@@ -95,7 +99,7 @@ namespace GameTheory.Gdl
 
 #if DEBUG
                 default:
-                    throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, "Unknown error type '{0}'.", parts[1]), "error");
+                    throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, "Unknown error type '{0}'.", parts[1]), nameof(error));
 #endif
             }
 

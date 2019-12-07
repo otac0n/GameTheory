@@ -9,15 +9,13 @@ namespace GameTheory.Gdl.Catalogs
     using GameTheory.Catalogs;
     using Newtonsoft.Json;
 
-    public class GdlGame : ICatalogGame
+    public class GdlGame : ICatalogGame, ICatalogPlayer
     {
         private readonly Lazy<Type> gameStateType;
-
         private readonly string gdlPath;
-
         private readonly Lazy<IReadOnlyList<Initializer>> initializers;
-
         private readonly Lazy<Type> moveType;
+        private readonly Lazy<Type> playerType;
 
         public GdlGame(string metadataPath)
         {
@@ -26,7 +24,7 @@ namespace GameTheory.Gdl.Catalogs
             this.gdlPath = Path.Combine(Path.GetDirectoryName(this.MetadataPath), this.Metadata.RuleSheet);
 
             this.Name = this.Metadata.GameName;
-            this.gameStateType = new Lazy<Type>(
+            var compileResult = new Lazy<CompileResult>(
                 () =>
                 {
                     var gdl = File.ReadAllText(this.gdlPath);
@@ -37,8 +35,14 @@ namespace GameTheory.Gdl.Catalogs
                         throw new InvalidOperationException(string.Join(Environment.NewLine, result.Errors));
                     }
 
-                    return result.Type;
+                    return result;
                 },
+                isThreadSafe: true);
+            this.gameStateType = new Lazy<Type>(
+                () => compileResult.Value.Type,
+                isThreadSafe: true);
+            this.playerType = new Lazy<Type>(
+                () => compileResult.Value.Player,
                 isThreadSafe: true);
             this.moveType = new Lazy<Type>(
                 () => ReflectionUtilities.GetMoveType(this.GameStateType),
@@ -68,6 +72,11 @@ namespace GameTheory.Gdl.Catalogs
 
         /// <inheritdoc />
         public string Name { get; }
+
+        /// <inheritdoc />
+        public Type PlayerType => this.playerType.Value;
+
+        public bool IsGameStateType(Type gameStateType) => this.gameStateType.IsValueCreated ? this.gameStateType.Value == gameStateType : false;
 
         /// <inheritdoc />
         public override string ToString() => this.Name;
