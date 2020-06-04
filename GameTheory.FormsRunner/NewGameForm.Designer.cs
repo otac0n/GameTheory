@@ -83,6 +83,7 @@ namespace GameTheory.FormsRunner
             this.searchResults.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.searchResults.HideSelection = false;
             this.searchResults.Location = new System.Drawing.Point(6, 32);
             this.searchResults.MultiSelect = false;
             this.searchResults.Name = "searchResults";
@@ -178,6 +179,7 @@ namespace GameTheory.FormsRunner
             // 
             // backButton
             // 
+            this.backButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.backButton.Enabled = false;
             this.backButton.Location = new System.Drawing.Point(122, 378);
             this.backButton.Name = "backButton";
@@ -193,6 +195,7 @@ namespace GameTheory.FormsRunner
             // 
             // finishButton
             // 
+            this.finishButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.finishButton.Enabled = false;
             this.finishButton.Location = new System.Drawing.Point(284, 378);
             this.finishButton.Name = "finishButton";

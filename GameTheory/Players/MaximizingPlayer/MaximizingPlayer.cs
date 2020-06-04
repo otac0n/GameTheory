@@ -194,7 +194,7 @@ namespace GameTheory.Players.MaximizingPlayer
 
             if (otherPlayer != null)
             {
-                // TODO: Allow move sorting by specific player classes.
+                // TODO: Allow move sorting by inheriting classes.
                 ////Array.Sort(allMoves, (m1, m2) => this.scoringMetric.Compare(node[m1].Score, node[m2].Score));
             }
 
