@@ -43,13 +43,13 @@ namespace GameTheory.FormsRunner.Shared
         public static void DrawImageTransparent(this Graphics graphics, Image image, RectangleF rectangle, float alpha)
         {
             var attr = new ImageAttributes();
-            attr.SetColorMatrix(new ColorMatrix(new float[][]
+            attr.SetColorMatrix(new ColorMatrix(new[]
             {
-                    new float[] { 1, 0, 0, 0, 0 },
-                    new float[] { 0, 1, 0, 0, 0 },
-                    new float[] { 0, 0, 1, 0, 0 },
-                    new float[] { 0, 0, 0, alpha, 0 },
-                    new float[] { 0, 0, 0, 0, 1 },
+                new float[] { 1, 0, 0, 0, 0 },
+                new float[] { 0, 1, 0, 0, 0 },
+                new float[] { 0, 0, 1, 0, 0 },
+                new float[] { 0, 0, 0, alpha, 0 },
+                new float[] { 0, 0, 0, 0, 1 },
             }));
             graphics.DrawImage(image, new[] { rectangle.Location, new PointF(rectangle.Right, rectangle.Top), new PointF(rectangle.Left, rectangle.Bottom) }, new RectangleF(Point.Empty, image.Size), GraphicsUnit.Pixel, attr);
         }

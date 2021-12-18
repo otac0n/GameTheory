@@ -1,4 +1,4 @@
-﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory
 {
@@ -12,23 +12,20 @@ namespace GameTheory
     /// <typeparam name="T">The type of the possible value.</typeparam>
     public struct Maybe<T> : IEquatable<Maybe<T>>
     {
-        private bool hasValue;
-        private T value;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="Maybe{T}"/> struct with the specified value.
         /// </summary>
         /// <param name="value">The value.</param>
         public Maybe(T value)
         {
-            this.hasValue = true;
-            this.value = value;
+            this.HasValue = true;
+            this.ValueOrDefault = value;
         }
 
         /// <summary>
         /// Gets a value indicating whether or not there is a value.
         /// </summary>
-        public bool HasValue => this.hasValue;
+        public bool HasValue { get; }
 
         /// <summary>
         /// Gets the possible value.
@@ -38,19 +35,19 @@ namespace GameTheory
         {
             get
             {
-                if (!this.hasValue)
+                if (!this.HasValue)
                 {
                     throw new InvalidOperationException();
                 }
 
-                return this.value;
+                return this.ValueOrDefault;
             }
         }
 
         /// <summary>
         /// Gets the possible value, or the defalut value of <typeparamref name="T"/>, if there is no value.
         /// </summary>
-        public T ValueOrDefault => this.value;
+        public T ValueOrDefault { get; }
 
         /// <summary>
         /// Implicitly constructs a <see cref="Maybe{T}"/> value given an existing value.
@@ -80,13 +77,13 @@ namespace GameTheory
 
         /// <inheritdoc />
         public bool Equals(Maybe<T> other) =>
-            other.hasValue == this.hasValue &&
-            (!other.hasValue || object.Equals(other.value, this.value));
+            other.HasValue == this.HasValue &&
+            (!other.HasValue || object.Equals(other.ValueOrDefault, this.ValueOrDefault));
 
         /// <inheritdoc />
         public override int GetHashCode()
         {
-            return this.hasValue ? this.value?.GetHashCode() ?? 0 : -1;
+            return this.HasValue ? this.ValueOrDefault?.GetHashCode() ?? 0 : -1;
         }
     }
 }
