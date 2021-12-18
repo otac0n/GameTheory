@@ -79,20 +79,20 @@ namespace GameTheory {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to , and .
+        ///   Looks up a localized string similar to  and .
         /// </summary>
-        public static string ListItemSeparatorLastElement {
+        public static string ListItemSeparatorConjunction {
             get {
-                return ResourceManager.GetString("ListItemSeparatorLastElement", resourceCulture);
+                return ResourceManager.GetString("ListItemSeparatorConjunction", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to  and .
+        ///   Looks up a localized string similar to  or .
         /// </summary>
-        public static string ListItemSeparatorPair {
+        public static string ListItemSeparatorDisjunction {
             get {
-                return ResourceManager.GetString("ListItemSeparatorPair", resourceCulture);
+                return ResourceManager.GetString("ListItemSeparatorDisjunction", resourceCulture);
             }
         }
         

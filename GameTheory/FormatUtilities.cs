@@ -105,8 +105,9 @@ namespace GameTheory
         /// </summary>
         /// <typeparam name="T">The type of elements in the list.</typeparam>
         /// <param name="items">The items in the list that will be separated.</param>
+        /// <param name="exclusive">A flag indicating whether the items in the list will be used exclusively.</param>
         /// <returns>The format tokens representing the list.</returns>
-        public static IList<object> FormatList<T>(IList<T> items)
+        public static IList<object> FormatList<T>(IList<T> items, bool exclusive = false)
         {
             if (items == null)
             {
@@ -123,11 +124,11 @@ namespace GameTheory
                     return new object[] { items[0] };
 
                 case 2:
-                    sep = SharedResources.ListItemSeparatorPair;
+                    sep = exclusive ? SharedResources.ListItemSeparatorDisjunction : SharedResources.ListItemSeparatorConjunction;
                     break;
 
                 default:
-                    sep = SharedResources.ListItemSeparatorLastElement;
+                    sep = SharedResources.ListItemSeparator + (exclusive ? SharedResources.ListItemSeparatorDisjunction : SharedResources.ListItemSeparatorConjunction);
                     break;
             }
 
@@ -153,8 +154,9 @@ namespace GameTheory
         /// </summary>
         /// <typeparam name="T">The type of elements in the list.</typeparam>
         /// <param name="items">The items in the list that will be separated.</param>
+        /// <param name="exclusive">A flag indicating whether the items in the list will be used exclusively.</param>
         /// <returns>The format tokens representing the list.</returns>
-        public static string FormatList(IList<string> items)
+        public static string FormatList(IList<string> items, bool exclusive = false)
         {
             if (items == null)
             {
@@ -171,11 +173,11 @@ namespace GameTheory
                     return items[0];
 
                 case 2:
-                    last = SharedResources.ListItemSeparatorPair;
+                    last = exclusive ? SharedResources.ListItemSeparatorDisjunction : SharedResources.ListItemSeparatorConjunction;
                     break;
 
                 default:
-                    last = SharedResources.ListItemSeparatorLastElement;
+                    last = SharedResources.ListItemSeparator + (exclusive ? SharedResources.ListItemSeparatorDisjunction : SharedResources.ListItemSeparatorConjunction);
                     break;
             }
 
