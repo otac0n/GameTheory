@@ -123,11 +123,11 @@
   <data name="ListItemSeparator" xml:space="preserve">
     <value>, </value>
   </data>
-  <data name="ListItemSeparatorLastElement" xml:space="preserve">
-    <value>, and </value>
-  </data>
-  <data name="ListItemSeparatorPair" xml:space="preserve">
+  <data name="ListItemSeparatorConjunction" xml:space="preserve">
     <value> and </value>
+  </data>
+  <data name="ListItemSeparatorDisjunction" xml:space="preserve">
+    <value> or </value>
   </data>
   <data name="Null" xml:space="preserve">
     <value>(null)</value>
