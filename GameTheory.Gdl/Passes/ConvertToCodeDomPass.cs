@@ -83,10 +83,6 @@ namespace GameTheory.Gdl.Passes
                 {
                     return SyntaxHelper.ObjectType;
                 }
-                else if (type == typeof(void))
-                {
-                    return SyntaxHelper.VoidType;
-                }
                 else if (type == typeof(int))
                 {
                     return SyntaxHelper.IntType;
@@ -249,6 +245,7 @@ namespace GameTheory.Gdl.Passes
 
                 switch (type)
                 {
+                    case NoneType noneType:
                     case EnumType enumType:
                     case FunctionType functionType:
                         var typeName = this.result.NamespaceScope.GetPublic(type);
@@ -2184,6 +2181,38 @@ namespace GameTheory.Gdl.Passes
                                                         SyntaxHelper.IdentifierName("FlattenFormatTokens")))))))
                             .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken)));
 
+            private StructDeclarationSyntax CreateNoneTypeDeclaration()
+            {
+                var structElement = SyntaxFactory.StructDeclaration(this.result.NamespaceScope.GetPublic(NoneType.Instance))
+                    .AddModifiers(SyntaxFactory.Token(SyntaxKind.PublicKeyword))
+                    .AddBaseListTypes(
+                        SyntaxFactory.SimpleBaseType(
+                            SyntaxFactory.GenericName(
+                                SyntaxHelper.Identifier("IComparable"))
+                            .AddTypeArgumentListArguments(
+                                this.Reference(NoneType.Instance))));
+
+                var compareTo = SyntaxFactory.MethodDeclaration(
+                    SyntaxHelper.IntType,
+                    SyntaxHelper.Identifier("CompareTo"))
+                    .AddModifiers(SyntaxFactory.Token(SyntaxKind.PublicKeyword))
+                    .WithParameterList(
+                        SyntaxFactory.ParameterList(
+                            SyntaxFactory.SingletonSeparatedList(
+                                SyntaxFactory.Parameter(
+                                    SyntaxHelper.Identifier("other"))
+                                    .WithType(
+                                        this.Reference(NoneType.Instance)))))
+                    .WithBody(
+                        SyntaxFactory.Block(
+                            SyntaxFactory.ReturnStatement(
+                                SyntaxHelper.LiteralExpression(0))));
+
+                structElement = structElement.AddMembers(compareTo);
+
+                return SyntaxHelper.ReorderMembers(structElement);
+            }
+
             private MemberDeclarationSyntax CreateObjectComparerDeclaration(IEnumerable<ExpressionType> allTypes)
             {
                 var types = (from r in allTypes
@@ -2531,6 +2560,10 @@ namespace GameTheory.Gdl.Passes
 
                         case StateType stateType:
                             result.Add(this.CreateStateTypeDeclaration(stateType));
+                            break;
+
+                        case NoneType noneType:
+                            result.Add(this.CreateNoneTypeDeclaration());
                             break;
 
                         default:
@@ -3169,6 +3202,7 @@ namespace GameTheory.Gdl.Passes
                                             SyntaxFactory.InvocationExpression(
                                                 value)))));
 
+                    case NoneType noneType:
                     case NumberRangeType numberRangeType:
                         return SyntaxFactory.ExpressionStatement(
                             SyntaxFactory.AwaitExpression(

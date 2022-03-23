@@ -58,6 +58,9 @@ namespace GameTheory.Gdl.Passes
                     case EnumType enumType:
                         return scope.Add(type, ScopeFlags.Public, enumType.RelationInfo.Constant.Name);
 
+                    case NoneType noneType:
+                        return scope.Add(type, ScopeFlags.Public, "None");
+
                     case StateType _:
                         return scope.Add(type, ScopeFlags.Public, "State");
 

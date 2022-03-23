@@ -2,12 +2,11 @@
 
 namespace GameTheory.Gdl.Types
 {
-    public class NoneType : BuiltInType
+    public sealed class NoneType : ExpressionType
     {
         public static readonly NoneType Instance = new NoneType();
 
         private NoneType()
-            : base(typeof(void))
         {
         }
 
