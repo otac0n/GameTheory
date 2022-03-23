@@ -78,7 +78,7 @@ namespace GameTheory.FormsRunner.Shared.Editors
                         {
                             valid = false;
 
-                            if (ex is TargetInvocationException)
+                            while (ex is TargetInvocationException)
                             {
                                 ex = ex.InnerException;
                             }

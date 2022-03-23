@@ -6,6 +6,7 @@ namespace GameTheory.FormsRunner.Shared.Displays
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
+    using System.Text.RegularExpressions;
     using System.Windows.Forms;
     using System.Xml;
     using System.Xml.Linq;
@@ -13,10 +14,10 @@ namespace GameTheory.FormsRunner.Shared.Displays
     using GameTheory.Catalogs;
     using GameTheory.Gdl.Catalogs;
     using GameTheory.Gdl.Shared;
-    using TheArtOfDev.HtmlRenderer.WinForms;
     using HtmlAgilityPack;
-    using HtmlDocument = HtmlAgilityPack.HtmlDocument;
     using Newtonsoft.Json.Linq;
+    using TheArtOfDev.HtmlRenderer.WinForms;
+    using HtmlDocument = HtmlAgilityPack.HtmlDocument;
 
     public class IXmlWithStylesheetDisplay : Display
     {
@@ -27,6 +28,7 @@ namespace GameTheory.FormsRunner.Shared.Displays
             Indent = true,
         };
 
+        private static readonly XNamespace xsl = "http://www.w3.org/1999/XSL/Transform";
         private GdlGame game;
         private XslCompiledTransform transform;
 
@@ -39,18 +41,41 @@ namespace GameTheory.FormsRunner.Shared.Displays
                 var metadataStylesheet = this.game.Metadata.StyleSheet;
                 if (!string.IsNullOrEmpty(metadataStylesheet) && Path.GetExtension(metadataStylesheet).ToUpperInvariant() == ".XSL")
                 {
-                    try
+                    var path = Path.Combine(Path.GetDirectoryName(this.game.MetadataPath), metadataStylesheet);
+                    var doc = XDocument.Load(path, LoadOptions.SetBaseUri);
+
+                    while (true)
                     {
-                        using (var reader = XmlReader.Create(Path.Combine(Path.GetDirectoryName(this.game.MetadataPath), metadataStylesheet), new XmlReaderSettings()))
+                        try
                         {
-                            var transform = new XslCompiledTransform();
-                            transform.Load(reader);
-                            this.transform = transform;
+                            using (var reader = doc.CreateReader())
+                            {
+                                var transform = new XslCompiledTransform();
+                                transform.Load(reader);
+                                this.transform = transform;
+                                break;
+                            }
                         }
-                    }
-                    catch
-                    {
-                        throw;
+                        catch (XsltException ex)
+                        {
+                            // TODO: I need to find a future-proof and locale-proff mechanism to detect this error.
+                            var messageMatch = Regex.Match(ex.Message, "The named template '(?<name>[_A-Za-z0-9]+)' does not exist.");
+                            if (messageMatch.Success)
+                            {
+                                // Add a runtime termination, rather than failing the transform comilation.
+                                doc.Root.Add(
+                                    new XElement(
+                                        xsl + "template",
+                                        new XAttribute("name", messageMatch.Groups["name"].Value),
+                                        new XElement(
+                                            xsl + "message",
+                                            new XAttribute("terminate", "yes"),
+                                            ex.ToString())));
+                                continue;
+                            }
+
+                            throw;
+                        }
                     }
                 }
             }
@@ -84,23 +109,42 @@ namespace GameTheory.FormsRunner.Shared.Displays
 
                     var doc = new HtmlDocument();
                     doc.LoadHtml(sw.ToString());
-
-                    var sources = (JObject)this.game.Metadata.Extensions["sources"];
-                    var sourceLookup = sources.Properties().ToLookup(p => (string)p.Value, p => p.Name, StringComparer.InvariantCultureIgnoreCase);
-                    var sourceRoot = new Uri((string)sources[this.game.Metadata.StyleSheet]);
-                    var metadataRoot = new Uri(Path.GetDirectoryName(this.game.MetadataPath) + Path.DirectorySeparatorChar, UriKind.Absolute);
-
-                    var images = doc.DocumentNode.SelectNodes("//img[@src]");
-                    var links = doc.DocumentNode.SelectNodes("//a[@href]");
-                    var all = Enumerable.Concat(
-                        (images ?? Enumerable.Empty<HtmlNode>()).Select(image => image.Attributes["src"]),
-                        (links ?? Enumerable.Empty<HtmlNode>()).Select(link => link.Attributes["href"]));
-                    foreach (var attr in all)
+                    var head = doc.DocumentNode.SelectSingleNode("//head");
+                    if (head == null)
                     {
-                        var url = new Uri(sourceRoot, attr.DeEntitizeValue);
-                        var source = sourceLookup[url.ToString()].FirstOrDefault();
-                        attr.Value = HtmlEntity.Entitize(new Uri(metadataRoot, source).ToString());
+                        doc.DocumentNode.PrependChild(head = doc.CreateElement("head"));
                     }
+
+                    var @base = head.SelectSingleNode("base");
+                    if (@base == null)
+                    {
+                        head.PrependChild(@base = doc.CreateElement("base"));
+                    }
+
+                    @base.Attributes.Add("href", HtmlEntity.Entitize(new Uri(Path.Combine(Path.GetDirectoryName(this.game.MetadataPath), "dummy/")).ToString()));
+
+                    ////var metadataStylesheet = this.game.Metadata.StyleSheet;
+                    ////var sources = (JObject)this.game.Metadata.Extensions["sources"];
+                    ////var sourceLookup = sources.Properties().ToLookup(p => (string)p.Value, p => p.Name, StringComparer.InvariantCultureIgnoreCase);
+                    ////var sourceRoot = new Uri((string)sources[metadataStylesheet]);
+                    ////var stylesheet = new Uri(Path.Combine(Path.GetDirectoryName(this.game.MetadataPath), metadataStylesheet), UriKind.Absolute);
+                    ////
+                    ////var images = doc.DocumentNode.SelectNodes("//img[@src]");
+                    ////var anchors = doc.DocumentNode.SelectNodes("//a[@href]");
+                    ////var links = doc.DocumentNode.SelectNodes("//link[@href]");
+                    ////var all = Enumerable.Concat(
+                    ////    Enumerable.Concat(
+                    ////        (images ?? Enumerable.Empty<HtmlNode>()).Select(image => image.Attributes["src"]),
+                    ////        (anchors ?? Enumerable.Empty<HtmlNode>()).Select(anchor => anchor.Attributes["href"])),
+                    ////    (links ?? Enumerable.Empty<HtmlNode>()).Select(link => link.Attributes["href"]));
+                    ////foreach (var attr in all)
+                    ////{
+                    ////    var href = attr.DeEntitizeValue;
+                    ////    var url = new UriBuilder(new Uri(sourceRoot, href));
+                    ////    url.Path = url.Path.Replace(string.Format("{0}{0}", Path.AltDirectorySeparatorChar), $"{Path.AltDirectorySeparatorChar}");
+                    ////    var source = sourceLookup[url.ToString()].FirstOrDefault();
+                    ////    attr.Value = HtmlEntity.Entitize((source == null ? new Uri(stylesheet, href) : new Uri(stylesheet, source)).ToString());
+                    ////}
 
                     html = doc.DocumentNode.OuterHtml;
                 }

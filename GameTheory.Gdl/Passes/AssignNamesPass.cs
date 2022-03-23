@@ -37,7 +37,7 @@ namespace GameTheory.Gdl.Passes
             result.Name = globalScope.GetPublic(result);
 
             var namespaceScope = new Scope<object>()
-                .Reserve(result.Name)
+                .Reserve(result.Name) // TODO: Add exception type names.
                 .Reserve("IXml")
                 .Reserve("TimeSpan")
                 .Reserve("Math")

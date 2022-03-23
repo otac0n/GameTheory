@@ -3173,7 +3173,7 @@ namespace GameTheory.Gdl.Passes
                 return SyntaxHelper.ReorderMembers(classElement);
             }
 
-            private ExpressionStatementSyntax CreateToXmlStatements(ExpressionType type, ExpressionSyntax value, ExpressionSyntax writer)
+            private StatementSyntax CreateToXmlStatements(ExpressionType type, ExpressionSyntax value, ExpressionSyntax writer)
             {
                 switch (type)
                 {
@@ -3237,12 +3237,20 @@ namespace GameTheory.Gdl.Passes
                                                 .AddArgumentListArguments(
                                                     SyntaxFactory.Argument(value))))));
 
-                    case AnyType anyType:
                     case UnionType unionType:
+                        var distinctTypes = unionType.Expressions.Select(e => e.ReturnType).Distinct().ToList();
+                        if (distinctTypes.Count == 1)
+                        {
+                            return this.CreateToXmlStatements(distinctTypes[0], value, writer);
+                        }
+
+                        return this.CreateToXmlStatements(AnyType.Instance, value, writer);
+
+                    case AnyType anyType:
                         break;
                 }
 
-                throw new NotSupportedException($"Could not enumerate the members of the type '{type}'");
+                throw new NotSupportedException($"Could not create a ToXml expression for the type '{type}'");
             }
 
             private MemberDeclarationSyntax CreateTrueRelationDeclaration(RelationInfo @true) =>
@@ -3281,7 +3289,7 @@ namespace GameTheory.Gdl.Passes
                     scope = new ExpressionScope(scope.Variables, newScope, scope.Names.Add(variableInfo, SyntaxHelper.IdentifierName(newScope.GetPrivate(variableInfo))));
 
                     return SyntaxFactory.ForEachStatement(
-                        this.Reference(variableInfo.ReturnType),
+                        SyntaxHelper.IdentifierName("var"),
                         SyntaxHelper.Identifier(scope.Scope.GetPrivate(variableInfo)),
                         this.AllMembers(variableInfo.ReturnType, variableInfo.ReturnType, scope),
                         SyntaxFactory.Block(
