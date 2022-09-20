@@ -49,6 +49,9 @@ namespace GameTheory.Catalogs
                 {
                     assemblies.Add(Assembly.LoadFrom(library));
                 }
+                catch (BadImageFormatException)
+                {
+                }
                 catch
                 {
                     Debugger.Break();
