@@ -1,216 +1,38 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{C126FB4D-027F-4F30-A873-EB419F6F4630}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>GameTheory.ConsoleRunner</RootNamespace>
-    <AssemblyName>GameTheory.ConsoleRunner</AssemblyName>
-    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <CodeAnalysisRuleSet>..\Strict.ruleset</CodeAnalysisRuleSet>
-    <DocumentationFile>bin\Debug\GameTheory.ConsoleRunner.xml</DocumentationFile>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <CodeAnalysisRuleSet>..\Strict.ruleset</CodeAnalysisRuleSet>
-    <DocumentationFile>bin\Release\GameTheory.ConsoleRunner.xml</DocumentationFile>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <TargetFramework>net6.0</TargetFramework>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System" />
-    <Reference Include="System.ComponentModel.Composition" />
-    <Reference Include="System.ComponentModel.DataAnnotations" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xml" />
-    <Reference Include="System.Xml.Linq" />
+    <PackageReference Include="FixMe" Version="1.0.0" PrivateAssets="All" />
+    <PackageReference Include="GitVersion.MsBuild" Version="5.9.0" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.8" PrivateAssets="All" />
+    <PackageReference Include="StyleCop.Analyzers" Version="1.1.118" PrivateAssets="All" />
+    <PackageReference Include="Unity.Container" Version="5.11.1" />
+    <PackageReference Include="Unity.ServiceLocation" Version="5.11.1" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="CommonServiceLocator">
-      <Version>2.0.5</Version>
-    </PackageReference>
-    <PackageReference Include="FixMe">
-      <Version>1.0.0</Version>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
-    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers">
-      <Version>2.9.8</Version>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
-    <PackageReference Include="StyleCop.Analyzers">
-      <Version>1.1.118</Version>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
-    <PackageReference Include="System.Collections">
-      <Version>4.3.0</Version>
-    </PackageReference>
-    <PackageReference Include="System.Collections.Immutable">
-      <Version>1.5.0</Version>
-    </PackageReference>
-    <PackageReference Include="System.Diagnostics.Debug">
-      <Version>4.3.0</Version>
-    </PackageReference>
-    <PackageReference Include="System.Globalization">
-      <Version>4.3.0</Version>
-    </PackageReference>
-    <PackageReference Include="System.Linq">
-      <Version>4.3.0</Version>
-    </PackageReference>
-    <PackageReference Include="System.Resources.ResourceManager">
-      <Version>4.3.0</Version>
-    </PackageReference>
-    <PackageReference Include="System.Threading">
-      <Version>4.3.0</Version>
-    </PackageReference>
-    <PackageReference Include="Unity.Container">
-      <Version>5.11.1</Version>
-    </PackageReference>
-    <PackageReference Include="Unity.ServiceLocation">
-      <Version>5.11.1</Version>
-    </PackageReference>
+    <ProjectReference Include="..\GameTheory\GameTheory.csproj" />
+    <ProjectReference Include="..\GameTheory.ConsoleRunner.Shared\GameTheory.ConsoleRunner.Shared.csproj" />
+    <ProjectReference Include="..\GameTheory.Games.CenturySpiceRoad.Console\GameTheory.Games.CenturySpiceRoad.Console.csproj" />
+    <ProjectReference Include="..\GameTheory.Games.Chess.Console\GameTheory.Games.Chess.Console.csproj" />
+    <ProjectReference Include="..\GameTheory.Games.Chess.Uci\GameTheory.Games.Chess.Uci.csproj" />
+    <ProjectReference Include="..\GameTheory.Games.Draughts.Console\GameTheory.Games.Draughts.Console.csproj" />
+    <ProjectReference Include="..\GameTheory.Games.Ergo.Console\GameTheory.Games.Ergo.Console.csproj" />
+    <ProjectReference Include="..\GameTheory.Games.FiveTribes.Console\GameTheory.Games.FiveTribes.Console.csproj" />
+    <ProjectReference Include="..\GameTheory.Games.Hangman.Console\GameTheory.Games.Hangman.Console.csproj" />
+    <ProjectReference Include="..\GameTheory.Games.Lotus.Console\GameTheory.Games.Lotus.Console.csproj" />
+    <ProjectReference Include="..\GameTheory.Games.LoveLetter.Console\GameTheory.Games.LoveLetter.Console.csproj" />
+    <ProjectReference Include="..\GameTheory.Games.Mancala.Console\GameTheory.Games.Mancala.Console.csproj" />
+    <ProjectReference Include="..\GameTheory.Games.Nessos.Console\GameTheory.Games.Nessos.Console.csproj" />
+    <ProjectReference Include="..\GameTheory.Games.NormalFormGame\GameTheory.Games.NormalFormGame.csproj" />
+    <ProjectReference Include="..\GameTheory.Games.PositivelyPerfectParfaitGame.Console\GameTheory.Games.PositivelyPerfectParfaitGame.Console.csproj" />
+    <ProjectReference Include="..\GameTheory.Games.SevenDragons.Console\GameTheory.Games.SevenDragons.Console.csproj" />
+    <ProjectReference Include="..\GameTheory.Games.Skull.Console\GameTheory.Games.Skull.Console.csproj" />
+    <ProjectReference Include="..\GameTheory.Games.Splendor.Console\GameTheory.Games.Splendor.Console.csproj" />
+    <ProjectReference Include="..\GameTheory.Games.TicTacToe.Console\GameTheory.Games.TicTacToe.Console.csproj" />
+    <ProjectReference Include="..\GameTheory.Games.TwentyFortyEight.Console\GameTheory.Games.TwentyFortyEight.Console.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\GameTheory\GameTheory.csproj">
-      <Project>{3b3e3456-b950-44c1-b8a2-fe6c79c2232f}</Project>
-      <Name>GameTheory</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\GameTheory.ConsoleRunner.Shared\GameTheory.ConsoleRunner.Shared.csproj">
-      <Project>{5f19cf02-4edc-4439-9375-1669519cf050}</Project>
-      <Name>GameTheory.ConsoleRunner.Shared</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\GameTheory.Games.CenturySpiceRoad.Console\GameTheory.Games.CenturySpiceRoad.Console.csproj">
-      <Project>{9883ee33-7865-4fa7-839a-54b61e3e0214}</Project>
-      <Name>GameTheory.Games.CenturySpiceRoad.Console</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\GameTheory.Games.Chess.Console\GameTheory.Games.Chess.Console.csproj">
-      <Project>{ecc600ad-d839-4a93-bc76-947df35fbfed}</Project>
-      <Name>GameTheory.Games.Chess.Console</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\GameTheory.Games.Chess.Uci\GameTheory.Games.Chess.Uci.csproj">
-      <Project>{b4df39d1-6870-4958-a1c2-f6e5b09cb99e}</Project>
-      <Name>GameTheory.Games.Chess.Uci</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\GameTheory.Games.Draughts.Console\GameTheory.Games.Draughts.Console.csproj">
-      <Project>{575618b4-33eb-441b-88bd-422f13fb5d8d}</Project>
-      <Name>GameTheory.Games.Draughts.Console</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\GameTheory.Games.Ergo.Console\GameTheory.Games.Ergo.Console.csproj">
-      <Project>{411516cd-5a50-45ba-8305-07120f9a2368}</Project>
-      <Name>GameTheory.Games.Ergo.Console</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\GameTheory.Games.FiveTribes.Console\GameTheory.Games.FiveTribes.Console.csproj">
-      <Project>{595a3644-d238-4eaf-9016-d659696068c9}</Project>
-      <Name>GameTheory.Games.FiveTribes.Console</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\GameTheory.Games.Hangman\GameTheory.Games.Hangman.csproj">
-      <Project>{70c1838c-ad1f-488c-9339-b9a1b5dcc5c1}</Project>
-      <Name>GameTheory.Games.Hangman</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\GameTheory.Games.Hangman.Console\GameTheory.Games.Hangman.Console.csproj">
-      <Project>{a1269e57-ff74-4a02-b968-0fcf5efb3966}</Project>
-      <Name>GameTheory.Games.Hangman.Console</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\GameTheory.Games.Lotus.Console\GameTheory.Games.Lotus.Console.csproj">
-      <Project>{25442def-9dc3-4324-9b53-18734213bd96}</Project>
-      <Name>GameTheory.Games.Lotus.Console</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\GameTheory.Games.LoveLetter.Console\GameTheory.Games.LoveLetter.Console.csproj">
-      <Project>{5e3f519c-81bd-48d2-b182-36a88bf4c0fa}</Project>
-      <Name>GameTheory.Games.LoveLetter.Console</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\GameTheory.Games.Mancala.Console\GameTheory.Games.Mancala.Console.csproj">
-      <Project>{8417ecb7-2bb9-4460-a022-95f2806703a0}</Project>
-      <Name>GameTheory.Games.Mancala.Console</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\GameTheory.Games.Nessos.Console\GameTheory.Games.Nessos.Console.csproj">
-      <Project>{b514bbfa-5456-4c7b-b941-98b6a2e890fe}</Project>
-      <Name>GameTheory.Games.Nessos.Console</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\GameTheory.Games.NormalFormGame\GameTheory.Games.NormalFormGame.csproj">
-      <Project>{2b9f26b4-66f6-4fdd-b4bd-e2990f19bb97}</Project>
-      <Name>GameTheory.Games.NormalFormGame</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\GameTheory.Games.PositivelyPerfectParfaitGame.Console\GameTheory.Games.PositivelyPerfectParfaitGame.Console.csproj">
-      <Project>{1b238786-d920-4ba0-b6ae-944fa92c3165}</Project>
-      <Name>GameTheory.Games.PositivelyPerfectParfaitGame.Console</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\GameTheory.Games.SevenDragons.Console\GameTheory.Games.SevenDragons.Console.csproj">
-      <Project>{5a8af090-887c-42af-8d8d-eb02783462a8}</Project>
-      <Name>GameTheory.Games.SevenDragons.Console</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\GameTheory.Games.Skull.Console\GameTheory.Games.Skull.Console.csproj">
-      <Project>{85aacc8c-0c86-4e73-b55b-cfaee3c77ebb}</Project>
-      <Name>GameTheory.Games.Skull.Console</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\GameTheory.Games.Splendor.Console\GameTheory.Games.Splendor.Console.csproj">
-      <Project>{7a954fc3-086c-4644-8663-57a8393013ad}</Project>
-      <Name>GameTheory.Games.Splendor.Console</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\GameTheory.Games.TicTacToe.Console\GameTheory.Games.TicTacToe.Console.csproj">
-      <Project>{108e7f3f-5026-4c7a-82be-545f98a5dc2c}</Project>
-      <Name>GameTheory.Games.TicTacToe.Console</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\GameTheory.Games.TwentyFortyEight.Console\GameTheory.Games.TwentyFortyEight.Console.csproj">
-      <Project>{1c1f0d6f-b9cd-46d9-a97d-ae86a3aef036}</Project>
-      <Name>GameTheory.Games.TwentyFortyEight.Console</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <Compile Include="..\SharedAssemblyInfo.cs">
-      <Link>Properties\SharedAssemblyInfo.cs</Link>
-    </Compile>
-    <None Include="App.config" />
-    <Compile Include="ConsoleCatalogs.cs" />
-    <Compile Include="ConsoleInteraction.cs" />
-    <Compile Include="ConsolePlayer.cs" />
-    <CodeAnalysisDictionary Include="..\CustomDictionary.xml">
-      <Link>CustomDictionary.xml</Link>
-    </CodeAnalysisDictionary>
-    <Compile Include="NativeMethods.cs" />
-    <Compile Include="Program.cs" />
-    <AdditionalFiles Include="..\stylecop.json">
-      <Link>stylecop.json</Link>
-    </AdditionalFiles>
-    <Compile Include="ToStringConsoleRenderer.cs" />
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
 </Project>
