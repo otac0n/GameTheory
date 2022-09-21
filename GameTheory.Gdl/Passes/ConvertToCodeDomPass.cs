@@ -3238,10 +3238,10 @@ namespace GameTheory.Gdl.Passes
                                                     SyntaxFactory.Argument(value))))));
 
                     case UnionType unionType:
-                        var distinctTypes = unionType.Expressions.Select(e => e.ReturnType).Distinct().ToList();
+                        var distinctTypes = unionType.Expressions.Select(e => e.ReturnType.StorageType).Distinct().ToList();
                         if (distinctTypes.Count == 1)
                         {
-                            return this.CreateToXmlStatements(distinctTypes[0], value, writer);
+                            return this.CreateToXmlStatements(unionType.Expressions.First().ReturnType, value, writer);
                         }
 
                         return this.CreateToXmlStatements(AnyType.Instance, value, writer);
