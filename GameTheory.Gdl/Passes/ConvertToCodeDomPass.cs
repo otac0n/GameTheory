@@ -2576,6 +2576,8 @@ namespace GameTheory.Gdl.Passes
                     result.Add(this.CreateEnumLookupDeclaration(enumTypes));
                 }
 
+                result.Add(this.CreateXmlHelperDeclaration());
+
                 return result.ToArray();
             }
 
@@ -3245,7 +3247,16 @@ namespace GameTheory.Gdl.Passes
                         return this.CreateToXmlStatements(AnyType.Instance, value, writer);
 
                     case AnyType anyType:
-                        break;
+                        return SyntaxFactory.ExpressionStatement(
+                            SyntaxFactory.AwaitExpression(
+                                SyntaxFactory.InvocationExpression(
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.IdentifierName(this.result.NamespaceScope.GetPublic("XmlHelper")),
+                                        SyntaxFactory.IdentifierName("ToXml")))
+                                    .AddArgumentListArguments(
+                                        SyntaxFactory.Argument(value),
+                                        SyntaxFactory.Argument(writer))));
                 }
 
                 throw new NotSupportedException($"Could not create a ToXml expression for the type '{type}'");
@@ -3276,6 +3287,14 @@ namespace GameTheory.Gdl.Passes
                                     .AddArgumentListArguments(
                                         SyntaxFactory.Argument(
                                             SyntaxHelper.IdentifierName("value"))))));
+
+            private ClassDeclarationSyntax CreateXmlHelperDeclaration()
+            {
+                var helperElement = SyntaxFactory.ClassDeclaration(this.result.NamespaceScope.GetPublic("XmlHelper"))
+                    .AddModifiers(SyntaxFactory.Token(SyntaxKind.PublicKeyword), SyntaxFactory.Token(SyntaxKind.StaticKeyword));
+
+                return helperElement;
+            }
 
             private StatementSyntax FixVariables(Sentence sentence, Func<ExpressionScope, StatementSyntax> inner, ExpressionScope scope)
             {

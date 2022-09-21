@@ -102,6 +102,7 @@ namespace GameTheory.Tests.Gdl
                 "Where",
                 "winners",
                 "writer",
+                "XmlHelper",
                 "XmlWriter")]
             string conflict)
         {
