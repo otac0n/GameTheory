@@ -162,10 +162,17 @@ namespace GameTheory.Tests.Gdl
 
         private static void GetDebugInfo(CompileResult result, out string types, out string names, out string dependencies, out string code)
         {
-            types = DebuggingTools.RenderTypeGraph(result.AssignedTypes).Replace("\"", "\"\"");
-            names = DebuggingTools.RenderNameGraph(result.KnowledgeBase, result.AssignedTypes).Replace("\"", "\"\"");
-            dependencies = DebuggingTools.RenderDependencyGraph(result.DependencyGraph).Replace("\"", "\"\"");
-            code = result.Code;
+            if (result.KnowledgeBase != null)
+            {
+                types = DebuggingTools.RenderTypeGraph(result.AssignedTypes).Replace("\"", "\"\"");
+                names = DebuggingTools.RenderNameGraph(result.KnowledgeBase, result.AssignedTypes).Replace("\"", "\"\"");
+                dependencies = DebuggingTools.RenderDependencyGraph(result.DependencyGraph).Replace("\"", "\"\"");
+                code = result.Code;
+            }
+            else
+            {
+                types = names = dependencies = code = null;
+            }
         }
 
         private static string LoadGameGdl(string path, out string friendlyName)
