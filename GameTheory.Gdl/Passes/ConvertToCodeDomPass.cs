@@ -3186,8 +3186,7 @@ namespace GameTheory.Gdl.Passes
                                         value,
                                         SyntaxHelper.IdentifierName("ToXml")))
                                         .AddArgumentListArguments(
-                                            SyntaxFactory.Argument(
-                                                writer))));
+                                            SyntaxFactory.Argument(writer))));
 
                     case ObjectType objectType:
                         return SyntaxFactory.ExpressionStatement(
@@ -3199,8 +3198,7 @@ namespace GameTheory.Gdl.Passes
                                         SyntaxFactory.IdentifierName("WriteStringAsync")))
                                     .AddArgumentListArguments(
                                         SyntaxFactory.Argument(
-                                            SyntaxFactory.InvocationExpression(
-                                                value)))));
+                                            value))));
 
                     case NoneType noneType:
                     case NumberRangeType numberRangeType:
