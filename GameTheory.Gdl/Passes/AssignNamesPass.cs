@@ -50,7 +50,8 @@ namespace GameTheory.Gdl.Passes
                 .Add("NameLookup", ScopeFlags.Public, "NameLookup")
                 .Add("GameState", ScopeFlags.Public, "GameState")
                 .Add("Move", ScopeFlags.Public, "Move", $"{result.Name} Move", "RoleMove")
-                .Add("ObjectComparer", ScopeFlags.Public, "ObjectComparer");
+                .Add("ObjectComparer", ScopeFlags.Public, "ObjectComparer")
+                .Add("XmlHelper", ScopeFlags.Public, "XmlHelper");
             namespaceScope = allTypes.Aggregate(namespaceScope, (scope, type) =>
             {
                 switch (type)
