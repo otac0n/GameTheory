@@ -60,11 +60,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TwentyFortyEight", "TwentyF
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameTheory", "GameTheory\GameTheory.csproj", "{3B3E3456-B950-44C1-B8A2-FE6C79C2232F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameTheory.ConsoleRunner", "GameTheory.ConsoleRunner\GameTheory.ConsoleRunner.csproj", "{C5182243-963D-432F-B812-225AA4CE32EB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameTheory.ConsoleRunner", "GameTheory.ConsoleRunner\GameTheory.ConsoleRunner.csproj", "{C5182243-963D-432F-B812-225AA4CE32EB}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameTheory.ConsoleRunner.Shared", "GameTheory.ConsoleRunner.Shared\GameTheory.ConsoleRunner.Shared.csproj", "{5F19CF02-4EDC-4439-9375-1669519CF050}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameTheory.FormsRunner", "GameTheory.FormsRunner\GameTheory.FormsRunner.csproj", "{2F27AE81-9890-4448-8DB1-1ABAFC2FE166}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameTheory.FormsRunner", "GameTheory.FormsRunner\GameTheory.FormsRunner.csproj", "{CBD35DC0-F932-4653-B088-F18291248174}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameTheory.FormsRunner.Shared", "GameTheory.FormsRunner.Shared\GameTheory.FormsRunner.Shared.csproj", "{716159D8-70AF-4337-AF39-82E322AA90A3}"
 EndProject
@@ -190,10 +190,10 @@ Global
 		{5F19CF02-4EDC-4439-9375-1669519CF050}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5F19CF02-4EDC-4439-9375-1669519CF050}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5F19CF02-4EDC-4439-9375-1669519CF050}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2F27AE81-9890-4448-8DB1-1ABAFC2FE166}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2F27AE81-9890-4448-8DB1-1ABAFC2FE166}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2F27AE81-9890-4448-8DB1-1ABAFC2FE166}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2F27AE81-9890-4448-8DB1-1ABAFC2FE166}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CBD35DC0-F932-4653-B088-F18291248174}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CBD35DC0-F932-4653-B088-F18291248174}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CBD35DC0-F932-4653-B088-F18291248174}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CBD35DC0-F932-4653-B088-F18291248174}.Release|Any CPU.Build.0 = Release|Any CPU
 		{716159D8-70AF-4337-AF39-82E322AA90A3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{716159D8-70AF-4337-AF39-82E322AA90A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{716159D8-70AF-4337-AF39-82E322AA90A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
