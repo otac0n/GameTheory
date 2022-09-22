@@ -19,7 +19,7 @@ namespace GameTheory.Gdl {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -187,7 +187,7 @@ namespace GameTheory.Gdl {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to An unexpected error was encountered whle generating the game code DOM. {0}.
+        ///   Looks up a localized string similar to An unexpected error was encountered while generating the game code DOM. {0}.
         /// </summary>
         internal static string GDL101_ERROR_ErrorConvertingToCodeDom {
             get {
@@ -205,7 +205,7 @@ namespace GameTheory.Gdl {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to An unexpected error was encountered whle compiling the generated type. {0}.
+        ///   Looks up a localized string similar to An unexpected error was encountered while compiling the generated type. {0}.
         /// </summary>
         internal static string GDL103_ERROR_ErrorComilingType {
             get {
