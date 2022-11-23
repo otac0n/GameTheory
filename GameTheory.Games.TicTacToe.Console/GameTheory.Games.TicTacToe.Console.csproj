@@ -5,7 +5,7 @@
     <CodeAnalysisRuleSet>GameTheory.Games.TicTacToe.Console.ruleset</CodeAnalysisRuleSet>
     <DebugType>Full</DebugType>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <TargetFrameworks>net48;netcoreapp2.0</TargetFrameworks>
+    <TargetFrameworks>net48;netstandard2.0</TargetFrameworks>
     <PackageLicenseUrl>https://raw.github.com/otac0n/GameTheory/master/license.md</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/otac0n/GameTheory</PackageProjectUrl>
   </PropertyGroup>
