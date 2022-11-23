@@ -2,7 +2,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\SharedAssemblyInfo.props" />
   <PropertyGroup>
-    <CodeAnalysisRuleSet>GameTheory.Games.SevenDragons.Forms.ruleset</CodeAnalysisRuleSet>
     <DebugType>Full</DebugType>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <TargetFrameworks>net48</TargetFrameworks>
@@ -31,7 +30,6 @@
     <Compile Update="CardControl.cs">
       <SubType>Component</SubType>
     </Compile>
-    <AdditionalFiles Include="GameTheory.Games.SevenDragons.Forms.ruleset" />
     <AdditionalFiles Include="..\stylecop.json" Link="stylecop.json" />
     <Compile Update="TableControl.cs">
       <SubType>Component</SubType>

@@ -2,7 +2,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\SharedAssemblyInfo.props" />
   <PropertyGroup>
-    <CodeAnalysisRuleSet>GameTheory.Games.Chess.Uci.ruleset</CodeAnalysisRuleSet>
     <DebugType>Full</DebugType>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <TargetFrameworks>net48</TargetFrameworks>
@@ -31,7 +30,6 @@
     <Content Include="UciEngines\**\*.*">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <AdditionalFiles Include="GameTheory.Games.Chess.Uci.ruleset" />
     <Compile Update="Resources.Designer.cs">
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>

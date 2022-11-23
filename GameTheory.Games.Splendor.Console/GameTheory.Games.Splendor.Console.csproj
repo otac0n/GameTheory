@@ -2,7 +2,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\SharedAssemblyInfo.props" />
   <PropertyGroup>
-    <CodeAnalysisRuleSet>GameTheory.Games.Splendor.Console.ruleset</CodeAnalysisRuleSet>
     <DebugType>Full</DebugType>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <TargetFrameworks>net48;netstandard2.0</TargetFrameworks>
@@ -30,7 +29,6 @@
   </ItemGroup>
   <ItemGroup>
     <WeaveTemplate Include="GameState.weave" />
-    <AdditionalFiles Include="GameTheory.Games.Splendor.Console.ruleset" />
     <AdditionalFiles Include="..\stylecop.json" Link="stylecop.json" />
   </ItemGroup>
 </Project>

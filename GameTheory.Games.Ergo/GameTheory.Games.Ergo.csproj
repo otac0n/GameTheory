@@ -2,7 +2,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\SharedAssemblyInfo.props" />
   <PropertyGroup>
-    <CodeAnalysisRuleSet>GameTheory.Games.Ergo.ruleset</CodeAnalysisRuleSet>
     <DebugType>Full</DebugType>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <TargetFrameworks>net48;netstandard2.0</TargetFrameworks>
@@ -26,7 +25,6 @@
     <ProjectReference Include="..\GameTheory\GameTheory.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <AdditionalFiles Include="GameTheory.Games.Ergo.ruleset" />
     <Compile Update="Resources.Designer.cs">
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>

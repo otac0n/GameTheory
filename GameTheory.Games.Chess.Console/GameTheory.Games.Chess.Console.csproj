@@ -2,7 +2,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\SharedAssemblyInfo.props" />
   <PropertyGroup>
-    <CodeAnalysisRuleSet>GameTheory.Games.Chess.Console.ruleset</CodeAnalysisRuleSet>
     <DebugType>Full</DebugType>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <TargetFrameworks>net48;netstandard2.0</TargetFrameworks>
@@ -29,7 +28,6 @@
     <ProjectReference Include="..\GameTheory.Games.Chess\GameTheory.Games.Chess.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <AdditionalFiles Include="GameTheory.Games.Chess.Console.ruleset" />
     <AdditionalFiles Include="..\stylecop.json" Link="stylecop.json" />
   </ItemGroup>
 </Project>

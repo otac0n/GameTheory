@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<RuleSet Name="GameTheory.Games.Draughts.Console" Description="Rules for the GameTheory.Games.Draughts.Console project." ToolsVersion="15.0">
-  <Include Path="..\Strict.ruleset" Action="Default" />
-</RuleSet>

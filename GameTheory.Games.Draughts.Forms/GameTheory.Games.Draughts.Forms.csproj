@@ -2,7 +2,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\SharedAssemblyInfo.props" />
   <PropertyGroup>
-    <CodeAnalysisRuleSet>GameTheory.Games.Draughts.Forms.ruleset</CodeAnalysisRuleSet>
     <DebugType>Full</DebugType>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <TargetFrameworks>net48</TargetFrameworks>
@@ -31,7 +30,6 @@
     <Compile Update="Checkerboard.cs">
       <SubType>Component</SubType>
     </Compile>
-    <AdditionalFiles Include="GameTheory.Games.Draughts.Forms.ruleset" />
     <AdditionalFiles Include="..\stylecop.json" Link="stylecop.json" />
   </ItemGroup>
 </Project>
