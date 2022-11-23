@@ -16,12 +16,14 @@ namespace GameTheory.Games.Chess.Uci.Catalogs
 
         public UciCatalog(string folder = null)
         {
-            this.folder = folder ?? Path.Combine(Environment.CurrentDirectory, "UciEngines");
+            this.folder = folder
+                ?? Environment.GetEnvironmentVariable("UCIENGINES")
+                ?? Path.Combine(Environment.CurrentDirectory, "UciEngines");
         }
 
         /// <inheritdoc/>
         protected override IEnumerable<ICatalogPlayer> GetPlayers(Type gameStateType, Type moveType) =>
-            gameStateType != typeof(GameState) || moveType != typeof(Move)
+            !(gameStateType == typeof(GameState) && moveType == typeof(Move) && Directory.Exists(this.folder))
                 ? Enumerable.Empty<UciCatalogPlayer>()
                 : Directory.EnumerateFiles(this.folder, "METADATA", SearchOption.AllDirectories)
                     .Distinct()
