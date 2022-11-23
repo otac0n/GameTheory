@@ -4,7 +4,7 @@
   <PropertyGroup>
     <DebugType>Full</DebugType>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <TargetFrameworks>net48</TargetFrameworks>
+    <TargetFrameworks>net5.0-windows</TargetFrameworks>
     <PackageLicenseUrl>https://raw.github.com/otac0n/GameTheory/master/license.md</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/otac0n/GameTheory</PackageProjectUrl>
   </PropertyGroup>
