@@ -62,7 +62,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameTheory.ConsoleRunner", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameTheory.ConsoleRunner.Shared", "GameTheory.ConsoleRunner.Shared\GameTheory.ConsoleRunner.Shared.csproj", "{5F19CF02-4EDC-4439-9375-1669519CF050}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameTheory.FormsRunner", "GameTheory.FormsRunner\GameTheory.FormsRunner.csproj", "{CBD35DC0-F932-4653-B088-F18291248174}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameTheory.FormsRunner", "GameTheory.FormsRunner\GameTheory.FormsRunner.csproj", "{CBD35DC0-F932-4653-B088-F18291248174}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameTheory.FormsRunner.Shared", "GameTheory.FormsRunner.Shared\GameTheory.FormsRunner.Shared.csproj", "{716159D8-70AF-4337-AF39-82E322AA90A3}"
 EndProject
