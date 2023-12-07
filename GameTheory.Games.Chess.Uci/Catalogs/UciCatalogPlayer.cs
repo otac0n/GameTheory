@@ -252,7 +252,7 @@ namespace GameTheory.Games.Chess.Uci.Catalogs
             static EnumCache()
             {
                 var assemblyName = new AssemblyName("UciEnums");
-                var builder = AppDomain.CurrentDomain.DefineDynamicAssembly(assemblyName, AssemblyBuilderAccess.Run);
+                var builder = AssemblyBuilder.DefineDynamicAssembly(assemblyName, AssemblyBuilderAccess.Run);
                 EnumCache.DynamicModule = builder.DefineDynamicModule(assemblyName.Name);
                 EnumCache.Cache = new ConcurrentDictionary<string, Type>();
             }
@@ -281,7 +281,7 @@ namespace GameTheory.Games.Chess.Uci.Catalogs
                         @enum.DefineLiteral(values[i], i);
                     }
 
-                    return @enum.CreateType();
+                    return @enum.CreateTypeInfo();
                 });
             }
         }

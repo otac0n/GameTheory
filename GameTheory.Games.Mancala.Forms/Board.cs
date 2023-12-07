@@ -39,9 +39,10 @@ namespace GameTheory.Games.Mancala.Forms
 
         protected override void OnPaint(PaintEventArgs e)
         {
-            e.Graphics.HighQuality(() =>
+            var g = e.Graphics;
+            g.HighQuality(() =>
             {
-                e.Graphics.FillRectangle(new SolidBrush(this.BackColor), this.ClientRectangle);
+                g.FillRectangle(new SolidBrush(this.BackColor), this.ClientRectangle);
 
                 var nw = this.GameState.BinsPerSide + 2;
                 var nh = 2;
@@ -51,6 +52,12 @@ namespace GameTheory.Games.Mancala.Forms
 
                 var cellSpacing = w * 0.1f;
 
+                const int ScaleCount = 10;
+                var beanRadius = Math.Sqrt(Math.Pow(w, 2) / (ScaleCount * 2));
+                var beanRect = new RectangleF(0, 0, (float)beanRadius, (float)(beanRadius * 0.8));
+
+                using (var beanPen = new Pen(this.BinColor))
+                using (var beanBrush = new SolidBrush(this.BackColor))
                 using (var binBrush = new SolidBrush(this.BinColor))
                 using (var textBrush = new SolidBrush(this.ForeColor))
                 using (var stringFormat = new StringFormat() { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center })
@@ -58,12 +65,33 @@ namespace GameTheory.Games.Mancala.Forms
                     for (var i = 0; i < (this.GameState.BinsPerSide + 1) * 2; i++)
                     {
                         var isMancala = i == this.GameState.BinsPerSide || i == this.GameState.BinsPerSide + (this.GameState.BinsPerSide + 1);
+                        var h = isMancala ? 2 * w + cellSpacing : w;
                         var y = isMancala ? 0 : 1 - i / (this.GameState.BinsPerSide + 1);
                         var x = i <= this.GameState.BinsPerSide ? i + 1 : (this.GameState.BinsPerSide + 1) * 2 - i - 1;
+                        var count = this.GameState[i];
 
-                        var rect = new RectangleF(x * (w + cellSpacing), y * (w + cellSpacing), w, isMancala ? 2 * w + cellSpacing : w);
-                        e.Graphics.FillRectangle(binBrush, rect);
-                        e.Graphics.DrawString(this.GameState[i].ToString(), this.Font, textBrush, rect, stringFormat);
+                        var rect = new RectangleF(x * (w + cellSpacing), y * (w + cellSpacing), w, h);
+                        g.FillRectangle(binBrush, rect);
+
+                        if (count > 0)
+                        {
+                            var random = new Random(i);
+                            for (var b = 0; b < count; b++)
+                            {
+                                var bx = beanRadius + Math.Clamp(random.NextDoubleNormal(0.5, 0.2), 0, 1) * (w - 2 * beanRadius);
+                                var by = beanRadius + Math.Clamp(random.NextDoubleNormal(0.5, 0.2), 0, 1) * (h - 2 * beanRadius);
+                                g.TranslateTransform((float)(rect.X + bx), (float)(rect.Y + by));
+
+                                var angleDeg = random.NextDouble() * 360;
+                                g.RotateTransform((float)angleDeg);
+
+                                g.FillEllipse(beanBrush, beanRect);
+                                g.DrawEllipse(beanPen, beanRect);
+                                g.ResetTransform();
+                            }
+                        }
+
+                        g.DrawString(count.ToString(), this.Font, textBrush, rect, stringFormat);
                     }
                 }
             });

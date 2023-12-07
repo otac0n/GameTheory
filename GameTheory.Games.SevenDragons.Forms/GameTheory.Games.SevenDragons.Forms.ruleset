@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<RuleSet Name="GameTheory.Games.SevenDragons.Forms" Description="Rules for the GameTheory.Games.SevenDragons.Forms project." ToolsVersion="15.0">
-  <Include Path="..\Strict.ruleset" Action="Default" />
-</RuleSet>
