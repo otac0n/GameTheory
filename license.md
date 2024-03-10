@@ -1,4 +1,4 @@
-﻿Copyright © 2017 John & Katie Gietzen
+﻿Copyright © 2017-2024 John & Katie Gietzen
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the

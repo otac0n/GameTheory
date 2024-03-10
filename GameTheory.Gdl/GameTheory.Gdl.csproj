@@ -1,22 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="..\SharedAssemblyProperties.props" />
   <PropertyGroup>
-    <CodeAnalysisRuleSet>GameTheory.Gdl.ruleset</CodeAnalysisRuleSet>
-    <TargetFrameworks>net462;netcoreapp2.0</TargetFrameworks>
+    <TargetFrameworks>net8.0;netcoreapp3.1</TargetFrameworks>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="FixMe" Version="1.0.0" />
     <PackageReference Include="Intervals" Version="1.2.0-alpha0021" />
     <PackageReference Include="KnowledgeInterchangeFormat" Version="0.3.0" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.0.0" />
-    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.8">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
     <PackageReference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform" Version="2.0.1" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
     <PackageReference Include="Pegasus" Version="4.1.0" />
-    <PackageReference Include="StyleCop.Analyzers" Version="1.1.118" />
     <PackageReference Include="System.CodeDom" Version="4.5.0" />
   </ItemGroup>
   <ItemGroup>
@@ -27,7 +21,6 @@
     <Content Include="Games\**\*.*">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <AdditionalFiles Include="GameTheory.Gdl.ruleset" />
     <Compile Update="Resources.Designer.cs">
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>

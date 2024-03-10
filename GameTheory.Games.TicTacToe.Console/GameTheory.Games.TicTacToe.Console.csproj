@@ -1,26 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
-  <Import Project="..\SharedAssemblyInfo.props" />
+  <Import Project="..\SharedAssemblyProperties.props" />
   <PropertyGroup>
-    <DebugType>Full</DebugType>
+    <DebugType>portable</DebugType>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <TargetFrameworks>net7.0;netstandard2.0</TargetFrameworks>
-    <PackageLicenseUrl>https://raw.github.com/otac0n/GameTheory/master/license.md</PackageLicenseUrl>
-    <PackageProjectUrl>https://github.com/otac0n/GameTheory</PackageProjectUrl>
+    <TargetFrameworks>net8.0;netcoreapp3.1</TargetFrameworks>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="6.0.0">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="Weave" Version="2.0.0">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
+    <PackageReference Include="Weave" Version="2.1.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GameTheory\GameTheory.csproj" />
@@ -28,6 +15,7 @@
     <ProjectReference Include="..\GameTheory.Games.TicTacToe\GameTheory.Games.TicTacToe.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <None Remove="GameState.weave" />
     <WeaveTemplate Include="GameState.weave" />
     <AdditionalFiles Include="..\stylecop.json" Link="stylecop.json" />
   </ItemGroup>
