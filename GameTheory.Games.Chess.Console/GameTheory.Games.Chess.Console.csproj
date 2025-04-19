@@ -4,7 +4,7 @@
   <PropertyGroup>
     <DebugType>portable</DebugType>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <TargetFrameworks>net8.0;netcoreapp3.1</TargetFrameworks>
+    <TargetFrameworks>net9.0</TargetFrameworks>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\GameTheory\GameTheory.csproj" />
