@@ -1,4 +1,4 @@
-// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Games.Chess.Uci.Protocol
 {
@@ -18,10 +18,7 @@ namespace GameTheory.Games.Chess.Uci.Protocol
         public BestMoveCommand(string move, [Optional] string ponder)
             : base("bestmove")
         {
-            if (string.IsNullOrEmpty(move))
-            {
-                throw new ArgumentNullException(nameof(move));
-            }
+            ArgumentException.ThrowIfNullOrEmpty(move);
 
             this.Move = move;
             this.Ponder = ponder;

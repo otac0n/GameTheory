@@ -1,4 +1,4 @@
-// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory
 {
@@ -45,10 +45,7 @@ namespace GameTheory
         /// <param name="items">The items to add to the collection.</param>
         public EnumCollection(IEnumerable<TEnum> items)
         {
-            if (items == null)
-            {
-                throw new ArgumentNullException(nameof(items));
-            }
+            ArgumentNullException.ThrowIfNull(items);
 
             var count = 0;
             var storage = new int[Capacity];
@@ -191,14 +188,11 @@ namespace GameTheory
         /// <returns>The new collection.</returns>
         public EnumCollection<TEnum> Add(TEnum item, int count)
         {
+            ArgumentOutOfRangeException.ThrowIfNegative(count);
+
             if (count == 0)
             {
                 return this;
-            }
-
-            if (count < 1)
-            {
-                throw new ArgumentOutOfRangeException(nameof(count));
             }
 
             var key = Convert.ToInt32(item, CultureInfo.InvariantCulture);
@@ -222,10 +216,7 @@ namespace GameTheory
         /// <returns>The new collection.</returns>
         public EnumCollection<TEnum> AddRange(EnumCollection<TEnum> items)
         {
-            if (items == null)
-            {
-                throw new ArgumentNullException(nameof(items));
-            }
+            ArgumentNullException.ThrowIfNull(items);
 
             var count = checked(this.count + items.count);
             var storage = new int[Capacity];
@@ -416,14 +407,11 @@ namespace GameTheory
         /// Makes a copy of the collection and removes the specified item from the collection.
         /// </summary>
         /// <param name="item">The item to remove.</param>
-        /// <param name="count">The number of copies of the specified item to add.</param>
+        /// <param name="count">The number of copies of the specified item to remove.</param>
         /// <returns>The new collection.</returns>
         public EnumCollection<TEnum> Remove(TEnum item, int count)
         {
-            if (count < 1)
-            {
-                throw new ArgumentOutOfRangeException(nameof(count));
-            }
+            ArgumentOutOfRangeException.ThrowIfNegativeOrZero(count);
 
             var key = Convert.ToInt32(item, CultureInfo.InvariantCulture);
             var existing = this.storage[key];
@@ -450,10 +438,7 @@ namespace GameTheory
         /// <returns>The new collection.</returns>
         public EnumCollection<TEnum> RemoveAll(Predicate<TEnum> match)
         {
-            if (match == null)
-            {
-                throw new ArgumentNullException(nameof(match));
-            }
+            ArgumentNullException.ThrowIfNull(match);
 
             var count = 0;
             var storage = new int[Capacity];
@@ -486,10 +471,7 @@ namespace GameTheory
         /// <returns>The new collection.</returns>
         public EnumCollection<TEnum> RemoveRange(EnumCollection<TEnum> items)
         {
-            if (items == null)
-            {
-                throw new ArgumentNullException(nameof(items));
-            }
+            ArgumentNullException.ThrowIfNull(items);
 
             var count = this.count;
             var storage = new int[Capacity];

@@ -1,4 +1,4 @@
-// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Players.MaximizingPlayer
 {
@@ -8,10 +8,7 @@ namespace GameTheory.Players.MaximizingPlayer
     {
         public WinCount(double wins, double simulations)
         {
-            if (!(simulations > 0))
-            {
-                throw new ArgumentOutOfRangeException(nameof(simulations));
-            }
+            ArgumentOutOfRangeException.ThrowIfNegativeOrZero(simulations);
 
             this.Wins = wins;
             this.Simulations = simulations;

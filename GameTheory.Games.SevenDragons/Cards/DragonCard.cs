@@ -1,4 +1,4 @@
-// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Games.SevenDragons.Cards
 {
@@ -100,10 +100,7 @@ namespace GameTheory.Games.SevenDragons.Cards
 
         private static ImmutableList<Color> Validate(IList<Color> colors)
         {
-            if (colors.Count != Grid.Count)
-            {
-                throw new ArgumentOutOfRangeException(nameof(colors));
-            }
+            ArgumentOutOfRangeException.ThrowIfNotEqual(colors.Count, Grid.Count, nameof(colors));
 
             return colors as ImmutableList<Color> ?? colors.ToImmutableList();
         }

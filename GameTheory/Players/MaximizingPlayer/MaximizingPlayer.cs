@@ -1,4 +1,4 @@
-// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Players.MaximizingPlayer
 {
@@ -37,7 +37,9 @@ namespace GameTheory.Players.MaximizingPlayer
         protected MaximizingPlayer(PlayerToken playerToken, IGameStateScoringMetric<TGameState, TMove, TScore> scoringMetric, int minPly)
             : base(playerToken, scoringMetric)
         {
-            this.MinPly = minPly > -1 ? minPly : throw new ArgumentOutOfRangeException(nameof(minPly));
+            ArgumentOutOfRangeException.ThrowIfNegative(minPly);
+
+            this.MinPly = minPly;
         }
 
         /// <summary>

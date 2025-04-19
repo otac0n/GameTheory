@@ -1,4 +1,4 @@
-// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory
 {
@@ -45,10 +45,8 @@ namespace GameTheory
         {
             get
             {
-                if (index < 0 || index >= this.width * this.height)
-                {
-                    throw new ArgumentOutOfRangeException(nameof(index));
-                }
+                ArgumentOutOfRangeException.ThrowIfNegative(index);
+                ArgumentOutOfRangeException.ThrowIfGreaterThanOrEqual(index, this.Count);
 
                 return new Point(index % this.width, index / this.width);
             }

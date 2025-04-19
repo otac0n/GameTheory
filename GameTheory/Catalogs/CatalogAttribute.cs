@@ -1,4 +1,4 @@
-// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Catalogs
 {
@@ -17,13 +17,16 @@ namespace GameTheory.Catalogs
         /// <param name="implementationType">The catalog type to be instantiated.</param>
         public CatalogAttribute(Type catalogType, Type implementationType)
         {
+            ArgumentNullException.ThrowIfNull(catalogType);
+            ArgumentNullException.ThrowIfNull(implementationType);
+
             if (!catalogType.IsAssignableFrom(implementationType))
             {
                 throw new ArgumentOutOfRangeException(nameof(implementationType));
             }
 
-            this.CatalogType = catalogType ?? throw new ArgumentNullException(nameof(catalogType));
-            this.ImplementationType = implementationType ?? throw new ArgumentNullException(nameof(implementationType));
+            this.CatalogType = catalogType;
+            this.ImplementationType = implementationType;
         }
 
         /// <summary>

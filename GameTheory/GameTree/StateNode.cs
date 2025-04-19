@@ -1,4 +1,4 @@
-// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.GameTree
 {
@@ -36,7 +36,7 @@ namespace GameTheory.GameTree
         /// <remarks>
         /// For performance, the same array reference is returned each time the property is accessed.
         /// </remarks>
-        public TMove[] Moves => this.moves ?? (this.moves = this.State.GetAvailableMoves().ToArray());
+        public TMove[] Moves => this.moves ??= this.State.GetAvailableMoves().ToArray();
 
         /// <summary>
         /// Gets the state that this node represents.

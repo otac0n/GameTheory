@@ -21,10 +21,8 @@ namespace GameTheory.Games.FiveTribes.Djinns
         /// <inheritdoc />
         public sealed override GameState HandleTransition(PlayerToken owner, GameState oldState, GameState newState)
         {
-            if (oldState == null)
-            {
-                throw new ArgumentNullException(nameof(oldState));
-            }
+            ArgumentNullException.ThrowIfNull(oldState);
+            ArgumentNullException.ThrowIfNull(newState);
 
             if (!oldState.Inventory[owner].Djinns.Contains(this))
             {
@@ -44,6 +42,8 @@ namespace GameTheory.Games.FiveTribes.Djinns
         /// <returns>An updated <see cref="GameState"/>.</returns>
         protected virtual GameState OnAcquire(PlayerToken owner, GameState state)
         {
+            ArgumentNullException.ThrowIfNull(state);
+
             return state;
         }
     }

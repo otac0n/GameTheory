@@ -1,4 +1,4 @@
-// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Games.Chess.Uci
 {
@@ -45,10 +45,7 @@ namespace GameTheory.Games.Chess.Uci
             bool redirectError = false,
             Encoding encoding = null)
         {
-            if (string.IsNullOrEmpty(executable))
-            {
-                throw new ArgumentNullException(nameof(executable));
-            }
+            ArgumentException.ThrowIfNullOrEmpty(executable);
 
             if (string.IsNullOrEmpty(workingDirectory))
             {

@@ -1,4 +1,4 @@
-// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory
 {
@@ -31,15 +31,8 @@ namespace GameTheory
         /// <returns>The collection of elements that match the maximum.</returns>
         public static List<T> AllMax<T>(this IEnumerable<T> source, IComparer<T> comparer)
         {
-            if (source == null)
-            {
-                throw new ArgumentNullException(nameof(source));
-            }
-
-            if (comparer == null)
-            {
-                throw new ArgumentNullException(nameof(comparer));
-            }
+            ArgumentNullException.ThrowIfNull(source);
+            ArgumentNullException.ThrowIfNull(comparer);
 
             var max = default(T);
             var list = new List<T>();
@@ -85,17 +78,9 @@ namespace GameTheory
         /// <returns>The collection of elements that match the maximum.</returns>
         public static List<TItem> AllMaxBy<TItem, TElement>(this IEnumerable<TItem> source, Func<TItem, TElement> elementSelector, out TElement max, IComparer<TElement> comparer = null)
         {
-            if (source == null)
-            {
-                throw new ArgumentNullException(nameof(source));
-            }
-
-            if (elementSelector == null)
-            {
-                throw new ArgumentNullException(nameof(elementSelector));
-            }
-
-            comparer = comparer ?? Comparer<TElement>.Default;
+            ArgumentNullException.ThrowIfNull(source);
+            ArgumentNullException.ThrowIfNull(elementSelector);
+            comparer ??= Comparer<TElement>.Default;
 
             max = default;
             var list = new List<TItem>();
@@ -137,15 +122,8 @@ namespace GameTheory
         /// <returns>The collection of elements that match the minimum.</returns>
         public static List<T> AllMin<T>(this IEnumerable<T> source, IComparer<T> comparer)
         {
-            if (source == null)
-            {
-                throw new ArgumentNullException(nameof(source));
-            }
-
-            if (comparer == null)
-            {
-                throw new ArgumentNullException(nameof(comparer));
-            }
+            ArgumentNullException.ThrowIfNull(source);
+            ArgumentNullException.ThrowIfNull(comparer);
 
             var min = default(T);
             var list = new List<T>();
@@ -191,17 +169,9 @@ namespace GameTheory
         /// <returns>The collection of elements that match the minimum.</returns>
         public static List<TItem> AllMinBy<TItem, TElement>(this IEnumerable<TItem> source, Func<TItem, TElement> elementSelector, out TElement min, IComparer<TElement> comparer = null)
         {
-            if (source == null)
-            {
-                throw new ArgumentNullException(nameof(source));
-            }
-
-            if (elementSelector == null)
-            {
-                throw new ArgumentNullException(nameof(elementSelector));
-            }
-
-            comparer = comparer ?? Comparer<TElement>.Default;
+            ArgumentNullException.ThrowIfNull(source);
+            ArgumentNullException.ThrowIfNull(elementSelector);
+            comparer ??= Comparer<TElement>.Default;
 
             min = default;
             var list = new List<TItem>();
@@ -245,10 +215,7 @@ namespace GameTheory
         /// <returns>The index of the item, if it is found; <c>-1</c>, otherwise.</returns>
         public static int IndexOf<T>(this IReadOnlyList<T> list, T item)
         {
-            if (list == null)
-            {
-                throw new ArgumentNullException(nameof(list));
-            }
+            ArgumentNullException.ThrowIfNull(list);
 
             for (var i = 0; i < list.Count; i++)
             {
@@ -290,15 +257,8 @@ namespace GameTheory
         /// <returns>The maxumum element.</returns>
         public static T Max<T>(this IEnumerable<T> source, IComparer<T> comparer)
         {
-            if (source == null)
-            {
-                throw new ArgumentNullException(nameof(source));
-            }
-
-            if (comparer == null)
-            {
-                throw new ArgumentNullException(nameof(comparer));
-            }
+            ArgumentNullException.ThrowIfNull(source);
+            ArgumentNullException.ThrowIfNull(comparer);
 
             var any = false;
             var max = default(T);
@@ -323,15 +283,8 @@ namespace GameTheory
         /// <returns>The maxumum element.</returns>
         public static T Max<T>(this IEnumerable<T> source, Comparison<T> comparison)
         {
-            if (source == null)
-            {
-                throw new ArgumentNullException(nameof(source));
-            }
-
-            if (comparison == null)
-            {
-                throw new ArgumentNullException(nameof(comparison));
-            }
+            ArgumentNullException.ThrowIfNull(source);
+            ArgumentNullException.ThrowIfNull(comparison);
 
             var any = false;
             var max = default(T);
@@ -358,15 +311,8 @@ namespace GameTheory
         /// <returns>The maxumum element.</returns>
         public static TResult Max<TSource, TResult>(this IEnumerable<TSource> source, Func<TSource, TResult> selector, IComparer<TResult> comparer)
         {
-            if (source == null)
-            {
-                throw new ArgumentNullException(nameof(source));
-            }
-
-            if (comparer == null)
-            {
-                throw new ArgumentNullException(nameof(comparer));
-            }
+            ArgumentNullException.ThrowIfNull(source);
+            ArgumentNullException.ThrowIfNull(comparer);
 
             var any = false;
             var max = default(TResult);
@@ -394,15 +340,8 @@ namespace GameTheory
         /// <returns>The maxumum element.</returns>
         public static TResult Max<TSource, TResult>(this IEnumerable<TSource> source, Func<TSource, TResult> selector, Comparison<TResult> comparison)
         {
-            if (source == null)
-            {
-                throw new ArgumentNullException(nameof(source));
-            }
-
-            if (comparison == null)
-            {
-                throw new ArgumentNullException(nameof(comparison));
-            }
+            ArgumentNullException.ThrowIfNull(source);
+            ArgumentNullException.ThrowIfNull(comparison);
 
             var any = false;
             var max = default(TResult);
@@ -430,12 +369,8 @@ namespace GameTheory
         /// <returns>The maxumum element.</returns>
         public static TSource MaxBy<TSource, TResult>(this IEnumerable<TSource> source, Func<TSource, TResult> elementSelector, IComparer<TResult> comparer = null)
         {
-            if (source == null)
-            {
-                throw new ArgumentNullException(nameof(source));
-            }
-
-            comparer = comparer ?? Comparer<TResult>.Default;
+            ArgumentNullException.ThrowIfNull(source);
+            comparer ??= Comparer<TResult>.Default;
 
             var any = false;
             var max = default(TResult);
@@ -463,15 +398,8 @@ namespace GameTheory
         /// <returns>The minimum element.</returns>
         public static T Min<T>(this IEnumerable<T> source, IComparer<T> comparer)
         {
-            if (source == null)
-            {
-                throw new ArgumentNullException(nameof(source));
-            }
-
-            if (comparer == null)
-            {
-                throw new ArgumentNullException(nameof(comparer));
-            }
+            ArgumentNullException.ThrowIfNull(source);
+            ArgumentNullException.ThrowIfNull(comparer);
 
             var any = false;
             var min = default(T);
@@ -496,15 +424,8 @@ namespace GameTheory
         /// <returns>The minimum element.</returns>
         public static T Min<T>(this IEnumerable<T> source, Comparison<T> comparison)
         {
-            if (source == null)
-            {
-                throw new ArgumentNullException(nameof(source));
-            }
-
-            if (comparison == null)
-            {
-                throw new ArgumentNullException(nameof(comparison));
-            }
+            ArgumentNullException.ThrowIfNull(source);
+            ArgumentNullException.ThrowIfNull(comparison);
 
             var any = false;
             var min = default(T);
@@ -531,15 +452,8 @@ namespace GameTheory
         /// <returns>The minimum element.</returns>
         public static TResult Min<TSource, TResult>(this IEnumerable<TSource> source, Func<TSource, TResult> selector, IComparer<TResult> comparer)
         {
-            if (source == null)
-            {
-                throw new ArgumentNullException(nameof(source));
-            }
-
-            if (comparer == null)
-            {
-                throw new ArgumentNullException(nameof(comparer));
-            }
+            ArgumentNullException.ThrowIfNull(source);
+            ArgumentNullException.ThrowIfNull(comparer);
 
             var any = false;
             var min = default(TResult);
@@ -567,15 +481,8 @@ namespace GameTheory
         /// <returns>The minimum element.</returns>
         public static TResult Min<TSource, TResult>(this IEnumerable<TSource> source, Func<TSource, TResult> selector, Comparison<TResult> comparison)
         {
-            if (source == null)
-            {
-                throw new ArgumentNullException(nameof(source));
-            }
-
-            if (comparison == null)
-            {
-                throw new ArgumentNullException(nameof(comparison));
-            }
+            ArgumentNullException.ThrowIfNull(source);
+            ArgumentNullException.ThrowIfNull(comparison);
 
             var any = false;
             var min = default(TResult);
@@ -603,12 +510,8 @@ namespace GameTheory
         /// <returns>The minimum element.</returns>
         public static TSource MinBy<TSource, TResult>(this IEnumerable<TSource> source, Func<TSource, TResult> elementSelector, IComparer<TResult> comparer = null)
         {
-            if (source == null)
-            {
-                throw new ArgumentNullException(nameof(source));
-            }
-
-            comparer = comparer ?? Comparer<TResult>.Default;
+            ArgumentNullException.ThrowIfNull(source);
+            comparer ??= Comparer<TResult>.Default;
 
             var any = false;
             var min = default(TResult);
@@ -636,10 +539,8 @@ namespace GameTheory
         /// <returns>A sequence that contains partitions of the specified size.</returns>
         public static IEnumerable<ImmutableList<T>> Partition<T>(this IEnumerable<T> source, int count)
         {
-            if (count <= 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(count));
-            }
+            ArgumentNullException.ThrowIfNull(source);
+            ArgumentOutOfRangeException.ThrowIfNegativeOrZero(count);
 
             var result = new List<T>(count);
             foreach (var item in source)

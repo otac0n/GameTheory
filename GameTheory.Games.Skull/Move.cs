@@ -17,7 +17,9 @@ namespace GameTheory.Games.Skull
         /// <param name="state">The <see cref="Skull.GameState"/> that this move is based on.</param>
         protected Move(GameState state)
         {
-            this.GameState = state ?? throw new ArgumentNullException(nameof(state));
+            ArgumentNullException.ThrowIfNull(state);
+
+            this.GameState = state;
             this.PlayerToken = state.ActivePlayer;
         }
 
@@ -28,7 +30,9 @@ namespace GameTheory.Games.Skull
         /// <param name="player">The <see cref="PlayerToken">player</see> that may choose this move.</param>
         protected Move(GameState state, PlayerToken player)
         {
-            this.GameState = state ?? throw new ArgumentNullException(nameof(state));
+            ArgumentNullException.ThrowIfNull(state);
+
+            this.GameState = state;
             this.PlayerToken = player;
         }
 

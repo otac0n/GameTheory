@@ -1,4 +1,4 @@
-// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Games.Mancala
 {
@@ -18,7 +18,9 @@ namespace GameTheory.Games.Mancala
         /// <param name="bin">The index of the bin.</param>
         internal Move(GameState state, int bin)
         {
-            this.GameState = state ?? throw new ArgumentNullException(nameof(state));
+            ArgumentNullException.ThrowIfNull(state);
+
+            this.GameState = state;
             this.Bin = bin;
         }
 

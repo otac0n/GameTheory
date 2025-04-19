@@ -1,4 +1,4 @@
-// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory
 {
@@ -25,15 +25,8 @@ namespace GameTheory
             where TGameState : IGameState<TMove>
             where TMove : IMove
         {
-            if (strategy == null)
-            {
-                throw new ArgumentNullException(nameof(strategy));
-            }
-
-            if (state == null)
-            {
-                throw new ArgumentNullException(nameof(state));
-            }
+            ArgumentNullException.ThrowIfNull(strategy);
+            ArgumentNullException.ThrowIfNull(state);
 
             var moves = state.GetAvailableMoves<TGameState, TMove>(playerToken);
             return strategy.ChooseMove(state, playerToken, moves, cancel);

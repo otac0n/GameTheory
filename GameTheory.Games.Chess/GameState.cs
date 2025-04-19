@@ -1,4 +1,4 @@
-// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Games.Chess
 {
@@ -40,10 +40,7 @@ namespace GameTheory.Games.Chess
         /// <param name="position">The Forsyth–Edwards Notation representation of the position.</param>
         public GameState(string position)
         {
-            if (string.IsNullOrEmpty(position))
-            {
-                throw new ArgumentNullException(nameof(position));
-            }
+            ArgumentNullException.ThrowIfNullOrEmpty(position);
 
             var index = 0;
             if ((!Parser.TryParseXFen(position, ref index, out var board, out var activePlayer, out var castling, out var epCoordinate, out var plyCountClock, out var moveNumber) &&
@@ -343,10 +340,7 @@ namespace GameTheory.Games.Chess
         /// <inheritdoc/>
         public IGameState<Move> MakeMove(Move move)
         {
-            if (move == null)
-            {
-                throw new ArgumentNullException(nameof(move));
-            }
+            ArgumentNullException.ThrowIfNull(move);
 
             if (this.CompareTo(move.GameState) != 0)
             {

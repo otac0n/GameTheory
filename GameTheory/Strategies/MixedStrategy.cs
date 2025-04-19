@@ -1,4 +1,4 @@
-// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Strategies
 {
@@ -36,10 +36,7 @@ namespace GameTheory.Strategies
         /// <param name="disposeChildren">A value indicating whether or not this strategy should own the disposal of the specified strategies.</param>
         public MixedStrategy(IEnumerable<Weighted<IStrategy<TGameState, TMove>>> strategies, bool disposeChildren)
         {
-            if (strategies == null)
-            {
-                throw new ArgumentNullException(nameof(strategies));
-            }
+            ArgumentNullException.ThrowIfNull(strategies);
 
             this.strategies = strategies.ToImmutableList();
             this.disposeChildren = disposeChildren;

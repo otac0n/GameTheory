@@ -25,10 +25,7 @@ namespace GameTheory.Games.FiveTribes.Djinns
         /// <inheritdoc />
         protected override GameState OnAcquire(PlayerToken owner, GameState state)
         {
-            if (state == null)
-            {
-                throw new ArgumentNullException(nameof(state));
-            }
+            ArgumentNullException.ThrowIfNull(state);
 
             return state.With(
                 scoreTables: state.ScoreTables.SetItem(owner, state.ScoreTables[owner].With(elderValue: 4)));

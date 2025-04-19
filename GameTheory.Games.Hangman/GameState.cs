@@ -1,4 +1,4 @@
-// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Games.Hangman
 {
@@ -202,10 +202,7 @@ namespace GameTheory.Games.Hangman
         /// <returns>The updated <see cref="GameState"/>.</returns>
         public GameState MakeMove(Move move)
         {
-            if (move == null)
-            {
-                throw new ArgumentNullException(nameof(move));
-            }
+            ArgumentNullException.ThrowIfNull(move);
 
             if (this.Guesses.Contains(move.Guess))
             {
@@ -226,10 +223,7 @@ namespace GameTheory.Games.Hangman
 
         private string MaskWord(Func<string, string> mask = null)
         {
-            if (mask == null)
-            {
-                mask = _ => "_";
-            }
+            mask ??= _ => "_";
 
             var builder = new StringBuilder(this.word);
             for (var i = builder.Length - 1; i >= 0; i--)

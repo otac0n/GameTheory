@@ -15,8 +15,11 @@ namespace GameTheory.Games.FiveTribes
         /// </summary>
         /// <param name="state">The <see cref="FiveTribes.GameState"/> that this move is based on.</param>
         protected Move(GameState state)
-            : this(state ?? throw new ArgumentNullException(nameof(state)), state.ActivePlayer)
         {
+            ArgumentNullException.ThrowIfNull(state);
+
+            this.GameState = state;
+            this.PlayerToken = state.ActivePlayer;
         }
 
         /// <summary>
@@ -26,8 +29,11 @@ namespace GameTheory.Games.FiveTribes
         /// <param name="playerToken">The player who may perform this move.</param>
         protected Move(GameState state, PlayerToken playerToken)
         {
+            ArgumentNullException.ThrowIfNull(state);
+            ArgumentNullException.ThrowIfNull(playerToken);
+
             this.GameState = state;
-            this.PlayerToken = playerToken ?? throw new ArgumentNullException(nameof(playerToken));
+            this.PlayerToken = playerToken;
         }
 
         /// <inheritdoc />

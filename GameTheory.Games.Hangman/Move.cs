@@ -1,4 +1,4 @@
-// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Games.Hangman
 {
@@ -17,7 +17,9 @@ namespace GameTheory.Games.Hangman
         /// <param name="guess">The letter being guessed.</param>
         public Move(GameState state, string guess)
         {
-            this.GameState = state ?? throw new ArgumentNullException(nameof(state));
+            ArgumentNullException.ThrowIfNull(state);
+
+            this.GameState = state;
             this.PlayerToken = state.Players[0];
             this.Guess = guess;
         }

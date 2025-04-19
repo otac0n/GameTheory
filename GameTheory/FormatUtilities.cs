@@ -1,4 +1,4 @@
-// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory
 {
@@ -55,10 +55,7 @@ namespace GameTheory
         /// <returns>An enumerable collection containing atomic format tokens.</returns>
         public static IEnumerable<object> FlattenFormatTokens(this ITokenFormattable @this)
         {
-            if (@this == null)
-            {
-                throw new ArgumentNullException(nameof(@this));
-            }
+            ArgumentNullException.ThrowIfNull(@this);
 
             return FlattenFormatTokens(@this.FormatTokens);
         }
@@ -109,10 +106,7 @@ namespace GameTheory
         /// <returns>The format tokens representing the list.</returns>
         public static IList<object> FormatList<T>(IList<T> items, bool exclusive = false)
         {
-            if (items == null)
-            {
-                throw new ArgumentNullException(nameof(items));
-            }
+            ArgumentNullException.ThrowIfNull(items);
 
             string sep;
             switch (items.Count)
@@ -158,10 +152,7 @@ namespace GameTheory
         /// <returns>The format tokens representing the list.</returns>
         public static string FormatList(IList<string> items, bool exclusive = false)
         {
-            if (items == null)
-            {
-                throw new ArgumentNullException(nameof(items));
-            }
+            ArgumentNullException.ThrowIfNull(items);
 
             string last;
             switch (items.Count)

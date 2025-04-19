@@ -1,4 +1,4 @@
-// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Players
 {
@@ -25,8 +25,11 @@ namespace GameTheory.Players
         /// <param name="fallbackPlayer">The player to default to when the strategy doesn't yield a move.</param>
         public StrategyPlayer(IStrategy<TGameState, TMove> strategy, IPlayer<TGameState, TMove> fallbackPlayer)
         {
-            this.fallbackPlayer = fallbackPlayer ?? throw new ArgumentNullException(nameof(fallbackPlayer));
-            this.strategy = strategy ?? throw new ArgumentNullException(nameof(strategy));
+            ArgumentNullException.ThrowIfNull(fallbackPlayer);
+            ArgumentNullException.ThrowIfNull(strategy);
+
+            this.fallbackPlayer = fallbackPlayer;
+            this.strategy = strategy;
         }
 
         /// <summary>

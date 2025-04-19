@@ -1,4 +1,4 @@
-// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Games.PositivelyPerfectParfaitGame
 {
@@ -46,10 +46,8 @@ namespace GameTheory.Games.PositivelyPerfectParfaitGame
             [Display(ResourceType = typeof(Resources), Name = nameof(Resources.PlayOut), Description = nameof(Resources.PlayOutDescription))]
             bool playOut = false)
         {
-            if (players < MinPlayers || players > MaxPlayers)
-            {
-                throw new ArgumentOutOfRangeException(nameof(players));
-            }
+            ArgumentOutOfRangeException.ThrowIfLessThan(players, MinPlayers);
+            ArgumentOutOfRangeException.ThrowIfGreaterThan(players, MaxPlayers);
 
             this.PlayOut = playOut;
             this.Players = Enumerable.Range(0, players).Select(i => new PlayerToken()).ToImmutableArray();
@@ -220,10 +218,7 @@ namespace GameTheory.Games.PositivelyPerfectParfaitGame
         /// <inheritdoc />
         public IGameState<Move> MakeMove(Move move)
         {
-            if (move == null)
-            {
-                throw new ArgumentNullException(nameof(move));
-            }
+            ArgumentNullException.ThrowIfNull(move);
 
             if (this.CompareTo(move.GameState) != 0)
             {

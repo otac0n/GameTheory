@@ -1,4 +1,4 @@
-// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.ConsoleRunner
 {
@@ -62,7 +62,7 @@ namespace GameTheory.ConsoleRunner
 
         public static object ConstructType(IEnumerable<Initializer> initializers, Func<Parameter, object> getArgument = null)
         {
-            getArgument = getArgument ?? (p => GetArgument(p));
+            getArgument ??= GetArgument;
             var initializer = ConsoleInteraction.Choose(initializers.ToList(), skipMessage: _ => Resources.SingleConstructor);
             return initializer.Accessor(initializer.Parameters.Select(getArgument).ToArray());
         }
@@ -221,7 +221,7 @@ namespace GameTheory.ConsoleRunner
 
         public static void List<T>(IList<T> items, Action<T> render = null)
         {
-            render = render ?? new Action<T>(item => Console.Write(item?.ToString()));
+            render ??= new Action<T>(item => Console.Write(item?.ToString()));
             for (var i = 0; i < items.Count; i++)
             {
                 Console.Write(Resources.ListItem, i + 1);

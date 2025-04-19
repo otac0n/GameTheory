@@ -1,4 +1,4 @@
-// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory
 {
@@ -18,10 +18,7 @@ namespace GameTheory
         /// <returns>The combined score.</returns>
         public static double Combine(Weighted<double>[] scores)
         {
-            if (scores == null)
-            {
-                throw new ArgumentNullException(nameof(scores));
-            }
+            ArgumentNullException.ThrowIfNull(scores);
 
             var weight = 0.0;
             var sum = 0.0;
@@ -127,10 +124,7 @@ namespace GameTheory
 
             IDictionary<PlayerToken, TScore> IGameStateScoringMetric<TGameState, TMove, TScore>.Score(TGameState state)
             {
-                if (state == null)
-                {
-                    throw new ArgumentNullException(nameof(state));
-                }
+                ArgumentNullException.ThrowIfNull(state);
 
                 return state.Players.ToDictionary(p => p, p => this.score(new PlayerState<TGameState, TMove>(p, state)));
             }

@@ -25,10 +25,7 @@ namespace GameTheory.Games.FiveTribes.Djinns
         /// <inheritdoc />
         protected override GameState OnAcquire(PlayerToken owner, GameState state)
         {
-            if (state == null)
-            {
-                throw new ArgumentNullException(nameof(state));
-            }
+            ArgumentNullException.ThrowIfNull(state);
 
             var assassinationTable = state.AssassinationTables[owner];
 

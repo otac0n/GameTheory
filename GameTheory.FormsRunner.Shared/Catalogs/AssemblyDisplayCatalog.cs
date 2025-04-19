@@ -1,4 +1,4 @@
-// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.FormsRunner.Shared.Catalogs
 {
@@ -22,8 +22,11 @@ namespace GameTheory.FormsRunner.Shared.Catalogs
         /// <param name="assembly">The assembly to search for displays.</param>
         public AssemblyDisplayCatalog(Type baseGameStateType, Assembly assembly)
         {
-            this.baseGameStateType = baseGameStateType ?? throw new ArgumentNullException(nameof(baseGameStateType));
-            this.assembly = assembly ?? throw new ArgumentNullException(nameof(assembly));
+            ArgumentNullException.ThrowIfNull(baseGameStateType);
+            ArgumentNullException.ThrowIfNull(assembly);
+
+            this.baseGameStateType = baseGameStateType;
+            this.assembly = assembly;
         }
 
         /// <inheritdoc/>

@@ -1,4 +1,4 @@
-// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Games.Nessos
 {
@@ -64,10 +64,8 @@ namespace GameTheory.Games.Nessos
             [Display(ResourceType = typeof(SharedResources), Name = nameof(SharedResources.Players), Description = nameof(SharedResources.PlayersDescription))]
             int players = MinPlayers)
         {
-            if (players < MinPlayers || players > MaxPlayers)
-            {
-                throw new ArgumentOutOfRangeException(nameof(players));
-            }
+            ArgumentOutOfRangeException.ThrowIfLessThan(players, MinPlayers);
+            ArgumentOutOfRangeException.ThrowIfGreaterThan(players, MaxPlayers);
 
             this.Players = Enumerable.Range(0, players).Select(i => new PlayerToken()).ToImmutableArray();
             this.FirstPlayer = this.Players[0];
@@ -386,10 +384,7 @@ namespace GameTheory.Games.Nessos
         /// <inheritdoc />
         public IGameState<Move> MakeMove(Move move)
         {
-            if (move == null)
-            {
-                throw new ArgumentNullException(nameof(move));
-            }
+            ArgumentNullException.ThrowIfNull(move);
 
             if (this.CompareTo(move.GameState) != 0)
             {

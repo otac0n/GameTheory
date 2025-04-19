@@ -1,4 +1,4 @@
-// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.ConsoleRunner.Shared.Catalogs
 {
@@ -30,7 +30,9 @@ namespace GameTheory.ConsoleRunner.Shared.Catalogs
         /// <param name="assemblies">The assemblies to search for console renderers.</param>
         public AssemblyConsoleRendererCatalog(IEnumerable<Assembly> assemblies)
         {
-            this.assemblies = (assemblies ?? throw new ArgumentNullException(nameof(assemblies))).ToImmutableList();
+            ArgumentNullException.ThrowIfNull(assemblies);
+
+            this.assemblies = assemblies.ToImmutableList();
         }
 
         /// <inheritdoc/>

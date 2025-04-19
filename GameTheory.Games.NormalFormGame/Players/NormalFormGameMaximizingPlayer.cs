@@ -1,4 +1,4 @@
-// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Games.NormalFormGame.Players
 {
@@ -28,10 +28,7 @@ namespace GameTheory.Games.NormalFormGame.Players
         /// <inheritdoc/>
         protected override double GetLead(IDictionary<PlayerToken, double> score, GameState<T> state, PlayerToken player)
         {
-            if (score == null)
-            {
-                throw new ArgumentNullException(nameof(score));
-            }
+            ArgumentNullException.ThrowIfNull(score);
 
             return score[player];
         }

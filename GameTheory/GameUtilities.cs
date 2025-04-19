@@ -1,4 +1,4 @@
-// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory
 {
@@ -26,10 +26,7 @@ namespace GameTheory
             where TGameState : IGameState<TMove>
             where TMove : IMove
         {
-            if (state == null)
-            {
-                throw new ArgumentNullException(nameof(state));
-            }
+            ArgumentNullException.ThrowIfNull(state);
 
             return state.Players.GetNextPlayer(currentPlayer);
         }
@@ -42,10 +39,7 @@ namespace GameTheory
         /// <returns>The next player, or the first player if the current player was not found.</returns>
         public static PlayerToken GetNextPlayer(this IReadOnlyList<PlayerToken> players, PlayerToken currentPlayer)
         {
-            if (players == null)
-            {
-                throw new ArgumentNullException(nameof(players));
-            }
+            ArgumentNullException.ThrowIfNull(players);
 
             return players[(players.IndexOf(currentPlayer) + 1) % players.Count];
         }
@@ -58,10 +52,7 @@ namespace GameTheory
         /// <returns>The next player, or the first player if the current player was not found.</returns>
         public static PlayerToken GetNextPlayer(this IList<PlayerToken> players, PlayerToken currentPlayer)
         {
-            if (players == null)
-            {
-                throw new ArgumentNullException(nameof(players));
-            }
+            ArgumentNullException.ThrowIfNull(players);
 
             return players[(players.IndexOf(currentPlayer) + 1) % players.Count];
         }
@@ -92,10 +83,7 @@ namespace GameTheory
         public static int GetPlayerNumber<TMove>(this IGameState<TMove> state, PlayerToken playerToken)
             where TMove : IMove
         {
-            if (state == null)
-            {
-                throw new ArgumentNullException(nameof(state));
-            }
+            ArgumentNullException.ThrowIfNull(state);
 
             var ix = state.Players.IndexOf(playerToken);
             return ix > -1 ? (ix + 1) : ix;
