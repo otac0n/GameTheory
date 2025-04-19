@@ -1,8 +1,9 @@
-// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Tests.Players
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
@@ -25,14 +26,14 @@ namespace GameTheory.Tests.Players
             {
                 state.Moves = Enumerable.Range(0, Moves).Select(i => new StubGameState.Move(player.PlayerToken, "Move " + (char)('A' + i))).ToList();
 
-                var moves = state.Moves.ToDictionary(m => m.Value, m => 0);
+                var moves = state.Moves.ToDictionary(m => m.Value, m => 0.0);
                 for (var i = 0; i < Samples; i++)
                 {
                     var move = (await player.ChooseMove(state, CancellationToken.None)).Value;
                     moves[move.Value]++;
                 }
 
-                Assert.That(moves, Is.All.Property("Value").EqualTo(Expected).Within(3.29 * Math.Sqrt(Expected)));
+                Assert.That(moves, Is.All.Property(nameof(KeyValuePair<string, double>.Value)).EqualTo(Expected).Within(3.29 * Math.Sqrt(Expected)));
             }
         }
     }
