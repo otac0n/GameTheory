@@ -1,4 +1,4 @@
-// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.GameTree
 {
@@ -14,5 +14,12 @@ namespace GameTheory.GameTree
         /// <param name="score">The score to extend.</param>
         /// <returns>The extended score.</returns>
         TScore Extend(TScore score);
+
+        /// <summary>
+        /// Reduces the specified score by one ply.
+        /// </summary>
+        /// <param name="score">The score to reduce.</param>
+        /// <returns>The reduced score.</returns>
+        TScore Reduce(TScore score);
     }
 }

@@ -212,6 +212,11 @@ namespace GameTheory.Players.MaximizingPlayer
                 var weightedOutcomes = new List<Weighted<Mainline<TGameState, TMove, TScore>>>();
                 foreach (var outcome in outcomes)
                 {
+                    if (this.scoreExtender != null)
+                    {
+                        alphaBetaScore = alphaBetaScore.ToImmutableDictionary(kvp => kvp.Key, kvp => this.scoreExtender.Reduce(kvp.Value));
+                    }
+
                     var mainline = this.GetMove(outcome.Value, ply - 1, alphaBetaScore, cancel);
                     var strategy = ImmutableArray.Create<IWeighted<TMove>>(Weighted.Create(move, 1));
                     var newMainline = mainline.Extend(move.PlayerToken, strategy, this.scoreExtender);

@@ -125,6 +125,9 @@ namespace GameTheory.Players.MaximizingPlayer
         /// <inheritdoc/>
         public ResultScore<TScore> Extend(ResultScore<TScore> score) => new ResultScore<TScore>(score.Result, score.InPly + 1, score.Likelihood, score.Rest);
 
+        /// <inheritdoc/>
+        public ResultScore<TScore> Reduce(ResultScore<TScore> score) => new ResultScore<TScore>(score.Result, score.InPly - 1, score.Likelihood, score.Rest);
+
         ResultScore<TScore> IScoringMetric<PlayerState<TGameState, TMove>, ResultScore<TScore>>.Score(PlayerState<TGameState, TMove> playerState)
         {
             var winners = playerState.GameState.GetWinners();
