@@ -1,9 +1,11 @@
-// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Tests.Players
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
+    using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
     using GameTheory.Games.TicTacToe;
@@ -23,16 +25,34 @@ namespace GameTheory.Tests.Players
 
             for (var i = 0; i < Samples; i++)
             {
-                var endState = await GameUtilities.PlayGame(new GameState(), playerTokens => new IPlayer<GameState, Move>[]
-                {
-                    new TicTacToeMaximizingPlayer(playerTokens[0], minPly: 6),
-                    new DuhPlayer<GameState, Move>(playerTokens[1]),
-                });
+                var debug = new StringBuilder();
+                var endState = await GameUtilities.PlayGame(
+                    new GameState(),
+                    new Func<IReadOnlyList<PlayerToken>, IReadOnlyList<IPlayer<GameState, Move>>>(playerTokens =>
+                    {
+                        var ticTacToe = new TicTacToeMaximizingPlayer(playerTokens[0], minPly: 6);
+                        var duh = new DuhPlayer<GameState, Move>(playerTokens[1]);
+
+                        debug.Append("Max: ").AppendLine(playerTokens[0].ToString());
+                        debug.Append("Duh: ").AppendLine(playerTokens[1].ToString());
+                        debug.AppendLine();
+                        ticTacToe.MessageSent += (m, s) => debug.AppendLine(string.Concat(s.FlattenFormatTokens())).AppendLine();
+
+                        return [ticTacToe, duh];
+                    }),
+                    (_, _, endState) => debug.AppendLine(endState.ToString()).AppendLine());
 
                 var players = endState.Players.ToArray();
-                foreach (var winner in endState.GetWinners())
+                var winners = endState.GetWinners();
+                if (winners.Count == 1)
                 {
-                    wins[Array.IndexOf(players, winner)]++;
+                    var index = Array.IndexOf(players, winners.Single());
+                    if (index == 1)
+                    {
+                        Console.WriteLine(debug.ToString());
+                    }
+
+                    wins[index]++;
                 }
             }
 
@@ -46,16 +66,34 @@ namespace GameTheory.Tests.Players
 
             for (var i = 0; i < Samples; i++)
             {
-                var endState = await GameUtilities.PlayGame(new GameState(), playerTokens => new IPlayer<GameState, Move>[]
-                {
-                    new DuhPlayer<GameState, Move>(playerTokens[0]),
-                    new TicTacToeMaximizingPlayer(playerTokens[1], minPly: 6),
-                });
+                var debug = new StringBuilder();
+                var endState = await GameUtilities.PlayGame(
+                    new GameState(),
+                    new Func<IReadOnlyList<PlayerToken>, IReadOnlyList<IPlayer<GameState, Move>>>(playerTokens =>
+                    {
+                        var duh = new DuhPlayer<GameState, Move>(playerTokens[0]);
+                        var ticTacToe = new TicTacToeMaximizingPlayer(playerTokens[1], minPly: 6);
+
+                        debug.Append("Duh: ").AppendLine(playerTokens[0].ToString());
+                        debug.Append("Max: ").AppendLine(playerTokens[1].ToString());
+                        debug.AppendLine();
+                        ticTacToe.MessageSent += (m, s) => debug.AppendLine(string.Concat(s.FlattenFormatTokens())).AppendLine();
+
+                        return [duh, ticTacToe];
+                    }),
+                    (_, _, endState) => debug.AppendLine(endState.ToString()).AppendLine());
 
                 var players = endState.Players.ToArray();
-                foreach (var winner in endState.GetWinners())
+                var winners = endState.GetWinners();
+                if (winners.Count == 1)
                 {
-                    wins[Array.IndexOf(players, winner)]++;
+                    var index = Array.IndexOf(players, winners.Single());
+                    if (index == 0)
+                    {
+                        Console.WriteLine(debug.ToString());
+                    }
+
+                    wins[index]++;
                 }
             }
 
