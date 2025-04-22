@@ -27,15 +27,8 @@ namespace GameTheory.Games.FiveTribes.Djinns
         /// <inheritdoc />
         public override GameState HandleAssassination(PlayerToken owner, GameState state, Point point, EnumCollection<Meeple> kill)
         {
-            if (kill == null)
-            {
-                throw new ArgumentNullException(nameof(kill));
-            }
-
-            if (state == null)
-            {
-                throw new ArgumentNullException(nameof(state));
-            }
+            ArgumentNullException.ThrowIfNull(state);
+            ArgumentNullException.ThrowIfNull(kill);
 
             if (owner != state.ActivePlayer)
             {

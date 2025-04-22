@@ -2,7 +2,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\SharedAssemblyProperties.props" />
   <PropertyGroup>
-    <TargetFrameworks>net8.0;netcoreapp3.1</TargetFrameworks>
+    <TargetFrameworks>net9.0</TargetFrameworks>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Intervals" Version="1.2.0-alpha0021" />

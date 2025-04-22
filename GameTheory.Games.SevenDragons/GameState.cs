@@ -1,4 +1,4 @@
-// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Games.SevenDragons
 {
@@ -118,10 +118,8 @@ namespace GameTheory.Games.SevenDragons
             bool includeActions = true)
             : this(null)
         {
-            if (players < MinPlayers || players > MaxPlayers)
-            {
-                throw new ArgumentOutOfRangeException(nameof(players));
-            }
+            ArgumentOutOfRangeException.ThrowIfLessThan(players, MinPlayers);
+            ArgumentOutOfRangeException.ThrowIfGreaterThan(players, MaxPlayers);
 
             this.Players = Enumerable.Range(0, players).Select(i => new PlayerToken()).ToImmutableArray();
             this.ActivePlayer = this.Players[0];
@@ -335,10 +333,7 @@ namespace GameTheory.Games.SevenDragons
         /// <returns>The updated <see cref="GameState"/>.</returns>
         public GameState MakeMove(Move move)
         {
-            if (move == null)
-            {
-                throw new ArgumentNullException(nameof(move));
-            }
+            ArgumentNullException.ThrowIfNull(move);
 
             if (this.CompareTo(move.GameState) != 0)
             {

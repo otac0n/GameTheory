@@ -1,4 +1,4 @@
-// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Games.Mancala
 {
@@ -49,14 +49,10 @@ namespace GameTheory.Games.Mancala
             [Display(ResourceType = typeof(Resources), Name = nameof(Resources.InitialStonesPerBin), Description = nameof(Resources.InitialStonesPerBinDescription))]
             int initialStonesPerBin = 4)
         {
-            if (binsPerSide < MinBinsPerSide || binsPerSide > MaxBinsPerSide)
-            {
-                throw new ArgumentOutOfRangeException(nameof(binsPerSide));
-            }
-            else if (initialStonesPerBin < MinInitialStonesPerBin || initialStonesPerBin > MaxInitialStonesPerBin)
-            {
-                throw new ArgumentOutOfRangeException(nameof(initialStonesPerBin));
-            }
+            ArgumentOutOfRangeException.ThrowIfLessThan(binsPerSide, MinBinsPerSide);
+            ArgumentOutOfRangeException.ThrowIfGreaterThan(binsPerSide, MaxBinsPerSide);
+            ArgumentOutOfRangeException.ThrowIfLessThan(initialStonesPerBin, MinInitialStonesPerBin);
+            ArgumentOutOfRangeException.ThrowIfGreaterThan(initialStonesPerBin, MaxInitialStonesPerBin);
 
             this.Players = ImmutableArray.Create(new PlayerToken(), new PlayerToken());
             this.ActivePlayerIndex = 0;
@@ -238,10 +234,7 @@ namespace GameTheory.Games.Mancala
         /// <returns>The updated <see cref="GameState"/>.</returns>
         public GameState MakeMove(Move move)
         {
-            if (move == null)
-            {
-                throw new ArgumentNullException(nameof(move));
-            }
+            ArgumentNullException.ThrowIfNull(move);
 
             if (this.CompareTo(move.GameState) != 0)
             {

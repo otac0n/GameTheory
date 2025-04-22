@@ -1,4 +1,4 @@
-// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Catalogs
 {
@@ -21,10 +21,15 @@ namespace GameTheory.Catalogs
         /// <param name="name">The name of the player.</param>
         public CatalogPlayer(Type playerType, Type gameStateType, Type moveType, IEnumerable<Initializer> initializers, string name = null)
         {
-            this.PlayerType = playerType ?? throw new ArgumentNullException(nameof(playerType));
-            this.GameStateType = gameStateType ?? throw new ArgumentNullException(nameof(gameStateType));
-            this.MoveType = moveType ?? throw new ArgumentNullException(nameof(moveType));
-            this.Initializers = (initializers ?? throw new ArgumentNullException(nameof(initializers))).ToList().AsReadOnly();
+            ArgumentNullException.ThrowIfNull(playerType);
+            ArgumentNullException.ThrowIfNull(gameStateType);
+            ArgumentNullException.ThrowIfNull(moveType);
+            ArgumentNullException.ThrowIfNull(initializers);
+
+            this.PlayerType = playerType;
+            this.GameStateType = gameStateType;
+            this.MoveType = moveType;
+            this.Initializers = initializers.ToList().AsReadOnly();
             this.Name = string.IsNullOrEmpty(name)
                 ? GetPlayerName(this.PlayerType)
                 : name;

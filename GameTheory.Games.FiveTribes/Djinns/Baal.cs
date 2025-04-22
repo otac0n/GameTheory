@@ -26,10 +26,7 @@ namespace GameTheory.Games.FiveTribes.Djinns
         /// <inheritdoc />
         public override GameState HandleTransition(PlayerToken owner, GameState oldState, GameState newState)
         {
-            if (oldState == null)
-            {
-                throw new ArgumentNullException(nameof(oldState));
-            }
+            ArgumentNullException.ThrowIfNull(oldState);
 
             foreach (var player in oldState.Players)
             {

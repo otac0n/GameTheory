@@ -18,7 +18,9 @@ namespace GameTheory.Games.Ergo
         /// <param name="state">The <see cref="Ergo.GameState"/> that this move is based on.</param>
         internal Move(GameState state)
         {
-            this.GameState = state ?? throw new ArgumentNullException(nameof(state));
+            ArgumentNullException.ThrowIfNull(state);
+
+            this.GameState = state;
             this.PlayerToken = state.ActivePlayer;
         }
 

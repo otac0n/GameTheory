@@ -1,4 +1,4 @@
-// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Games.Lotus
 {
@@ -49,10 +49,8 @@ namespace GameTheory.Games.Lotus
             [Display(ResourceType = typeof(SharedResources), Name = nameof(SharedResources.Players), Description = nameof(SharedResources.PlayersDescription))]
             int players = MinPlayers)
         {
-            if (players < MinPlayers || players > MaxPlayers)
-            {
-                throw new ArgumentOutOfRangeException(nameof(players));
-            }
+            ArgumentOutOfRangeException.ThrowIfLessThan(players, MinPlayers);
+            ArgumentOutOfRangeException.ThrowIfGreaterThan(players, MaxPlayers);
 
             this.Players = Enumerable.Range(0, players).Select(i => new PlayerToken()).ToImmutableArray();
             this.ActivePlayer = this.Players[0];
@@ -141,10 +139,7 @@ namespace GameTheory.Games.Lotus
         /// <returns>The collection of players that control the specified flower.</returns>
         public static ImmutableList<PlayerToken> GetControllingPlayers(Flower flower)
         {
-            if (flower == null)
-            {
-                throw new ArgumentNullException(nameof(flower));
-            }
+            ArgumentNullException.ThrowIfNull(flower);
 
             var points = flower.Petals.Where(p => p.Owner != null).Select(p => new { p.Owner, p.Guardians }).Concat(flower.Guardians.Select(g => new { Owner = g, Guardians = 1 }));
             var playerPoints = from p in points
@@ -342,10 +337,7 @@ namespace GameTheory.Games.Lotus
         /// <inheritdoc />
         public IGameState<Move> MakeMove(Move move)
         {
-            if (move == null)
-            {
-                throw new ArgumentNullException(nameof(move));
-            }
+            ArgumentNullException.ThrowIfNull(move);
 
             if (this.CompareTo(move.GameState) != 0)
             {

@@ -1,4 +1,4 @@
-// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Games.Draughts
 {
@@ -159,15 +159,8 @@ namespace GameTheory.Games.Draughts
         /// <returns>The maximum score possible.</returns>
         public static T MeasureCaptures<T>(GameState state, PlayerToken player, CaptureMove move, IScoringMetric<CaptureMove, T> scoringMetric)
         {
-            if (state == null)
-            {
-                throw new ArgumentNullException(nameof(state));
-            }
-
-            if (scoringMetric == null)
-            {
-                throw new ArgumentNullException(nameof(scoringMetric));
-            }
+            ArgumentNullException.ThrowIfNull(state);
+            ArgumentNullException.ThrowIfNull(scoringMetric);
 
             var score = scoringMetric.Score(move);
 

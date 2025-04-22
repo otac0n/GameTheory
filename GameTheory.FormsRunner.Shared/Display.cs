@@ -1,4 +1,4 @@
-// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.FormsRunner.Shared
 {
@@ -12,7 +12,7 @@ namespace GameTheory.FormsRunner.Shared
     {
         private static IList<Display> displays;
 
-        private static IList<Display> Displays => displays ?? (displays = new List<Display>
+        private static IList<Display> Displays => displays ??= new List<Display>
         {
             NullDisplay.Instance,
             PrimitiveDisplay.Instance,
@@ -20,7 +20,7 @@ namespace GameTheory.FormsRunner.Shared
             DictionaryDisplay.Instance,
             ListDisplay.Instance,
             ObjectGraphDisplay.Instance,
-        }.AsReadOnly());
+        }.AsReadOnly();
 
         public static Control FindAndUpdate<T>(Control control, Scope scope, T value, IReadOnlyList<Display> displays, Action<Control, Control> update = null) =>
             FindAndUpdate(control, scope, typeof(T), value, displays, update);

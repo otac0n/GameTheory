@@ -1,4 +1,4 @@
-// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.ConsoleRunner.Shared
 {
@@ -22,15 +22,8 @@ namespace GameTheory.ConsoleRunner.Shared
         /// <inheritdoc/>
         public void Show(TGameState state, IList<object> formatTokens)
         {
-            if (state == null)
-            {
-                throw new ArgumentNullException(nameof(state));
-            }
-
-            if (formatTokens == null)
-            {
-                throw new ArgumentNullException(nameof(formatTokens));
-            }
+            ArgumentNullException.ThrowIfNull(state);
+            ArgumentNullException.ThrowIfNull(formatTokens);
 
             foreach (var token in formatTokens)
             {
@@ -41,15 +34,8 @@ namespace GameTheory.ConsoleRunner.Shared
         /// <inheritdoc/>
         public void Show(TGameState state, ITokenFormattable tokenFormattable)
         {
-            if (state == null)
-            {
-                throw new ArgumentNullException(nameof(state));
-            }
-
-            if (tokenFormattable == null)
-            {
-                throw new ArgumentNullException(nameof(tokenFormattable));
-            }
+            ArgumentNullException.ThrowIfNull(state);
+            ArgumentNullException.ThrowIfNull(tokenFormattable);
 
             this.Show(state, tokenFormattable.FormatTokens);
         }

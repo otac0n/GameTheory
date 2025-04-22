@@ -1,4 +1,4 @@
-// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.FormsRunner.Shared
 {
@@ -15,14 +15,14 @@ namespace GameTheory.FormsRunner.Shared
 
         private static IList<Editor> editors;
 
-        private static IList<Editor> Editors => editors ?? (editors = new List<Editor>
+        private static IList<Editor> Editors => editors ??= new List<Editor>
         {
             BoolEditor.Instance,
             StringEditor.Instance,
             Int32Editor.Instance,
             EnumEditor.Instance,
             ObjectGraphEditor.Instance,
-        }.AsReadOnly());
+        }.AsReadOnly();
 
         public static Control FindAndUpdate(Control control, Scope scope, Parameter parameter, object value, out Control errorControl, IReadOnlyList<Editor> editors, Action<Control, string> setError, Action<object, bool> set, Action<Control, Control> update = null)
         {

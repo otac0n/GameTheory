@@ -1,4 +1,4 @@
-// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory
 {
@@ -47,8 +47,8 @@ namespace GameTheory
                 return comp;
             }
 
-            keyComparer = keyComparer ?? Comparer<TKey>.Default;
-            valueComparer = valueComparer ?? Comparer<TValue>.Default;
+            keyComparer ??= Comparer<TKey>.Default;
+            valueComparer ??= Comparer<TValue>.Default;
 
             var otherKeys = new List<TKey>(right.Count);
             otherKeys.AddRange(right.Keys);
@@ -104,7 +104,7 @@ namespace GameTheory
             }
 
             var keyComparer = EnumComparer<TKey>.Default;
-            valueComparer = valueComparer ?? Comparer<TValue>.Default;
+            valueComparer ??= Comparer<TValue>.Default;
 
             var otherKeys = new List<TKey>(right.Count);
             otherKeys.AddRange(right.Keys);
@@ -262,7 +262,7 @@ namespace GameTheory
                 return comp;
             }
 
-            keyComparer = keyComparer ?? Comparer<TKey>.Default;
+            keyComparer ??= Comparer<TKey>.Default;
             var valueComparer = EnumComparer<TValue>.Default;
 
             var otherKeys = new List<TKey>(right.Count);
@@ -579,7 +579,7 @@ namespace GameTheory
                 return comp;
             }
 
-            comparer = comparer ?? Comparer<TKey>.Default;
+            comparer ??= Comparer<TKey>.Default;
 
             var otherKeys = new List<TKey>(right.Count);
             otherKeys.AddRange(right);

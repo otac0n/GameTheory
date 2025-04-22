@@ -1,4 +1,4 @@
-// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Catalogs
 {
@@ -25,15 +25,8 @@ namespace GameTheory.Catalogs
         /// <returns>The requested catalogs.</returns>
         public static T LoadCatalogs<T>(Func<T[], T> makeComposite, string path = null, IServiceLocator serviceLocator = null)
         {
-            if (path == null)
-            {
-                path = Environment.CurrentDirectory;
-            }
-
-            if (serviceLocator == null)
-            {
-                serviceLocator = ServiceLocator.Current;
-            }
+            path ??= Environment.CurrentDirectory;
+            serviceLocator ??= ServiceLocator.Current;
 
             var libraries = Enumerable.Concat(
                 Directory.EnumerateFiles(path, "GameTheory.*.dll"),

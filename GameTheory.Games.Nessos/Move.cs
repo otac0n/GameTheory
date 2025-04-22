@@ -1,4 +1,4 @@
-// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Games.Nessos
 {
@@ -18,7 +18,9 @@ namespace GameTheory.Games.Nessos
         /// <param name="player">The <see cref="PlayerToken">player</see> that may choose this move.</param>
         protected Move(GameState state, PlayerToken player)
         {
-            this.GameState = state ?? throw new ArgumentNullException(nameof(state));
+            ArgumentNullException.ThrowIfNull(state);
+
+            this.GameState = state;
             this.PlayerToken = player;
         }
 

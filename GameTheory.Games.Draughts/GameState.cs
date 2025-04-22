@@ -1,4 +1,4 @@
-// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Games.Draughts
 {
@@ -21,7 +21,9 @@ namespace GameTheory.Games.Draughts
         /// <param name="variant">The variant of Draughts being played.</param>
         public GameState(Variant variant)
         {
-            this.Variant = variant ?? throw new ArgumentNullException(nameof(variant));
+            ArgumentNullException.ThrowIfNull(variant);
+
+            this.Variant = variant;
             this.Players = ImmutableArray.Create(new PlayerToken(), new PlayerToken());
             this.ActivePlayer = this.Players[0];
             this.Phase = Phase.Play;
@@ -180,10 +182,7 @@ namespace GameTheory.Games.Draughts
         /// <inheritdoc/>
         public IGameState<Move> MakeMove(Move move)
         {
-            if (move == null)
-            {
-                throw new ArgumentNullException(nameof(move));
-            }
+            ArgumentNullException.ThrowIfNull(move);
 
             if (this.CompareTo(move.GameState) != 0)
             {

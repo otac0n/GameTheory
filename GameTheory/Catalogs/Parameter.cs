@@ -1,4 +1,4 @@
-// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Catalogs
 {
@@ -20,10 +20,7 @@ namespace GameTheory.Catalogs
         /// <param name="parameterInfo">The <see cref="ParameterInfo"/> to use as the soruce for this parameter.</param>
         public Parameter(ParameterInfo parameterInfo)
         {
-            if (parameterInfo == null)
-            {
-                throw new ArgumentNullException(nameof(parameterInfo));
-            }
+            ArgumentNullException.ThrowIfNull(parameterInfo);
 
             this.Name = parameterInfo.Name;
             this.ParameterType = parameterInfo.ParameterType;
@@ -101,8 +98,10 @@ namespace GameTheory.Catalogs
         /// <param name="validations">A collection of validation attributes.</param>
         public Parameter(string name, Type parameterType, string displayName = null, Maybe<object> @default = default, string description = null, string placeholder = null, bool isPassword = false, IEnumerable<ValidationAttribute> validations = null)
         {
-            this.Name = name ?? throw new ArgumentNullException(nameof(name));
-            this.ParameterType = parameterType ?? throw new ArgumentNullException(nameof(parameterType));
+            ArgumentNullException.ThrowIfNull(name);
+            ArgumentNullException.ThrowIfNull(parameterType);
+            this.Name = name;
+            this.ParameterType = parameterType;
             this.DisplayName = displayName ?? this.Name;
             this.Default = @default;
             this.Description = description;

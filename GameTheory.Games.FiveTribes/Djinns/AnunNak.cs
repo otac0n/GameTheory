@@ -32,10 +32,7 @@ namespace GameTheory.Games.FiveTribes.Djinns
         {
             public override IEnumerable<Move> GenerateMoves(GameState state)
             {
-                if (state == null)
-                {
-                    throw new ArgumentNullException(nameof(state));
-                }
+                ArgumentNullException.ThrowIfNull(state);
 
                 var toDraw = Math.Min(state.Bag.Count, 3);
                 if (toDraw == 0)

@@ -1,4 +1,4 @@
-// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Games.Hangman.Console
 {
@@ -16,10 +16,7 @@ namespace GameTheory.Games.Hangman.Console
         /// <inheritdoc/>
         protected override void RenderToken(GameState state, object token)
         {
-            if (state == null)
-            {
-                throw new ArgumentNullException(nameof(state));
-            }
+            ArgumentNullException.ThrowIfNull(state);
 
             base.RenderToken(state, token);
         }

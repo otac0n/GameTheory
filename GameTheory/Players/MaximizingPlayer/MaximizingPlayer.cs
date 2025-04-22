@@ -1,4 +1,4 @@
-// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Players.MaximizingPlayer
 {
@@ -37,7 +37,9 @@ namespace GameTheory.Players.MaximizingPlayer
         protected MaximizingPlayer(PlayerToken playerToken, IGameStateScoringMetric<TGameState, TMove, TScore> scoringMetric, int minPly)
             : base(playerToken, scoringMetric)
         {
-            this.MinPly = minPly > -1 ? minPly : throw new ArgumentOutOfRangeException(nameof(minPly));
+            ArgumentOutOfRangeException.ThrowIfNegative(minPly);
+
+            this.MinPly = minPly;
         }
 
         /// <summary>
@@ -220,21 +222,24 @@ namespace GameTheory.Players.MaximizingPlayer
                 mainlines[m] = combined;
                 moveNode.Score = leads[m] = this.GetLead(combined.Scores, combined.GameState, move.PlayerToken);
 
-                if (singlePlayer != null && m > 0)
+                if (singlePlayer != null)
                 {
-                    var mainline = mainlines[0] = this.Maximize(singlePlayer, mainlines[0], leads[0], mainlines[m], leads[m]);
-                    var leadA = leads[0] = this.GetLead(mainline.Scores, mainline.GameState, singlePlayer);
+                    if (m > 0)
+                    {
+                        var mainline = mainlines[0] = this.Maximize(singlePlayer, mainlines[0], leads[0], mainlines[m], leads[m]);
+                        var leadA = leads[0] = this.GetLead(mainline.Scores, mainline.GameState, singlePlayer);
+                    }
 
                     // Alpha-beta pruning.
-                    if (otherPlayer != null)
+                    if (false && otherPlayer != null)
                     {
-                        var scoresA = mainline.Scores;
+                        var scoresA = mainlines[0].Scores;
 
                         int comp;
                         if (alphaBetaScore.TryGetValue(singlePlayer, out var scoresB))
                         {
                             var leadB = this.GetLead(scoresB, state, singlePlayer);
-                            comp = this.scoringMetric.Compare(leadA, leadB);
+                            comp = this.scoringMetric.Compare(leads[0], leadB);
                         }
                         else
                         {

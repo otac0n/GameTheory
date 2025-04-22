@@ -1,4 +1,4 @@
-// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Games.Chess
 {
@@ -334,12 +334,10 @@ namespace GameTheory.Games.Chess
 
         public static bool TryParseShredderFenCastling(string subject, ref int index, Pieces[,] board, out Dictionary<Pieces, int> castling)
         {
+            ArgumentNullException.ThrowIfNull(board);
+
             int boardWidth;
-            if (board == null)
-            {
-                throw new ArgumentOutOfRangeException(nameof(board));
-            }
-            else if ((boardWidth = board.GetLength(DimensionX)) == 0 || boardWidth > MaxShredderFenBoardWidth)
+            if ((boardWidth = board.GetLength(DimensionX)) == 0 || boardWidth > MaxShredderFenBoardWidth)
             {
                 throw new ArgumentOutOfRangeException(nameof(board));
             }
@@ -499,12 +497,10 @@ namespace GameTheory.Games.Chess
 
         public static bool TryParseXFenCastling(string subject, ref int index, Pieces[,] board, out Dictionary<Pieces, int> castling)
         {
+            ArgumentNullException.ThrowIfNull(board);
+
             int boardWidth;
-            if (board == null)
-            {
-                throw new ArgumentOutOfRangeException(nameof(board));
-            }
-            else if ((boardWidth = board.GetLength(DimensionX)) == 0 || boardWidth > MaxXFenBoardWidth)
+            if ((boardWidth = board.GetLength(DimensionX)) == 0 || boardWidth > MaxXFenBoardWidth)
             {
                 throw new ArgumentOutOfRangeException(nameof(board));
             }

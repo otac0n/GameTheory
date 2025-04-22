@@ -1,4 +1,4 @@
-// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Players.MaximizingPlayer
 {
@@ -32,7 +32,9 @@ namespace GameTheory.Players.MaximizingPlayer
         /// <param name="scoringMetric">The scoring metric to use.</param>
         public MaximizingPlayerBase(PlayerToken playerToken, IGameStateScoringMetric<TGameState, TMove, TScore> scoringMetric)
         {
-            this.scoringMetric = scoringMetric ?? throw new ArgumentNullException(nameof(scoringMetric));
+            ArgumentNullException.ThrowIfNull(scoringMetric);
+
+            this.scoringMetric = scoringMetric;
             this.scoreExtender = this.scoringMetric as IScorePlyExtender<TScore>;
             this.PlayerToken = playerToken;
             this.gameTree = new GameTree<TGameState, TMove, TScore>(this.MakeCache());
@@ -243,15 +245,8 @@ namespace GameTheory.Players.MaximizingPlayer
         /// <returns>The player's lead, as a score.</returns>
         protected virtual TScore GetLead(IDictionary<PlayerToken, TScore> score, TGameState state, PlayerToken player)
         {
-            if (state == null)
-            {
-                throw new ArgumentNullException(nameof(state));
-            }
-
-            if (score == null)
-            {
-                throw new ArgumentNullException(nameof(score));
-            }
+            ArgumentNullException.ThrowIfNull(score);
+            ArgumentNullException.ThrowIfNull(state);
 
             if (state.Players.Count == 1)
             {

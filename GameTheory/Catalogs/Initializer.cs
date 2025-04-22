@@ -1,4 +1,4 @@
-// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Catalogs
 {
@@ -20,9 +20,13 @@ namespace GameTheory.Catalogs
         /// <param name="parameters">A collection of parameters to be passed to the accessor function as arguments.</param>
         public Initializer(string name, Func<object[], object> accessor, IEnumerable<Parameter> parameters)
         {
-            this.Name = name ?? throw new ArgumentNullException(nameof(name));
-            this.Accessor = accessor ?? throw new ArgumentNullException(nameof(accessor));
-            this.Parameters = (parameters ?? throw new ArgumentNullException(nameof(parameters))).ToList().AsReadOnly();
+            ArgumentNullException.ThrowIfNull(name);
+            ArgumentNullException.ThrowIfNull(accessor);
+            ArgumentNullException.ThrowIfNull(parameters);
+
+            this.Name = name;
+            this.Accessor = accessor;
+            this.Parameters = parameters.ToList().AsReadOnly();
         }
 
         /// <inheritdoc/>

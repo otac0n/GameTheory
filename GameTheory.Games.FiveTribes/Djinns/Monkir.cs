@@ -26,15 +26,8 @@ namespace GameTheory.Games.FiveTribes.Djinns
         /// <inheritdoc />
         public override GameState HandleTransition(PlayerToken owner, GameState oldState, GameState newState)
         {
-            if (oldState == null)
-            {
-                throw new ArgumentNullException(nameof(oldState));
-            }
-
-            if (newState == null)
-            {
-                throw new ArgumentNullException(nameof(newState));
-            }
+            ArgumentNullException.ThrowIfNull(oldState);
+            ArgumentNullException.ThrowIfNull(newState);
 
             var newPalaces = newState.Sultanate.Sum(s => s.Palaces) - oldState.Sultanate.Sum(s => s.Palaces);
 

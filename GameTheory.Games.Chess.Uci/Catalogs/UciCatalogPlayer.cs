@@ -1,4 +1,4 @@
-// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Games.Chess.Uci.Catalogs
 {
@@ -61,10 +61,10 @@ namespace GameTheory.Games.Chess.Uci.Catalogs
 
         public Type GameStateType => typeof(GameState);
 
-        public IReadOnlyList<Initializer> Initializers => this.initializers ?? (this.initializers = new ReadOnlyCollection<Initializer>(new[]
+        public IReadOnlyList<Initializer> Initializers => this.initializers ??= new ReadOnlyCollection<Initializer>(new[]
         {
                 CreateInitializer(this.executablePath, this.engine.Value.Options),
-        }));
+        });
 
         public EngineMetadata Metadata { get; }
 
@@ -112,7 +112,7 @@ namespace GameTheory.Games.Chess.Uci.Catalogs
                 List<ValidationAttribute> attributes = null;
                 void AddAttribute(ValidationAttribute attribute)
                 {
-                    (attributes ?? (attributes = new List<ValidationAttribute>())).Add(attribute);
+                    (attributes ??= new List<ValidationAttribute>()).Add(attribute);
                 }
 
                 if (option.Name.StartsWith("Nalimov", StringComparison.OrdinalIgnoreCase) ||
@@ -161,9 +161,10 @@ namespace GameTheory.Games.Chess.Uci.Catalogs
                         var value = (int)args[pos];
                         if (!hasDefault || value != defaultValue)
                         {
-                            if (hasRange && (value < minInt || value > maxInt))
+                            if (hasRange)
                             {
-                                throw new ArgumentOutOfRangeException(option.Name);
+                                ArgumentOutOfRangeException.ThrowIfLessThan(value, minInt, option.Name);
+                                ArgumentOutOfRangeException.ThrowIfGreaterThan(value, maxInt, option.Name);
                             }
 
                             list.Add(new SetOptionCommand(option.Name, value.ToString()));
@@ -263,14 +264,8 @@ namespace GameTheory.Games.Chess.Uci.Catalogs
 
             public static Type GetEnum(IList<string> values)
             {
-                if (values == null)
-                {
-                    throw new ArgumentNullException(nameof(values));
-                }
-                else if (values.Count == 0)
-                {
-                    throw new ArgumentOutOfRangeException(nameof(values));
-                }
+                ArgumentNullException.ThrowIfNull(values);
+                ArgumentOutOfRangeException.ThrowIfZero(values.Count, nameof(values));
 
                 var key = string.Join("|", values.Select(v => v.Replace("\\", "\\\\").Replace("|", "\\|")));
                 return EnumCache.Cache.GetOrAdd(key, _ =>

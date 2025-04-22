@@ -1,4 +1,4 @@
-// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Games.PositivelyPerfectParfaitGame.Players
 {
@@ -36,15 +36,8 @@ namespace GameTheory.Games.PositivelyPerfectParfaitGame.Players
         /// <inheritdoc/>
         protected override ResultScore<double> GetLead(IDictionary<PlayerToken, ResultScore<double>> score, GameState state, PlayerToken player)
         {
-            if (state == null)
-            {
-                throw new ArgumentNullException(nameof(state));
-            }
-
-            if (score == null)
-            {
-                throw new ArgumentNullException(nameof(score));
-            }
+            ArgumentNullException.ThrowIfNull(score);
+            ArgumentNullException.ThrowIfNull(state);
 
             if (state.PlayOut)
             {

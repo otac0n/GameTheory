@@ -1,4 +1,4 @@
-// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory
 {
@@ -25,8 +25,7 @@ namespace GameTheory
         /// <remarks>
         /// Do not allow this instance to be observed by threads.
         /// </remarks>
-        public static System.Random Instance =>
-            instance ?? (instance = new System.Random(unchecked(Environment.TickCount * Interlocked.Increment(ref counter))));
+        public static System.Random Instance => instance ??= new System.Random(unchecked(Environment.TickCount * Interlocked.Increment(ref counter)));
 
         /// <summary>
         /// Returns a random floating point number with the specified normal distribution.
@@ -71,15 +70,8 @@ namespace GameTheory
         /// <returns>The remaining deck.</returns>
         public static ImmutableList<T> Deal<T>(this ImmutableList<T> deck, int count, out ImmutableList<T> dealt, ref ImmutableList<T> discards, System.Random instance = null)
         {
-            if (deck == null)
-            {
-                throw new ArgumentNullException(nameof(deck));
-            }
-
-            if (discards == null)
-            {
-                throw new ArgumentNullException(nameof(discards));
-            }
+            ArgumentNullException.ThrowIfNull(deck);
+            ArgumentNullException.ThrowIfNull(discards);
 
             var allDealt = ImmutableList<T>.Empty;
             deck = deck.Deal(count, out var newlyDealt, instance);
@@ -114,15 +106,8 @@ namespace GameTheory
         public static EnumCollection<T> Deal<T>(this EnumCollection<T> deck, int count, out ImmutableList<T> dealt, ref EnumCollection<T> discards, System.Random instance = null)
             where T : struct
         {
-            if (deck == null)
-            {
-                throw new ArgumentNullException(nameof(deck));
-            }
-
-            if (discards == null)
-            {
-                throw new ArgumentNullException(nameof(discards));
-            }
+            ArgumentNullException.ThrowIfNull(deck);
+            ArgumentNullException.ThrowIfNull(discards);
 
             var allDealt = ImmutableList<T>.Empty;
             deck = deck.Deal(count, out var newlyDealt, instance);
@@ -155,12 +140,8 @@ namespace GameTheory
         /// <returns>The remaining deck.</returns>
         public static ImmutableList<T> Deal<T>(this ImmutableList<T> deck, int count, out ImmutableList<T> dealt, System.Random instance = null)
         {
-            if (deck == null)
-            {
-                throw new ArgumentNullException(nameof(deck));
-            }
-
-            instance = instance ?? Instance;
+            ArgumentNullException.ThrowIfNull(deck);
+            instance ??= Instance;
 
             if (count >= deck.Count)
             {
@@ -192,12 +173,8 @@ namespace GameTheory
         public static EnumCollection<T> Deal<T>(this EnumCollection<T> deck, int count, out ImmutableList<T> dealt, System.Random instance = null)
             where T : struct
         {
-            if (deck == null)
-            {
-                throw new ArgumentNullException(nameof(deck));
-            }
-
-            instance = instance ?? Instance;
+            ArgumentNullException.ThrowIfNull(deck);
+            instance ??= Instance;
 
             if (count >= deck.Count)
             {
@@ -227,12 +204,9 @@ namespace GameTheory
         /// <returns>The remaining deck.</returns>
         public static ImmutableList<T> Deal<T>(this ImmutableList<T> deck, out T dealt, System.Random instance = null)
         {
-            if (deck == null)
-            {
-                throw new ArgumentNullException(nameof(deck));
-            }
+            ArgumentNullException.ThrowIfNull(deck);
 
-            instance = instance ?? Instance;
+            instance ??= Instance;
 
             if (deck.Count > 0)
             {
@@ -258,12 +232,8 @@ namespace GameTheory
         public static EnumCollection<T> Deal<T>(this EnumCollection<T> deck, out T dealt, System.Random instance = null)
             where T : struct
         {
-            if (deck == null)
-            {
-                throw new ArgumentNullException(nameof(deck));
-            }
-
-            instance = instance ?? Instance;
+            ArgumentNullException.ThrowIfNull(deck);
+            instance ??= Instance;
 
             if (deck.Count > 0)
             {
@@ -298,12 +268,8 @@ namespace GameTheory
         /// <returns>The selected element.</returns>
         public static T Pick<T>(this IReadOnlyList<T> items, System.Random instance = null)
         {
-            if (items == null)
-            {
-                throw new ArgumentNullException(nameof(items));
-            }
-
-            instance = instance ?? Instance;
+            ArgumentNullException.ThrowIfNull(items);
+            instance ??= Instance;
 
             return items[instance.Next(items.Count)];
         }
@@ -317,12 +283,8 @@ namespace GameTheory
         /// <returns>The selected element.</returns>
         public static T Pick<T>(this IList<T> items, System.Random instance = null)
         {
-            if (items == null)
-            {
-                throw new ArgumentNullException(nameof(items));
-            }
-
-            instance = instance ?? Instance;
+            ArgumentNullException.ThrowIfNull(items);
+            instance ??= Instance;
 
             return items[instance.Next(items.Count)];
         }
@@ -363,12 +325,8 @@ namespace GameTheory
         /// <returns>The selected element.</returns>
         public static T Pick<T>(this IEnumerable<T> items, System.Random instance = null)
         {
-            if (items == null)
-            {
-                throw new ArgumentNullException(nameof(items));
-            }
-
-            instance = instance ?? Instance;
+            ArgumentNullException.ThrowIfNull(items);
+            instance ??= Instance;
 
             var current = default(T);
 
@@ -395,12 +353,8 @@ namespace GameTheory
         /// <returns>The selected element.</returns>
         public static T Pick<T>(this IList<IWeighted<T>> weightedItems, System.Random instance = null)
         {
-            if (weightedItems == null)
-            {
-                throw new ArgumentNullException(nameof(weightedItems));
-            }
-
-            instance = instance ?? Instance;
+            ArgumentNullException.ThrowIfNull(weightedItems);
+            instance ??= Instance;
 
             var totalWeight = weightedItems.Sum(i => i.Weight);
             var threshold = totalWeight * instance.NextDouble();
@@ -427,12 +381,8 @@ namespace GameTheory
         /// <returns>The selected element.</returns>
         public static T Pick<T>(this IList<Weighted<T>> weightedItems, System.Random instance = null)
         {
-            if (weightedItems == null)
-            {
-                throw new ArgumentNullException(nameof(weightedItems));
-            }
-
-            instance = instance ?? Instance;
+            ArgumentNullException.ThrowIfNull(weightedItems);
+            instance ??= Instance;
 
             var totalWeight = weightedItems.Sum(i => i.Weight);
             var threshold = totalWeight * instance.NextDouble();
@@ -459,12 +409,8 @@ namespace GameTheory
         /// <returns>The selected element.</returns>
         public static T Pick<T>(this IReadOnlyList<IWeighted<T>> weightedItems, System.Random instance = null)
         {
-            if (weightedItems == null)
-            {
-                throw new ArgumentNullException(nameof(weightedItems));
-            }
-
-            instance = instance ?? Instance;
+            ArgumentNullException.ThrowIfNull(weightedItems);
+            instance ??= Instance;
 
             var totalWeight = weightedItems.Sum(i => i.Weight);
             var threshold = totalWeight * instance.NextDouble();
@@ -491,12 +437,8 @@ namespace GameTheory
         /// <returns>The selected element.</returns>
         public static T Pick<T>(this IReadOnlyList<Weighted<T>> weightedItems, System.Random instance = null)
         {
-            if (weightedItems == null)
-            {
-                throw new ArgumentNullException(nameof(weightedItems));
-            }
-
-            instance = instance ?? Instance;
+            ArgumentNullException.ThrowIfNull(weightedItems);
+            instance ??= Instance;
 
             var totalWeight = weightedItems.Sum(i => i.Weight);
             var threshold = totalWeight * instance.NextDouble();
@@ -577,6 +519,8 @@ namespace GameTheory
         /// <returns>The selected element.</returns>
         public static T Pick<T>(this IEnumerable<IWeighted<T>> weightedItems, System.Random instance = null)
         {
+            ArgumentNullException.ThrowIfNull(weightedItems);
+
             return weightedItems.ToList().Pick(instance);
         }
 
@@ -589,6 +533,8 @@ namespace GameTheory
         /// <returns>A new list containing the original items in a new order.</returns>
         public static List<T> Shuffle<T>(this IEnumerable<T> source, System.Random instance = null)
         {
+            ArgumentNullException.ThrowIfNull(source);
+
             var copy = source.ToList();
             copy.ShuffleInPlace(instance);
             return copy;
@@ -602,7 +548,8 @@ namespace GameTheory
         /// <param name="instance">An instance of <see cref="System.Random"/> to use.</param>
         public static void ShuffleInPlace<T>(this IList<T> source, System.Random instance = null)
         {
-            instance = instance ?? Instance;
+            ArgumentNullException.ThrowIfNull(source);
+            instance ??= Instance;
 
             for (var i = source.Count - 1; i >= 1; i--)
             {

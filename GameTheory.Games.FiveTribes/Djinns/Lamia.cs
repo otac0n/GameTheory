@@ -48,15 +48,8 @@ namespace GameTheory.Games.FiveTribes.Djinns
         /// <inheritdoc />
         public override GameState HandleTransition(PlayerToken owner, GameState oldState, GameState newState)
         {
-            if (oldState == null)
-            {
-                throw new ArgumentNullException(nameof(oldState));
-            }
-
-            if (newState == null)
-            {
-                throw new ArgumentNullException(nameof(newState));
-            }
+            ArgumentNullException.ThrowIfNull(oldState);
+            ArgumentNullException.ThrowIfNull(newState);
 
             if (oldState.Phase == Phase.MerchandiseSale && newState.Phase == Phase.Bid && newState[this.stateKey] != null)
             {

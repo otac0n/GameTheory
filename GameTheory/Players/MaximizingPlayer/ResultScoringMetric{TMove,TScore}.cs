@@ -1,4 +1,4 @@
-// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Players.MaximizingPlayer
 {
@@ -31,10 +31,7 @@ namespace GameTheory.Players.MaximizingPlayer
         /// <inheritdoc/>
         public ResultScore<TScore> Combine(params Weighted<ResultScore<TScore>>[] scores)
         {
-            if (scores == null)
-            {
-                throw new ArgumentNullException(nameof(scores));
-            }
+            ArgumentNullException.ThrowIfNull(scores);
 
             const int Weight = 0;
             const int Likelihood = 1;
@@ -140,10 +137,7 @@ namespace GameTheory.Players.MaximizingPlayer
         /// <inheritdoc/>
         public IDictionary<PlayerToken, ResultScore<TScore>> Score(TGameState state)
         {
-            if (state == null)
-            {
-                throw new ArgumentNullException(nameof(state));
-            }
+            ArgumentNullException.ThrowIfNull(state);
 
             var winners = state.GetWinners();
             var sharedResult = winners.Count == 0 ? (state.GetAvailableMoves().Count == 0 ? (state.Players.Count == 1 ? Result.Loss : Result.Impasse) : Result.None) : (Result?)null;
