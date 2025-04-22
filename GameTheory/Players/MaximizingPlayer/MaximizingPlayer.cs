@@ -142,7 +142,8 @@ namespace GameTheory.Players.MaximizingPlayer
             var cached = node.Mainline;
             if (cached != null)
             {
-                if (cached.Depth >= ply || cached.FullyDetermined)
+                if ((cached.Depth >= ply || cached.FullyDetermined) &&
+                    (cached.LimitingPlayer == null || (alphaBetaLeads.TryGetValue(cached.LimitingPlayer, out var beta) && this.scoringMetric.Compare(beta, this.GetLead(cached.Scores, cached.GameState, cached.LimitingPlayer)) >= 0)))
                 {
                     Interlocked.Increment(ref this.cacheHits);
                     return cached;
@@ -173,6 +174,7 @@ namespace GameTheory.Players.MaximizingPlayer
             var players = allMoves.Select(m => m.PlayerToken).ToImmutableHashSet();
 
             // For Alpha-beta pruning.
+            var pruned = false;
             PlayerToken? singlePlayer, otherPlayer;
 
             // If only one player can move, they must choose a move.
@@ -244,6 +246,7 @@ namespace GameTheory.Players.MaximizingPlayer
                         {
                             if (this.scoringMetric.Compare(beta, otherLead) >= 0)
                             {
+                                pruned = true;
                                 break;
                             }
                         }
@@ -258,6 +261,12 @@ namespace GameTheory.Players.MaximizingPlayer
 
             if (singlePlayer != null)
             {
+                if (pruned)
+                {
+                    var mainline = mainlines[0];
+                    return new Mainline<TGameState, TMove, TScore>(mainline.Scores, mainline.GameState, mainline.PlayerToken, mainline.Strategies, mainline.Depth, mainline.FullyDetermined, otherPlayer);
+                }
+
                 return mainlines[0];
             }
             else

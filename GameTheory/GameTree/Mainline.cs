@@ -1,4 +1,4 @@
-// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.GameTree
 {
@@ -24,8 +24,13 @@ namespace GameTheory.GameTree
         /// <param name="strategies">The sequence of moves necessary to arrive at the resulting game state.</param>
         /// <param name="playerToken">The player who moves next in the sequence or <c>null</c> if there are no moves.</param>
         /// <param name="depth">The depth to which the score was computed.</param>
-        /// <param name="fullyDetermined">A flag indicating whether or not the game tree has been exhaustively searched at this node.</param>
-        public Mainline(IDictionary<PlayerToken, TScore> scores, TGameState state, PlayerToken playerToken, ImmutableStack<IReadOnlyList<IWeighted<TMove>>> strategies, int depth, bool fullyDetermined)
+        /// <param name="fullyDetermined">A value indicating whether or not the full depth of non-pruned nodes has been searched.</param>
+        /// <param name="limitingPlayer">The player who has limited the choices available (pruned) at this level.</param>
+        /// <remarks>
+        /// If <paramref name="fullyDetermined"/> is false, the depth of search could be extended.
+        /// If <paramref name="limitingPlayer"/> is not null, the breadth of search could be extended.
+        /// </remarks>
+        public Mainline(IDictionary<PlayerToken, TScore> scores, TGameState state, PlayerToken playerToken, ImmutableStack<IReadOnlyList<IWeighted<TMove>>> strategies, int depth, bool fullyDetermined, PlayerToken? limitingPlayer = null)
         {
             this.Scores = scores;
             this.GameState = state;
@@ -33,6 +38,7 @@ namespace GameTheory.GameTree
             this.Strategies = strategies;
             this.Depth = depth;
             this.FullyDetermined = fullyDetermined;
+            this.LimitingPlayer = limitingPlayer;
         }
 
         /// <summary>
@@ -101,6 +107,15 @@ namespace GameTheory.GameTree
 
                     tokens.Add(score.Key);
                     tokens.Add(": ");
+
+                    if (this.LimitingPlayer != null)
+                    {
+                        tokens.Add(
+                            score.Key == this.LimitingPlayer ? "<=" :
+                            score.Key == this.PlayerToken ? ">=" :
+                            "~");
+                    }
+
                     tokens.Add(score.Value);
 
                     first = false;
@@ -121,7 +136,7 @@ namespace GameTheory.GameTree
         }
 
         /// <summary>
-        /// Gets a value indicating whether or not the entire game tree has been searched at this level.
+        /// Gets a value indicating whether or not the full depth of non-pruned nodes has been searched.
         /// </summary>
         public bool FullyDetermined { get; }
 
@@ -144,6 +159,11 @@ namespace GameTheory.GameTree
         /// Gets the sequence of moves/strategies necessary to arrive at the resulting game state.
         /// </summary>
         public ImmutableStack<IReadOnlyList<IWeighted<TMove>>> Strategies { get; }
+
+        /// <summary>
+        /// Gets the player who has limited the choices available (pruned) at this level.
+        /// </summary>
+        public PlayerToken? LimitingPlayer { get; }
 
         /// <summary>
         /// Extends the mainline by one ply specifying the strategy to play, optionally extending the score by one ply as well.
