@@ -101,7 +101,7 @@ namespace GameTheory.Players.MaximizingPlayer
 
                     if (m == null || (!m.FullyDetermined && m.Depth < p))
                     {
-                        m = mainlines[i] = this.GetMove(roots[i], p, ImmutableDictionary<PlayerToken, IDictionary<PlayerToken, TScore>>.Empty, cancel);
+                        m = mainlines[i] = this.GetMove(roots[i], p, ImmutableDictionary<PlayerToken, TScore>.Empty, cancel);
                     }
 
                     fullyDetermined &= m.FullyDetermined;
@@ -136,7 +136,7 @@ namespace GameTheory.Players.MaximizingPlayer
         /// <inheritdoc />
         protected override IGameStateCache<TGameState, TMove, TScore> MakeCache() => new SplayTreeCache<TGameState, TMove, TScore>();
 
-        private Mainline<TGameState, TMove, TScore> GetMove(StateNode<TGameState, TMove, TScore> node, int ply, ImmutableDictionary<PlayerToken, IDictionary<PlayerToken, TScore>> alphaBetaScore, CancellationToken cancel)
+        private Mainline<TGameState, TMove, TScore> GetMove(StateNode<TGameState, TMove, TScore> node, int ply, ImmutableDictionary<PlayerToken, TScore> alphaBetaLeads, CancellationToken cancel)
         {
             Interlocked.Increment(ref this.nodesSearched);
             var cached = node.Mainline;
@@ -153,10 +153,10 @@ namespace GameTheory.Players.MaximizingPlayer
                 Interlocked.Increment(ref this.cacheMisses);
             }
 
-            return node.Mainline = this.GetMoveImpl(node, ply, alphaBetaScore, cancel);
+            return node.Mainline = this.GetMoveImpl(node, ply, alphaBetaLeads, cancel);
         }
 
-        private Mainline<TGameState, TMove, TScore> GetMoveImpl(StateNode<TGameState, TMove, TScore> node, int ply, ImmutableDictionary<PlayerToken, IDictionary<PlayerToken, TScore>> alphaBetaScore, CancellationToken cancel)
+        private Mainline<TGameState, TMove, TScore> GetMoveImpl(StateNode<TGameState, TMove, TScore> node, int ply, ImmutableDictionary<PlayerToken, TScore> alphaBetaLeads, CancellationToken cancel)
         {
             var state = node.State;
 
@@ -173,7 +173,7 @@ namespace GameTheory.Players.MaximizingPlayer
             var players = allMoves.Select(m => m.PlayerToken).ToImmutableHashSet();
 
             // For Alpha-beta pruning.
-            PlayerToken singlePlayer, otherPlayer;
+            PlayerToken? singlePlayer, otherPlayer;
 
             // If only one player can move, they must choose a move.
             // If more than one player can move, then we assume that players will play moves that improve their position as well as moves that would result in a smaller loss than the best move of an opponent.
@@ -214,10 +214,10 @@ namespace GameTheory.Players.MaximizingPlayer
                 {
                     if (this.scoreExtender != null)
                     {
-                        alphaBetaScore = alphaBetaScore.ToImmutableDictionary(kvp => kvp.Key, kvp => this.scoreExtender.Reduce(kvp.Value));
+                        alphaBetaLeads = alphaBetaLeads.ToImmutableDictionary(kvp => kvp.Key, kvp => this.scoreExtender.Reduce(kvp.Value));
                     }
 
-                    var mainline = this.GetMove(outcome.Value, ply - 1, alphaBetaScore, cancel);
+                    var mainline = this.GetMove(outcome.Value, ply - 1, alphaBetaLeads, cancel);
                     var strategy = ImmutableArray.Create<IWeighted<TMove>>(Weighted.Create(move, 1));
                     var newMainline = mainline.Extend(move.PlayerToken, strategy, this.scoreExtender);
                     weightedOutcomes.Add(Weighted.Create(newMainline, outcome.Weight));
@@ -227,41 +227,30 @@ namespace GameTheory.Players.MaximizingPlayer
                 mainlines[m] = combined;
                 moveNode.Score = leads[m] = this.GetLead(combined.Scores, combined.GameState, move.PlayerToken);
 
-                if (singlePlayer != null && m > 0)
+                if (singlePlayer != null)
                 {
-                    var mainline = mainlines[0] = this.Maximize(singlePlayer, mainlines[0], leads[0], mainlines[m], leads[m]);
-                    var leadA = leads[0] = this.GetLead(mainline.Scores, mainline.GameState, singlePlayer);
+                    if (m > 0)
+                    {
+                        // Basic negamax. Not used for simultaneous moves.
+                        mainlines[0] = this.Maximize(singlePlayer, mainlines[0], leads[0], mainlines[m], leads[m]);
+                        leads[0] = this.GetLead(mainlines[0].Scores, mainlines[0].GameState, singlePlayer);
+                    }
 
                     // Alpha-beta pruning.
                     if (otherPlayer != null)
                     {
-                        var scoresA = mainline.Scores;
-
-                        int comp;
-                        if (alphaBetaScore.TryGetValue(singlePlayer, out var scoresB))
+                        var otherLead = this.GetLead(mainlines[0].Scores, mainlines[0].GameState, otherPlayer);
+                        if (alphaBetaLeads.TryGetValue(otherPlayer, out var beta))
                         {
-                            var leadB = this.GetLead(scoresB, state, singlePlayer);
-                            comp = this.scoringMetric.Compare(leadA, leadB);
-                        }
-                        else
-                        {
-                            comp = 1;
-                        }
-
-                        if (comp > 0)
-                        {
-                            alphaBetaScore = alphaBetaScore.SetItem(singlePlayer, scoresA);
-                            if (alphaBetaScore.TryGetValue(otherPlayer, out var scoresC))
+                            if (this.scoringMetric.Compare(beta, otherLead) >= 0)
                             {
-                                var otherA = this.GetLead(scoresA, state, otherPlayer);
-                                var leadC = this.GetLead(scoresC, state, otherPlayer);
-                                comp = this.scoringMetric.Compare(leadC, otherA);
-
-                                if (comp > 0)
-                                {
-                                    break;
-                                }
+                                break;
                             }
+                        }
+
+                        if (!alphaBetaLeads.TryGetValue(singlePlayer, out var alpha) || this.scoringMetric.Compare(leads[0], alpha) > 0)
+                        {
+                            alphaBetaLeads = alphaBetaLeads.SetItem(singlePlayer, alpha = leads[0]);
                         }
                     }
                 }
