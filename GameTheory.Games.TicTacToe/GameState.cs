@@ -20,7 +20,7 @@ namespace GameTheory.Games.TicTacToe
         private readonly ImmutableList<PlayerToken> players;
         private readonly ImmutableList<PlayerToken> winners;
         private readonly PlayerToken winningPlayer;
-        private PlayerToken[,] field;
+        private readonly PlayerToken[,] field;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GameState"/> class in the starting position.
@@ -89,8 +89,8 @@ namespace GameTheory.Games.TicTacToe
             }
 
             this.winners = this.winningPlayer == null
-                ? ImmutableList<PlayerToken>.Empty
-                : ImmutableList.Create(this.winningPlayer);
+                ? []
+                : [this.winningPlayer];
         }
 
         /// <summary>
@@ -160,7 +160,7 @@ namespace GameTheory.Games.TicTacToe
         {
             if (this.winningPlayer != null)
             {
-                return ImmutableList<Move>.Empty;
+                return [];
             }
 
             var moves = ImmutableList.CreateBuilder<Move>();
@@ -229,14 +229,7 @@ namespace GameTheory.Games.TicTacToe
             }
 
             var newField = new PlayerToken[Size, Size];
-            for (var x = 0; x < Size; x++)
-            {
-                for (var y = 0; y < Size; y++)
-                {
-                    newField[x, y] = this.field[x, y];
-                }
-            }
-
+            Array.Copy(this.field, newField, Size * Size);
             newField[move.X, move.Y] = move.PlayerToken;
 
             return new GameState(this.players, newField);
