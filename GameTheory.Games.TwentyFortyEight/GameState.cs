@@ -9,7 +9,6 @@ namespace GameTheory.Games.TwentyFortyEight
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using GameTheory.Games.TwentyFortyEight.Moves;
-    using Random = Random;
 
     /// <summary>
     /// Indicates the current turn.
@@ -246,7 +245,7 @@ namespace GameTheory.Games.TwentyFortyEight
                 }
             }
 
-            var picked = Random.Instance.Next(found);
+            var picked = Random.Shared.Next(found);
 
             for (var x = 0; x < Size; x++)
             {
@@ -256,7 +255,7 @@ namespace GameTheory.Games.TwentyFortyEight
                     {
                         if (picked == 0)
                         {
-                            field[x, y] = Random.Instance.NextDouble() < SmallValueWeight ? SmallValue : LargeValue;
+                            field[x, y] = Random.Shared.NextDouble() < SmallValueWeight ? SmallValue : LargeValue;
                             return;
                         }
 
