@@ -1,12 +1,13 @@
-// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
-namespace GameTheory.Games.Chess.Tests
+namespace GameTheory.Games.Chess.Tests.Serialization
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
+    using GameTheory.Games.Chess.Serialization;
     using NUnit.Framework;
 
     public class SerializerTests

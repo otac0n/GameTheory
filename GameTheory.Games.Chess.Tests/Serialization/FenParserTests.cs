@@ -1,14 +1,15 @@
-// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
-namespace GameTheory.Games.Chess.Tests
+namespace GameTheory.Games.Chess.Tests.Serialization
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using GameTheory.Games.Chess.Serialization;
     using NUnit.Framework;
 
     [TestFixture]
-    public class ParserTests
+    public class FenParserTests
     {
         [TestCase("", 0)]
         [TestCase("//", 1)]
@@ -16,7 +17,7 @@ namespace GameTheory.Games.Chess.Tests
         public void TryParseCoordinate_WhenGivenInvalidInput_ReturnsFalse(string subject, int index)
         {
             var startIndex = index;
-            var result = Parser.TryParseCoordinate(subject, ref index, out var actual);
+            var result = FenParser.TryParseCoordinate(subject, ref index, out var actual);
             Assert.That(result, Is.False);
             Assert.That(index, Is.EqualTo(startIndex));
             Assert.That(actual, Is.EqualTo(default(Point)));
@@ -32,7 +33,7 @@ namespace GameTheory.Games.Chess.Tests
             var expected = new Point(int.Parse(expectedParts[0]), int.Parse(expectedParts[1]));
 
             var index = 0;
-            var result = Parser.TryParseCoordinate(subject, ref index, out var actual);
+            var result = FenParser.TryParseCoordinate(subject, ref index, out var actual);
             Assert.That(result, Is.True);
             Assert.That(index, Is.EqualTo(subject.Length));
             Assert.That(actual, Is.EqualTo(expected));
@@ -59,7 +60,7 @@ namespace GameTheory.Games.Chess.Tests
         public void TryParseFen_WhenGivenInvalidInput_ReturnsFalse(string subject, int index)
         {
             var startIndex = index;
-            var result = Parser.TryParseFen(subject, ref index, out var board, out var activePlayer, out var castling, out var epCoordinate, out var plyCountClock, out var moveNumber);
+            var result = FenParser.TryParseFen(subject, ref index, out var board, out var activePlayer, out var castling, out var epCoordinate, out var plyCountClock, out var moveNumber);
             Assert.That(result, Is.False);
             Assert.That(index, Is.EqualTo(startIndex));
             Assert.That(board, Is.EqualTo(default(Pieces[,])));
@@ -86,7 +87,7 @@ namespace GameTheory.Games.Chess.Tests
                 : new Point(expectedEpX.Value, expectedEpY.Value);
 
             var index = 0;
-            var result = Parser.TryParseFen(subject, ref index, out var board, out var activePlayer, out var castling, out var epCoordinate, out var plyCountClock, out var moveNumber);
+            var result = FenParser.TryParseFen(subject, ref index, out var board, out var activePlayer, out var castling, out var epCoordinate, out var plyCountClock, out var moveNumber);
             Assert.That(result, Is.True);
             Assert.That(index, Is.EqualTo(subject.Length));
             Assert.That(activePlayer, Is.EqualTo(expectedActivePlayer));
@@ -113,7 +114,7 @@ namespace GameTheory.Games.Chess.Tests
         public void TryParseFenBoard_WhenGivenInvalidInput_ReturnsFalse(string subject, int index)
         {
             var startIndex = index;
-            var result = Parser.TryParseFenBoard(subject, ref index, out var actual);
+            var result = FenParser.TryParseFenBoard(subject, ref index, out var actual);
             Assert.That(result, Is.False);
             Assert.That(index, Is.EqualTo(startIndex));
             Assert.That(actual, Is.EqualTo(default(List<Pieces>)));
@@ -129,7 +130,7 @@ namespace GameTheory.Games.Chess.Tests
             var expected = expectedStr.Split(';').Select(s => (Pieces)Enum.Parse(typeof(Pieces), s)).ToList();
 
             var index = 0;
-            var result = Parser.TryParseFenBoard(subject, ref index, out var actual);
+            var result = FenParser.TryParseFenBoard(subject, ref index, out var actual);
             Assert.That(result, Is.True);
             Assert.That(index, Is.EqualTo(expectedIndex));
             Assert.That(actual, Is.EqualTo(expected));
@@ -140,7 +141,7 @@ namespace GameTheory.Games.Chess.Tests
         public void TryParseFenCastling_WhenGivenInvalidInput_ReturnsFalse(string subject, int index)
         {
             var startIndex = index;
-            var result = Parser.TryParseFenCastling(subject, ref index, out var actual);
+            var result = FenParser.TryParseFenCastling(subject, ref index, out var actual);
             Assert.That(result, Is.False);
             Assert.That(index, Is.EqualTo(startIndex));
             Assert.That(actual, Is.EqualTo(default(HashSet<Pieces>)));
@@ -156,7 +157,7 @@ namespace GameTheory.Games.Chess.Tests
             var expected = expectedStr.Split(';').Select(s => (Pieces)Enum.Parse(typeof(Pieces), s)).ToList();
 
             var index = 0;
-            var result = Parser.TryParseFenCastling(subject, ref index, out var actual);
+            var result = FenParser.TryParseFenCastling(subject, ref index, out var actual);
             Assert.That(result, Is.True);
             Assert.That(index, Is.EqualTo(subject.Length));
             Assert.That(actual, Is.EquivalentTo(expected));
@@ -167,7 +168,7 @@ namespace GameTheory.Games.Chess.Tests
         public void TryParseFenColor_WhenGivenInvalidInput_ReturnsFalse(string subject, int index)
         {
             var startIndex = index;
-            var result = Parser.TryParseFenColor(subject, ref index, out var actual);
+            var result = FenParser.TryParseFenColor(subject, ref index, out var actual);
             Assert.That(result, Is.False);
             Assert.That(index, Is.EqualTo(startIndex));
             Assert.That(actual, Is.EqualTo(default(Pieces)));
@@ -178,7 +179,7 @@ namespace GameTheory.Games.Chess.Tests
         public void TryParseFenColor_WhenGivenValidInput_ReturnsTheExpectedValue(string subject, int index, Pieces expected)
         {
             var startIndex = index;
-            var result = Parser.TryParseFenColor(subject, ref index, out var actual);
+            var result = FenParser.TryParseFenColor(subject, ref index, out var actual);
             Assert.That(result, Is.True);
             Assert.That(index, Is.EqualTo(startIndex + 1));
             Assert.That(actual, Is.EqualTo(expected));
@@ -189,7 +190,7 @@ namespace GameTheory.Games.Chess.Tests
         public void TryParseFenPiece_WhenGivenInvalidInput_ReturnsFalse(string subject, int index)
         {
             var startIndex = index;
-            var result = Parser.TryParseFenPiece(subject, ref index, out var actual);
+            var result = FenParser.TryParseFenPiece(subject, ref index, out var actual);
             Assert.That(result, Is.False);
             Assert.That(index, Is.EqualTo(startIndex));
             Assert.That(actual, Is.EqualTo(default(Pieces)));
@@ -211,7 +212,7 @@ namespace GameTheory.Games.Chess.Tests
         public void TryParseFenPiece_WhenGivenValidInput_ReturnsTheExpectedValue(string subject, int index, Pieces expected)
         {
             var startIndex = index;
-            var result = Parser.TryParseFenPiece(subject, ref index, out var actual);
+            var result = FenParser.TryParseFenPiece(subject, ref index, out var actual);
             Assert.That(result, Is.True);
             Assert.That(index, Is.EqualTo(startIndex + 1));
             Assert.That(actual, Is.EqualTo(expected));
@@ -224,7 +225,7 @@ namespace GameTheory.Games.Chess.Tests
         public void TryParseFenRank_WhenGivenInvalidInput_ReturnsTheExpectedValue(string subject, int index)
         {
             var startIndex = index;
-            var result = Parser.TryParseFenRank(subject, ref index, out var actual);
+            var result = FenParser.TryParseFenRank(subject, ref index, out var actual);
             Assert.That(result, Is.False);
             Assert.That(index, Is.EqualTo(startIndex));
             Assert.That(actual, Is.EqualTo(default(List<Pieces>)));
@@ -241,7 +242,7 @@ namespace GameTheory.Games.Chess.Tests
             var expected = expectedStr.Split(';').Select(s => (Pieces)Enum.Parse(typeof(Pieces), s)).ToList();
 
             var index = 0;
-            var result = Parser.TryParseFenRank(subject, ref index, out var actual);
+            var result = FenParser.TryParseFenRank(subject, ref index, out var actual);
             Assert.That(result, Is.True);
             Assert.That(index, Is.EqualTo(subject.Length));
             Assert.That(actual, Is.EqualTo(expected));
@@ -252,7 +253,7 @@ namespace GameTheory.Games.Chess.Tests
         public void TryParseFenRankSeparator_WhenGivenInvalidInput_ReturnsFalse(string subject, int index)
         {
             var startIndex = index;
-            var result = Parser.TryParseFenRankSeparator(subject, ref index);
+            var result = FenParser.TryParseFenRankSeparator(subject, ref index);
             Assert.That(result, Is.False);
             Assert.That(index, Is.EqualTo(startIndex));
         }
@@ -262,7 +263,7 @@ namespace GameTheory.Games.Chess.Tests
         public void TryParseFenRankSeparator_WhenGivenValidInput_ReturnsTrue(string subject, int index)
         {
             var startIndex = index;
-            var result = Parser.TryParseFenRankSeparator(subject, ref index);
+            var result = FenParser.TryParseFenRankSeparator(subject, ref index);
             Assert.That(result, Is.True);
             Assert.That(index, Is.EqualTo(startIndex + 1));
         }
@@ -272,7 +273,7 @@ namespace GameTheory.Games.Chess.Tests
         public void TryParseFenRecordSeparator_WhenGivenInvalidInput_ReturnsFalse(string subject, int index)
         {
             var startIndex = index;
-            var result = Parser.TryParseFenRecordSeparator(subject, ref index);
+            var result = FenParser.TryParseFenRecordSeparator(subject, ref index);
             Assert.That(result, Is.False);
             Assert.That(index, Is.EqualTo(startIndex));
         }
@@ -282,7 +283,7 @@ namespace GameTheory.Games.Chess.Tests
         public void TryParseFenRecordSeparator_WhenGivenValidInput_ReturnsTrue(string subject, int index)
         {
             var startIndex = index;
-            var result = Parser.TryParseFenRecordSeparator(subject, ref index);
+            var result = FenParser.TryParseFenRecordSeparator(subject, ref index);
             Assert.That(result, Is.True);
             Assert.That(index, Is.EqualTo(startIndex + 1));
         }
@@ -294,7 +295,7 @@ namespace GameTheory.Games.Chess.Tests
         public void TryParseInt32_WhenGivenInvalidInput_ReturnsFalse(string subject, int index)
         {
             var startIndex = index;
-            var result = Parser.TryParseInt32(subject, ref index, out var actual);
+            var result = FenParser.TryParseInt32(subject, ref index, out var actual);
             Assert.That(result, Is.False);
             Assert.That(index, Is.EqualTo(startIndex));
             Assert.That(actual, Is.EqualTo(default(int)));
@@ -307,7 +308,7 @@ namespace GameTheory.Games.Chess.Tests
         public void TryParseInt32_WhenGivenValidInput_ReturnsTheExpectedValue(string subject, int index, int expected)
         {
             var startIndex = index;
-            var result = Parser.TryParseInt32(subject, ref index, out var actual);
+            var result = FenParser.TryParseInt32(subject, ref index, out var actual);
             Assert.That(result, Is.True);
             Assert.That(index, Is.EqualTo(startIndex + expected.ToString().Length));
             Assert.That(actual, Is.EqualTo(expected));
@@ -336,7 +337,7 @@ namespace GameTheory.Games.Chess.Tests
         public void TryParseShredderFen_WhenGivenInvalidInput_ReturnsFalse(string subject, int index)
         {
             var startIndex = index;
-            var result = Parser.TryParseShredderFen(subject, ref index, out var board, out var activePlayer, out var castling, out var epCoordinate, out var plyCountClock, out var moveNumber);
+            var result = FenParser.TryParseShredderFen(subject, ref index, out var board, out var activePlayer, out var castling, out var epCoordinate, out var plyCountClock, out var moveNumber);
             Assert.That(result, Is.False);
             Assert.That(index, Is.EqualTo(startIndex));
             Assert.That(board, Is.EqualTo(default(Pieces[,])));
@@ -367,7 +368,7 @@ namespace GameTheory.Games.Chess.Tests
                 : new Point(expectedEpX.Value, expectedEpY.Value);
 
             var index = 0;
-            var result = Parser.TryParseShredderFen(subject, ref index, out var board, out var activePlayer, out var castling, out var epCoordinate, out var plyCountClock, out var moveNumber);
+            var result = FenParser.TryParseShredderFen(subject, ref index, out var board, out var activePlayer, out var castling, out var epCoordinate, out var plyCountClock, out var moveNumber);
             Assert.That(result, Is.True);
             Assert.That(index, Is.EqualTo(subject.Length));
             Assert.That(activePlayer, Is.EqualTo(expectedActivePlayer));
@@ -399,7 +400,7 @@ namespace GameTheory.Games.Chess.Tests
             board[1, fileK] = Pieces.Black | Pieces.Rook;
 
             var startIndex = index;
-            var result = Parser.TryParseShredderFenCastling(subject, ref index, board, out var actual);
+            var result = FenParser.TryParseShredderFenCastling(subject, ref index, board, out var actual);
             Assert.That(result, Is.False);
             Assert.That(index, Is.EqualTo(startIndex));
             Assert.That(actual, Is.EqualTo(default(HashSet<Tuple<Pieces, int>>)));
@@ -445,7 +446,7 @@ namespace GameTheory.Games.Chess.Tests
             board[1, fileK] = Pieces.Black | Pieces.Rook;
 
             var index = 0;
-            var result = Parser.TryParseShredderFenCastling(subject, ref index, board, out var actual);
+            var result = FenParser.TryParseShredderFenCastling(subject, ref index, board, out var actual);
             Assert.That(result, Is.True);
             Assert.That(index, Is.EqualTo(subject.Length));
             Assert.That(actual, Is.EquivalentTo(expected));
@@ -474,7 +475,7 @@ namespace GameTheory.Games.Chess.Tests
         public void TryParseXFen_WhenGivenInvalidInput_ReturnsFalse(string subject, int index)
         {
             var startIndex = index;
-            var result = Parser.TryParseXFen(subject, ref index, out var board, out var activePlayer, out var castling, out var epCoordinate, out var plyCountClock, out var moveNumber);
+            var result = FenParser.TryParseXFen(subject, ref index, out var board, out var activePlayer, out var castling, out var epCoordinate, out var plyCountClock, out var moveNumber);
             Assert.That(result, Is.False);
             Assert.That(index, Is.EqualTo(startIndex));
             Assert.That(board, Is.EqualTo(default(Pieces[,])));
@@ -511,7 +512,7 @@ namespace GameTheory.Games.Chess.Tests
                 : new Point(expectedEpX.Value, expectedEpY.Value);
 
             var index = 0;
-            var result = Parser.TryParseXFen(subject, ref index, out var board, out var activePlayer, out var castling, out var epCoordinate, out var plyCountClock, out var moveNumber);
+            var result = FenParser.TryParseXFen(subject, ref index, out var board, out var activePlayer, out var castling, out var epCoordinate, out var plyCountClock, out var moveNumber);
             Assert.That(result, Is.True);
             Assert.That(index, Is.EqualTo(subject.Length));
             Assert.That(activePlayer, Is.EqualTo(expectedActivePlayer));
@@ -558,7 +559,7 @@ namespace GameTheory.Games.Chess.Tests
             board[1, fileK] = Pieces.Black | Pieces.Rook;
 
             var startIndex = index;
-            var result = Parser.TryParseXFenCastling(subject, ref index, board, out var actual);
+            var result = FenParser.TryParseXFenCastling(subject, ref index, board, out var actual);
             Assert.That(result, Is.False);
             Assert.That(index, Is.EqualTo(startIndex));
             Assert.That(actual, Is.EqualTo(default(HashSet<Tuple<Pieces, int>>)));
@@ -624,7 +625,7 @@ namespace GameTheory.Games.Chess.Tests
             board[1, fileK] = Pieces.Black | Pieces.Rook;
 
             var index = 0;
-            var result = Parser.TryParseXFenCastling(subject, ref index, board, out var actual);
+            var result = FenParser.TryParseXFenCastling(subject, ref index, board, out var actual);
             Assert.That(result, Is.True);
             Assert.That(index, Is.EqualTo(subject.Length));
             Assert.That(actual, Is.EquivalentTo(expected));

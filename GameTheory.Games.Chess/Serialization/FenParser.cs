@@ -1,11 +1,11 @@
 ﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
-namespace GameTheory.Games.Chess
+namespace GameTheory.Games.Chess.Serialization
 {
     using System;
     using System.Collections.Generic;
 
-    public static class Parser
+    public static class FenParser
     {
         internal const int DimensionX = 1;
         internal const int DimensionY = 0;
@@ -58,7 +58,7 @@ namespace GameTheory.Games.Chess
             var startIndex = index;
 
             var file = subject[index++] - 'a';
-            if (!Parser.TryParseInt32(subject, ref index, out var rank))
+            if (!FenParser.TryParseInt32(subject, ref index, out var rank))
             {
                 index = startIndex;
                 coordinate = default;
@@ -74,19 +74,19 @@ namespace GameTheory.Games.Chess
         public static bool TryParseFen(string subject, ref int index, out Pieces[,] board, out Pieces activePlayer, out HashSet<Pieces> castling, out Point? epCoordinate, out int plyCountClock, out int turnNumber)
         {
             var startIndex = index;
-            if (!Parser.TryParseFenBoard(subject, ref index, out board) ||
-                !Parser.TryParseFenRecordSeparator(subject, ref index) ||
-                !Parser.TryParseFenColor(subject, ref index, out activePlayer) ||
-                !Parser.TryParseFenRecordSeparator(subject, ref index) ||
-                !Parser.TryParseFenCastlingField(subject, ref index, out castling) ||
-                !Parser.TryParseFenRecordSeparator(subject, ref index) ||
-                !Parser.TryParseCoordinateField(subject, ref index, out epCoordinate) ||
+            if (!FenParser.TryParseFenBoard(subject, ref index, out board) ||
+                !FenParser.TryParseFenRecordSeparator(subject, ref index) ||
+                !FenParser.TryParseFenColor(subject, ref index, out activePlayer) ||
+                !FenParser.TryParseFenRecordSeparator(subject, ref index) ||
+                !FenParser.TryParseFenCastlingField(subject, ref index, out castling) ||
+                !FenParser.TryParseFenRecordSeparator(subject, ref index) ||
+                !FenParser.TryParseCoordinateField(subject, ref index, out epCoordinate) ||
                 epCoordinate?.X >= board.GetLength(DimensionX) ||
                 epCoordinate?.Y >= board.GetLength(DimensionY) ||
-                !Parser.TryParseFenRecordSeparator(subject, ref index) ||
-                !Parser.TryParseInt32(subject, ref index, out plyCountClock) ||
-                !Parser.TryParseFenRecordSeparator(subject, ref index) ||
-                !Parser.TryParseInt32(subject, ref index, out turnNumber))
+                !FenParser.TryParseFenRecordSeparator(subject, ref index) ||
+                !FenParser.TryParseInt32(subject, ref index, out plyCountClock) ||
+                !FenParser.TryParseFenRecordSeparator(subject, ref index) ||
+                !FenParser.TryParseInt32(subject, ref index, out turnNumber))
             {
                 index = startIndex;
                 board = default;
@@ -107,7 +107,7 @@ namespace GameTheory.Games.Chess
             var ranks = new List<List<Pieces>>();
             while (true)
             {
-                if (!Parser.TryParseFenRank(subject, ref index, out var rank))
+                if (!FenParser.TryParseFenRank(subject, ref index, out var rank))
                 {
                     if (ranks.Count == 0)
                     {
@@ -121,7 +121,7 @@ namespace GameTheory.Games.Chess
 
                 ranks.Add(rank);
 
-                if (ranks.Count == MaxParseSize || !Parser.TryParseFenRankSeparator(subject, ref index))
+                if (ranks.Count == MaxParseSize || !FenParser.TryParseFenRankSeparator(subject, ref index))
                 {
                     break;
                 }
@@ -156,7 +156,7 @@ namespace GameTheory.Games.Chess
             var startIndex = index;
 
             var result = new HashSet<Pieces>();
-            while (index < subject.Length && Parser.FenCastling.TryGetValue(subject[index], out var value))
+            while (index < subject.Length && FenParser.FenCastling.TryGetValue(subject[index], out var value))
             {
                 result.Add(value);
                 index++;
@@ -182,7 +182,7 @@ namespace GameTheory.Games.Chess
                 return false;
             }
 
-            if (Parser.FenColors.TryGetValue(subject[index], out color))
+            if (FenParser.FenColors.TryGetValue(subject[index], out color))
             {
                 index++;
                 return true;
@@ -201,7 +201,7 @@ namespace GameTheory.Games.Chess
                 return false;
             }
 
-            if (Parser.FenPieces.TryGetValue(subject[index], out piece))
+            if (FenParser.FenPieces.TryGetValue(subject[index], out piece))
             {
                 index++;
                 return true;
@@ -218,11 +218,11 @@ namespace GameTheory.Games.Chess
             var result = new List<Pieces>();
             while (result.Count <= MaxParseSize)
             {
-                if (Parser.TryParseFenPiece(subject, ref index, out var piece))
+                if (FenParser.TryParseFenPiece(subject, ref index, out var piece))
                 {
                     result.Add(piece);
                 }
-                else if (Parser.TryParseInt32(subject, ref index, out var skip))
+                else if (FenParser.TryParseInt32(subject, ref index, out var skip))
                 {
                     if (result.Count + skip > MaxParseSize)
                     {
@@ -250,7 +250,7 @@ namespace GameTheory.Games.Chess
 
         public static bool TryParseFenRankSeparator(string subject, ref int index)
         {
-            if (index < subject.Length && subject[index] == Parser.FenRankSeparator)
+            if (index < subject.Length && subject[index] == FenParser.FenRankSeparator)
             {
                 index++;
                 return true;
@@ -263,7 +263,7 @@ namespace GameTheory.Games.Chess
 
         public static bool TryParseFenRecordSeparator(string subject, ref int index)
         {
-            if (index < subject.Length && subject[index] == Parser.FenRecordSeparator)
+            if (index < subject.Length && subject[index] == FenParser.FenRecordSeparator)
             {
                 index++;
                 return true;
@@ -304,20 +304,20 @@ namespace GameTheory.Games.Chess
         {
             var startIndex = index;
             int boardWidth;
-            if (!Parser.TryParseFenBoard(subject, ref index, out board) ||
+            if (!FenParser.TryParseFenBoard(subject, ref index, out board) ||
                 (boardWidth = board.GetLength(DimensionX)) > MaxShredderFenBoardWidth ||
-                !Parser.TryParseFenRecordSeparator(subject, ref index) ||
-                !Parser.TryParseFenColor(subject, ref index, out activePlayer) ||
-                !Parser.TryParseFenRecordSeparator(subject, ref index) ||
-                !Parser.TryParseShredderFenCastlingField(subject, ref index, board, out castling) ||
-                !Parser.TryParseFenRecordSeparator(subject, ref index) ||
-                !Parser.TryParseCoordinateField(subject, ref index, out epCoordinate) ||
+                !FenParser.TryParseFenRecordSeparator(subject, ref index) ||
+                !FenParser.TryParseFenColor(subject, ref index, out activePlayer) ||
+                !FenParser.TryParseFenRecordSeparator(subject, ref index) ||
+                !FenParser.TryParseShredderFenCastlingField(subject, ref index, board, out castling) ||
+                !FenParser.TryParseFenRecordSeparator(subject, ref index) ||
+                !FenParser.TryParseCoordinateField(subject, ref index, out epCoordinate) ||
                 epCoordinate?.X >= boardWidth ||
                 epCoordinate?.Y >= board.GetLength(DimensionY) ||
-                !Parser.TryParseFenRecordSeparator(subject, ref index) ||
-                !Parser.TryParseInt32(subject, ref index, out plyCountClock) ||
-                !Parser.TryParseFenRecordSeparator(subject, ref index) ||
-                !Parser.TryParseInt32(subject, ref index, out turnNumber))
+                !FenParser.TryParseFenRecordSeparator(subject, ref index) ||
+                !FenParser.TryParseInt32(subject, ref index, out plyCountClock) ||
+                !FenParser.TryParseFenRecordSeparator(subject, ref index) ||
+                !FenParser.TryParseInt32(subject, ref index, out turnNumber))
             {
                 index = startIndex;
                 board = default;
@@ -467,20 +467,20 @@ namespace GameTheory.Games.Chess
         {
             var startIndex = index;
             int boardWidth;
-            if (!Parser.TryParseFenBoard(subject, ref index, out board) ||
+            if (!FenParser.TryParseFenBoard(subject, ref index, out board) ||
                 (boardWidth = board.GetLength(DimensionX)) > MaxXFenBoardWidth ||
-                !Parser.TryParseFenRecordSeparator(subject, ref index) ||
-                !Parser.TryParseFenColor(subject, ref index, out activePlayer) ||
-                !Parser.TryParseFenRecordSeparator(subject, ref index) ||
-                !Parser.TryParseXFenCastlingField(subject, ref index, board, out castling) ||
-                !Parser.TryParseFenRecordSeparator(subject, ref index) ||
-                !Parser.TryParseCoordinateField(subject, ref index, out epCoordinate) ||
+                !FenParser.TryParseFenRecordSeparator(subject, ref index) ||
+                !FenParser.TryParseFenColor(subject, ref index, out activePlayer) ||
+                !FenParser.TryParseFenRecordSeparator(subject, ref index) ||
+                !FenParser.TryParseXFenCastlingField(subject, ref index, board, out castling) ||
+                !FenParser.TryParseFenRecordSeparator(subject, ref index) ||
+                !FenParser.TryParseCoordinateField(subject, ref index, out epCoordinate) ||
                 epCoordinate?.X >= boardWidth ||
                 epCoordinate?.Y >= board.GetLength(DimensionY) ||
-                !Parser.TryParseFenRecordSeparator(subject, ref index) ||
-                !Parser.TryParseInt32(subject, ref index, out plyCountClock) ||
-                !Parser.TryParseFenRecordSeparator(subject, ref index) ||
-                !Parser.TryParseInt32(subject, ref index, out turnNumber))
+                !FenParser.TryParseFenRecordSeparator(subject, ref index) ||
+                !FenParser.TryParseInt32(subject, ref index, out plyCountClock) ||
+                !FenParser.TryParseFenRecordSeparator(subject, ref index) ||
+                !FenParser.TryParseInt32(subject, ref index, out turnNumber))
             {
                 index = startIndex;
                 board = default;
@@ -791,14 +791,14 @@ namespace GameTheory.Games.Chess
                 coordinate = default;
                 return false;
             }
-            else if (subject[index] == Parser.FenEmptyFieldValue)
+            else if (subject[index] == FenParser.FenEmptyFieldValue)
             {
                 coordinate = default;
                 index++;
                 return true;
             }
 
-            var result = Parser.TryParseCoordinate(subject, ref index, out var coordinateValue);
+            var result = FenParser.TryParseCoordinate(subject, ref index, out var coordinateValue);
             coordinate = coordinateValue;
             return result;
         }
@@ -810,7 +810,7 @@ namespace GameTheory.Games.Chess
                 castling = default;
                 return false;
             }
-            else if (subject[index] == Parser.FenEmptyFieldValue)
+            else if (subject[index] == FenParser.FenEmptyFieldValue)
             {
                 castling = default;
                 index++;
@@ -827,7 +827,7 @@ namespace GameTheory.Games.Chess
                 castling = default;
                 return false;
             }
-            else if (subject[index] == Parser.FenEmptyFieldValue)
+            else if (subject[index] == FenParser.FenEmptyFieldValue)
             {
                 castling = default;
                 index++;
@@ -844,7 +844,7 @@ namespace GameTheory.Games.Chess
                 castling = default;
                 return false;
             }
-            else if (subject[index] == Parser.FenEmptyFieldValue)
+            else if (subject[index] == FenParser.FenEmptyFieldValue)
             {
                 castling = default;
                 index++;

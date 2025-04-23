@@ -1,17 +1,18 @@
-// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
-namespace GameTheory.Games.Chess
+namespace GameTheory.Games.Chess.Serialization
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Text;
+    using GameTheory;
+    using GameTheory.Games.Chess;
 
     public static class Serializer
     {
-        internal static readonly Dictionary<Pieces, char> FenColors = Parser.FenColors.ToDictionary(kvp => kvp.Value, kvp => kvp.Key);
+        internal static readonly Dictionary<Pieces, char> FenColors = FenParser.FenColors.ToDictionary(kvp => kvp.Value, kvp => kvp.Key);
 
-        internal static readonly Dictionary<Pieces, char> FenPieces = Parser.FenPieces.ToDictionary(kvp => kvp.Value, kvp => kvp.Key);
+        internal static readonly Dictionary<Pieces, char> FenPieces = FenParser.FenPieces.ToDictionary(kvp => kvp.Value, kvp => kvp.Key);
 
         public static string SerializeFen(GameState state)
         {
@@ -23,15 +24,15 @@ namespace GameTheory.Games.Chess
         public static void SerializeFen(StringBuilder sb, GameState state)
         {
             SerializeFenBoard(sb, state);
-            sb.Append(Parser.FenRecordSeparator);
+            sb.Append(FenParser.FenRecordSeparator);
             SerializeFenActivePlayer(sb, state);
-            sb.Append(Parser.FenRecordSeparator);
+            sb.Append(FenParser.FenRecordSeparator);
             SerializeFenCastling(sb, state);
-            sb.Append(Parser.FenRecordSeparator);
+            sb.Append(FenParser.FenRecordSeparator);
             SerializeFenEnPassantCoordinate(sb, state);
-            sb.Append(Parser.FenRecordSeparator);
+            sb.Append(FenParser.FenRecordSeparator);
             sb.Append(state.PlyCountClock);
-            sb.Append(Parser.FenRecordSeparator);
+            sb.Append(FenParser.FenRecordSeparator);
             sb.Append(state.MoveNumber);
         }
 
@@ -45,7 +46,7 @@ namespace GameTheory.Games.Chess
             {
                 if (!first)
                 {
-                    sb.Append(Parser.FenRankSeparator);
+                    sb.Append(FenParser.FenRankSeparator);
                 }
 
                 SerializeFenRank(sb, state, i);
@@ -58,7 +59,7 @@ namespace GameTheory.Games.Chess
         {
             if (state.Castling.All(c => c < 0))
             {
-                sb.Append(Parser.FenEmptyFieldValue);
+                sb.Append(FenParser.FenEmptyFieldValue);
             }
             else
             {
@@ -88,7 +89,7 @@ namespace GameTheory.Games.Chess
         {
             if (pieces.Count == 0)
             {
-                sb.Append(Parser.FenEmptyFieldValue);
+                sb.Append(FenParser.FenEmptyFieldValue);
             }
             else
             {
@@ -129,7 +130,7 @@ namespace GameTheory.Games.Chess
         {
             if (state.EnPassantIndex == null)
             {
-                sb.Append(Parser.FenEmptyFieldValue);
+                sb.Append(FenParser.FenEmptyFieldValue);
             }
             else
             {
@@ -143,7 +144,7 @@ namespace GameTheory.Games.Chess
             for (var i = 0; i < state.Variant.Width; i++)
             {
                 var piece = state.GetPieceAt(i, rank);
-                if (Serializer.FenPieces.TryGetValue(piece, out var p))
+                if (FenPieces.TryGetValue(piece, out var p))
                 {
                     if (skipped > 0)
                     {

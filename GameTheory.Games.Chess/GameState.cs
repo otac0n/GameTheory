@@ -9,6 +9,7 @@ namespace GameTheory.Games.Chess
     using System.Linq;
     using GameTheory.Comparers;
     using GameTheory.Games.Chess.Moves;
+    using GameTheory.Games.Chess.Serialization;
 
     /// <summary>
     /// Represents the current state in a game of Chess.
@@ -43,8 +44,8 @@ namespace GameTheory.Games.Chess
             ArgumentNullException.ThrowIfNullOrEmpty(position);
 
             var index = 0;
-            if ((!Parser.TryParseXFen(position, ref index, out var board, out var activePlayer, out var castling, out var epCoordinate, out var plyCountClock, out var moveNumber) &&
-                !Parser.TryParseShredderFen(position, ref index, out board, out activePlayer, out castling, out epCoordinate, out plyCountClock, out moveNumber)) ||
+            if ((!FenParser.TryParseXFen(position, ref index, out var board, out var activePlayer, out var castling, out var epCoordinate, out var plyCountClock, out var moveNumber) &&
+                !FenParser.TryParseShredderFen(position, ref index, out board, out activePlayer, out castling, out epCoordinate, out plyCountClock, out moveNumber)) ||
                 index != position.Length)
             {
                 throw new ArgumentException("Invalid position.", nameof(position));
