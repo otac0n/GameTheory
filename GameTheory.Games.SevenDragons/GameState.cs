@@ -127,7 +127,7 @@ namespace GameTheory.Games.SevenDragons
             this.Table = StartingTable;
             this.DiscardPile = ImmutableList<ActionCard>.Empty;
 
-            var inventoryOffset = GameTheory.Random.Instance.Next(players);
+            var inventoryOffset = Random.Shared.Next(players);
             this.InventoryMap = this.Players.Select((p, i) => new { Player = p, Index = (i + inventoryOffset) % players }).ToImmutableDictionary(x => x.Player, x => x.Index);
             var inventories = Goals.Shuffle().Select(goal => new Inventory(goal, ImmutableList<Card>.Empty)).ToImmutableList();
 

@@ -7,26 +7,12 @@ namespace GameTheory
     using System.Collections.Immutable;
     using System.Diagnostics;
     using System.Linq;
-    using System.Threading;
 
     /// <summary>
-    /// Provides a thread-static instance of the <see cref="System.Random"/> class.
+    /// Provides a thread-static instance of the <see cref="Random"/> class.
     /// </summary>
-    public static class Random
+    public static class RandomExtensions
     {
-        private static int counter;
-
-        [ThreadStatic]
-        private static System.Random instance;
-
-        /// <summary>
-        /// Gets an instance of the <see cref="System.Random"/> class that is unique to the current thread.
-        /// </summary>
-        /// <remarks>
-        /// Do not allow this instance to be observed by threads.
-        /// </remarks>
-        public static System.Random Instance => instance ??= new System.Random(unchecked(Environment.TickCount * Interlocked.Increment(ref counter)));
-
         /// <summary>
         /// Returns a random floating point number with the specified normal distribution.
         /// </summary>
@@ -34,7 +20,7 @@ namespace GameTheory
         /// <param name="mean">The mean value of the distribution.</param>
         /// <param name="variance">The variance of the distribution.</param>
         /// <returns>A double precision floating point number from the specified normal distribution.</returns>
-        public static double NextDoubleNormal(this System.Random instance, double mean, double variance)
+        public static double NextDoubleNormal(this Random instance, double mean, double variance)
         {
             var value = instance.NextDoubleNormal();
             return value * variance + mean;
@@ -45,7 +31,7 @@ namespace GameTheory
         /// </summary>
         /// <param name="instance">An underlying <see cref="Random"/> instance to use for generation of values.</param>
         /// <returns>A double precision floating point number from the standard normal distribution.</returns>
-        public static double NextDoubleNormal(this System.Random instance)
+        public static double NextDoubleNormal(this Random instance)
         {
             double u1, u2;
             do
@@ -66,9 +52,9 @@ namespace GameTheory
         /// <param name="count">The number of items to deal.</param>
         /// <param name="dealt">The resulting items.</param>
         /// <param name="discards">The discards pile.</param>
-        /// <param name="instance">An instance of <see cref="System.Random"/> to use.</param>
+        /// <param name="instance">An instance of <see cref="Random"/> to use.</param>
         /// <returns>The remaining deck.</returns>
-        public static ImmutableList<T> Deal<T>(this ImmutableList<T> deck, int count, out ImmutableList<T> dealt, ref ImmutableList<T> discards, System.Random instance = null)
+        public static ImmutableList<T> Deal<T>(this ImmutableList<T> deck, int count, out ImmutableList<T> dealt, ref ImmutableList<T> discards, Random instance = null)
         {
             ArgumentNullException.ThrowIfNull(deck);
             ArgumentNullException.ThrowIfNull(discards);
@@ -101,9 +87,9 @@ namespace GameTheory
         /// <param name="count">The number of items to deal.</param>
         /// <param name="dealt">The resulting items.</param>
         /// <param name="discards">The discards pile.</param>
-        /// <param name="instance">An instance of <see cref="System.Random"/> to use.</param>
+        /// <param name="instance">An instance of <see cref="Random"/> to use.</param>
         /// <returns>The remaining deck.</returns>
-        public static EnumCollection<T> Deal<T>(this EnumCollection<T> deck, int count, out ImmutableList<T> dealt, ref EnumCollection<T> discards, System.Random instance = null)
+        public static EnumCollection<T> Deal<T>(this EnumCollection<T> deck, int count, out ImmutableList<T> dealt, ref EnumCollection<T> discards, Random instance = null)
             where T : struct
         {
             ArgumentNullException.ThrowIfNull(deck);
@@ -136,12 +122,12 @@ namespace GameTheory
         /// <param name="deck">The source of items being dealt.</param>
         /// <param name="count">The number of items to deal.</param>
         /// <param name="dealt">The resulting items.</param>
-        /// <param name="instance">An instance of <see cref="System.Random"/> to use.</param>
+        /// <param name="instance">An instance of <see cref="Random"/> to use.</param>
         /// <returns>The remaining deck.</returns>
-        public static ImmutableList<T> Deal<T>(this ImmutableList<T> deck, int count, out ImmutableList<T> dealt, System.Random instance = null)
+        public static ImmutableList<T> Deal<T>(this ImmutableList<T> deck, int count, out ImmutableList<T> dealt, Random instance = null)
         {
             ArgumentNullException.ThrowIfNull(deck);
-            instance ??= Instance;
+            instance ??= Random.Shared;
 
             if (count >= deck.Count)
             {
@@ -168,13 +154,13 @@ namespace GameTheory
         /// <param name="deck">The source of items being dealt.</param>
         /// <param name="count">The number of items to deal.</param>
         /// <param name="dealt">The resulting items.</param>
-        /// <param name="instance">An instance of <see cref="System.Random"/> to use.</param>
+        /// <param name="instance">An instance of <see cref="Random"/> to use.</param>
         /// <returns>The remaining deck.</returns>
-        public static EnumCollection<T> Deal<T>(this EnumCollection<T> deck, int count, out ImmutableList<T> dealt, System.Random instance = null)
+        public static EnumCollection<T> Deal<T>(this EnumCollection<T> deck, int count, out ImmutableList<T> dealt, Random instance = null)
             where T : struct
         {
             ArgumentNullException.ThrowIfNull(deck);
-            instance ??= Instance;
+            instance ??= Random.Shared;
 
             if (count >= deck.Count)
             {
@@ -200,13 +186,13 @@ namespace GameTheory
         /// <typeparam name="T">The type of items in the deck.</typeparam>
         /// <param name="deck">The source of items being dealt.</param>
         /// <param name="dealt">The resulting item or default if there were no items.</param>
-        /// <param name="instance">An instance of <see cref="System.Random"/> to use.</param>
+        /// <param name="instance">An instance of <see cref="Random"/> to use.</param>
         /// <returns>The remaining deck.</returns>
-        public static ImmutableList<T> Deal<T>(this ImmutableList<T> deck, out T dealt, System.Random instance = null)
+        public static ImmutableList<T> Deal<T>(this ImmutableList<T> deck, out T dealt, Random instance = null)
         {
             ArgumentNullException.ThrowIfNull(deck);
 
-            instance ??= Instance;
+            instance ??= Random.Shared;
 
             if (deck.Count > 0)
             {
@@ -227,13 +213,13 @@ namespace GameTheory
         /// <typeparam name="T">The type of items in the deck.</typeparam>
         /// <param name="deck">The source of items being dealt.</param>
         /// <param name="dealt">The resulting item or default if there were no items.</param>
-        /// <param name="instance">An instance of <see cref="System.Random"/> to use.</param>
+        /// <param name="instance">An instance of <see cref="Random"/> to use.</param>
         /// <returns>The remaining deck.</returns>
-        public static EnumCollection<T> Deal<T>(this EnumCollection<T> deck, out T dealt, System.Random instance = null)
+        public static EnumCollection<T> Deal<T>(this EnumCollection<T> deck, out T dealt, Random instance = null)
             where T : struct
         {
             ArgumentNullException.ThrowIfNull(deck);
-            instance ??= Instance;
+            instance ??= Random.Shared;
 
             if (deck.Count > 0)
             {
@@ -264,12 +250,12 @@ namespace GameTheory
         /// </summary>
         /// <typeparam name="T">The type of items in the list.</typeparam>
         /// <param name="items">The items to choose from.</param>
-        /// <param name="instance">An instance of <see cref="System.Random"/> to use.</param>
+        /// <param name="instance">An instance of <see cref="Random"/> to use.</param>
         /// <returns>The selected element.</returns>
-        public static T Pick<T>(this IReadOnlyList<T> items, System.Random instance = null)
+        public static T Pick<T>(this IReadOnlyList<T> items, Random instance = null)
         {
             ArgumentNullException.ThrowIfNull(items);
-            instance ??= Instance;
+            instance ??= Random.Shared;
 
             return items[instance.Next(items.Count)];
         }
@@ -279,12 +265,12 @@ namespace GameTheory
         /// </summary>
         /// <typeparam name="T">The type of items in the list.</typeparam>
         /// <param name="items">The items to choose from.</param>
-        /// <param name="instance">An instance of <see cref="System.Random"/> to use.</param>
+        /// <param name="instance">An instance of <see cref="Random"/> to use.</param>
         /// <returns>The selected element.</returns>
-        public static T Pick<T>(this IList<T> items, System.Random instance = null)
+        public static T Pick<T>(this IList<T> items, Random instance = null)
         {
             ArgumentNullException.ThrowIfNull(items);
-            instance ??= Instance;
+            instance ??= Random.Shared;
 
             return items[instance.Next(items.Count)];
         }
@@ -294,39 +280,39 @@ namespace GameTheory
         /// </summary>
         /// <typeparam name="T">The type of items in the list.</typeparam>
         /// <param name="items">The items to choose from.</param>
-        /// <param name="instance">An instance of <see cref="System.Random"/> to use.</param>
+        /// <param name="instance">An instance of <see cref="Random"/> to use.</param>
         /// <returns>The selected element.</returns>
-        public static T Pick<T>(this List<T> items, System.Random instance = null) => Pick((IList<T>)items, instance);
+        public static T Pick<T>(this List<T> items, Random instance = null) => Pick((IList<T>)items, instance);
 
         /// <summary>
         /// Selects a random element from a list.
         /// </summary>
         /// <typeparam name="T">The type of items in the list.</typeparam>
         /// <param name="items">The items to choose from.</param>
-        /// <param name="instance">An instance of <see cref="System.Random"/> to use.</param>
+        /// <param name="instance">An instance of <see cref="Random"/> to use.</param>
         /// <returns>The selected element.</returns>
-        public static T Pick<T>(this T[] items, System.Random instance = null) => Pick((IList<T>)items, instance);
+        public static T Pick<T>(this T[] items, Random instance = null) => Pick((IList<T>)items, instance);
 
         /// <summary>
         /// Selects a random element from a list.
         /// </summary>
         /// <typeparam name="T">The type of items in the list.</typeparam>
         /// <param name="items">The items to choose from.</param>
-        /// <param name="instance">An instance of <see cref="System.Random"/> to use.</param>
+        /// <param name="instance">An instance of <see cref="Random"/> to use.</param>
         /// <returns>The selected element.</returns>
-        public static T Pick<T>(this ImmutableArray<T> items, System.Random instance = null) => Pick((IList<T>)items, instance);
+        public static T Pick<T>(this ImmutableArray<T> items, Random instance = null) => Pick((IList<T>)items, instance);
 
         /// <summary>
         /// Selects a random element from a collection.
         /// </summary>
         /// <typeparam name="T">The type of items in the collection.</typeparam>
         /// <param name="items">The items to choose from.</param>
-        /// <param name="instance">An instance of <see cref="System.Random"/> to use.</param>
+        /// <param name="instance">An instance of <see cref="Random"/> to use.</param>
         /// <returns>The selected element.</returns>
-        public static T Pick<T>(this IEnumerable<T> items, System.Random instance = null)
+        public static T Pick<T>(this IEnumerable<T> items, Random instance = null)
         {
             ArgumentNullException.ThrowIfNull(items);
-            instance ??= Instance;
+            instance ??= Random.Shared;
 
             var current = default(T);
 
@@ -349,12 +335,12 @@ namespace GameTheory
         /// </summary>
         /// <typeparam name="T">The type of items in the list.</typeparam>
         /// <param name="weightedItems">The weighted items to choose from.</param>
-        /// <param name="instance">An instance of <see cref="System.Random"/> to use.</param>
+        /// <param name="instance">An instance of <see cref="Random"/> to use.</param>
         /// <returns>The selected element.</returns>
-        public static T Pick<T>(this IList<IWeighted<T>> weightedItems, System.Random instance = null)
+        public static T Pick<T>(this IList<IWeighted<T>> weightedItems, Random instance = null)
         {
             ArgumentNullException.ThrowIfNull(weightedItems);
-            instance ??= Instance;
+            instance ??= Random.Shared;
 
             var totalWeight = weightedItems.Sum(i => i.Weight);
             var threshold = totalWeight * instance.NextDouble();
@@ -377,12 +363,12 @@ namespace GameTheory
         /// </summary>
         /// <typeparam name="T">The type of items in the list.</typeparam>
         /// <param name="weightedItems">The weighted items to choose from.</param>
-        /// <param name="instance">An instance of <see cref="System.Random"/> to use.</param>
+        /// <param name="instance">An instance of <see cref="Random"/> to use.</param>
         /// <returns>The selected element.</returns>
-        public static T Pick<T>(this IList<Weighted<T>> weightedItems, System.Random instance = null)
+        public static T Pick<T>(this IList<Weighted<T>> weightedItems, Random instance = null)
         {
             ArgumentNullException.ThrowIfNull(weightedItems);
-            instance ??= Instance;
+            instance ??= Random.Shared;
 
             var totalWeight = weightedItems.Sum(i => i.Weight);
             var threshold = totalWeight * instance.NextDouble();
@@ -405,12 +391,12 @@ namespace GameTheory
         /// </summary>
         /// <typeparam name="T">The type of items in the list.</typeparam>
         /// <param name="weightedItems">The weighted items to choose from.</param>
-        /// <param name="instance">An instance of <see cref="System.Random"/> to use.</param>
+        /// <param name="instance">An instance of <see cref="Random"/> to use.</param>
         /// <returns>The selected element.</returns>
-        public static T Pick<T>(this IReadOnlyList<IWeighted<T>> weightedItems, System.Random instance = null)
+        public static T Pick<T>(this IReadOnlyList<IWeighted<T>> weightedItems, Random instance = null)
         {
             ArgumentNullException.ThrowIfNull(weightedItems);
-            instance ??= Instance;
+            instance ??= Random.Shared;
 
             var totalWeight = weightedItems.Sum(i => i.Weight);
             var threshold = totalWeight * instance.NextDouble();
@@ -433,12 +419,12 @@ namespace GameTheory
         /// </summary>
         /// <typeparam name="T">The type of items in the list.</typeparam>
         /// <param name="weightedItems">The weighted items to choose from.</param>
-        /// <param name="instance">An instance of <see cref="System.Random"/> to use.</param>
+        /// <param name="instance">An instance of <see cref="Random"/> to use.</param>
         /// <returns>The selected element.</returns>
-        public static T Pick<T>(this IReadOnlyList<Weighted<T>> weightedItems, System.Random instance = null)
+        public static T Pick<T>(this IReadOnlyList<Weighted<T>> weightedItems, Random instance = null)
         {
             ArgumentNullException.ThrowIfNull(weightedItems);
-            instance ??= Instance;
+            instance ??= Random.Shared;
 
             var totalWeight = weightedItems.Sum(i => i.Weight);
             var threshold = totalWeight * instance.NextDouble();
@@ -461,63 +447,63 @@ namespace GameTheory
         /// </summary>
         /// <typeparam name="T">The type of items in the list.</typeparam>
         /// <param name="weightedItems">The weighted items to choose from.</param>
-        /// <param name="instance">An instance of <see cref="System.Random"/> to use.</param>
+        /// <param name="instance">An instance of <see cref="Random"/> to use.</param>
         /// <returns>The selected element.</returns>
-        public static T Pick<T>(this List<IWeighted<T>> weightedItems, System.Random instance = null) => Pick((IList<IWeighted<T>>)weightedItems, instance);
+        public static T Pick<T>(this List<IWeighted<T>> weightedItems, Random instance = null) => Pick((IList<IWeighted<T>>)weightedItems, instance);
 
         /// <summary>
         /// Selects a random element from a list of weighted items.
         /// </summary>
         /// <typeparam name="T">The type of items in the list.</typeparam>
         /// <param name="weightedItems">The weighted items to choose from.</param>
-        /// <param name="instance">An instance of <see cref="System.Random"/> to use.</param>
+        /// <param name="instance">An instance of <see cref="Random"/> to use.</param>
         /// <returns>The selected element.</returns>
-        public static T Pick<T>(this List<Weighted<T>> weightedItems, System.Random instance = null) => Pick((IList<Weighted<T>>)weightedItems, instance);
+        public static T Pick<T>(this List<Weighted<T>> weightedItems, Random instance = null) => Pick((IList<Weighted<T>>)weightedItems, instance);
 
         /// <summary>
         /// Selects a random element from a list of weighted items.
         /// </summary>
         /// <typeparam name="T">The type of items in the list.</typeparam>
         /// <param name="weightedItems">The weighted items to choose from.</param>
-        /// <param name="instance">An instance of <see cref="System.Random"/> to use.</param>
+        /// <param name="instance">An instance of <see cref="Random"/> to use.</param>
         /// <returns>The selected element.</returns>
-        public static T Pick<T>(this IWeighted<T>[] weightedItems, System.Random instance = null) => Pick((IList<IWeighted<T>>)weightedItems, instance);
+        public static T Pick<T>(this IWeighted<T>[] weightedItems, Random instance = null) => Pick((IList<IWeighted<T>>)weightedItems, instance);
 
         /// <summary>
         /// Selects a random element from a list of weighted items.
         /// </summary>
         /// <typeparam name="T">The type of items in the list.</typeparam>
         /// <param name="weightedItems">The weighted items to choose from.</param>
-        /// <param name="instance">An instance of <see cref="System.Random"/> to use.</param>
+        /// <param name="instance">An instance of <see cref="Random"/> to use.</param>
         /// <returns>The selected element.</returns>
-        public static T Pick<T>(this Weighted<T>[] weightedItems, System.Random instance = null) => Pick((IList<Weighted<T>>)weightedItems, instance);
+        public static T Pick<T>(this Weighted<T>[] weightedItems, Random instance = null) => Pick((IList<Weighted<T>>)weightedItems, instance);
 
         /// <summary>
         /// Selects a random element from a list of weighted items.
         /// </summary>
         /// <typeparam name="T">The type of items in the list.</typeparam>
         /// <param name="weightedItems">The weighted items to choose from.</param>
-        /// <param name="instance">An instance of <see cref="System.Random"/> to use.</param>
+        /// <param name="instance">An instance of <see cref="Random"/> to use.</param>
         /// <returns>The selected element.</returns>
-        public static T Pick<T>(this ImmutableArray<IWeighted<T>> weightedItems, System.Random instance = null) => Pick((IList<IWeighted<T>>)weightedItems, instance);
+        public static T Pick<T>(this ImmutableArray<IWeighted<T>> weightedItems, Random instance = null) => Pick((IList<IWeighted<T>>)weightedItems, instance);
 
         /// <summary>
         /// Selects a random element from a list of weighted items.
         /// </summary>
         /// <typeparam name="T">The type of items in the list.</typeparam>
         /// <param name="weightedItems">The weighted items to choose from.</param>
-        /// <param name="instance">An instance of <see cref="System.Random"/> to use.</param>
+        /// <param name="instance">An instance of <see cref="Random"/> to use.</param>
         /// <returns>The selected element.</returns>
-        public static T Pick<T>(this ImmutableArray<Weighted<T>> weightedItems, System.Random instance = null) => Pick((IList<Weighted<T>>)weightedItems, instance);
+        public static T Pick<T>(this ImmutableArray<Weighted<T>> weightedItems, Random instance = null) => Pick((IList<Weighted<T>>)weightedItems, instance);
 
         /// <summary>
         /// Selects a random element from a collection of weighted items.
         /// </summary>
         /// <typeparam name="T">The type of items in the collection.</typeparam>
         /// <param name="weightedItems">The weighted items to choose from.</param>
-        /// <param name="instance">An instance of <see cref="System.Random"/> to use.</param>
+        /// <param name="instance">An instance of <see cref="Random"/> to use.</param>
         /// <returns>The selected element.</returns>
-        public static T Pick<T>(this IEnumerable<IWeighted<T>> weightedItems, System.Random instance = null)
+        public static T Pick<T>(this IEnumerable<IWeighted<T>> weightedItems, Random instance = null)
         {
             ArgumentNullException.ThrowIfNull(weightedItems);
 
@@ -529,9 +515,9 @@ namespace GameTheory
         /// </summary>
         /// <typeparam name="T">The type of elements in the collection.</typeparam>
         /// <param name="source">The items to shuffle.</param>
-        /// <param name="instance">An instance of <see cref="System.Random"/> to use.</param>
+        /// <param name="instance">An instance of <see cref="Random"/> to use.</param>
         /// <returns>A new list containing the original items in a new order.</returns>
-        public static List<T> Shuffle<T>(this IEnumerable<T> source, System.Random instance = null)
+        public static List<T> Shuffle<T>(this IEnumerable<T> source, Random instance = null)
         {
             ArgumentNullException.ThrowIfNull(source);
 
@@ -545,11 +531,11 @@ namespace GameTheory
         /// </summary>
         /// <typeparam name="T">The type of elements in the collection.</typeparam>
         /// <param name="source">The items to shuffle.</param>
-        /// <param name="instance">An instance of <see cref="System.Random"/> to use.</param>
-        public static void ShuffleInPlace<T>(this IList<T> source, System.Random instance = null)
+        /// <param name="instance">An instance of <see cref="Random"/> to use.</param>
+        public static void ShuffleInPlace<T>(this IList<T> source, Random instance = null)
         {
             ArgumentNullException.ThrowIfNull(source);
-            instance ??= Instance;
+            instance ??= Random.Shared;
 
             for (var i = source.Count - 1; i >= 1; i--)
             {
