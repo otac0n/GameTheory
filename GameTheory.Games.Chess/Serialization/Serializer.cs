@@ -142,24 +142,34 @@ namespace GameTheory.Games.Chess.Serialization
             }
         }
 
-        public static void SerializePgn(TextWriter writer, IEnumerable<PgnGame> games, NotationSystem? notation = null)
+        public static void SerializePgn(TextWriter writer, IEnumerable<PgnGame> games, NotationSystem? notation = null, bool nestedComments = false)
         {
             notation ??= new AlgebraicNotation();
 
+            var first = true;
             foreach (var game in games)
             {
-                SerializePgn(writer, game, notation);
+                if (!first)
+                {
+                    writer.WriteLine();
+                }
+
+                SerializePgn(writer, game, notation, nestedComments);
+                first = false;
             }
         }
 
-        public static void SerializePgn(TextWriter writer, PgnGame game, NotationSystem? notation = null)
+        public static void SerializePgn(TextWriter writer, PgnGame game, NotationSystem? notation = null, bool nestedComments = false)
         {
             notation ??= new AlgebraicNotation();
 
-            SerializePgnTags(writer, game.Tags);
-            writer.WriteLine();
-            SerializePgnElements(writer, game.Objects, notation);
-            writer.WriteLine();
+            if (game.Tags.Count > 0)
+            {
+                SerializePgnTags(writer, game.Tags);
+                writer.WriteLine();
+            }
+
+            SerializePgnElements(writer, game.Objects, notation, nestedComments);
             writer.WriteLine();
         }
 
@@ -203,7 +213,7 @@ namespace GameTheory.Games.Chess.Serialization
             }
         }
 
-        private static void SerializePgnElements(TextWriter writer, IList<object> elements, NotationSystem notation)
+        private static void SerializePgnElements(TextWriter writer, IList<object> elements, NotationSystem notation, bool nestedComments)
         {
             var lastMove = 0;
             var needsDelimiter = false;
@@ -218,10 +228,47 @@ namespace GameTheory.Games.Chess.Serialization
 
                 switch (element)
                 {
-                    case IList<object> nested:
+                    case AnnotatedVariation<GameState, Move> variation:
                         writer.Write('(');
-                        SerializePgnElements(writer, nested, notation);
+                        SerializePgnElements(writer, variation.Objects, notation, nestedComments);
                         writer.Write(')');
+                        lastMove = 0;
+                        needsDelimiter = true;
+                        break;
+
+                    case IList<object> nested:
+                        if (nestedComments)
+                        {
+                            void SerializeComments(object next)
+                            {
+                                switch (next)
+                                {
+                                    case IList<object> inner:
+                                        writer.Write('{');
+
+                                        foreach (var c in inner)
+                                        {
+                                            SerializeComments(c);
+                                        }
+
+                                        writer.Write('}');
+                                        break;
+
+                                    default:
+                                        writer.Write(next);
+                                        break;
+                                }
+                            }
+
+                            SerializeComments(nested);
+                        }
+                        else
+                        {
+                            writer.Write('(');
+                            SerializePgnElements(writer, nested, notation, nestedComments);
+                            writer.Write(')');
+                        }
+
                         lastMove = 0;
                         needsDelimiter = true;
                         break;

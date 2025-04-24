@@ -120,7 +120,7 @@ moveSection <IList<object>> = e:elements _ t:result { e.Concat(new[] { t }).ToLi
 
 elements = element<0,,_>
 
-recursiveVariation <object> =
+recursiveVariation <AnnotatedVariation<GameState, Move>> =
     "(" _
     origState:(<GameState> { GetGameState(state) })
     origLookup:(<ImmutableDictionary<double, GameState>> { GetStateLookup(state) })
@@ -134,6 +134,7 @@ recursiveVariation <object> =
             state["Lookup"] = origLookup.Remove(n);
         }
     )
+    startingState:(<GameState> { GetGameState(state) })
     v:elements
     x:(<object> _ t:result { t })?
     _ (")" / #ERROR{ "Expected ')'." })
@@ -141,7 +142,7 @@ recursiveVariation <object> =
         state[nameof(GameState)] = origState;
         state["Lookup"] = origLookup;
     }
-    { v.Where(e => !(e is double)).Concat(x).ToList().AsReadOnly() }
+    { new AnnotatedVariation<GameState, Move>(startingState, v.Where(e => !(e is double)).Concat(x)) }
 
 element <object>
     = recursiveVariation
@@ -192,7 +193,10 @@ numericalGlyph <int> = "$" i:integer { i }
 braceComment <object>
     = "{" t:('' [^{}]*) "}" { t }
     / !{ nestedComments } "{" t:('' [^}]*) ("}" / #ERROR{ "Expected '}'." }) { t }
-    / &{ nestedComments } "{" n:(<object> t:('' [^{}]+) { t } / braceComment)* ("}" / #ERROR{ "Expected '}'." }) { n }
+    / &{ nestedComments } n:nestedComment { n }
+
+nestedComment <IList<object>>
+    = "{" n:(<object> t:('' [^{}]+) { t } / nestedComment)* ("}" / #ERROR{ "Expected '}'." }) { n }
 
 result <object> -memoize
   = "*" { MakeResult(state, 0, 0) }
