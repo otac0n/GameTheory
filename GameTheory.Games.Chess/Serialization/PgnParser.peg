@@ -2,6 +2,7 @@
 @namespace GameTheory.Games.Chess.Serialization
 @using System.Linq
 @using System.Collections.Immutable
+@using GameTheory.GameTree
 @using GameTheory.Games.Chess.NotationSystems
 @members
 {
@@ -80,7 +81,7 @@
                 select m).SingleOrDefault();
     }
 
-    private Dictionary<PlayerToken, Result> MakeResult(Cursor cursor, double white, double black)
+    private Mainline<GameState, Move, Result> MakeResult(Cursor cursor, double white, double black)
     {
         var gameState = GetGameState(cursor);
 
@@ -93,11 +94,13 @@
             0 => Result.None,
         };
 
-        return new()
+        var scores = new Dictionary<PlayerToken, Result>()
         {
             { gameState.Players[0], Score(white, black) },
             { gameState.Players[1], Score(black, white) },
         };
+
+        return new(scores, gameState, gameState.ActivePlayer, ImmutableStack<IReadOnlyList<IWeighted<Move>>>.Empty, 0, true);
     }
 }
 
