@@ -2,7 +2,7 @@
 
 namespace GameTheory.Games.Chess.Serialization
 {
-    public enum NumericAnnotationGlyph : byte
+    public enum NumericAnnotationGlyph
     {
         /// <summary>
         /// Empty.

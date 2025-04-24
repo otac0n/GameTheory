@@ -88,7 +88,7 @@ database <IList<PgnGame>>
     = (escape / _) games:game<0,,_> _ EOF { games }
 
 game <PgnGame>
-    = tags:tagSection #{ InitializeGameState(tags, state); } startingState:(<GameState> { state[nameof(GameState)] }) _ moves:moveSection { new PgnGame(tags, startingState, moves) }
+    = tags:tagSection #{ InitializeGameState(tags, state); } startingState:(<GameState> { state[nameof(GameState)] }) _ elements:moveSection { new PgnGame(tags, startingState, elements.Where(e => !(e is int))) }
 
 tagSection <IEnumerable<KeyValuePair<string, string>>>
     = tagPair<0,,_>
@@ -123,7 +123,7 @@ move <Move> =
 
 comment <object>
     = g:glyph { (NumericAnnotationGlyph)g }
-    / n:numericalGlyph {(NumericAnnotationGlyph) n }
+    / n:numericalGlyph { (NumericAnnotationGlyph) n }
     / braceComment
 
 glyph <int>
