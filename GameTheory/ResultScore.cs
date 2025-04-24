@@ -1,6 +1,6 @@
 ﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
-namespace GameTheory.Players.MaximizingPlayer
+namespace GameTheory
 {
     using System;
     using System.Collections.Generic;
@@ -77,7 +77,7 @@ namespace GameTheory.Players.MaximizingPlayer
             this.Result == other.Result &&
             this.InPly == other.InPly &&
             this.Likelihood == other.Likelihood &&
-            object.Equals(this.Rest, other.Rest);
+            Equals(this.Rest, other.Rest);
 
         /// <inheritdoc />
         public override int GetHashCode()
