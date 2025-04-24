@@ -2,11 +2,7 @@
 
 namespace GameTheory.Games.Chess.Tests.Serialization
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
+    using System.IO;
     using GameTheory.Games.Chess.Serialization;
     using NUnit.Framework;
 
@@ -22,6 +18,25 @@ namespace GameTheory.Games.Chess.Tests.Serialization
             var state = new GameState(subject);
             var serialized = Serializer.SerializeFen(state);
             Assert.That(serialized, Is.EqualTo(subject));
+        }
+
+        [Test]
+        public void SerializePgn_WhenGivenValidFile_RoundTripsPgnInTwoSteps([ValueSource(typeof(PgnParserTests), nameof(PgnParserTests.ValidPgnKeys))] string key)
+        {
+            var input = PgnParserTests.ValidPgnFiles[key];
+            var parser = new PgnParser();
+
+            var round1 = parser.Parse(input);
+            var serializer1 = new StringWriter();
+            Serializer.SerializePgn(serializer1, round1);
+            var output1 = serializer1.ToString();
+
+            var round2 = parser.Parse(output1);
+            var serializer2 = new StringWriter();
+            Serializer.SerializePgn(serializer2, round2);
+            var output2 = serializer2.ToString();
+
+            Assert.That(output2, Is.EqualTo(output1));
         }
     }
 }

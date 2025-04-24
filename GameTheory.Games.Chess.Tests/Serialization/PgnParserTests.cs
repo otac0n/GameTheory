@@ -2,32 +2,46 @@
 
 namespace GameTheory.Games.Chess.Tests.Serialization
 {
+    using System.Collections.Generic;
     using GameTheory.Games.Chess.NotationSystems;
     using GameTheory.Games.Chess.Serialization;
     using NUnit.Framework;
 
     internal class PgnParserTests
     {
-        [Datapoints]
-        public static readonly string[] ValidPgnFiles =
-            [
+        public static readonly IDictionary<string, string> ValidPgnFiles = new Dictionary<string, string>
+        {
+            {
+                "Empty file",
+                string.Empty
+            },
+            {
+                "Empty game",
                 """
                 *
-                """,
-
+                """
+            },
+            {
+                "Draw before a move",
                 """
                 1. 1/2-1/2
-                """,
-
+                """
+            },
+            {
+                "Black resigns after first move",
                 """
                 [Result "1-0"]
                 d4 1-0
-                """,
-
+                """
+            },
+            {
+                "Comments between every element",
                 """
                 {a} 1. {b} e4 {c} e5 {d} 1/2-1/2
-                """,
-
+                """
+            },
+            {
+                "Casual bullet game",
                 """
                 [Event "Casual bullet game"]
                 [Site "https://lichess.org/vkyK3R2T"]
@@ -50,8 +64,10 @@ namespace GameTheory.Games.Chess.Tests.Serialization
                 1. Nf3 d5 { A06 Zukertort Opening } 2. g4 e5 3. Bh3 c5 4. Nxe5 Nf6 5. O-O Bd6
                 6. Nd3 Qc7 7. f3 Bxh2+ 8. Kh1 c4 9. Nf4 Bxf4 10. e3 Bxe3 11. dxe3 d4 12. Qxd4 O-O
                 13. b3 { White wins on time. } 1-0
-                """,
-
+                """
+            },
+            {
+                "Rated blitz game",
                 """
                 [Event "Rated blitz game"]
                 [Site "https://lichess.org/nr36ee5w"]
@@ -98,10 +114,12 @@ namespace GameTheory.Games.Chess.Tests.Serialization
                 29. e7 Re8 30. Qf7?? { (Mate in 5 → -6.12) Lost forced checkmate sequence. Rd8 was best. } (30. Rd8 Qb8 31. Rxb8 h5 32. Rxe8+ Kh7 33. Qg8+ Kh6 34. Qh8#)
                 30... Qc6+ 31. Kg1?? { (-6.11 → Mate in 1) Checkmate is now unavoidable. Rd5 was best. } (31. Rd5 Qxd5+ 32. Qxd5 Nxd5 33. Rd1 Nxe7 34. Kg1 b4 35. Rc1 Rc8 36. Kf2 Kg8 37. Ke3 Kf7)
                 31... Qg2# { Black wins by checkmate. } 0-1
-                """,
-
+                """
+            },
+            {
                 // From https://www.saremba.de/chessgml/standards/pgn/pgn-complete.htm#c2.3
                 // and https://github.com/fsmosca/PGN-Standard/blob/master/PGN-Standard.txt § 2.3
+                "F/S Return Match",
                 """
                 [Event "F/S Return Match"] 
                 [Site "Belgrade, Serbia JUG"] 
@@ -118,9 +136,11 @@ namespace GameTheory.Games.Chess.Tests.Serialization
                 27. Qe3 Qg5 28. Qxg5 hxg5 29. b3 Ke6 30. a3 Kd6 31. axb4 cxb4 32. Ra5 Nd5 33.
                 f3 Bc8 34. Kf2 Bf5 35. Ra7 g6 36. Ra6+ Kc5 37. Ke1 Nf4 38. g3 Nxh3 39. Kd2 Kb5
                 40. Rd6 Kc5 41. Ra6 Nf2 42. g4 Bd3 43. Re6 1/2-1/2
-                """,
-
+                """
+            },
+            {
                 // From https://open-chess.org/viewtopic.php?t=1889
+                "Wch1",
                 """
                 [Event "Wch1"]
                 [Site "U.S.A."]
@@ -173,11 +193,15 @@ namespace GameTheory.Games.Chess.Tests.Serialization
                 Rxe4 Qxe4 {Many authors praise the high level of this positional game. The
                 score had become 4-4. The match continued in New Orleans.} 0-1
                 """
-            ];
+            },
+        };
 
-        [Theory]
-        public void Parse_WithAllTestPGNFiles_SuccessfullyParsesTheFile(string pgnFile)
+        public static readonly string[] ValidPgnKeys = [.. ValidPgnFiles.Keys];
+
+        [Test]
+        public void Parse_WithAllTestPGNFiles_SuccessfullyParsesTheFile([ValueSource(nameof(ValidPgnKeys))] string key)
         {
+            var pgnFile = ValidPgnFiles[key];
             var parser = new PgnParser();
             var result = parser.Parse(pgnFile);
         }

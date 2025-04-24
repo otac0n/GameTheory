@@ -7,14 +7,19 @@ namespace GameTheory.Games.Chess.Serialization
 
     public sealed class PgnGame
     {
+        private readonly ILookup<string, string> lookup;
+
         public PgnGame(IEnumerable<KeyValuePair<string, string>> tags, GameState startingPosition, IEnumerable<object> objects)
         {
-            this.Tags = tags.ToLookup(t => t.Key, t => t.Value);
+            this.Tags = tags.ToList().AsReadOnly();
+            this.lookup = this.Tags.ToLookup(t => t.Key, t => t.Value);
             this.StartingPosition = startingPosition;
             this.Objects = objects.ToList().AsReadOnly();
         }
 
-        public ILookup<string, string> Tags { get; }
+        public IEnumerable<string> this[string tag] => this.lookup[tag];
+
+        public IList<KeyValuePair<string, string>> Tags { get; }
 
         public GameState StartingPosition { get; }
 

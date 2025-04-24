@@ -141,7 +141,7 @@ recursiveVariation <object> =
         state[nameof(GameState)] = origState;
         state["Lookup"] = origLookup;
     }
-    { v.Concat(x).ToList().AsReadOnly() }
+    { v.Where(e => !(e is double)).Concat(x).ToList().AsReadOnly() }
 
 element <object>
     = recursiveVariation
@@ -167,7 +167,7 @@ move <Move> =
 
 comment <object>
     = g:glyph { (NumericAnnotationGlyph)g }
-    / n:numericalGlyph { (NumericAnnotationGlyph) n }
+    / n:numericalGlyph { (NumericAnnotationGlyph)n }
     / braceComment
 
 glyph <int>
@@ -199,7 +199,7 @@ result <object> -memoize
   / white:integer _ "-" _ black:integer { MakeResult(state, white, black) }
   / a:integer _ "/" _ b:integer _ "-" _ c:integer _ "/" _ d:integer &{ a == 1 && b == 2 && c == 1 && d == 2 } { MakeResult(state, 0.5, 0.5) }
 
-string = "\"" unescaped:(c:[^\"] &{ IsPrintable(c[0]) } / "\\" { "\\" } / "\\\"" { "\"" })+ "\"" { string.Concat(unescaped) }
+string = "\"" unescaped:(c:[^\"] &{ IsPrintable(c[0]) } / "\\" { "\\" } / "\\\"" { "\"" })+ ("\"" / #ERROR{ "Unterminated string." }) { string.Concat(unescaped) }
 
 integer <int> = i:([0-9] [0-9]*) { int.Parse(i) }
 
