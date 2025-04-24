@@ -1,4 +1,4 @@
-// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Games.Chess.NotationSystems
 {
@@ -81,9 +81,7 @@ namespace GameTheory.Games.Chess.NotationSystems
 
         /// <inheritdoc />
         public override IList<object> FormatEnPassantCapture(EnPassantCaptureMove enPassantCapture) =>
-            FormatUtilities.Build(
-                this.FormatCapture(enPassantCapture),
-                "e.p.");
+            this.FormatCapture(enPassantCapture);
 
         /// <inheritdoc />
         public override IList<object> FormatMove(BasicMove move) =>

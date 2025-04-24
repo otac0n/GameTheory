@@ -1,13 +1,23 @@
-// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Games.Chess
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using GameTheory.Games.Chess.Moves;
 
     public abstract class NotationSystem
     {
+        public virtual string FormatString(Move move) =>
+            string.Concat(
+                this.Format(move).Select(token =>
+                token switch
+                {
+                    Pieces p => this.Format(p),
+                    _ => token,
+                }));
+
         public virtual IList<object> Format(Move move)
         {
             if (move is EnPassantCaptureMove enPassantCapture)

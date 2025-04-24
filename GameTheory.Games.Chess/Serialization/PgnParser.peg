@@ -1,0 +1,174 @@
+@classname PgnParser
+@namespace GameTheory.Games.Chess.Serialization
+@using System.Linq
+@using GameTheory.Games.Chess.NotationSystems
+@members
+{
+    private bool nestedComments;
+    private NotationSystem notation;
+
+    public PgnParser(NotationSystem? notationSystem = null, bool nestedComments = false)
+    {
+        this.notation = notationSystem ?? new AlgebraicNotation();
+        this.nestedComments = nestedComments;
+    }
+
+    private static bool IsPrintable(char c)
+    {
+        if (char.IsControl(c))
+        {
+            return false;
+        }
+
+        switch (c)
+        {
+            case '\t':
+            case '\n':
+            case '\r':
+            case '\u2028': // Line separator
+            case '\u2029': // Paragraph separator
+                return false;
+        }
+
+        return true;
+    }
+
+    private static bool IsLetter(char c)
+    {
+        return char.IsLetter(c) || char.IsBetween(c, (char)0x2654, (char)0x265F);
+    }
+
+    private static void InitializeGameState(IEnumerable<KeyValuePair<string, string>> tags, Cursor cursor)
+    {
+        GameState gameState;
+
+        var lookup = tags.ToLookup(t => t.Key, t => t.Value);
+        if (lookup.Contains("SetUp") && lookup["SetUp"].Single() == "1")
+        {
+            gameState = new GameState(lookup["FEN"].Single());
+        }
+        else
+        {
+            gameState = new GameState();
+        }
+
+        cursor[nameof(GameState)] = gameState;
+    }
+
+    private Move FindMove(Cursor cursor, string move)
+    {
+        return (from m in ((GameState)cursor[nameof(GameState)]).GetAvailableMoves()
+                from s in m.IsCheckmate ? new[] { "#", "+", "" } : m.IsCheck ? new[] { "+", "" } : new [] { "" }
+                where this.notation.FormatString(m) + s == move
+                select m).SingleOrDefault();
+    }
+
+    private Dictionary<PlayerToken, Result> MakeResult(Cursor cursor, double white, double black)
+    {
+        var gameState = (GameState)cursor[nameof(GameState)];
+
+        Result Score(double a, double b) => a switch
+        {
+            1 when b > 0.5 => Result.SharedWin,
+            1 => Result.Win,
+            0.5 => Result.Impasse,
+            0 when b > 0 => Result.Loss,
+            0 => Result.None,
+        };
+
+        return new()
+        {
+            { gameState.Players[0], Score(white, black) },
+            { gameState.Players[1], Score(black, white) },
+        };
+    }
+}
+
+database <IList<PgnGame>>
+    = (escape / _) games:game<0,,_> _ EOF { games }
+
+game <PgnGame>
+    = tags:tagSection #{ InitializeGameState(tags, state); } startingState:(<GameState> { state[nameof(GameState)] }) _ moves:moveSection { new PgnGame(tags, startingState, moves) }
+
+tagSection <IEnumerable<KeyValuePair<string, string>>>
+    = tagPair<0,,_>
+
+tagPair <KeyValuePair<string, string>>
+    = "[" _ name:identifier _ value:string _ "]" { new KeyValuePair<string, string>(name, value) }
+
+moveSection <IList<object>> = e:elements _ t:result { e.Concat(new[] { t }).ToList().AsReadOnly() }
+
+elements = element<0,,_>
+
+recursiveVariation <object> = "(" orig:(<GameState> { state[nameof(GameState)] }) _ v:elements x:(<object> _ t:result { t })? _ (")" / #ERROR{ "Expected ')'." }) #{ state[nameof(GameState)] = orig; } { v.Concat(x).ToList().AsReadOnly() }
+
+element <object>
+    = recursiveVariation
+    / !result n:moveNumber { n }
+    / move
+    / comment
+
+moveNumber <int> =
+    n:integer (_ ".")*
+    expected:(<int> { state[nameof(GameState)].MoveNumber })
+    (&{ n == expected } / #ERROR{ "Wrong move number '" + n + "'. (" + ((GameState)state[nameof(GameState)]) + ")" })
+    { n }
+
+move <Move> =
+    move:identifier
+    found:(<Move> { this.FindMove(state, move) })
+    (&{ found != null } / #ERROR{ "Could not find move '" + move + "'. (" + ((GameState)state[nameof(GameState)]) + ": " + string.Join(" ", ((GameState)state[nameof(GameState)]).GetAvailableMoves().Select(this.notation.FormatString)) + ")" })
+    #{ state["GameState"] = state["GameState"].MakeMove(found); }
+    { found }
+
+comment <object>
+    = g:glyph { (NumericAnnotationGlyph)g }
+    / n:numericalGlyph {(NumericAnnotationGlyph) n }
+    / braceComment
+
+glyph <int>
+    = ("!!" / "‼") { 3 }
+    / ("??" / "⁇") { 4 }
+    / "!" { 1 }
+    / "?" { 2 }
+    / "⁉" { 5 }
+    / "⁈" { 6 }
+    / "□" { 7 }
+    / "=" { 10 }
+    / "∞" { 13 }
+    / "⩲" { 14 }
+    / "⩱" { 15 }
+    / "±" { 16 }
+    / "∓" { 17 }
+    / "+" _ "−" { 18 }
+    / "+" _ "−" { 19 }
+
+numericalGlyph <int> = "$" i:integer { i }
+
+braceComment <object>
+    = "{" t:('' [^{}]*) "}" { t }
+    / !{ nestedComments } "{" t:('' [^}]*) ("}" / #ERROR{ "Expected '}'." }) { t }
+    / &{ nestedComments } "{" n:(<object> t:('' [^{}]+) { t } / braceComment)* ("}" / #ERROR{ "Expected '}'." }) { n }
+
+result <object> -memoize
+  = "*" { MakeResult(state, 0, 0) }
+  / white:integer _ "-" _ black:integer { MakeResult(state, white, black) }
+  / a:integer _ "/" _ b:integer _ "-" _ c:integer _ "/" _ d:integer &{ a == 1 && b == 2 && c == 1 && d == 2 } { MakeResult(state, 0.5, 0.5) }
+
+string = "\"" unescaped:(c:[^\"] &{ IsPrintable(c[0]) } / "\\" { "\\" } / "\\\"" { "\"" })+ "\"" { string.Concat(unescaped) }
+
+integer <int> = i:([0-9] [0-9]*) { int.Parse(i) }
+
+identifier = c:. &{ IsLetter(c[0]) } ([-+#=:_0-9] / r:. &{ IsLetter(r[0]) })*
+
+_ -memoize = '' (WS / EOL escape / EOL)*
+
+escape = '%' data:('' (!EOL .)*)
+
+EOL -memoize
+    = [\n\r\u2028\u2029]
+
+WS -memoize
+    = [ \t\v\f\u00A0\uFEFF\u1680\u180E\u2000-\u200A\u202F\u205F\u3000]
+
+EOF = c:. #ERROR{ "Unexpected character '" + c + "'" } / ;
