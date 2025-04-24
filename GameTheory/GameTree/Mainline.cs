@@ -1,4 +1,4 @@
-// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.GameTree
 {
@@ -106,15 +106,20 @@ namespace GameTheory.GameTree
                     first = false;
                 }
 
-                tokens.Add("] (depth ");
+                tokens.Add("]");
 
-                if (!this.FullyDetermined)
+                if (!this.FullyDetermined || this.Depth > 0)
                 {
-                    tokens.Add(">=");
-                }
+                    tokens.Add(" (depth ");
 
-                tokens.Add(this.Depth);
-                tokens.Add(")");
+                    if (!this.FullyDetermined)
+                    {
+                        tokens.Add(">=");
+                    }
+
+                    tokens.Add(this.Depth);
+                    tokens.Add(")");
+                }
 
                 return tokens;
             }
