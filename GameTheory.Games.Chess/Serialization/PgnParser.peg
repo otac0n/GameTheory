@@ -1,6 +1,7 @@
 @classname PgnParser
 @namespace GameTheory.Games.Chess.Serialization
 @using System.Linq
+@using System.Collections.Immutable
 @using GameTheory.Games.Chess.NotationSystems
 @members
 {
@@ -53,11 +54,27 @@
         }
 
         cursor[nameof(GameState)] = gameState;
+        cursor["Lookup"] = ImmutableDictionary<double, GameState>.Empty;
+    }
+
+    private GameState GetGameState(Cursor cursor) => (GameState)cursor[nameof(GameState)];
+    private ImmutableDictionary<double, GameState> GetStateLookup(Cursor cursor) => (ImmutableDictionary<double, GameState>)cursor["Lookup"];
+
+    private double GetHalfMoveNumber(Cursor cursor) => GetHalfMoveNumber(GetGameState(cursor));
+    private double GetHalfMoveNumber(GameState gameState) => gameState.MoveNumber + (gameState.ActiveColor == Pieces.Black ? 0.5 : 0);
+
+    private void MakeMove(Cursor cursor, Move move)
+    {
+        var lookup = GetStateLookup(cursor);
+        var gameState = GetGameState(cursor);
+
+        cursor["Lookup"] = lookup.SetItem(GetHalfMoveNumber(gameState), gameState);
+        cursor[nameof(GameState)] = gameState.MakeMove(move);
     }
 
     private Move FindMove(Cursor cursor, string move)
     {
-        return (from m in ((GameState)cursor[nameof(GameState)]).GetAvailableMoves()
+        return (from m in GetGameState(cursor).GetAvailableMoves()
                 from s in m.IsCheckmate ? new[] { "#", "+", "" } : m.IsCheck ? new[] { "+", "" } : new [] { "" }
                 where this.notation.FormatString(m) + s == move
                 select m).SingleOrDefault();
@@ -65,7 +82,7 @@
 
     private Dictionary<PlayerToken, Result> MakeResult(Cursor cursor, double white, double black)
     {
-        var gameState = (GameState)cursor[nameof(GameState)];
+        var gameState = GetGameState(cursor);
 
         Result Score(double a, double b) => a switch
         {
@@ -88,7 +105,7 @@ database <IList<PgnGame>>
     = (escape / _) games:game<0,,_> _ EOF { games }
 
 game <PgnGame>
-    = tags:tagSection #{ InitializeGameState(tags, state); } startingState:(<GameState> { state[nameof(GameState)] }) _ elements:moveSection { new PgnGame(tags, startingState, elements.Where(e => !(e is int))) }
+    = tags:tagSection #{ InitializeGameState(tags, state); } orig:(<GameState> { GetGameState(state) }) _ elements:moveSection { new PgnGame(tags, orig, elements.Where(e => !(e is double))) }
 
 tagSection <IEnumerable<KeyValuePair<string, string>>>
     = tagPair<0,,_>
@@ -100,7 +117,28 @@ moveSection <IList<object>> = e:elements _ t:result { e.Concat(new[] { t }).ToLi
 
 elements = element<0,,_>
 
-recursiveVariation <object> = "(" orig:(<GameState> { state[nameof(GameState)] }) _ v:elements x:(<object> _ t:result { t })? _ (")" / #ERROR{ "Expected ')'." }) #{ state[nameof(GameState)] = orig; } { v.Concat(x).ToList().AsReadOnly() }
+recursiveVariation <object> =
+    "(" _
+    origState:(<GameState> { GetGameState(state) })
+    origLookup:(<ImmutableDictionary<double, GameState>> { GetStateLookup(state) })
+    (
+        n:&moveNumberLookahead
+        expected:(<double> { GetHalfMoveNumber(state) })
+        &{ n < expected }
+        (&{ origLookup.ContainsKey(n) } / #ERROR{ "Wrong move number '" + n + "'. (" + GetGameState(state) + ")" })
+        #{
+            state[nameof(GameState)] = origLookup[n];
+            state["Lookup"] = origLookup.Remove(n);
+        }
+    )
+    v:elements
+    x:(<object> _ t:result { t })?
+    _ (")" / #ERROR{ "Expected ')'." })
+    #{
+        state[nameof(GameState)] = origState;
+        state["Lookup"] = origLookup;
+    }
+    { v.Concat(x).ToList().AsReadOnly() }
 
 element <object>
     = recursiveVariation
@@ -108,17 +146,20 @@ element <object>
     / move
     / comment
 
-moveNumber <int> =
-    n:integer (_ ".")*
-    expected:(<int> { state[nameof(GameState)].MoveNumber })
-    (&{ n == expected } / #ERROR{ "Wrong move number '" + n + "'. (" + ((GameState)state[nameof(GameState)]) + ")" })
+moveNumberLookahead <double> =
+    n:integer p:(_ ".")* { n + (p.Count > 1 ? 0.5 : 0) }
+
+moveNumber <double> =
+    n:moveNumberLookahead
+    expected:(<double> { GetHalfMoveNumber(state) })
+    (&{ n == expected } / #ERROR{ "Wrong move number '" + n + "'. (" + GetGameState(state) + ")" })
     { n }
 
 move <Move> =
     move:identifier
     found:(<Move> { this.FindMove(state, move) })
-    (&{ found != null } / #ERROR{ "Could not find move '" + move + "'. (" + ((GameState)state[nameof(GameState)]) + ": " + string.Join(" ", ((GameState)state[nameof(GameState)]).GetAvailableMoves().Select(this.notation.FormatString)) + ")" })
-    #{ state["GameState"] = state["GameState"].MakeMove(found); }
+    (&{ found != null } / #ERROR{ "Could not find move '" + move + "'. (" + GetGameState(state) + ": " + string.Join(" ", GetGameState(state).GetAvailableMoves().Select(this.notation.FormatString)) + ")" })
+    #{ MakeMove(state, found); }
     { found }
 
 comment <object>
