@@ -79,7 +79,7 @@ namespace GameTheory {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to  and .
+        ///   Looks up a localized string similar to and.
         /// </summary>
         public static string ListItemSeparatorConjunction {
             get {
@@ -88,7 +88,7 @@ namespace GameTheory {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to  or .
+        ///   Looks up a localized string similar to or.
         /// </summary>
         public static string ListItemSeparatorDisjunction {
             get {

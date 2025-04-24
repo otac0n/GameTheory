@@ -115,14 +115,14 @@ namespace GameTheory
                     return Array.Empty<object>();
 
                 case 1:
-                    return new object[] { items[0] };
+                    return [items[0]];
 
                 case 2:
-                    sep = exclusive ? SharedResources.ListItemSeparatorDisjunction : SharedResources.ListItemSeparatorConjunction;
+                    sep = $" {(exclusive ? SharedResources.ListItemSeparatorDisjunction : SharedResources.ListItemSeparatorConjunction)} ";
                     break;
 
                 default:
-                    sep = SharedResources.ListItemSeparator + (exclusive ? SharedResources.ListItemSeparatorDisjunction : SharedResources.ListItemSeparatorConjunction);
+                    sep = $"{SharedResources.ListItemSeparator}{(exclusive ? SharedResources.ListItemSeparatorDisjunction : SharedResources.ListItemSeparatorConjunction)} ";
                     break;
             }
 
@@ -146,7 +146,6 @@ namespace GameTheory
         /// <summary>
         /// Returns the list of format tokens representing a list.
         /// </summary>
-        /// <typeparam name="T">The type of elements in the list.</typeparam>
         /// <param name="items">The items in the list that will be separated.</param>
         /// <param name="exclusive">A flag indicating whether the items in the list will be used exclusively.</param>
         /// <returns>The format tokens representing the list.</returns>
@@ -164,11 +163,11 @@ namespace GameTheory
                     return items[0];
 
                 case 2:
-                    last = exclusive ? SharedResources.ListItemSeparatorDisjunction : SharedResources.ListItemSeparatorConjunction;
+                    last = $" {(exclusive ? SharedResources.ListItemSeparatorDisjunction : SharedResources.ListItemSeparatorConjunction)} ";
                     break;
 
                 default:
-                    last = SharedResources.ListItemSeparator + (exclusive ? SharedResources.ListItemSeparatorDisjunction : SharedResources.ListItemSeparatorConjunction);
+                    last = $"{SharedResources.ListItemSeparator}{(exclusive ? SharedResources.ListItemSeparatorDisjunction : SharedResources.ListItemSeparatorConjunction)} ";
                     break;
             }
 
@@ -176,7 +175,7 @@ namespace GameTheory
             result.Append(items[0]);
             for (var i = 1; i < items.Count; i++)
             {
-                result.Append(i == items.Count - 1 ? SharedResources.ListItemSeparator : last);
+                result.Append(i == items.Count - 1 ? last : SharedResources.ListItemSeparator);
                 result.Append(items[i]);
             }
 
