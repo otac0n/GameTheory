@@ -5,7 +5,7 @@ namespace GameTheory.Games.Chess.Serialization
     using System.Collections.Generic;
     using System.Linq;
 
-    public record class PgnGame
+    public sealed class PgnGame
     {
         public PgnGame(IEnumerable<KeyValuePair<string, string>> tags, GameState startingPosition, IEnumerable<object> objects)
         {
