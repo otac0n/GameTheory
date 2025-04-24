@@ -351,6 +351,8 @@ namespace GameTheory.Games.Chess
             return move.Apply(this);
         }
 
+        public override string ToString() => Serializer.SerializeFen(this);
+
         internal IReadOnlyList<Move> GenerateAllMoves()
         {
             return CachingUtils.WeakRefernceCache(ref this.allMovesCache, () => this.Variant.GenerateAllMoves(this));
