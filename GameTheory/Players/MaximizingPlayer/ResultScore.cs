@@ -6,49 +6,6 @@ namespace GameTheory.Players.MaximizingPlayer
     using System.Collections.Generic;
 
     /// <summary>
-    /// The possible outcomes for a game.
-    /// </summary>
-    public enum Result : short
-    {
-        /// <summary>
-        /// The outcome has not yet been determined.
-        /// </summary>
-        None = 0,
-
-        /// <summary>
-        /// The game will result in a loss for the player.
-        /// </summary>
-        /// <remarks>
-        /// A loss occurs when the game has no subsequent moves, the player is not a winner, and some other player is a winner.
-        /// </remarks>
-        Loss = -2,
-
-        /// <summary>
-        /// The game will result in an impasse.
-        /// </summary>
-        /// <remarks>
-        /// An impasse (or stalemate) occurs when the game has no subsequent moves and there are no winners.
-        /// </remarks>
-        Impasse = -1,
-
-        /// <summary>
-        /// The game will result in a draw.
-        /// </summary>
-        /// <remarks>
-        /// A draw occurs when the game has no subsequent moves, the player is a winner, and some other player is also a winner.
-        /// </remarks>
-        SharedWin = 1,
-
-        /// <summary>
-        /// The game will result in a win.
-        /// </summary>
-        /// <remarks>
-        /// A win occurs when the game has no subsequen moves, the player is a winner, and no other player is a winner.
-        /// </remarks>
-        Win = 2,
-    }
-
-    /// <summary>
     /// Extends a score to prioritize winning over purely increasing the score.
     /// </summary>
     /// <typeparam name="TScore">The type that represents the rest of the score.</typeparam>
