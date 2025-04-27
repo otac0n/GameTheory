@@ -1,4 +1,4 @@
-// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Games.Chess
 {
@@ -274,10 +274,9 @@ namespace GameTheory.Games.Chess
             return true;
         }
 
-        protected internal IReadOnlyList<Move> GenerateAllMoves(GameState state, bool onlyCaptures = false)
+        protected internal IReadOnlyList<Move> GenerateAllMoves(GameState state, Pieces activeColor, int? captureIndex = null)
         {
             var builder = new List<Move>();
-            var activeColor = state.ActiveColor;
             var width = this.Width;
             var pawnDirection = activeColor == Pieces.White ? 1 : -1;
             var promotionY = this.PromotionRank[activeColor];
@@ -302,7 +301,7 @@ namespace GameTheory.Games.Chess
                         // Move
                         targetY = y + pawnDirection;
                         var moveTarget = this.GetIndexOf(x, targetY);
-                        if (!onlyCaptures && state[moveTarget] == Pieces.None)
+                        if (!captureIndex.HasValue && state[moveTarget] == Pieces.None)
                         {
                             // Move and promote
                             if (targetY == promotionY)
@@ -338,6 +337,10 @@ namespace GameTheory.Games.Chess
                             }
 
                             var captureTarget = this.GetIndexOf(targetX, targetY);
+                            if (captureIndex.HasValue && captureIndex != captureTarget)
+                            {
+                                continue;
+                            }
 
                             var targetValue = state[captureTarget];
                             if (targetValue == Pieces.None)
@@ -368,12 +371,15 @@ namespace GameTheory.Games.Chess
                     case Pieces.Knight:
                         foreach (var target in this.knightMoves[i])
                         {
-                            var targetValue = state[target];
-                            if ((targetValue & activeColor) == Pieces.None)
+                            if (!captureIndex.HasValue || target == captureIndex)
                             {
-                                if (!onlyCaptures || targetValue != Pieces.None)
+                                var targetValue = state[target];
+                                if ((targetValue & activeColor) == Pieces.None)
                                 {
-                                    builder.Add(new BasicMove(state, i, target));
+                                    if (!captureIndex.HasValue || targetValue != Pieces.None)
+                                    {
+                                        builder.Add(new BasicMove(state, i, target));
+                                    }
                                 }
                             }
                         }
@@ -391,7 +397,7 @@ namespace GameTheory.Games.Chess
                     case Pieces.King:
                         isKing = true;
 
-                        if (!onlyCaptures)
+                        if (!captureIndex.HasValue)
                         {
                             foreach (var side in Variant.Sides)
                             {
@@ -423,14 +429,14 @@ namespace GameTheory.Games.Chess
                                         var board = state.Board;
                                         board[i] = Pieces.None;
                                         board[t] = piece;
-                                        var check = this.GenerateAllMoves(
-                                            state.With(
+                                        var updated = state.With(
                                                 activeColor: activeColor == Pieces.White ? Pieces.Black : Pieces.White,
-                                                board: board),
-                                            onlyCaptures: true)
-                                            .OfType<BasicMove>()
-                                            .Where(basicMove => basicMove.ToIndex == t);
-                                        if (check.Any())
+                                                board: board);
+                                        var checks = this.GenerateAllMoves(
+                                            updated,
+                                            updated.ActiveColor,
+                                            captureIndex: t);
+                                        if (checks.Any())
                                         {
                                             clear = false;
                                             break;
@@ -473,11 +479,14 @@ namespace GameTheory.Games.Chess
 
                             var moveTarget = this.GetIndexOf(targetX, targetY);
                             var targetValue = state[moveTarget];
-                            if ((targetValue & activeColor) == Pieces.None)
+                            if (!captureIndex.HasValue || moveTarget == captureIndex)
                             {
-                                if (!onlyCaptures || targetValue != Pieces.None)
+                                if ((targetValue & activeColor) == Pieces.None)
                                 {
-                                    builder.Add(new BasicMove(state, i, moveTarget));
+                                    if (!captureIndex.HasValue || targetValue != Pieces.None)
+                                    {
+                                        builder.Add(new BasicMove(state, i, moveTarget));
+                                    }
                                 }
                             }
 
@@ -503,19 +512,8 @@ namespace GameTheory.Games.Chess
             foreach (var move in allMoves)
             {
                 var result = move.Apply(state);
-                var kingChop = false;
-                foreach (var response in result.GenerateAllMoves())
-                {
-                    if (response is BasicMove basicMove)
-                    {
-                        if (result[basicMove.ToIndex] == activeKing)
-                        {
-                            kingChop = true;
-                            break;
-                        }
-                    }
-                }
-
+                var kingIndex = Enumerable.Range(0, this.Size).First(i => result[i] == activeKing);
+                var kingChop = this.GenerateAllMoves(result, result.ActiveColor, kingIndex).Any();
                 if (!kingChop)
                 {
                     moves.Add(move);

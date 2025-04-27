@@ -1,4 +1,4 @@
-// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Games.Chess.Players
 {
@@ -40,7 +40,7 @@ namespace GameTheory.Games.Chess.Players
 
             var movesMapped = from move in state.GetAvailableMoves<GameState, Move>(this.PlayerToken)
                               let basicMove = move as BasicMove
-                              let isCapture = basicMove != null && state.Board[basicMove.ToIndex] != Pieces.None
+                              let isCapture = basicMove != null && state[basicMove.ToIndex] != Pieces.None
                               let push = basicMove != null
                                   ? (state.Variant.GetCoordinates(basicMove.FromIndex).Y - state.Variant.GetCoordinates(basicMove.ToIndex).Y) * colorDir
                                   : 0

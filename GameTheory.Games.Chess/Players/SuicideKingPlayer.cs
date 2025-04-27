@@ -1,4 +1,4 @@
-// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
+﻿// Copyright © John & Katie Gietzen. All Rights Reserved. This source is subject to the MIT license. Please see license.md for more information.
 
 namespace GameTheory.Games.Chess.Players
 {
@@ -34,10 +34,11 @@ namespace GameTheory.Games.Chess.Players
         internal static double Score(PlayerToken chasingPlayer, PlayerState<GameState, Move> playerState)
         {
             var state = playerState.GameState;
+            var board = state.Board;
             var colorDir = playerState.PlayerToken == chasingPlayer ? 1 : -1;
 
-            var whiteKing = state.Variant.GetCoordinates(state.Board.IndexOf(Pieces.White | Pieces.King));
-            var blackKing = state.Variant.GetCoordinates(state.Board.IndexOf(Pieces.Black | Pieces.King));
+            var whiteKing = state.Variant.GetCoordinates(board.IndexOf(Pieces.White | Pieces.King));
+            var blackKing = state.Variant.GetCoordinates(board.IndexOf(Pieces.Black | Pieces.King));
 
             return Math.Max(Math.Abs(whiteKing.X - blackKing.X), Math.Abs(whiteKing.Y - blackKing.Y)) * colorDir;
         }

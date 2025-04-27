@@ -133,25 +133,23 @@ namespace GameTheory.Games.Chess
             {
                 var king = this.ActiveColor | Pieces.King;
                 var kingIndex = Enumerable.Range(0, this.Variant.Size).First(i => this.board[i] == king);
-                var check = this.Variant.GenerateAllMoves(
-                    this.With(
-                        activeColor: this.ActiveColor == Pieces.White ? Pieces.Black : Pieces.White),
-                    onlyCaptures: true)
-                    .OfType<BasicMove>()
-                    .Where(basicMove => basicMove.ToIndex == kingIndex);
-                return check.Any();
+                var checks = this.Variant.GenerateAllMoves(
+                    this,
+                    this.ActiveColor == Pieces.White ? Pieces.Black : Pieces.White,
+                    captureIndex: kingIndex);
+                return checks.Any();
             }
         }
 
         /// <summary>
         /// Gets a value indicating whether or not the active player is in checkmate.
         /// </summary>
-        public bool IsCheckmate => this.GetAvailableMoves(out var isMate).Count == 0 && isMate && this.IsCheck;
+        public bool IsCheckmate => this.IsCheck && this.GetAvailableMoves(out var isMate).Count == 0 && isMate;
 
         /// <summary>
         /// Gets a value indicating whether or not the active player is in stalemate.
         /// </summary>
-        public bool IsStalemate => this.GetAvailableMoves(out var isMate).Count == 0 && isMate && !this.IsCheck;
+        public bool IsStalemate => !this.IsCheck && this.GetAvailableMoves(out var isMate).Count == 0 && isMate;
 
         /// <summary>
         /// Gets the current move number.
@@ -355,7 +353,7 @@ namespace GameTheory.Games.Chess
 
         internal IReadOnlyList<Move> GenerateAllMoves()
         {
-            return CachingUtils.WeakRefernceCache(ref this.allMovesCache, () => this.Variant.GenerateAllMoves(this));
+            return CachingUtils.WeakRefernceCache(ref this.allMovesCache, () => this.Variant.GenerateAllMoves(this, this.ActiveColor));
         }
 
         internal GameState With(
