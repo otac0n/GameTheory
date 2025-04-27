@@ -36,7 +36,10 @@ namespace GameTheory.Games.Chess
         /// <inheritdoc/>
         public PlayerToken PlayerToken { get; }
 
-        internal GameState GameState { get; }
+        /// <summary>
+        /// Gets the <see cref="Chess.GameState"/> that this move is based on.
+        /// </summary>
+        public GameState GameState { get; }
 
         /// <inheritdoc />
         public sealed override string ToString() => $"{this.GameState.MoveNumber}.{(this.GameState.ActiveColor == Pieces.Black ? ".." : string.Empty)} {string.Concat(this.FlattenFormatTokens().Select(t => t is Pieces piece ? this.GameState.Variant.NotationSystem.Format(piece) : t))}{(this.IsCheckmate ? "#" : this.IsCheck ? "+" : string.Empty)}{(this is EnPassantCaptureMove ? " e.p." : string.Empty)}";

@@ -19,7 +19,7 @@ namespace GameTheory.GameTree
         /// <summary>
         /// Gets the starting position of the variation.
         /// </summary>
-        public TGameState StartingPosition { get; } = startingPosition;
+        public TGameState StartingState { get; } = startingPosition;
 
         /// <summary>
         /// Gets the format tokens, <typeparamref name="TMove">moves</typeparamref>, and <typeparamref name="TGameState">game states</typeparamref> in the variation.
